@@ -1249,38 +1249,64 @@ function renderPositionsReal(open, cfg) {
 // ── PERFORMANCE STATS ─────────────────────────────────
 function renderPerfStats(closed, portfolioValue, initialCapital) {
   if (!closed.length) return;
+
+  // notionalPl (col Y) is blank for closed trades — it's only filled for open positions.
+  // Infer it: position size = finalPl / (finalPlPct/100), then notionalPl = posSize × (plPct/100).
+  // Fall back to finalPl when either % is zero (e.g. fully stopped-out with no partial).
+  const inferNotionalPl = t => {
+    if (t.notionalPl !== 0) return t.notionalPl;            // sheet has the value — use it
+    if (t.finalPlPct !== 0 && t.plPct !== 0) {
+      const posSize = t.finalPl / (t.finalPlPct / 100);     // Rs invested
+      return posSize * (t.plPct / 100);
+    }
+    return t.finalPl;                                        // no notional data → assume same as final
+  };
+
   const totalFinalPl = closed.reduce((s, t) => s + t.finalPl, 0);
-  const totalNotionalPl = closed.reduce((s, t) => s + t.notionalPl, 0);
-  const captureRate = totalNotionalPl !== 0 ? (totalFinalPl / totalNotionalPl * 100) : 0;
+  const totalNotionalPl = closed.reduce((s, t) => s + inferNotionalPl(t), 0);
+  const hasNotionalData = closed.some(t => t.notionalPl !== 0 || t.plPct !== 0);
+  const captureRate = totalNotionalPl !== 0 ? (totalFinalPl / totalNotionalPl * 100) : 100;
   const wins = closed.filter(t => t.finalPlPct > 0);
   const losses = closed.filter(t => t.finalPlPct < 0);
-  const notionalWins = closed.filter(t => t.plPct > 0);
+  // notional win rate: use plPct if available, else fall back to finalPlPct
+  const notionalPctOf = t => t.plPct !== 0 ? t.plPct : t.finalPlPct;
+  const notionalWins = closed.filter(t => notionalPctOf(t) > 0);
   const finalWR = closed.length > 0 ? (wins.length / closed.length * 100) : 0;
   const notionalWR = closed.length > 0 ? (notionalWins.length / closed.length * 100) : 0;
   const avgFinalWin = wins.length > 0 ? wins.reduce((s,t) => s + t.finalPlPct, 0) / wins.length : 0;
   const avgFinalLoss = losses.length > 0 ? losses.reduce((s,t) => s + t.finalPlPct, 0) / losses.length : 0;
-  const notionalWinList = closed.filter(t => t.plPct > 0);
-  const notionalLossList = closed.filter(t => t.plPct < 0);
-  const avgNotionalWin = notionalWinList.length > 0 ? notionalWinList.reduce((s,t) => s + t.plPct, 0) / notionalWinList.length : 0;
-  const avgNotionalLoss = notionalLossList.length > 0 ? notionalLossList.reduce((s,t) => s + t.plPct, 0) / notionalLossList.length : 0;
+  const notionalWinList = closed.filter(t => notionalPctOf(t) > 0);
+  const notionalLossList = closed.filter(t => notionalPctOf(t) < 0);
+  const avgNotionalWin = notionalWinList.length > 0 ? notionalWinList.reduce((s,t) => s + notionalPctOf(t), 0) / notionalWinList.length : 0;
+  const avgNotionalLoss = notionalLossList.length > 0 ? notionalLossList.reduce((s,t) => s + notionalPctOf(t), 0) / notionalLossList.length : 0;
   const expectancy = closed.length > 0 ? closed.reduce((s,t) => s + t.finalPlPct, 0) / closed.length : 0;
   const rMultiple = avgFinalLoss !== 0 ? Math.abs(avgFinalWin / avgFinalLoss) : 0;
   const rop = initialCapital > 0 ? (totalFinalPl / initialCapital * 100) : 0;
   const leftOnTable = totalNotionalPl - totalFinalPl;
-  const fmt = v => '₹' + Math.abs(Math.round(v)).toLocaleString('en-IN');
+  // fmt preserves sign in the label, uses abs for the ₹ amount
+  const fmtRs = v => (v < 0 ? '-' : '') + '₹' + Math.abs(Math.round(v)).toLocaleString('en-IN');
   const fmtPct = v => (v >= 0 ? '+' : '') + v.toFixed(1) + '%';
   const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
 
-  set('perf-final-pl', fmt(totalFinalPl));
+  set('perf-final-pl', fmtRs(totalFinalPl));
   set('perf-final-plpct', fmtPct(rop));
-  set('perf-notional-pl', fmt(totalNotionalPl));
-  set('perf-notional-plpct', fmtPct(initialCapital > 0 ? totalNotionalPl / initialCapital * 100 : 0));
-  set('perf-capture', captureRate.toFixed(1) + '%');
-  set('perf-capture-sub', captureRate < 50 ? 'Losing over half your upside to early exits' : captureRate < 70 ? 'Room to improve — hold winners longer' : 'Good capture rate');
+  const finalPlEl = document.getElementById('perf-final-pl');
+  if (finalPlEl) finalPlEl.className = 'compare-value ' + (totalFinalPl >= 0 ? 'text-green' : 'text-red');
+
+  set('perf-notional-pl', fmtRs(totalNotionalPl));
+  const notionalRoP = initialCapital > 0 ? totalNotionalPl / initialCapital * 100 : 0;
+  set('perf-notional-plpct', fmtPct(notionalRoP));
+  const notionalPlEl = document.getElementById('perf-notional-pl');
+  if (notionalPlEl) notionalPlEl.className = 'compare-value ' + (totalNotionalPl >= totalFinalPl ? 'text-amber' : 'text-green');
+
+  set('perf-capture', hasNotionalData ? captureRate.toFixed(1) + '%' : 'N/A');
+  set('perf-capture-sub', !hasNotionalData ? 'Add plPct (col X) to sheet to enable' : captureRate < 50 ? 'Losing over half your upside to early exits' : captureRate < 70 ? 'Room to improve — hold winners longer' : 'Good capture rate');
   set('perf-rop', fmtPct(rop));
-  set('perf-rop-sub', 'On ' + fmt(initialCapital) + ' initial capital');
+  set('perf-rop-sub', 'On ' + fmtRs(initialCapital) + ' initial capital');
   set('perf-closed-count', closed.length);
-  set('perf-left-table', leftOnTable > 0 ? `⚠ Leaving ${fmt(leftOnTable)} on the table by exiting early` : '✓ Capturing gains efficiently');
+  set('perf-left-table', hasNotionalData
+    ? (leftOnTable > 0 ? `⚠ Leaving ${fmtRs(leftOnTable)} on the table by exiting early` : '✓ Capturing gains efficiently')
+    : 'Add notional P&L% (col X) to compare final vs notional');
   set('perf-expectancy', fmtPct(expectancy));
   set('perf-expectancy-sub', expectancy >= 0 ? `Each trade makes you +${expectancy.toFixed(1)}% on avg. Edge exists.` : `Each trade costs you ${expectancy.toFixed(1)}% on avg. Review system.`);
   set('perf-rmultiple', rMultiple.toFixed(2) + 'R');
