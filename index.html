@@ -793,8 +793,8 @@ tbody tr:hover { filter: brightness(0.97); }
       <div id="chart-rmultiple" style="height:220px;"></div>
     </div>
     <div class="card">
-      <div class="chart-title">Day of Week P&L</div>
-      <div class="chart-sub">Realised P&L by exit day — reveals best/worst days</div>
+      <div class="chart-title">Win Rate by Entry Day</div>
+      <div class="chart-sub">Which day you enter matters — based on closed trades entry date</div>
       <div id="chart-dayofweek" style="height:220px;"></div>
     </div>
   </div>
@@ -909,31 +909,59 @@ tbody tr:hover { filter: brightness(0.97); }
   </div>
 
   <!-- Unlock Advanced Analytics -->
-  <div class="section-title" style="margin-top:20px">Unlock Advanced Analytics</div>
+  <div class="section-title" style="margin-top:20px">Unlock Advanced Analytics — Add These Columns to Your Sheet</div>
+  <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px">Inspired by real trader analysis: MAE + MFE:MAE ratio separated 14% win rate from 100% across 24 consecutive wins</div>
   <div class="grid-3" style="margin-bottom:14px">
-    <div class="card card-sm" style="border:1px dashed var(--border);opacity:0.8">
-      <div class="stat-label">Max Adverse Excursion (MAE)</div>
+    <div class="card card-sm" style="border:1px dashed var(--border)">
+      <div class="stat-label" style="color:var(--red)">🔑 MAE % — Most Powerful Signal</div>
       <div style="font-size:13px;margin-top:8px;line-height:1.6;color:var(--text-secondary)">
-        How far did each trade go against you before you exited? Reveals if you're moving stops.<br><br>
-        <strong>Add to sheet:</strong> Column tracking the lowest price hit while in the trade.
+        Max Adverse Excursion — how far the trade went <strong>against you</strong> before recovering or stopping out.<br><br>
+        <strong>Real data:</strong> MAE &lt;1.5% → 100% WR · MAE &gt;3% → 21% WR<br><br>
+        <strong>Add col O:</strong> Formula <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">=MIN(low range during trade)</code> → compute <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">=(entry-min)/entry*100</code>
       </div>
-      <div class="stat-badge badge-amber" style="margin-top:10px">Needs: MAE column</div>
+      <div class="stat-badge badge-red" style="margin-top:10px">Add column O → maeCol in Config</div>
     </div>
-    <div class="card card-sm" style="border:1px dashed var(--border);opacity:0.8">
-      <div class="stat-label">Sector Concentration</div>
+    <div class="card card-sm" style="border:1px dashed var(--border)">
+      <div class="stat-label" style="color:var(--red)">🔑 MFE % — The Game Filter</div>
       <div style="font-size:13px;margin-top:8px;line-height:1.6;color:var(--text-secondary)">
-        How many open positions are in the same sector? Hidden correlated risk can wipe out diversification.<br><br>
-        <strong>Add to sheet:</strong> Sector/Industry column for each trade.
+        Max Favorable Excursion — highest point reached while in the trade.<br><br>
+        <strong>Real data:</strong> MFE:MAE &gt;3x → 100% WR on 24 consecutive trades · &lt;3x → 14% WR<br><br>
+        <strong>Add col P:</strong> Formula <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">=(max-entry)/entry*100</code> during trade
       </div>
-      <div class="stat-badge badge-amber" style="margin-top:10px">Needs: Sector column</div>
+      <div class="stat-badge badge-red" style="margin-top:10px">Add column P → mfeCol in Config</div>
     </div>
-    <div class="card card-sm" style="border:1px dashed var(--border);opacity:0.8">
-      <div class="stat-label">Trade Notes &amp; Mistake Log</div>
+    <div class="card card-sm" style="border:1px dashed var(--border)">
+      <div class="stat-label" style="color:var(--amber)">⏰ Entry Time</div>
       <div style="font-size:13px;margin-top:8px;line-height:1.6;color:var(--text-secondary)">
-        Tag each trade: Rule followed / Emotional exit / Moved stop / Oversized. You can't fix what you don't track.<br><br>
-        <strong>Add to sheet:</strong> Notes column + Quality tag column.
+        What time did you enter? Real analysis showed 09:00–11:00 IST (GTT) = 0% WR · 15:00–15:30 IST = 78% WR<br><br>
+        <strong>Add col Q:</strong> Entry time as text e.g. <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">09:15</code> or <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">15:00</code>
       </div>
-      <div class="stat-badge badge-amber" style="margin-top:10px">Needs: Notes + Tag columns</div>
+      <div class="stat-badge badge-amber" style="margin-top:10px">Add column Q → entryTimeCol in Config</div>
+    </div>
+    <div class="card card-sm" style="border:1px dashed var(--border)">
+      <div class="stat-label" style="color:var(--amber)">🏷 Trade Quality Tag</div>
+      <div style="font-size:13px;margin-top:8px;line-height:1.6;color:var(--text-secondary)">
+        Tag each trade honestly at exit:<br>
+        <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">Rule ✓</code> / <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">Emotional</code> / <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">Moved Stop</code> / <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">Late Entry</code> / <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">Oversized</code><br><br>
+        This is the single most powerful improvement tool.
+      </div>
+      <div class="stat-badge badge-amber" style="margin-top:10px">Add column T → qualityTagCol in Config</div>
+    </div>
+    <div class="card card-sm" style="border:1px dashed var(--border)">
+      <div class="stat-label" style="color:var(--text-muted)">🏭 Sector</div>
+      <div style="font-size:13px;margin-top:8px;line-height:1.6;color:var(--text-secondary)">
+        IT / BFSI / Pharma / Auto / FMCG etc.<br><br>
+        Reveals hidden concentration — when market rotates, correlated positions all hit stop simultaneously.
+      </div>
+      <div class="stat-badge badge-amber" style="margin-top:10px">Add column N → sectorCol in Config</div>
+    </div>
+    <div class="card card-sm" style="border:1px dashed var(--border)">
+      <div class="stat-label" style="color:var(--text-muted)">📝 Exit Reason</div>
+      <div style="font-size:13px;margin-top:8px;line-height:1.6;color:var(--text-secondary)">
+        <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">Stop</code> / <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">Target</code> / <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">Rule-based</code> / <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">Time</code><br><br>
+        17 of 18 losing trades in the example had correct entries — the leak was in exit management. This column proves it.
+      </div>
+      <div class="stat-badge badge-amber" style="margin-top:10px">Add column G → exitReasonCol in Config</div>
     </div>
   </div>
 
@@ -2028,15 +2056,29 @@ function initPerfCharts(closed, initialCapital, open) {
   });
   rmChart.render(); perfCharts.push(rmChart);
 
-  const dow = [0,0,0,0,0];
-  sorted.forEach(t => { if(!t.closeDate) return; const d = parseDate(t.closeDate).getDay(); if(d>=1&&d<=5) dow[d-1]+=t.finalPl; });
+  // Win rate by ENTRY day (openDate) — per the trader insight: entry day predicts outcome
+  const dowBuckets = [{w:0,t:0},{w:0,t:0},{w:0,t:0},{w:0,t:0},{w:0,t:0}]; // Mon-Fri
+  sorted.forEach(t => {
+    if (!t.openDate) return;
+    const d = parseDate(t.openDate).getDay();
+    if (d >= 1 && d <= 5) {
+      dowBuckets[d-1].t++;
+      if (t.finalPlPct > 0) dowBuckets[d-1].w++;
+    }
+  });
+  const dowWR = dowBuckets.map(b => b.t > 0 ? parseFloat((b.w/b.t*100).toFixed(1)) : null);
+  const dowN = dowBuckets.map(b => b.t);
   const dowChart = new ApexCharts(document.getElementById('chart-dayofweek'), {
     ...baseOpts(220), chart: { ...baseOpts(220).chart, type: 'bar' },
-    series: [{ name: 'P&L ₹', data: dow.map(Math.round) }],
-    xaxis: { ...baseOpts().xaxis, categories: ['Monday','Tuesday','Wednesday','Thursday','Friday'] },
-    yaxis: { labels: { style: { colors: c.text, fontSize:'11px' }, formatter: v => (v>=0?'+':'')+v.toLocaleString('en-IN') } },
-    colors: dow.map(v => v>=0?c.green:c.red), plotOptions: { bar: { columnWidth:'55%', distributed:true, borderRadius:4 } },
-    legend: { show: false }, dataLabels: { enabled: false },
+    series: [{ name: 'Win Rate %', data: dowWR }],
+    xaxis: { ...baseOpts().xaxis, categories: dowN.map((n,i) => (['Mon','Tue','Wed','Thu','Fri'][i]) + ' (n='+n+')') },
+    yaxis: { labels: { style: { colors: c.text, fontSize:'11px' }, formatter: v => v != null ? v+'%' : '' }, min: 0, max: 100 },
+    colors: dowWR.map(v => v === null ? c.amber : v >= 60 ? c.green : v >= 40 ? c.amber : c.red),
+    plotOptions: { bar: { columnWidth:'55%', distributed:true, borderRadius:4 } },
+    legend: { show: false },
+    dataLabels: { enabled: true, formatter: v => v != null ? v+'%' : 'No data', style: { fontSize:'11px' } },
+    annotations: { yaxis: [{ y: 50, borderColor: c.text, strokeDashArray: 3, label: { text: '50%', style:{color:c.text,fontSize:'10px',background:'transparent'} } }] },
+    tooltip: { ...baseOpts().tooltip, y: { formatter: (v, {dataPointIndex}) => v != null ? v+'% win rate ('+dowBuckets[dataPointIndex].w+' of '+dowN[dataPointIndex]+' trades)' : 'No trades' } },
   });
   dowChart.render(); perfCharts.push(dowChart);
 }
