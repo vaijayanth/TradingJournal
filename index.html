@@ -1263,34 +1263,106 @@ function renderCalendar() {
   const grid = document.getElementById('cal-grid');
   const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const daysInMonth = [31,28,31,30,31,30,31,31,30,31,30,31];
-  // First day of month for 2025 (0=Sun, 1=Mon...)
-  const firstDays2025 = [3,6,6,2,4,0,2,5,1,3,6,1]; // Jan 1 = Wed (3)
+  const firstDays2025 = [3,6,6,2,4,0,2,5,1,3,6,1];
   const dayHeaders = ['S','M','T','W','T','F','S'];
 
-  // Sample trade days
+  // Sample trade data per calendar day — key: "M-D"
   const tradeDays = {
-    '1-8':'profit-2','1-14':'profit-3','1-22':'loss-1',
-    '2-5':'profit-1','2-12':'loss-2','2-19':'profit-2','2-26':'profit-1',
-    '3-4':'profit-3','3-11':'loss-1','3-18':'profit-2','3-25':'loss-2',
-    '4-2':'profit-1','4-9':'loss-3','4-16':'profit-2','4-23':'profit-3',
-    '5-6':'profit-2','5-13':'loss-1','5-20':'profit-1','5-27':'loss-2',
-    '6-3':'profit-3','6-10':'profit-2','6-17':'loss-1',
+    '1-8':  { cls:'profit-2', stock:'TATAMOTORS', pnl:'+12.4%', partial:'Y', setup:'Breakout' },
+    '1-14': { cls:'profit-3', stock:'NESTLEIND',  pnl:'+15.6%', partial:'Y', setup:'VCP' },
+    '1-22': { cls:'loss-1',   stock:'SUNPHARMA',  pnl:'-3.8%',  partial:'N', setup:'Breakout' },
+    '2-5':  { cls:'profit-1', stock:'AXISBANK',   pnl:'+4.2%',  partial:'N', setup:'Pullback' },
+    '2-12': { cls:'loss-2',   stock:'LTIM',       pnl:'-4.2%',  partial:'N', setup:'Breakout' },
+    '2-19': { cls:'profit-2', stock:'DMART',      pnl:'+9.8%',  partial:'N', setup:'VCP' },
+    '2-26': { cls:'profit-1', stock:'PIDILITIND', pnl:'+7.4%',  partial:'N', setup:'Pullback' },
+    '3-4':  { cls:'profit-3', stock:'TITAN',      pnl:'+11.2%', partial:'Y', setup:'VCP' },
+    '3-11': { cls:'loss-1',   stock:'MARUTI',     pnl:'-5.1%',  partial:'N', setup:'Breakout' },
+    '3-18': { cls:'profit-2', stock:'ICICIBANK',  pnl:'+6.8%',  partial:'N', setup:'Pullback' },
+    '3-25': { cls:'loss-2',   stock:'ASIANPAINT', pnl:'-3.2%',  partial:'N', setup:'Breakout' },
+    '4-2':  { cls:'profit-1', stock:'SBILIFE',    pnl:'+5.2%',  partial:'N', setup:'VCP' },
+    '4-9':  { cls:'loss-3',   stock:'HDFCBANK',   pnl:'-6.8%',  partial:'N', setup:'Pullback' },
+    '4-16': { cls:'profit-2', stock:'ULTRACEMCO', pnl:'+8.1%',  partial:'N', setup:'Breakout' },
+    '4-23': { cls:'profit-3', stock:'BAJAJFINSV', pnl:'+13.4%', partial:'Y', setup:'VCP' },
+    '5-6':  { cls:'profit-2', stock:'WIPRO',      pnl:'+7.2%',  partial:'N', setup:'Pullback' },
+    '5-13': { cls:'loss-1',   stock:'AXISBANK',   pnl:'-3.6%',  partial:'N', setup:'Breakout' },
+    '5-20': { cls:'profit-1', stock:'HDFC',       pnl:'+4.8%',  partial:'N', setup:'VCP' },
+    '5-27': { cls:'loss-2',   stock:'INFY',       pnl:'-4.9%',  partial:'N', setup:'Pullback' },
+    '6-3':  { cls:'profit-3', stock:'TCS',        pnl:'+10.4%', partial:'N', setup:'VCP' },
+    '6-10': { cls:'profit-2', stock:'RELIANCE',   pnl:'+8.6%',  partial:'Y', setup:'Breakout' },
+    '6-17': { cls:'loss-1',   stock:'HCLTECH',    pnl:'-3.1%',  partial:'N', setup:'Pullback' },
   };
 
   let html = '';
   months.forEach((m, mi) => {
     html += `<div class="cal-month"><div class="cal-month-name">${m}</div><div class="cal-days-grid">`;
     dayHeaders.forEach(d => { html += `<div class="cal-day-header">${d}</div>`; });
-    // Empty cells before first day
     for (let e = 0; e < firstDays2025[mi]; e++) { html += `<div class="cal-cell empty"></div>`; }
     for (let d = 1; d <= daysInMonth[mi]; d++) {
       const key = `${mi+1}-${d}`;
-      const cls = tradeDays[key] || 'no-trade';
-      html += `<div class="cal-cell ${cls}" title="${m} ${d}"></div>`;
+      const trade = tradeDays[key];
+      if (trade) {
+        const tip = JSON.stringify(trade).replace(/"/g, '&quot;');
+        html += `<div class="cal-cell ${trade.cls}" data-trade="${tip}" data-date="${m} ${d}" onmouseenter="showCalTooltip(event,this)" onmouseleave="hideCalTooltip()"></div>`;
+      } else {
+        html += `<div class="cal-cell no-trade"></div>`;
+      }
     }
     html += `</div></div>`;
   });
   grid.innerHTML = html;
+
+  // Create tooltip element once
+  if (!document.getElementById('cal-tooltip')) {
+    const tt = document.createElement('div');
+    tt.id = 'cal-tooltip';
+    tt.style.cssText = `
+      position:fixed; z-index:9999; pointer-events:none; display:none;
+      background:var(--surface); border:1px solid var(--border);
+      border-radius:8px; padding:10px 13px;
+      box-shadow:0 8px 24px rgba(0,0,0,0.15);
+      font-size:12px; line-height:1.6; min-width:160px;
+    `;
+    document.body.appendChild(tt);
+  }
+}
+
+function showCalTooltip(e, el) {
+  const tt = document.getElementById('cal-tooltip');
+  const trade = JSON.parse(el.getAttribute('data-trade').replace(/&quot;/g, '"'));
+  const date = el.getAttribute('data-date');
+  const isProfit = trade.pnl.startsWith('+');
+  const color = isProfit ? 'var(--green)' : 'var(--red)';
+  tt.innerHTML = `
+    <div style="font-weight:700;font-size:13px;color:var(--text-primary);margin-bottom:5px">${trade.stock}</div>
+    <div style="color:var(--text-muted);font-size:11px;margin-bottom:6px">${date}</div>
+    <div style="display:flex;justify-content:space-between;gap:16px">
+      <span style="color:var(--text-secondary)">Final P&L</span>
+      <span style="font-weight:700;color:${color}">${trade.pnl}</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;gap:16px">
+      <span style="color:var(--text-secondary)">Partial exit</span>
+      <span style="font-weight:600;color:${trade.partial==='Y'?'var(--green)':'var(--text-muted)'}">${trade.partial}</span>
+    </div>
+    <div style="display:flex;justify-content:space-between;gap:16px">
+      <span style="color:var(--text-secondary)">Setup</span>
+      <span style="font-weight:600;color:var(--accent)">${trade.setup}</span>
+    </div>
+  `;
+  tt.style.display = 'block';
+  positionCalTooltip(e, tt);
+}
+
+function positionCalTooltip(e, tt) {
+  const x = e.clientX + 12;
+  const y = e.clientY - 10;
+  const rect = tt.getBoundingClientRect();
+  tt.style.left = (x + rect.width > window.innerWidth ? x - rect.width - 24 : x) + 'px';
+  tt.style.top = (y + rect.height > window.innerHeight ? y - rect.height : y) + 'px';
+}
+
+function hideCalTooltip() {
+  const tt = document.getElementById('cal-tooltip');
+  if (tt) tt.style.display = 'none';
 }
 
 // ── COLUMN MAPPINGS CONFIG ────────────────────────────
