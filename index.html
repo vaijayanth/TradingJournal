@@ -620,18 +620,18 @@ tbody tr:hover { filter: brightness(0.97); }
         <div class="compare-side">
           <div class="compare-value text-amber" id="perf-notional-pl">—</div>
           <div class="compare-value" style="font-size:14px; color:var(--amber)" id="perf-notional-plpct">—</div>
-          <div class="compare-label">Notional (If held)</div>
+          <div class="compare-label">Notional (Open Positions)</div>
         </div>
       </div>
       <div class="compare-gap" id="perf-left-table">—</div>
     </div>
 
-    <!-- Capture Rate -->
+    <!-- Open Unrealized P&L -->
     <div class="card card-sm">
-      <div class="stat-label">P&amp;L Capture Rate</div>
+      <div class="stat-label">Open Unrealized P&amp;L</div>
       <div class="big-metric-wrap">
         <div class="big-metric-value text-amber" id="perf-capture">—</div>
-        <div class="big-metric-label">of gains captured</div>
+        <div class="big-metric-label" id="perf-capture-label">across open positions</div>
         <div class="big-metric-sub" id="perf-capture-sub">—</div>
       </div>
     </div>
@@ -672,7 +672,7 @@ tbody tr:hover { filter: brightness(0.97); }
         <div class="compare-vs">vs</div>
         <div class="compare-side">
           <div class="compare-value text-green" id="perf-notional-wr">—</div>
-          <div class="compare-label">Notional</div>
+          <div class="compare-label">Open (In Profit)</div>
         </div>
       </div>
       <div class="compare-gap" id="perf-wr-gap">—</div>
@@ -695,16 +695,16 @@ tbody tr:hover { filter: brightness(0.97); }
       </div>
     </div>
     <div class="card card-sm">
-      <div class="stat-label">Notional Avg Win vs Loss</div>
+      <div class="stat-label">Open Positions — Avg Unrealized</div>
       <div class="flex-row" style="margin-top:8px; gap:20px">
         <div>
           <div style="font-size:20px; font-weight:700; color:var(--green)" id="perf-avg-notional-win">—</div>
-          <div class="stat-sub">Avg Notional Win</div>
+          <div class="stat-sub">Avg Winning Open</div>
         </div>
         <div style="color:var(--border); font-size:20px">|</div>
         <div>
           <div style="font-size:20px; font-weight:700; color:var(--red)" id="perf-avg-notional-loss">—</div>
-          <div class="stat-sub">Avg Notional Loss</div>
+          <div class="stat-sub">Avg Losing Open</div>
         </div>
       </div>
     </div>
@@ -1105,7 +1105,7 @@ async function refreshData() {
   const cfg = loadConfig();
   renderDashboard(data, cfg);
   renderPositionsReal(data.open, cfg);
-  renderPerfStats(data.closed, data.portfolioValue, data.initialCapital);
+  renderPerfStats(data.closed, data.open, data.portfolioValue, data.initialCapital);
   renderClosedTradesReal(data.closed);
   renderCalendarReal(data.closed);
   renderStreakReal(data.closed);
@@ -1257,25 +1257,15 @@ function renderPositionsReal(open, cfg) {
 }
 
 // ── PERFORMANCE STATS ─────────────────────────────────
-function renderPerfStats(closed, portfolioValue, initialCapital) {
-  if (!closed.length) return;
+function renderPerfStats(closed, open, portfolioValue, initialCapital) {
+  if (!closed.length && !open.length) return;
 
-  // notionalPl (col Y) is blank for closed trades — it's only filled for open positions.
-  // Infer it: position size = finalPl / (finalPlPct/100), then notionalPl = posSize × (plPct/100).
-  // Fall back to finalPl when either % is zero (e.g. fully stopped-out with no partial).
-  const inferNotionalPl = t => {
-    if (t.notionalPl !== 0) return t.notionalPl;            // sheet has the value — use it
-    if (t.finalPlPct !== 0 && t.plPct !== 0) {
-      const posSize = t.finalPl / (t.finalPlPct / 100);     // Rs invested
-      return posSize * (t.plPct / 100);
-    }
-    return t.finalPl;                                        // no notional data → assume same as final
-  };
+  const fmtRs = v => (v < 0 ? '-' : '') + '₹' + Math.abs(Math.round(v)).toLocaleString('en-IN');
+  const fmtPct = v => (v >= 0 ? '+' : '') + v.toFixed(1) + '%';
+  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
 
+  // ── Closed trade stats ──
   const totalFinalPl = closed.reduce((s, t) => s + t.finalPl, 0);
-  const totalNotionalPl = closed.reduce((s, t) => s + inferNotionalPl(t), 0);
-  // hasNotionalData: plPct (col X) must be non-zero for at least one closed trade
-  const hasNotionalData = closed.some(t => t.plPct !== 0);
   const wins = closed.filter(t => t.finalPlPct > 0);
   const losses = closed.filter(t => t.finalPlPct < 0);
   const finalWR = closed.length > 0 ? (wins.length / closed.length * 100) : 0;
@@ -1284,74 +1274,50 @@ function renderPerfStats(closed, portfolioValue, initialCapital) {
   const expectancy = closed.length > 0 ? closed.reduce((s,t) => s + t.finalPlPct, 0) / closed.length : 0;
   const rMultiple = avgFinalLoss !== 0 ? Math.abs(avgFinalWin / avgFinalLoss) : 0;
   const rop = initialCapital > 0 ? (totalFinalPl / initialCapital * 100) : 0;
-  const fmtRs = v => (v < 0 ? '-' : '') + '₹' + Math.abs(Math.round(v)).toLocaleString('en-IN');
-  const fmtPct = v => (v >= 0 ? '+' : '') + v.toFixed(1) + '%';
-  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
 
-  // ── Capture rate is sign-sensitive ──
-  // Both positive: classic "what % of notional gains did you lock in?"
-  // Both negative: your exits HELPED — you avoided worse losses by exiting
-  // Mixed or no data: show accordingly
-  let captureDisplay = 'N/A', captureSub = 'Add plPct (col X) to sheet to enable';
-  let leftTableMsg = 'Add notional P&L% (col X) to compare final vs notional';
-  let notionalColor = 'text-amber';
+  // ── Open trade (notional) stats — col Y (notionalPl) is mark-to-market for open positions ──
+  const openWithData = open.filter(t => t.notionalPl !== 0);
+  const totalNotionalPl = openWithData.reduce((s, t) => s + t.notionalPl, 0);
+  const hasOpenData = openWithData.length > 0;
+  const notionalRoP = initialCapital > 0 ? totalNotionalPl / initialCapital * 100 : 0;
 
-  if (hasNotionalData) {
-    const bothPositive = totalFinalPl >= 0 && totalNotionalPl > 0;
-    const bothNegative = totalFinalPl < 0 && totalNotionalPl < 0;
-    const exitsSavedMoney = bothNegative && totalFinalPl > totalNotionalPl; // less negative = good
-    const leftOnTable = totalNotionalPl - totalFinalPl;
-
-    if (bothPositive) {
-      const rate = (totalFinalPl / totalNotionalPl * 100);
-      captureDisplay = rate.toFixed(1) + '%';
-      captureSub = rate < 50 ? 'Losing over half your potential gains to early exits'
-                 : rate < 70 ? 'Room to improve — try holding winners longer'
-                 : 'Good capture rate';
-      leftTableMsg = leftOnTable > 0
-        ? `⚠ Leaving ${fmtRs(leftOnTable)} on the table by exiting early`
-        : '✓ Capturing gains efficiently';
-      notionalColor = 'text-amber';
-    } else if (exitsSavedMoney) {
-      const saved = totalFinalPl - totalNotionalPl; // positive: how much exit saved
-      captureDisplay = fmtRs(saved) + ' saved';
-      captureSub = 'Early exits avoided additional losses vs holding';
-      leftTableMsg = `✓ Early exits avoided ${fmtRs(saved)} in additional losses`;
-      notionalColor = 'text-red'; // notional would have been worse
-    } else if (bothNegative) {
-      captureDisplay = 'N/A';
-      captureSub = 'Both scenarios negative — holding was better';
-      leftTableMsg = '⚠ Holding would have resulted in smaller losses';
-      notionalColor = 'text-green';
-    } else {
-      // Mixed signs
-      captureDisplay = 'N/A';
-      captureSub = 'Mixed — some wins, some losses in notional';
-      leftTableMsg = totalFinalPl >= totalNotionalPl ? '✓ Exits were timely' : '⚠ Holding may have been better';
-    }
-  }
-
+  // ── Final P&L card ──
   set('perf-final-pl', fmtRs(totalFinalPl));
   set('perf-final-plpct', fmtPct(rop));
   const finalPlEl = document.getElementById('perf-final-pl');
   if (finalPlEl) finalPlEl.className = 'compare-value ' + (totalFinalPl >= 0 ? 'text-green' : 'text-red');
 
-  set('perf-notional-pl', hasNotionalData ? fmtRs(totalNotionalPl) : 'N/A');
-  const notionalRoP = initialCapital > 0 ? totalNotionalPl / initialCapital * 100 : 0;
-  set('perf-notional-plpct', hasNotionalData ? fmtPct(notionalRoP) : '—');
+  // ── Notional (open) P&L card ──
+  set('perf-notional-pl', hasOpenData ? fmtRs(totalNotionalPl) : (open.length ? '₹0' : 'N/A'));
+  set('perf-notional-plpct', hasOpenData ? fmtPct(notionalRoP) : '—');
   const notionalPlEl = document.getElementById('perf-notional-pl');
-  if (notionalPlEl) notionalPlEl.className = 'compare-value ' + notionalColor;
+  if (notionalPlEl) notionalPlEl.className = 'compare-value ' + (totalNotionalPl >= 0 ? 'text-green' : 'text-red');
 
-  set('perf-capture', captureDisplay);
-  set('perf-capture-sub', captureSub);
+  // ── Left-table gap ──
+  const combined = totalFinalPl + totalNotionalPl;
+  set('perf-left-table', hasOpenData
+    ? `Combined (realised + unrealised): ${fmtRs(combined)}`
+    : open.length ? 'Open positions have no mark-to-market data (col Y)' : 'No open positions');
+
+  // ── Open Unrealized P&L card (formerly capture rate) ──
   const captureEl = document.getElementById('perf-capture');
-  if (captureEl) captureEl.className = 'big-metric-value ' + (captureDisplay.includes('saved') ? 'text-green' : 'text-amber');
+  if (hasOpenData) {
+    set('perf-capture', fmtRs(totalNotionalPl));
+    set('perf-capture-sub', openWithData.length + ' of ' + open.length + ' open positions have MTM data');
+    if (captureEl) captureEl.className = 'big-metric-value ' + (totalNotionalPl >= 0 ? 'text-green' : 'text-red');
+  } else {
+    set('perf-capture', open.length ? '₹0' : 'N/A');
+    set('perf-capture-sub', open.length ? 'Column Y (notionalPl) is blank for all open positions' : 'No open positions currently');
+    if (captureEl) captureEl.className = 'big-metric-value text-amber';
+  }
+  set('perf-capture-label', 'unrealised P&L (open positions)');
 
+  // ── RoP card ──
   set('perf-rop', fmtPct(rop));
   set('perf-rop-sub', 'On ' + fmtRs(initialCapital) + ' initial capital');
   set('perf-closed-count', closed.length);
-  set('perf-left-table', leftTableMsg);
 
+  // ── System quality ──
   set('perf-expectancy', fmtPct(expectancy));
   set('perf-expectancy-sub', expectancy >= 0 ? `Each trade makes you +${expectancy.toFixed(1)}% on avg. Edge exists.` : `Each trade costs you ${expectancy.toFixed(1)}% on avg. Review system.`);
   set('perf-rmultiple', rMultiple.toFixed(2) + 'R');
@@ -1359,23 +1325,23 @@ function renderPerfStats(closed, portfolioValue, initialCapital) {
   const rmBadge = document.getElementById('perf-rmultiple-badge');
   if (rmBadge) rmBadge.className = 'stat-badge ' + (rMultiple >= 1.5 ? 'badge-green' : rMultiple >= 1 ? 'badge-amber' : 'badge-red');
 
+  // ── Win rate: closed final vs open % in profit ──
   set('perf-final-wr', finalWR.toFixed(1) + '%');
-  // Notional win rate only meaningful when plPct is available; otherwise show N/A
-  if (hasNotionalData) {
-    const notionalWins = closed.filter(t => t.plPct > 0);
-    const notionalWR = closed.length > 0 ? (notionalWins.length / closed.length * 100) : 0;
-    set('perf-notional-wr', notionalWR.toFixed(1) + '%');
-    const wrGap = Math.abs(notionalWR - finalWR);
-    set('perf-wr-gap', wrGap.toFixed(1) + 'pp gap' + (notionalWR > finalWR ? ' — early exits flipping wins to losses' : wrGap < 1 ? ' — consistent exit timing' : ' — exits improving win rate'));
-    const notionalWinList = closed.filter(t => t.plPct > 0);
-    const notionalLossList = closed.filter(t => t.plPct < 0);
-    const avgNWin = notionalWinList.length > 0 ? notionalWinList.reduce((s,t) => s + t.plPct, 0) / notionalWinList.length : 0;
-    const avgNLoss = notionalLossList.length > 0 ? notionalLossList.reduce((s,t) => s + t.plPct, 0) / notionalLossList.length : 0;
-    set('perf-avg-notional-win', fmtPct(avgNWin));
-    set('perf-avg-notional-loss', fmtPct(avgNLoss));
+  if (open.length > 0) {
+    const openWinning = open.filter(t => t.notionalPl > 0).length;
+    const openWR = openWinning / open.length * 100;
+    set('perf-notional-wr', openWR.toFixed(1) + '%');
+    set('perf-wr-gap', `${openWinning} of ${open.length} open positions currently profitable`);
+    // Avg unrealised on winning and losing open positions
+    const openWins = openWithData.filter(t => t.notionalPl > 0);
+    const openLosses = openWithData.filter(t => t.notionalPl < 0);
+    const avgNWin = openWins.length > 0 ? openWins.reduce((s,t) => s + t.notionalPl, 0) / openWins.length : 0;
+    const avgNLoss = openLosses.length > 0 ? openLosses.reduce((s,t) => s + t.notionalPl, 0) / openLosses.length : 0;
+    set('perf-avg-notional-win', openWins.length ? fmtRs(avgNWin) : 'N/A');
+    set('perf-avg-notional-loss', openLosses.length ? fmtRs(avgNLoss) : 'N/A');
   } else {
     set('perf-notional-wr', 'N/A');
-    set('perf-wr-gap', 'Add plPct (col X) to sheet for notional win rate');
+    set('perf-wr-gap', 'No open positions');
     set('perf-avg-notional-win', 'N/A');
     set('perf-avg-notional-loss', 'N/A');
   }
