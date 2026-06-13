@@ -501,10 +501,10 @@ tbody tr:hover { filter: brightness(0.97); }
 
 <!-- ════ PASSWORD GATE ════ -->
 <div id="auth-overlay" style="display:none;position:fixed;inset:0;z-index:9999;background:var(--bg);align-items:center;justify-content:center">
-  <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:40px;width:340px;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,0.15)">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:40px;width:340px;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,0.15)">
     <div style="font-size:32px;margin-bottom:8px">🔒</div>
-    <div style="font-size:20px;font-weight:700;margin-bottom:4px">Trading Journal</div>
-    <div style="font-size:13px;color:var(--text-muted);margin-bottom:24px">Enter your password to continue</div>
+    <div style="font-size:20px;font-weight:700;margin-bottom:4px;color:var(--text-primary)">Trading Journal</div>
+    <div style="font-size:13px;color:var(--text-secondary);margin-bottom:24px">Enter your password to continue</div>
     <input type="password" id="auth-password" class="config-input" placeholder="Password" style="text-align:center;font-size:16px;letter-spacing:2px" onkeydown="if(event.key==='Enter')checkPassword()">
     <button class="btn-primary" style="width:100%;margin-top:12px;padding:10px" onclick="checkPassword()">Unlock</button>
     <div id="auth-error" style="color:var(--red);font-size:12px;margin-top:10px;display:none">Incorrect password</div>
