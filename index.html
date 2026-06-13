@@ -495,6 +495,21 @@ tbody tr:hover { filter: brightness(0.97); }
 .flex-row { display: flex; align-items: center; gap: 10px; }
 .mt-4 { margin-top: 16px; }
 .mt-3 { margin-top: 12px; }
+/* ── SKELETON PULSE ── */
+@keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+.skeleton { animation: pulse 1.5s ease-in-out infinite; background: var(--border); border-radius: 4px; display: inline-block; }
+/* ── MOBILE RESPONSIVE ── */
+@media (max-width: 640px) {
+  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  .grid-3 { grid-template-columns: repeat(1, 1fr); }
+  .grid-2 { grid-template-columns: repeat(1, 1fr); }
+  .nav-tabs { gap: 2px; }
+  .nav-tab { font-size: 11px; padding: 6px 8px; }
+  .refresh-info { display: none; }
+  table { font-size: 12px; }
+  .compare-row { flex-direction: column; gap: 8px; }
+  .compare-vs { display: none; }
+}
 </style>
 </head>
 <body>
@@ -837,6 +852,31 @@ tbody tr:hover { filter: brightness(0.97); }
     <div class="ema-insight" id="ema-insight" style="margin-top:12px">—</div>
   </div>
 
+  <!-- Partial Exit Analysis -->
+  <div class="section-title" style="margin-top:20px">Partial Exit Analysis</div>
+  <div class="grid-3" style="margin-bottom:14px">
+    <div class="card card-sm">
+      <div class="stat-label">With Partial Exit</div>
+      <div style="font-size:24px;font-weight:700;margin-top:4px" id="partial-yes-wr">—</div>
+      <div class="stat-sub">Win Rate</div>
+      <div style="font-size:16px;font-weight:700;margin-top:8px" id="partial-yes-avg">—</div>
+      <div class="stat-sub">Avg P&L%</div>
+      <div style="font-size:13px;margin-top:4px;color:var(--text-muted)" id="partial-yes-n">n = —</div>
+    </div>
+    <div class="card card-sm">
+      <div class="stat-label">Without Partial Exit</div>
+      <div style="font-size:24px;font-weight:700;margin-top:4px" id="partial-no-wr">—</div>
+      <div class="stat-sub">Win Rate</div>
+      <div style="font-size:16px;font-weight:700;margin-top:8px" id="partial-no-avg">—</div>
+      <div class="stat-sub">Avg P&L%</div>
+      <div style="font-size:13px;margin-top:4px;color:var(--text-muted)" id="partial-no-n">n = —</div>
+    </div>
+    <div class="card card-sm">
+      <div class="stat-label">Partial Exit Verdict</div>
+      <div style="font-size:15px;font-weight:700;margin-top:8px;line-height:1.5" id="partial-insight">—</div>
+    </div>
+  </div>
+
   <!-- 2-col chart grid -->
   <div class="section-title">Pattern Analysis</div>
   <div class="grid-2">
@@ -854,6 +894,11 @@ tbody tr:hover { filter: brightness(0.97); }
       <div class="chart-title">Monthly P&L</div>
       <div class="chart-sub">Realised P&L by calendar month</div>
       <div id="chart-monthly" style="height:240px;"></div>
+    </div>
+    <div class="card">
+      <div class="chart-title">Win Rate Trend (Monthly)</div>
+      <div class="chart-sub">Are you improving? Win rate by calendar month</div>
+      <div id="chart-wr-trend" style="height:240px;"></div>
     </div>
     <div class="card">
       <div class="chart-title">Win Rate by Setup Type</div>
@@ -1062,7 +1107,7 @@ const DEFAULT_CONFIG = {
   partialPlCol: 'AB', finalExitPriceCol: 'AC', finalPlCol: 'AD',
   finalPlPctCol: 'AE', ageCol: 'AF',
   portfolioCell: 'AI26', initialCapCell: 'AI20',
-  maxHeat: 5, partialTrigger: 10, stopProximity: 2, heatGreen: 2.5, heatAmber: 4,
+  maxHeat: 5, partialTrigger: 10, stopProximity: 2, heatGreen: 2.5, heatAmber: 4, maxAge: 60,
 };
 
 function loadConfig() {
@@ -1114,7 +1159,9 @@ async function fetchData() {
 async function refreshData() {
   const btn = document.querySelector('[title="Refresh"]');
   if (btn) btn.textContent = '⟳';
+  document.body.classList.add('loading');
   const data = await fetchData();
+  document.body.classList.remove('loading');
   if (!data) { if (btn) btn.textContent = '↻'; return; }
   window._data = data;
   const cfg = loadConfig();
@@ -1130,6 +1177,7 @@ async function refreshData() {
   const ts = now.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' });
   const ri = document.querySelector('.refresh-info');
   if (ri) ri.textContent = 'Updated at ' + ts;
+  localStorage.setItem('tj_last_refresh', Date.now());
   if (btn) btn.textContent = '↻';
 }
 
@@ -1215,6 +1263,10 @@ function renderDashboard(data, cfg) {
       if (t.pctFromStop <= 0) alerts.push({ type:'red', icon:'🔴', title:`${t.stock} — Exit Rule Triggered`, desc:'Position is at or below stop loss. Mechanical exit required.' });
       else if (t.pctFromStop <= cfg.stopProximity) alerts.push({ type:'amber', icon:'🟡', title:`${t.stock} — Within ${t.pctFromStop.toFixed(1)}% of Stop`, desc:`Only ${t.pctFromStop.toFixed(1)}% above stop loss. Review before market open.` });
       if (t.plPct >= cfg.partialTrigger && t.partialTaken === 'N') alerts.push({ type:'green', icon:'🟢', title:`${t.stock} — Partial Exit Pending (+${t.plPct.toFixed(1)}%)`, desc:`At +${cfg.partialTrigger}% trigger. Partial exit not yet taken. Act today.` });
+      const cfg_maxAge = cfg.maxAge || 60;
+      if (t.age && parseInt(t.age) > cfg_maxAge && t.partialTaken !== 'Y') {
+        alerts.push({ type:'amber', icon:'🕐', title:`${t.stock} — Held ${t.age} days, no partial taken`, desc:`Position is ${t.age} days old and partial exit hasn't been taken. Review your exit plan.` });
+      }
     });
     alertsWrap.innerHTML = alerts.length === 0
       ? '<div style="padding:16px;text-align:center;color:var(--text-muted);font-size:13px">✓ No alerts — all positions within parameters</div>'
@@ -1982,6 +2034,32 @@ function initAnalysisCharts(open, closed) {
     setupWrPh.style.display = '';
   }
 
+  // Partial Exit Analysis
+  const partialYes = closed.filter(t => (t.partialTaken||'').toUpperCase() === 'Y');
+  const partialNo = closed.filter(t => (t.partialTaken||'').toUpperCase() === 'N');
+  const pStats = trades => {
+    const wins = trades.filter(t => t.finalPlPct > 0);
+    return {
+      wr: trades.length ? wins.length/trades.length*100 : 0,
+      avg: trades.length ? trades.reduce((s,t)=>s+t.finalPlPct,0)/trades.length : 0,
+      n: trades.length
+    };
+  };
+  const py = pStats(partialYes), pn = pStats(partialNo);
+  set('partial-yes-wr', py.wr.toFixed(0)+'%');
+  set('partial-yes-avg', (py.avg>=0?'+':'')+py.avg.toFixed(1)+'%');
+  set('partial-yes-n', 'n = '+py.n+' trades');
+  set('partial-no-wr', pn.wr.toFixed(0)+'%');
+  set('partial-no-avg', (pn.avg>=0?'+':'')+pn.avg.toFixed(1)+'%');
+  set('partial-no-n', 'n = '+pn.n+' trades');
+  const partialInsightEl = document.getElementById('partial-insight');
+  if (partialInsightEl && py.n > 0 && pn.n > 0) {
+    const better = py.avg > pn.avg ? 'With' : 'Without';
+    const diff = Math.abs(py.avg - pn.avg).toFixed(1);
+    partialInsightEl.textContent = `${better} partial exit performs better by ${diff}% avg per trade`;
+    partialInsightEl.style.color = py.avg > pn.avg ? 'var(--green)' : 'var(--amber)';
+  }
+
   // Scatter
   const sorted = [...closed].filter(t => t.closeDate).sort((a,b) => parseDate(a.closeDate)-parseDate(b.closeDate));
   const sc = new ApexCharts(document.getElementById('chart-scatter'), {
@@ -1997,6 +2075,32 @@ function initAnalysisCharts(open, closed) {
     tooltip: { ...baseOpts().tooltip, x: { formatter: v => v+' days' }, y: { formatter: v => v+'%' } },
   });
   sc.render(); analysisCharts.push(sc);
+
+  // Hold time sweet spot callout
+  const holdBuckets = {'1-7d':[], '8-14d':[], '15-30d':[], '31-60d':[], '60d+':[]};
+  closed.forEach(t => {
+    const age = parseInt(t.age) || 0;
+    if (age <= 7) holdBuckets['1-7d'].push(t);
+    else if (age <= 14) holdBuckets['8-14d'].push(t);
+    else if (age <= 30) holdBuckets['15-30d'].push(t);
+    else if (age <= 60) holdBuckets['31-60d'].push(t);
+    else holdBuckets['60d+'].push(t);
+  });
+  const bucketStats = Object.entries(holdBuckets).map(([label, trades]) => ({
+    label,
+    avg: trades.length ? trades.reduce((s,t)=>s+t.finalPlPct,0)/trades.length : null,
+    n: trades.length
+  })).filter(b => b.n >= 3 && b.avg !== null);
+  if (bucketStats.length) {
+    const best = bucketStats.reduce((a,b) => b.avg > a.avg ? b : a);
+    const scatterCard = document.querySelector('#chart-scatter')?.closest('.card');
+    if (scatterCard) {
+      const callout = document.createElement('div');
+      callout.style.cssText = 'margin-top:10px;padding:8px 12px;background:var(--green-soft);border-radius:6px;font-size:12px;color:var(--text-primary)';
+      callout.innerHTML = `🎯 <strong>Sweet spot:</strong> Trades held <strong>${best.label}</strong> average ${best.avg >= 0 ? '+' : ''}${best.avg.toFixed(1)}% (n=${best.n})`;
+      scatterCard.appendChild(callout);
+    }
+  }
 
   // Entry Velocity
   const wkMap = {};
@@ -2041,6 +2145,29 @@ function initAnalysisCharts(open, closed) {
     annotations: { yaxis: [{ y:0, borderColor:c.text, strokeDashArray:2 }] },
   });
   mp.render(); analysisCharts.push(mp);
+
+  // Win Rate Trend (Monthly)
+  const monthWR = {};
+  closed.forEach(t => {
+    if (!t.closeDate) return;
+    const d = parseDate(t.closeDate); if(isNaN(d)) return;
+    const key = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+    if (!monthWR[key]) monthWR[key] = {wins:0,total:0};
+    monthWR[key].total++;
+    if (t.finalPlPct > 0) monthWR[key].wins++;
+  });
+  const mWRKeys = Object.keys(monthWR).sort();
+  const mWRData = mWRKeys.map(k => parseFloat((monthWR[k].wins/monthWR[k].total*100).toFixed(1)));
+  const wrTrendChart = new ApexCharts(document.getElementById('chart-wr-trend'), {
+    ...baseOpts(240), chart: { ...baseOpts(240).chart, type: 'line' },
+    series: [{ name: 'Win Rate %', data: mWRData }],
+    xaxis: { ...baseOpts().xaxis, categories: mWRKeys.map(k => { const [y,m] = k.split('-'); return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][parseInt(m)-1]+' '+y.slice(2); }), labels: { ...baseOpts().xaxis.labels, rotate: -30 } },
+    yaxis: { labels: { style:{colors:c.text,fontSize:'11px'}, formatter: v => v+'%' }, min: 0, max: 100 },
+    colors: [c.accent], stroke: { curve: 'smooth', width: 2 }, markers: { size: 4 },
+    annotations: { yaxis: [{ y: 50, borderColor: c.text, strokeDashArray: 3, label: { text: '50%', style:{color:c.text,fontSize:'10px'} } }] },
+    dataLabels: { enabled: true, formatter: v => v+'%', style:{fontSize:'10px'} },
+  });
+  wrTrendChart.render(); analysisCharts.push(wrTrendChart);
 }
 
 // ── INIT ─────────────────────────────────────────────
@@ -2103,6 +2230,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btn) btn.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
   }
   initAuth();
+  const lastRefresh = localStorage.getItem('tj_last_refresh');
+  if (lastRefresh && Date.now() - parseInt(lastRefresh) > 4 * 60 * 60 * 1000) {
+    const ri = document.querySelector('.refresh-info');
+    if (ri) ri.textContent = '⚠ Data may be stale — last updated ' + new Date(parseInt(lastRefresh)).toLocaleTimeString('en-IN', {hour:'2-digit',minute:'2-digit'});
+    if (ri) ri.style.color = 'var(--amber)';
+  }
   populateConfigPage();
   renderColMappings();
   const cfg = loadConfig();
