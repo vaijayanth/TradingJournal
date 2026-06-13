@@ -1928,13 +1928,15 @@ function initAnalysisCharts(open, closed) {
   // Win rate by setup bar chart
   const setupWrEl = document.getElementById('chart-setup-wr');
   const setupWrPh = document.getElementById('chart-setup-wr-placeholder');
-  if (setupKeys.length > 1 && setupWrEl) {
+  const realSetupKeys = setupKeys.filter(s => s !== 'Unlabelled');
+  if (realSetupKeys.length >= 1 && setupWrEl) {
     if (setupWrPh) setupWrPh.style.display = 'none';
-    const wrStats = setupKeys.map(s => calcStats(setupMap[s]));
+    setupWrEl.style.display = '';
+    const wrStats = realSetupKeys.map(s => calcStats(setupMap[s]));
     const setupWrChart = new ApexCharts(setupWrEl, {
       ...baseOpts(240), chart: { ...baseOpts(240).chart, type: 'bar' },
       series: [{ name: 'Win Rate %', data: wrStats.map(s => parseFloat(s.wr.toFixed(1))) }],
-      xaxis: { ...baseOpts().xaxis, categories: setupKeys, labels: { ...baseOpts().xaxis.labels, rotate: -20, hideOverlappingLabels: true } },
+      xaxis: { ...baseOpts().xaxis, categories: realSetupKeys, labels: { ...baseOpts().xaxis.labels, rotate: -20, hideOverlappingLabels: true } },
       yaxis: { labels: { style:{colors:c.text,fontSize:'11px'}, formatter: v => v+'%' }, max: 100 },
       colors: wrStats.map(s => s.wr >= 50 ? c.green : s.wr >= 30 ? c.amber : c.red),
       plotOptions: { bar: { columnWidth: '55%', distributed: true, borderRadius: 4 } },
@@ -1942,6 +1944,7 @@ function initAnalysisCharts(open, closed) {
       annotations: { yaxis: [{ y: 50, borderColor: c.text, strokeDashArray: 3, label: { text: '50%', style:{color:c.text,fontSize:'10px'} } }] },
     });
     setupWrChart.render(); analysisCharts.push(setupWrChart);
+    setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
   } else if (setupWrPh) {
     if (setupWrEl) setupWrEl.style.display = 'none';
     setupWrPh.style.display = '';
