@@ -510,7 +510,7 @@ tbody tr:hover { filter: brightness(0.97); }
   </div>
   <div class="nav-right">
     <span class="refresh-info">Updated 2 min ago</span>
-    <button class="btn-icon" title="Refresh" onclick="alert('Refresh triggered')">↻</button>
+    <button class="btn-icon" title="Refresh" onclick="refreshData()">↻</button>
     <button class="btn-icon" title="Toggle theme" onclick="toggleTheme()">🌙</button>
   </div>
 </nav>
@@ -522,43 +522,43 @@ tbody tr:hover { filter: brightness(0.97); }
   <div class="grid-4">
     <div class="card card-sm">
       <div class="stat-label">Portfolio Value</div>
-      <div class="stat-value">₹12,45,230</div>
-      <div class="stat-sub">Initial: ₹10,00,000</div>
-      <div class="stat-badge badge-green">▲ +₹2,45,230</div>
-    </div>
-    <div class="card card-sm">
-      <div class="stat-label">Total Invested</div>
-      <div class="stat-value">₹8,20,000</div>
-      <div class="stat-sub">65.8% of portfolio deployed</div>
-      <div class="stat-badge badge-blue">7 positions</div>
+      <div class="stat-value" id="dash-pv">—</div>
+      <div class="stat-sub" id="dash-pv-sub">Loading…</div>
+      <div class="stat-badge badge-green" id="dash-pv-badge">—</div>
     </div>
     <div class="card card-sm">
       <div class="stat-label">Open Positions</div>
-      <div class="stat-value">7</div>
-      <div class="stat-sub">Active trades</div>
-      <div class="stat-badge badge-amber">3 need attention</div>
+      <div class="stat-value" id="dash-open">—</div>
+      <div class="stat-sub" id="dash-open-sub">Active trades</div>
+      <div class="stat-badge badge-blue" id="dash-open-badge">—</div>
+    </div>
+    <div class="card card-sm">
+      <div class="stat-label">Closed Trades</div>
+      <div class="stat-value" id="dash-closed">—</div>
+      <div class="stat-sub" id="dash-closed-sub">Completed</div>
+      <div class="stat-badge badge-blue" id="dash-closed-badge">—</div>
     </div>
     <div class="card card-sm">
       <div class="stat-label">Return on Portfolio</div>
-      <div class="stat-value green">+24.5%</div>
-      <div class="stat-sub">Since inception</div>
-      <div class="stat-badge badge-green">▲ Compounding</div>
+      <div class="stat-value green" id="dash-return">—</div>
+      <div class="stat-sub" id="dash-return-sub">Since inception</div>
+      <div class="stat-badge badge-green" id="dash-return-badge">▲ Compounding</div>
     </div>
   </div>
 
   <div class="section-title" style="margin-top:20px">Risk & Heat</div>
   <div class="grid-4">
     <div class="card card-sm">
-      <div class="stat-label">Initial Risk</div>
-      <div class="stat-value">₹24,600</div>
+      <div class="stat-label">Total Initial Risk ₹</div>
+      <div class="stat-value" id="dash-init-risk">—</div>
       <div class="stat-sub">Across all open positions</div>
-      <div class="stat-badge badge-amber">1.97% of capital</div>
+      <div class="stat-badge badge-amber" id="dash-init-risk-badge">—</div>
     </div>
     <div class="card card-sm">
-      <div class="stat-label">Active Risk</div>
-      <div class="stat-value">₹18,200</div>
-      <div class="stat-sub">Current stop-adjusted</div>
-      <div class="stat-badge badge-green">1.46% of capital</div>
+      <div class="stat-label">Realised P&amp;L ₹</div>
+      <div class="stat-value" id="dash-realised-pl">—</div>
+      <div class="stat-sub" id="dash-realised-sub">From closed trades</div>
+      <div class="stat-badge" id="dash-realised-badge">—</div>
     </div>
 
     <!-- Heat Gauge spanning 2 cols -->
@@ -567,68 +567,27 @@ tbody tr:hover { filter: brightness(0.97); }
 
       <div class="heat-row">
         <div class="heat-label-row">
-          <span class="heat-label">Actual Heat</span>
-          <span class="heat-value text-amber">2.8%</span>
+          <span class="heat-label">Portfolio Heat</span>
+          <span class="heat-value" id="heat-actual-value">—</span>
         </div>
         <div class="heat-track">
-          <div class="heat-fill" style="width:56%; background: linear-gradient(90deg, #10B981 0%, #F59E0B 70%, #EF4444 100%);"></div>
+          <div class="heat-fill" id="heat-actual-fill" style="width:0%; background: linear-gradient(90deg, #10B981 0%, #F59E0B 70%, #EF4444 100%);"></div>
         </div>
       </div>
 
-      <div class="heat-row">
-        <div class="heat-label-row">
-          <span class="heat-label">Initial Heat</span>
-          <span class="heat-value text-amber">3.1%</span>
-        </div>
-        <div class="heat-track">
-          <div class="heat-fill" style="width:62%; background: linear-gradient(90deg, #10B981 0%, #F59E0B 70%, #EF4444 100%);"></div>
-        </div>
-      </div>
-
-      <div class="heat-markers">
-        <span>0%</span><span>2.5% 🟢</span><span>4% 🟡</span><span>5% 🔴 ceiling</span>
+      <div class="heat-markers" id="heat-markers">
+        <span>0%</span><span id="heat-green-marker">2.5% 🟢</span><span id="heat-amber-marker">4% 🟡</span><span id="heat-max-marker">5% 🔴 ceiling</span>
       </div>
 
       <div style="margin-top:10px">
-        <div class="stat-badge badge-amber" style="font-size:12px">⚠ AMBER — Approaching ceiling. No new positions above 1R.</div>
+        <div class="stat-badge" id="heat-status-badge" style="font-size:12px">—</div>
       </div>
     </div>
   </div>
 
   <div class="section-title" style="margin-top:20px">Behavioural Alerts</div>
-  <div class="alerts-wrap">
-    <div class="alert-banner alert-red">
-      <div class="alert-icon">🔴</div>
-      <div class="alert-text">
-        <div class="alert-title">RELIANCE — Exit Rule Triggered</div>
-        <div class="alert-desc">Position is below 7-day low. Mechanical exit required. Do not override.</div>
-      </div>
-      <span class="alert-arrow">→ View in Positions</span>
-    </div>
-    <div class="alert-banner alert-amber">
-      <div class="alert-icon">🟡</div>
-      <div class="alert-text">
-        <div class="alert-title">INFY — Within 2% of Stop</div>
-        <div class="alert-desc">1.6% away from stop loss. Review before market open tomorrow.</div>
-      </div>
-      <span class="alert-arrow">→ View in Positions</span>
-    </div>
-    <div class="alert-banner alert-amber">
-      <div class="alert-icon">🟡</div>
-      <div class="alert-text">
-        <div class="alert-title">HCLTECH — Within 2% of Stop</div>
-        <div class="alert-desc">1.5% away from stop loss. Monitor closely.</div>
-      </div>
-      <span class="alert-arrow">→ View in Positions</span>
-    </div>
-    <div class="alert-banner alert-green">
-      <div class="alert-icon">🟢</div>
-      <div class="alert-text">
-        <div class="alert-title">TCS — Partial Exit Pending (+10.4%)</div>
-        <div class="alert-desc">At or above +10% gain. Partial exit not yet taken. Rule requires action today.</div>
-      </div>
-      <span class="alert-arrow">→ View in Positions</span>
-    </div>
+  <div class="alerts-wrap" id="alerts-wrap">
+    <div style="padding:16px;text-align:center;color:var(--text-muted);font-size:13px">Loading alerts…</div>
   </div>
 </div>
 
@@ -650,41 +609,41 @@ tbody tr:hover { filter: brightness(0.97); }
   <div class="grid-3">
     <!-- Final vs Notional -->
     <div class="card card-sm">
-      <div class="stat-label">P&L — Final vs Notional</div>
+      <div class="stat-label">P&amp;L — Final vs Notional</div>
       <div class="compare-row" style="margin-top:8px">
         <div class="compare-side">
-          <div class="compare-value text-green">₹62,400</div>
-          <div class="compare-value" style="font-size:14px; color:var(--green)">+6.2%</div>
+          <div class="compare-value text-green" id="perf-final-pl">—</div>
+          <div class="compare-value" style="font-size:14px; color:var(--green)" id="perf-final-plpct">—</div>
           <div class="compare-label">Final (Realised)</div>
         </div>
         <div class="compare-vs">vs</div>
         <div class="compare-side">
-          <div class="compare-value text-amber">₹1,31,200</div>
-          <div class="compare-value" style="font-size:14px; color:var(--amber)">+13.1%</div>
+          <div class="compare-value text-amber" id="perf-notional-pl">—</div>
+          <div class="compare-value" style="font-size:14px; color:var(--amber)" id="perf-notional-plpct">—</div>
           <div class="compare-label">Notional (If held)</div>
         </div>
       </div>
-      <div class="compare-gap">⚠ Leaving ₹68,800 on the table by exiting early</div>
+      <div class="compare-gap" id="perf-left-table">—</div>
     </div>
 
     <!-- Capture Rate -->
     <div class="card card-sm">
-      <div class="stat-label">P&L Capture Rate</div>
+      <div class="stat-label">P&amp;L Capture Rate</div>
       <div class="big-metric-wrap">
-        <div class="big-metric-value text-amber">47.6%</div>
+        <div class="big-metric-value text-amber" id="perf-capture">—</div>
         <div class="big-metric-label">of gains captured</div>
-        <div class="big-metric-sub">Losing over half your upside to early exits</div>
+        <div class="big-metric-sub" id="perf-capture-sub">—</div>
       </div>
     </div>
 
     <!-- RoP -->
     <div class="card card-sm">
       <div class="stat-label">Return on Portfolio</div>
-      <div class="stat-value green" style="font-size:32px; margin-top:8px">+6.2%</div>
-      <div class="stat-sub">On ₹10,00,000 initial capital</div>
+      <div class="stat-value green" style="font-size:32px; margin-top:8px" id="perf-rop">—</div>
+      <div class="stat-sub" id="perf-rop-sub">On initial capital</div>
       <div style="margin-top:10px">
         <div class="stat-label">Closed Trades</div>
-        <div style="font-size:20px; font-weight:700">57</div>
+        <div style="font-size:20px; font-weight:700" id="perf-closed-count">—</div>
       </div>
     </div>
   </div>
@@ -694,32 +653,29 @@ tbody tr:hover { filter: brightness(0.97); }
   <div class="grid-3" style="margin-bottom:14px">
     <div class="card card-sm">
       <div class="stat-label">Expectancy Per Trade</div>
-      <div class="stat-value green" style="font-size:28px; margin-top:4px">+0.42%</div>
-      <div class="stat-sub" style="margin-top:8px; font-size:13px; line-height:1.5">
-        Each trade is currently <strong style="color:var(--green)">making you +0.42%</strong> on average.
-        Edge exists — system is working.
-      </div>
+      <div class="stat-value green" style="font-size:28px; margin-top:4px" id="perf-expectancy">—</div>
+      <div class="stat-sub" style="margin-top:8px; font-size:13px; line-height:1.5" id="perf-expectancy-sub">Average final P&amp;L% per trade</div>
     </div>
     <div class="card card-sm">
       <div class="stat-label">R-Multiple</div>
-      <div class="stat-value" style="font-size:28px; margin-top:4px">1.8R</div>
-      <div class="stat-sub">Avg Win / Avg Loss</div>
-      <div class="stat-badge badge-green" style="margin-top:8px">✓ Asymmetric edge</div>
+      <div class="stat-value" style="font-size:28px; margin-top:4px" id="perf-rmultiple">—</div>
+      <div class="stat-sub">Avg Win% / |Avg Loss%|</div>
+      <div class="stat-badge badge-green" style="margin-top:8px" id="perf-rmultiple-badge">—</div>
     </div>
     <div class="card card-sm">
       <div class="stat-label">Win Rate — Final vs Notional</div>
       <div class="compare-row" style="margin-top:8px">
         <div class="compare-side">
-          <div class="compare-value text-red">26.87%</div>
+          <div class="compare-value text-red" id="perf-final-wr">—</div>
           <div class="compare-label">Final</div>
         </div>
         <div class="compare-vs">vs</div>
         <div class="compare-side">
-          <div class="compare-value text-green">57.43%</div>
+          <div class="compare-value text-green" id="perf-notional-wr">—</div>
           <div class="compare-label">Notional</div>
         </div>
       </div>
-      <div class="compare-gap">30.6pp gap — early exits flipping wins to losses</div>
+      <div class="compare-gap" id="perf-wr-gap">—</div>
     </div>
   </div>
 
@@ -728,12 +684,12 @@ tbody tr:hover { filter: brightness(0.97); }
       <div class="stat-label">Final Avg Win vs Loss</div>
       <div class="flex-row" style="margin-top:8px; gap:20px">
         <div>
-          <div style="font-size:20px; font-weight:700; color:var(--green)">+8.4%</div>
+          <div style="font-size:20px; font-weight:700; color:var(--green)" id="perf-avg-final-win">—</div>
           <div class="stat-sub">Avg Final Win</div>
         </div>
         <div style="color:var(--border); font-size:20px">|</div>
         <div>
-          <div style="font-size:20px; font-weight:700; color:var(--red)">-4.1%</div>
+          <div style="font-size:20px; font-weight:700; color:var(--red)" id="perf-avg-final-loss">—</div>
           <div class="stat-sub">Avg Final Loss</div>
         </div>
       </div>
@@ -742,12 +698,12 @@ tbody tr:hover { filter: brightness(0.97); }
       <div class="stat-label">Notional Avg Win vs Loss</div>
       <div class="flex-row" style="margin-top:8px; gap:20px">
         <div>
-          <div style="font-size:20px; font-weight:700; color:var(--green)">+17.2%</div>
+          <div style="font-size:20px; font-weight:700; color:var(--green)" id="perf-avg-notional-win">—</div>
           <div class="stat-sub">Avg Notional Win</div>
         </div>
         <div style="color:var(--border); font-size:20px">|</div>
         <div>
-          <div style="font-size:20px; font-weight:700; color:var(--red)">-4.3%</div>
+          <div style="font-size:20px; font-weight:700; color:var(--red)" id="perf-avg-notional-loss">—</div>
           <div class="stat-sub">Avg Notional Loss</div>
         </div>
       </div>
@@ -781,7 +737,7 @@ tbody tr:hover { filter: brightness(0.97); }
           <div class="flex-row" style="gap:5px"><div style="width:14px;height:14px;border-radius:3px;background:var(--green)"></div><span style="font-size:11px;color:var(--text-muted)">Win</span></div>
           <div class="flex-row" style="gap:5px"><div style="width:14px;height:14px;border-radius:3px;background:var(--red)"></div><span style="font-size:11px;color:var(--text-muted)">Loss</span></div>
         </div>
-        <div style="margin-top:8px; font-size:12px; color:var(--text-muted)">Current streak: <strong style="color:var(--green)">2W</strong> &nbsp;|&nbsp; Longest win streak: <strong>5W</strong> &nbsp;|&nbsp; Longest loss streak: <strong style="color:var(--red)">4L</strong></div>
+        <div style="margin-top:8px; font-size:12px; color:var(--text-muted)" id="streak-info">—</div>
       </div>
     </div>
     <div class="card">
@@ -811,8 +767,8 @@ tbody tr:hover { filter: brightness(0.97); }
   </div>
 
   <!-- Collapsible trade table -->
-  <button class="collapsible-toggle" onclick="toggleCollapsible('closed-trades-body', this)">
-    <span>▶</span> Show all closed trades (57)
+  <button class="collapsible-toggle" id="closed-toggle" onclick="toggleCollapsible('closed-trades-body', this)">
+    <span>▶</span> Show all closed trades (—)
   </button>
   <div class="collapsible-body" id="closed-trades-body">
     <div class="table-wrap">
@@ -841,21 +797,21 @@ tbody tr:hover { filter: brightness(0.97); }
       <div class="ema-side above">
         <div class="ema-context-label" style="color:var(--green)">Above 21 EMA</div>
         <div class="ema-metric">
-          <div class="ema-metric-value text-green">61%</div>
+          <div class="ema-metric-value text-green" id="ema-above-wr">—</div>
           <div class="ema-metric-label">Win Rate</div>
         </div>
         <div class="ema-metric">
-          <div class="ema-metric-value text-green">+9.2%</div>
-          <div class="ema-metric-label">Avg P&L%</div>
+          <div class="ema-metric-value text-green" id="ema-above-avg">—</div>
+          <div class="ema-metric-label">Avg P&amp;L%</div>
         </div>
         <div class="ema-metric">
-          <div class="ema-metric-value" style="font-size:20px">2.1R</div>
+          <div class="ema-metric-value" style="font-size:20px" id="ema-above-r">—</div>
           <div class="ema-metric-label">Avg R-Multiple</div>
         </div>
-        <div class="ema-trades">n = 42 trades</div>
+        <div class="ema-trades" id="ema-above-n">n = — trades</div>
         <div style="margin-top:12px">
           <div style="height:8px;border-radius:99px;background:var(--green-soft)">
-            <div style="height:100%;width:61%;border-radius:99px;background:var(--green)"></div>
+            <div id="ema-above-bar" style="height:100%;width:0%;border-radius:99px;background:var(--green);transition:width 0.8s"></div>
           </div>
         </div>
       </div>
@@ -863,28 +819,27 @@ tbody tr:hover { filter: brightness(0.97); }
       <div class="ema-side">
         <div class="ema-context-label" style="color:var(--red)">Below 21 EMA</div>
         <div class="ema-metric">
-          <div class="ema-metric-value text-red">28%</div>
+          <div class="ema-metric-value text-red" id="ema-below-wr">—</div>
           <div class="ema-metric-label">Win Rate</div>
         </div>
         <div class="ema-metric">
-          <div class="ema-metric-value text-red">-2.1%</div>
-          <div class="ema-metric-label">Avg P&L%</div>
+          <div class="ema-metric-value text-red" id="ema-below-avg">—</div>
+          <div class="ema-metric-label">Avg P&amp;L%</div>
         </div>
         <div class="ema-metric">
-          <div class="ema-metric-value" style="font-size:20px">0.6R</div>
+          <div class="ema-metric-value" style="font-size:20px" id="ema-below-r">—</div>
           <div class="ema-metric-label">Avg R-Multiple</div>
         </div>
-        <div class="ema-trades">n = 15 trades</div>
+        <div class="ema-trades" id="ema-below-n">n = — trades</div>
         <div style="margin-top:12px">
           <div style="height:8px;border-radius:99px;background:var(--red-soft)">
-            <div style="height:100%;width:28%;border-radius:99px;background:var(--red)"></div>
+            <div id="ema-below-bar" style="height:100%;width:0%;border-radius:99px;background:var(--red);transition:width 0.8s"></div>
           </div>
         </div>
       </div>
     </div>
-    <div class="ema-insight">
-      → You perform <strong>2.2× better</strong> when entering above the 21 EMA.
-      Below-EMA trades are costing you an average of -2.1% per trade. Stop taking them.
+    <div class="ema-insight" id="ema-insight">
+      → Configure your Apps Script URL in Config tab to load live data.
     </div>
   </div>
 
@@ -933,17 +888,17 @@ tbody tr:hover { filter: brightness(0.97); }
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px">
     <div>
       <div style="font-size:15px; font-weight:700">Open Positions — Action Board</div>
-      <div style="font-size:12px; color:var(--text-muted); margin-top:2px">7 active trades · Sorted by risk proximity · Read-only</div>
+      <div style="font-size:12px; color:var(--text-muted); margin-top:2px" id="pos-count-text">Loading…</div>
     </div>
-    <div class="stat-badge badge-amber">Portfolio Heat: 2.8%</div>
+    <div class="stat-badge badge-amber" id="pos-heat-badge">Portfolio Heat: —</div>
   </div>
 
   <!-- Alert strip -->
   <div class="alert-strip">
     <span style="font-size:12px; font-weight:600; color:var(--text-muted)">Live Alerts:</span>
-    <div class="strip-badge badge-red">🔴 1 exit triggered</div>
-    <div class="strip-badge badge-amber">🟡 2 near stop</div>
-    <div class="strip-badge badge-green">🟢 1 partial pending</div>
+    <div class="strip-badge badge-red" id="strip-red">🔴 — exit triggered</div>
+    <div class="strip-badge badge-amber" id="strip-amber">🟡 — near stop</div>
+    <div class="strip-badge badge-green" id="strip-green">🟢 — partial pending</div>
   </div>
 
   <!-- Table controls -->
@@ -995,14 +950,24 @@ tbody tr:hover { filter: brightness(0.97); }
     <div class="config-field">
       <label class="config-label">Google Apps Script Web App URL</label>
       <div class="flex-row" style="gap:8px">
-        <input type="text" class="config-input" placeholder="https://script.google.com/macros/s/..." value="">
-        <button class="btn-ghost" style="white-space:nowrap">Test</button>
-        <button class="btn-primary" style="white-space:nowrap">Save</button>
+        <input type="text" id="cfg-url" class="config-input" placeholder="https://script.google.com/macros/s/...">
+        <button class="btn-ghost" style="white-space:nowrap" onclick="testConnection()">Test</button>
+        <button class="btn-primary" style="white-space:nowrap" onclick="saveAllConfig();refreshData()">Save &amp; Refresh</button>
+      </div>
+    </div>
+    <div class="config-grid-2" style="margin-top:12px">
+      <div class="config-field">
+        <label class="config-label">Trade Sheet Tab Name</label>
+        <input type="text" id="cfg-sheet" class="config-input" placeholder="TRADES">
+      </div>
+      <div class="config-field">
+        <label class="config-label">Header Rows to Skip</label>
+        <input type="number" id="cfg-header-rows" class="config-input config-input-sm" value="1" min="0">
       </div>
     </div>
     <div class="connection-status">
-      <div class="status-dot" style="background:var(--amber)"></div>
-      <span>Not connected — enter your Apps Script URL above to connect</span>
+      <div class="status-dot" id="conn-status-dot" style="background:var(--amber)"></div>
+      <span id="conn-status-text">Not connected — enter your Apps Script URL above to connect</span>
     </div>
   </div>
 
@@ -1010,9 +975,9 @@ tbody tr:hover { filter: brightness(0.97); }
   <div class="card config-section" style="margin-bottom:16px">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px">
       <div class="config-section-title" style="margin-bottom:0">Column Mappings</div>
-      <button class="btn-primary" style="padding:7px 14px; font-size:12px">Save Mappings</button>
+      <button class="btn-primary" style="padding:7px 14px; font-size:12px" onclick="saveAllConfig()">Save All</button>
     </div>
-    <div style="font-size:12px; color:var(--text-muted); margin-bottom:14px">Map each data field to the column letter in your Google Sheet trade tab.</div>
+    <div style="font-size:12px; color:var(--text-muted); margin-bottom:14px">Enter the column letter for each field in your Google Sheet (e.g. A, B, AA).</div>
 
     <div id="col-mappings">
       <!-- rows injected by JS -->
@@ -1023,58 +988,46 @@ tbody tr:hover { filter: brightness(0.97); }
   <div class="card config-section" style="margin-bottom:16px">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px">
       <div class="config-section-title" style="margin-bottom:0">Risk Rules</div>
-      <button class="btn-primary" style="padding:7px 14px; font-size:12px">Save Rules</button>
+      <button class="btn-primary" style="padding:7px 14px; font-size:12px" onclick="saveAllConfig()">Save All</button>
     </div>
     <div class="config-grid">
       <div class="config-field">
         <label class="config-label">Max Portfolio Heat Ceiling (%)</label>
-        <input type="number" class="config-input config-input-sm" value="5.0" step="0.5">
+        <input type="number" id="cfg-max-heat" class="config-input config-input-sm" step="0.5">
       </div>
       <div class="config-field">
         <label class="config-label">Partial Exit Trigger (%)</label>
-        <input type="number" class="config-input config-input-sm" value="10.0" step="0.5">
+        <input type="number" id="cfg-partial-trigger" class="config-input config-input-sm" step="0.5">
       </div>
       <div class="config-field">
         <label class="config-label">Stop Proximity Alert (%)</label>
-        <input type="number" class="config-input config-input-sm" value="2.0" step="0.5">
+        <input type="number" id="cfg-stop-proximity" class="config-input config-input-sm" step="0.5">
       </div>
       <div class="config-field">
         <label class="config-label">Heat Gauge — Green below (%)</label>
-        <input type="number" class="config-input config-input-sm" value="2.5" step="0.5">
+        <input type="number" id="cfg-heat-green" class="config-input config-input-sm" step="0.5">
       </div>
       <div class="config-field">
         <label class="config-label">Heat Gauge — Amber below (%)</label>
-        <input type="number" class="config-input config-input-sm" value="4.0" step="0.5">
+        <input type="number" id="cfg-heat-amber" class="config-input config-input-sm" step="0.5">
       </div>
     </div>
   </div>
 
-  <!-- Sheet Structure -->
+  <!-- Sheet Cell References -->
   <div class="card config-section">
     <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px">
-      <div class="config-section-title" style="margin-bottom:0">Sheet Structure & Cell References</div>
-      <button class="btn-primary" style="padding:7px 14px; font-size:12px">Save Structure</button>
+      <div class="config-section-title" style="margin-bottom:0">Cell References</div>
+      <button class="btn-primary" style="padding:7px 14px; font-size:12px" onclick="saveAllConfig()">Save All</button>
     </div>
     <div class="config-grid">
       <div class="config-field">
-        <label class="config-label">Trade Data Tab Name</label>
-        <input type="text" class="config-input" value="Trades">
+        <label class="config-label">Portfolio Value Cell (e.g. AI26)</label>
+        <input type="text" id="cfg-portfolio-cell" class="config-input config-input-sm">
       </div>
       <div class="config-field">
-        <label class="config-label">Config Tab Name</label>
-        <input type="text" class="config-input" value="Config">
-      </div>
-      <div class="config-field">
-        <label class="config-label">Portfolio Capital Base (cell)</label>
-        <input type="text" class="config-input config-input-sm" value="B2">
-      </div>
-      <div class="config-field">
-        <label class="config-label">Initial Portfolio Size (cell)</label>
-        <input type="text" class="config-input config-input-sm" value="B3">
-      </div>
-      <div class="config-field">
-        <label class="config-label">Compounded Portfolio Value (cell)</label>
-        <input type="text" class="config-input config-input-sm" value="B4">
+        <label class="config-label">Initial Capital Cell (e.g. AI20)</label>
+        <input type="text" id="cfg-initial-cap-cell" class="config-input config-input-sm">
       </div>
     </div>
   </div>
@@ -1082,41 +1035,293 @@ tbody tr:hover { filter: brightness(0.97); }
 
 <!-- ════════════════════ SCRIPTS ════════════════════ -->
 <script>
-// ── SAMPLE DATA ──────────────────────────────────────
-const openPositions = [
-  { stock:'RELIANCE', age:14, entry:2840, stop:2901, fromStop:-2.1, pnl:-2.1, partial:'N', ema:'Below',  alert:'red',
-    entryDate:'30 May 2025', risk7dl:2901, ema21:2910, initRisk:5600, initRiskPct:0.45 },
-  { stock:'INFY',     age:8,  entry:1420, stop:1398, fromStop:1.6,  pnl:1.6,  partial:'N', ema:'Above', alert:'amber',
-    entryDate:'05 Jun 2025', risk7dl:1398, ema21:1405, initRisk:3100, initRiskPct:0.25 },
-  { stock:'HCLTECH',  age:18, entry:1180, stop:1162, fromStop:1.5,  pnl:5.1,  partial:'N', ema:'Above', alert:'amber',
-    entryDate:'27 May 2025', risk7dl:1162, ema21:1170, initRisk:3600, initRiskPct:0.29 },
-  { stock:'TCS',      age:22, entry:3310, stop:3180, fromStop:4.1,  pnl:10.4, partial:'N', ema:'Above', alert:'green',
-    entryDate:'23 May 2025', risk7dl:3180, ema21:3280, initRisk:5200, initRiskPct:0.42 },
-  { stock:'HDFC',     age:5,  entry:720,  stop:693,  fromStop:3.9,  pnl:3.9,  partial:'N', ema:'Above', alert:'none',
-    entryDate:'09 Jun 2025', risk7dl:693,  ema21:710,  initRisk:2700, initRiskPct:0.22 },
-  { stock:'WIPRO',    age:11, entry:445,  stop:432,  fromStop:2.9,  pnl:2.9,  partial:'N', ema:'Above', alert:'none',
-    entryDate:'03 Jun 2025', risk7dl:432,  ema21:440,  initRisk:2600, initRiskPct:0.21 },
-  { stock:'BAJFINANCE', age:3, entry:6820, stop:6600, fromStop:3.2, pnl:3.2, partial:'N', ema:'Above', alert:'none',
-    entryDate:'11 Jun 2025', risk7dl:6600, ema21:6780, initRisk:4400, initRiskPct:0.35 },
-];
+// ── CONFIG ───────────────────────────────────────────
+const CONFIG_KEY = 'tj_config_v1';
+const DEFAULT_CONFIG = {
+  url: '', sheet: 'TRADES', headerRows: '1',
+  flagCol: 'B', stockCol: 'E', openDateCol: 'C', closeDateCol: 'D',
+  ema21Col: 'F', cmpCol: 'H', sevenDayLowCol: 'I', stopLossCol: 'J',
+  initRiskRsCol: 'K', initRiskPctCol: 'L', entryPriceCol: 'R',
+  setupTypeCol: 'S', pctFromStopCol: 'W', plPctCol: 'X',
+  notionalPlCol: 'Y', partialQtyCol: 'Z', partialPriceCol: 'AA',
+  partialPlCol: 'AB', finalExitPriceCol: 'AC', finalPlCol: 'AD',
+  finalPlPctCol: 'AE', ageCol: 'AF',
+  portfolioCell: 'AI26', initialCapCell: 'AI20',
+  maxHeat: 5, partialTrigger: 10, stopProximity: 2, heatGreen: 2.5, heatAmber: 4,
+};
 
-const closedTrades = [
-  {stock:'TATAMOTORS', entryDate:'15 Jan', exitDate:'08 Feb', days:24, entry:820,  finalPnl:12.4,  notionalPnl:19.8, partial:'Y', ema:'Above'},
-  {stock:'SUNPHARMA',  entryDate:'02 Feb', exitDate:'14 Feb', days:12, entry:1240, finalPnl:-3.8,  notionalPnl:-3.8, partial:'N', ema:'Above'},
-  {stock:'AXISBANK',   entryDate:'10 Feb', exitDate:'01 Mar', days:19, entry:1050, finalPnl:8.2,   notionalPnl:22.1, partial:'N', ema:'Above'},
-  {stock:'LTIM',       entryDate:'18 Feb', exitDate:'05 Mar', days:15, entry:5200, finalPnl:-4.2,  notionalPnl:-4.2, partial:'N', ema:'Below'},
-  {stock:'NESTLEIND',  entryDate:'25 Feb', exitDate:'20 Mar', days:23, entry:2150, finalPnl:15.6,  notionalPnl:28.4, partial:'Y', ema:'Above'},
-  {stock:'MARUTI',     entryDate:'05 Mar', exitDate:'22 Mar', days:17, entry:11200,finalPnl:-5.1,  notionalPnl:-5.1, partial:'N', ema:'Below'},
-  {stock:'DMART',      entryDate:'12 Mar', exitDate:'04 Apr', days:23, entry:4800, finalPnl:9.8,   notionalPnl:17.2, partial:'N', ema:'Above'},
-  {stock:'PIDILITIND',entryDate:'20 Mar',  exitDate:'10 Apr', days:21, entry:2800, finalPnl:7.4,   notionalPnl:14.6, partial:'N', ema:'Above'},
-  {stock:'ASIANPAINT', entryDate:'01 Apr', exitDate:'18 Apr', days:17, entry:2900, finalPnl:-3.2,  notionalPnl:-3.2, partial:'N', ema:'Above'},
-  {stock:'TITAN',      entryDate:'08 Apr', exitDate:'30 Apr', days:22, entry:3400, finalPnl:11.2,  notionalPnl:21.8, partial:'Y', ema:'Above'},
-  {stock:'ICICIBANK',  entryDate:'15 Apr', exitDate:'05 May', days:20, entry:1100, finalPnl:6.8,   notionalPnl:18.4, partial:'N', ema:'Above'},
-  {stock:'SBILIFE',    entryDate:'22 Apr', exitDate:'10 May', days:18, entry:1450, finalPnl:-4.6,  notionalPnl:-4.6, partial:'N', ema:'Below'},
-  {stock:'ULTRACEMCO', entryDate:'02 May', exitDate:'20 May', days:18, entry:9800, finalPnl:5.2,   notionalPnl:11.8, partial:'N', ema:'Above'},
-  {stock:'HDFCBANK',   entryDate:'10 May', exitDate:'28 May', days:18, entry:1650, finalPnl:-3.9,  notionalPnl:-3.9, partial:'N', ema:'Above'},
-  {stock:'BAJAJFINSV', entryDate:'18 May', exitDate:'05 Jun', days:18, entry:1580, finalPnl:4.8,   notionalPnl:9.2,  partial:'N', ema:'Above'},
-];
+function loadConfig() {
+  try { return { ...DEFAULT_CONFIG, ...JSON.parse(localStorage.getItem(CONFIG_KEY) || '{}') }; }
+  catch(e) { return { ...DEFAULT_CONFIG }; }
+}
+function saveConfig(cfg) { localStorage.setItem(CONFIG_KEY, JSON.stringify(cfg)); }
+
+// ── FETCH ────────────────────────────────────────────
+async function fetchData() {
+  const cfg = loadConfig();
+  if (!cfg.url) { showToast('No Apps Script URL configured. Go to Config tab.', 'amber'); return null; }
+  const params = new URLSearchParams({
+    sheet: cfg.sheet, headerRows: cfg.headerRows,
+    flagCol: cfg.flagCol, stockCol: cfg.stockCol,
+    openDateCol: cfg.openDateCol, closeDateCol: cfg.closeDateCol,
+    ema21Col: cfg.ema21Col, cmpCol: cfg.cmpCol,
+    sevenDayLowCol: cfg.sevenDayLowCol, stopLossCol: cfg.stopLossCol,
+    initRiskRsCol: cfg.initRiskRsCol, initRiskPctCol: cfg.initRiskPctCol,
+    entryPriceCol: cfg.entryPriceCol, setupTypeCol: cfg.setupTypeCol,
+    pctFromStopCol: cfg.pctFromStopCol, plPctCol: cfg.plPctCol,
+    notionalPlCol: cfg.notionalPlCol, partialQtyCol: cfg.partialQtyCol,
+    partialPriceCol: cfg.partialPriceCol, partialPlCol: cfg.partialPlCol,
+    finalExitPriceCol: cfg.finalExitPriceCol, finalPlCol: cfg.finalPlCol,
+    finalPlPctCol: cfg.finalPlPctCol, ageCol: cfg.ageCol,
+    portfolioCell: cfg.portfolioCell, initialCapCell: cfg.initialCapCell,
+  });
+  try {
+    const res = await fetch(cfg.url + '?' + params.toString(), { redirect: 'follow' });
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error || 'Unknown error');
+    return data;
+  } catch(e) {
+    showToast('Fetch error: ' + e.message, 'red');
+    return null;
+  }
+}
+
+async function refreshData() {
+  const btn = document.querySelector('[title="Refresh"]');
+  if (btn) btn.textContent = '⟳';
+  const data = await fetchData();
+  if (!data) { if (btn) btn.textContent = '↻'; return; }
+  window._data = data;
+  const cfg = loadConfig();
+  renderDashboard(data, cfg);
+  renderPositionsReal(data.open, cfg);
+  renderPerfStats(data.closed, data.portfolioValue, data.initialCapital);
+  renderClosedTradesReal(data.closed);
+  renderCalendarReal(data.closed);
+  renderStreakReal(data.closed);
+  if (window._perfChartsInit) { perfCharts.forEach(c => c.destroy()); perfCharts = []; initPerfCharts(data.closed, data.initialCapital); }
+  if (window._analysisChartsInit) { analysisCharts.forEach(c => c.destroy()); analysisCharts = []; initAnalysisCharts(data.open, data.closed); }
+  const now = new Date();
+  const ts = now.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' });
+  const ri = document.querySelector('.refresh-info');
+  if (ri) ri.textContent = 'Updated at ' + ts;
+  if (btn) btn.textContent = '↻';
+}
+
+// ── DASHBOARD ────────────────────────────────────────
+function renderDashboard(data, cfg) {
+  const { portfolioValue, initialCapital, open, closed } = data;
+  const totalReturn = initialCapital > 0 ? ((portfolioValue - initialCapital) / initialCapital * 100) : 0;
+  const totalFinalPl = closed.reduce((s, t) => s + t.finalPl, 0);
+  const totalInitRisk = open.reduce((s, t) => s + t.initRiskRs, 0);
+  const totalHeat = open.reduce((s, t) => s + t.initRiskPct, 0);
+  const fmt = v => '₹' + Math.abs(v).toLocaleString('en-IN', { maximumFractionDigits: 0 });
+
+  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+
+  // Card 1: Portfolio Value
+  set('dash-pv', fmt(portfolioValue));
+  set('dash-pv-sub', 'Initial: ' + fmt(initialCapital));
+  const pvDiff = portfolioValue - initialCapital;
+  set('dash-pv-badge', (pvDiff >= 0 ? '▲ +' : '▼ -') + fmt(pvDiff));
+  const pvBadge = document.getElementById('dash-pv-badge');
+  if (pvBadge) { pvBadge.className = 'stat-badge ' + (pvDiff >= 0 ? 'badge-green' : 'badge-red'); }
+
+  // Card 2: Open Positions
+  set('dash-open', open.length);
+  const alertCount = open.filter(t => t.pctFromStop <= 0 || (t.pctFromStop > 0 && t.pctFromStop <= cfg.stopProximity) || (t.plPct >= cfg.partialTrigger && t.partialTaken === 'N')).length;
+  set('dash-open-badge', alertCount > 0 ? alertCount + ' need attention' : 'All clear');
+  const openBadge = document.getElementById('dash-open-badge');
+  if (openBadge) openBadge.className = 'stat-badge ' + (alertCount > 0 ? 'badge-amber' : 'badge-green');
+
+  // Card 3: Closed Trades
+  set('dash-closed', closed.length);
+  set('dash-closed-sub', 'Total P&L: ' + (totalFinalPl >= 0 ? '+' : '') + fmt(totalFinalPl));
+  set('dash-closed-badge', closed.length + ' completed');
+
+  // Card 4: Return
+  const retStr = (totalReturn >= 0 ? '+' : '') + totalReturn.toFixed(1) + '%';
+  set('dash-return', retStr);
+  set('dash-return-sub', 'Since inception · ' + fmt(initialCapital) + ' base');
+  set('dash-return-badge', totalReturn >= 0 ? '▲ Compounding' : '▼ Drawdown');
+  const retEl = document.getElementById('dash-return');
+  if (retEl) { retEl.className = 'stat-value ' + (totalReturn >= 0 ? 'green' : 'red'); }
+
+  // Risk cards
+  set('dash-init-risk', fmt(totalInitRisk));
+  set('dash-init-risk-badge', totalHeat.toFixed(2) + '% of capital');
+  set('dash-realised-pl', (totalFinalPl >= 0 ? '+' : '') + fmt(totalFinalPl));
+  set('dash-realised-sub', closed.length + ' closed trades');
+  const realBadge = document.getElementById('dash-realised-badge');
+  if (realBadge) { realBadge.className = 'stat-badge ' + (totalFinalPl >= 0 ? 'badge-green' : 'badge-red'); realBadge.textContent = (totalFinalPl >= 0 ? '▲ Profit' : '▼ Loss'); }
+
+  // Heat gauge
+  const heatWidth = Math.min(100, (totalHeat / cfg.maxHeat) * 100);
+  const heatFill = document.getElementById('heat-actual-fill');
+  if (heatFill) heatFill.style.width = heatWidth + '%';
+  set('heat-actual-value', totalHeat.toFixed(2) + '%');
+  const heatValEl = document.getElementById('heat-actual-value');
+  if (heatValEl) heatValEl.className = 'heat-value ' + (totalHeat <= cfg.heatGreen ? 'text-green' : totalHeat <= cfg.heatAmber ? 'text-amber' : 'text-red');
+  set('heat-green-marker', cfg.heatGreen + '% 🟢');
+  set('heat-amber-marker', cfg.heatAmber + '% 🟡');
+  set('heat-max-marker', cfg.maxHeat + '% 🔴 ceiling');
+  const heatStatus = document.getElementById('heat-status-badge');
+  if (heatStatus) {
+    if (totalHeat <= cfg.heatGreen) { heatStatus.className = 'stat-badge badge-green'; heatStatus.textContent = '✓ GREEN — Capacity for new positions'; }
+    else if (totalHeat <= cfg.heatAmber) { heatStatus.className = 'stat-badge badge-amber'; heatStatus.textContent = '⚠ AMBER — Approaching ceiling. Reduce size.'; }
+    else { heatStatus.className = 'stat-badge badge-red'; heatStatus.textContent = '🚫 RED — Above limit. No new positions.'; }
+  }
+  const posHeat = document.getElementById('pos-heat-badge');
+  if (posHeat) posHeat.textContent = 'Portfolio Heat: ' + totalHeat.toFixed(2) + '%';
+
+  // Alerts
+  const alertsWrap = document.getElementById('alerts-wrap');
+  if (alertsWrap) {
+    const alerts = [];
+    open.forEach(t => {
+      if (t.pctFromStop <= 0) alerts.push({ type:'red', icon:'🔴', title:`${t.stock} — Exit Rule Triggered`, desc:'Position is at or below stop loss. Mechanical exit required.' });
+      else if (t.pctFromStop <= cfg.stopProximity) alerts.push({ type:'amber', icon:'🟡', title:`${t.stock} — Within ${t.pctFromStop.toFixed(1)}% of Stop`, desc:`Only ${t.pctFromStop.toFixed(1)}% above stop loss. Review before market open.` });
+      if (t.plPct >= cfg.partialTrigger && t.partialTaken === 'N') alerts.push({ type:'green', icon:'🟢', title:`${t.stock} — Partial Exit Pending (+${t.plPct.toFixed(1)}%)`, desc:`At +${cfg.partialTrigger}% trigger. Partial exit not yet taken. Act today.` });
+    });
+    alertsWrap.innerHTML = alerts.length === 0
+      ? '<div style="padding:16px;text-align:center;color:var(--text-muted);font-size:13px">✓ No alerts — all positions within parameters</div>'
+      : alerts.map(a => `<div class="alert-banner alert-${a.type}" onclick="showPage('positions',document.querySelectorAll('.nav-tab')[3])">
+          <div class="alert-icon">${a.icon}</div>
+          <div class="alert-text"><div class="alert-title">${a.title}</div><div class="alert-desc">${a.desc}</div></div>
+          <span class="alert-arrow">→ View in Positions</span>
+        </div>`).join('');
+  }
+}
+
+// ── POSITIONS (REAL DATA) ─────────────────────────────
+function renderPositionsReal(open, cfg) {
+  const tbody = document.getElementById('positions-tbody');
+  tbody.innerHTML = '';
+  const trades = open.map(t => {
+    let alertType = 'none';
+    if (t.pctFromStop <= 0) alertType = 'red';
+    else if (t.pctFromStop <= cfg.stopProximity) alertType = 'amber';
+    if (t.plPct >= cfg.partialTrigger && t.partialTaken === 'N') alertType = 'green';
+    return { ...t, alertType };
+  }).sort((a, b) => a.pctFromStop - b.pctFromStop);
+
+  trades.forEach((t, i) => {
+    const rowClass = t.alertType !== 'none' ? 'row-' + t.alertType : '';
+    const pnlClass = t.plPct >= 0 ? 'pnl-pos' : 'pnl-neg';
+    const emaStr = (t.ema21 || '').trim();
+    const emaClass = emaStr.toLowerCase() === 'above' ? 'tag-above' : 'tag-below';
+    const partialClass = t.partialTaken === 'Y' ? 'tag-y' : 'tag-n';
+    const fromStopClass = t.pctFromStop < 0 ? 'pnl-neg' : t.pctFromStop <= cfg.stopProximity ? 'text-amber' : 'pnl-pos';
+    tbody.innerHTML += `
+      <tr class="${rowClass}" onclick="toggleExpand(${i})">
+        <td><span class="stock-name">${t.stock}</span>${t.dataError ? ' <span style="font-size:10px;color:var(--red)">⚠</span>' : ''}</td>
+        <td>${t.age}d</td>
+        <td>₹${t.entryPrice.toLocaleString('en-IN')}</td>
+        <td>₹${t.stopLoss.toLocaleString('en-IN')}</td>
+        <td class="${fromStopClass} fw-700">${t.pctFromStop >= 0 ? '+' : ''}${t.pctFromStop.toFixed(1)}%</td>
+        <td class="${pnlClass}">${t.plPct >= 0 ? '+' : ''}${t.plPct.toFixed(1)}%</td>
+        <td><span class="tag ${partialClass}">${t.partialTaken}</span></td>
+        <td><span class="tag ${emaClass}">${emaStr || '—'}</span></td>
+      </tr>
+      <tr class="expand-row" id="expand-${i}">
+        <td colspan="8" style="padding:0">
+          <div class="expand-content">
+            <div class="expand-item"><div class="expand-label">Entry Date</div><div class="expand-value">${t.openDate || '—'}</div></div>
+            <div class="expand-item"><div class="expand-label">7-Day Low</div><div class="expand-value">₹${t.sevenDayLow.toLocaleString('en-IN')}</div></div>
+            <div class="expand-item"><div class="expand-label">CMP</div><div class="expand-value">₹${t.cmp.toLocaleString('en-IN')}</div></div>
+            <div class="expand-item"><div class="expand-label">Initial Risk ₹</div><div class="expand-value">₹${t.initRiskRs.toLocaleString('en-IN')}</div></div>
+            <div class="expand-item"><div class="expand-label">Initial Risk %</div><div class="expand-value">${t.initRiskPct.toFixed(2)}% of capital</div></div>
+          </div>
+        </td>
+      </tr>`;
+  });
+
+  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  set('pos-count-text', `${open.length} active trades · Sorted by risk proximity · Read-only`);
+  const reds = trades.filter(t => t.alertType === 'red').length;
+  const ambers = trades.filter(t => t.alertType === 'amber').length;
+  const greens = trades.filter(t => t.alertType === 'green').length;
+  set('strip-red', `🔴 ${reds} exit triggered`);
+  set('strip-amber', `🟡 ${ambers} near stop`);
+  set('strip-green', `🟢 ${greens} partial pending`);
+}
+
+// ── PERFORMANCE STATS ─────────────────────────────────
+function renderPerfStats(closed, portfolioValue, initialCapital) {
+  if (!closed.length) return;
+  const totalFinalPl = closed.reduce((s, t) => s + t.finalPl, 0);
+  const totalNotionalPl = closed.reduce((s, t) => s + t.notionalPl, 0);
+  const captureRate = totalNotionalPl !== 0 ? (totalFinalPl / totalNotionalPl * 100) : 0;
+  const wins = closed.filter(t => t.finalPlPct > 0);
+  const losses = closed.filter(t => t.finalPlPct < 0);
+  const notionalWins = closed.filter(t => t.plPct > 0);
+  const finalWR = closed.length > 0 ? (wins.length / closed.length * 100) : 0;
+  const notionalWR = closed.length > 0 ? (notionalWins.length / closed.length * 100) : 0;
+  const avgFinalWin = wins.length > 0 ? wins.reduce((s,t) => s + t.finalPlPct, 0) / wins.length : 0;
+  const avgFinalLoss = losses.length > 0 ? losses.reduce((s,t) => s + t.finalPlPct, 0) / losses.length : 0;
+  const notionalWinList = closed.filter(t => t.plPct > 0);
+  const notionalLossList = closed.filter(t => t.plPct < 0);
+  const avgNotionalWin = notionalWinList.length > 0 ? notionalWinList.reduce((s,t) => s + t.plPct, 0) / notionalWinList.length : 0;
+  const avgNotionalLoss = notionalLossList.length > 0 ? notionalLossList.reduce((s,t) => s + t.plPct, 0) / notionalLossList.length : 0;
+  const expectancy = closed.length > 0 ? closed.reduce((s,t) => s + t.finalPlPct, 0) / closed.length : 0;
+  const rMultiple = avgFinalLoss !== 0 ? Math.abs(avgFinalWin / avgFinalLoss) : 0;
+  const rop = initialCapital > 0 ? (totalFinalPl / initialCapital * 100) : 0;
+  const leftOnTable = totalNotionalPl - totalFinalPl;
+  const fmt = v => '₹' + Math.abs(Math.round(v)).toLocaleString('en-IN');
+  const fmtPct = v => (v >= 0 ? '+' : '') + v.toFixed(1) + '%';
+  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+
+  set('perf-final-pl', fmt(totalFinalPl));
+  set('perf-final-plpct', fmtPct(rop));
+  set('perf-notional-pl', fmt(totalNotionalPl));
+  set('perf-notional-plpct', fmtPct(initialCapital > 0 ? totalNotionalPl / initialCapital * 100 : 0));
+  set('perf-capture', captureRate.toFixed(1) + '%');
+  set('perf-capture-sub', captureRate < 50 ? 'Losing over half your upside to early exits' : captureRate < 70 ? 'Room to improve — hold winners longer' : 'Good capture rate');
+  set('perf-rop', fmtPct(rop));
+  set('perf-rop-sub', 'On ' + fmt(initialCapital) + ' initial capital');
+  set('perf-closed-count', closed.length);
+  set('perf-left-table', leftOnTable > 0 ? `⚠ Leaving ${fmt(leftOnTable)} on the table by exiting early` : '✓ Capturing gains efficiently');
+  set('perf-expectancy', fmtPct(expectancy));
+  set('perf-expectancy-sub', expectancy >= 0 ? `Each trade makes you +${expectancy.toFixed(1)}% on avg. Edge exists.` : `Each trade costs you ${expectancy.toFixed(1)}% on avg. Review system.`);
+  set('perf-rmultiple', rMultiple.toFixed(2) + 'R');
+  set('perf-rmultiple-badge', rMultiple >= 1.5 ? '✓ Asymmetric edge' : rMultiple >= 1 ? 'Edge — room to improve' : '⚠ Below 1R — check exit rules');
+  const rmBadge = document.getElementById('perf-rmultiple-badge');
+  if (rmBadge) rmBadge.className = 'stat-badge ' + (rMultiple >= 1.5 ? 'badge-green' : rMultiple >= 1 ? 'badge-amber' : 'badge-red');
+  set('perf-final-wr', finalWR.toFixed(1) + '%');
+  set('perf-notional-wr', notionalWR.toFixed(1) + '%');
+  const wrGap = Math.abs(notionalWR - finalWR);
+  set('perf-wr-gap', wrGap.toFixed(1) + 'pp gap' + (notionalWR > finalWR ? ' — early exits flipping wins to losses' : ' — consistent exit timing'));
+  set('perf-avg-final-win', fmtPct(avgFinalWin));
+  set('perf-avg-final-loss', fmtPct(avgFinalLoss));
+  set('perf-avg-notional-win', fmtPct(avgNotionalWin));
+  set('perf-avg-notional-loss', fmtPct(avgNotionalLoss));
+
+  const toggle = document.getElementById('closed-toggle');
+  if (toggle) { const arrow = toggle.querySelector('span'); toggle.innerHTML = `<span>${arrow ? arrow.textContent : '▶'}</span> Show all closed trades (${closed.length})`; }
+}
+
+// ── CLOSED TRADES TABLE ───────────────────────────────
+function renderClosedTradesReal(closed) {
+  const tbody = document.getElementById('closed-trades-tbody');
+  const sorted = [...closed].sort((a, b) => new Date(b.closeDate) - new Date(a.closeDate));
+  tbody.innerHTML = sorted.map(t => {
+    const pnlClass = t.finalPlPct >= 0 ? 'pnl-pos' : 'pnl-neg';
+    const nPnlClass = t.plPct >= 0 ? 'pnl-pos' : 'pnl-neg';
+    const emaClass = (t.ema21 || '').toLowerCase() === 'above' ? 'tag-above' : 'tag-below';
+    const partialClass = t.partialTaken === 'Y' ? 'tag-y' : 'tag-n';
+    return `<tr>
+      <td><span class="stock-name">${t.stock}</span></td>
+      <td>${t.openDate || '—'}</td>
+      <td>${t.closeDate || '—'}</td>
+      <td>${t.age || '—'}d</td>
+      <td>₹${t.entryPrice.toLocaleString('en-IN')}</td>
+      <td class="${pnlClass}">${t.finalPlPct >= 0 ? '+' : ''}${t.finalPlPct.toFixed(1)}%</td>
+      <td class="${nPnlClass}">${t.plPct >= 0 ? '+' : ''}${t.plPct.toFixed(1)}%</td>
+      <td><span class="tag ${partialClass}">${t.partialTaken}</span></td>
+      <td><span class="tag ${emaClass}">${t.ema21 || '—'}</span></td>
+    </tr>`;
+  }).join('');
+}
 
 // ── NAVIGATION ──────────────────────────────────────
 function showPage(id, btn) {
@@ -1124,19 +1329,24 @@ function showPage(id, btn) {
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('page-' + id).classList.add('active');
   btn.classList.add('active');
-
-  // Lazy-init charts on first visit
-  if (id === 'performance' && !window._perfChartsInit) { initPerfCharts(); window._perfChartsInit = true; }
-  if (id === 'analysis' && !window._analysisChartsInit) { initAnalysisCharts(); window._analysisChartsInit = true; }
+  if (id === 'performance' && !window._perfChartsInit) {
+    const d = window._data;
+    initPerfCharts(d ? d.closed : [], d ? d.initialCapital : 0);
+    window._perfChartsInit = true;
+  }
+  if (id === 'analysis' && !window._analysisChartsInit) {
+    const d = window._data;
+    initAnalysisCharts(d ? d.open : [], d ? d.closed : []);
+    window._analysisChartsInit = true;
+  }
 }
 
 // ── THEME ───────────────────────────────────────────
 function toggleTheme() {
   const html = document.documentElement;
-  const isDark = html.getAttribute('data-theme') === 'dark';
-  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
-  document.querySelector('[onclick="toggleTheme()"]').textContent = isDark ? '🌙' : '☀️';
-  // Re-render ApexCharts with new theme
+  const dark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', dark ? 'light' : 'dark');
+  document.querySelector('[onclick="toggleTheme()"]').textContent = dark ? '🌙' : '☀️';
   if (window._perfChartsInit) { destroyAndReinitPerf(); }
   if (window._analysisChartsInit) { destroyAndReinitAnalysis(); }
 }
@@ -1168,40 +1378,14 @@ function toggleCollapsible(id, btn) {
   btn.innerHTML = btn.innerHTML.replace(/Show|Hide/, isOpen ? 'Hide' : 'Show');
 }
 
-// ── POSITIONS TABLE ──────────────────────────────────
+// ── POSITIONS TABLE (kept for fallback) ───────────────
 function renderPositions(data) {
-  const tbody = document.getElementById('positions-tbody');
-  tbody.innerHTML = '';
-  data.forEach((p, i) => {
-    const rowClass = p.alert === 'red' ? 'row-red' : p.alert === 'amber' ? 'row-amber' : p.alert === 'green' ? 'row-green' : '';
-    const pnlClass = p.pnl >= 0 ? 'pnl-pos' : 'pnl-neg';
-    const emaClass = p.ema === 'Above' ? 'tag-above' : 'tag-below';
-    const partialClass = p.partial === 'Y' ? 'tag-y' : 'tag-n';
-    const fromStopClass = p.fromStop < 0 ? 'pnl-neg' : p.fromStop < 2 ? 'text-amber' : 'pnl-pos';
-
-    tbody.innerHTML += `
-      <tr class="${rowClass}" onclick="toggleExpand(${i})">
-        <td><span class="stock-name">${p.stock}</span></td>
-        <td>${p.age}d</td>
-        <td>₹${p.entry.toLocaleString('en-IN')}</td>
-        <td>₹${p.stop.toLocaleString('en-IN')}</td>
-        <td class="${fromStopClass} fw-700">${p.fromStop > 0 ? '+' : ''}${p.fromStop}%</td>
-        <td class="${pnlClass}">${p.pnl > 0 ? '+' : ''}${p.pnl}%</td>
-        <td><span class="tag ${partialClass}">${p.partial}</span></td>
-        <td><span class="tag ${emaClass}">${p.ema}</span></td>
-      </tr>
-      <tr class="expand-row" id="expand-${i}">
-        <td colspan="8" style="padding:0">
-          <div class="expand-content">
-            <div class="expand-item"><div class="expand-label">Entry Date</div><div class="expand-value">${p.entryDate}</div></div>
-            <div class="expand-item"><div class="expand-label">7-Day Low</div><div class="expand-value">₹${p.risk7dl.toLocaleString('en-IN')}</div></div>
-            <div class="expand-item"><div class="expand-label">21 EMA</div><div class="expand-value">₹${p.ema21.toLocaleString('en-IN')}</div></div>
-            <div class="expand-item"><div class="expand-label">Initial Risk ₹</div><div class="expand-value">₹${p.initRisk.toLocaleString('en-IN')}</div></div>
-            <div class="expand-item"><div class="expand-label">Initial Risk %</div><div class="expand-value">${p.initRiskPct}% of capital</div></div>
-          </div>
-        </td>
-      </tr>`;
-  });
+  if (!data || !data.length) {
+    const tbody = document.getElementById('positions-tbody');
+    if (tbody) tbody.innerHTML = '<tr><td colspan="8" style="text-align:center;padding:32px;color:var(--text-muted)">No data — configure Apps Script URL in Config tab</td></tr>';
+    return;
+  }
+  renderPositionsReal(data, loadConfig());
 }
 
 function toggleExpand(i) {
@@ -1229,80 +1413,66 @@ function filterAlert(val) {
   });
 }
 
-// ── CLOSED TRADES TABLE ──────────────────────────────
-function renderClosedTrades() {
-  const tbody = document.getElementById('closed-trades-tbody');
-  closedTrades.forEach(t => {
-    const pnlClass = t.finalPnl >= 0 ? 'pnl-pos' : 'pnl-neg';
-    const nPnlClass = t.notionalPnl >= 0 ? 'pnl-pos' : 'pnl-neg';
-    const emaClass = t.ema === 'Above' ? 'tag-above' : 'tag-below';
-    const partialClass = t.partial === 'Y' ? 'tag-y' : 'tag-n';
-    tbody.innerHTML += `<tr>
-      <td><span class="stock-name">${t.stock}</span></td>
-      <td>${t.entryDate}</td>
-      <td>${t.exitDate}</td>
-      <td>${t.days}d</td>
-      <td>₹${t.entry.toLocaleString('en-IN')}</td>
-      <td class="${pnlClass}">${t.finalPnl > 0 ? '+' : ''}${t.finalPnl}%</td>
-      <td class="${nPnlClass}">${t.notionalPnl > 0 ? '+' : ''}${t.notionalPnl}%</td>
-      <td><span class="tag ${partialClass}">${t.partial}</span></td>
-      <td><span class="tag ${emaClass}">${t.ema}</span></td>
-    </tr>`;
-  });
-}
-
-// ── WIN/LOSS STREAK ──────────────────────────────────
-function renderStreak() {
-  const seq = 'WWLWWWLLLLWWLWWLWLWWWLWLLWWWWWLLWLWWWLWWLLWLWWWLLWWLWWW'.split('');
+// ── STREAK (REAL) ────────────────────────────────────
+function renderStreakReal(closed) {
+  const sorted = [...closed].filter(t => t.closeDate).sort((a, b) => new Date(a.closeDate) - new Date(b.closeDate));
+  const seq = sorted.map(t => t.finalPlPct >= 0 ? 'W' : 'L');
   const container = document.getElementById('streak-blocks');
-  container.innerHTML = seq.map(s => `<div class="streak-block ${s.toLowerCase()}" title="${s === 'W' ? 'Win' : 'Loss'}">${s}</div>`).join('');
+  if (container) container.innerHTML = seq.map(s => `<div class="streak-block ${s.toLowerCase()}" title="${s === 'W' ? 'Win' : 'Loss'}">${s}</div>`).join('');
+  let longestWin = 0, longestLoss = 0, tmp = seq.length > 0 ? 1 : 0;
+  for (let i = 1; i < seq.length; i++) { if (seq[i] === seq[i-1]) tmp++; else tmp = 1; if (seq[i] === 'W' && tmp > longestWin) longestWin = tmp; if (seq[i] === 'L' && tmp > longestLoss) longestLoss = tmp; }
+  if (seq.length > 0) { if (seq[0] === 'W' && 1 > longestWin) longestWin = 1; if (seq[0] === 'L' && 1 > longestLoss) longestLoss = 1; }
+  let curRun = 0, runType = seq.length > 0 ? seq[seq.length - 1] : '';
+  for (let i = seq.length - 1; i >= 0; i--) { if (seq[i] === runType) curRun++; else break; }
+  const streakInfo = document.getElementById('streak-info');
+  if (streakInfo && seq.length > 0) {
+    const col = runType === 'W' ? 'var(--green)' : 'var(--red)';
+    streakInfo.innerHTML = `Current streak: <strong style="color:${col}">${curRun}${runType}</strong> &nbsp;|&nbsp; Longest win streak: <strong>${longestWin}W</strong> &nbsp;|&nbsp; Longest loss streak: <strong style="color:var(--red)">${longestLoss}L</strong>`;
+  }
 }
 
-// ── CALENDAR ─────────────────────────────────────────
-function renderCalendar() {
+// ── STREAK (placeholder, overridden by renderStreakReal) ─
+function renderStreak() { /* data loaded on refresh */ }
+
+// ── CALENDAR (REAL DATA) ─────────────────────────────
+function renderCalendarReal(closed) {
   const grid = document.getElementById('cal-grid');
   const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const daysInMonth = [31,28,31,30,31,30,31,31,30,31,30,31];
-  const firstDays2025 = [3,6,6,2,4,0,2,5,1,3,6,1];
   const dayHeaders = ['S','M','T','W','T','F','S'];
 
-  // Sample trade data per calendar day — key: "M-D"
-  const tradeDays = {
-    '1-8':  { cls:'profit-2', stock:'TATAMOTORS', pnl:'+12.4%', partial:'Y', setup:'Breakout' },
-    '1-14': { cls:'profit-3', stock:'NESTLEIND',  pnl:'+15.6%', partial:'Y', setup:'VCP' },
-    '1-22': { cls:'loss-1',   stock:'SUNPHARMA',  pnl:'-3.8%',  partial:'N', setup:'Breakout' },
-    '2-5':  { cls:'profit-1', stock:'AXISBANK',   pnl:'+4.2%',  partial:'N', setup:'Pullback' },
-    '2-12': { cls:'loss-2',   stock:'LTIM',       pnl:'-4.2%',  partial:'N', setup:'Breakout' },
-    '2-19': { cls:'profit-2', stock:'DMART',      pnl:'+9.8%',  partial:'N', setup:'VCP' },
-    '2-26': { cls:'profit-1', stock:'PIDILITIND', pnl:'+7.4%',  partial:'N', setup:'Pullback' },
-    '3-4':  { cls:'profit-3', stock:'TITAN',      pnl:'+11.2%', partial:'Y', setup:'VCP' },
-    '3-11': { cls:'loss-1',   stock:'MARUTI',     pnl:'-5.1%',  partial:'N', setup:'Breakout' },
-    '3-18': { cls:'profit-2', stock:'ICICIBANK',  pnl:'+6.8%',  partial:'N', setup:'Pullback' },
-    '3-25': { cls:'loss-2',   stock:'ASIANPAINT', pnl:'-3.2%',  partial:'N', setup:'Breakout' },
-    '4-2':  { cls:'profit-1', stock:'SBILIFE',    pnl:'+5.2%',  partial:'N', setup:'VCP' },
-    '4-9':  { cls:'loss-3',   stock:'HDFCBANK',   pnl:'-6.8%',  partial:'N', setup:'Pullback' },
-    '4-16': { cls:'profit-2', stock:'ULTRACEMCO', pnl:'+8.1%',  partial:'N', setup:'Breakout' },
-    '4-23': { cls:'profit-3', stock:'BAJAJFINSV', pnl:'+13.4%', partial:'Y', setup:'VCP' },
-    '5-6':  { cls:'profit-2', stock:'WIPRO',      pnl:'+7.2%',  partial:'N', setup:'Pullback' },
-    '5-13': { cls:'loss-1',   stock:'AXISBANK',   pnl:'-3.6%',  partial:'N', setup:'Breakout' },
-    '5-20': { cls:'profit-1', stock:'HDFC',       pnl:'+4.8%',  partial:'N', setup:'VCP' },
-    '5-27': { cls:'loss-2',   stock:'INFY',       pnl:'-4.9%',  partial:'N', setup:'Pullback' },
-    '6-3':  { cls:'profit-3', stock:'TCS',        pnl:'+10.4%', partial:'N', setup:'VCP' },
-    '6-10': { cls:'profit-2', stock:'RELIANCE',   pnl:'+8.6%',  partial:'Y', setup:'Breakout' },
-    '6-17': { cls:'loss-1',   stock:'HCLTECH',    pnl:'-3.1%',  partial:'N', setup:'Pullback' },
-  };
+  // Group by close date
+  const dayMap = {};
+  closed.forEach(t => {
+    if (!t.closeDate) return;
+    const d = new Date(t.closeDate);
+    if (isNaN(d)) return;
+    const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+    if (!dayMap[key]) dayMap[key] = { date: d, pl: 0, trades: [] };
+    dayMap[key].pl += t.finalPl;
+    dayMap[key].trades.push(t);
+  });
+
+  const allDates = Object.values(dayMap).map(v => v.date);
+  const year = allDates.length > 0 ? Math.max(...allDates.map(d => d.getFullYear())) : new Date().getFullYear();
+  const maxAbs = Math.max(...Object.values(dayMap).map(v => Math.abs(v.pl)), 1);
+  const isLeap = (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
+  const daysInMonth = [31, isLeap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
   let html = '';
   months.forEach((m, mi) => {
-    html += `<div class="cal-month"><div class="cal-month-name">${m}</div><div class="cal-days-grid">`;
+    const firstDay = new Date(year, mi, 1).getDay();
+    html += `<div class="cal-month"><div class="cal-month-name">${m} ${year}</div><div class="cal-days-grid">`;
     dayHeaders.forEach(d => { html += `<div class="cal-day-header">${d}</div>`; });
-    for (let e = 0; e < firstDays2025[mi]; e++) { html += `<div class="cal-cell empty"></div>`; }
-    for (let d = 1; d <= daysInMonth[mi]; d++) {
-      const key = `${mi+1}-${d}`;
-      const trade = tradeDays[key];
-      if (trade) {
-        const tip = JSON.stringify(trade).replace(/"/g, '&quot;');
-        html += `<div class="cal-cell ${trade.cls}" data-trade="${tip}" data-date="${m} ${d}" onmouseenter="showCalTooltip(event,this)" onmouseleave="hideCalTooltip()"></div>`;
+    for (let e = 0; e < firstDay; e++) html += `<div class="cal-cell empty"></div>`;
+    for (let day = 1; day <= daysInMonth[mi]; day++) {
+      const entry = dayMap[`${year}-${mi}-${day}`];
+      if (entry) {
+        const ratio = Math.abs(entry.pl) / maxAbs;
+        const cls = entry.pl >= 0 ? (ratio > 0.66 ? 'profit-3' : ratio > 0.33 ? 'profit-2' : 'profit-1') : (ratio > 0.66 ? 'loss-3' : ratio > 0.33 ? 'loss-2' : 'loss-1');
+        const stocks = entry.trades.map(t => t.stock).join(', ');
+        const plFmt = (entry.pl >= 0 ? '+₹' : '-₹') + Math.round(Math.abs(entry.pl)).toLocaleString('en-IN');
+        const tip = JSON.stringify({ pnl: plFmt, stock: stocks, partial: entry.trades.some(t => t.partialTaken === 'Y') ? 'Y' : 'N', setup: entry.trades.map(t => t.setupType || '—').join(', ') }).replace(/"/g, '&quot;');
+        html += `<div class="cal-cell ${cls}" data-trade="${tip}" data-date="${m} ${day}" onmouseenter="showCalTooltip(event,this)" onmouseleave="hideCalTooltip()"></div>`;
       } else {
         html += `<div class="cal-cell no-trade"></div>`;
       }
@@ -1311,17 +1481,10 @@ function renderCalendar() {
   });
   grid.innerHTML = html;
 
-  // Create tooltip element once
   if (!document.getElementById('cal-tooltip')) {
     const tt = document.createElement('div');
     tt.id = 'cal-tooltip';
-    tt.style.cssText = `
-      position:fixed; z-index:9999; pointer-events:none; display:none;
-      background:var(--surface); border:1px solid var(--border);
-      border-radius:8px; padding:10px 13px;
-      box-shadow:0 8px 24px rgba(0,0,0,0.15);
-      font-size:12px; line-height:1.6; min-width:160px;
-    `;
+    tt.style.cssText = 'position:fixed;z-index:9999;pointer-events:none;display:none;background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 13px;box-shadow:0 8px 24px rgba(0,0,0,0.15);font-size:12px;line-height:1.6;min-width:160px;';
     document.body.appendChild(tt);
   }
 }
@@ -1367,30 +1530,123 @@ function hideCalTooltip() {
 
 // ── COLUMN MAPPINGS CONFIG ────────────────────────────
 function renderColMappings() {
+  const cfg = loadConfig();
   const fields = [
-    { label: 'Stock Name', key: 'stock', default: 'A' },
-    { label: 'Open/Closed Flag', key: 'flag', default: 'B' },
-    { label: 'Trade / Entry Date', key: 'date', default: 'C' },
-    { label: 'Entry Price', key: 'entry', default: 'D' },
-    { label: 'Stop Loss Price', key: 'stop', default: 'E' },
-    { label: 'Partial Taken (Y/N)', key: 'partial', default: 'F' },
-    { label: '7-Day Low', key: '7dl', default: 'G' },
-    { label: '21 EMA Context', key: 'ema', default: 'H' },
-    { label: 'Notional P&L%', key: 'npnlpct', default: 'I' },
-    { label: 'Final P&L%', key: 'fpnlpct', default: 'J' },
-    { label: 'Final P&L ₹', key: 'fpnl', default: 'K' },
-    { label: 'Notional P&L ₹', key: 'npnl', default: 'L' },
-    { label: 'Setup Type', key: 'setup', default: '—', optional: true },
+    { label: 'Open/Closed Flag (YES=open, NO=closed)', key: 'flagCol' },
+    { label: 'Stock Name', key: 'stockCol' },
+    { label: 'Entry / Open Date', key: 'openDateCol' },
+    { label: 'Exit / Close Date', key: 'closeDateCol' },
+    { label: '21 EMA Context (Above/Below)', key: 'ema21Col' },
+    { label: 'CMP — Current Market Price', key: 'cmpCol' },
+    { label: '7-Day Low', key: 'sevenDayLowCol' },
+    { label: 'Stop Loss Price', key: 'stopLossCol' },
+    { label: 'Initial Risk ₹', key: 'initRiskRsCol' },
+    { label: 'Initial Risk %', key: 'initRiskPctCol' },
+    { label: 'Entry Price', key: 'entryPriceCol' },
+    { label: 'Setup Type', key: 'setupTypeCol', optional: true },
+    { label: '% from Stop Loss', key: 'pctFromStopCol' },
+    { label: 'Notional P&L %', key: 'plPctCol' },
+    { label: 'Notional P&L ₹', key: 'notionalPlCol' },
+    { label: 'Partial Exit Qty', key: 'partialQtyCol' },
+    { label: 'Partial Exit Price', key: 'partialPriceCol' },
+    { label: 'Partial P&L ₹', key: 'partialPlCol' },
+    { label: 'Final Exit Price', key: 'finalExitPriceCol' },
+    { label: 'Final P&L ₹', key: 'finalPlCol' },
+    { label: 'Final P&L %', key: 'finalPlPctCol' },
+    { label: 'Trade Age (days)', key: 'ageCol' },
   ];
-  const cols = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
   const container = document.getElementById('col-mappings');
-  container.innerHTML = fields.map(f => {
-    const opts = ['—', ...cols].map(c => `<option value="${c}" ${c === f.default ? 'selected' : ''}>${c}</option>`).join('');
-    return `<div class="config-map-row">
+  container.innerHTML = fields.map(f => `
+    <div class="config-map-row">
       <div class="config-map-label">${f.label}${f.optional ? ' <span class="config-map-opt">(optional)</span>' : ''}</div>
-      <select class="col-select">${opts}</select>
-    </div>`;
-  }).join('');
+      <input type="text" id="cfg-${f.key}" class="col-select" value="${cfg[f.key] || DEFAULT_CONFIG[f.key]}" maxlength="3" style="text-transform:uppercase;width:70px">
+    </div>`).join('');
+}
+
+// ── CONFIG SAVE / POPULATE ────────────────────────────
+function populateConfigPage() {
+  const cfg = loadConfig();
+  const setVal = (id, v) => { const el = document.getElementById(id); if (el) el.value = v; };
+  setVal('cfg-url', cfg.url);
+  setVal('cfg-sheet', cfg.sheet);
+  setVal('cfg-header-rows', cfg.headerRows);
+  setVal('cfg-portfolio-cell', cfg.portfolioCell);
+  setVal('cfg-initial-cap-cell', cfg.initialCapCell);
+  setVal('cfg-max-heat', cfg.maxHeat);
+  setVal('cfg-partial-trigger', cfg.partialTrigger);
+  setVal('cfg-stop-proximity', cfg.stopProximity);
+  setVal('cfg-heat-green', cfg.heatGreen);
+  setVal('cfg-heat-amber', cfg.heatAmber);
+  updateConnStatus(cfg.url ? 'configured' : 'not-configured');
+}
+
+function updateConnStatus(state) {
+  const dot = document.getElementById('conn-status-dot');
+  const text = document.getElementById('conn-status-text');
+  if (!dot || !text) return;
+  const states = {
+    'configured': ['var(--green)', 'URL configured — click Test to verify, or Save & Refresh to load data'],
+    'connected':  ['var(--green)', 'Connected — data loaded successfully'],
+    'error':      ['var(--red)',   'Connection error — check URL and try again'],
+    'not-configured': ['var(--amber)', 'Not connected — enter your Apps Script URL above'],
+  };
+  const [color, msg] = states[state] || states['not-configured'];
+  dot.style.background = color;
+  text.textContent = msg;
+}
+
+function saveAllConfig() {
+  const cfg = loadConfig();
+  const getVal = (id, fb) => { const el = document.getElementById(id); return el ? el.value.trim() : fb; };
+  cfg.url = getVal('cfg-url', cfg.url);
+  cfg.sheet = getVal('cfg-sheet', cfg.sheet) || 'TRADES';
+  cfg.headerRows = getVal('cfg-header-rows', cfg.headerRows) || '1';
+  cfg.portfolioCell = getVal('cfg-portfolio-cell', cfg.portfolioCell).toUpperCase() || cfg.portfolioCell;
+  cfg.initialCapCell = getVal('cfg-initial-cap-cell', cfg.initialCapCell).toUpperCase() || cfg.initialCapCell;
+  cfg.maxHeat = parseFloat(getVal('cfg-max-heat', cfg.maxHeat)) || cfg.maxHeat;
+  cfg.partialTrigger = parseFloat(getVal('cfg-partial-trigger', cfg.partialTrigger)) || cfg.partialTrigger;
+  cfg.stopProximity = parseFloat(getVal('cfg-stop-proximity', cfg.stopProximity)) || cfg.stopProximity;
+  cfg.heatGreen = parseFloat(getVal('cfg-heat-green', cfg.heatGreen)) || cfg.heatGreen;
+  cfg.heatAmber = parseFloat(getVal('cfg-heat-amber', cfg.heatAmber)) || cfg.heatAmber;
+  ['flagCol','stockCol','openDateCol','closeDateCol','ema21Col','cmpCol','sevenDayLowCol','stopLossCol',
+   'initRiskRsCol','initRiskPctCol','entryPriceCol','setupTypeCol','pctFromStopCol','plPctCol',
+   'notionalPlCol','partialQtyCol','partialPriceCol','partialPlCol','finalExitPriceCol','finalPlCol','finalPlPctCol','ageCol'
+  ].forEach(key => { const v = getVal('cfg-' + key, cfg[key]).toUpperCase(); if (v) cfg[key] = v; });
+  saveConfig(cfg);
+  showToast('Configuration saved!', 'green');
+  updateConnStatus(cfg.url ? 'configured' : 'not-configured');
+}
+
+async function testConnection() {
+  const urlEl = document.getElementById('cfg-url');
+  if (!urlEl || !urlEl.value.trim()) { showToast('Enter a URL first', 'amber'); return; }
+  const cfg = loadConfig();
+  cfg.url = urlEl.value.trim();
+  saveConfig(cfg);
+  showToast('Testing connection…', 'blue');
+  const data = await fetchData();
+  if (data) {
+    updateConnStatus('connected');
+    showToast(`Connected! ${data.open.length} open + ${data.closed.length} closed trades`, 'green');
+  } else {
+    updateConnStatus('error');
+  }
+}
+
+// ── TOAST ─────────────────────────────────────────────
+function showToast(msg, type = 'green') {
+  let tt = document.getElementById('toast');
+  if (!tt) {
+    tt = document.createElement('div');
+    tt.id = 'toast';
+    tt.style.cssText = 'position:fixed;bottom:24px;right:24px;z-index:10000;padding:12px 18px;border-radius:10px;font-size:13px;font-weight:600;box-shadow:0 8px 24px rgba(0,0,0,0.2);opacity:0;transition:opacity 0.3s;pointer-events:none;max-width:360px;';
+    document.body.appendChild(tt);
+  }
+  const colors = { green:['var(--green-soft)','var(--green)'], red:['var(--red-soft)','var(--red)'], amber:['var(--amber-soft)','var(--amber)'], blue:['var(--accent-soft)','var(--accent)'] };
+  const [bg, color] = colors[type] || colors.green;
+  tt.style.background = bg; tt.style.color = color; tt.style.border = `1px solid ${color}`;
+  tt.textContent = msg; tt.style.opacity = '1';
+  clearTimeout(tt._t); tt._t = setTimeout(() => { tt.style.opacity = '0'; }, 3500);
 }
 
 // ── APEXCHARTS HELPERS ────────────────────────────────
@@ -1409,169 +1665,199 @@ function baseOpts(height = 220) {
 
 // ── PERFORMANCE CHARTS ────────────────────────────────
 let perfCharts = [];
-function destroyAndReinitPerf() { perfCharts.forEach(c => c.destroy()); perfCharts = []; initPerfCharts(); }
-function destroyAndReinitAnalysis() { analysisCharts.forEach(c => c.destroy()); analysisCharts = []; initAnalysisCharts(); }
+function destroyAndReinitPerf() {
+  perfCharts.forEach(c => c.destroy()); perfCharts = [];
+  const d = window._data;
+  initPerfCharts(d ? d.closed : [], d ? d.initialCapital : 0);
+}
+function destroyAndReinitAnalysis() {
+  analysisCharts.forEach(c => c.destroy()); analysisCharts = [];
+  const d = window._data;
+  initAnalysisCharts(d ? d.open : [], d ? d.closed : []);
+}
 
-function initPerfCharts() {
+function initPerfCharts(closed, initialCapital) {
+  if (!closed || !closed.length) return;
   const c = chartColors();
+  const sorted = [...closed].filter(t => t.closeDate).sort((a, b) => new Date(a.closeDate) - new Date(b.closeDate));
 
-  // 1. Equity Curve
-  const equityData = [
-    {x:'Jan',y:1000000},{x:'Feb',y:1024000},{x:'Mar',y:1062000},{x:'Apr',y:1048000},
-    {x:'May',y:1085000},{x:'Jun',y:1124000},{x:'Jul',y:1098000},{x:'Aug',y:1142000},
-    {x:'Sep',y:1189000},{x:'Oct',y:1165000},{x:'Nov',y:1210000},{x:'Dec',y:1245230}
-  ];
-  const eq = new ApexCharts(document.getElementById('chart-equity'), {
-    ...baseOpts(220),
-    chart: { ...baseOpts(220).chart, type: 'area' },
-    series: [{ name: 'Portfolio Value', data: equityData.map(d => d.y) }],
-    xaxis: { ...baseOpts().xaxis, categories: equityData.map(d => d.x) },
+  let eq = initialCapital || 0, peak = eq;
+  const eqData = [], ddData = [], xLbls = [];
+  sorted.forEach(t => {
+    eq += t.finalPl; if (eq > peak) peak = eq;
+    eqData.push(Math.round(eq));
+    ddData.push(parseFloat(((eq - peak) / peak * 100).toFixed(2)));
+    xLbls.push(t.closeDate);
+  });
+
+  const eqChart = new ApexCharts(document.getElementById('chart-equity'), {
+    ...baseOpts(220), chart: { ...baseOpts(220).chart, type: 'area' },
+    series: [{ name: 'Portfolio Value', data: eqData }],
+    xaxis: { ...baseOpts().xaxis, categories: xLbls, labels: { ...baseOpts().xaxis.labels, rotate: -30, hideOverlappingLabels: true } },
     yaxis: { labels: { style: { colors: c.text, fontSize:'11px' }, formatter: v => '₹' + (v/100000).toFixed(1) + 'L' } },
-    colors: [c.green],
-    fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.35, opacityTo: 0.02 } },
-    stroke: { curve: 'smooth', width: 2 },
-    dataLabels: { enabled: false },
-    tooltip: { ...baseOpts().tooltip, y: { formatter: v => '₹' + v.toLocaleString('en-IN') } },
-    markers: { size: 4, hover: { size: 7 } },
+    colors: [c.green], fill: { type: 'gradient', gradient: { shadeIntensity:1, opacityFrom:0.35, opacityTo:0.02 } },
+    stroke: { curve: 'smooth', width: 2 }, dataLabels: { enabled: false }, markers: { size: 4, hover: { size: 7 } },
   });
-  eq.render(); perfCharts.push(eq);
+  eqChart.render(); perfCharts.push(eqChart);
 
-  // 2. Drawdown
-  const ddData = [0,-1.2,-0.8,-3.1,-1.8,-0.4,-4.2,-2.6,-1.1,-3.8,-2.2,-0.9];
-  const dd = new ApexCharts(document.getElementById('chart-drawdown'), {
-    ...baseOpts(220),
-    chart: { ...baseOpts(220).chart, type: 'area' },
+  const maxDD = ddData.length ? Math.min(...ddData) : 0;
+  const ddChart = new ApexCharts(document.getElementById('chart-drawdown'), {
+    ...baseOpts(220), chart: { ...baseOpts(220).chart, type: 'area' },
     series: [{ name: 'Drawdown %', data: ddData }],
-    xaxis: { ...baseOpts().xaxis, categories: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'] },
+    xaxis: { ...baseOpts().xaxis, categories: xLbls, labels: { ...baseOpts().xaxis.labels, rotate: -30, hideOverlappingLabels: true } },
     yaxis: { labels: { style: { colors: c.text, fontSize:'11px' }, formatter: v => v + '%' }, max: 0 },
-    colors: [c.red],
-    fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0.05 } },
-    stroke: { curve: 'smooth', width: 2 },
-    annotations: { yaxis: [{ y: -4.2, label: { text: 'Max DD: -4.2%', style: { color: c.red } }, borderColor: c.red }] },
+    colors: [c.red], fill: { type: 'gradient', gradient: { shadeIntensity:1, opacityFrom:0.4, opacityTo:0.05 } },
+    stroke: { curve: 'smooth', width: 2 }, dataLabels: { enabled: false },
+    annotations: { yaxis: [{ y: maxDD, label: { text: 'Max DD: ' + maxDD.toFixed(1) + '%', style: { color: c.red, fontSize:'11px' } }, borderColor: c.red, strokeDashArray: 3 }] },
   });
-  dd.render(); perfCharts.push(dd);
+  ddChart.render(); perfCharts.push(ddChart);
 
-  // 3. P&L Distribution
-  const bins = ['-15','-12','-9','-6','-3','0','+3','+6','+9','+12','+15','+18','+21'];
-  const finalDist = [0,1,2,4,8,3,5,6,4,3,2,1,0];
-  const notionalDist = [0,1,1,3,4,2,4,5,6,5,4,3,2];
-  const dist = new ApexCharts(document.getElementById('chart-distribution'), {
-    ...baseOpts(220),
-    chart: { ...baseOpts(220).chart, type: 'bar' },
-    series: [
-      { name: 'Final P&L%', data: finalDist },
-      { name: 'Notional P&L%', data: notionalDist },
-    ],
-    xaxis: { ...baseOpts().xaxis, categories: bins, title: { text: 'P&L %', style: { color: c.text } } },
-    yaxis: { labels: { style: { colors: c.text, fontSize:'11px' } }, title: { text: 'Trades', style: { color: c.text } } },
-    colors: [c.accent, c.amber],
-    plotOptions: { bar: { columnWidth: '80%' } },
-    dataLabels: { enabled: false },
+  const bucketSize = 3, buckets = {};
+  sorted.forEach(t => {
+    const bf = Math.floor(t.finalPlPct / bucketSize) * bucketSize;
+    const bn = Math.floor(t.plPct / bucketSize) * bucketSize;
+    if (!buckets[bf]) buckets[bf] = { f:0, n:0 };
+    if (!buckets[bn]) buckets[bn] = { f:0, n:0 };
+    buckets[bf].f++; buckets[bn].n++;
   });
-  dist.render(); perfCharts.push(dist);
-
-  // 4. R-Multiple Distribution
-  const rBins = ['-2','-1.5','-1','-0.5','0','0.5','1','1.5','2','2.5','3','4','5+'];
-  const rData = [0,1,3,5,2,4,6,5,4,3,2,1,1];
-  const rm = new ApexCharts(document.getElementById('chart-rmultiple'), {
-    ...baseOpts(220),
-    chart: { ...baseOpts(220).chart, type: 'bar' },
-    series: [{ name: 'R-Multiple', data: rData }],
-    xaxis: { ...baseOpts().xaxis, categories: rBins, title: { text: 'R-Multiple', style: { color: c.text } } },
-    colors: rData.map((_,i) => i < 4 ? c.red : c.green),
-    plotOptions: { bar: { columnWidth: '80%', distributed: true } },
-    legend: { show: false },
-    dataLabels: { enabled: false },
-    annotations: { xaxis: [{ x: '0', label: { text: 'Breakeven', style: { color: c.text } }, borderColor: c.text }] },
+  const binKeys = Object.keys(buckets).map(Number).sort((a,b) => a - b);
+  const distChart = new ApexCharts(document.getElementById('chart-distribution'), {
+    ...baseOpts(220), chart: { ...baseOpts(220).chart, type: 'bar' },
+    series: [{ name: 'Final P&L%', data: binKeys.map(k => buckets[k].f||0) }, { name: 'Notional P&L%', data: binKeys.map(k => buckets[k].n||0) }],
+    xaxis: { ...baseOpts().xaxis, categories: binKeys.map(k => (k>=0?'+':'')+k+'%') },
+    colors: [c.accent, c.amber], plotOptions: { bar: { columnWidth: '80%' } }, dataLabels: { enabled: false },
   });
-  rm.render(); perfCharts.push(rm);
+  distChart.render(); perfCharts.push(distChart);
 
-  // 5. Day of Week
-  const dowData = [12400, -3200, 18600, 8400, -5100];
-  const dow = new ApexCharts(document.getElementById('chart-dayofweek'), {
-    ...baseOpts(220),
-    chart: { ...baseOpts(220).chart, type: 'bar' },
-    series: [{ name: 'P&L ₹', data: dowData }],
+  const rBins = ['-6+','-5','-4','-3','-2','-1','0','1','2','3','4','5','6+'];
+  const rData = new Array(rBins.length).fill(0);
+  sorted.forEach(t => { const v = Math.round(t.finalPlPct); let i = v+6; if(v<=-6)i=0; else if(v>=6)i=12; rData[i]++; });
+  const rmChart = new ApexCharts(document.getElementById('chart-rmultiple'), {
+    ...baseOpts(220), chart: { ...baseOpts(220).chart, type: 'bar' },
+    series: [{ name: 'Trades', data: rData }],
+    xaxis: { ...baseOpts().xaxis, categories: rBins, title: { text: 'Final P&L%', style: { color: c.text } } },
+    colors: rData.map((_,i) => i<6 ? c.red : i===6 ? c.amber : c.green),
+    plotOptions: { bar: { columnWidth: '80%', distributed: true } }, legend: { show: false }, dataLabels: { enabled: false },
+  });
+  rmChart.render(); perfCharts.push(rmChart);
+
+  const dow = [0,0,0,0,0];
+  sorted.forEach(t => { if(!t.closeDate) return; const d = new Date(t.closeDate).getDay(); if(d>=1&&d<=5) dow[d-1]+=t.finalPl; });
+  const dowChart = new ApexCharts(document.getElementById('chart-dayofweek'), {
+    ...baseOpts(220), chart: { ...baseOpts(220).chart, type: 'bar' },
+    series: [{ name: 'P&L ₹', data: dow.map(Math.round) }],
     xaxis: { ...baseOpts().xaxis, categories: ['Monday','Tuesday','Wednesday','Thursday','Friday'] },
     yaxis: { labels: { style: { colors: c.text, fontSize:'11px' }, formatter: v => (v>=0?'+':'')+v.toLocaleString('en-IN') } },
-    colors: dowData.map(v => v >= 0 ? c.green : c.red),
-    plotOptions: { bar: { columnWidth: '55%', distributed: true, borderRadius: 4 } },
-    legend: { show: false },
-    dataLabels: { enabled: false },
+    colors: dow.map(v => v>=0?c.green:c.red), plotOptions: { bar: { columnWidth:'55%', distributed:true, borderRadius:4 } },
+    legend: { show: false }, dataLabels: { enabled: false },
   });
-  dow.render(); perfCharts.push(dow);
+  dowChart.render(); perfCharts.push(dowChart);
 }
 
 // ── ANALYSIS CHARTS ───────────────────────────────────
 let analysisCharts = [];
-function initAnalysisCharts() {
+function initAnalysisCharts(open, closed) {
+  if (!closed) closed = []; if (!open) open = [];
   const c = chartColors();
+  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
 
-  // 1. Scatter — Trade Age vs P&L%
-  const scatterData = [
-    {x:5,y:-4.2},{x:7,y:-3.1},{x:8,y:2.4},{x:9,y:-5.1},{x:10,y:3.8},
-    {x:12,y:8.4},{x:14,y:-4.6},{x:15,y:6.2},{x:16,y:12.1},{x:18,y:-3.8},
-    {x:19,y:9.4},{x:20,y:15.6},{x:21,y:-4.2},{x:22,y:10.4},{x:23,y:18.2},
-    {x:25,y:7.8},{x:27,y:22.4},{x:30,y:-3.9},{x:32,y:16.8},{x:35,y:24.6},
-  ];
+  // EMA Split
+  const above = closed.filter(t => (t.ema21||'').toLowerCase() === 'above');
+  const below = closed.filter(t => (t.ema21||'').toLowerCase() === 'below');
+  const calcStats = trades => {
+    const wins = trades.filter(t => t.finalPlPct > 0), losses = trades.filter(t => t.finalPlPct < 0);
+    const wr = trades.length > 0 ? wins.length / trades.length * 100 : 0;
+    const avg = trades.length > 0 ? trades.reduce((s,t) => s+t.finalPlPct, 0) / trades.length : 0;
+    const aw = wins.length > 0 ? wins.reduce((s,t) => s+t.finalPlPct, 0)/wins.length : 0;
+    const al = losses.length > 0 ? Math.abs(losses.reduce((s,t) => s+t.finalPlPct, 0)/losses.length) : 0;
+    return { wr, avg, r: al > 0 ? aw/al : 0, n: trades.length };
+  };
+  const ab = calcStats(above), bl = calcStats(below);
+  set('ema-above-wr', ab.wr.toFixed(0)+'%'); set('ema-above-avg', (ab.avg>=0?'+':'')+ab.avg.toFixed(1)+'%');
+  set('ema-above-r', ab.r.toFixed(1)+'R'); set('ema-above-n', 'n = '+ab.n+' trades');
+  const abBar = document.getElementById('ema-above-bar'); if(abBar) abBar.style.width = Math.min(100,ab.wr)+'%';
+  set('ema-below-wr', bl.wr.toFixed(0)+'%'); set('ema-below-avg', (bl.avg>=0?'+':'')+bl.avg.toFixed(1)+'%');
+  set('ema-below-r', bl.r.toFixed(1)+'R'); set('ema-below-n', 'n = '+bl.n+' trades');
+  const blBar = document.getElementById('ema-below-bar'); if(blBar) blBar.style.width = Math.min(100,bl.wr)+'%';
+  const insEl = document.getElementById('ema-insight');
+  if (insEl && ab.n > 0 && bl.n > 0) {
+    const mult = bl.wr > 0 ? (ab.wr/bl.wr).toFixed(1) : '∞';
+    insEl.innerHTML = `→ You perform <strong>${mult}× better</strong> when entering above the 21 EMA. Below-EMA trades return avg ${bl.avg.toFixed(1)}% per trade.`;
+  }
+
+  // Scatter
+  const sorted = [...closed].filter(t => t.closeDate).sort((a,b) => new Date(a.closeDate)-new Date(b.closeDate));
   const sc = new ApexCharts(document.getElementById('chart-scatter'), {
-    ...baseOpts(240),
-    chart: { ...baseOpts(240).chart, type: 'scatter', zoom: { enabled: false } },
+    ...baseOpts(240), chart: { ...baseOpts(240).chart, type: 'scatter', zoom: { enabled: false } },
     series: [
-      { name: 'Win', data: scatterData.filter(d => d.y >= 0).map(d => [d.x, d.y]) },
-      { name: 'Loss', data: scatterData.filter(d => d.y < 0).map(d => [d.x, d.y]) },
+      { name:'Win', data: sorted.filter(t=>t.finalPlPct>=0).map(t=>[t.age, parseFloat(t.finalPlPct.toFixed(1))]) },
+      { name:'Loss', data: sorted.filter(t=>t.finalPlPct<0).map(t=>[t.age, parseFloat(t.finalPlPct.toFixed(1))]) },
     ],
-    xaxis: { ...baseOpts().xaxis, title: { text: 'Hold Days', style: { color: c.text } }, min: 0, max: 40 },
-    yaxis: { labels: { style: { colors: c.text, fontSize:'11px' }, formatter: v => v + '%' }, title: { text: 'Final P&L%', style: { color: c.text } } },
-    colors: [c.green, c.red],
-    markers: { size: 6 },
+    xaxis: { ...baseOpts().xaxis, title: { text:'Hold Days', style:{color:c.text} }, min: 0 },
+    yaxis: { labels: { style:{colors:c.text,fontSize:'11px'}, formatter: v => v+'%' }, title: { text:'Final P&L%', style:{color:c.text} } },
+    colors: [c.green, c.red], markers: { size: 6 },
     annotations: { yaxis: [{ y: 0, borderColor: c.text, strokeDashArray: 3 }] },
-    tooltip: { ...baseOpts().tooltip, x: { formatter: v => v + ' days' }, y: { formatter: v => v + '%' } },
+    tooltip: { ...baseOpts().tooltip, x: { formatter: v => v+' days' }, y: { formatter: v => v+'%' } },
   });
   sc.render(); analysisCharts.push(sc);
 
-  // 2. Entry Velocity
-  const weeks = ['W1','W2','W3','W4','W5','W6','W7','W8','W9','W10','W11','W12','W13','W14','W15','W16'];
-  const velocity = [1,2,1,3,2,1,4,2,1,2,3,1,2,1,2,1];
+  // Entry Velocity
+  const wkMap = {};
+  [...open, ...closed].forEach(t => {
+    if (!t.openDate) return;
+    const d = new Date(t.openDate); if (isNaN(d)) return;
+    const jan1 = new Date(d.getFullYear(), 0, 1);
+    const wk = Math.ceil((((d-jan1)/86400000)+jan1.getDay()+1)/7);
+    const key = d.getFullYear()+'-W'+String(wk).padStart(2,'0');
+    wkMap[key] = (wkMap[key]||0)+1;
+  });
+  const wkKeys = Object.keys(wkMap).sort(), velData = wkKeys.map(k => wkMap[k]);
   const vel = new ApexCharts(document.getElementById('chart-velocity'), {
-    ...baseOpts(240),
-    chart: { ...baseOpts(240).chart, type: 'bar' },
-    series: [{ name: 'New Positions', data: velocity }],
-    xaxis: { ...baseOpts().xaxis, categories: weeks },
-    yaxis: { labels: { style: { colors: c.text, fontSize:'11px' } }, tickAmount: 5, max: 5 },
-    colors: velocity.map(v => v >= 3 ? c.amber : c.accent),
-    plotOptions: { bar: { columnWidth: '60%', distributed: true, borderRadius: 3 } },
-    legend: { show: false },
-    dataLabels: { enabled: false },
-    annotations: { yaxis: [{ y: 3, label: { text: 'Overtrading threshold', style: { color: c.amber, fontSize: '11px' } }, borderColor: c.amber, strokeDashArray: 4 }] },
+    ...baseOpts(240), chart: { ...baseOpts(240).chart, type: 'bar' },
+    series: [{ name:'New Positions', data: velData }],
+    xaxis: { ...baseOpts().xaxis, categories: wkKeys.map(k=>k.replace(/\d{4}-/,'')), labels: { ...baseOpts().xaxis.labels, rotate:-45, hideOverlappingLabels:true } },
+    yaxis: { labels: { style:{colors:c.text,fontSize:'11px'} }, tickAmount:5 },
+    colors: velData.map(v => v>=3?c.amber:c.accent),
+    plotOptions: { bar: { columnWidth:'60%', distributed:true, borderRadius:3 } },
+    legend: { show:false }, dataLabels: { enabled:false },
+    annotations: { yaxis: [{ y:3, label:{text:'Overtrading threshold',style:{color:c.amber,fontSize:'11px'}}, borderColor:c.amber, strokeDashArray:4 }] },
   });
   vel.render(); analysisCharts.push(vel);
 
-  // 3. Monthly P&L
-  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
-  const mPnl = [8400, -3200, 22100, 12600, -5100, 15400, -2800, 18900, 9200, -4600, 21300, 7800];
+  // Monthly P&L
+  const mMap = {};
+  sorted.forEach(t => {
+    if (!t.closeDate) return;
+    const d = new Date(t.closeDate); if (isNaN(d)) return;
+    const key = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+    mMap[key] = (mMap[key]||0)+t.finalPl;
+  });
+  const mKeys = Object.keys(mMap).sort(), mData = mKeys.map(k=>Math.round(mMap[k]));
   const mp = new ApexCharts(document.getElementById('chart-monthly'), {
-    ...baseOpts(240),
-    chart: { ...baseOpts(240).chart, type: 'bar' },
-    series: [{ name: 'Monthly P&L ₹', data: mPnl }],
-    xaxis: { ...baseOpts().xaxis, categories: months },
-    yaxis: { labels: { style: { colors: c.text, fontSize:'11px' }, formatter: v => (v>=0?'+':'')+v.toLocaleString('en-IN') } },
-    colors: mPnl.map(v => v >= 0 ? c.green : c.red),
-    plotOptions: { bar: { columnWidth: '60%', distributed: true, borderRadius: 4 } },
-    legend: { show: false },
-    dataLabels: { enabled: false },
-    annotations: { yaxis: [{ y: 0, borderColor: c.text, strokeDashArray: 2 }] },
+    ...baseOpts(240), chart: { ...baseOpts(240).chart, type: 'bar' },
+    series: [{ name:'Monthly P&L ₹', data: mData }],
+    xaxis: { ...baseOpts().xaxis, categories: mKeys },
+    yaxis: { labels: { style:{colors:c.text,fontSize:'11px'}, formatter: v=>(v>=0?'+':'')+v.toLocaleString('en-IN') } },
+    colors: mData.map(v=>v>=0?c.green:c.red),
+    plotOptions: { bar: { columnWidth:'60%', distributed:true, borderRadius:4 } },
+    legend: { show:false }, dataLabels: { enabled:false },
+    annotations: { yaxis: [{ y:0, borderColor:c.text, strokeDashArray:2 }] },
   });
   mp.render(); analysisCharts.push(mp);
 }
 
 // ── INIT ─────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
-  renderPositions(openPositions);
-  renderClosedTrades();
-  renderStreak();
-  renderCalendar();
+  populateConfigPage();
   renderColMappings();
+  const cfg = loadConfig();
+  if (cfg.url) {
+    refreshData();
+  } else {
+    renderPositions([]);
+    const ri = document.querySelector('.refresh-info');
+    if (ri) ri.textContent = 'No data — configure in Config tab';
+  }
 });
 </script>
 </body>
