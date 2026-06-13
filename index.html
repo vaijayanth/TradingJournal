@@ -1024,9 +1024,10 @@ tbody tr:hover { filter: brightness(0.97); }
   <!-- Alert strip -->
   <div class="alert-strip">
     <span style="font-size:12px; font-weight:600; color:var(--text-muted)">Live Alerts:</span>
-    <div class="strip-badge badge-red" id="strip-red">🔴 — exit triggered</div>
-    <div class="strip-badge badge-amber" id="strip-amber">🟡 — near stop</div>
-    <div class="strip-badge badge-green" id="strip-green">🟢 — partial pending</div>
+    <div class="strip-badge badge-red" id="strip-red" onclick="filterByAlert('red')" style="cursor:pointer" title="Click to filter">🔴 — exit triggered</div>
+    <div class="strip-badge badge-amber" id="strip-amber" onclick="filterByAlert('amber')" style="cursor:pointer" title="Click to filter">🟡 — near stop</div>
+    <div class="strip-badge badge-green" id="strip-green" onclick="filterByAlert('green')" style="cursor:pointer" title="Click to filter">🟢 — partial pending</div>
+    <div class="strip-badge" id="strip-all" onclick="filterByAlert('all')" style="cursor:pointer;display:none">✕ Clear filter</div>
   </div>
 
   <!-- Table controls -->
@@ -1700,6 +1701,27 @@ function filterAlert(val) {
   rows.forEach((row, i) => {
     const isAlert = row.classList.contains('row-red') || row.classList.contains('row-amber') || row.classList.contains('row-green');
     row.style.display = (val === 'all' || isAlert) ? '' : 'none';
+  });
+}
+
+function filterByAlert(type) {
+  const rows = document.querySelectorAll('#positions-tbody tr:not(.expand-row)');
+  const clearBtn = document.getElementById('strip-all');
+  // Toggle: clicking same type again clears filter
+  const current = document.getElementById('positions-tbody').getAttribute('data-filter');
+  if (current === type) { type = 'all'; }
+  document.getElementById('positions-tbody').setAttribute('data-filter', type);
+  // Highlight active badge
+  ['red','amber','green'].forEach(t => {
+    const el = document.getElementById('strip-' + t);
+    if (el) el.style.outline = (type === t) ? '2px solid var(--accent)' : 'none';
+  });
+  if (clearBtn) clearBtn.style.display = (type !== 'all') ? '' : 'none';
+  rows.forEach((row, i) => {
+    const show = type === 'all' || row.classList.contains('row-' + type);
+    row.style.display = show ? '' : 'none';
+    const expandRow = document.getElementById('expand-' + i);
+    if (expandRow) expandRow.style.display = 'none'; // collapse expand rows on filter
   });
 }
 
