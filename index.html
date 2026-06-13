@@ -1437,6 +1437,19 @@ function chartColors() {
 function setPeriod(btn, period) {
   document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
   btn.classList.add('active');
+  const d = window._data;
+  if (!d) return;
+  let closed = d.closed;
+  if (period !== 'all') {
+    const cutoff = new Date();
+    cutoff.setDate(cutoff.getDate() - parseInt(period));
+    closed = d.closed.filter(t => t.closeDate && parseDate(t.closeDate) >= cutoff);
+  }
+  renderPerfStats(closed, d.open, d.portfolioValue, d.initialCapital);
+  if (window._perfChartsInit) {
+    perfCharts.forEach(c => c.destroy()); perfCharts = [];
+    initPerfCharts(closed, d.initialCapital, period === 'all' ? d.open : []);
+  }
 }
 
 // ── COLLAPSIBLE ──────────────────────────────────────
