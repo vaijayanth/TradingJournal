@@ -639,11 +639,13 @@ tbody tr:hover { filter: brightness(0.97); }
     <!-- RoP -->
     <div class="card card-sm">
       <div class="stat-label">Return on Portfolio</div>
-      <div class="stat-value green" style="font-size:32px; margin-top:8px" id="perf-rop">—</div>
-      <div class="stat-sub" id="perf-rop-sub">On initial capital</div>
-      <div style="margin-top:10px">
-        <div class="stat-label">Closed Trades</div>
-        <div style="font-size:20px; font-weight:700" id="perf-closed-count">—</div>
+      <div class="stat-value green" style="font-size:28px; margin-top:4px" id="perf-rop">—</div>
+      <div class="stat-sub" style="font-size:12px" id="perf-rop-sub">Realised (closed)</div>
+      <div style="margin-top:6px; font-size:20px; font-weight:700" id="perf-rop-combined">—</div>
+      <div class="stat-sub" style="font-size:12px" id="perf-rop-combined-sub">Combined (realised + unrealised)</div>
+      <div style="margin-top:8px">
+        <div class="stat-label">Trades</div>
+        <div style="font-size:16px; font-weight:700" id="perf-closed-count">—</div>
       </div>
     </div>
   </div>
@@ -653,8 +655,12 @@ tbody tr:hover { filter: brightness(0.97); }
   <div class="grid-3" style="margin-bottom:14px">
     <div class="card card-sm">
       <div class="stat-label">Expectancy Per Trade</div>
-      <div class="stat-value green" style="font-size:28px; margin-top:4px" id="perf-expectancy">—</div>
-      <div class="stat-sub" style="margin-top:8px; font-size:13px; line-height:1.5" id="perf-expectancy-sub">Average final P&amp;L% per trade</div>
+      <div class="stat-value green" style="font-size:24px; margin-top:4px" id="perf-expectancy">—</div>
+      <div class="stat-sub" style="margin-top:4px; font-size:12px" id="perf-expectancy-sub">Realised (closed trades)</div>
+      <div style="margin-top:6px; font-size:18px; font-weight:700" id="perf-expectancy-open">—</div>
+      <div class="stat-sub" style="font-size:12px" id="perf-expectancy-open-sub">Unrealised (open trades)</div>
+      <div style="margin-top:6px; font-size:18px; font-weight:700" id="perf-expectancy-combined">—</div>
+      <div class="stat-sub" style="font-size:12px">Combined (all trades)</div>
     </div>
     <div class="card card-sm">
       <div class="stat-label">R-Multiple</div>
@@ -663,19 +669,21 @@ tbody tr:hover { filter: brightness(0.97); }
       <div class="stat-badge badge-green" style="margin-top:8px" id="perf-rmultiple-badge">—</div>
     </div>
     <div class="card card-sm">
-      <div class="stat-label">Win Rate — Final vs Notional</div>
+      <div class="stat-label">Win Rate</div>
       <div class="compare-row" style="margin-top:8px">
         <div class="compare-side">
           <div class="compare-value text-red" id="perf-final-wr">—</div>
-          <div class="compare-label">Final</div>
+          <div class="compare-label">Closed</div>
         </div>
         <div class="compare-vs">vs</div>
         <div class="compare-side">
           <div class="compare-value text-green" id="perf-notional-wr">—</div>
-          <div class="compare-label">Open (In Profit)</div>
+          <div class="compare-label">Open (in profit)</div>
         </div>
       </div>
-      <div class="compare-gap" id="perf-wr-gap">—</div>
+      <div style="margin-top:6px; font-size:16px; font-weight:700" id="perf-combined-wr">—</div>
+      <div class="stat-sub" style="font-size:12px">Combined win rate</div>
+      <div class="compare-gap" style="margin-top:4px" id="perf-wr-gap">—</div>
     </div>
   </div>
 
@@ -715,7 +723,7 @@ tbody tr:hover { filter: brightness(0.97); }
   <div class="grid-2">
     <div class="card">
       <div class="chart-title">Equity Curve</div>
-      <div class="chart-sub">Realised P&amp;L only (closed trades) — open positions excluded · Dashed line = initial capital</div>
+      <div class="chart-sub">Cumulative realised P&amp;L · Final point includes open position unrealised MTM · Dashed line = initial capital</div>
       <div id="chart-equity" style="height:220px;"></div>
     </div>
     <div class="card">
@@ -1109,7 +1117,7 @@ async function refreshData() {
   renderClosedTradesReal(data.closed);
   renderCalendarReal(data.closed);
   renderStreakReal(data.closed);
-  if (window._perfChartsInit) { perfCharts.forEach(c => c.destroy()); perfCharts = []; initPerfCharts(data.closed, data.initialCapital); }
+  if (window._perfChartsInit) { perfCharts.forEach(c => c.destroy()); perfCharts = []; initPerfCharts(data.closed, data.initialCapital, data.open); }
   if (window._analysisChartsInit) { analysisCharts.forEach(c => c.destroy()); analysisCharts = []; initAnalysisCharts(data.open, data.closed); }
   const now = new Date();
   const ts = now.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' });
@@ -1294,9 +1302,8 @@ function renderPerfStats(closed, open, portfolioValue, initialCapital) {
   if (notionalPlEl) notionalPlEl.className = 'compare-value ' + (totalNotionalPl >= 0 ? 'text-green' : 'text-red');
 
   // ── Left-table gap ──
-  const combined = totalFinalPl + totalNotionalPl;
   set('perf-left-table', hasOpenData
-    ? `Combined (realised + unrealised): ${fmtRs(combined)}`
+    ? `Unrealised (col Y) across ${openWithData.length} open positions`
     : open.length ? 'Open positions have no mark-to-market data (col Y)' : 'No open positions');
 
   // ── Open Unrealized P&L card (formerly capture rate) ──
@@ -1312,39 +1319,68 @@ function renderPerfStats(closed, open, portfolioValue, initialCapital) {
   }
   set('perf-capture-label', 'unrealised P&L (open positions)');
 
-  // ── RoP card ──
-  set('perf-rop', fmtPct(rop));
-  set('perf-rop-sub', 'On ' + fmtRs(initialCapital) + ' initial capital');
-  set('perf-closed-count', closed.length);
+  // ── Combined stats (closed + open) ──
+  const combined = totalFinalPl + totalNotionalPl;
+  const totalTrades = closed.length + open.length;
+  const combinedRoP = initialCapital > 0 ? combined / initialCapital * 100 : 0;
+  // Unrealised expectancy: avg notionalPl per open trade as % of initial capital
+  const unrealisedExpPct = open.length > 0 && initialCapital > 0
+    ? totalNotionalPl / open.length / initialCapital * 100 : 0;
+  // Combined expectancy: (total realised + total unrealised) / total trades / initialCapital * 100
+  const combinedExpPct = totalTrades > 0 && initialCapital > 0
+    ? combined / totalTrades / initialCapital * 100 : 0;
 
-  // ── System quality ──
+  // ── RoP card ──
+  const ropEl = document.getElementById('perf-rop');
+  set('perf-rop', fmtPct(rop));
+  if (ropEl) ropEl.className = 'stat-value ' + (rop >= 0 ? 'green' : 'red');
+  set('perf-rop-sub', 'Realised (' + fmtRs(initialCapital) + ' initial capital)');
+  const ropCombEl = document.getElementById('perf-rop-combined');
+  set('perf-rop-combined', fmtPct(combinedRoP));
+  if (ropCombEl) ropCombEl.style.color = combinedRoP >= 0 ? 'var(--green)' : 'var(--red)';
+  set('perf-rop-combined-sub', 'Combined (' + fmtRs(combined) + ')');
+  set('perf-closed-count', closed.length + ' closed · ' + open.length + ' open');
+
+  // ── Expectancy — 3 lines ──
+  const expEl = document.getElementById('perf-expectancy');
   set('perf-expectancy', fmtPct(expectancy));
-  set('perf-expectancy-sub', expectancy >= 0 ? `Each trade makes you +${expectancy.toFixed(1)}% on avg. Edge exists.` : `Each trade costs you ${expectancy.toFixed(1)}% on avg. Review system.`);
+  if (expEl) expEl.style.color = expectancy >= 0 ? 'var(--green)' : 'var(--red)';
+  set('perf-expectancy-sub', 'Realised (' + closed.length + ' closed trades)');
+  const expOpenEl = document.getElementById('perf-expectancy-open');
+  set('perf-expectancy-open', open.length ? fmtPct(unrealisedExpPct) : 'N/A');
+  if (expOpenEl) expOpenEl.style.color = unrealisedExpPct >= 0 ? 'var(--green)' : 'var(--red)';
+  set('perf-expectancy-open-sub', 'Unrealised (' + open.length + ' open trades)');
+  const expCombEl = document.getElementById('perf-expectancy-combined');
+  set('perf-expectancy-combined', totalTrades ? fmtPct(combinedExpPct) : 'N/A');
+  if (expCombEl) expCombEl.style.color = combinedExpPct >= 0 ? 'var(--green)' : 'var(--red)';
+
+  // ── R-Multiple (closed trades only — open have no % basis) ──
   set('perf-rmultiple', rMultiple.toFixed(2) + 'R');
   set('perf-rmultiple-badge', rMultiple >= 1.5 ? '✓ Asymmetric edge' : rMultiple >= 1 ? 'Edge — room to improve' : '⚠ Below 1R — check exit rules');
   const rmBadge = document.getElementById('perf-rmultiple-badge');
   if (rmBadge) rmBadge.className = 'stat-badge ' + (rMultiple >= 1.5 ? 'badge-green' : rMultiple >= 1 ? 'badge-amber' : 'badge-red');
 
-  // ── Win rate: closed final vs open % in profit ──
+  // ── Win rate: closed vs open, plus combined ──
   set('perf-final-wr', finalWR.toFixed(1) + '%');
-  if (open.length > 0) {
-    const openWinning = open.filter(t => t.notionalPl > 0).length;
-    const openWR = openWinning / open.length * 100;
-    set('perf-notional-wr', openWR.toFixed(1) + '%');
-    set('perf-wr-gap', `${openWinning} of ${open.length} open positions currently profitable`);
-    // Avg unrealised on winning and losing open positions
-    const openWins = openWithData.filter(t => t.notionalPl > 0);
-    const openLosses = openWithData.filter(t => t.notionalPl < 0);
-    const avgNWin = openWins.length > 0 ? openWins.reduce((s,t) => s + t.notionalPl, 0) / openWins.length : 0;
-    const avgNLoss = openLosses.length > 0 ? openLosses.reduce((s,t) => s + t.notionalPl, 0) / openLosses.length : 0;
-    set('perf-avg-notional-win', openWins.length ? fmtRs(avgNWin) : 'N/A');
-    set('perf-avg-notional-loss', openLosses.length ? fmtRs(avgNLoss) : 'N/A');
-  } else {
-    set('perf-notional-wr', 'N/A');
-    set('perf-wr-gap', 'No open positions');
-    set('perf-avg-notional-win', 'N/A');
-    set('perf-avg-notional-loss', 'N/A');
-  }
+  const openWinning = open.filter(t => t.notionalPl > 0).length;
+  const openWR = open.length > 0 ? openWinning / open.length * 100 : 0;
+  set('perf-notional-wr', open.length ? openWR.toFixed(1) + '%' : 'N/A');
+  const combinedWins = wins.length + openWinning;
+  const combinedWR = totalTrades > 0 ? combinedWins / totalTrades * 100 : 0;
+  const combWREl = document.getElementById('perf-combined-wr');
+  set('perf-combined-wr', totalTrades ? combinedWR.toFixed(1) + '%' : 'N/A');
+  if (combWREl) combWREl.style.color = combinedWR >= 50 ? 'var(--green)' : 'var(--red)';
+  set('perf-wr-gap', open.length
+    ? `${openWinning} of ${open.length} open profitable · ${combinedWins} of ${totalTrades} total`
+    : `${wins.length} of ${closed.length} closed trades profitable`);
+
+  // ── Avg unrealised on winning vs losing open positions ──
+  const openWins = openWithData.filter(t => t.notionalPl > 0);
+  const openLosses = openWithData.filter(t => t.notionalPl < 0);
+  const avgNWin = openWins.length > 0 ? openWins.reduce((s,t) => s + t.notionalPl, 0) / openWins.length : 0;
+  const avgNLoss = openLosses.length > 0 ? openLosses.reduce((s,t) => s + t.notionalPl, 0) / openLosses.length : 0;
+  set('perf-avg-notional-win', openWins.length ? fmtRs(avgNWin) : 'N/A');
+  set('perf-avg-notional-loss', openLosses.length ? fmtRs(avgNLoss) : 'N/A');
   set('perf-avg-final-win', fmtPct(avgFinalWin));
   set('perf-avg-final-loss', fmtPct(avgFinalLoss));
 
@@ -1383,7 +1419,7 @@ function showPage(id, btn) {
   btn.classList.add('active');
   if (id === 'performance' && !window._perfChartsInit) {
     const d = window._data;
-    initPerfCharts(d ? d.closed : [], d ? d.initialCapital : 0);
+    initPerfCharts(d ? d.closed : [], d ? d.initialCapital : 0, d ? d.open : []);
     window._perfChartsInit = true;
   }
   if (id === 'analysis' && !window._analysisChartsInit) {
@@ -1728,7 +1764,7 @@ function destroyAndReinitAnalysis() {
   initAnalysisCharts(d ? d.open : [], d ? d.closed : []);
 }
 
-function initPerfCharts(closed, initialCapital) {
+function initPerfCharts(closed, initialCapital, open) {
   if (!closed || !closed.length) return;
   const c = chartColors();
   const sorted = [...closed].filter(t => t.closeDate).sort((a, b) => parseDate(a.closeDate) - parseDate(b.closeDate));
@@ -1741,6 +1777,17 @@ function initPerfCharts(closed, initialCapital) {
     ddData.push(parseFloat(((eq - peak) / peak * 100).toFixed(2)));
     xLbls.push(t.closeDate);
   });
+
+  // Add open position unrealised MTM as final "Today" point
+  const openArr = open || [];
+  const totalUnrealised = openArr.reduce((s, t) => s + (t.notionalPl || 0), 0);
+  if (totalUnrealised !== 0) {
+    const combinedEq = eq + totalUnrealised;
+    if (combinedEq > peak) peak = combinedEq;
+    eqData.push(Math.round(combinedEq));
+    ddData.push(parseFloat(((combinedEq - peak) / peak * 100).toFixed(2)));
+    xLbls.push('Today');
+  }
 
   const finalEq = eqData.length ? eqData[eqData.length - 1] : initialCapital;
   const eqColor = finalEq >= (initialCapital || 0) ? c.green : c.red;
