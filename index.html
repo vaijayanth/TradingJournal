@@ -1274,63 +1274,113 @@ function renderPerfStats(closed, portfolioValue, initialCapital) {
 
   const totalFinalPl = closed.reduce((s, t) => s + t.finalPl, 0);
   const totalNotionalPl = closed.reduce((s, t) => s + inferNotionalPl(t), 0);
-  const hasNotionalData = closed.some(t => t.notionalPl !== 0 || t.plPct !== 0);
-  const captureRate = totalNotionalPl !== 0 ? (totalFinalPl / totalNotionalPl * 100) : 100;
+  // hasNotionalData: plPct (col X) must be non-zero for at least one closed trade
+  const hasNotionalData = closed.some(t => t.plPct !== 0);
   const wins = closed.filter(t => t.finalPlPct > 0);
   const losses = closed.filter(t => t.finalPlPct < 0);
-  // notional win rate: use plPct if available, else fall back to finalPlPct
-  const notionalPctOf = t => t.plPct !== 0 ? t.plPct : t.finalPlPct;
-  const notionalWins = closed.filter(t => notionalPctOf(t) > 0);
   const finalWR = closed.length > 0 ? (wins.length / closed.length * 100) : 0;
-  const notionalWR = closed.length > 0 ? (notionalWins.length / closed.length * 100) : 0;
   const avgFinalWin = wins.length > 0 ? wins.reduce((s,t) => s + t.finalPlPct, 0) / wins.length : 0;
   const avgFinalLoss = losses.length > 0 ? losses.reduce((s,t) => s + t.finalPlPct, 0) / losses.length : 0;
-  const notionalWinList = closed.filter(t => notionalPctOf(t) > 0);
-  const notionalLossList = closed.filter(t => notionalPctOf(t) < 0);
-  const avgNotionalWin = notionalWinList.length > 0 ? notionalWinList.reduce((s,t) => s + notionalPctOf(t), 0) / notionalWinList.length : 0;
-  const avgNotionalLoss = notionalLossList.length > 0 ? notionalLossList.reduce((s,t) => s + notionalPctOf(t), 0) / notionalLossList.length : 0;
   const expectancy = closed.length > 0 ? closed.reduce((s,t) => s + t.finalPlPct, 0) / closed.length : 0;
   const rMultiple = avgFinalLoss !== 0 ? Math.abs(avgFinalWin / avgFinalLoss) : 0;
   const rop = initialCapital > 0 ? (totalFinalPl / initialCapital * 100) : 0;
-  const leftOnTable = totalNotionalPl - totalFinalPl;
-  // fmt preserves sign in the label, uses abs for the ₹ amount
   const fmtRs = v => (v < 0 ? '-' : '') + '₹' + Math.abs(Math.round(v)).toLocaleString('en-IN');
   const fmtPct = v => (v >= 0 ? '+' : '') + v.toFixed(1) + '%';
   const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+
+  // ── Capture rate is sign-sensitive ──
+  // Both positive: classic "what % of notional gains did you lock in?"
+  // Both negative: your exits HELPED — you avoided worse losses by exiting
+  // Mixed or no data: show accordingly
+  let captureDisplay = 'N/A', captureSub = 'Add plPct (col X) to sheet to enable';
+  let leftTableMsg = 'Add notional P&L% (col X) to compare final vs notional';
+  let notionalColor = 'text-amber';
+
+  if (hasNotionalData) {
+    const bothPositive = totalFinalPl >= 0 && totalNotionalPl > 0;
+    const bothNegative = totalFinalPl < 0 && totalNotionalPl < 0;
+    const exitsSavedMoney = bothNegative && totalFinalPl > totalNotionalPl; // less negative = good
+    const leftOnTable = totalNotionalPl - totalFinalPl;
+
+    if (bothPositive) {
+      const rate = (totalFinalPl / totalNotionalPl * 100);
+      captureDisplay = rate.toFixed(1) + '%';
+      captureSub = rate < 50 ? 'Losing over half your potential gains to early exits'
+                 : rate < 70 ? 'Room to improve — try holding winners longer'
+                 : 'Good capture rate';
+      leftTableMsg = leftOnTable > 0
+        ? `⚠ Leaving ${fmtRs(leftOnTable)} on the table by exiting early`
+        : '✓ Capturing gains efficiently';
+      notionalColor = 'text-amber';
+    } else if (exitsSavedMoney) {
+      const saved = totalFinalPl - totalNotionalPl; // positive: how much exit saved
+      captureDisplay = fmtRs(saved) + ' saved';
+      captureSub = 'Early exits avoided additional losses vs holding';
+      leftTableMsg = `✓ Early exits avoided ${fmtRs(saved)} in additional losses`;
+      notionalColor = 'text-red'; // notional would have been worse
+    } else if (bothNegative) {
+      captureDisplay = 'N/A';
+      captureSub = 'Both scenarios negative — holding was better';
+      leftTableMsg = '⚠ Holding would have resulted in smaller losses';
+      notionalColor = 'text-green';
+    } else {
+      // Mixed signs
+      captureDisplay = 'N/A';
+      captureSub = 'Mixed — some wins, some losses in notional';
+      leftTableMsg = totalFinalPl >= totalNotionalPl ? '✓ Exits were timely' : '⚠ Holding may have been better';
+    }
+  }
 
   set('perf-final-pl', fmtRs(totalFinalPl));
   set('perf-final-plpct', fmtPct(rop));
   const finalPlEl = document.getElementById('perf-final-pl');
   if (finalPlEl) finalPlEl.className = 'compare-value ' + (totalFinalPl >= 0 ? 'text-green' : 'text-red');
 
-  set('perf-notional-pl', fmtRs(totalNotionalPl));
+  set('perf-notional-pl', hasNotionalData ? fmtRs(totalNotionalPl) : 'N/A');
   const notionalRoP = initialCapital > 0 ? totalNotionalPl / initialCapital * 100 : 0;
-  set('perf-notional-plpct', fmtPct(notionalRoP));
+  set('perf-notional-plpct', hasNotionalData ? fmtPct(notionalRoP) : '—');
   const notionalPlEl = document.getElementById('perf-notional-pl');
-  if (notionalPlEl) notionalPlEl.className = 'compare-value ' + (totalNotionalPl >= totalFinalPl ? 'text-amber' : 'text-green');
+  if (notionalPlEl) notionalPlEl.className = 'compare-value ' + notionalColor;
 
-  set('perf-capture', hasNotionalData ? captureRate.toFixed(1) + '%' : 'N/A');
-  set('perf-capture-sub', !hasNotionalData ? 'Add plPct (col X) to sheet to enable' : captureRate < 50 ? 'Losing over half your upside to early exits' : captureRate < 70 ? 'Room to improve — hold winners longer' : 'Good capture rate');
+  set('perf-capture', captureDisplay);
+  set('perf-capture-sub', captureSub);
+  const captureEl = document.getElementById('perf-capture');
+  if (captureEl) captureEl.className = 'big-metric-value ' + (captureDisplay.includes('saved') ? 'text-green' : 'text-amber');
+
   set('perf-rop', fmtPct(rop));
   set('perf-rop-sub', 'On ' + fmtRs(initialCapital) + ' initial capital');
   set('perf-closed-count', closed.length);
-  set('perf-left-table', hasNotionalData
-    ? (leftOnTable > 0 ? `⚠ Leaving ${fmtRs(leftOnTable)} on the table by exiting early` : '✓ Capturing gains efficiently')
-    : 'Add notional P&L% (col X) to compare final vs notional');
+  set('perf-left-table', leftTableMsg);
+
   set('perf-expectancy', fmtPct(expectancy));
   set('perf-expectancy-sub', expectancy >= 0 ? `Each trade makes you +${expectancy.toFixed(1)}% on avg. Edge exists.` : `Each trade costs you ${expectancy.toFixed(1)}% on avg. Review system.`);
   set('perf-rmultiple', rMultiple.toFixed(2) + 'R');
   set('perf-rmultiple-badge', rMultiple >= 1.5 ? '✓ Asymmetric edge' : rMultiple >= 1 ? 'Edge — room to improve' : '⚠ Below 1R — check exit rules');
   const rmBadge = document.getElementById('perf-rmultiple-badge');
   if (rmBadge) rmBadge.className = 'stat-badge ' + (rMultiple >= 1.5 ? 'badge-green' : rMultiple >= 1 ? 'badge-amber' : 'badge-red');
+
   set('perf-final-wr', finalWR.toFixed(1) + '%');
-  set('perf-notional-wr', notionalWR.toFixed(1) + '%');
-  const wrGap = Math.abs(notionalWR - finalWR);
-  set('perf-wr-gap', wrGap.toFixed(1) + 'pp gap' + (notionalWR > finalWR ? ' — early exits flipping wins to losses' : ' — consistent exit timing'));
+  // Notional win rate only meaningful when plPct is available; otherwise show N/A
+  if (hasNotionalData) {
+    const notionalWins = closed.filter(t => t.plPct > 0);
+    const notionalWR = closed.length > 0 ? (notionalWins.length / closed.length * 100) : 0;
+    set('perf-notional-wr', notionalWR.toFixed(1) + '%');
+    const wrGap = Math.abs(notionalWR - finalWR);
+    set('perf-wr-gap', wrGap.toFixed(1) + 'pp gap' + (notionalWR > finalWR ? ' — early exits flipping wins to losses' : wrGap < 1 ? ' — consistent exit timing' : ' — exits improving win rate'));
+    const notionalWinList = closed.filter(t => t.plPct > 0);
+    const notionalLossList = closed.filter(t => t.plPct < 0);
+    const avgNWin = notionalWinList.length > 0 ? notionalWinList.reduce((s,t) => s + t.plPct, 0) / notionalWinList.length : 0;
+    const avgNLoss = notionalLossList.length > 0 ? notionalLossList.reduce((s,t) => s + t.plPct, 0) / notionalLossList.length : 0;
+    set('perf-avg-notional-win', fmtPct(avgNWin));
+    set('perf-avg-notional-loss', fmtPct(avgNLoss));
+  } else {
+    set('perf-notional-wr', 'N/A');
+    set('perf-wr-gap', 'Add plPct (col X) to sheet for notional win rate');
+    set('perf-avg-notional-win', 'N/A');
+    set('perf-avg-notional-loss', 'N/A');
+  }
   set('perf-avg-final-win', fmtPct(avgFinalWin));
   set('perf-avg-final-loss', fmtPct(avgFinalLoss));
-  set('perf-avg-notional-win', fmtPct(avgNotionalWin));
-  set('perf-avg-notional-loss', fmtPct(avgNotionalLoss));
 
   const toggle = document.getElementById('closed-toggle');
   if (toggle) { const arrow = toggle.querySelector('span'); toggle.innerHTML = `<span>${arrow ? arrow.textContent : '▶'}</span> Show all closed trades (${closed.length})`; }
@@ -1746,7 +1796,7 @@ function initPerfCharts(closed, initialCapital) {
     ...baseOpts(220), chart: { ...baseOpts(220).chart, type: 'area' },
     series: [{ name: 'Drawdown %', data: ddData }],
     xaxis: { ...baseOpts().xaxis, categories: xLbls, labels: { ...baseOpts().xaxis.labels, rotate: -30, hideOverlappingLabels: true } },
-    yaxis: { labels: { style: { colors: c.text, fontSize:'11px' }, formatter: v => v + '%' }, max: 0 },
+    yaxis: { labels: { style: { colors: c.text, fontSize:'11px' }, formatter: v => parseFloat(v).toFixed(2) + '%' }, max: 0 },
     colors: [c.red], fill: { type: 'gradient', gradient: { shadeIntensity:1, opacityFrom:0.4, opacityTo:0.05 } },
     stroke: { curve: 'smooth', width: 2 }, dataLabels: { enabled: false },
     annotations: { yaxis: [{ y: maxDD, label: { text: 'Max DD: ' + maxDD.toFixed(1) + '%', style: { color: c.red, fontSize:'11px' } }, borderColor: c.red, strokeDashArray: 3 }] },
