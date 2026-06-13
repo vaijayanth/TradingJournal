@@ -1430,8 +1430,9 @@ function initPerfCharts() {
     colors: [c.green],
     fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.35, opacityTo: 0.02 } },
     stroke: { curve: 'smooth', width: 2 },
+    dataLabels: { enabled: false },
     tooltip: { ...baseOpts().tooltip, y: { formatter: v => '₹' + v.toLocaleString('en-IN') } },
-    markers: { size: 0 },
+    markers: { size: 4, hover: { size: 7 } },
   });
   eq.render(); perfCharts.push(eq);
 
