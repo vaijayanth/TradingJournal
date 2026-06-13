@@ -1695,7 +1695,17 @@ function filterTable(query) {
   });
 }
 
-function sortTable(key) { /* sorting handled visually via CSS for now */ }
+function sortTable(key) {
+  const d = window._data;
+  if (!d) return;
+  const cfg = loadConfig();
+  const sorted = [...d.open].sort((a, b) => {
+    if (key === 'age') return (parseInt(b.age) || 0) - (parseInt(a.age) || 0);
+    if (key === 'pnl') return b.plPct - a.plPct;
+    return a.pctFromStop - b.pctFromStop; // default: closest to stop first
+  });
+  renderPositionsReal(sorted, cfg);
+}
 function filterAlert(val) {
   const rows = document.querySelectorAll('#positions-tbody tr:not(.expand-row)');
   rows.forEach((row, i) => {
