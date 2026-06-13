@@ -797,59 +797,31 @@ tbody tr:hover { filter: brightness(0.97); }
 <!-- ════ ANALYSIS ════ -->
 <div id="page-analysis" class="page">
 
-  <!-- 21 EMA Full Width -->
-  <div class="section-title">21 EMA Context vs Outcome</div>
+  <!-- Setup Type Breakdown -->
+  <div class="section-title">Setup Type vs Outcome</div>
   <div class="card" style="margin-bottom:14px">
-    <div class="chart-title">Entry Context — Above vs Below 21 EMA at Trade Entry</div>
-    <div class="chart-sub">Most immediately actionable signal in your dataset</div>
-    <div class="ema-split">
-      <div class="ema-side above">
-        <div class="ema-context-label" style="color:var(--green)">Above 21 EMA</div>
-        <div class="ema-metric">
-          <div class="ema-metric-value text-green" id="ema-above-wr">—</div>
-          <div class="ema-metric-label">Win Rate</div>
-        </div>
-        <div class="ema-metric">
-          <div class="ema-metric-value text-green" id="ema-above-avg">—</div>
-          <div class="ema-metric-label">Avg P&amp;L%</div>
-        </div>
-        <div class="ema-metric">
-          <div class="ema-metric-value" style="font-size:20px" id="ema-above-r">—</div>
-          <div class="ema-metric-label">Avg R-Multiple</div>
-        </div>
-        <div class="ema-trades" id="ema-above-n">n = — trades</div>
-        <div style="margin-top:12px">
-          <div style="height:8px;border-radius:99px;background:var(--green-soft)">
-            <div id="ema-above-bar" style="height:100%;width:0%;border-radius:99px;background:var(--green);transition:width 0.8s"></div>
-          </div>
-        </div>
-      </div>
-      <div class="ema-divider">vs</div>
-      <div class="ema-side">
-        <div class="ema-context-label" style="color:var(--red)">Below 21 EMA</div>
-        <div class="ema-metric">
-          <div class="ema-metric-value text-red" id="ema-below-wr">—</div>
-          <div class="ema-metric-label">Win Rate</div>
-        </div>
-        <div class="ema-metric">
-          <div class="ema-metric-value text-red" id="ema-below-avg">—</div>
-          <div class="ema-metric-label">Avg P&amp;L%</div>
-        </div>
-        <div class="ema-metric">
-          <div class="ema-metric-value" style="font-size:20px" id="ema-below-r">—</div>
-          <div class="ema-metric-label">Avg R-Multiple</div>
-        </div>
-        <div class="ema-trades" id="ema-below-n">n = — trades</div>
-        <div style="margin-top:12px">
-          <div style="height:8px;border-radius:99px;background:var(--red-soft)">
-            <div id="ema-below-bar" style="height:100%;width:0%;border-radius:99px;background:var(--red);transition:width 0.8s"></div>
-          </div>
-        </div>
-      </div>
+    <div class="chart-title">Performance by Trade Setup (Entry Label)</div>
+    <div class="chart-sub">Captured at entry — shows which setups actually work in your system</div>
+    <div id="setup-breakdown-wrap" style="overflow-x:auto;margin-top:12px">
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead>
+          <tr style="color:var(--text-muted);text-align:left;border-bottom:1px solid var(--border)">
+            <th style="padding:6px 10px">Setup</th>
+            <th style="padding:6px 10px;text-align:right">Trades</th>
+            <th style="padding:6px 10px;text-align:right">Win Rate</th>
+            <th style="padding:6px 10px;text-align:right">Avg P&L%</th>
+            <th style="padding:6px 10px;text-align:right">Avg Win%</th>
+            <th style="padding:6px 10px;text-align:right">Avg Loss%</th>
+            <th style="padding:6px 10px;text-align:right">R-Multiple</th>
+            <th style="padding:6px 10px;text-align:right">Total P&L</th>
+          </tr>
+        </thead>
+        <tbody id="setup-breakdown-tbody">
+          <tr><td colspan="8" style="padding:20px;text-align:center;color:var(--text-muted)">Loading…</td></tr>
+        </tbody>
+      </table>
     </div>
-    <div class="ema-insight" id="ema-insight">
-      → Configure your Apps Script URL in Config tab to load live data.
-    </div>
+    <div class="ema-insight" id="ema-insight" style="margin-top:12px">—</div>
   </div>
 
   <!-- 2-col chart grid -->
@@ -871,9 +843,10 @@ tbody tr:hover { filter: brightness(0.97); }
       <div id="chart-monthly" style="height:240px;"></div>
     </div>
     <div class="card">
-      <div class="chart-title">R-Multiple by Setup Type</div>
-      <div class="chart-sub">Placeholder — unlocks when Setup Type column is added</div>
-      <div class="chart-placeholder" style="height:240px">
+      <div class="chart-title">Win Rate by Setup Type</div>
+      <div class="chart-sub">Which setups hit most often</div>
+      <div id="chart-setup-wr" style="height:240px"></div>
+      <div class="chart-placeholder" id="chart-setup-wr-placeholder" style="height:240px;display:none">
         <div class="placeholder-icon">🔒</div>
         <div class="placeholder-title">Setup Type Not Mapped</div>
         <div class="placeholder-desc">Add a Setup Type column to your Google Sheet and map it in Config to unlock this chart.</div>
@@ -1882,28 +1855,81 @@ function initAnalysisCharts(open, closed) {
   const c = chartColors();
   const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
 
-  // EMA Split
-  const above = closed.filter(t => (t.ema21||'').toLowerCase() === 'above');
-  const below = closed.filter(t => (t.ema21||'').toLowerCase() === 'below');
+  // ── Setup Type Breakdown ──
   const calcStats = trades => {
     const wins = trades.filter(t => t.finalPlPct > 0), losses = trades.filter(t => t.finalPlPct < 0);
     const wr = trades.length > 0 ? wins.length / trades.length * 100 : 0;
     const avg = trades.length > 0 ? trades.reduce((s,t) => s+t.finalPlPct, 0) / trades.length : 0;
     const aw = wins.length > 0 ? wins.reduce((s,t) => s+t.finalPlPct, 0)/wins.length : 0;
     const al = losses.length > 0 ? Math.abs(losses.reduce((s,t) => s+t.finalPlPct, 0)/losses.length) : 0;
-    return { wr, avg, r: al > 0 ? aw/al : 0, n: trades.length };
+    const totalPl = trades.reduce((s,t) => s+t.finalPl, 0);
+    return { wr, avg, r: al > 0 ? aw/al : 0, aw, al: -Math.abs(al), n: trades.length, totalPl };
   };
-  const ab = calcStats(above), bl = calcStats(below);
-  set('ema-above-wr', ab.wr.toFixed(0)+'%'); set('ema-above-avg', (ab.avg>=0?'+':'')+ab.avg.toFixed(1)+'%');
-  set('ema-above-r', ab.r.toFixed(1)+'R'); set('ema-above-n', 'n = '+ab.n+' trades');
-  const abBar = document.getElementById('ema-above-bar'); if(abBar) abBar.style.width = Math.min(100,ab.wr)+'%';
-  set('ema-below-wr', bl.wr.toFixed(0)+'%'); set('ema-below-avg', (bl.avg>=0?'+':'')+bl.avg.toFixed(1)+'%');
-  set('ema-below-r', bl.r.toFixed(1)+'R'); set('ema-below-n', 'n = '+bl.n+' trades');
-  const blBar = document.getElementById('ema-below-bar'); if(blBar) blBar.style.width = Math.min(100,bl.wr)+'%';
+
+  const setupMap = {};
+  closed.forEach(t => {
+    const s = (t.setupType || 'Unlabelled').trim() || 'Unlabelled';
+    if (!setupMap[s]) setupMap[s] = [];
+    setupMap[s].push(t);
+  });
+  const setupKeys = Object.keys(setupMap).sort((a,b) => setupMap[b].length - setupMap[a].length);
+  const fmtRsA = v => (v < 0 ? '-' : '+') + '₹' + Math.abs(Math.round(v)).toLocaleString('en-IN');
+
+  const tbody = document.getElementById('setup-breakdown-tbody');
+  if (tbody) {
+    if (setupKeys.length === 0 || (setupKeys.length === 1 && setupKeys[0] === 'Unlabelled')) {
+      tbody.innerHTML = '<tr><td colspan="8" style="padding:20px;text-align:center;color:var(--text-muted)">No setup type data — add labels in column S of your sheet</td></tr>';
+    } else {
+      tbody.innerHTML = setupKeys.map(s => {
+        const st = calcStats(setupMap[s]);
+        const wrColor = st.wr >= 50 ? 'var(--green)' : st.wr >= 30 ? 'var(--amber)' : 'var(--red)';
+        const avgColor = st.avg >= 0 ? 'var(--green)' : 'var(--red)';
+        const plColor = st.totalPl >= 0 ? 'var(--green)' : 'var(--red)';
+        return `<tr style="border-bottom:1px solid var(--border)">
+          <td style="padding:8px 10px;font-weight:600">${s}</td>
+          <td style="padding:8px 10px;text-align:right;color:var(--text-muted)">${st.n}</td>
+          <td style="padding:8px 10px;text-align:right;font-weight:700;color:${wrColor}">${st.wr.toFixed(0)}%</td>
+          <td style="padding:8px 10px;text-align:right;color:${avgColor}">${(st.avg>=0?'+':'')+st.avg.toFixed(1)}%</td>
+          <td style="padding:8px 10px;text-align:right;color:var(--green)">${st.aw > 0 ? '+'+st.aw.toFixed(1)+'%' : '—'}</td>
+          <td style="padding:8px 10px;text-align:right;color:var(--red)">${st.al < 0 ? st.al.toFixed(1)+'%' : '—'}</td>
+          <td style="padding:8px 10px;text-align:right">${st.r.toFixed(1)}R</td>
+          <td style="padding:8px 10px;text-align:right;font-weight:600;color:${plColor}">${fmtRsA(st.totalPl)}</td>
+        </tr>`;
+      }).join('');
+    }
+  }
+
+  // Insight: best setup by avg P&L
   const insEl = document.getElementById('ema-insight');
-  if (insEl && ab.n > 0 && bl.n > 0) {
-    const mult = bl.wr > 0 ? (ab.wr/bl.wr).toFixed(1) : '∞';
-    insEl.innerHTML = `→ You perform <strong>${mult}× better</strong> when entering above the 21 EMA. Below-EMA trades return avg ${bl.avg.toFixed(1)}% per trade.`;
+  if (insEl && setupKeys.length > 1) {
+    const stats = setupKeys.map(s => ({ s, ...calcStats(setupMap[s]) }));
+    const best = stats.reduce((a, b) => b.avg > a.avg ? b : a);
+    const worst = stats.reduce((a, b) => b.avg < a.avg ? b : a);
+    insEl.innerHTML = `→ Best setup: <strong>${best.s}</strong> (avg ${(best.avg>=0?'+':'')+best.avg.toFixed(1)}%, ${best.wr.toFixed(0)}% win rate, n=${best.n}) · Weakest: <strong>${worst.s}</strong> (avg ${worst.avg.toFixed(1)}%, n=${worst.n})`;
+  } else if (insEl) {
+    insEl.textContent = '→ Add setup type labels in column S to see which setups work best.';
+  }
+
+  // Win rate by setup bar chart
+  const setupWrEl = document.getElementById('chart-setup-wr');
+  const setupWrPh = document.getElementById('chart-setup-wr-placeholder');
+  if (setupKeys.length > 1 && setupWrEl) {
+    if (setupWrPh) setupWrPh.style.display = 'none';
+    const wrStats = setupKeys.map(s => calcStats(setupMap[s]));
+    const setupWrChart = new ApexCharts(setupWrEl, {
+      ...baseOpts(240), chart: { ...baseOpts(240).chart, type: 'bar' },
+      series: [{ name: 'Win Rate %', data: wrStats.map(s => parseFloat(s.wr.toFixed(1))) }],
+      xaxis: { ...baseOpts().xaxis, categories: setupKeys, labels: { ...baseOpts().xaxis.labels, rotate: -20, hideOverlappingLabels: true } },
+      yaxis: { labels: { style:{colors:c.text,fontSize:'11px'}, formatter: v => v+'%' }, max: 100 },
+      colors: wrStats.map(s => s.wr >= 50 ? c.green : s.wr >= 30 ? c.amber : c.red),
+      plotOptions: { bar: { columnWidth: '55%', distributed: true, borderRadius: 4 } },
+      legend: { show: false }, dataLabels: { enabled: true, formatter: v => v+'%', style: { fontSize:'11px' } },
+      annotations: { yaxis: [{ y: 50, borderColor: c.text, strokeDashArray: 3, label: { text: '50%', style:{color:c.text,fontSize:'10px'} } }] },
+    });
+    setupWrChart.render(); analysisCharts.push(setupWrChart);
+  } else if (setupWrPh) {
+    if (setupWrEl) setupWrEl.style.display = 'none';
+    setupWrPh.style.display = '';
   }
 
   // Scatter
