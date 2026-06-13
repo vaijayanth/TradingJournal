@@ -499,6 +499,18 @@ tbody tr:hover { filter: brightness(0.97); }
 </head>
 <body>
 
+<!-- ════ PASSWORD GATE ════ -->
+<div id="auth-overlay" style="display:none;position:fixed;inset:0;z-index:9999;background:var(--bg);align-items:center;justify-content:center">
+  <div style="background:var(--card);border:1px solid var(--border);border-radius:16px;padding:40px;width:340px;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,0.15)">
+    <div style="font-size:32px;margin-bottom:8px">🔒</div>
+    <div style="font-size:20px;font-weight:700;margin-bottom:4px">Trading Journal</div>
+    <div style="font-size:13px;color:var(--text-muted);margin-bottom:24px">Enter your password to continue</div>
+    <input type="password" id="auth-password" class="config-input" placeholder="Password" style="text-align:center;font-size:16px;letter-spacing:2px" onkeydown="if(event.key==='Enter')checkPassword()">
+    <button class="btn-primary" style="width:100%;margin-top:12px;padding:10px" onclick="checkPassword()">Unlock</button>
+    <div id="auth-error" style="color:var(--red);font-size:12px;margin-top:10px;display:none">Incorrect password</div>
+  </div>
+</div>
+
 <!-- ════ NAVBAR ════ -->
 <nav>
   <div class="nav-logo">📈 <span>Trading</span>Journal</div>
@@ -926,6 +938,22 @@ tbody tr:hover { filter: brightness(0.97); }
 
   <div style="font-size:15px; font-weight:700; margin-bottom:4px">Configuration</div>
   <div style="font-size:12.5px; color:var(--text-muted); margin-bottom:24px">All settings are saved locally in your browser. No data is sent anywhere.</div>
+
+  <!-- Security -->
+  <div class="card config-section" style="margin-bottom:16px">
+    <div class="config-section-title">Security</div>
+    <div class="config-field">
+      <label class="config-label">Journal Password</label>
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:8px">Set a password to protect this journal. Leave blank to remove password protection.</div>
+      <div class="flex-row" style="gap:8px">
+        <input type="password" id="cfg-new-password" class="config-input" placeholder="New password (leave blank to remove)">
+        <button class="btn-primary" style="white-space:nowrap" onclick="setJournalPassword()">Set Password</button>
+      </div>
+      <div id="cfg-password-status" style="font-size:12px;margin-top:6px;color:var(--text-muted)">
+        Status: <span id="cfg-password-state">—</span>
+      </div>
+    </div>
+  </div>
 
   <!-- Connection -->
   <div class="card config-section" style="margin-bottom:16px">
@@ -2012,6 +2040,57 @@ function initAnalysisCharts(open, closed) {
 }
 
 // ── INIT ─────────────────────────────────────────────
+// ── AUTH ─────────────────────────────────────────────
+const AUTH_KEY = 'tj_auth_hash';
+const AUTH_SESSION = 'tj_authed';
+
+async function sha256(str) {
+  const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
+  return Array.from(new Uint8Array(buf)).map(b => b.toString(16).padStart(2,'0')).join('');
+}
+
+async function checkPassword() {
+  const pw = document.getElementById('auth-password').value;
+  const stored = localStorage.getItem(AUTH_KEY);
+  const hash = await sha256(pw);
+  if (hash === stored) {
+    sessionStorage.setItem(AUTH_SESSION, '1');
+    document.getElementById('auth-overlay').style.display = 'none';
+  } else {
+    document.getElementById('auth-error').style.display = 'block';
+    document.getElementById('auth-password').value = '';
+    document.getElementById('auth-password').focus();
+  }
+}
+
+async function setJournalPassword() {
+  const pw = document.getElementById('cfg-new-password').value.trim();
+  const stateEl = document.getElementById('cfg-password-state');
+  if (!pw) {
+    localStorage.removeItem(AUTH_KEY);
+    if (stateEl) stateEl.textContent = 'No password set — journal is unprotected';
+    showToast('Password removed', 'amber');
+  } else {
+    const hash = await sha256(pw);
+    localStorage.setItem(AUTH_KEY, hash);
+    sessionStorage.setItem(AUTH_SESSION, '1');
+    if (stateEl) stateEl.textContent = 'Password is set ✓';
+    showToast('Password saved', 'green');
+  }
+  document.getElementById('cfg-new-password').value = '';
+}
+
+function initAuth() {
+  const hash = localStorage.getItem(AUTH_KEY);
+  const stateEl = document.getElementById('cfg-password-state');
+  if (stateEl) stateEl.textContent = hash ? 'Password is set ✓' : 'No password set — journal is unprotected';
+  if (!hash) return; // no password configured
+  if (sessionStorage.getItem(AUTH_SESSION)) return; // already authenticated this session
+  const overlay = document.getElementById('auth-overlay');
+  overlay.style.display = 'flex';
+  setTimeout(() => document.getElementById('auth-password').focus(), 100);
+}
+
 document.addEventListener('DOMContentLoaded', () => {
   const savedTheme = localStorage.getItem('tj_theme');
   if (savedTheme) {
@@ -2019,6 +2098,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const btn = document.querySelector('[onclick="toggleTheme()"]');
     if (btn) btn.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
   }
+  initAuth();
   populateConfigPage();
   renderColMappings();
   const cfg = loadConfig();
