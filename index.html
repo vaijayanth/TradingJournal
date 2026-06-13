@@ -1332,9 +1332,8 @@ function renderPerfStats(closed, open, portfolioValue, initialCapital) {
   const combined = totalFinalPl + totalNotionalPl;
   const totalTrades = closed.length + open.length;
   const combinedRoP = initialCapital > 0 ? combined / initialCapital * 100 : 0;
-  // Unrealised expectancy: avg notionalPl per open trade as % of initial capital
-  const unrealisedExpPct = open.length > 0 && initialCapital > 0
-    ? totalNotionalPl / open.length / initialCapital * 100 : 0;
+  // Unrealised expectancy: avg notionalPl per open trade in ₹ (% too small to be meaningful)
+  const avgUnrealisedRs = open.length > 0 ? totalNotionalPl / open.length : 0;
   // Combined expectancy: (total realised + total unrealised) / total trades / initialCapital * 100
   const combinedExpPct = totalTrades > 0 && initialCapital > 0
     ? combined / totalTrades / initialCapital * 100 : 0;
@@ -1356,9 +1355,9 @@ function renderPerfStats(closed, open, portfolioValue, initialCapital) {
   if (expEl) expEl.style.color = expectancy >= 0 ? 'var(--green)' : 'var(--red)';
   set('perf-expectancy-sub', 'Realised (' + closed.length + ' closed trades)');
   const expOpenEl = document.getElementById('perf-expectancy-open');
-  set('perf-expectancy-open', open.length ? fmtPct(unrealisedExpPct) : 'N/A');
-  if (expOpenEl) expOpenEl.style.color = unrealisedExpPct >= 0 ? 'var(--green)' : 'var(--red)';
-  set('perf-expectancy-open-sub', 'Unrealised (' + open.length + ' open trades)');
+  set('perf-expectancy-open', open.length ? fmtRs(avgUnrealisedRs) : 'N/A');
+  if (expOpenEl) expOpenEl.style.color = avgUnrealisedRs >= 0 ? 'var(--green)' : 'var(--red)';
+  set('perf-expectancy-open-sub', 'Avg unrealised ₹ per open trade (' + open.length + ')');
   const expCombEl = document.getElementById('perf-expectancy-combined');
   set('perf-expectancy-combined', totalTrades ? fmtPct(combinedExpPct) : 'N/A');
   if (expCombEl) expCombEl.style.color = combinedExpPct >= 0 ? 'var(--green)' : 'var(--red)';
@@ -1787,37 +1786,46 @@ function initPerfCharts(closed, initialCapital, open) {
     xLbls.push(t.closeDate);
   });
 
-  // Add open position unrealised MTM as final "Today" point
+  // "Today" point = realised equity + open unrealised MTM (separate series, dashed)
   const openArr = open || [];
   const totalUnrealised = openArr.reduce((s, t) => s + (t.notionalPl || 0), 0);
-  if (totalUnrealised !== 0) {
-    const combinedEq = eq + totalUnrealised;
-    if (combinedEq > peak) peak = combinedEq;
-    eqData.push(Math.round(combinedEq));
-    ddData.push(parseFloat(((combinedEq - peak) / peak * 100).toFixed(2)));
+  const todayEq = totalUnrealised !== 0 ? Math.round(eq + totalUnrealised) : null;
+  // Build Today series: null for all closed points, then the combined value
+  const todaySeries = eqData.map(() => null);
+  if (todayEq !== null) {
+    todaySeries[todaySeries.length - 1] = eqData[eqData.length - 1]; // connect from last closed
+    todaySeries.push(todayEq);
     xLbls.push('Today');
+    eqData.push(null); // closed series has no value at Today
   }
 
-  const finalEq = eqData.length ? eqData[eqData.length - 1] : initialCapital;
-  const eqColor = finalEq >= (initialCapital || 0) ? c.green : c.red;
+  const realisedColor = eq >= (initialCapital || 0) ? c.green : c.red;
+  const todayColor = todayEq !== null ? (todayEq >= (initialCapital || 0) ? c.green : c.red) : c.amber;
   const eqChart = new ApexCharts(document.getElementById('chart-equity'), {
-    ...baseOpts(220), chart: { ...baseOpts(220).chart, type: 'area' },
-    series: [{ name: 'Realised P&L', data: eqData }],
+    ...baseOpts(220), chart: { ...baseOpts(220).chart, type: 'line' },
+    series: [
+      { name: 'Realised', data: eqData, type: 'area' },
+      { name: 'Incl. Unrealised', data: todaySeries, type: 'line' },
+    ],
     xaxis: { ...baseOpts().xaxis, categories: xLbls, labels: { ...baseOpts().xaxis.labels, rotate: -30, hideOverlappingLabels: true } },
-    yaxis: { labels: { style: { colors: c.text, fontSize:'11px' }, formatter: v => '₹' + (v/100000).toFixed(1) + 'L' } },
-    colors: [eqColor],
-    fill: { type: 'gradient', gradient: { shadeIntensity:1, opacityFrom:0.35, opacityTo:0.02 } },
-    stroke: { curve: 'smooth', width: 2 }, dataLabels: { enabled: false }, markers: { size: 4, hover: { size: 7 } },
+    yaxis: { labels: { style: { colors: c.text, fontSize:'11px' }, formatter: v => v ? '₹' + (v/100000).toFixed(1) + 'L' : '' } },
+    colors: [realisedColor, c.amber],
+    fill: { type: ['gradient', 'solid'], gradient: { shadeIntensity:1, opacityFrom:0.35, opacityTo:0.02 } },
+    stroke: { curve: 'smooth', width: [2, 2], dashArray: [0, 6] },
+    dataLabels: { enabled: false },
+    markers: { size: [3, 6], hover: { size: 7 } },
     annotations: initialCapital ? { yaxis: [{ y: initialCapital, label: { text: 'Initial capital', style: { color: c.text, fontSize:'10px', background: 'transparent' } }, borderColor: c.text, strokeDashArray: 4 }] } : {},
-    tooltip: { ...baseOpts().tooltip, y: { formatter: v => '₹' + Math.round(v).toLocaleString('en-IN') } },
+    tooltip: { ...baseOpts().tooltip, y: { formatter: v => v ? '₹' + Math.round(v).toLocaleString('en-IN') : '' } },
+    legend: { show: todayEq !== null, labels: { colors: c.text } },
   });
   eqChart.render(); perfCharts.push(eqChart);
 
+  // Drawdown uses realised-only data (no Today point — unrealised MTM is not a true drawdown)
   const maxDD = ddData.length ? Math.min(...ddData) : 0;
   const ddChart = new ApexCharts(document.getElementById('chart-drawdown'), {
     ...baseOpts(220), chart: { ...baseOpts(220).chart, type: 'area' },
     series: [{ name: 'Drawdown %', data: ddData }],
-    xaxis: { ...baseOpts().xaxis, categories: xLbls, labels: { ...baseOpts().xaxis.labels, rotate: -30, hideOverlappingLabels: true } },
+    xaxis: { ...baseOpts().xaxis, categories: xLbls.slice(0, ddData.length), labels: { ...baseOpts().xaxis.labels, rotate: -30, hideOverlappingLabels: true } },
     yaxis: { labels: { style: { colors: c.text, fontSize:'11px' }, formatter: v => parseFloat(v).toFixed(2) + '%' }, max: 0 },
     colors: [c.red], fill: { type: 'gradient', gradient: { shadeIntensity:1, opacityFrom:0.4, opacityTo:0.05 } },
     stroke: { curve: 'smooth', width: 2 }, dataLabels: { enabled: false },
