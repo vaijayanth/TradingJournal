@@ -1887,7 +1887,7 @@ function initAnalysisCharts(open, closed) {
     if (!setupMap[s]) setupMap[s] = [];
     setupMap[s].push(t);
   });
-  const setupKeys = Object.keys(setupMap).sort((a,b) => setupMap[b].length - setupMap[a].length);
+  const setupKeys = Object.keys(setupMap).filter(s => s !== 'Unlabelled').sort((a,b) => setupMap[b].length - setupMap[a].length);
   const fmtRsA = v => (v < 0 ? '-' : '+') + '₹' + Math.abs(Math.round(v)).toLocaleString('en-IN');
 
   const tbody = document.getElementById('setup-breakdown-tbody');
@@ -1928,15 +1928,14 @@ function initAnalysisCharts(open, closed) {
   // Win rate by setup bar chart
   const setupWrEl = document.getElementById('chart-setup-wr');
   const setupWrPh = document.getElementById('chart-setup-wr-placeholder');
-  const realSetupKeys = setupKeys.filter(s => s !== 'Unlabelled');
-  if (realSetupKeys.length >= 1 && setupWrEl) {
+  if (setupKeys.length >= 1 && setupWrEl) {
     if (setupWrPh) setupWrPh.style.display = 'none';
     setupWrEl.style.display = '';
-    const wrStats = realSetupKeys.map(s => calcStats(setupMap[s]));
+    const wrStats = setupKeys.map(s => calcStats(setupMap[s]));
     const setupWrChart = new ApexCharts(setupWrEl, {
       ...baseOpts(240), chart: { ...baseOpts(240).chart, type: 'bar' },
       series: [{ name: 'Win Rate %', data: wrStats.map(s => parseFloat(s.wr.toFixed(1))) }],
-      xaxis: { ...baseOpts().xaxis, categories: realSetupKeys, labels: { ...baseOpts().xaxis.labels, rotate: -20, hideOverlappingLabels: true } },
+      xaxis: { ...baseOpts().xaxis, categories: setupKeys, labels: { ...baseOpts().xaxis.labels, rotate: -20, hideOverlappingLabels: true } },
       yaxis: { labels: { style:{colors:c.text,fontSize:'11px'}, formatter: v => v+'%' }, max: 100 },
       colors: wrStats.map(s => s.wr >= 50 ? c.green : s.wr >= 30 ? c.amber : c.red),
       plotOptions: { bar: { columnWidth: '55%', distributed: true, borderRadius: 4 } },
