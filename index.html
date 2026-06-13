@@ -2,7 +2,7 @@
 <html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
-<script>try{var t=localStorage.getItem('tj_theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+<script>try{if(location.search.includes('reset=1')){localStorage.removeItem('tj_auth_hash');sessionStorage.removeItem('tj_authed');history.replaceState(null,'',location.pathname);}var t=localStorage.getItem('tj_theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Trading Journal</title>
 <script src="https://cdn.jsdelivr.net/npm/apexcharts@3.44.0/dist/apexcharts.min.js"></script>
@@ -951,6 +951,10 @@ tbody tr:hover { filter: brightness(0.97); }
       </div>
       <div id="cfg-password-status" style="font-size:12px;margin-top:6px;color:var(--text-muted)">
         Status: <span id="cfg-password-state">—</span>
+      </div>
+      <div style="font-size:11.5px;color:var(--text-muted);margin-top:10px;padding:8px;background:var(--bg);border-radius:6px;line-height:1.6">
+        💡 <strong>Forgot password?</strong> Open the URL with <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">?reset=1</code> appended to clear it.<br>
+        e.g. <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">https://vaijayanth.github.io/TradingJournal?reset=1</code>
       </div>
     </div>
   </div>
