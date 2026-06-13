@@ -565,6 +565,11 @@ tbody tr:hover { filter: brightness(0.97); }
       <div class="stat-value" id="dash-closed">—</div>
       <div class="stat-sub" id="dash-closed-sub">Completed</div>
       <div class="stat-badge badge-blue" id="dash-closed-badge">—</div>
+      <div style="margin-top:8px;border-top:1px solid var(--border);padding-top:8px">
+        <div class="stat-label">Today's Exits</div>
+        <div style="font-size:18px;font-weight:700" id="dash-today-pl">—</div>
+        <div class="stat-sub" id="dash-today-sub">—</div>
+      </div>
     </div>
     <div class="card card-sm">
       <div class="stat-label">Return on Portfolio</div>
@@ -696,6 +701,11 @@ tbody tr:hover { filter: brightness(0.97); }
       <div class="stat-value" style="font-size:28px; margin-top:4px" id="perf-rmultiple">—</div>
       <div class="stat-sub">Avg Win% / |Avg Loss%|</div>
       <div class="stat-badge badge-green" style="margin-top:8px" id="perf-rmultiple-badge">—</div>
+      <div style="margin-top:12px;border-top:1px solid var(--border);padding-top:8px">
+        <div class="stat-label">Risk-Adjusted Return</div>
+        <div style="font-size:18px;font-weight:700;margin-top:4px" id="perf-sharpe">—</div>
+        <div class="stat-sub" id="perf-sharpe-sub">Return ÷ Volatility of trade returns</div>
+      </div>
     </div>
     <div class="card card-sm">
       <div class="stat-label">Win Rate</div>
@@ -874,6 +884,56 @@ tbody tr:hover { filter: brightness(0.97); }
     <div class="card card-sm">
       <div class="stat-label">Partial Exit Verdict</div>
       <div style="font-size:15px;font-weight:700;margin-top:8px;line-height:1.5" id="partial-insight">—</div>
+    </div>
+  </div>
+
+  <!-- Behavioural Patterns -->
+  <div class="section-title" style="margin-top:20px">Behavioural Patterns</div>
+  <div class="grid-2" style="margin-bottom:14px">
+    <div class="card card-sm">
+      <div class="stat-label">After 3+ Consecutive Losses</div>
+      <div style="font-size:22px;font-weight:700;margin-top:6px" id="consec-loss-next-wr">—</div>
+      <div class="stat-sub">Win rate on next trade</div>
+      <div style="font-size:16px;font-weight:700;margin-top:8px" id="consec-loss-next-avg">—</div>
+      <div class="stat-sub">Avg P&amp;L% on next trade</div>
+      <div style="font-size:12px;margin-top:8px;color:var(--text-muted)" id="consec-loss-insight">—</div>
+    </div>
+    <div class="card card-sm">
+      <div class="stat-label">Position Sizing Consistency</div>
+      <div style="font-size:22px;font-weight:700;margin-top:6px" id="sizing-cv">—</div>
+      <div class="stat-sub">Coefficient of variation (lower = more consistent)</div>
+      <div style="font-size:16px;font-weight:700;margin-top:8px" id="sizing-range">—</div>
+      <div class="stat-sub" id="sizing-range-sub">Min → Max initial risk ₹</div>
+      <div class="stat-badge" style="margin-top:8px" id="sizing-badge">—</div>
+    </div>
+  </div>
+
+  <!-- Unlock Advanced Analytics -->
+  <div class="section-title" style="margin-top:20px">Unlock Advanced Analytics</div>
+  <div class="grid-3" style="margin-bottom:14px">
+    <div class="card card-sm" style="border:1px dashed var(--border);opacity:0.8">
+      <div class="stat-label">Max Adverse Excursion (MAE)</div>
+      <div style="font-size:13px;margin-top:8px;line-height:1.6;color:var(--text-secondary)">
+        How far did each trade go against you before you exited? Reveals if you're moving stops.<br><br>
+        <strong>Add to sheet:</strong> Column tracking the lowest price hit while in the trade.
+      </div>
+      <div class="stat-badge badge-amber" style="margin-top:10px">Needs: MAE column</div>
+    </div>
+    <div class="card card-sm" style="border:1px dashed var(--border);opacity:0.8">
+      <div class="stat-label">Sector Concentration</div>
+      <div style="font-size:13px;margin-top:8px;line-height:1.6;color:var(--text-secondary)">
+        How many open positions are in the same sector? Hidden correlated risk can wipe out diversification.<br><br>
+        <strong>Add to sheet:</strong> Sector/Industry column for each trade.
+      </div>
+      <div class="stat-badge badge-amber" style="margin-top:10px">Needs: Sector column</div>
+    </div>
+    <div class="card card-sm" style="border:1px dashed var(--border);opacity:0.8">
+      <div class="stat-label">Trade Notes &amp; Mistake Log</div>
+      <div style="font-size:13px;margin-top:8px;line-height:1.6;color:var(--text-secondary)">
+        Tag each trade: Rule followed / Emotional exit / Moved stop / Oversized. You can't fix what you don't track.<br><br>
+        <strong>Add to sheet:</strong> Notes column + Quality tag column.
+      </div>
+      <div class="stat-badge badge-amber" style="margin-top:10px">Needs: Notes + Tag columns</div>
     </div>
   </div>
 
@@ -1107,7 +1167,7 @@ const DEFAULT_CONFIG = {
   partialPlCol: 'AB', finalExitPriceCol: 'AC', finalPlCol: 'AD',
   finalPlPctCol: 'AE', ageCol: 'AF',
   portfolioCell: 'AI26', initialCapCell: 'AI20',
-  maxHeat: 5, partialTrigger: 10, stopProximity: 2, heatGreen: 2.5, heatAmber: 4, maxAge: 60,
+  maxHeat: 5, partialTrigger: 10, stopProximity: 2, heatGreen: 2.5, heatAmber: 4, maxAge: 60, maxPositions: 15,
 };
 
 function loadConfig() {
@@ -1212,10 +1272,27 @@ function renderDashboard(data, cfg) {
   const openBadge = document.getElementById('dash-open-badge');
   if (openBadge) openBadge.className = 'stat-badge ' + (alertCount > 0 ? 'badge-amber' : 'badge-green');
 
+  // Today's P&L
+  const today = new Date();
+  const todayStr = today.toDateString();
+  const todayPl = closed.filter(t => t.closeDate && parseDate(t.closeDate).toDateString() === todayStr)
+    .reduce((s,t) => s + t.finalPl, 0);
+  const todayTrades = closed.filter(t => t.closeDate && parseDate(t.closeDate).toDateString() === todayStr).length;
+
   // Card 3: Closed Trades
   set('dash-closed', closed.length);
   set('dash-closed-sub', 'Realised P&L: ' + fmtSigned(totalFinalPl));
   set('dash-closed-badge', closed.length + ' completed');
+
+  if (todayTrades > 0) {
+    set('dash-today-pl', (todayPl >= 0 ? '+' : '') + '₹' + Math.abs(Math.round(todayPl)).toLocaleString('en-IN'));
+    const todayEl = document.getElementById('dash-today-pl');
+    if (todayEl) todayEl.style.color = todayPl >= 0 ? 'var(--green)' : 'var(--red)';
+    set('dash-today-sub', 'Today: ' + todayTrades + ' exit' + (todayTrades > 1 ? 's' : ''));
+  } else {
+    set('dash-today-pl', '—');
+    set('dash-today-sub', 'No exits today');
+  }
 
   // Card 4: Return
   const retStr = (totalReturn >= 0 ? '+' : '') + totalReturn.toFixed(1) + '%';
@@ -1259,6 +1336,9 @@ function renderDashboard(data, cfg) {
   const alertsWrap = document.getElementById('alerts-wrap');
   if (alertsWrap) {
     const alerts = [];
+    if (open.length > (cfg.maxPositions || 15)) {
+      alerts.unshift({ type:'red', icon:'🚫', title:`${open.length} positions open — exceeds limit of ${cfg.maxPositions || 15}`, desc:'Too many concurrent positions increases correlation risk and dilutes focus. Consider closing weakest positions.' });
+    }
     open.forEach(t => {
       if (t.pctFromStop <= 0) alerts.push({ type:'red', icon:'🔴', title:`${t.stock} — Exit Rule Triggered`, desc:'Position is at or below stop loss. Mechanical exit required.' });
       else if (t.pctFromStop <= cfg.stopProximity) alerts.push({ type:'amber', icon:'🟡', title:`${t.stock} — Within ${t.pctFromStop.toFixed(1)}% of Stop`, desc:`Only ${t.pctFromStop.toFixed(1)}% above stop loss. Review before market open.` });
@@ -1316,6 +1396,7 @@ function renderPositionsReal(open, cfg) {
             <div class="expand-item"><div class="expand-label">CMP</div><div class="expand-value">₹${t.cmp.toLocaleString('en-IN')}</div></div>
             <div class="expand-item"><div class="expand-label">Initial Risk ₹</div><div class="expand-value">₹${t.initRiskRs.toLocaleString('en-IN')}</div></div>
             <div class="expand-item"><div class="expand-label">Initial Risk %</div><div class="expand-value">${t.initRiskPct.toFixed(2)}% of capital</div></div>
+            <div class="expand-item" style="grid-column:span 2"><div class="expand-label">Partial Status</div><div class="expand-value" style="font-size:12px">${(function(){ const daysSinceEntry = t.age ? parseInt(t.age) : 0; const partialDue = t.plPct >= cfg.partialTrigger && t.partialTaken !== 'Y'; return partialDue ? '<span style="color:var(--amber)">⚠ Partial overdue — up ' + t.plPct.toFixed(1) + '% for ' + daysSinceEntry + 'd</span>' : t.partialTaken === 'Y' ? '<span style="color:var(--green)">✓ Partial taken</span>' : '—'; })()}</div></div>
           </div>
         </td>
       </tr>`;
@@ -1419,6 +1500,18 @@ function renderPerfStats(closed, open, portfolioValue, initialCapital) {
   const expCombEl = document.getElementById('perf-expectancy-combined');
   set('perf-expectancy-combined', totalTrades ? fmtPct(combinedExpPct) : 'N/A');
   if (expCombEl) expCombEl.style.color = combinedExpPct >= 0 ? 'var(--green)' : 'var(--red)';
+
+  // ── Sharpe-style: mean finalPlPct / std dev of finalPlPct ──
+  if (closed.length > 1) {
+    const mean = expectancy;
+    const variance = closed.reduce((s,t) => s + Math.pow(t.finalPlPct - mean, 2), 0) / closed.length;
+    const stdDev = Math.sqrt(variance);
+    const sharpe = stdDev > 0 ? mean / stdDev : 0;
+    const sharpeEl = document.getElementById('perf-sharpe');
+    set('perf-sharpe', sharpe.toFixed(2));
+    if (sharpeEl) sharpeEl.style.color = sharpe > 0.5 ? 'var(--green)' : sharpe > 0 ? 'var(--amber)' : 'var(--red)';
+    set('perf-sharpe-sub', sharpe > 0.5 ? 'Strong risk-adjusted edge' : sharpe > 0 ? 'Marginal edge — improve consistency' : 'Negative — losses outweigh consistency');
+  }
 
   // ── R-Multiple (closed trades only — open have no % basis) ──
   set('perf-rmultiple', rMultiple.toFixed(2) + 'R');
@@ -2058,6 +2151,55 @@ function initAnalysisCharts(open, closed) {
     const diff = Math.abs(py.avg - pn.avg).toFixed(1);
     partialInsightEl.textContent = `${better} partial exit performs better by ${diff}% avg per trade`;
     partialInsightEl.style.color = py.avg > pn.avg ? 'var(--green)' : 'var(--amber)';
+  }
+
+  // Consecutive loss behaviour
+  const sortedByDate = [...closed].filter(t => t.closeDate).sort((a,b) => parseDate(a.closeDate) - parseDate(b.closeDate));
+  const nextTradeAfterStreak = [];
+  let streak = 0;
+  sortedByDate.forEach((t, i) => {
+    if (t.finalPlPct < 0) { streak++; } else { streak = 0; }
+    if (streak >= 3 && i + 1 < sortedByDate.length) {
+      nextTradeAfterStreak.push(sortedByDate[i + 1]);
+    }
+  });
+  if (nextTradeAfterStreak.length >= 3) {
+    const nWins = nextTradeAfterStreak.filter(t => t.finalPlPct > 0).length;
+    const nWR = nWins / nextTradeAfterStreak.length * 100;
+    const nAvg = nextTradeAfterStreak.reduce((s,t) => s + t.finalPlPct, 0) / nextTradeAfterStreak.length;
+    set('consec-loss-next-wr', nWR.toFixed(0) + '%');
+    const wrEl = document.getElementById('consec-loss-next-wr');
+    if (wrEl) wrEl.style.color = nWR >= 50 ? 'var(--green)' : 'var(--red)';
+    set('consec-loss-next-avg', (nAvg >= 0 ? '+' : '') + nAvg.toFixed(1) + '%');
+    const avgEl = document.getElementById('consec-loss-next-avg');
+    if (avgEl) avgEl.style.color = nAvg >= 0 ? 'var(--green)' : 'var(--red)';
+    set('consec-loss-insight', `Based on ${nextTradeAfterStreak.length} trades after a 3+ loss streak`);
+  } else {
+    set('consec-loss-next-wr', 'N/A');
+    set('consec-loss-next-avg', 'N/A');
+    set('consec-loss-insight', 'Not enough consecutive loss sequences yet');
+  }
+
+  // Position sizing consistency
+  const risks = closed.filter(t => t.initRiskRs > 0).map(t => t.initRiskRs);
+  const openRisks = open.filter(t => t.initRiskRs > 0).map(t => t.initRiskRs);
+  const allRisks = [...risks, ...openRisks];
+  if (allRisks.length > 1) {
+    const mean = allRisks.reduce((s,v) => s+v, 0) / allRisks.length;
+    const std = Math.sqrt(allRisks.reduce((s,v) => s + Math.pow(v-mean,2), 0) / allRisks.length);
+    const cv = (std / mean * 100);
+    const minR = Math.min(...allRisks), maxR = Math.max(...allRisks);
+    const fmtRs = v => '₹' + Math.round(v).toLocaleString('en-IN');
+    set('sizing-cv', cv.toFixed(0) + '%');
+    const cvEl = document.getElementById('sizing-cv');
+    if (cvEl) cvEl.style.color = cv < 25 ? 'var(--green)' : cv < 50 ? 'var(--amber)' : 'var(--red)';
+    set('sizing-range', fmtRs(minR) + ' → ' + fmtRs(maxR));
+    const badge = document.getElementById('sizing-badge');
+    if (badge) {
+      if (cv < 25) { badge.className = 'stat-badge badge-green'; badge.textContent = '✓ Consistent sizing'; }
+      else if (cv < 50) { badge.className = 'stat-badge badge-amber'; badge.textContent = '⚠ Some variation — review'; }
+      else { badge.className = 'stat-badge badge-red'; badge.textContent = '🚫 Inconsistent — fix sizing rules'; }
+    }
   }
 
   // Scatter
