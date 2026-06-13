@@ -715,7 +715,7 @@ tbody tr:hover { filter: brightness(0.97); }
   <div class="grid-2">
     <div class="card">
       <div class="chart-title">Equity Curve</div>
-      <div class="chart-sub">Cumulative portfolio value — exit-date anchored</div>
+      <div class="chart-sub">Realised P&amp;L only (closed trades) — open positions excluded · Dashed line = initial capital</div>
       <div id="chart-equity" style="height:220px;"></div>
     </div>
     <div class="card">
@@ -1056,6 +1056,16 @@ function loadConfig() {
 }
 function saveConfig(cfg) { localStorage.setItem(CONFIG_KEY, JSON.stringify(cfg)); }
 
+// ── DATE PARSING ─────────────────────────────────────
+// Apps Script returns dates as "21-Apr-2026" (dd-MMM-yyyy).
+// new Date("21-Apr-2026") → Invalid Date in V8. Convert to "Apr 21, 2026".
+function parseDate(s) {
+  if (!s) return new Date(0);
+  const m = s.match(/^(\d{1,2})-([A-Za-z]{3})-(\d{4})$/);
+  if (m) return new Date(`${m[2]} ${parseInt(m[1])}, ${m[3]}`);
+  return new Date(s);
+}
+
 // ── FETCH ────────────────────────────────────────────
 async function fetchData() {
   const cfg = loadConfig();
@@ -1329,7 +1339,7 @@ function renderPerfStats(closed, portfolioValue, initialCapital) {
 // ── CLOSED TRADES TABLE ───────────────────────────────
 function renderClosedTradesReal(closed) {
   const tbody = document.getElementById('closed-trades-tbody');
-  const sorted = [...closed].sort((a, b) => new Date(b.closeDate) - new Date(a.closeDate));
+  const sorted = [...closed].sort((a, b) => parseDate(b.closeDate) - parseDate(a.closeDate));
   tbody.innerHTML = sorted.map(t => {
     const pnlClass = t.finalPlPct >= 0 ? 'pnl-pos' : 'pnl-neg';
     const nPnlClass = t.plPct >= 0 ? 'pnl-pos' : 'pnl-neg';
@@ -1441,7 +1451,7 @@ function filterAlert(val) {
 
 // ── STREAK (REAL) ────────────────────────────────────
 function renderStreakReal(closed) {
-  const sorted = [...closed].filter(t => t.closeDate).sort((a, b) => new Date(a.closeDate) - new Date(b.closeDate));
+  const sorted = [...closed].filter(t => t.closeDate).sort((a, b) => parseDate(a.closeDate) - parseDate(b.closeDate));
   const seq = sorted.map(t => t.finalPlPct >= 0 ? 'W' : 'L');
   const container = document.getElementById('streak-blocks');
   if (container) container.innerHTML = seq.map(s => `<div class="streak-block ${s.toLowerCase()}" title="${s === 'W' ? 'Win' : 'Loss'}">${s}</div>`).join('');
@@ -1470,7 +1480,7 @@ function renderCalendarReal(closed) {
   const dayMap = {};
   closed.forEach(t => {
     if (!t.closeDate) return;
-    const d = new Date(t.closeDate);
+    const d = parseDate(t.closeDate);
     if (isNaN(d)) return;
     const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
     if (!dayMap[key]) dayMap[key] = { date: d, pl: 0, trades: [] };
@@ -1705,7 +1715,7 @@ function destroyAndReinitAnalysis() {
 function initPerfCharts(closed, initialCapital) {
   if (!closed || !closed.length) return;
   const c = chartColors();
-  const sorted = [...closed].filter(t => t.closeDate).sort((a, b) => new Date(a.closeDate) - new Date(b.closeDate));
+  const sorted = [...closed].filter(t => t.closeDate).sort((a, b) => parseDate(a.closeDate) - parseDate(b.closeDate));
 
   let eq = initialCapital || 0, peak = eq;
   const eqData = [], ddData = [], xLbls = [];
@@ -1716,13 +1726,18 @@ function initPerfCharts(closed, initialCapital) {
     xLbls.push(t.closeDate);
   });
 
+  const finalEq = eqData.length ? eqData[eqData.length - 1] : initialCapital;
+  const eqColor = finalEq >= (initialCapital || 0) ? c.green : c.red;
   const eqChart = new ApexCharts(document.getElementById('chart-equity'), {
     ...baseOpts(220), chart: { ...baseOpts(220).chart, type: 'area' },
-    series: [{ name: 'Portfolio Value', data: eqData }],
+    series: [{ name: 'Realised P&L', data: eqData }],
     xaxis: { ...baseOpts().xaxis, categories: xLbls, labels: { ...baseOpts().xaxis.labels, rotate: -30, hideOverlappingLabels: true } },
     yaxis: { labels: { style: { colors: c.text, fontSize:'11px' }, formatter: v => '₹' + (v/100000).toFixed(1) + 'L' } },
-    colors: [c.green], fill: { type: 'gradient', gradient: { shadeIntensity:1, opacityFrom:0.35, opacityTo:0.02 } },
+    colors: [eqColor],
+    fill: { type: 'gradient', gradient: { shadeIntensity:1, opacityFrom:0.35, opacityTo:0.02 } },
     stroke: { curve: 'smooth', width: 2 }, dataLabels: { enabled: false }, markers: { size: 4, hover: { size: 7 } },
+    annotations: initialCapital ? { yaxis: [{ y: initialCapital, label: { text: 'Initial capital', style: { color: c.text, fontSize:'10px', background: 'transparent' } }, borderColor: c.text, strokeDashArray: 4 }] } : {},
+    tooltip: { ...baseOpts().tooltip, y: { formatter: v => '₹' + Math.round(v).toLocaleString('en-IN') } },
   });
   eqChart.render(); perfCharts.push(eqChart);
 
@@ -1768,7 +1783,7 @@ function initPerfCharts(closed, initialCapital) {
   rmChart.render(); perfCharts.push(rmChart);
 
   const dow = [0,0,0,0,0];
-  sorted.forEach(t => { if(!t.closeDate) return; const d = new Date(t.closeDate).getDay(); if(d>=1&&d<=5) dow[d-1]+=t.finalPl; });
+  sorted.forEach(t => { if(!t.closeDate) return; const d = parseDate(t.closeDate).getDay(); if(d>=1&&d<=5) dow[d-1]+=t.finalPl; });
   const dowChart = new ApexCharts(document.getElementById('chart-dayofweek'), {
     ...baseOpts(220), chart: { ...baseOpts(220).chart, type: 'bar' },
     series: [{ name: 'P&L ₹', data: dow.map(Math.round) }],
@@ -1812,7 +1827,7 @@ function initAnalysisCharts(open, closed) {
   }
 
   // Scatter
-  const sorted = [...closed].filter(t => t.closeDate).sort((a,b) => new Date(a.closeDate)-new Date(b.closeDate));
+  const sorted = [...closed].filter(t => t.closeDate).sort((a,b) => parseDate(a.closeDate)-parseDate(b.closeDate));
   const sc = new ApexCharts(document.getElementById('chart-scatter'), {
     ...baseOpts(240), chart: { ...baseOpts(240).chart, type: 'scatter', zoom: { enabled: false } },
     series: [
@@ -1831,7 +1846,7 @@ function initAnalysisCharts(open, closed) {
   const wkMap = {};
   [...open, ...closed].forEach(t => {
     if (!t.openDate) return;
-    const d = new Date(t.openDate); if (isNaN(d)) return;
+    const d = parseDate(t.openDate); if (isNaN(d)) return;
     const jan1 = new Date(d.getFullYear(), 0, 1);
     const wk = Math.ceil((((d-jan1)/86400000)+jan1.getDay()+1)/7);
     const key = d.getFullYear()+'-W'+String(wk).padStart(2,'0');
@@ -1854,7 +1869,7 @@ function initAnalysisCharts(open, closed) {
   const mMap = {};
   sorted.forEach(t => {
     if (!t.closeDate) return;
-    const d = new Date(t.closeDate); if (isNaN(d)) return;
+    const d = parseDate(t.closeDate); if (isNaN(d)) return;
     const key = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
     mMap[key] = (mMap[key]||0)+t.finalPl;
   });
