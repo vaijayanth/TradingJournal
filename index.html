@@ -950,7 +950,7 @@ tbody tr:hover { filter: brightness(0.97); }
     <div class="config-field">
       <label class="config-label">Google Apps Script Web App URL</label>
       <div class="flex-row" style="gap:8px">
-        <input type="text" id="cfg-url" class="config-input" placeholder="https://script.google.com/macros/s/...">
+        <input type="text" id="cfg-url" class="config-input" placeholder="https://script.google.com/macros/s/..." onblur="(function(){const v=this.value.trim();if(v){const c=loadConfig();c.url=v;saveConfig(c);updateConnStatus('configured');}}).call(this)">
         <button class="btn-ghost" style="white-space:nowrap" onclick="testConnection()">Test</button>
         <button class="btn-primary" style="white-space:nowrap" onclick="saveAllConfig();refreshData()">Save &amp; Refresh</button>
       </div>
