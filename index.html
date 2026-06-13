@@ -1414,7 +1414,9 @@ function showPage(id, btn) {
 function toggleTheme() {
   const html = document.documentElement;
   const dark = html.getAttribute('data-theme') === 'dark';
-  html.setAttribute('data-theme', dark ? 'light' : 'dark');
+  const next = dark ? 'light' : 'dark';
+  html.setAttribute('data-theme', next);
+  localStorage.setItem('tj_theme', next);
   document.querySelector('[onclick="toggleTheme()"]').textContent = dark ? '🌙' : '☀️';
   if (window._perfChartsInit) { destroyAndReinitPerf(); }
   if (window._analysisChartsInit) { destroyAndReinitAnalysis(); }
@@ -2008,6 +2010,12 @@ function initAnalysisCharts(open, closed) {
 
 // ── INIT ─────────────────────────────────────────────
 document.addEventListener('DOMContentLoaded', () => {
+  const savedTheme = localStorage.getItem('tj_theme');
+  if (savedTheme) {
+    document.documentElement.setAttribute('data-theme', savedTheme);
+    const btn = document.querySelector('[onclick="toggleTheme()"]');
+    if (btn) btn.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
+  }
   populateConfigPage();
   renderColMappings();
   const cfg = loadConfig();
