@@ -555,9 +555,10 @@ tbody tr:hover { filter: brightness(0.97); }
       <div class="stat-badge badge-amber" id="dash-init-risk-badge">—</div>
     </div>
     <div class="card card-sm">
-      <div class="stat-label">Realised P&amp;L ₹</div>
+      <div class="stat-label">Total P&amp;L ₹</div>
       <div class="stat-value" id="dash-realised-pl">—</div>
-      <div class="stat-sub" id="dash-realised-sub">From closed trades</div>
+      <div class="stat-sub" id="dash-realised-sub">Realised + Unrealised</div>
+      <div style="font-size:12px;margin-top:4px;color:var(--text-muted)" id="dash-realised-breakdown">—</div>
       <div class="stat-badge" id="dash-realised-badge">—</div>
     </div>
 
@@ -1131,9 +1132,12 @@ function renderDashboard(data, cfg) {
   const { portfolioValue, initialCapital, open, closed } = data;
   const totalReturn = initialCapital > 0 ? ((portfolioValue - initialCapital) / initialCapital * 100) : 0;
   const totalFinalPl = closed.reduce((s, t) => s + t.finalPl, 0);
+  const totalUnrealisedPl = open.reduce((s, t) => s + (t.notionalPl || 0), 0);
+  const totalCombinedPl = totalFinalPl + totalUnrealisedPl;
   const totalInitRisk = open.reduce((s, t) => s + t.initRiskRs, 0);
   const totalHeat = open.reduce((s, t) => s + t.initRiskPct, 0);
   const fmt = v => '₹' + Math.abs(v).toLocaleString('en-IN', { maximumFractionDigits: 0 });
+  const fmtSigned = v => (v >= 0 ? '+' : '-') + fmt(v);
 
   const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
 
@@ -1147,6 +1151,8 @@ function renderDashboard(data, cfg) {
 
   // Card 2: Open Positions
   set('dash-open', open.length);
+  const unrealisedStr = totalUnrealisedPl !== 0 ? ' · MTM ' + fmtSigned(totalUnrealisedPl) : '';
+  set('dash-open-sub', 'Active trades' + unrealisedStr);
   const alertCount = open.filter(t => t.pctFromStop <= 0 || (t.pctFromStop > 0 && t.pctFromStop <= cfg.stopProximity) || (t.plPct >= cfg.partialTrigger && t.partialTaken === 'N')).length;
   set('dash-open-badge', alertCount > 0 ? alertCount + ' need attention' : 'All clear');
   const openBadge = document.getElementById('dash-open-badge');
@@ -1154,7 +1160,7 @@ function renderDashboard(data, cfg) {
 
   // Card 3: Closed Trades
   set('dash-closed', closed.length);
-  set('dash-closed-sub', 'Total P&L: ' + (totalFinalPl >= 0 ? '+' : '') + fmt(totalFinalPl));
+  set('dash-closed-sub', 'Realised P&L: ' + fmtSigned(totalFinalPl));
   set('dash-closed-badge', closed.length + ' completed');
 
   // Card 4: Return
@@ -1168,10 +1174,13 @@ function renderDashboard(data, cfg) {
   // Risk cards
   set('dash-init-risk', fmt(totalInitRisk));
   set('dash-init-risk-badge', totalHeat.toFixed(2) + '% of capital');
-  set('dash-realised-pl', (totalFinalPl >= 0 ? '+' : '') + fmt(totalFinalPl));
-  set('dash-realised-sub', closed.length + ' closed trades');
+  const dashPlEl = document.getElementById('dash-realised-pl');
+  set('dash-realised-pl', fmtSigned(totalCombinedPl));
+  if (dashPlEl) dashPlEl.className = 'stat-value ' + (totalCombinedPl >= 0 ? 'green' : 'red');
+  set('dash-realised-sub', 'Realised + Unrealised');
+  set('dash-realised-breakdown', 'Realised: ' + fmtSigned(totalFinalPl) + ' · Unrealised: ' + fmtSigned(totalUnrealisedPl));
   const realBadge = document.getElementById('dash-realised-badge');
-  if (realBadge) { realBadge.className = 'stat-badge ' + (totalFinalPl >= 0 ? 'badge-green' : 'badge-red'); realBadge.textContent = (totalFinalPl >= 0 ? '▲ Profit' : '▼ Loss'); }
+  if (realBadge) { realBadge.className = 'stat-badge ' + (totalCombinedPl >= 0 ? 'badge-green' : 'badge-red'); realBadge.textContent = (totalCombinedPl >= 0 ? '▲ Profit' : '▼ Loss'); }
 
   // Heat gauge
   const heatWidth = Math.min(100, (totalHeat / cfg.maxHeat) * 100);
