@@ -1,0 +1,1505 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Trading Journal</title>
+<script src="https://cdn.jsdelivr.net/npm/apexcharts@3.44.0/dist/apexcharts.min.js"></script>
+<script src="https://unpkg.com/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
+<style>
+:root {
+  --bg: #F1F5F9;
+  --surface: #FFFFFF;
+  --surface2: #F8FAFC;
+  --border: #E2E8F0;
+  --text-primary: #0F172A;
+  --text-secondary: #64748B;
+  --text-muted: #94A3B8;
+  --accent: #3B82F6;
+  --accent-soft: #EFF6FF;
+  --green: #10B981;
+  --green-soft: #ECFDF5;
+  --red: #EF4444;
+  --red-soft: #FEF2F2;
+  --amber: #F59E0B;
+  --amber-soft: #FFFBEB;
+  --nav-bg: #FFFFFF;
+  --shadow: 0 1px 3px rgba(0,0,0,0.06), 0 1px 2px rgba(0,0,0,0.04);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.08);
+  --radius: 12px;
+  --radius-sm: 8px;
+}
+[data-theme="dark"] {
+  --bg: #0D0F14;
+  --surface: #161A23;
+  --surface2: #1E2330;
+  --border: #2A3347;
+  --text-primary: #E2E8F0;
+  --text-secondary: #94A3B8;
+  --text-muted: #4A5568;
+  --accent: #60A5FA;
+  --accent-soft: #1E3A5F;
+  --green: #34D399;
+  --green-soft: #064E3B;
+  --red: #F87171;
+  --red-soft: #450A0A;
+  --amber: #FBBF24;
+  --amber-soft: #451A03;
+  --nav-bg: #161A23;
+  --shadow: 0 1px 3px rgba(0,0,0,0.4);
+  --shadow-md: 0 4px 12px rgba(0,0,0,0.4);
+}
+* { box-sizing: border-box; margin: 0; padding: 0; }
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Inter', 'Segoe UI', sans-serif;
+  background: var(--bg);
+  color: var(--text-primary);
+  min-height: 100vh;
+  transition: background 0.25s, color 0.25s;
+}
+/* ── NAVBAR ── */
+nav {
+  position: sticky; top: 0; z-index: 100;
+  background: var(--nav-bg);
+  border-bottom: 1px solid var(--border);
+  box-shadow: var(--shadow);
+  padding: 0 24px;
+  display: flex; align-items: center; gap: 0;
+  height: 56px;
+}
+.nav-logo {
+  font-size: 15px; font-weight: 700;
+  color: var(--text-primary);
+  display: flex; align-items: center; gap: 8px;
+  margin-right: 32px; white-space: nowrap;
+}
+.nav-logo span { color: var(--accent); }
+.nav-tabs { display: flex; align-items: center; gap: 2px; flex: 1; }
+.nav-tab {
+  padding: 6px 16px; border-radius: var(--radius-sm);
+  font-size: 13.5px; font-weight: 500;
+  color: var(--text-secondary); cursor: pointer;
+  border: none; background: none;
+  transition: all 0.15s; white-space: nowrap;
+}
+.nav-tab:hover { background: var(--surface2); color: var(--text-primary); }
+.nav-tab.active {
+  background: var(--accent-soft); color: var(--accent); font-weight: 600;
+}
+.nav-right { display: flex; align-items: center; gap: 10px; margin-left: auto; }
+.refresh-info { font-size: 11.5px; color: var(--text-muted); white-space: nowrap; }
+.btn-icon {
+  width: 34px; height: 34px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); background: var(--surface);
+  color: var(--text-secondary); cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 15px; transition: all 0.15s;
+}
+.btn-icon:hover { background: var(--surface2); color: var(--text-primary); }
+/* ── LAYOUT ── */
+.page { display: none; padding: 24px; max-width: 1400px; margin: 0 auto; }
+.page.active { display: block; }
+.section-title {
+  font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
+  color: var(--text-muted); text-transform: uppercase;
+  margin-bottom: 12px; margin-top: 24px;
+}
+.section-title:first-child { margin-top: 0; }
+/* ── CARDS ── */
+.card {
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius); padding: 20px;
+  box-shadow: var(--shadow);
+}
+.card-sm { padding: 16px; }
+.grid-4 { display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px; }
+.grid-3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+/* ── STAT CARDS ── */
+.stat-label {
+  font-size: 11.5px; font-weight: 600; letter-spacing: 0.04em;
+  color: var(--text-muted); text-transform: uppercase; margin-bottom: 8px;
+}
+.stat-value {
+  font-size: 26px; font-weight: 700; line-height: 1.1;
+  color: var(--text-primary); letter-spacing: -0.5px;
+}
+.stat-value.green { color: var(--green); }
+.stat-value.red { color: var(--red); }
+.stat-sub {
+  font-size: 12px; color: var(--text-secondary); margin-top: 5px;
+}
+.stat-badge {
+  display: inline-flex; align-items: center; gap: 3px;
+  font-size: 11.5px; font-weight: 600; padding: 2px 7px;
+  border-radius: 20px; margin-top: 4px;
+}
+.badge-green { background: var(--green-soft); color: var(--green); }
+.badge-red { background: var(--red-soft); color: var(--red); }
+.badge-amber { background: var(--amber-soft); color: var(--amber); }
+.badge-blue { background: var(--accent-soft); color: var(--accent); }
+/* ── HEAT GAUGE ── */
+.heat-card { grid-column: span 2; }
+.heat-row { margin-bottom: 14px; }
+.heat-row:last-child { margin-bottom: 0; }
+.heat-label-row {
+  display: flex; justify-content: space-between; align-items: center;
+  margin-bottom: 6px;
+}
+.heat-label { font-size: 12px; font-weight: 600; color: var(--text-secondary); }
+.heat-value { font-size: 13px; font-weight: 700; }
+.heat-track {
+  height: 10px; border-radius: 99px;
+  background: var(--surface2); border: 1px solid var(--border);
+  position: relative; overflow: hidden;
+}
+.heat-fill {
+  height: 100%; border-radius: 99px;
+  transition: width 0.8s cubic-bezier(0.4,0,0.2,1);
+}
+.heat-markers {
+  display: flex; justify-content: space-between;
+  margin-top: 4px;
+  font-size: 10px; color: var(--text-muted);
+}
+.heat-legend {
+  display: flex; gap: 14px; margin-top: 12px;
+}
+.heat-legend-item {
+  display: flex; align-items: center; gap: 5px;
+  font-size: 11px; color: var(--text-secondary);
+}
+.heat-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+}
+/* ── ALERTS ── */
+.alerts-wrap { display: flex; flex-direction: column; gap: 8px; }
+.alert-banner {
+  display: flex; align-items: center; gap: 12px;
+  padding: 12px 16px; border-radius: var(--radius-sm);
+  border-left: 3px solid;
+  cursor: pointer; transition: opacity 0.15s;
+}
+.alert-banner:hover { opacity: 0.85; }
+.alert-red {
+  background: var(--red-soft); border-color: var(--red);
+}
+.alert-amber {
+  background: var(--amber-soft); border-color: var(--amber);
+}
+.alert-green {
+  background: var(--green-soft); border-color: var(--green);
+}
+.alert-icon { font-size: 15px; flex-shrink: 0; }
+.alert-text { flex: 1; }
+.alert-title { font-size: 13px; font-weight: 700; }
+.alert-red .alert-title { color: var(--red); }
+.alert-amber .alert-title { color: var(--amber); }
+.alert-green .alert-title { color: var(--green); }
+.alert-desc { font-size: 12px; color: var(--text-secondary); margin-top: 1px; }
+.alert-arrow { color: var(--text-muted); font-size: 12px; }
+/* ── PERIOD FILTER ── */
+.period-filter {
+  display: flex; gap: 6px; align-items: center;
+  background: var(--surface); border: 1px solid var(--border);
+  border-radius: var(--radius-sm); padding: 4px;
+  width: fit-content;
+}
+.period-btn {
+  padding: 6px 16px; border-radius: 6px;
+  font-size: 12.5px; font-weight: 500;
+  color: var(--text-secondary); cursor: pointer;
+  border: none; background: none; transition: all 0.15s;
+}
+.period-btn.active {
+  background: var(--accent); color: #fff; font-weight: 600;
+}
+/* ── BIG METRIC ── */
+.big-metric-wrap {
+  text-align: center; padding: 8px 0;
+}
+.big-metric-value {
+  font-size: 42px; font-weight: 800; letter-spacing: -2px; line-height: 1;
+}
+.big-metric-label {
+  font-size: 12px; font-weight: 600; color: var(--text-secondary);
+  margin-top: 6px; text-transform: uppercase; letter-spacing: 0.05em;
+}
+.big-metric-sub {
+  font-size: 12px; color: var(--text-muted); margin-top: 4px;
+}
+/* ── COMPARE CARD ── */
+.compare-row {
+  display: flex; align-items: center; gap: 0;
+  justify-content: space-around;
+}
+.compare-side { text-align: center; flex: 1; }
+.compare-vs {
+  font-size: 11px; font-weight: 700; color: var(--text-muted);
+  padding: 0 12px;
+}
+.compare-value { font-size: 22px; font-weight: 700; }
+.compare-label { font-size: 11px; color: var(--text-secondary); margin-top: 3px; }
+.compare-gap {
+  text-align: center; font-size: 11.5px; font-weight: 600;
+  color: var(--amber); margin-top: 10px;
+  padding: 5px; background: var(--amber-soft); border-radius: 6px;
+}
+/* ── CHART CONTAINERS ── */
+.chart-title {
+  font-size: 13px; font-weight: 700; color: var(--text-primary);
+  margin-bottom: 4px;
+}
+.chart-sub {
+  font-size: 11.5px; color: var(--text-muted); margin-bottom: 12px;
+}
+.chart-placeholder {
+  height: 200px; border-radius: var(--radius-sm);
+  background: var(--surface2); border: 2px dashed var(--border);
+  display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 8px;
+}
+.placeholder-icon { font-size: 28px; }
+.placeholder-title { font-size: 13px; font-weight: 700; color: var(--text-secondary); }
+.placeholder-desc { font-size: 11.5px; color: var(--text-muted); text-align: center; max-width: 220px; }
+/* ── WIN/LOSS STREAK ── */
+.streak-wrap {
+  display: flex; flex-wrap: wrap; gap: 4px; padding: 4px 0;
+}
+.streak-block {
+  width: 24px; height: 28px; border-radius: 4px;
+  display: flex; align-items: center; justify-content: center;
+  font-size: 9px; font-weight: 700; color: #fff;
+  cursor: default;
+  position: relative;
+}
+.streak-block.w { background: var(--green); }
+.streak-block.l { background: var(--red); }
+.streak-legend {
+  display: flex; gap: 12px; margin-top: 8px;
+}
+/* ── CALENDAR HEATMAP ── */
+.cal-grid {
+  display: grid; grid-template-columns: repeat(4, 1fr); gap: 14px;
+}
+.cal-month { }
+.cal-month-name {
+  font-size: 11px; font-weight: 700; color: var(--text-secondary);
+  text-align: center; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.06em;
+}
+.cal-days-grid {
+  display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px;
+}
+.cal-day-header {
+  font-size: 8px; color: var(--text-muted); text-align: center;
+  font-weight: 600; padding-bottom: 3px;
+}
+.cal-cell {
+  aspect-ratio: 1; border-radius: 3px; cursor: default;
+  position: relative;
+}
+.cal-cell.empty { background: transparent; }
+.cal-cell.no-trade { background: var(--surface2); }
+.cal-cell.profit-1 { background: #BBF7D0; }
+.cal-cell.profit-2 { background: #6EE7B7; }
+.cal-cell.profit-3 { background: #10B981; }
+.cal-cell.loss-1 { background: #FECACA; }
+.cal-cell.loss-2 { background: #FCA5A5; }
+.cal-cell.loss-3 { background: #EF4444; }
+[data-theme="dark"] .cal-cell.no-trade { background: #1E2330; }
+[data-theme="dark"] .cal-cell.profit-1 { background: #064E3B; }
+[data-theme="dark"] .cal-cell.profit-2 { background: #065F46; }
+[data-theme="dark"] .cal-cell.profit-3 { background: #047857; }
+[data-theme="dark"] .cal-cell.loss-1 { background: #450A0A; }
+[data-theme="dark"] .cal-cell.loss-2 { background: #7F1D1D; }
+[data-theme="dark"] .cal-cell.loss-3 { background: #991B1B; }
+/* ── 21 EMA SPLIT ── */
+.ema-split {
+  display: grid; grid-template-columns: 1fr auto 1fr; gap: 0; align-items: stretch;
+}
+.ema-side {
+  padding: 20px; text-align: center;
+}
+.ema-side.above { border-right: 1px solid var(--border); }
+.ema-context-label {
+  font-size: 11px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--text-muted); margin-bottom: 12px;
+}
+.ema-metric { margin-bottom: 14px; }
+.ema-metric-value { font-size: 32px; font-weight: 800; letter-spacing: -1px; }
+.ema-metric-label { font-size: 11px; color: var(--text-secondary); margin-top: 2px; }
+.ema-trades { font-size: 11px; color: var(--text-muted); margin-top: 10px; }
+.ema-insight {
+  text-align: center; padding: 12px 20px;
+  background: var(--accent-soft); border-radius: var(--radius-sm);
+  font-size: 12.5px; font-weight: 600; color: var(--accent);
+  margin-top: 12px;
+}
+.ema-divider {
+  display: flex; align-items: center; justify-content: center;
+  padding: 0 16px;
+  font-size: 11px; font-weight: 700; color: var(--text-muted);
+}
+/* ── POSITIONS TABLE ── */
+.table-controls {
+  display: flex; gap: 10px; align-items: center; margin-bottom: 14px;
+}
+.search-input {
+  padding: 8px 12px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); background: var(--surface);
+  color: var(--text-primary); font-size: 13px;
+  flex: 1; max-width: 260px; outline: none;
+  transition: border 0.15s;
+}
+.search-input:focus { border-color: var(--accent); }
+.search-input::placeholder { color: var(--text-muted); }
+.select-control {
+  padding: 8px 12px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); background: var(--surface);
+  color: var(--text-secondary); font-size: 12.5px; outline: none; cursor: pointer;
+}
+.alert-strip {
+  display: flex; gap: 10px; align-items: center;
+  padding: 10px 16px; border-radius: var(--radius-sm);
+  background: var(--surface2); border: 1px solid var(--border);
+  margin-bottom: 14px; font-size: 12.5px;
+}
+.strip-badge {
+  display: flex; align-items: center; gap: 5px;
+  font-weight: 700; padding: 3px 10px; border-radius: 20px;
+}
+.table-wrap { border-radius: var(--radius); overflow: hidden; border: 1px solid var(--border); }
+table { width: 100%; border-collapse: collapse; }
+thead { background: var(--surface2); }
+th {
+  padding: 10px 14px; text-align: left;
+  font-size: 11px; font-weight: 700; letter-spacing: 0.06em;
+  color: var(--text-muted); text-transform: uppercase;
+  border-bottom: 1px solid var(--border); white-space: nowrap;
+  cursor: pointer; user-select: none;
+}
+th:hover { color: var(--text-secondary); }
+td {
+  padding: 12px 14px; font-size: 13px;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+tr:last-child td { border-bottom: none; }
+tbody tr { background: var(--surface); transition: filter 0.1s; cursor: pointer; }
+tbody tr:hover { filter: brightness(0.97); }
+[data-theme="dark"] tbody tr:hover { filter: brightness(1.06); }
+.row-red td:first-child { border-left: 3px solid var(--red); }
+.row-amber td:first-child { border-left: 3px solid var(--amber); }
+.row-green td:first-child { border-left: 3px solid var(--green); }
+.row-red { background: var(--red-soft) !important; }
+.row-amber { background: var(--amber-soft) !important; }
+.row-green { background: var(--green-soft) !important; }
+.stock-name { font-weight: 700; font-size: 13.5px; }
+.pnl-pos { color: var(--green); font-weight: 600; }
+.pnl-neg { color: var(--red); font-weight: 600; }
+.tag {
+  display: inline-block; padding: 2px 8px; border-radius: 20px;
+  font-size: 11px; font-weight: 600;
+}
+.tag-above { background: var(--green-soft); color: var(--green); }
+.tag-below { background: var(--red-soft); color: var(--red); }
+.tag-y { background: var(--green-soft); color: var(--green); }
+.tag-n { background: var(--surface2); color: var(--text-muted); }
+/* Expanded row */
+.expand-row { display: none; }
+.expand-row.open { display: table-row; }
+.expand-content {
+  padding: 14px 20px; background: var(--surface2);
+  display: grid; grid-template-columns: repeat(5, 1fr); gap: 14px;
+}
+.expand-item { }
+.expand-label { font-size: 10.5px; font-weight: 600; color: var(--text-muted); text-transform: uppercase; letter-spacing: 0.05em; }
+.expand-value { font-size: 14px; font-weight: 700; color: var(--text-primary); margin-top: 3px; }
+/* ── CONFIG ── */
+.config-section { margin-bottom: 20px; }
+.config-section-title {
+  font-size: 12px; font-weight: 700; text-transform: uppercase;
+  letter-spacing: 0.08em; color: var(--text-muted);
+  margin-bottom: 12px; padding-bottom: 8px;
+  border-bottom: 1px solid var(--border);
+}
+.config-field { margin-bottom: 14px; }
+.config-label {
+  display: block; font-size: 12.5px; font-weight: 600;
+  color: var(--text-secondary); margin-bottom: 5px;
+}
+.config-input {
+  width: 100%; padding: 9px 12px; border-radius: var(--radius-sm);
+  border: 1px solid var(--border); background: var(--surface);
+  color: var(--text-primary); font-size: 13.5px; outline: none;
+  transition: border 0.15s;
+}
+.config-input:focus { border-color: var(--accent); }
+.config-input-sm { max-width: 100px; }
+.config-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 14px; }
+.config-grid-2 { display: grid; grid-template-columns: repeat(2, 1fr); gap: 14px; }
+.btn-primary {
+  padding: 9px 18px; border-radius: var(--radius-sm);
+  background: var(--accent); color: #fff;
+  font-size: 13px; font-weight: 600; border: none; cursor: pointer;
+  transition: opacity 0.15s;
+}
+.btn-primary:hover { opacity: 0.88; }
+.btn-ghost {
+  padding: 9px 18px; border-radius: var(--radius-sm);
+  background: var(--surface); color: var(--text-secondary);
+  font-size: 13px; font-weight: 600;
+  border: 1px solid var(--border); cursor: pointer;
+  transition: all 0.15s;
+}
+.btn-ghost:hover { background: var(--surface2); color: var(--text-primary); }
+.connection-status {
+  display: flex; align-items: center; gap: 8px;
+  font-size: 13px; color: var(--text-secondary); margin-top: 10px;
+}
+.status-dot {
+  width: 8px; height: 8px; border-radius: 50%;
+  background: var(--green); flex-shrink: 0;
+}
+.config-map-row {
+  display: flex; align-items: center; gap: 12px;
+  padding: 8px 0; border-bottom: 1px solid var(--border);
+}
+.config-map-row:last-child { border-bottom: none; }
+.config-map-label { flex: 1; font-size: 13px; color: var(--text-primary); }
+.config-map-opt { font-size: 11.5px; color: var(--text-muted); margin-left: 4px; }
+.col-select {
+  width: 70px; padding: 5px 8px; border-radius: 6px;
+  border: 1px solid var(--border); background: var(--surface);
+  color: var(--text-primary); font-size: 12.5px; font-weight: 600; outline: none;
+}
+/* ── COLLAPSIBLE ── */
+.collapsible-toggle {
+  display: flex; align-items: center; gap: 8px;
+  width: 100%; padding: 12px 16px; border-radius: var(--radius-sm);
+  background: var(--surface2); border: 1px solid var(--border);
+  color: var(--text-secondary); font-size: 13px; font-weight: 600;
+  cursor: pointer; margin-top: 16px; transition: all 0.15s;
+}
+.collapsible-toggle:hover { background: var(--border); color: var(--text-primary); }
+.collapsible-body { display: none; margin-top: 12px; }
+.collapsible-body.open { display: block; }
+/* ── MISC ── */
+.divider { height: 1px; background: var(--border); margin: 20px 0; }
+.text-green { color: var(--green); }
+.text-red { color: var(--red); }
+.text-amber { color: var(--amber); }
+.text-muted { color: var(--text-muted); }
+.fw-700 { font-weight: 700; }
+.flex-row { display: flex; align-items: center; gap: 10px; }
+.mt-4 { margin-top: 16px; }
+.mt-3 { margin-top: 12px; }
+</style>
+</head>
+<body>
+
+<!-- ════ NAVBAR ════ -->
+<nav>
+  <div class="nav-logo">📈 <span>Trading</span>Journal</div>
+  <div class="nav-tabs">
+    <button class="nav-tab active" onclick="showPage('dashboard', this)">Dashboard</button>
+    <button class="nav-tab" onclick="showPage('performance', this)">Performance</button>
+    <button class="nav-tab" onclick="showPage('analysis', this)">Analysis</button>
+    <button class="nav-tab" onclick="showPage('positions', this)">Positions</button>
+    <button class="nav-tab" onclick="showPage('config', this)">Config</button>
+  </div>
+  <div class="nav-right">
+    <span class="refresh-info">Updated 2 min ago</span>
+    <button class="btn-icon" title="Refresh" onclick="alert('Refresh triggered')">↻</button>
+    <button class="btn-icon" title="Toggle theme" onclick="toggleTheme()">🌙</button>
+  </div>
+</nav>
+
+<!-- ════ DASHBOARD ════ -->
+<div id="page-dashboard" class="page active">
+
+  <div class="section-title">Portfolio Status</div>
+  <div class="grid-4">
+    <div class="card card-sm">
+      <div class="stat-label">Portfolio Value</div>
+      <div class="stat-value">₹12,45,230</div>
+      <div class="stat-sub">Initial: ₹10,00,000</div>
+      <div class="stat-badge badge-green">▲ +₹2,45,230</div>
+    </div>
+    <div class="card card-sm">
+      <div class="stat-label">Total Invested</div>
+      <div class="stat-value">₹8,20,000</div>
+      <div class="stat-sub">65.8% of portfolio deployed</div>
+      <div class="stat-badge badge-blue">7 positions</div>
+    </div>
+    <div class="card card-sm">
+      <div class="stat-label">Open Positions</div>
+      <div class="stat-value">7</div>
+      <div class="stat-sub">Active trades</div>
+      <div class="stat-badge badge-amber">3 need attention</div>
+    </div>
+    <div class="card card-sm">
+      <div class="stat-label">Return on Portfolio</div>
+      <div class="stat-value green">+24.5%</div>
+      <div class="stat-sub">Since inception</div>
+      <div class="stat-badge badge-green">▲ Compounding</div>
+    </div>
+  </div>
+
+  <div class="section-title" style="margin-top:20px">Risk & Heat</div>
+  <div class="grid-4">
+    <div class="card card-sm">
+      <div class="stat-label">Initial Risk</div>
+      <div class="stat-value">₹24,600</div>
+      <div class="stat-sub">Across all open positions</div>
+      <div class="stat-badge badge-amber">1.97% of capital</div>
+    </div>
+    <div class="card card-sm">
+      <div class="stat-label">Active Risk</div>
+      <div class="stat-value">₹18,200</div>
+      <div class="stat-sub">Current stop-adjusted</div>
+      <div class="stat-badge badge-green">1.46% of capital</div>
+    </div>
+
+    <!-- Heat Gauge spanning 2 cols -->
+    <div class="card card-sm heat-card">
+      <div class="stat-label" style="margin-bottom:14px">Portfolio Heat</div>
+
+      <div class="heat-row">
+        <div class="heat-label-row">
+          <span class="heat-label">Actual Heat</span>
+          <span class="heat-value text-amber">2.8%</span>
+        </div>
+        <div class="heat-track">
+          <div class="heat-fill" style="width:56%; background: linear-gradient(90deg, #10B981 0%, #F59E0B 70%, #EF4444 100%);"></div>
+        </div>
+      </div>
+
+      <div class="heat-row">
+        <div class="heat-label-row">
+          <span class="heat-label">Initial Heat</span>
+          <span class="heat-value text-amber">3.1%</span>
+        </div>
+        <div class="heat-track">
+          <div class="heat-fill" style="width:62%; background: linear-gradient(90deg, #10B981 0%, #F59E0B 70%, #EF4444 100%);"></div>
+        </div>
+      </div>
+
+      <div class="heat-markers">
+        <span>0%</span><span>2.5% 🟢</span><span>4% 🟡</span><span>5% 🔴 ceiling</span>
+      </div>
+
+      <div style="margin-top:10px">
+        <div class="stat-badge badge-amber" style="font-size:12px">⚠ AMBER — Approaching ceiling. No new positions above 1R.</div>
+      </div>
+    </div>
+  </div>
+
+  <div class="section-title" style="margin-top:20px">Behavioural Alerts</div>
+  <div class="alerts-wrap">
+    <div class="alert-banner alert-red">
+      <div class="alert-icon">🔴</div>
+      <div class="alert-text">
+        <div class="alert-title">RELIANCE — Exit Rule Triggered</div>
+        <div class="alert-desc">Position is below 7-day low. Mechanical exit required. Do not override.</div>
+      </div>
+      <span class="alert-arrow">→ View in Positions</span>
+    </div>
+    <div class="alert-banner alert-amber">
+      <div class="alert-icon">🟡</div>
+      <div class="alert-text">
+        <div class="alert-title">INFY — Within 2% of Stop</div>
+        <div class="alert-desc">1.6% away from stop loss. Review before market open tomorrow.</div>
+      </div>
+      <span class="alert-arrow">→ View in Positions</span>
+    </div>
+    <div class="alert-banner alert-amber">
+      <div class="alert-icon">🟡</div>
+      <div class="alert-text">
+        <div class="alert-title">HCLTECH — Within 2% of Stop</div>
+        <div class="alert-desc">1.5% away from stop loss. Monitor closely.</div>
+      </div>
+      <span class="alert-arrow">→ View in Positions</span>
+    </div>
+    <div class="alert-banner alert-green">
+      <div class="alert-icon">🟢</div>
+      <div class="alert-text">
+        <div class="alert-title">TCS — Partial Exit Pending (+10.4%)</div>
+        <div class="alert-desc">At or above +10% gain. Partial exit not yet taken. Rule requires action today.</div>
+      </div>
+      <span class="alert-arrow">→ View in Positions</span>
+    </div>
+  </div>
+</div>
+
+<!-- ════ PERFORMANCE ════ -->
+<div id="page-performance" class="page">
+
+  <!-- Period Filter -->
+  <div class="flex-row" style="margin-bottom:20px; justify-content:space-between; align-items:center;">
+    <div style="font-size:14px; font-weight:700; color:var(--text-primary)">Performance Analytics</div>
+    <div class="period-filter">
+      <button class="period-btn active" onclick="setPeriod(this,'all')">All Time</button>
+      <button class="period-btn" onclick="setPeriod(this,'90')">Last 90 Days</button>
+      <button class="period-btn" onclick="setPeriod(this,'30')">Last 30 Days</button>
+    </div>
+  </div>
+
+  <!-- Group 1: P&L Summary -->
+  <div class="section-title">P&L Summary</div>
+  <div class="grid-3">
+    <!-- Final vs Notional -->
+    <div class="card card-sm">
+      <div class="stat-label">P&L — Final vs Notional</div>
+      <div class="compare-row" style="margin-top:8px">
+        <div class="compare-side">
+          <div class="compare-value text-green">₹62,400</div>
+          <div class="compare-value" style="font-size:14px; color:var(--green)">+6.2%</div>
+          <div class="compare-label">Final (Realised)</div>
+        </div>
+        <div class="compare-vs">vs</div>
+        <div class="compare-side">
+          <div class="compare-value text-amber">₹1,31,200</div>
+          <div class="compare-value" style="font-size:14px; color:var(--amber)">+13.1%</div>
+          <div class="compare-label">Notional (If held)</div>
+        </div>
+      </div>
+      <div class="compare-gap">⚠ Leaving ₹68,800 on the table by exiting early</div>
+    </div>
+
+    <!-- Capture Rate -->
+    <div class="card card-sm">
+      <div class="stat-label">P&L Capture Rate</div>
+      <div class="big-metric-wrap">
+        <div class="big-metric-value text-amber">47.6%</div>
+        <div class="big-metric-label">of gains captured</div>
+        <div class="big-metric-sub">Losing over half your upside to early exits</div>
+      </div>
+    </div>
+
+    <!-- RoP -->
+    <div class="card card-sm">
+      <div class="stat-label">Return on Portfolio</div>
+      <div class="stat-value green" style="font-size:32px; margin-top:8px">+6.2%</div>
+      <div class="stat-sub">On ₹10,00,000 initial capital</div>
+      <div style="margin-top:10px">
+        <div class="stat-label">Closed Trades</div>
+        <div style="font-size:20px; font-weight:700">57</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Group 2: System Quality -->
+  <div class="section-title" style="margin-top:20px">System Quality</div>
+  <div class="grid-3" style="margin-bottom:14px">
+    <div class="card card-sm">
+      <div class="stat-label">Expectancy Per Trade</div>
+      <div class="stat-value green" style="font-size:28px; margin-top:4px">+0.42%</div>
+      <div class="stat-sub" style="margin-top:8px; font-size:13px; line-height:1.5">
+        Each trade is currently <strong style="color:var(--green)">making you +0.42%</strong> on average.
+        Edge exists — system is working.
+      </div>
+    </div>
+    <div class="card card-sm">
+      <div class="stat-label">R-Multiple</div>
+      <div class="stat-value" style="font-size:28px; margin-top:4px">1.8R</div>
+      <div class="stat-sub">Avg Win / Avg Loss</div>
+      <div class="stat-badge badge-green" style="margin-top:8px">✓ Asymmetric edge</div>
+    </div>
+    <div class="card card-sm">
+      <div class="stat-label">Win Rate — Final vs Notional</div>
+      <div class="compare-row" style="margin-top:8px">
+        <div class="compare-side">
+          <div class="compare-value text-red">26.87%</div>
+          <div class="compare-label">Final</div>
+        </div>
+        <div class="compare-vs">vs</div>
+        <div class="compare-side">
+          <div class="compare-value text-green">57.43%</div>
+          <div class="compare-label">Notional</div>
+        </div>
+      </div>
+      <div class="compare-gap">30.6pp gap — early exits flipping wins to losses</div>
+    </div>
+  </div>
+
+  <div class="grid-2">
+    <div class="card card-sm">
+      <div class="stat-label">Final Avg Win vs Loss</div>
+      <div class="flex-row" style="margin-top:8px; gap:20px">
+        <div>
+          <div style="font-size:20px; font-weight:700; color:var(--green)">+8.4%</div>
+          <div class="stat-sub">Avg Final Win</div>
+        </div>
+        <div style="color:var(--border); font-size:20px">|</div>
+        <div>
+          <div style="font-size:20px; font-weight:700; color:var(--red)">-4.1%</div>
+          <div class="stat-sub">Avg Final Loss</div>
+        </div>
+      </div>
+    </div>
+    <div class="card card-sm">
+      <div class="stat-label">Notional Avg Win vs Loss</div>
+      <div class="flex-row" style="margin-top:8px; gap:20px">
+        <div>
+          <div style="font-size:20px; font-weight:700; color:var(--green)">+17.2%</div>
+          <div class="stat-sub">Avg Notional Win</div>
+        </div>
+        <div style="color:var(--border); font-size:20px">|</div>
+        <div>
+          <div style="font-size:20px; font-weight:700; color:var(--red)">-4.3%</div>
+          <div class="stat-sub">Avg Notional Loss</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Charts Grid -->
+  <div class="section-title" style="margin-top:24px">Charts</div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="chart-title">Equity Curve</div>
+      <div class="chart-sub">Cumulative portfolio value — exit-date anchored</div>
+      <div id="chart-equity" style="height:220px;"></div>
+    </div>
+    <div class="card">
+      <div class="chart-title">Drawdown</div>
+      <div class="chart-sub">% below peak equity at each point in time</div>
+      <div id="chart-drawdown" style="height:220px;"></div>
+    </div>
+    <div class="card">
+      <div class="chart-title">P&L Distribution</div>
+      <div class="chart-sub">Final P&L% vs Notional P&L% — reveals right-tail truncation</div>
+      <div id="chart-distribution" style="height:220px;"></div>
+    </div>
+    <div class="card">
+      <div class="chart-title">Win / Loss Streak</div>
+      <div class="chart-sub">Trade sequence — shows if losses cluster or are random</div>
+      <div id="streak-container" style="padding-top:8px">
+        <div class="streak-wrap" id="streak-blocks"></div>
+        <div class="streak-legend" style="margin-top:10px">
+          <div class="flex-row" style="gap:5px"><div style="width:14px;height:14px;border-radius:3px;background:var(--green)"></div><span style="font-size:11px;color:var(--text-muted)">Win</span></div>
+          <div class="flex-row" style="gap:5px"><div style="width:14px;height:14px;border-radius:3px;background:var(--red)"></div><span style="font-size:11px;color:var(--text-muted)">Loss</span></div>
+        </div>
+        <div style="margin-top:8px; font-size:12px; color:var(--text-muted)">Current streak: <strong style="color:var(--green)">2W</strong> &nbsp;|&nbsp; Longest win streak: <strong>5W</strong> &nbsp;|&nbsp; Longest loss streak: <strong style="color:var(--red)">4L</strong></div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="chart-title">R-Multiple Distribution</div>
+      <div class="chart-sub">Edge shape across all closed trades</div>
+      <div id="chart-rmultiple" style="height:220px;"></div>
+    </div>
+    <div class="card">
+      <div class="chart-title">Day of Week P&L</div>
+      <div class="chart-sub">Realised P&L by exit day — reveals best/worst days</div>
+      <div id="chart-dayofweek" style="height:220px;"></div>
+    </div>
+  </div>
+
+  <!-- Calendar Heatmap -->
+  <div class="card" style="margin-top:14px">
+    <div class="chart-title">P&L Calendar — 2025</div>
+    <div class="chart-sub">Daily realised P&L anchored on exit date · Hover for details</div>
+    <div class="cal-grid" id="cal-grid"></div>
+    <div class="flex-row" style="margin-top:14px; gap:20px; font-size:11px; color:var(--text-muted)">
+      <div class="flex-row" style="gap:4px"><div style="width:12px;height:12px;border-radius:2px;background:#10B981"></div> Strong profit</div>
+      <div class="flex-row" style="gap:4px"><div style="width:12px;height:12px;border-radius:2px;background:#BBF7D0"></div> Small profit</div>
+      <div class="flex-row" style="gap:4px"><div style="width:12px;height:12px;border-radius:2px;background:#EF4444"></div> Strong loss</div>
+      <div class="flex-row" style="gap:4px"><div style="width:12px;height:12px;border-radius:2px;background:#FECACA"></div> Small loss</div>
+      <div class="flex-row" style="gap:4px"><div style="width:12px;height:12px;border-radius:2px;background:var(--surface2);border:1px solid var(--border)"></div> No trade</div>
+    </div>
+  </div>
+
+  <!-- Collapsible trade table -->
+  <button class="collapsible-toggle" onclick="toggleCollapsible('closed-trades-body', this)">
+    <span>▶</span> Show all closed trades (57)
+  </button>
+  <div class="collapsible-body" id="closed-trades-body">
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>Stock</th><th>Entry Date</th><th>Exit Date</th><th>Days Held</th>
+            <th>Entry ₹</th><th>Final P&L%</th><th>Notional P&L%</th><th>Partial</th><th>21 EMA</th>
+          </tr>
+        </thead>
+        <tbody id="closed-trades-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<!-- ════ ANALYSIS ════ -->
+<div id="page-analysis" class="page">
+
+  <!-- 21 EMA Full Width -->
+  <div class="section-title">21 EMA Context vs Outcome</div>
+  <div class="card" style="margin-bottom:14px">
+    <div class="chart-title">Entry Context — Above vs Below 21 EMA at Trade Entry</div>
+    <div class="chart-sub">Most immediately actionable signal in your dataset</div>
+    <div class="ema-split">
+      <div class="ema-side above">
+        <div class="ema-context-label" style="color:var(--green)">Above 21 EMA</div>
+        <div class="ema-metric">
+          <div class="ema-metric-value text-green">61%</div>
+          <div class="ema-metric-label">Win Rate</div>
+        </div>
+        <div class="ema-metric">
+          <div class="ema-metric-value text-green">+9.2%</div>
+          <div class="ema-metric-label">Avg P&L%</div>
+        </div>
+        <div class="ema-metric">
+          <div class="ema-metric-value" style="font-size:20px">2.1R</div>
+          <div class="ema-metric-label">Avg R-Multiple</div>
+        </div>
+        <div class="ema-trades">n = 42 trades</div>
+        <div style="margin-top:12px">
+          <div style="height:8px;border-radius:99px;background:var(--green-soft)">
+            <div style="height:100%;width:61%;border-radius:99px;background:var(--green)"></div>
+          </div>
+        </div>
+      </div>
+      <div class="ema-divider">vs</div>
+      <div class="ema-side">
+        <div class="ema-context-label" style="color:var(--red)">Below 21 EMA</div>
+        <div class="ema-metric">
+          <div class="ema-metric-value text-red">28%</div>
+          <div class="ema-metric-label">Win Rate</div>
+        </div>
+        <div class="ema-metric">
+          <div class="ema-metric-value text-red">-2.1%</div>
+          <div class="ema-metric-label">Avg P&L%</div>
+        </div>
+        <div class="ema-metric">
+          <div class="ema-metric-value" style="font-size:20px">0.6R</div>
+          <div class="ema-metric-label">Avg R-Multiple</div>
+        </div>
+        <div class="ema-trades">n = 15 trades</div>
+        <div style="margin-top:12px">
+          <div style="height:8px;border-radius:99px;background:var(--red-soft)">
+            <div style="height:100%;width:28%;border-radius:99px;background:var(--red)"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="ema-insight">
+      → You perform <strong>2.2× better</strong> when entering above the 21 EMA.
+      Below-EMA trades are costing you an average of -2.1% per trade. Stop taking them.
+    </div>
+  </div>
+
+  <!-- 2-col chart grid -->
+  <div class="section-title">Pattern Analysis</div>
+  <div class="grid-2">
+    <div class="card">
+      <div class="chart-title">Trade Age vs P&L%</div>
+      <div class="chart-sub">Hold time vs outcome — are you exiting too early?</div>
+      <div id="chart-scatter" style="height:240px;"></div>
+    </div>
+    <div class="card">
+      <div class="chart-title">Entry Velocity</div>
+      <div class="chart-sub">New positions per week — primary overtrading detector</div>
+      <div id="chart-velocity" style="height:240px;"></div>
+    </div>
+    <div class="card">
+      <div class="chart-title">Monthly P&L</div>
+      <div class="chart-sub">Realised P&L by calendar month</div>
+      <div id="chart-monthly" style="height:240px;"></div>
+    </div>
+    <div class="card">
+      <div class="chart-title">R-Multiple by Setup Type</div>
+      <div class="chart-sub">Placeholder — unlocks when Setup Type column is added</div>
+      <div class="chart-placeholder" style="height:240px">
+        <div class="placeholder-icon">🔒</div>
+        <div class="placeholder-title">Setup Type Not Mapped</div>
+        <div class="placeholder-desc">Add a Setup Type column to your Google Sheet and map it in Config to unlock this chart.</div>
+      </div>
+    </div>
+    <div class="card">
+      <div class="chart-title">Setup Type vs Win Rate</div>
+      <div class="chart-sub">Placeholder — unlocks when Setup Type column is added</div>
+      <div class="chart-placeholder" style="height:240px">
+        <div class="placeholder-icon">🔒</div>
+        <div class="placeholder-title">Setup Type Not Mapped</div>
+        <div class="placeholder-desc">Configure Setup Type in the Config tab to see win rates broken down by trade setup.</div>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════ POSITIONS ════ -->
+<div id="page-positions" class="page">
+
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px">
+    <div>
+      <div style="font-size:15px; font-weight:700">Open Positions — Action Board</div>
+      <div style="font-size:12px; color:var(--text-muted); margin-top:2px">7 active trades · Sorted by risk proximity · Read-only</div>
+    </div>
+    <div class="stat-badge badge-amber">Portfolio Heat: 2.8%</div>
+  </div>
+
+  <!-- Alert strip -->
+  <div class="alert-strip">
+    <span style="font-size:12px; font-weight:600; color:var(--text-muted)">Live Alerts:</span>
+    <div class="strip-badge badge-red">🔴 1 exit triggered</div>
+    <div class="strip-badge badge-amber">🟡 2 near stop</div>
+    <div class="strip-badge badge-green">🟢 1 partial pending</div>
+  </div>
+
+  <!-- Table controls -->
+  <div class="table-controls">
+    <input type="text" class="search-input" placeholder="🔍 Search stock name..." oninput="filterTable(this.value)">
+    <select class="select-control" onchange="sortTable(this.value)">
+      <option value="stop">Sort: % from Stop ↑</option>
+      <option value="age">Sort: Age</option>
+      <option value="pnl">Sort: P&L%</option>
+    </select>
+    <select class="select-control" onchange="filterAlert(this.value)">
+      <option value="all">Show: All Positions</option>
+      <option value="alerts">Alerts Only</option>
+    </select>
+  </div>
+
+  <!-- Positions Table -->
+  <div class="table-wrap">
+    <table id="positions-table">
+      <thead>
+        <tr>
+          <th>Stock</th>
+          <th>Age</th>
+          <th>Entry ₹</th>
+          <th>Stop ₹</th>
+          <th>% from Stop</th>
+          <th>Notional P&L%</th>
+          <th>Partial</th>
+          <th>21 EMA</th>
+        </tr>
+      </thead>
+      <tbody id="positions-tbody"></tbody>
+    </table>
+  </div>
+  <div style="font-size:11.5px; color:var(--text-muted); margin-top:10px">
+    Click any row to expand position details. Red = exit triggered · Amber = within stop proximity · Green = partial exit due
+  </div>
+</div>
+
+<!-- ════ CONFIG ════ -->
+<div id="page-config" class="page">
+
+  <div style="font-size:15px; font-weight:700; margin-bottom:4px">Configuration</div>
+  <div style="font-size:12.5px; color:var(--text-muted); margin-bottom:24px">All settings are saved locally in your browser. No data is sent anywhere.</div>
+
+  <!-- Connection -->
+  <div class="card config-section" style="margin-bottom:16px">
+    <div class="config-section-title">Connection</div>
+    <div class="config-field">
+      <label class="config-label">Google Apps Script Web App URL</label>
+      <div class="flex-row" style="gap:8px">
+        <input type="text" class="config-input" placeholder="https://script.google.com/macros/s/..." value="">
+        <button class="btn-ghost" style="white-space:nowrap">Test</button>
+        <button class="btn-primary" style="white-space:nowrap">Save</button>
+      </div>
+    </div>
+    <div class="connection-status">
+      <div class="status-dot" style="background:var(--amber)"></div>
+      <span>Not connected — enter your Apps Script URL above to connect</span>
+    </div>
+  </div>
+
+  <!-- Column Mappings -->
+  <div class="card config-section" style="margin-bottom:16px">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px">
+      <div class="config-section-title" style="margin-bottom:0">Column Mappings</div>
+      <button class="btn-primary" style="padding:7px 14px; font-size:12px">Save Mappings</button>
+    </div>
+    <div style="font-size:12px; color:var(--text-muted); margin-bottom:14px">Map each data field to the column letter in your Google Sheet trade tab.</div>
+
+    <div id="col-mappings">
+      <!-- rows injected by JS -->
+    </div>
+  </div>
+
+  <!-- Risk Rules -->
+  <div class="card config-section" style="margin-bottom:16px">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px">
+      <div class="config-section-title" style="margin-bottom:0">Risk Rules</div>
+      <button class="btn-primary" style="padding:7px 14px; font-size:12px">Save Rules</button>
+    </div>
+    <div class="config-grid">
+      <div class="config-field">
+        <label class="config-label">Max Portfolio Heat Ceiling (%)</label>
+        <input type="number" class="config-input config-input-sm" value="5.0" step="0.5">
+      </div>
+      <div class="config-field">
+        <label class="config-label">Partial Exit Trigger (%)</label>
+        <input type="number" class="config-input config-input-sm" value="10.0" step="0.5">
+      </div>
+      <div class="config-field">
+        <label class="config-label">Stop Proximity Alert (%)</label>
+        <input type="number" class="config-input config-input-sm" value="2.0" step="0.5">
+      </div>
+      <div class="config-field">
+        <label class="config-label">Heat Gauge — Green below (%)</label>
+        <input type="number" class="config-input config-input-sm" value="2.5" step="0.5">
+      </div>
+      <div class="config-field">
+        <label class="config-label">Heat Gauge — Amber below (%)</label>
+        <input type="number" class="config-input config-input-sm" value="4.0" step="0.5">
+      </div>
+    </div>
+  </div>
+
+  <!-- Sheet Structure -->
+  <div class="card config-section">
+    <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px">
+      <div class="config-section-title" style="margin-bottom:0">Sheet Structure & Cell References</div>
+      <button class="btn-primary" style="padding:7px 14px; font-size:12px">Save Structure</button>
+    </div>
+    <div class="config-grid">
+      <div class="config-field">
+        <label class="config-label">Trade Data Tab Name</label>
+        <input type="text" class="config-input" value="Trades">
+      </div>
+      <div class="config-field">
+        <label class="config-label">Config Tab Name</label>
+        <input type="text" class="config-input" value="Config">
+      </div>
+      <div class="config-field">
+        <label class="config-label">Portfolio Capital Base (cell)</label>
+        <input type="text" class="config-input config-input-sm" value="B2">
+      </div>
+      <div class="config-field">
+        <label class="config-label">Initial Portfolio Size (cell)</label>
+        <input type="text" class="config-input config-input-sm" value="B3">
+      </div>
+      <div class="config-field">
+        <label class="config-label">Compounded Portfolio Value (cell)</label>
+        <input type="text" class="config-input config-input-sm" value="B4">
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ════════════════════ SCRIPTS ════════════════════ -->
+<script>
+// ── SAMPLE DATA ──────────────────────────────────────
+const openPositions = [
+  { stock:'RELIANCE', age:14, entry:2840, stop:2901, fromStop:-2.1, pnl:-2.1, partial:'N', ema:'Below',  alert:'red',
+    entryDate:'30 May 2025', risk7dl:2901, ema21:2910, initRisk:5600, initRiskPct:0.45 },
+  { stock:'INFY',     age:8,  entry:1420, stop:1398, fromStop:1.6,  pnl:1.6,  partial:'N', ema:'Above', alert:'amber',
+    entryDate:'05 Jun 2025', risk7dl:1398, ema21:1405, initRisk:3100, initRiskPct:0.25 },
+  { stock:'HCLTECH',  age:18, entry:1180, stop:1162, fromStop:1.5,  pnl:5.1,  partial:'N', ema:'Above', alert:'amber',
+    entryDate:'27 May 2025', risk7dl:1162, ema21:1170, initRisk:3600, initRiskPct:0.29 },
+  { stock:'TCS',      age:22, entry:3310, stop:3180, fromStop:4.1,  pnl:10.4, partial:'N', ema:'Above', alert:'green',
+    entryDate:'23 May 2025', risk7dl:3180, ema21:3280, initRisk:5200, initRiskPct:0.42 },
+  { stock:'HDFC',     age:5,  entry:720,  stop:693,  fromStop:3.9,  pnl:3.9,  partial:'N', ema:'Above', alert:'none',
+    entryDate:'09 Jun 2025', risk7dl:693,  ema21:710,  initRisk:2700, initRiskPct:0.22 },
+  { stock:'WIPRO',    age:11, entry:445,  stop:432,  fromStop:2.9,  pnl:2.9,  partial:'N', ema:'Above', alert:'none',
+    entryDate:'03 Jun 2025', risk7dl:432,  ema21:440,  initRisk:2600, initRiskPct:0.21 },
+  { stock:'BAJFINANCE', age:3, entry:6820, stop:6600, fromStop:3.2, pnl:3.2, partial:'N', ema:'Above', alert:'none',
+    entryDate:'11 Jun 2025', risk7dl:6600, ema21:6780, initRisk:4400, initRiskPct:0.35 },
+];
+
+const closedTrades = [
+  {stock:'TATAMOTORS', entryDate:'15 Jan', exitDate:'08 Feb', days:24, entry:820,  finalPnl:12.4,  notionalPnl:19.8, partial:'Y', ema:'Above'},
+  {stock:'SUNPHARMA',  entryDate:'02 Feb', exitDate:'14 Feb', days:12, entry:1240, finalPnl:-3.8,  notionalPnl:-3.8, partial:'N', ema:'Above'},
+  {stock:'AXISBANK',   entryDate:'10 Feb', exitDate:'01 Mar', days:19, entry:1050, finalPnl:8.2,   notionalPnl:22.1, partial:'N', ema:'Above'},
+  {stock:'LTIM',       entryDate:'18 Feb', exitDate:'05 Mar', days:15, entry:5200, finalPnl:-4.2,  notionalPnl:-4.2, partial:'N', ema:'Below'},
+  {stock:'NESTLEIND',  entryDate:'25 Feb', exitDate:'20 Mar', days:23, entry:2150, finalPnl:15.6,  notionalPnl:28.4, partial:'Y', ema:'Above'},
+  {stock:'MARUTI',     entryDate:'05 Mar', exitDate:'22 Mar', days:17, entry:11200,finalPnl:-5.1,  notionalPnl:-5.1, partial:'N', ema:'Below'},
+  {stock:'DMART',      entryDate:'12 Mar', exitDate:'04 Apr', days:23, entry:4800, finalPnl:9.8,   notionalPnl:17.2, partial:'N', ema:'Above'},
+  {stock:'PIDILITIND',entryDate:'20 Mar',  exitDate:'10 Apr', days:21, entry:2800, finalPnl:7.4,   notionalPnl:14.6, partial:'N', ema:'Above'},
+  {stock:'ASIANPAINT', entryDate:'01 Apr', exitDate:'18 Apr', days:17, entry:2900, finalPnl:-3.2,  notionalPnl:-3.2, partial:'N', ema:'Above'},
+  {stock:'TITAN',      entryDate:'08 Apr', exitDate:'30 Apr', days:22, entry:3400, finalPnl:11.2,  notionalPnl:21.8, partial:'Y', ema:'Above'},
+  {stock:'ICICIBANK',  entryDate:'15 Apr', exitDate:'05 May', days:20, entry:1100, finalPnl:6.8,   notionalPnl:18.4, partial:'N', ema:'Above'},
+  {stock:'SBILIFE',    entryDate:'22 Apr', exitDate:'10 May', days:18, entry:1450, finalPnl:-4.6,  notionalPnl:-4.6, partial:'N', ema:'Below'},
+  {stock:'ULTRACEMCO', entryDate:'02 May', exitDate:'20 May', days:18, entry:9800, finalPnl:5.2,   notionalPnl:11.8, partial:'N', ema:'Above'},
+  {stock:'HDFCBANK',   entryDate:'10 May', exitDate:'28 May', days:18, entry:1650, finalPnl:-3.9,  notionalPnl:-3.9, partial:'N', ema:'Above'},
+  {stock:'BAJAJFINSV', entryDate:'18 May', exitDate:'05 Jun', days:18, entry:1580, finalPnl:4.8,   notionalPnl:9.2,  partial:'N', ema:'Above'},
+];
+
+// ── NAVIGATION ──────────────────────────────────────
+function showPage(id, btn) {
+  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+  document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
+  document.getElementById('page-' + id).classList.add('active');
+  btn.classList.add('active');
+
+  // Lazy-init charts on first visit
+  if (id === 'performance' && !window._perfChartsInit) { initPerfCharts(); window._perfChartsInit = true; }
+  if (id === 'analysis' && !window._analysisChartsInit) { initAnalysisCharts(); window._analysisChartsInit = true; }
+}
+
+// ── THEME ───────────────────────────────────────────
+function toggleTheme() {
+  const html = document.documentElement;
+  const isDark = html.getAttribute('data-theme') === 'dark';
+  html.setAttribute('data-theme', isDark ? 'light' : 'dark');
+  document.querySelector('[onclick="toggleTheme()"]').textContent = isDark ? '🌙' : '☀️';
+  // Re-render ApexCharts with new theme
+  if (window._perfChartsInit) { destroyAndReinitPerf(); }
+  if (window._analysisChartsInit) { destroyAndReinitAnalysis(); }
+}
+function isDark() { return document.documentElement.getAttribute('data-theme') === 'dark'; }
+function chartColors() {
+  return {
+    bg: isDark() ? '#161A23' : '#ffffff',
+    text: isDark() ? '#94A3B8' : '#64748B',
+    grid: isDark() ? '#2A3347' : '#F1F5F9',
+    border: isDark() ? '#2A3347' : '#E2E8F0',
+    green: isDark() ? '#34D399' : '#10B981',
+    red: isDark() ? '#F87171' : '#EF4444',
+    amber: isDark() ? '#FBBF24' : '#F59E0B',
+    accent: isDark() ? '#60A5FA' : '#3B82F6',
+  };
+}
+
+// ── PERIOD FILTER ────────────────────────────────────
+function setPeriod(btn, period) {
+  document.querySelectorAll('.period-btn').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+}
+
+// ── COLLAPSIBLE ──────────────────────────────────────
+function toggleCollapsible(id, btn) {
+  const body = document.getElementById(id);
+  const isOpen = body.classList.toggle('open');
+  btn.querySelector('span').textContent = isOpen ? '▼' : '▶';
+  btn.innerHTML = btn.innerHTML.replace(/Show|Hide/, isOpen ? 'Hide' : 'Show');
+}
+
+// ── POSITIONS TABLE ──────────────────────────────────
+function renderPositions(data) {
+  const tbody = document.getElementById('positions-tbody');
+  tbody.innerHTML = '';
+  data.forEach((p, i) => {
+    const rowClass = p.alert === 'red' ? 'row-red' : p.alert === 'amber' ? 'row-amber' : p.alert === 'green' ? 'row-green' : '';
+    const pnlClass = p.pnl >= 0 ? 'pnl-pos' : 'pnl-neg';
+    const emaClass = p.ema === 'Above' ? 'tag-above' : 'tag-below';
+    const partialClass = p.partial === 'Y' ? 'tag-y' : 'tag-n';
+    const fromStopClass = p.fromStop < 0 ? 'pnl-neg' : p.fromStop < 2 ? 'text-amber' : 'pnl-pos';
+
+    tbody.innerHTML += `
+      <tr class="${rowClass}" onclick="toggleExpand(${i})">
+        <td><span class="stock-name">${p.stock}</span></td>
+        <td>${p.age}d</td>
+        <td>₹${p.entry.toLocaleString('en-IN')}</td>
+        <td>₹${p.stop.toLocaleString('en-IN')}</td>
+        <td class="${fromStopClass} fw-700">${p.fromStop > 0 ? '+' : ''}${p.fromStop}%</td>
+        <td class="${pnlClass}">${p.pnl > 0 ? '+' : ''}${p.pnl}%</td>
+        <td><span class="tag ${partialClass}">${p.partial}</span></td>
+        <td><span class="tag ${emaClass}">${p.ema}</span></td>
+      </tr>
+      <tr class="expand-row" id="expand-${i}">
+        <td colspan="8" style="padding:0">
+          <div class="expand-content">
+            <div class="expand-item"><div class="expand-label">Entry Date</div><div class="expand-value">${p.entryDate}</div></div>
+            <div class="expand-item"><div class="expand-label">7-Day Low</div><div class="expand-value">₹${p.risk7dl.toLocaleString('en-IN')}</div></div>
+            <div class="expand-item"><div class="expand-label">21 EMA</div><div class="expand-value">₹${p.ema21.toLocaleString('en-IN')}</div></div>
+            <div class="expand-item"><div class="expand-label">Initial Risk ₹</div><div class="expand-value">₹${p.initRisk.toLocaleString('en-IN')}</div></div>
+            <div class="expand-item"><div class="expand-label">Initial Risk %</div><div class="expand-value">${p.initRiskPct}% of capital</div></div>
+          </div>
+        </td>
+      </tr>`;
+  });
+}
+
+function toggleExpand(i) {
+  const row = document.getElementById('expand-' + i);
+  row.classList.toggle('open');
+}
+
+function filterTable(query) {
+  const rows = document.querySelectorAll('#positions-tbody tr:not(.expand-row)');
+  rows.forEach((row, i) => {
+    const name = row.querySelector('.stock-name')?.textContent || '';
+    const matches = name.toLowerCase().includes(query.toLowerCase());
+    row.style.display = matches ? '' : 'none';
+    const expandRow = document.getElementById('expand-' + i);
+    if (expandRow) expandRow.style.display = matches ? '' : 'none';
+  });
+}
+
+function sortTable(key) { /* sorting handled visually via CSS for now */ }
+function filterAlert(val) {
+  const rows = document.querySelectorAll('#positions-tbody tr:not(.expand-row)');
+  rows.forEach((row, i) => {
+    const isAlert = row.classList.contains('row-red') || row.classList.contains('row-amber') || row.classList.contains('row-green');
+    row.style.display = (val === 'all' || isAlert) ? '' : 'none';
+  });
+}
+
+// ── CLOSED TRADES TABLE ──────────────────────────────
+function renderClosedTrades() {
+  const tbody = document.getElementById('closed-trades-tbody');
+  closedTrades.forEach(t => {
+    const pnlClass = t.finalPnl >= 0 ? 'pnl-pos' : 'pnl-neg';
+    const nPnlClass = t.notionalPnl >= 0 ? 'pnl-pos' : 'pnl-neg';
+    const emaClass = t.ema === 'Above' ? 'tag-above' : 'tag-below';
+    const partialClass = t.partial === 'Y' ? 'tag-y' : 'tag-n';
+    tbody.innerHTML += `<tr>
+      <td><span class="stock-name">${t.stock}</span></td>
+      <td>${t.entryDate}</td>
+      <td>${t.exitDate}</td>
+      <td>${t.days}d</td>
+      <td>₹${t.entry.toLocaleString('en-IN')}</td>
+      <td class="${pnlClass}">${t.finalPnl > 0 ? '+' : ''}${t.finalPnl}%</td>
+      <td class="${nPnlClass}">${t.notionalPnl > 0 ? '+' : ''}${t.notionalPnl}%</td>
+      <td><span class="tag ${partialClass}">${t.partial}</span></td>
+      <td><span class="tag ${emaClass}">${t.ema}</span></td>
+    </tr>`;
+  });
+}
+
+// ── WIN/LOSS STREAK ──────────────────────────────────
+function renderStreak() {
+  const seq = 'WWLWWWLLLLWWLWWLWLWWWLWLLWWWWWLLWLWWWLWWLLWLWWWLLWWLWWW'.split('');
+  const container = document.getElementById('streak-blocks');
+  container.innerHTML = seq.map(s => `<div class="streak-block ${s.toLowerCase()}" title="${s === 'W' ? 'Win' : 'Loss'}">${s}</div>`).join('');
+}
+
+// ── CALENDAR ─────────────────────────────────────────
+function renderCalendar() {
+  const grid = document.getElementById('cal-grid');
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const daysInMonth = [31,28,31,30,31,30,31,31,30,31,30,31];
+  // First day of month for 2025 (0=Sun, 1=Mon...)
+  const firstDays2025 = [3,6,6,2,4,0,2,5,1,3,6,1]; // Jan 1 = Wed (3)
+  const dayHeaders = ['S','M','T','W','T','F','S'];
+
+  // Sample trade days
+  const tradeDays = {
+    '1-8':'profit-2','1-14':'profit-3','1-22':'loss-1',
+    '2-5':'profit-1','2-12':'loss-2','2-19':'profit-2','2-26':'profit-1',
+    '3-4':'profit-3','3-11':'loss-1','3-18':'profit-2','3-25':'loss-2',
+    '4-2':'profit-1','4-9':'loss-3','4-16':'profit-2','4-23':'profit-3',
+    '5-6':'profit-2','5-13':'loss-1','5-20':'profit-1','5-27':'loss-2',
+    '6-3':'profit-3','6-10':'profit-2','6-17':'loss-1',
+  };
+
+  let html = '';
+  months.forEach((m, mi) => {
+    html += `<div class="cal-month"><div class="cal-month-name">${m}</div><div class="cal-days-grid">`;
+    dayHeaders.forEach(d => { html += `<div class="cal-day-header">${d}</div>`; });
+    // Empty cells before first day
+    for (let e = 0; e < firstDays2025[mi]; e++) { html += `<div class="cal-cell empty"></div>`; }
+    for (let d = 1; d <= daysInMonth[mi]; d++) {
+      const key = `${mi+1}-${d}`;
+      const cls = tradeDays[key] || 'no-trade';
+      html += `<div class="cal-cell ${cls}" title="${m} ${d}"></div>`;
+    }
+    html += `</div></div>`;
+  });
+  grid.innerHTML = html;
+}
+
+// ── COLUMN MAPPINGS CONFIG ────────────────────────────
+function renderColMappings() {
+  const fields = [
+    { label: 'Stock Name', key: 'stock', default: 'A' },
+    { label: 'Open/Closed Flag', key: 'flag', default: 'B' },
+    { label: 'Trade / Entry Date', key: 'date', default: 'C' },
+    { label: 'Entry Price', key: 'entry', default: 'D' },
+    { label: 'Stop Loss Price', key: 'stop', default: 'E' },
+    { label: 'Partial Taken (Y/N)', key: 'partial', default: 'F' },
+    { label: '7-Day Low', key: '7dl', default: 'G' },
+    { label: '21 EMA Context', key: 'ema', default: 'H' },
+    { label: 'Notional P&L%', key: 'npnlpct', default: 'I' },
+    { label: 'Final P&L%', key: 'fpnlpct', default: 'J' },
+    { label: 'Final P&L ₹', key: 'fpnl', default: 'K' },
+    { label: 'Notional P&L ₹', key: 'npnl', default: 'L' },
+    { label: 'Setup Type', key: 'setup', default: '—', optional: true },
+  ];
+  const cols = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'.split('');
+  const container = document.getElementById('col-mappings');
+  container.innerHTML = fields.map(f => {
+    const opts = ['—', ...cols].map(c => `<option value="${c}" ${c === f.default ? 'selected' : ''}>${c}</option>`).join('');
+    return `<div class="config-map-row">
+      <div class="config-map-label">${f.label}${f.optional ? ' <span class="config-map-opt">(optional)</span>' : ''}</div>
+      <select class="col-select">${opts}</select>
+    </div>`;
+  }).join('');
+}
+
+// ── APEXCHARTS HELPERS ────────────────────────────────
+function baseOpts(height = 220) {
+  const c = chartColors();
+  return {
+    chart: { height, background: c.bg, toolbar: { show: false }, animations: { speed: 500 }, fontFamily: 'inherit' },
+    theme: { mode: isDark() ? 'dark' : 'light' },
+    grid: { borderColor: c.grid, strokeDashArray: 3 },
+    xaxis: { labels: { style: { colors: c.text, fontSize: '11px' } }, axisBorder: { show: false }, axisTicks: { show: false } },
+    yaxis: { labels: { style: { colors: c.text, fontSize: '11px' } } },
+    tooltip: { theme: isDark() ? 'dark' : 'light' },
+    legend: { labels: { colors: c.text } },
+  };
+}
+
+// ── PERFORMANCE CHARTS ────────────────────────────────
+let perfCharts = [];
+function destroyAndReinitPerf() { perfCharts.forEach(c => c.destroy()); perfCharts = []; initPerfCharts(); }
+function destroyAndReinitAnalysis() { analysisCharts.forEach(c => c.destroy()); analysisCharts = []; initAnalysisCharts(); }
+
+function initPerfCharts() {
+  const c = chartColors();
+
+  // 1. Equity Curve
+  const equityData = [
+    {x:'Jan',y:1000000},{x:'Feb',y:1024000},{x:'Mar',y:1062000},{x:'Apr',y:1048000},
+    {x:'May',y:1085000},{x:'Jun',y:1124000},{x:'Jul',y:1098000},{x:'Aug',y:1142000},
+    {x:'Sep',y:1189000},{x:'Oct',y:1165000},{x:'Nov',y:1210000},{x:'Dec',y:1245230}
+  ];
+  const eq = new ApexCharts(document.getElementById('chart-equity'), {
+    ...baseOpts(220),
+    chart: { ...baseOpts(220).chart, type: 'area' },
+    series: [{ name: 'Portfolio Value', data: equityData.map(d => d.y) }],
+    xaxis: { ...baseOpts().xaxis, categories: equityData.map(d => d.x) },
+    yaxis: { labels: { style: { colors: c.text, fontSize:'11px' }, formatter: v => '₹' + (v/100000).toFixed(1) + 'L' } },
+    colors: [c.green],
+    fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.35, opacityTo: 0.02 } },
+    stroke: { curve: 'smooth', width: 2 },
+    tooltip: { ...baseOpts().tooltip, y: { formatter: v => '₹' + v.toLocaleString('en-IN') } },
+    markers: { size: 0 },
+  });
+  eq.render(); perfCharts.push(eq);
+
+  // 2. Drawdown
+  const ddData = [0,-1.2,-0.8,-3.1,-1.8,-0.4,-4.2,-2.6,-1.1,-3.8,-2.2,-0.9];
+  const dd = new ApexCharts(document.getElementById('chart-drawdown'), {
+    ...baseOpts(220),
+    chart: { ...baseOpts(220).chart, type: 'area' },
+    series: [{ name: 'Drawdown %', data: ddData }],
+    xaxis: { ...baseOpts().xaxis, categories: ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'] },
+    yaxis: { labels: { style: { colors: c.text, fontSize:'11px' }, formatter: v => v + '%' }, max: 0 },
+    colors: [c.red],
+    fill: { type: 'gradient', gradient: { shadeIntensity: 1, opacityFrom: 0.4, opacityTo: 0.05 } },
+    stroke: { curve: 'smooth', width: 2 },
+    annotations: { yaxis: [{ y: -4.2, label: { text: 'Max DD: -4.2%', style: { color: c.red } }, borderColor: c.red }] },
+  });
+  dd.render(); perfCharts.push(dd);
+
+  // 3. P&L Distribution
+  const bins = ['-15','-12','-9','-6','-3','0','+3','+6','+9','+12','+15','+18','+21'];
+  const finalDist = [0,1,2,4,8,3,5,6,4,3,2,1,0];
+  const notionalDist = [0,1,1,3,4,2,4,5,6,5,4,3,2];
+  const dist = new ApexCharts(document.getElementById('chart-distribution'), {
+    ...baseOpts(220),
+    chart: { ...baseOpts(220).chart, type: 'bar' },
+    series: [
+      { name: 'Final P&L%', data: finalDist },
+      { name: 'Notional P&L%', data: notionalDist },
+    ],
+    xaxis: { ...baseOpts().xaxis, categories: bins, title: { text: 'P&L %', style: { color: c.text } } },
+    yaxis: { labels: { style: { colors: c.text, fontSize:'11px' } }, title: { text: 'Trades', style: { color: c.text } } },
+    colors: [c.accent, c.amber],
+    plotOptions: { bar: { columnWidth: '80%' } },
+    dataLabels: { enabled: false },
+  });
+  dist.render(); perfCharts.push(dist);
+
+  // 4. R-Multiple Distribution
+  const rBins = ['-2','-1.5','-1','-0.5','0','0.5','1','1.5','2','2.5','3','4','5+'];
+  const rData = [0,1,3,5,2,4,6,5,4,3,2,1,1];
+  const rm = new ApexCharts(document.getElementById('chart-rmultiple'), {
+    ...baseOpts(220),
+    chart: { ...baseOpts(220).chart, type: 'bar' },
+    series: [{ name: 'R-Multiple', data: rData }],
+    xaxis: { ...baseOpts().xaxis, categories: rBins, title: { text: 'R-Multiple', style: { color: c.text } } },
+    colors: rData.map((_,i) => i < 4 ? c.red : c.green),
+    plotOptions: { bar: { columnWidth: '80%', distributed: true } },
+    legend: { show: false },
+    dataLabels: { enabled: false },
+    annotations: { xaxis: [{ x: '0', label: { text: 'Breakeven', style: { color: c.text } }, borderColor: c.text }] },
+  });
+  rm.render(); perfCharts.push(rm);
+
+  // 5. Day of Week
+  const dowData = [12400, -3200, 18600, 8400, -5100];
+  const dow = new ApexCharts(document.getElementById('chart-dayofweek'), {
+    ...baseOpts(220),
+    chart: { ...baseOpts(220).chart, type: 'bar' },
+    series: [{ name: 'P&L ₹', data: dowData }],
+    xaxis: { ...baseOpts().xaxis, categories: ['Monday','Tuesday','Wednesday','Thursday','Friday'] },
+    yaxis: { labels: { style: { colors: c.text, fontSize:'11px' }, formatter: v => (v>=0?'+':'')+v.toLocaleString('en-IN') } },
+    colors: dowData.map(v => v >= 0 ? c.green : c.red),
+    plotOptions: { bar: { columnWidth: '55%', distributed: true, borderRadius: 4 } },
+    legend: { show: false },
+    dataLabels: { enabled: false },
+  });
+  dow.render(); perfCharts.push(dow);
+}
+
+// ── ANALYSIS CHARTS ───────────────────────────────────
+let analysisCharts = [];
+function initAnalysisCharts() {
+  const c = chartColors();
+
+  // 1. Scatter — Trade Age vs P&L%
+  const scatterData = [
+    {x:5,y:-4.2},{x:7,y:-3.1},{x:8,y:2.4},{x:9,y:-5.1},{x:10,y:3.8},
+    {x:12,y:8.4},{x:14,y:-4.6},{x:15,y:6.2},{x:16,y:12.1},{x:18,y:-3.8},
+    {x:19,y:9.4},{x:20,y:15.6},{x:21,y:-4.2},{x:22,y:10.4},{x:23,y:18.2},
+    {x:25,y:7.8},{x:27,y:22.4},{x:30,y:-3.9},{x:32,y:16.8},{x:35,y:24.6},
+  ];
+  const sc = new ApexCharts(document.getElementById('chart-scatter'), {
+    ...baseOpts(240),
+    chart: { ...baseOpts(240).chart, type: 'scatter', zoom: { enabled: false } },
+    series: [
+      { name: 'Win', data: scatterData.filter(d => d.y >= 0).map(d => [d.x, d.y]) },
+      { name: 'Loss', data: scatterData.filter(d => d.y < 0).map(d => [d.x, d.y]) },
+    ],
+    xaxis: { ...baseOpts().xaxis, title: { text: 'Hold Days', style: { color: c.text } }, min: 0, max: 40 },
+    yaxis: { labels: { style: { colors: c.text, fontSize:'11px' }, formatter: v => v + '%' }, title: { text: 'Final P&L%', style: { color: c.text } } },
+    colors: [c.green, c.red],
+    markers: { size: 6 },
+    annotations: { yaxis: [{ y: 0, borderColor: c.text, strokeDashArray: 3 }] },
+    tooltip: { ...baseOpts().tooltip, x: { formatter: v => v + ' days' }, y: { formatter: v => v + '%' } },
+  });
+  sc.render(); analysisCharts.push(sc);
+
+  // 2. Entry Velocity
+  const weeks = ['W1','W2','W3','W4','W5','W6','W7','W8','W9','W10','W11','W12','W13','W14','W15','W16'];
+  const velocity = [1,2,1,3,2,1,4,2,1,2,3,1,2,1,2,1];
+  const vel = new ApexCharts(document.getElementById('chart-velocity'), {
+    ...baseOpts(240),
+    chart: { ...baseOpts(240).chart, type: 'bar' },
+    series: [{ name: 'New Positions', data: velocity }],
+    xaxis: { ...baseOpts().xaxis, categories: weeks },
+    yaxis: { labels: { style: { colors: c.text, fontSize:'11px' } }, tickAmount: 5, max: 5 },
+    colors: velocity.map(v => v >= 3 ? c.amber : c.accent),
+    plotOptions: { bar: { columnWidth: '60%', distributed: true, borderRadius: 3 } },
+    legend: { show: false },
+    dataLabels: { enabled: false },
+    annotations: { yaxis: [{ y: 3, label: { text: 'Overtrading threshold', style: { color: c.amber, fontSize: '11px' } }, borderColor: c.amber, strokeDashArray: 4 }] },
+  });
+  vel.render(); analysisCharts.push(vel);
+
+  // 3. Monthly P&L
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const mPnl = [8400, -3200, 22100, 12600, -5100, 15400, -2800, 18900, 9200, -4600, 21300, 7800];
+  const mp = new ApexCharts(document.getElementById('chart-monthly'), {
+    ...baseOpts(240),
+    chart: { ...baseOpts(240).chart, type: 'bar' },
+    series: [{ name: 'Monthly P&L ₹', data: mPnl }],
+    xaxis: { ...baseOpts().xaxis, categories: months },
+    yaxis: { labels: { style: { colors: c.text, fontSize:'11px' }, formatter: v => (v>=0?'+':'')+v.toLocaleString('en-IN') } },
+    colors: mPnl.map(v => v >= 0 ? c.green : c.red),
+    plotOptions: { bar: { columnWidth: '60%', distributed: true, borderRadius: 4 } },
+    legend: { show: false },
+    dataLabels: { enabled: false },
+    annotations: { yaxis: [{ y: 0, borderColor: c.text, strokeDashArray: 2 }] },
+  });
+  mp.render(); analysisCharts.push(mp);
+}
+
+// ── INIT ─────────────────────────────────────────────
+document.addEventListener('DOMContentLoaded', () => {
+  renderPositions(openPositions);
+  renderClosedTrades();
+  renderStreak();
+  renderCalendar();
+  renderColMappings();
+});
+</script>
+</body>
+</html>
