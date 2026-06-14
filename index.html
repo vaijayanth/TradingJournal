@@ -508,15 +508,26 @@ tbody tr:hover { filter: brightness(0.97); }
 .skeleton { animation: pulse 1.5s ease-in-out infinite; background: var(--border); border-radius: 4px; display: inline-block; }
 /* ── MOBILE RESPONSIVE ── */
 @media (max-width: 640px) {
-  .grid-4 { grid-template-columns: repeat(2, 1fr); }
+  body { overflow-x: hidden; }
+  .page { padding: 12px; }
+  .grid-4 { grid-template-columns: repeat(2, 1fr); gap: 10px; }
   .grid-3 { grid-template-columns: repeat(1, 1fr); }
   .grid-2 { grid-template-columns: repeat(1, 1fr); }
-  .nav-tabs { gap: 2px; }
-  .nav-tab { font-size: 11px; padding: 6px 8px; }
+  .nav-tabs { gap: 2px; overflow-x: auto; -webkit-overflow-scrolling: touch; flex-wrap: nowrap; }
+  .nav-tab { font-size: 11px; padding: 6px 8px; white-space: nowrap; flex-shrink: 0; }
   .refresh-info { display: none; }
-  table { font-size: 12px; }
+  table { font-size: 11px; }
+  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
   .compare-row { flex-direction: column; gap: 8px; }
   .compare-vs { display: none; }
+  .stat-value { font-size: 20px; }
+  .card { padding: 14px; }
+  .card-sm { padding: 12px; }
+  #auth-overlay > div { width: calc(100vw - 40px) !important; padding: 28px 20px !important; }
+  .section-title { font-size: 11px; }
+  .chart-title { font-size: 12px; }
+  nav { padding: 0 12px; gap: 8px; }
+  .nav-logo span { display: none; }
 }
 </style>
 </head>
