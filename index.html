@@ -1129,12 +1129,13 @@ tbody tr:hover { filter: brightness(0.97); }
       </div>
     </div>
     <div class="card">
-      <div class="chart-title">Setup Type vs Win Rate</div>
-      <div class="chart-sub">Placeholder — unlocks when Setup Type column is added</div>
-      <div class="chart-placeholder" style="height:240px">
+      <div class="chart-title">Avg P&L % by Setup Type</div>
+      <div class="chart-sub">Which setups deliver the most return on average</div>
+      <div id="chart-setup-avgpl" style="height:240px"></div>
+      <div class="chart-placeholder" id="chart-setup-avgpl-placeholder" style="height:240px;display:none">
         <div class="placeholder-icon">🔒</div>
         <div class="placeholder-title">Setup Type Not Mapped</div>
-        <div class="placeholder-desc">Configure Setup Type in the Config tab to see win rates broken down by trade setup.</div>
+        <div class="placeholder-desc">Add a Setup Type column to your Google Sheet and map it in Config to unlock this chart.</div>
       </div>
     </div>
   </div>
@@ -2724,6 +2725,35 @@ function initAnalysisCharts(open, closed) {
   } else if (setupWrPh) {
     if (setupWrEl) setupWrEl.style.display = 'none';
     setupWrPh.style.display = '';
+  }
+
+  // Avg P&L % by setup type
+  const setupAvgEl = document.getElementById('chart-setup-avgpl');
+  const setupAvgPh = document.getElementById('chart-setup-avgpl-placeholder');
+  if (setupKeys.length >= 1 && setupAvgEl) {
+    if (setupAvgPh) setupAvgPh.style.display = 'none';
+    setupAvgEl.style.display = '';
+    const avgStats = setupKeys.map(s => calcStats(setupMap[s]));
+    const avgData = avgStats.map(s => parseFloat(s.avg.toFixed(2)));
+    const setupAvgChart = new ApexCharts(setupAvgEl, {
+      ...baseOpts(240), chart: { ...baseOpts(240).chart, type: 'bar' },
+      series: [{ name: 'Avg P&L %', data: avgData }],
+      xaxis: { ...baseOpts().xaxis, categories: setupKeys, labels: { ...baseOpts().xaxis.labels, rotate: -20, hideOverlappingLabels: true } },
+      yaxis: { labels: { style:{colors:c.text,fontSize:'11px'}, formatter: v => (v>=0?'+':'')+v.toFixed(1)+'%' } },
+      colors: avgData.map(v => v >= 0 ? c.green : c.red),
+      plotOptions: { bar: { columnWidth: '55%', distributed: true, borderRadius: 4 } },
+      legend: { show: false }, dataLabels: { enabled: true, formatter: v => (v>=0?'+':'')+v.toFixed(1)+'%', style: { fontSize:'11px' } },
+      annotations: { yaxis: [{ y: 0, borderColor: c.text, strokeDashArray: 2 }] },
+      tooltip: { ...baseOpts().tooltip, y: { formatter: (v, {dataPointIndex}) => {
+        const s = setupKeys[dataPointIndex];
+        const st = setupMap[s]; const n = st ? st.length : 0;
+        return (v>=0?'+':'')+v.toFixed(2)+'% avg across '+n+' trade'+(n!==1?'s':'');
+      }}},
+    });
+    setupAvgChart.render(); analysisCharts.push(setupAvgChart);
+  } else if (setupAvgPh) {
+    if (setupAvgEl) setupAvgEl.style.display = 'none';
+    setupAvgPh.style.display = '';
   }
 
   // Partial Exit Analysis
