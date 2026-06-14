@@ -2122,36 +2122,48 @@ function initPerfCharts(closed, initialCapital, open) {
     eqData.push(null); // closed series has no value at Today
   }
 
+  // Sparse x-axis labels: show at most 7 evenly spaced dates so chart stays clean
+  const sparseXAxis = (labels, extraAtEnd) => {
+    const n = labels.length;
+    const maxTicks = 7;
+    const step = n <= maxTicks ? 1 : Math.ceil(n / maxTicks);
+    return labels.map((l, i) => {
+      if (i === n - 1 && extraAtEnd) return l; // always show last label (Today etc.)
+      return i % step === 0 ? l : '';
+    });
+  };
+
   const realisedColor = eq >= (initialCapital || 0) ? c.green : c.red;
-  const todayColor = todayEq !== null ? (todayEq >= (initialCapital || 0) ? c.green : c.red) : c.amber;
+  const eqXLabels = sparseXAxis(xLbls, todayEq !== null);
   const eqChart = new ApexCharts(document.getElementById('chart-equity'), {
-    ...baseOpts(220), chart: { ...baseOpts(220).chart, type: 'line' },
+    ...baseOpts(240), chart: { ...baseOpts(240).chart, type: 'line' },
     series: [
       { name: 'Realised', data: eqData, type: 'area' },
       { name: 'Incl. Unrealised', data: todaySeries, type: 'line' },
     ],
-    xaxis: { ...baseOpts().xaxis, categories: xLbls, labels: { ...baseOpts().xaxis.labels, rotate: -30, hideOverlappingLabels: true } },
-    yaxis: { labels: { style: { colors: c.text, fontSize:'11px' }, formatter: v => v ? '₹' + (v/100000).toFixed(1) + 'L' : '' } },
+    xaxis: { ...baseOpts().xaxis, categories: eqXLabels, tickPlacement: 'on', labels: { ...baseOpts().xaxis.labels, rotate: 0, hideOverlappingLabels: true, trim: false } },
+    yaxis: { labels: { style: { colors: c.text, fontSize:'11px' }, formatter: v => v != null ? '₹' + (v/100000).toFixed(1) + 'L' : '' } },
     colors: [realisedColor, c.amber],
     fill: { type: ['gradient', 'solid'], gradient: { shadeIntensity:1, opacityFrom:0.35, opacityTo:0.02 } },
-    stroke: { curve: 'smooth', width: [2, 2], dashArray: [0, 6] },
+    stroke: { curve: 'smooth', width: [2.5, 2], dashArray: [0, 6] },
     dataLabels: { enabled: false },
-    markers: { size: [3, 6], hover: { size: 7 } },
+    markers: { size: [0, 7], hover: { size: 8 } },
     annotations: initialCapital ? { yaxis: [{ y: initialCapital, label: { text: 'Initial capital', style: { color: c.text, fontSize:'10px', background: 'transparent' } }, borderColor: c.text, strokeDashArray: 4 }] } : {},
-    tooltip: { ...baseOpts().tooltip, y: { formatter: v => v ? '₹' + Math.round(v).toLocaleString('en-IN') : '' } },
+    tooltip: { ...baseOpts().tooltip, x: { formatter: (_, { dataPointIndex }) => xLbls[dataPointIndex] || '' }, y: { formatter: v => v != null ? '₹' + Math.round(v).toLocaleString('en-IN') : '' } },
     legend: { show: todayEq !== null, labels: { colors: c.text } },
   });
   eqChart.render(); perfCharts.push(eqChart);
 
   // Drawdown uses realised-only data (no Today point — unrealised MTM is not a true drawdown)
   const maxDD = ddData.length ? Math.min(...ddData) : 0;
+  const ddXLabels = sparseXAxis(xLbls.slice(0, ddData.length), false);
   const ddChart = new ApexCharts(document.getElementById('chart-drawdown'), {
     ...baseOpts(220), chart: { ...baseOpts(220).chart, type: 'area' },
     series: [{ name: 'Drawdown %', data: ddData }],
-    xaxis: { ...baseOpts().xaxis, categories: xLbls.slice(0, ddData.length), labels: { ...baseOpts().xaxis.labels, rotate: -30, hideOverlappingLabels: true } },
+    xaxis: { ...baseOpts().xaxis, categories: ddXLabels, labels: { ...baseOpts().xaxis.labels, rotate: 0, hideOverlappingLabels: true } },
     yaxis: { labels: { style: { colors: c.text, fontSize:'11px' }, formatter: v => parseFloat(v).toFixed(2) + '%' }, max: 0 },
     colors: [c.red], fill: { type: 'gradient', gradient: { shadeIntensity:1, opacityFrom:0.4, opacityTo:0.05 } },
-    stroke: { curve: 'smooth', width: 2 }, dataLabels: { enabled: false },
+    stroke: { curve: 'smooth', width: 2 }, dataLabels: { enabled: false }, markers: { size: 0 },
     annotations: { yaxis: [{ y: maxDD, label: { text: 'Max DD: ' + maxDD.toFixed(1) + '%', style: { color: c.red, fontSize:'11px' } }, borderColor: c.red, strokeDashArray: 3 }] },
   });
   ddChart.render(); perfCharts.push(ddChart);
@@ -2287,7 +2299,7 @@ function initPerfCharts(closed, initialCapital, open) {
         { name: 'Realised Return %', data: indexedData, type: 'area' },
         ...(todayIndexed ? [{ name: 'Incl. Unrealised', data: todayIndexed, type: 'line' }] : []),
       ],
-      xaxis: { ...baseOpts().xaxis, categories: sorted.map((_,i) => i+1).concat(todayIndexed ? ['Now'] : []), title: { text: 'Trade #', style: { color: c.text, fontSize: '11px' } }, labels: { ...baseOpts().xaxis.labels, hideOverlappingLabels: true } },
+      xaxis: { ...baseOpts().xaxis, categories: sorted.map((_,i) => i+1).concat(todayIndexed ? ['Now'] : []), title: { text: 'Trade #', style: { color: c.text, fontSize: '11px' } }, tickAmount: Math.min(10, sorted.length), labels: { ...baseOpts().xaxis.labels, hideOverlappingLabels: true } },
       yaxis: { labels: { style: { colors: c.text, fontSize:'11px' }, formatter: v => v != null ? (v>=0?'+':'')+v.toFixed(1)+'%' : '' } },
       colors: [eq2 >= (initialCapital||0) ? c.green : c.red, c.amber],
       fill: { type: ['gradient','solid'], gradient: { shadeIntensity:1, opacityFrom:0.3, opacityTo:0.02 } },
