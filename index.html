@@ -199,6 +199,22 @@ nav {
 .alert-green .alert-title { color: var(--green); }
 .alert-desc { font-size: 12px; color: var(--text-secondary); margin-top: 1px; }
 .alert-arrow { color: var(--text-muted); font-size: 12px; }
+/* ── ALERT GROUPS ── */
+.alert-group { border-radius: var(--radius-sm); overflow: hidden; margin-bottom: 6px; }
+.alert-group-header {
+  display: flex; align-items: center; gap: 10px; padding: 10px 14px;
+  cursor: pointer; user-select: none; transition: opacity .15s;
+  font-size: 13px; font-weight: 700;
+}
+.alert-group-header:hover { opacity: 0.85; }
+.alert-group-header .ag-count {
+  font-size: 11px; font-weight: 700; padding: 1px 7px; border-radius: 20px; margin-left: 4px;
+}
+.alert-group-header .ag-chevron { margin-left: auto; font-size: 11px; transition: transform .2s; }
+.alert-group-header.open .ag-chevron { transform: rotate(90deg); }
+.alert-group-body { display: none; }
+.alert-group-body.open { display: block; }
+.alert-group-body .alert-banner { border-radius: 0; margin: 0; border-left-width: 3px; border-top: 1px solid rgba(255,255,255,0.05); }
 /* ── PERIOD FILTER ── */
 .period-filter {
   display: flex; gap: 6px; align-items: center;
@@ -1669,13 +1685,52 @@ function renderDashboard(data, cfg) {
         alerts.push({ type:'amber', icon:'⚠', title:`${t.stock} — Profit at risk: +${t.plPct.toFixed(1)}% but HA is Red`, desc:`Healthy gain but Heikin-Ashi momentum has turned red. Consider tightening stop or taking partial profits to protect gains.` });
       }
     });
-    alertsWrap.innerHTML = alerts.length === 0
-      ? '<div style="padding:16px;text-align:center;color:var(--text-muted);font-size:13px">✓ No alerts — all positions within parameters</div>'
-      : alerts.map(a => `<div class="alert-banner alert-${a.type}" onclick="showPage('positions',document.querySelectorAll('.nav-tab')[3])">
-          <div class="alert-icon">${a.icon}</div>
-          <div class="alert-text"><div class="alert-title">${a.title}</div><div class="alert-desc">${a.desc}</div></div>
-          <span class="alert-arrow">→ View in Positions</span>
-        </div>`).join('');
+    if (alerts.length === 0) {
+      alertsWrap.innerHTML = '<div style="padding:16px;text-align:center;color:var(--text-muted);font-size:13px">✓ No alerts — all positions within parameters</div>';
+    } else {
+      // Group alerts by priority order
+      const groups = [
+        { key:'red',     icon:'🔴', label:'Exit Triggered',         color:'var(--red)',   bg:'var(--red-soft)',   countBg:'rgba(255,69,58,0.2)',   autoOpen: true  },
+        { key:'ha-warn', icon:'⚠',  label:'Profit at Risk — HA Red', color:'var(--red)',   bg:'var(--red-soft)',   countBg:'rgba(255,69,58,0.2)',   autoOpen: true  },
+        { key:'ha',      icon:'🔄', label:'HA Momentum Shift',       color:'var(--amber)', bg:'var(--amber-soft)', countBg:'rgba(255,159,10,0.2)', autoOpen: false },
+        { key:'amber',   icon:'🟡', label:'Near Stop / Review',      color:'var(--amber)', bg:'var(--amber-soft)', countBg:'rgba(255,159,10,0.2)', autoOpen: false },
+        { key:'green',   icon:'🟢', label:'Partial Exit Pending',    color:'var(--green)', bg:'var(--green-soft)', countBg:'rgba(52,199,89,0.2)',  autoOpen: false },
+      ];
+
+      // Tag each alert with a group key
+      const tagged = alerts.map(a => {
+        if (a.icon === '⚠') return { ...a, groupKey: 'ha-warn' };
+        if (a.icon === '🔄') return { ...a, groupKey: 'ha' };
+        return { ...a, groupKey: a.type };
+      });
+
+      alertsWrap.innerHTML = groups.map(g => {
+        const items = tagged.filter(a => a.groupKey === g.key);
+        if (items.length === 0) return '';
+        const headerId = 'ag-hdr-' + g.key;
+        const bodyId   = 'ag-body-' + g.key;
+        const isOpen   = g.autoOpen;
+        return `
+          <div class="alert-group">
+            <div class="alert-group-header ${isOpen ? 'open' : ''}" id="${headerId}"
+                 style="background:${g.bg};color:${g.color}"
+                 onclick="toggleAlertGroup('${g.key}')">
+              <span>${g.icon}</span>
+              <span>${g.label}</span>
+              <span class="ag-count" style="background:${g.countBg};color:${g.color}">${items.length}</span>
+              <span class="ag-chevron">▶</span>
+            </div>
+            <div class="alert-group-body ${isOpen ? 'open' : ''}" id="${bodyId}">
+              ${items.map(a => `
+                <div class="alert-banner alert-${a.type}" onclick="showPage('positions',document.querySelectorAll('.nav-tab')[3])">
+                  <div class="alert-icon">${a.icon}</div>
+                  <div class="alert-text"><div class="alert-title">${a.title}</div><div class="alert-desc">${a.desc}</div></div>
+                  <span class="alert-arrow">→ Positions</span>
+                </div>`).join('')}
+            </div>
+          </div>`;
+      }).join('');
+    }
   }
 }
 
@@ -2051,6 +2106,15 @@ function setPeriod(btn, period) {
     perfCharts.forEach(c => c.destroy()); perfCharts = [];
     initPerfCharts(closed, d.initialCapital, period === 'all' ? d.open : []);
   }
+}
+
+// ── ALERT GROUPS ─────────────────────────────────────
+function toggleAlertGroup(key) {
+  const hdr  = document.getElementById('ag-hdr-'  + key);
+  const body = document.getElementById('ag-body-' + key);
+  if (!hdr || !body) return;
+  const isOpen = body.classList.toggle('open');
+  hdr.classList.toggle('open', isOpen);
 }
 
 // ── COLLAPSIBLE ──────────────────────────────────────
