@@ -1105,6 +1105,62 @@ tbody tr:hover { filter: brightness(0.97); }
     </div>
   </div>
 
+  <!-- ── Trade Management Analysis ── -->
+  <div class="section-title" style="margin-top:24px">Trade Management</div>
+
+  <!-- Insight strip -->
+  <div class="grid-4" style="margin-bottom:14px">
+    <div class="card card-sm">
+      <div class="stat-label">Avg Init Risk</div>
+      <div class="stat-value" id="tm-avg-risk">—</div>
+      <div class="stat-sub" id="tm-avg-risk-sub">per closed trade</div>
+    </div>
+    <div class="card card-sm">
+      <div class="stat-label">Avg Actual Loss</div>
+      <div class="stat-value" id="tm-avg-loss">—</div>
+      <div class="stat-sub" id="tm-avg-loss-sub">stopped-out trades</div>
+    </div>
+    <div class="card card-sm">
+      <div class="stat-label">Stop Slippage</div>
+      <div class="stat-value" id="tm-slippage">—</div>
+      <div class="stat-sub" id="tm-slippage-sub">loss beyond planned risk</div>
+    </div>
+    <div class="card card-sm">
+      <div class="stat-label">Median Winner</div>
+      <div class="stat-value" id="tm-median-win">—</div>
+      <div class="stat-sub" id="tm-median-win-sub">50th pct of winning trades</div>
+    </div>
+  </div>
+
+  <!-- Insight callout -->
+  <div class="card" style="margin-bottom:14px;border-left:3px solid var(--accent)">
+    <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em">Breakeven Stop Insight</div>
+    <div id="tm-be-insight" style="font-size:13px;line-height:1.7;color:var(--text-secondary)">Loading…</div>
+  </div>
+
+  <div class="grid-2" style="margin-bottom:14px">
+    <div class="card">
+      <div class="chart-title">Init Risk % Distribution</div>
+      <div class="chart-sub">Are your stops consistently sized or all over the place?</div>
+      <div id="chart-tm-risk-dist" style="height:220px"></div>
+    </div>
+    <div class="card">
+      <div class="chart-title">Win Rate by Risk Size</div>
+      <div class="chart-sub">Do tighter or wider stops produce better outcomes?</div>
+      <div id="chart-tm-wr-by-risk" style="height:220px"></div>
+    </div>
+    <div class="card">
+      <div class="chart-title">Winner Size Distribution</div>
+      <div class="chart-sub">Where do winners close? — calibrates when to move stop to breakeven</div>
+      <div id="chart-tm-winner-dist" style="height:220px"></div>
+    </div>
+    <div class="card">
+      <div class="chart-title">Loss Size Distribution</div>
+      <div class="chart-sub">Are losses clean (near init risk) or messy (overrun)?</div>
+      <div id="chart-tm-loss-dist" style="height:220px"></div>
+    </div>
+  </div>
+
   <!-- 2-col chart grid -->
   <div class="section-title">Pattern Analysis</div>
   <div class="grid-2">
@@ -2896,6 +2952,219 @@ function initAnalysisCharts(open, closed) {
   });
   vel.render(); analysisCharts.push(vel);
 
+  // ── TRADE MANAGEMENT ANALYSIS ──────────────────────
+  const tmSet = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+
+  const tmClosed = closed.filter(t => t.closeDate && t.finalPlPct !== undefined);
+  const tmWinners = tmClosed.filter(t => t.finalPlPct > 0);
+  const tmLosers = tmClosed.filter(t => t.finalPlPct < 0);
+
+  // Init risk % — use initRiskPct col L
+  const withRisk = tmClosed.filter(t => t.initRiskPct && Math.abs(t.initRiskPct) > 0);
+  const avgInitRisk = withRisk.length > 0 ? withRisk.reduce((s,t) => s + Math.abs(t.initRiskPct), 0) / withRisk.length : 0;
+  const avgActualLoss = tmLosers.length > 0 ? tmLosers.reduce((s,t) => s + Math.abs(t.finalPlPct), 0) / tmLosers.length : 0;
+  const slippage = avgActualLoss - avgInitRisk;
+
+  const sortedWinPct = [...tmWinners].map(t => t.finalPlPct).sort((a,b) => a - b);
+  const medianWin = sortedWinPct.length > 0 ? sortedWinPct[Math.floor(sortedWinPct.length / 2)] : 0;
+
+  tmSet('tm-avg-risk', avgInitRisk > 0 ? '-' + avgInitRisk.toFixed(2) + '%' : '—');
+  tmSet('tm-avg-loss', avgActualLoss > 0 ? '-' + avgActualLoss.toFixed(2) + '%' : '—');
+
+  const slippageEl = document.getElementById('tm-slippage');
+  if (slippageEl) {
+    slippageEl.textContent = slippage > 0 ? '+' + slippage.toFixed(2) + '%' : slippage.toFixed(2) + '%';
+    slippageEl.style.color = slippage > 0.5 ? 'var(--red)' : slippage <= 0 ? 'var(--green)' : 'var(--amber)';
+  }
+  tmSet('tm-median-win', medianWin > 0 ? '+' + medianWin.toFixed(2) + '%' : '—');
+
+  // ── Breakeven stop insight ──
+  const beInsightEl = document.getElementById('tm-be-insight');
+  if (beInsightEl && tmWinners.length > 0) {
+    const beTriggers = [1, 1.5, 2, 2.5, 3];
+    // Winners that close BELOW the trigger = would have been stopped at breakeven (0%) → net saved from loss if they were losers
+    // We interpret: if a winner closes at +1.2% and trigger is +2%, it would NOT have been affected (it closed before reaching +2%)
+    // A more useful framing: what % of winners close ABOVE each trigger level (those are the ones that safely passed the BE stop)
+    const insights = beTriggers.map(trigger => {
+      const safeWinners = tmWinners.filter(t => t.finalPlPct >= trigger).length; // winners that hit trigger and went further
+      const cutEarly = tmWinners.filter(t => t.finalPlPct < trigger && t.finalPlPct > 0).length; // small winners below trigger
+      const savedLosers = tmLosers.filter(t => Math.abs(t.finalPlPct) > 0.3).length; // approx losers that had a chance to hit trigger
+      return { trigger, safeWinners, cutEarly, savedPct: tmLosers.length > 0 ? (savedLosers / tmLosers.length * 100) : 0 };
+    });
+
+    // Find the trigger where cutEarly is small (<15% of winners) and explain it
+    const bestTrigger = insights.find(i => i.cutEarly / tmWinners.length < 0.15) || insights[2];
+    const cutEarlyPct = (bestTrigger.cutEarly / tmWinners.length * 100).toFixed(0);
+    const safeWinPct = (bestTrigger.safeWinners / tmWinners.length * 100).toFixed(0);
+
+    // Pct of winners above various thresholds
+    const above2 = tmWinners.filter(t => t.finalPlPct >= 2).length;
+    const above5 = tmWinners.filter(t => t.finalPlPct >= 5).length;
+    const above10 = tmWinners.filter(t => t.finalPlPct >= 10).length;
+    const p2 = (above2 / tmWinners.length * 100).toFixed(0);
+    const p5 = (above5 / tmWinners.length * 100).toFixed(0);
+    const p10 = (above10 / tmWinners.length * 100).toFixed(0);
+
+    let beText = `Of your <strong>${tmWinners.length} winning trades</strong>: `;
+    beText += `<strong>${p2}%</strong> close above +2% · <strong>${p5}%</strong> above +5% · <strong>${p10}%</strong> above +10%.<br>`;
+
+    if (parseInt(p2) >= 70) {
+      beText += `✅ <strong>Moving stop to breakeven at +2% makes sense</strong> — ${p2}% of your winners would clear the trigger and run. `;
+      beText += `Only ${100 - parseInt(p2)}% of winners close between 0–2% so you'd rarely cut a winner early.`;
+    } else if (parseInt(p2) >= 50) {
+      beText += `⚠️ <strong>A +2% breakeven trigger is borderline</strong> — ${100 - parseInt(p2)}% of winners close below +2% and would be stopped at 0% instead. `;
+      beText += `Consider a tighter trigger of +1% or only apply it to high-conviction setups.`;
+    } else {
+      beText += `⚠️ <strong>Breakeven stop at +2% would cut ${100 - parseInt(p2)}% of your winners early</strong> — most of your winning trades close below +2%. `;
+      beText += `Your winners are small — focus on letting trades run before adding a breakeven rule.`;
+    }
+
+    if (slippage > 0.5) {
+      beText += `<br><br>📌 <strong>Stop slippage alert:</strong> your actual losses average ${slippage.toFixed(2)}% more than your init risk — check for gap-downs or late stop executions.`;
+    } else if (slippage <= 0) {
+      beText += `<br><br>✅ <strong>Stop discipline is solid</strong> — actual losses are at or within your planned init risk.`;
+    }
+
+    beInsightEl.innerHTML = beText;
+  } else if (beInsightEl) {
+    beInsightEl.textContent = 'Not enough closed trades to compute breakeven stop analysis.';
+  }
+
+  // ── Init Risk % Distribution histogram ──
+  const riskBuckets = {'<0.5%':0,'0.5–1%':0,'1–1.5%':0,'1.5–2%':0,'2–2.5%':0,'2.5–3%':0,'>3%':0};
+  withRisk.forEach(t => {
+    const r = Math.abs(t.initRiskPct);
+    if (r < 0.5) riskBuckets['<0.5%']++;
+    else if (r < 1) riskBuckets['0.5–1%']++;
+    else if (r < 1.5) riskBuckets['1–1.5%']++;
+    else if (r < 2) riskBuckets['1.5–2%']++;
+    else if (r < 2.5) riskBuckets['2–2.5%']++;
+    else if (r < 3) riskBuckets['2.5–3%']++;
+    else riskBuckets['>3%']++;
+  });
+  const riskKeys = Object.keys(riskBuckets);
+  const riskData = riskKeys.map(k => riskBuckets[k]);
+  const riskDistEl = document.getElementById('chart-tm-risk-dist');
+  if (riskDistEl && withRisk.length > 0) {
+    const rdChart = new ApexCharts(riskDistEl, {
+      ...baseOpts(220), chart: { ...baseOpts(220).chart, type: 'bar' },
+      series: [{ name: 'Trades', data: riskData }],
+      xaxis: { ...baseOpts().xaxis, categories: riskKeys },
+      yaxis: { labels: { style:{colors:c.text,fontSize:'11px'} }, title: { text:'# trades', style:{color:c.text,fontSize:'10px'} } },
+      colors: riskData.map((_, i) => i <= 1 ? c.green : i <= 3 ? c.accent : c.red),
+      plotOptions: { bar: { columnWidth:'65%', distributed:true, borderRadius:3 } },
+      legend: { show:false },
+      dataLabels: { enabled: true, formatter: v => v > 0 ? v : '', style:{fontSize:'11px',colors:[c.text]} },
+      annotations: { xaxis: [{ x: '1–1.5%', borderColor: c.green, label: { text: 'Sweet spot', style:{color:c.green,fontSize:'10px',background:'transparent'}, position:'top', orientation:'horizontal' } }] },
+      tooltip: { ...baseOpts().tooltip, y: { formatter: v => v + ' trade' + (v!==1?'s':'') } },
+    });
+    rdChart.render(); analysisCharts.push(rdChart);
+  }
+
+  // ── Win Rate by Risk Bucket ──
+  const riskWR = {};
+  withRisk.forEach(t => {
+    const r = Math.abs(t.initRiskPct);
+    const bucket = r < 1 ? '<1%' : r < 1.5 ? '1–1.5%' : r < 2 ? '1.5–2%' : r < 3 ? '2–3%' : '>3%';
+    if (!riskWR[bucket]) riskWR[bucket] = {w:0,t:0};
+    riskWR[bucket].t++;
+    if (t.finalPlPct > 0) riskWR[bucket].w++;
+  });
+  const riskWRKeys = ['<1%','1–1.5%','1.5–2%','2–3%','>3%'].filter(k => riskWR[k] && riskWR[k].t > 0);
+  const riskWRData = riskWRKeys.map(k => parseFloat((riskWR[k].w / riskWR[k].t * 100).toFixed(1)));
+  const riskWRCounts = riskWRKeys.map(k => riskWR[k].t);
+  const wrByRiskEl = document.getElementById('chart-tm-wr-by-risk');
+  if (wrByRiskEl && riskWRKeys.length > 0) {
+    const wrRiskChart = new ApexCharts(wrByRiskEl, {
+      ...baseOpts(220), chart: { ...baseOpts(220).chart, type: 'bar' },
+      series: [{ name: 'Win Rate %', data: riskWRData }],
+      xaxis: { ...baseOpts().xaxis, categories: riskWRKeys.map((k,i) => k + ' (n=' + riskWRCounts[i] + ')') },
+      yaxis: { labels: { style:{colors:c.text,fontSize:'11px'}, formatter: v => v+'%' }, min:0, max:100 },
+      colors: riskWRData.map(v => v >= 50 ? c.green : v >= 35 ? c.amber : c.red),
+      plotOptions: { bar: { columnWidth:'55%', distributed:true, borderRadius:4 } },
+      legend: { show:false },
+      dataLabels: { enabled: true, formatter: v => v+'%', style:{fontSize:'11px'} },
+      annotations: { yaxis: [{ y:50, borderColor:c.text, strokeDashArray:3, label:{text:'50%',style:{color:c.text,fontSize:'10px',background:'transparent'}} }] },
+      tooltip: { ...baseOpts().tooltip, y: { formatter: (v, {dataPointIndex}) => v + '% (' + riskWR[riskWRKeys[dataPointIndex]].w + ' of ' + riskWRCounts[dataPointIndex] + ')' } },
+    });
+    wrRiskChart.render(); analysisCharts.push(wrRiskChart);
+  }
+
+  // ── Winner Size Distribution ──
+  const winBuckets = {'0–2%':0,'2–5%':0,'5–8%':0,'8–12%':0,'12–20%':0,'>20%':0};
+  tmWinners.forEach(t => {
+    const p = t.finalPlPct;
+    if (p < 2) winBuckets['0–2%']++;
+    else if (p < 5) winBuckets['2–5%']++;
+    else if (p < 8) winBuckets['5–8%']++;
+    else if (p < 12) winBuckets['8–12%']++;
+    else if (p < 20) winBuckets['12–20%']++;
+    else winBuckets['>20%']++;
+  });
+  const winKeys = Object.keys(winBuckets);
+  const winData = winKeys.map(k => winBuckets[k]);
+  const winDistEl = document.getElementById('chart-tm-winner-dist');
+  if (winDistEl && tmWinners.length > 0) {
+    const wdChart = new ApexCharts(winDistEl, {
+      ...baseOpts(220), chart: { ...baseOpts(220).chart, type: 'bar' },
+      series: [{ name: 'Winners', data: winData }],
+      xaxis: { ...baseOpts().xaxis, categories: winKeys },
+      yaxis: { labels: { style:{colors:c.text,fontSize:'11px'} }, title: { text:'# winners', style:{color:c.text,fontSize:'10px'} } },
+      colors: winData.map((_, i) => {
+        const intensity = ['rgba(52,199,89,0.4)','rgba(52,199,89,0.55)','rgba(52,199,89,0.7)','rgba(52,199,89,0.85)','var(--green)','var(--green)'];
+        return intensity[i] || c.green;
+      }),
+      plotOptions: { bar: { columnWidth:'65%', distributed:true, borderRadius:3 } },
+      legend: { show:false },
+      dataLabels: { enabled: true, formatter: v => v > 0 ? v : '', style:{fontSize:'11px',colors:['#fff']} },
+      annotations: {
+        xaxis: [{ x: '2–5%', borderColor: c.accent, strokeDashArray: 4, label: { text: 'BE stop zone', style:{color:c.accent,fontSize:'10px',background:'transparent'}, orientation:'horizontal', position:'top' } }],
+      },
+      tooltip: { ...baseOpts().tooltip, y: { formatter: (v, {dataPointIndex}) => {
+        const pct = tmWinners.length > 0 ? (v / tmWinners.length * 100).toFixed(0) : 0;
+        return v + ' trade' + (v!==1?'s':'') + ' (' + pct + '% of winners)';
+      }}},
+    });
+    wdChart.render(); analysisCharts.push(wdChart);
+  }
+
+  // ── Loss Size Distribution ──
+  const lossBuckets = {'0–1%':0,'1–2%':0,'2–3%':0,'3–5%':0,'5–8%':0,'>8%':0};
+  tmLosers.forEach(t => {
+    const p = Math.abs(t.finalPlPct);
+    if (p < 1) lossBuckets['0–1%']++;
+    else if (p < 2) lossBuckets['1–2%']++;
+    else if (p < 3) lossBuckets['2–3%']++;
+    else if (p < 5) lossBuckets['3–5%']++;
+    else if (p < 8) lossBuckets['5–8%']++;
+    else lossBuckets['>8%']++;
+  });
+  const lossKeys = Object.keys(lossBuckets);
+  const lossData = lossKeys.map(k => lossBuckets[k]);
+  const lossDistEl = document.getElementById('chart-tm-loss-dist');
+  if (lossDistEl && tmLosers.length > 0) {
+    const ldChart = new ApexCharts(lossDistEl, {
+      ...baseOpts(220), chart: { ...baseOpts(220).chart, type: 'bar' },
+      series: [{ name: 'Losses', data: lossData }],
+      xaxis: { ...baseOpts().xaxis, categories: lossKeys },
+      yaxis: { labels: { style:{colors:c.text,fontSize:'11px'} }, title: { text:'# losses', style:{color:c.text,fontSize:'10px'} } },
+      colors: lossData.map((_, i) => {
+        const intensity = ['rgba(255,69,58,0.35)','rgba(255,69,58,0.5)','rgba(255,69,58,0.65)','rgba(255,69,58,0.8)','var(--red)','var(--red)'];
+        return intensity[i] || c.red;
+      }),
+      plotOptions: { bar: { columnWidth:'65%', distributed:true, borderRadius:3 } },
+      legend: { show:false },
+      dataLabels: { enabled: true, formatter: v => v > 0 ? v : '', style:{fontSize:'11px',colors:['#fff']} },
+      annotations: {
+        xaxis: avgInitRisk > 0 ? [{ x: avgInitRisk < 1 ? '0–1%' : avgInitRisk < 2 ? '1–2%' : '2–3%', borderColor: c.amber, strokeDashArray: 4, label: { text: 'Avg init risk', style:{color:c.amber,fontSize:'10px',background:'transparent'}, orientation:'horizontal', position:'top' } }] : [],
+      },
+      tooltip: { ...baseOpts().tooltip, y: { formatter: (v, {dataPointIndex}) => {
+        const pct = tmLosers.length > 0 ? (v / tmLosers.length * 100).toFixed(0) : 0;
+        return v + ' trade' + (v!==1?'s':'') + ' (' + pct + '% of losses)';
+      }}},
+    });
+    ldChart.render(); analysisCharts.push(ldChart);
+  }
 }
 
 // ── INIT ─────────────────────────────────────────────
