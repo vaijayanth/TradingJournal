@@ -829,7 +829,10 @@ tbody tr:hover { filter: brightness(0.97); }
         <div style="width:10px;height:10px;border-radius:50%;background:var(--green)"></div>
         <div class="chart-title" style="margin:0;text-transform:uppercase;letter-spacing:.07em;font-size:11px">Equity Curve</div>
       </div>
-      <button id="eq-dd-toggle" onclick="toggleEqDD()" style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s">▶ DD OFF</button>
+      <div style="display:flex;gap:6px;align-items:center">
+        <button id="eq-mode-toggle" onclick="toggleEqMode()" style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s">% Return</button>
+        <button id="eq-dd-toggle" onclick="toggleEqDD()" style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s">▶ DD OFF</button>
+      </div>
     </div>
     <!-- Month pills -->
     <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px" id="eq-month-pills">
@@ -2271,11 +2274,21 @@ function initPerfCharts(closed, initialCapital, open) {
   window._eqOpen = open || [];
   window._eqInitialCapital = initialCapital || 0;
   window._eqDDOn = false;
+  window._eqMode = window._eqMode || '%';
   window._eqMonth = 'all';
 
   // Reset DD button state
   const ddBtn = document.getElementById('eq-dd-toggle');
   if (ddBtn) { ddBtn.textContent = '▶ DD OFF'; ddBtn.style.background = ''; ddBtn.style.borderColor = ''; ddBtn.style.color = ''; }
+  // Reset mode button state (preserve user's chosen mode across tab re-entries)
+  const modeBtn = document.getElementById('eq-mode-toggle');
+  if (modeBtn) {
+    const isAbs = window._eqMode === '₹';
+    modeBtn.textContent = isAbs ? '₹ Absolute' : '% Return';
+    modeBtn.style.background = isAbs ? 'rgba(99,102,241,0.15)' : '';
+    modeBtn.style.borderColor = isAbs ? 'var(--accent)' : '';
+    modeBtn.style.color = isAbs ? 'var(--accent)' : '';
+  }
 
   // Build month pills — clear first to avoid duplication on re-init
   const eqMonths = [...new Set(sorted.map(t => {
@@ -2326,23 +2339,26 @@ function initPerfCharts(closed, initialCapital, open) {
       });
     }
 
+    const isAbsMode = window._eqMode === '₹';
     let runEq = startEq, peak = month === 'all' ? cap : startEq;
     const retData = [], ddData2 = [], labels = [], tradeLabels = [];
     displayTrades.forEach(t => {
       runEq += t.finalPl;
       if (runEq > peak) peak = runEq;
       const ret = cap > 0 ? (runEq - cap) / cap * 100 : 0;
-      retData.push(parseFloat(ret.toFixed(2)));
+      retData.push(isAbsMode ? parseFloat(runEq.toFixed(0)) : parseFloat(ret.toFixed(2)));
       ddData2.push(parseFloat(((runEq - peak) / peak * 100).toFixed(2)));
       labels.push(t.closeDate);
-      tradeLabels.push(t.stock + ' · ' + (t.finalPlPct >= 0 ? '+' : '') + t.finalPlPct.toFixed(1) + '% · ' + t.closeDate);
+      const plSign = t.finalPlPct >= 0 ? '+' : '';
+      const capVal = isAbsMode ? '₹' + Math.round(runEq).toLocaleString('en-IN') : (ret>=0?'+':'')+ret.toFixed(2)+'%';
+      tradeLabels.push(t.stock + ' · ' + plSign + t.finalPlPct.toFixed(1) + '% · ' + t.closeDate);
+      tradeLabels[tradeLabels.length-1] = t.stock + ' · ' + plSign + '₹' + Math.abs(Math.round(t.finalPl)).toLocaleString('en-IN') + ' · ' + t.closeDate;
     });
 
     // Today point (unrealised MTM)
     const totalUnrealised2 = openArr.reduce((s,t) => s+(t.notionalPl||0), 0);
     if (month === 'all' && totalUnrealised2 !== 0) {
-      const combRet = cap > 0 ? (runEq + totalUnrealised2 - cap) / cap * 100 : 0;
-      retData.push(null); // main series ends
+      retData.push(null); // main series ends — dashed series handled separately
       labels.push('Today');
       tradeLabels.push('Open positions MTM · ' + (totalUnrealised2 >= 0 ? '+' : '') + '₹' + Math.abs(Math.round(totalUnrealised2)).toLocaleString('en-IN'));
     }
@@ -2367,18 +2383,26 @@ function initPerfCharts(closed, initialCapital, open) {
       ...baseOpts(260), chart: { ...baseOpts(260).chart, type: 'area', id: 'eq-main' },
       series: [{ name: 'Return %', data: retData }],
       xaxis: { ...baseOpts().xaxis, categories: sparseLabels, labels: { ...baseOpts().xaxis.labels, rotate: 0, hideOverlappingLabels: true } },
-      yaxis: { labels: { style:{colors:c2.text,fontSize:'11px'}, formatter: v => v != null ? (v>=0?'+':'')+v.toFixed(1)+'%' : '' } },
+      yaxis: { labels: { style:{colors:c2.text,fontSize:'11px'}, formatter: v => v != null ? (isAbsMode ? '₹'+Math.round(v).toLocaleString('en-IN') : (v>=0?'+':'')+v.toFixed(1)+'%') : '' } },
       colors: [realisedColor2],
       fill: { type: 'gradient', gradient: { shadeIntensity:1, opacityFrom: 0.3, opacityTo: 0.02, colorStops:[{offset:0,color:realisedColor2,opacity:0.3},{offset:100,color:realisedColor2,opacity:0.02}] } },
       stroke: { curve: 'smooth', width: 2.5 },
       dataLabels: { enabled: false }, markers: { size: 0, hover: { size: 5 } },
-      annotations: { yaxis: [{ y: 0, borderColor: c2.text, strokeDashArray: 2, label:{text:'Break-even',style:{color:c2.text,fontSize:'10px',background:'transparent'}} }] },
+      annotations: { yaxis: [{ y: isAbsMode ? cap : 0, borderColor: c2.text, strokeDashArray: 2, label:{text:'Break-even',style:{color:c2.text,fontSize:'10px',background:'transparent'}} }] },
       tooltip: { ...baseOpts().tooltip, custom: ({ dataPointIndex }) => {
         const label = tradeLabels[dataPointIndex] || '';
-        const ret = retData[dataPointIndex];
-        if (ret == null) return '';
-        const col = ret >= 0 ? 'var(--green)' : 'var(--red)';
-        return `<div style="padding:8px 12px;font-size:12px;font-weight:600;color:${col};background:var(--surface);border:1px solid var(--border);border-radius:8px">${label}<br><span style="font-size:11px;color:var(--text-muted)">Cumulative: ${ret>=0?'+':''}${ret.toFixed(2)}%</span></div>`;
+        const val = retData[dataPointIndex];
+        if (val == null) return '';
+        const col = val >= 0 ? 'var(--green)' : 'var(--red)';
+        let cumLine;
+        if (isAbsMode) {
+          const retPct = cap > 0 ? (val - cap) / cap * 100 : 0;
+          cumLine = `₹${Math.round(val).toLocaleString('en-IN')} <span style="opacity:.7">(${retPct>=0?'+':''}${retPct.toFixed(2)}%)</span>`;
+        } else {
+          const absVal = cap > 0 ? cap + val/100*cap : 0;
+          cumLine = `${val>=0?'+':''}${val.toFixed(2)}% <span style="opacity:.7">(₹${Math.round(absVal).toLocaleString('en-IN')})</span>`;
+        }
+        return `<div style="padding:8px 12px;font-size:12px;font-weight:600;color:${col};background:var(--surface);border:1px solid var(--border);border-radius:8px">${label}<br><span style="font-size:11px;color:var(--text-muted)">Capital: ${cumLine}</span></div>`;
       }},
       legend: { show: false },
     });
@@ -2588,6 +2612,18 @@ function filterEqMonth(btn, month) {
   document.querySelectorAll('.eq-pill').forEach(p => p.classList.remove('active'));
   if (btn) btn.classList.add('active');
   window._eqMonth = month || 'all';
+  if (window._renderEqChart) window._renderEqChart();
+}
+function toggleEqMode() {
+  window._eqMode = (window._eqMode === '₹') ? '%' : '₹';
+  const btn = document.getElementById('eq-mode-toggle');
+  if (btn) {
+    const isAbsolute = window._eqMode === '₹';
+    btn.textContent = isAbsolute ? '₹ Absolute' : '% Return';
+    btn.style.background = isAbsolute ? 'rgba(99,102,241,0.15)' : '';
+    btn.style.borderColor = isAbsolute ? 'var(--accent)' : '';
+    btn.style.color = isAbsolute ? 'var(--accent)' : '';
+  }
   if (window._renderEqChart) window._renderEqChart();
 }
 function toggleEqDD() {
