@@ -1143,21 +1143,37 @@ tbody tr:hover { filter: brightness(0.97); }
       <div class="chart-title">Init Risk % Distribution</div>
       <div class="chart-sub">Are your stops consistently sized or all over the place?</div>
       <div id="chart-tm-risk-dist" style="height:220px"></div>
+      <div style="margin-top:12px;padding:10px 12px;background:var(--surface2);border-radius:8px;font-size:12px;line-height:1.7;color:var(--text-secondary)">
+        <strong style="color:var(--text-primary)">What to look for:</strong> The bulk of bars should land in the <strong>1–2% risk zone</strong>. If they're spread across all buckets you're not sizing consistently — each trade carries different risk which makes your system hard to evaluate.<br>
+        <strong style="color:var(--text-primary)">Action:</strong> If you see many trades &gt;3% risk, those stops are too wide — you're giving the stock too much room and risking too much capital. If most are &lt;1%, stops may be too tight and getting hit by normal noise.
+      </div>
     </div>
     <div class="card">
       <div class="chart-title">Win Rate by Risk Size</div>
       <div class="chart-sub">Do tighter or wider stops produce better outcomes?</div>
       <div id="chart-tm-wr-by-risk" style="height:220px"></div>
+      <div style="margin-top:12px;padding:10px 12px;background:var(--surface2);border-radius:8px;font-size:12px;line-height:1.7;color:var(--text-secondary)">
+        <strong style="color:var(--text-primary)">What to look for:</strong> If tighter stops (&lt;1%) win less often, they're too close to price noise and getting triggered prematurely. If wider stops (&gt;3%) win more but your losses are big, you're trading win rate for pain.<br>
+        <strong style="color:var(--text-primary)">Action:</strong> Find the risk bucket with the <strong>best win rate</strong> — that's your edge zone. Move your stop placement towards that range. Ideally 1–2% risk should have the highest or equal win rate.
+      </div>
     </div>
     <div class="card">
       <div class="chart-title">Winner Size Distribution</div>
       <div class="chart-sub">Where do winners close? — calibrates when to move stop to breakeven</div>
       <div id="chart-tm-winner-dist" style="height:220px"></div>
+      <div style="margin-top:12px;padding:10px 12px;background:var(--surface2);border-radius:8px;font-size:12px;line-height:1.7;color:var(--text-secondary)">
+        <strong style="color:var(--text-primary)">What to look for:</strong> If most winners cluster in <strong>0–2%</strong>, your winners are tiny — exits are too early or setups aren't running. You want a right-skewed shape: most bars in 2–10%+ with a long tail.<br>
+        <strong style="color:var(--text-primary)">Action:</strong> The <em>BE stop zone</em> annotation marks 2–5%. If &gt;70% of your winners are above that line, moving stop to breakeven at +2% profit is safe. If most winners close below it, <strong>don't</strong> add a breakeven rule yet — you'll stop yourself out of winners.
+      </div>
     </div>
     <div class="card">
       <div class="chart-title">Loss Size Distribution</div>
       <div class="chart-sub">Are losses clean (near init risk) or messy (overrun)?</div>
       <div id="chart-tm-loss-dist" style="height:220px"></div>
+      <div style="margin-top:12px;padding:10px 12px;background:var(--surface2);border-radius:8px;font-size:12px;line-height:1.7;color:var(--text-secondary)">
+        <strong style="color:var(--text-primary)">What to look for:</strong> Losses should cluster tightly around your avg init risk bucket (marked in amber). If you see a large spike in <strong>5–8% or &gt;8%</strong>, those are <em>uncontrolled losses</em> — stops moved, gap-downs, or held through the stop.<br>
+        <strong style="color:var(--text-primary)">Action:</strong> Any loss more than 2× your init risk is a process failure, not a market failure. Count them. If &gt;10% of your losses are outsized, that's the single biggest lever to fix — one big loss can wipe 5–10 normal stops.
+      </div>
     </div>
   </div>
 
@@ -1168,11 +1184,19 @@ tbody tr:hover { filter: brightness(0.97); }
       <div class="chart-title">Trade Age vs P&L%</div>
       <div class="chart-sub">Hold time vs outcome — are you exiting too early?</div>
       <div id="chart-scatter" style="height:240px;"></div>
+      <div style="margin-top:12px;padding:10px 12px;background:var(--surface2);border-radius:8px;font-size:12px;line-height:1.7;color:var(--text-secondary)">
+        <strong style="color:var(--text-primary)">What to look for:</strong> Green dots (winners) should cluster in the <strong>top-right</strong> — held longer, bigger gain. If your biggest winners are all held &lt;10 days, you're exiting too early. Red dots (losers) should cluster bottom-left — stopped quickly.<br>
+        <strong style="color:var(--text-primary)">Action:</strong> If you see green dots scattered left (short hold, good gain) that's fine — quick winners happen. But if most big winners are also short-held, ask if you're taking profit too early out of fear. The goal: let green run, cut red fast.
+      </div>
     </div>
     <div class="card">
       <div class="chart-title">Entry Velocity</div>
       <div class="chart-sub">New positions per week — primary overtrading detector</div>
       <div id="chart-velocity" style="height:240px;"></div>
+      <div style="margin-top:12px;padding:10px 12px;background:var(--surface2);border-radius:8px;font-size:12px;line-height:1.7;color:var(--text-secondary)">
+        <strong style="color:var(--text-primary)">What to look for:</strong> Weeks with <strong>&gt;3 new entries</strong> are a warning sign. Overtrading usually happens after a loss streak (revenge trading) or a big win (overconfidence). The amber line marks the threshold.<br>
+        <strong style="color:var(--text-primary)">Action:</strong> Find your worst-performing weeks and cross-check with entry velocity spikes — they usually correlate. Consider a hard rule: <em>max 2–3 new positions per week</em>. Sitting in cash is also a position.
+      </div>
     </div>
     <div class="card">
       <div class="chart-title">Win Rate by Setup Type</div>
@@ -1183,6 +1207,10 @@ tbody tr:hover { filter: brightness(0.97); }
         <div class="placeholder-title">Setup Type Not Mapped</div>
         <div class="placeholder-desc">Add a Setup Type column to your Google Sheet and map it in Config to unlock this chart.</div>
       </div>
+      <div style="margin-top:12px;padding:10px 12px;background:var(--surface2);border-radius:8px;font-size:12px;line-height:1.7;color:var(--text-secondary)">
+        <strong style="color:var(--text-primary)">What to look for:</strong> Green bars (&gt;50%) = setups with statistical edge. Red bars (&lt;35%) = setups that are not working — you may be misidentifying them or trading them in wrong market conditions.<br>
+        <strong style="color:var(--text-primary)">Action:</strong> Stop trading red-bar setups until you understand why they fail. Double down on green-bar setups. If all setups are similar win rate, you likely need more data or clearer setup definitions.
+      </div>
     </div>
     <div class="card">
       <div class="chart-title">Avg P&L % by Setup Type</div>
@@ -1192,6 +1220,10 @@ tbody tr:hover { filter: brightness(0.97); }
         <div class="placeholder-icon">🔒</div>
         <div class="placeholder-title">Setup Type Not Mapped</div>
         <div class="placeholder-desc">Add a Setup Type column to your Google Sheet and map it in Config to unlock this chart.</div>
+      </div>
+      <div style="margin-top:12px;padding:10px 12px;background:var(--surface2);border-radius:8px;font-size:12px;line-height:1.7;color:var(--text-secondary)">
+        <strong style="color:var(--text-primary)">What to look for:</strong> A setup with high win rate (previous chart) but negative avg P&L means wins are small and losses are large — the setup has no edge. The best setups show <strong>both</strong> positive avg P&L and decent win rate.<br>
+        <strong style="color:var(--text-primary)">Action:</strong> Cross-reference with the Win Rate chart. A setup with 60% win rate but -0.5% avg P&L is worse than a 40% setup with +3% avg P&L. Prioritise the setups that are green in <em>both</em> charts.
       </div>
     </div>
   </div>
