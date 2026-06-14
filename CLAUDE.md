@@ -14,8 +14,8 @@ Connected to a Google Sheet via Apps Script as a JSON middleware.
 
 ## Google Sheet
 - Sheet name: `TRADES`
-- Portfolio value cell: `AI26` (live combined value including open positions at market price)
-- Initial capital cell: `AI20`
+- Portfolio value cell: `AK26` (live combined value including open positions at market price)
+- Initial capital cell: `AK20`
 
 ## Column Mapping (DEFAULT_CONFIG)
 | Field | Column |
