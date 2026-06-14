@@ -1665,6 +1665,9 @@ function renderDashboard(data, cfg) {
       if ((t.haChanged || '').toUpperCase() === 'Y' && t.haColour) {
         alerts.push({ type:'amber', icon:'🔄', title:`${t.stock} — HA colour flipped to ${t.haColour}`, desc:`Heikin-Ashi candle colour changed — momentum shift signal. Review position and consider tightening stop.` });
       }
+      if (t.plPct >= 5 && (t.haColour || '').trim().toLowerCase() === 'red') {
+        alerts.push({ type:'amber', icon:'⚠', title:`${t.stock} — Profit at risk: +${t.plPct.toFixed(1)}% but HA is Red`, desc:`Healthy gain but Heikin-Ashi momentum has turned red. Consider tightening stop or taking partial profits to protect gains.` });
+      }
     });
     alertsWrap.innerHTML = alerts.length === 0
       ? '<div style="padding:16px;text-align:center;color:var(--text-muted);font-size:13px">✓ No alerts — all positions within parameters</div>'
@@ -1685,13 +1688,15 @@ function renderPositionsReal(open, cfg) {
     if (t.pctFromStop <= 0) alertType = 'red';
     else if (t.pctFromStop <= cfg.stopProximity) alertType = 'amber';
     if (t.plPct >= cfg.partialTrigger && t.partialTaken === 'N') alertType = 'green';
-    return { ...t, alertType };
+    // HA warning: profit ≥ 5% but HA is Red — momentum fading, consider protecting gains
+    const haWarn = t.plPct >= 5 && (t.haColour || '').trim().toLowerCase() === 'red';
+    return { ...t, alertType, haWarn };
   }).sort((a, b) => a.pctFromStop - b.pctFromStop);
 
   trades.forEach((t, i) => {
     const haColour = (t.haColour || '').trim();
     const haChanged = (t.haChanged || '').toUpperCase() === 'Y';
-    const rowClass = [t.alertType !== 'none' ? 'row-' + t.alertType : '', haChanged ? 'row-ha' : ''].filter(Boolean).join(' ');
+    const rowClass = [t.alertType !== 'none' ? 'row-' + t.alertType : '', haChanged ? 'row-ha' : '', t.haWarn ? 'row-ha-warn' : ''].filter(Boolean).join(' ');
     const pnlClass = t.plPct >= 0 ? 'pnl-pos' : 'pnl-neg';
     const emaStr = (t.ema21 || '').trim();
     const emaClass = emaStr.toLowerCase() === 'above' ? 'tag-above' : 'tag-below';
@@ -1700,6 +1705,7 @@ function renderPositionsReal(open, cfg) {
     const haClass = haColour.toLowerCase() === 'green' ? 'tag-ha-green' : haColour.toLowerCase() === 'red' ? 'tag-ha-red' : '';
     const haChangedClass = haChanged ? 'tag-ha-changed' : '';
     const haLabel = haColour ? (haChanged ? '🔄 ' + haColour : haColour) : '—';
+    const haWarnStyle = t.haWarn ? 'box-shadow:0 0 0 2px var(--red);' : '';
     tbody.innerHTML += `
       <tr class="${rowClass}" onclick="toggleExpand(${i})">
         <td><span class="stock-name">${t.stock}</span>${t.dataError ? ' <span style="font-size:10px;color:var(--red)">⚠</span>' : ''}</td>
@@ -1710,7 +1716,7 @@ function renderPositionsReal(open, cfg) {
         <td class="${pnlClass}">${t.plPct >= 0 ? '+' : ''}${t.plPct.toFixed(1)}%</td>
         <td><span class="tag ${partialClass}">${t.partialTaken}</span></td>
         <td><span class="tag ${emaClass}">${emaStr || '—'}</span></td>
-        <td><span class="tag ${haClass} ${haChangedClass}" title="${haChanged ? 'HA colour just changed — momentum shift!' : ''}">${haLabel}</span></td>
+        <td><span class="tag ${haClass} ${haChangedClass}" style="${haWarnStyle}" title="${t.haWarn ? '⚠ Profit at risk — HA Red with healthy gain, consider protecting' : haChanged ? 'HA colour just changed — momentum shift!' : ''}">${t.haWarn ? '⚠ ' : ''}${haLabel}</span></td>
       </tr>
       <tr class="expand-row" id="expand-${i}">
         <td colspan="9" style="padding:0">
@@ -1732,11 +1738,11 @@ function renderPositionsReal(open, cfg) {
   const reds = trades.filter(t => t.alertType === 'red').length;
   const ambers = trades.filter(t => t.alertType === 'amber').length;
   const greens = trades.filter(t => t.alertType === 'green').length;
-  const has = trades.filter(t => (t.haChanged || '').toUpperCase() === 'Y').length;
+  const has = trades.filter(t => (t.haChanged || '').toUpperCase() === 'Y' || t.haWarn).length;
   set('strip-red', `🔴 ${reds} exit triggered`);
   set('strip-amber', `🟡 ${ambers} near stop`);
   set('strip-green', `🟢 ${greens} partial pending`);
-  set('strip-ha', `🔄 ${has} HA shift`);
+  set('strip-ha', `🔄 ${has} HA watch`);
 }
 
 // ── PERFORMANCE STATS ─────────────────────────────────
@@ -2114,7 +2120,7 @@ function filterByAlert(type) {
   });
   if (clearBtn) clearBtn.style.display = (type !== 'all') ? '' : 'none';
   rows.forEach((row, i) => {
-    const show = type === 'all' || row.classList.contains('row-' + type);
+    const show = type === 'all' || row.classList.contains('row-' + type) || (type === 'ha' && row.classList.contains('row-ha-warn'));
     row.style.display = show ? '' : 'none';
     const expandRow = document.getElementById('expand-' + i);
     if (expandRow) expandRow.style.display = 'none';
