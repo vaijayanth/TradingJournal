@@ -1262,6 +1262,7 @@ tbody tr:hover { filter: brightness(0.97); }
     <div class="strip-badge badge-red" id="strip-red" onclick="filterByAlert('red')" style="cursor:pointer" title="Click to filter">🔴 — exit triggered</div>
     <div class="strip-badge badge-amber" id="strip-amber" onclick="filterByAlert('amber')" style="cursor:pointer" title="Click to filter">🟡 — near stop</div>
     <div class="strip-badge badge-green" id="strip-green" onclick="filterByAlert('green')" style="cursor:pointer" title="Click to filter">🟢 — partial pending</div>
+    <div class="strip-badge" id="strip-ha" onclick="filterByAlert('ha')" style="cursor:pointer;background:rgba(255,159,10,0.15);color:var(--amber);border-color:var(--amber)" title="Click to filter">🔄 0 HA shift</div>
     <div class="strip-badge" id="strip-all" onclick="filterByAlert('all')" style="cursor:pointer;display:none">✕ Clear filter</div>
   </div>
 
@@ -1688,14 +1689,14 @@ function renderPositionsReal(open, cfg) {
   }).sort((a, b) => a.pctFromStop - b.pctFromStop);
 
   trades.forEach((t, i) => {
-    const rowClass = t.alertType !== 'none' ? 'row-' + t.alertType : '';
+    const haColour = (t.haColour || '').trim();
+    const haChanged = (t.haChanged || '').toUpperCase() === 'Y';
+    const rowClass = [t.alertType !== 'none' ? 'row-' + t.alertType : '', haChanged ? 'row-ha' : ''].filter(Boolean).join(' ');
     const pnlClass = t.plPct >= 0 ? 'pnl-pos' : 'pnl-neg';
     const emaStr = (t.ema21 || '').trim();
     const emaClass = emaStr.toLowerCase() === 'above' ? 'tag-above' : 'tag-below';
     const partialClass = t.partialTaken === 'Y' ? 'tag-y' : 'tag-n';
     const fromStopClass = t.pctFromStop < 0 ? 'pnl-neg' : t.pctFromStop <= cfg.stopProximity ? 'text-amber' : 'pnl-pos';
-    const haColour = (t.haColour || '').trim();
-    const haChanged = (t.haChanged || '').toUpperCase() === 'Y';
     const haClass = haColour.toLowerCase() === 'green' ? 'tag-ha-green' : haColour.toLowerCase() === 'red' ? 'tag-ha-red' : '';
     const haChangedClass = haChanged ? 'tag-ha-changed' : '';
     const haLabel = haColour ? (haChanged ? '🔄 ' + haColour : haColour) : '—';
@@ -1731,9 +1732,11 @@ function renderPositionsReal(open, cfg) {
   const reds = trades.filter(t => t.alertType === 'red').length;
   const ambers = trades.filter(t => t.alertType === 'amber').length;
   const greens = trades.filter(t => t.alertType === 'green').length;
+  const has = trades.filter(t => (t.haChanged || '').toUpperCase() === 'Y').length;
   set('strip-red', `🔴 ${reds} exit triggered`);
   set('strip-amber', `🟡 ${ambers} near stop`);
   set('strip-green', `🟢 ${greens} partial pending`);
+  set('strip-ha', `🔄 ${has} HA shift`);
 }
 
 // ── PERFORMANCE STATS ─────────────────────────────────
@@ -2105,7 +2108,7 @@ function filterByAlert(type) {
   if (current === type) { type = 'all'; }
   document.getElementById('positions-tbody').setAttribute('data-filter', type);
   // Highlight active badge
-  ['red','amber','green'].forEach(t => {
+  ['red','amber','green','ha'].forEach(t => {
     const el = document.getElementById('strip-' + t);
     if (el) el.style.outline = (type === t) ? '2px solid var(--accent)' : 'none';
   });
@@ -2114,7 +2117,7 @@ function filterByAlert(type) {
     const show = type === 'all' || row.classList.contains('row-' + type);
     row.style.display = show ? '' : 'none';
     const expandRow = document.getElementById('expand-' + i);
-    if (expandRow) expandRow.style.display = 'none'; // collapse expand rows on filter
+    if (expandRow) expandRow.style.display = 'none';
   });
 }
 
