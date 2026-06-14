@@ -827,7 +827,7 @@ tbody tr:hover { filter: brightness(0.97); }
     </div>
     <div class="card">
       <div class="chart-title">P&L Distribution</div>
-      <div class="chart-sub">Final P&L% vs Notional P&L% — reveals right-tail truncation</div>
+      <div class="chart-sub">How often you win big vs lose small — losses should cluster left, wins should have a long right tail</div>
       <div id="chart-distribution" style="height:220px;"></div>
     </div>
     <div class="card">
@@ -2223,20 +2223,38 @@ function initPerfCharts(closed, initialCapital, open) {
   });
   ddChart.render(); perfCharts.push(ddChart);
 
-  const bucketSize = 3, buckets = {};
+  // P&L Distribution — single series histogram, green buckets = profit, red = loss
+  const bucketSize = 2;
+  const distBuckets = {};
   sorted.forEach(t => {
-    const bf = Math.floor(t.finalPlPct / bucketSize) * bucketSize;
-    const bn = Math.floor(t.plPct / bucketSize) * bucketSize;
-    if (!buckets[bf]) buckets[bf] = { f:0, n:0 };
-    if (!buckets[bn]) buckets[bn] = { f:0, n:0 };
-    buckets[bf].f++; buckets[bn].n++;
+    const b = Math.floor(t.finalPlPct / bucketSize) * bucketSize;
+    distBuckets[b] = (distBuckets[b] || 0) + 1;
   });
-  const binKeys = Object.keys(buckets).map(Number).sort((a,b) => a - b);
+  const distKeys = Object.keys(distBuckets).map(Number).sort((a,b) => a - b);
+  const distData = distKeys.map(k => distBuckets[k]);
+  const distColors = distKeys.map(k => k >= 0 ? c.green : c.red);
+  const avgWin = wins.length > 0 ? wins.reduce((s,t) => s+t.finalPlPct,0)/wins.length : null;
+  const avgLoss = losses.length > 0 ? losses.reduce((s,t) => s+t.finalPlPct,0)/losses.length : null;
+  const distAnnotations = [];
+  if (avgLoss !== null) {
+    const lossIdx = distKeys.findIndex(k => k <= avgLoss && avgLoss < k + bucketSize);
+    if (lossIdx >= 0) distAnnotations.push({ x: distKeys[lossIdx] < 0 ? distKeys[lossIdx]+'%' : '+'+distKeys[lossIdx]+'%', label: { text: 'Avg loss', style:{color:c.red,fontSize:'10px',background:'transparent'}, orientation:'horizontal', position:'top' }, borderColor: c.red, strokeDashArray: 3 });
+  }
+  if (avgWin !== null) {
+    const winIdx = distKeys.findIndex(k => k <= avgWin && avgWin < k + bucketSize);
+    if (winIdx >= 0) distAnnotations.push({ x: distKeys[winIdx] >= 0 ? '+'+distKeys[winIdx]+'%' : distKeys[winIdx]+'%', label: { text: 'Avg win', style:{color:c.green,fontSize:'10px',background:'transparent'}, orientation:'horizontal', position:'top' }, borderColor: c.green, strokeDashArray: 3 });
+  }
   const distChart = new ApexCharts(document.getElementById('chart-distribution'), {
     ...baseOpts(220), chart: { ...baseOpts(220).chart, type: 'bar' },
-    series: [{ name: 'Final P&L%', data: binKeys.map(k => buckets[k].f||0) }, { name: 'Notional P&L%', data: binKeys.map(k => buckets[k].n||0) }],
-    xaxis: { ...baseOpts().xaxis, categories: binKeys.map(k => (k>=0?'+':'')+k+'%') },
-    colors: [c.accent, c.amber], plotOptions: { bar: { columnWidth: '80%' } }, dataLabels: { enabled: false },
+    series: [{ name: 'Trades', data: distData }],
+    xaxis: { ...baseOpts().xaxis, categories: distKeys.map(k => (k>=0?'+':'')+k+'%'), title: { text: 'Final P&L% bucket (2% wide)', style:{color:c.text,fontSize:'10px'} } },
+    yaxis: { labels: { style:{colors:c.text,fontSize:'11px'} }, title: { text: '# trades', style:{color:c.text,fontSize:'10px'} } },
+    colors: distColors,
+    plotOptions: { bar: { columnWidth: '85%', distributed: true, borderRadius: 2 } },
+    legend: { show: false },
+    dataLabels: { enabled: distData.length <= 14, formatter: v => v > 0 ? v : '', style:{fontSize:'10px', colors:[c.text]} },
+    annotations: { xaxis: distAnnotations },
+    tooltip: { ...baseOpts().tooltip, y: { formatter: v => v + ' trade' + (v !== 1 ? 's' : '') } },
   });
   distChart.render(); perfCharts.push(distChart);
 
