@@ -533,6 +533,8 @@ tbody tr:hover { filter: brightness(0.97); }
 </head>
 <body>
 
+<div id="js-error-banner" style="display:none;position:fixed;top:0;left:0;right:0;z-index:99999;background:#ff3b30;color:#fff;padding:12px 16px;font-size:13px;font-family:monospace;word-break:break-all"></div>
+
 <!-- ════ PASSWORD GATE ════ -->
 <div id="auth-overlay" style="display:none;position:fixed;inset:0;z-index:9999;background:var(--bg);align-items:center;justify-content:center">
   <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:40px;width:340px;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,0.15)">
@@ -3261,6 +3263,11 @@ function initAuth() {
   overlay.style.display = 'flex';
   setTimeout(() => document.getElementById('auth-password').focus(), 100);
 }
+
+window.onerror = function(msg, src, line, col, err) {
+  const el = document.getElementById('js-error-banner');
+  if (el) { el.style.display = 'block'; el.textContent = '⚠ JS Error: ' + msg + ' (line ' + line + ')'; }
+};
 
 document.addEventListener('DOMContentLoaded', () => {
   const savedTheme = localStorage.getItem('tj_theme');
