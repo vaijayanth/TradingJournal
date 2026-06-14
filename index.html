@@ -2433,6 +2433,8 @@ function initPerfCharts(closed, initialCapital, open) {
   window._renderEqChart = renderEqChart;
 
   // P&L Distribution — single series histogram, green buckets = profit, red = loss
+  const distWins = sorted.filter(t => t.finalPlPct > 0);
+  const distLosses = sorted.filter(t => t.finalPlPct < 0);
   const bucketSize = 2;
   const distBuckets = {};
   sorted.forEach(t => {
@@ -2442,8 +2444,8 @@ function initPerfCharts(closed, initialCapital, open) {
   const distKeys = Object.keys(distBuckets).map(Number).sort((a,b) => a - b);
   const distData = distKeys.map(k => distBuckets[k]);
   const distColors = distKeys.map(k => k >= 0 ? c.green : c.red);
-  const avgWin = wins.length > 0 ? wins.reduce((s,t) => s+t.finalPlPct,0)/wins.length : null;
-  const avgLoss = losses.length > 0 ? losses.reduce((s,t) => s+t.finalPlPct,0)/losses.length : null;
+  const avgWin = distWins.length > 0 ? distWins.reduce((s,t) => s+t.finalPlPct,0)/distWins.length : null;
+  const avgLoss = distLosses.length > 0 ? distLosses.reduce((s,t) => s+t.finalPlPct,0)/distLosses.length : null;
   const distAnnotations = [];
   if (avgLoss !== null) {
     const lossIdx = distKeys.findIndex(k => k <= avgLoss && avgLoss < k + bucketSize);
