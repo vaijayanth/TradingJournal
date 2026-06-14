@@ -1671,8 +1671,13 @@ function renderDashboard(data, cfg) {
       alerts.unshift({ type:'red', icon:'🚫', title:`${open.length} positions open — exceeds limit of ${cfg.maxPositions || 15}`, desc:'Too many concurrent positions increases correlation risk and dilutes focus. Consider closing weakest positions.' });
     }
     open.forEach(t => {
-      if (t.pctFromStop <= 0) alerts.push({ type:'red', icon:'🔴', title:`${t.stock} — Exit Rule Triggered`, desc:'Position is at or below stop loss. Mechanical exit required.' });
-      else if (t.pctFromStop <= cfg.stopProximity) alerts.push({ type:'amber', icon:'🟡', title:`${t.stock} — Within ${t.pctFromStop.toFixed(1)}% of Stop`, desc:`Only ${t.pctFromStop.toFixed(1)}% above stop loss. Review before market open.` });
+      const effStop = Math.max(t.stopLoss || 0, t.sevenDayLow || 0);
+      const effPct = (t.cmp && effStop) ? ((t.cmp - effStop) / t.cmp * 100) : t.pctFromStop;
+      if (effPct <= 0) alerts.push({ type:'red', icon:'🔴', title:`${t.stock} — Exit Rule Triggered`, desc:`Price at or below effective stop (MAX of manual stop ₹${t.stopLoss.toLocaleString('en-IN')}, 7-day low ₹${t.sevenDayLow.toLocaleString('en-IN')}). Mechanical exit required.` });
+      else if (effPct <= cfg.stopProximity) alerts.push({ type:'amber', icon:'🟡', title:`${t.stock} — Within ${effPct.toFixed(1)}% of Stop`, desc:`Only ${effPct.toFixed(1)}% above effective stop (MAX of ₹${t.stopLoss.toLocaleString('en-IN')}, ₹${t.sevenDayLow.toLocaleString('en-IN')}). Review before market open.` });
+      if ((t.ema21 || '').trim().toLowerCase() === 'below' && t.plPct > 0) {
+        alerts.push({ type:'red', icon:'📉', title:`${t.stock} — Below 21 EMA (+${t.plPct.toFixed(1)}%)`, desc:`Price has crossed below 21 EMA. Position is profitable — consider tightening stop to protect gains.` });
+      }
       if (t.plPct >= cfg.partialTrigger && t.partialTaken === 'N') alerts.push({ type:'green', icon:'🟢', title:`${t.stock} — Partial Exit Pending (+${t.plPct.toFixed(1)}%)`, desc:`At +${cfg.partialTrigger}% trigger. Partial exit not yet taken. Act today.` });
       const cfg_maxAge = cfg.maxAge || 60;
       if (t.age && parseInt(t.age) > cfg_maxAge && t.partialTaken !== 'Y') {
@@ -1691,6 +1696,7 @@ function renderDashboard(data, cfg) {
       // Group alerts by priority order
       const groups = [
         { key:'red',     icon:'🔴', label:'Exit Triggered',         color:'var(--red)',   bg:'var(--red-soft)',   countBg:'rgba(255,69,58,0.2)',   autoOpen: true  },
+        { key:'ema',     icon:'📉', label:'Below 21 EMA — Protect Profits', color:'var(--red)', bg:'var(--red-soft)', countBg:'rgba(255,69,58,0.2)', autoOpen: true },
         { key:'ha-warn', icon:'⚠',  label:'Profit at Risk — HA Red', color:'var(--red)',   bg:'var(--red-soft)',   countBg:'rgba(255,69,58,0.2)',   autoOpen: true  },
         { key:'ha',      icon:'🔄', label:'HA Momentum Shift',       color:'var(--amber)', bg:'var(--amber-soft)', countBg:'rgba(255,159,10,0.2)', autoOpen: false },
         { key:'amber',   icon:'🟡', label:'Near Stop / Review',      color:'var(--amber)', bg:'var(--amber-soft)', countBg:'rgba(255,159,10,0.2)', autoOpen: false },
@@ -1699,6 +1705,7 @@ function renderDashboard(data, cfg) {
 
       // Tag each alert with a group key
       const tagged = alerts.map(a => {
+        if (a.icon === '📉') return { ...a, groupKey: 'ema' };
         if (a.icon === '⚠') return { ...a, groupKey: 'ha-warn' };
         if (a.icon === '🔄') return { ...a, groupKey: 'ha' };
         return { ...a, groupKey: a.type };
@@ -1739,14 +1746,15 @@ function renderPositionsReal(open, cfg) {
   const tbody = document.getElementById('positions-tbody');
   tbody.innerHTML = '';
   const trades = open.map(t => {
+    const effStop = Math.max(t.stopLoss || 0, t.sevenDayLow || 0);
+    const effPct = (t.cmp && effStop) ? ((t.cmp - effStop) / t.cmp * 100) : t.pctFromStop;
     let alertType = 'none';
-    if (t.pctFromStop <= 0) alertType = 'red';
-    else if (t.pctFromStop <= cfg.stopProximity) alertType = 'amber';
+    if (effPct <= 0) alertType = 'red';
+    else if (effPct <= cfg.stopProximity) alertType = 'amber';
     if (t.plPct >= cfg.partialTrigger && t.partialTaken === 'N') alertType = 'green';
-    // HA warning: profit ≥ 5% but HA is Red — momentum fading, consider protecting gains
     const haWarn = t.plPct >= 5 && (t.haColour || '').trim().toLowerCase() === 'red';
-    return { ...t, alertType, haWarn };
-  }).sort((a, b) => a.pctFromStop - b.pctFromStop);
+    return { ...t, alertType, haWarn, effStop, effPct };
+  }).sort((a, b) => a.effPct - b.effPct);
 
   trades.forEach((t, i) => {
     const haColour = (t.haColour || '').trim();
@@ -1756,7 +1764,7 @@ function renderPositionsReal(open, cfg) {
     const emaStr = (t.ema21 || '').trim();
     const emaClass = emaStr.toLowerCase() === 'above' ? 'tag-above' : 'tag-below';
     const partialClass = t.partialTaken === 'Y' ? 'tag-y' : 'tag-n';
-    const fromStopClass = t.pctFromStop < 0 ? 'pnl-neg' : t.pctFromStop <= cfg.stopProximity ? 'text-amber' : 'pnl-pos';
+    const fromStopClass = t.effPct < 0 ? 'pnl-neg' : t.effPct <= cfg.stopProximity ? 'text-amber' : 'pnl-pos';
     const haClass = haColour.toLowerCase() === 'green' ? 'tag-ha-green' : haColour.toLowerCase() === 'red' ? 'tag-ha-red' : '';
     const haChangedClass = haChanged ? 'tag-ha-changed' : '';
     const haLabel = haColour ? (haChanged ? '🔄 ' + haColour : haColour) : '—';
@@ -1766,8 +1774,8 @@ function renderPositionsReal(open, cfg) {
         <td><span class="stock-name">${t.stock}</span>${t.dataError ? ' <span style="font-size:10px;color:var(--red)">⚠</span>' : ''}</td>
         <td>${t.age}d</td>
         <td>₹${t.entryPrice.toLocaleString('en-IN')}</td>
-        <td>₹${t.stopLoss.toLocaleString('en-IN')}</td>
-        <td class="${fromStopClass} fw-700">${t.pctFromStop >= 0 ? '+' : ''}${t.pctFromStop.toFixed(1)}%</td>
+        <td title="Effective stop: MAX(manual ₹${t.stopLoss.toLocaleString('en-IN')}, 7d low ₹${t.sevenDayLow.toLocaleString('en-IN')}) = ₹${t.effStop.toLocaleString('en-IN')}">₹${t.effStop.toLocaleString('en-IN')}</td>
+        <td class="${fromStopClass} fw-700">${t.effPct >= 0 ? '+' : ''}${t.effPct.toFixed(1)}%</td>
         <td class="${pnlClass}">${t.plPct >= 0 ? '+' : ''}${t.plPct.toFixed(1)}%</td>
         <td><span class="tag ${partialClass}">${t.partialTaken}</span></td>
         <td><span class="tag ${emaClass}">${emaStr || '—'}</span></td>
@@ -1777,7 +1785,9 @@ function renderPositionsReal(open, cfg) {
         <td colspan="9" style="padding:0">
           <div class="expand-content">
             <div class="expand-item"><div class="expand-label">Entry Date</div><div class="expand-value">${t.openDate || '—'}</div></div>
-            <div class="expand-item"><div class="expand-label">7-Day Low</div><div class="expand-value">₹${t.sevenDayLow.toLocaleString('en-IN')}</div></div>
+            <div class="expand-item"><div class="expand-label">Manual Stop (J)</div><div class="expand-value">₹${t.stopLoss.toLocaleString('en-IN')}</div></div>
+            <div class="expand-item"><div class="expand-label">7-Day Low (I)</div><div class="expand-value">₹${t.sevenDayLow.toLocaleString('en-IN')}</div></div>
+            <div class="expand-item"><div class="expand-label">Effective Stop</div><div class="expand-value" style="color:var(--amber);font-weight:700">₹${t.effStop.toLocaleString('en-IN')} <span style="font-size:10px;opacity:0.7">(MAX of J,I)</span></div></div>
             <div class="expand-item"><div class="expand-label">CMP</div><div class="expand-value">₹${t.cmp.toLocaleString('en-IN')}</div></div>
             <div class="expand-item"><div class="expand-label">Initial Risk ₹</div><div class="expand-value">₹${t.initRiskRs.toLocaleString('en-IN')}</div></div>
             <div class="expand-item"><div class="expand-label">Initial Risk %</div><div class="expand-value">${t.initRiskPct.toFixed(2)}% of capital</div></div>
