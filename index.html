@@ -495,6 +495,14 @@ tbody tr:hover { filter: brightness(0.97); }
 .flex-row { display: flex; align-items: center; gap: 10px; }
 .mt-4 { margin-top: 16px; }
 .mt-3 { margin-top: 12px; }
+/* ── EQUITY MONTH PILLS ── */
+.eq-pill {
+  padding: 3px 12px; border-radius: 20px; font-size: 12px; font-weight: 600;
+  border: 1px solid var(--border); background: var(--surface2);
+  color: var(--text-secondary); cursor: pointer; transition: all .15s;
+}
+.eq-pill:hover { border-color: var(--accent); color: var(--accent); }
+.eq-pill.active { background: var(--green); border-color: var(--green); color: #fff; }
 /* ── SKELETON PULSE ── */
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 .skeleton { animation: pulse 1.5s ease-in-out infinite; background: var(--border); border-radius: 4px; display: inline-block; }
@@ -814,17 +822,24 @@ tbody tr:hover { filter: brightness(0.97); }
 
   <!-- Charts Grid -->
   <div class="section-title" style="margin-top:24px">Charts</div>
+  <!-- Equity Curve — full width, interactive -->
+  <div class="card" style="margin-bottom:14px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:10px;height:10px;border-radius:50%;background:var(--green)"></div>
+        <div class="chart-title" style="margin:0;text-transform:uppercase;letter-spacing:.07em;font-size:11px">Equity Curve</div>
+      </div>
+      <button id="eq-dd-toggle" onclick="toggleEqDD()" style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s">▶ DD OFF</button>
+    </div>
+    <!-- Month pills -->
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px" id="eq-month-pills">
+      <button class="eq-pill active" onclick="filterEqMonth(this,'all')">All</button>
+    </div>
+    <div id="chart-equity" style="height:260px;"></div>
+    <div id="chart-drawdown" style="height:0;overflow:hidden;transition:height .3s;margin-top:0"></div>
+  </div>
+
   <div class="grid-2">
-    <div class="card">
-      <div class="chart-title">Equity Curve</div>
-      <div class="chart-sub">Cumulative realised P&amp;L · Final point includes open position unrealised MTM · Dashed line = initial capital</div>
-      <div id="chart-equity" style="height:220px;"></div>
-    </div>
-    <div class="card">
-      <div class="chart-title">Drawdown</div>
-      <div class="chart-sub">% below peak equity at each point in time</div>
-      <div id="chart-drawdown" style="height:220px;"></div>
-    </div>
     <div class="card">
       <div class="chart-title">P&L Distribution</div>
       <div class="chart-sub">How often you win big vs lose small — losses should cluster left, wins should have a long right tail</div>
@@ -2140,9 +2155,11 @@ function baseOpts(height = 220) {
 // ── PERFORMANCE CHARTS ────────────────────────────────
 let perfCharts = [];
 function destroyAndReinitPerf() {
-  perfCharts.forEach(c => c.destroy()); perfCharts = [];
+  perfCharts.forEach(c => { try{c.destroy();}catch(e){} }); perfCharts = [];
+  if (window._eqChartInst) { try{window._eqChartInst.destroy();}catch(e){} window._eqChartInst=null; }
+  if (window._ddChartInst) { try{window._ddChartInst.destroy();}catch(e){} window._ddChartInst=null; }
   const d = window._data;
-  initPerfCharts(d ? d.closed : [], d ? d.initialCapital : 0);
+  initPerfCharts(d ? d.closed : [], d ? d.initialCapital : 0, d ? d.open : []);
 }
 function destroyAndReinitAnalysis() {
   analysisCharts.forEach(c => c.destroy()); analysisCharts = [];
@@ -2177,51 +2194,158 @@ function initPerfCharts(closed, initialCapital, open) {
     eqData.push(null); // closed series has no value at Today
   }
 
-  // Sparse x-axis labels: show at most 7 evenly spaced dates so chart stays clean
-  const sparseXAxis = (labels, extraAtEnd) => {
-    const n = labels.length;
-    const maxTicks = 7;
-    const step = n <= maxTicks ? 1 : Math.ceil(n / maxTicks);
-    return labels.map((l, i) => {
-      if (i === n - 1 && extraAtEnd) return l; // always show last label (Today etc.)
-      return i % step === 0 ? l : '';
+  // ── Equity Curve — interactive with month pills, DD toggle, % Y-axis ──
+  // Store full sorted list for filtering; use % return not ₹
+  window._eqSorted = sorted;
+  window._eqOpen = open || [];
+  window._eqInitialCapital = initialCapital || 0;
+  window._eqDDOn = false;
+  window._eqMonth = 'all';
+
+  // Build month pills from available close dates
+  const eqMonths = [...new Set(sorted.map(t => {
+    const d = parseDate(t.closeDate); if (isNaN(d)) return null;
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+  }).filter(Boolean))].sort();
+  const pillsEl = document.getElementById('eq-month-pills');
+  if (pillsEl) {
+    const MNAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    eqMonths.forEach(m => {
+      const [y, mo] = m.split('-');
+      const btn = document.createElement('button');
+      btn.className = 'eq-pill';
+      btn.textContent = MNAMES[parseInt(mo)-1] + ' ' + y.slice(2);
+      btn.setAttribute('data-month', m);
+      btn.onclick = function() { filterEqMonth(this, m); };
+      pillsEl.appendChild(btn);
     });
+  }
+
+  renderEqChart();
+
+  function renderEqChart() {
+    const c2 = chartColors();
+    const month = window._eqMonth;
+    const allTrades = window._eqSorted;
+    const cap = window._eqInitialCapital;
+    const openArr = window._eqOpen;
+
+    // Filter to month if set; if month filter active, only show trades in that month
+    // but start equity from the running total up to that point
+    let displayTrades, startEq;
+    if (month === 'all') {
+      displayTrades = allTrades;
+      startEq = cap;
+    } else {
+      // Start equity from cumulative total before this month
+      const [fy, fm] = month.split('-').map(Number);
+      const before = allTrades.filter(t => {
+        const d = parseDate(t.closeDate); if (isNaN(d)) return false;
+        return d.getFullYear() < fy || (d.getFullYear() === fy && d.getMonth()+1 < fm);
+      });
+      startEq = cap + before.reduce((s,t) => s+t.finalPl, 0);
+      displayTrades = allTrades.filter(t => {
+        const d = parseDate(t.closeDate); if (isNaN(d)) return false;
+        return d.getFullYear() === fy && d.getMonth()+1 === fm;
+      });
+    }
+
+    let runEq = startEq, peak = month === 'all' ? cap : startEq;
+    const retData = [], ddData2 = [], labels = [], tradeLabels = [];
+    displayTrades.forEach(t => {
+      runEq += t.finalPl;
+      if (runEq > peak) peak = runEq;
+      const ret = cap > 0 ? (runEq - cap) / cap * 100 : 0;
+      retData.push(parseFloat(ret.toFixed(2)));
+      ddData2.push(parseFloat(((runEq - peak) / peak * 100).toFixed(2)));
+      labels.push(t.closeDate);
+      tradeLabels.push(t.stock + ' · ' + (t.finalPlPct >= 0 ? '+' : '') + t.finalPlPct.toFixed(1) + '% · ' + t.closeDate);
+    });
+
+    // Today point (unrealised MTM)
+    const totalUnrealised2 = openArr.reduce((s,t) => s+(t.notionalPl||0), 0);
+    if (month === 'all' && totalUnrealised2 !== 0) {
+      const combRet = cap > 0 ? (runEq + totalUnrealised2 - cap) / cap * 100 : 0;
+      retData.push(null); // main series ends
+      labels.push('Today');
+      tradeLabels.push('Open positions MTM · ' + (totalUnrealised2 >= 0 ? '+' : '') + '₹' + Math.abs(Math.round(totalUnrealised2)).toLocaleString('en-IN'));
+    }
+
+    const sparseLabels = labels.map((l, i) => {
+      const step = Math.ceil(labels.length / 7);
+      return (i % step === 0 || i === labels.length - 1) ? l : '';
+    });
+
+    const realisedColor2 = runEq >= cap ? c2.green : c2.red;
+    const ddOn = window._eqDDOn;
+
+    // Destroy previous eq chart if exists
+    if (window._eqChartInst) { try { window._eqChartInst.destroy(); } catch(e){} }
+    if (window._ddChartInst) { try { window._ddChartInst.destroy(); } catch(e){} }
+
+    const eqEl = document.getElementById('chart-equity');
+    const ddEl = document.getElementById('chart-drawdown');
+    if (!eqEl) return;
+
+    window._eqChartInst = new ApexCharts(eqEl, {
+      ...baseOpts(260), chart: { ...baseOpts(260).chart, type: 'area', id: 'eq-main' },
+      series: [{ name: 'Return %', data: retData }],
+      xaxis: { ...baseOpts().xaxis, categories: sparseLabels, labels: { ...baseOpts().xaxis.labels, rotate: 0, hideOverlappingLabels: true } },
+      yaxis: { labels: { style:{colors:c2.text,fontSize:'11px'}, formatter: v => v != null ? (v>=0?'+':'')+v.toFixed(1)+'%' : '' } },
+      colors: [realisedColor2],
+      fill: { type: 'gradient', gradient: { shadeIntensity:1, opacityFrom: 0.3, opacityTo: 0.02, colorStops:[{offset:0,color:realisedColor2,opacity:0.3},{offset:100,color:realisedColor2,opacity:0.02}] } },
+      stroke: { curve: 'smooth', width: 2.5 },
+      dataLabels: { enabled: false }, markers: { size: 0, hover: { size: 5 } },
+      annotations: { yaxis: [{ y: 0, borderColor: c2.text, strokeDashArray: 2, label:{text:'Break-even',style:{color:c2.text,fontSize:'10px',background:'transparent'}} }] },
+      tooltip: { ...baseOpts().tooltip, custom: ({ dataPointIndex }) => {
+        const label = tradeLabels[dataPointIndex] || '';
+        const ret = retData[dataPointIndex];
+        if (ret == null) return '';
+        const col = ret >= 0 ? 'var(--green)' : 'var(--red)';
+        return `<div style="padding:8px 12px;font-size:12px;font-weight:600;color:${col};background:var(--surface);border:1px solid var(--border);border-radius:8px">${label}<br><span style="font-size:11px;color:var(--text-muted)">Cumulative: ${ret>=0?'+':''}${ret.toFixed(2)}%</span></div>`;
+      }},
+      legend: { show: false },
+    });
+    window._eqChartInst.render();
+
+    // Drawdown panel
+    if (ddOn && ddEl && ddData2.length) {
+      ddEl.style.height = '140px';
+      ddEl.style.marginTop = '8px';
+      const maxDD2 = Math.min(...ddData2);
+      window._ddChartInst = new ApexCharts(ddEl, {
+        ...baseOpts(140), chart: { ...baseOpts(140).chart, type: 'area' },
+        series: [{ name: 'Drawdown %', data: ddData2 }],
+        xaxis: { ...baseOpts().xaxis, categories: sparseLabels, labels: { ...baseOpts().xaxis.labels, rotate: 0, hideOverlappingLabels: true } },
+        yaxis: { labels: { style:{colors:c2.text,fontSize:'10px'}, formatter: v => v.toFixed(1)+'%' }, max: 0 },
+        colors: [c2.red], fill: { type:'gradient', gradient:{shadeIntensity:1,opacityFrom:0.5,opacityTo:0.05} },
+        stroke: { curve:'smooth', width:1.5 }, dataLabels:{enabled:false}, markers:{size:0},
+        annotations: { yaxis: [{ y: maxDD2, borderColor: c2.red, strokeDashArray: 3, label:{text:'Max DD '+maxDD2.toFixed(1)+'%',style:{color:c2.red,fontSize:'10px',background:'transparent'}} }] },
+      });
+      window._ddChartInst.render();
+    } else if (ddEl) {
+      ddEl.style.height = '0';
+      ddEl.style.marginTop = '0';
+    }
+  }
+
+  window.filterEqMonth = function(btn, month) {
+    document.querySelectorAll('.eq-pill').forEach(p => p.classList.remove('active'));
+    btn.classList.add('active');
+    window._eqMonth = month;
+    renderEqChart();
   };
-
-  const realisedColor = eq >= (initialCapital || 0) ? c.green : c.red;
-  const eqXLabels = sparseXAxis(xLbls, todayEq !== null);
-  const eqChart = new ApexCharts(document.getElementById('chart-equity'), {
-    ...baseOpts(240), chart: { ...baseOpts(240).chart, type: 'line' },
-    series: [
-      { name: 'Realised', data: eqData, type: 'area' },
-      { name: 'Incl. Unrealised', data: todaySeries, type: 'line' },
-    ],
-    xaxis: { ...baseOpts().xaxis, categories: eqXLabels, tickPlacement: 'on', labels: { ...baseOpts().xaxis.labels, rotate: 0, hideOverlappingLabels: true, trim: false } },
-    yaxis: { labels: { style: { colors: c.text, fontSize:'11px' }, formatter: v => v != null ? '₹' + (v/100000).toFixed(1) + 'L' : '' } },
-    colors: [realisedColor, c.amber],
-    fill: { type: ['gradient', 'solid'], gradient: { shadeIntensity:1, opacityFrom:0.35, opacityTo:0.02 } },
-    stroke: { curve: 'smooth', width: [2.5, 2], dashArray: [0, 6] },
-    dataLabels: { enabled: false },
-    markers: { size: [0, 7], hover: { size: 8 } },
-    annotations: initialCapital ? { yaxis: [{ y: initialCapital, label: { text: 'Initial capital', style: { color: c.text, fontSize:'10px', background: 'transparent' } }, borderColor: c.text, strokeDashArray: 4 }] } : {},
-    tooltip: { ...baseOpts().tooltip, x: { formatter: (_, { dataPointIndex }) => xLbls[dataPointIndex] || '' }, y: { formatter: v => v != null ? '₹' + Math.round(v).toLocaleString('en-IN') : '' } },
-    legend: { show: todayEq !== null, labels: { colors: c.text } },
-  });
-  eqChart.render(); perfCharts.push(eqChart);
-
-  // Drawdown uses realised-only data (no Today point — unrealised MTM is not a true drawdown)
-  const maxDD = ddData.length ? Math.min(...ddData) : 0;
-  const ddXLabels = sparseXAxis(xLbls.slice(0, ddData.length), false);
-  const ddChart = new ApexCharts(document.getElementById('chart-drawdown'), {
-    ...baseOpts(220), chart: { ...baseOpts(220).chart, type: 'area' },
-    series: [{ name: 'Drawdown %', data: ddData }],
-    xaxis: { ...baseOpts().xaxis, categories: ddXLabels, labels: { ...baseOpts().xaxis.labels, rotate: 0, hideOverlappingLabels: true } },
-    yaxis: { labels: { style: { colors: c.text, fontSize:'11px' }, formatter: v => parseFloat(v).toFixed(2) + '%' }, max: 0 },
-    colors: [c.red], fill: { type: 'gradient', gradient: { shadeIntensity:1, opacityFrom:0.4, opacityTo:0.05 } },
-    stroke: { curve: 'smooth', width: 2 }, dataLabels: { enabled: false }, markers: { size: 0 },
-    annotations: { yaxis: [{ y: maxDD, label: { text: 'Max DD: ' + maxDD.toFixed(1) + '%', style: { color: c.red, fontSize:'11px' } }, borderColor: c.red, strokeDashArray: 3 }] },
-  });
-  ddChart.render(); perfCharts.push(ddChart);
+  window.toggleEqDD = function() {
+    window._eqDDOn = !window._eqDDOn;
+    const btn = document.getElementById('eq-dd-toggle');
+    if (btn) {
+      btn.textContent = window._eqDDOn ? '▶ DD ON' : '▶ DD OFF';
+      btn.style.background = window._eqDDOn ? 'var(--red-soft)' : 'var(--surface2)';
+      btn.style.borderColor = window._eqDDOn ? 'var(--red)' : 'var(--border)';
+      btn.style.color = window._eqDDOn ? 'var(--red)' : 'var(--text-muted)';
+    }
+    renderEqChart();
+  };
 
   // P&L Distribution — single series histogram, green buckets = profit, red = loss
   const bucketSize = 2;
