@@ -1452,7 +1452,16 @@ const DEFAULT_CONFIG = {
 };
 
 function loadConfig() {
-  try { return { ...DEFAULT_CONFIG, ...JSON.parse(localStorage.getItem(CONFIG_KEY) || '{}') }; }
+  try {
+    const saved = JSON.parse(localStorage.getItem(CONFIG_KEY) || '{}');
+    // One-time migration: fix old cell refs that shifted when AG/AH columns were inserted
+    if (saved.portfolioCell === 'AI26') saved.portfolioCell = 'AK26';
+    if (saved.initialCapCell === 'AI20') saved.initialCapCell = 'AK20';
+    if (saved.portfolioCell === 'AI26' || saved.initialCapCell === 'AI20') {
+      localStorage.setItem(CONFIG_KEY, JSON.stringify(saved));
+    }
+    return { ...DEFAULT_CONFIG, ...saved };
+  }
   catch(e) { return { ...DEFAULT_CONFIG }; }
 }
 function saveConfig(cfg) { localStorage.setItem(CONFIG_KEY, JSON.stringify(cfg)); }
