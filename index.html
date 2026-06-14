@@ -406,6 +406,9 @@ tbody tr:hover { filter: brightness(0.97); }
 .tag-below { background: var(--red-soft); color: var(--red); }
 .tag-y { background: var(--green-soft); color: var(--green); }
 .tag-n { background: var(--surface2); color: var(--text-muted); }
+.tag-ha-green { background: var(--green-soft); color: var(--green); }
+.tag-ha-red { background: var(--red-soft); color: var(--red); }
+.tag-ha-changed { outline: 2px solid var(--amber); outline-offset: 1px; }
 /* Expanded row */
 .expand-row { display: none; }
 .expand-row.open { display: table-row; }
@@ -1289,6 +1292,7 @@ tbody tr:hover { filter: brightness(0.97); }
           <th>Notional P&L%</th>
           <th>Partial</th>
           <th>21 EMA</th>
+          <th>HA</th>
         </tr>
       </thead>
       <tbody id="positions-tbody"></tbody>
@@ -1442,6 +1446,7 @@ const DEFAULT_CONFIG = {
   notionalPlCol: 'Y', partialQtyCol: 'Z', partialPriceCol: 'AA',
   partialPlCol: 'AB', finalExitPriceCol: 'AC', finalPlCol: 'AD',
   finalPlPctCol: 'AE', ageCol: 'AF',
+  haColourCol: 'AG', haChangedCol: 'AH',
   portfolioCell: 'AI26', initialCapCell: 'AI20',
   maxHeat: 5, partialTrigger: 10, stopProximity: 2, heatGreen: 2.5, heatAmber: 4, maxAge: 60, maxPositions: 15,
 };
@@ -1479,6 +1484,7 @@ async function fetchData() {
     partialPriceCol: cfg.partialPriceCol, partialPlCol: cfg.partialPlCol,
     finalExitPriceCol: cfg.finalExitPriceCol, finalPlCol: cfg.finalPlCol,
     finalPlPctCol: cfg.finalPlPctCol, ageCol: cfg.ageCol,
+    haColourCol: cfg.haColourCol, haChangedCol: cfg.haChangedCol,
     portfolioCell: cfg.portfolioCell, initialCapCell: cfg.initialCapCell,
   });
   try {
@@ -1646,6 +1652,9 @@ function renderDashboard(data, cfg) {
       if (t.age && parseInt(t.age) > cfg_maxAge && t.partialTaken !== 'Y') {
         alerts.push({ type:'amber', icon:'🕐', title:`${t.stock} — Held ${t.age} days, no partial taken`, desc:`Position is ${t.age} days old and partial exit hasn't been taken. Review your exit plan.` });
       }
+      if ((t.haChanged || '').toUpperCase() === 'Y' && t.haColour) {
+        alerts.push({ type:'amber', icon:'🔄', title:`${t.stock} — HA colour flipped to ${t.haColour}`, desc:`Heikin-Ashi candle colour changed — momentum shift signal. Review position and consider tightening stop.` });
+      }
     });
     alertsWrap.innerHTML = alerts.length === 0
       ? '<div style="padding:16px;text-align:center;color:var(--text-muted);font-size:13px">✓ No alerts — all positions within parameters</div>'
@@ -1676,6 +1685,11 @@ function renderPositionsReal(open, cfg) {
     const emaClass = emaStr.toLowerCase() === 'above' ? 'tag-above' : 'tag-below';
     const partialClass = t.partialTaken === 'Y' ? 'tag-y' : 'tag-n';
     const fromStopClass = t.pctFromStop < 0 ? 'pnl-neg' : t.pctFromStop <= cfg.stopProximity ? 'text-amber' : 'pnl-pos';
+    const haColour = (t.haColour || '').trim();
+    const haChanged = (t.haChanged || '').toUpperCase() === 'Y';
+    const haClass = haColour.toLowerCase() === 'green' ? 'tag-ha-green' : haColour.toLowerCase() === 'red' ? 'tag-ha-red' : '';
+    const haChangedClass = haChanged ? 'tag-ha-changed' : '';
+    const haLabel = haColour ? (haChanged ? '🔄 ' + haColour : haColour) : '—';
     tbody.innerHTML += `
       <tr class="${rowClass}" onclick="toggleExpand(${i})">
         <td><span class="stock-name">${t.stock}</span>${t.dataError ? ' <span style="font-size:10px;color:var(--red)">⚠</span>' : ''}</td>
@@ -1686,9 +1700,10 @@ function renderPositionsReal(open, cfg) {
         <td class="${pnlClass}">${t.plPct >= 0 ? '+' : ''}${t.plPct.toFixed(1)}%</td>
         <td><span class="tag ${partialClass}">${t.partialTaken}</span></td>
         <td><span class="tag ${emaClass}">${emaStr || '—'}</span></td>
+        <td><span class="tag ${haClass} ${haChangedClass}" title="${haChanged ? 'HA colour just changed — momentum shift!' : ''}">${haLabel}</span></td>
       </tr>
       <tr class="expand-row" id="expand-${i}">
-        <td colspan="8" style="padding:0">
+        <td colspan="9" style="padding:0">
           <div class="expand-content">
             <div class="expand-item"><div class="expand-label">Entry Date</div><div class="expand-value">${t.openDate || '—'}</div></div>
             <div class="expand-item"><div class="expand-label">7-Day Low</div><div class="expand-value">₹${t.sevenDayLow.toLocaleString('en-IN')}</div></div>
@@ -1696,6 +1711,7 @@ function renderPositionsReal(open, cfg) {
             <div class="expand-item"><div class="expand-label">Initial Risk ₹</div><div class="expand-value">₹${t.initRiskRs.toLocaleString('en-IN')}</div></div>
             <div class="expand-item"><div class="expand-label">Initial Risk %</div><div class="expand-value">${t.initRiskPct.toFixed(2)}% of capital</div></div>
             <div class="expand-item" style="grid-column:span 2"><div class="expand-label">Partial Status</div><div class="expand-value" style="font-size:12px">${(function(){ const daysSinceEntry = t.age ? parseInt(t.age) : 0; const partialDue = t.plPct >= cfg.partialTrigger && t.partialTaken !== 'Y'; return partialDue ? '<span style="color:var(--amber)">⚠ Partial overdue — up ' + t.plPct.toFixed(1) + '% for ' + daysSinceEntry + 'd</span>' : t.partialTaken === 'Y' ? '<span style="color:var(--green)">✓ Partial taken</span>' : '—'; })()}</div></div>
+            ${haColour ? `<div class="expand-item"><div class="expand-label">HA Colour</div><div class="expand-value"><span class="tag ${haClass} ${haChangedClass}">${haLabel}</span>${haChanged ? ' <span style="color:var(--amber);font-size:11px">— momentum shift, review stop</span>' : ''}</div></div>` : ''}
           </div>
         </td>
       </tr>`;
@@ -2234,6 +2250,8 @@ function renderColMappings() {
     { label: 'Final P&L ₹', key: 'finalPlCol' },
     { label: 'Final P&L %', key: 'finalPlPctCol' },
     { label: 'Trade Age (days)', key: 'ageCol' },
+    { label: 'HA Colour (AG)', key: 'haColourCol', optional: true },
+    { label: 'HA Colour Changed (AH)', key: 'haChangedCol', optional: true },
   ];
   const container = document.getElementById('col-mappings');
   container.innerHTML = fields.map(f => `
@@ -2318,7 +2336,8 @@ function saveAllConfig() {
   cfg.heatAmber = parseFloat(getVal('cfg-heat-amber', cfg.heatAmber)) || cfg.heatAmber;
   ['flagCol','stockCol','openDateCol','closeDateCol','ema21Col','cmpCol','sevenDayLowCol','stopLossCol',
    'initRiskRsCol','initRiskPctCol','entryPriceCol','setupTypeCol','pctFromStopCol','plPctCol',
-   'notionalPlCol','partialQtyCol','partialPriceCol','partialPlCol','finalExitPriceCol','finalPlCol','finalPlPctCol','ageCol'
+   'notionalPlCol','partialQtyCol','partialPriceCol','partialPlCol','finalExitPriceCol','finalPlCol','finalPlPctCol','ageCol',
+   'haColourCol','haChangedCol'
   ].forEach(key => { const v = getVal('cfg-' + key, cfg[key]).toUpperCase(); if (v) cfg[key] = v; });
   saveConfig(cfg);
   showToast('Configuration saved!', 'green');
