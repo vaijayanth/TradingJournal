@@ -706,6 +706,12 @@ tbody tr:hover { filter: brightness(0.97); }
         <div style="font-size:18px;font-weight:700;margin-top:4px" id="perf-sharpe">—</div>
         <div class="stat-sub" id="perf-sharpe-sub">Return ÷ Volatility of trade returns</div>
       </div>
+      <div style="margin-top:12px;border-top:1px solid var(--border);padding-top:8px">
+        <div class="stat-label">Profit Factor</div>
+        <div style="font-size:22px;font-weight:700;margin-top:4px" id="perf-profit-factor">—</div>
+        <div class="stat-sub">Gross wins ÷ Gross losses (>1 = edge)</div>
+        <div class="stat-badge" style="margin-top:6px" id="perf-profit-factor-badge">—</div>
+      </div>
     </div>
     <div class="card card-sm">
       <div class="stat-label">Win Rate</div>
@@ -723,6 +729,20 @@ tbody tr:hover { filter: brightness(0.97); }
       <div style="margin-top:6px; font-size:16px; font-weight:700" id="perf-combined-wr">—</div>
       <div class="stat-sub" style="font-size:12px">Combined win rate</div>
       <div class="compare-gap" style="margin-top:4px" id="perf-wr-gap">—</div>
+      <div style="margin-top:12px;border-top:1px solid var(--border);padding-top:8px">
+        <div class="stat-label">Consecutive Streaks</div>
+        <div style="display:flex;gap:16px;margin-top:6px">
+          <div>
+            <div style="font-size:20px;font-weight:700;color:var(--green)" id="perf-max-consec-wins">—</div>
+            <div class="stat-sub">Max wins</div>
+          </div>
+          <div style="color:var(--border)">|</div>
+          <div>
+            <div style="font-size:20px;font-weight:700;color:var(--red)" id="perf-max-consec-losses">—</div>
+            <div class="stat-sub">Max losses</div>
+          </div>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -797,6 +817,59 @@ tbody tr:hover { filter: brightness(0.97); }
       <div class="chart-sub">Which day you enter matters — based on closed trades entry date</div>
       <div id="chart-dayofweek" style="height:220px;"></div>
     </div>
+  </div>
+
+  <!-- Advanced Analytics Row -->
+  <div class="grid-2" style="margin-top:14px">
+    <!-- Hold Duration → Win Rate -->
+    <div class="card">
+      <div class="chart-title">Hold Duration → Win Rate</div>
+      <div class="chart-sub">Identifies your sweet spot and zombie hold zones</div>
+      <div style="overflow-x:auto;margin-top:12px">
+        <table style="width:100%;border-collapse:collapse;font-size:13px" id="hold-duration-table">
+          <thead>
+            <tr style="color:var(--text-muted);text-align:left;border-bottom:1px solid var(--border)">
+              <th style="padding:6px 10px">Hold Period</th>
+              <th style="padding:6px 10px;text-align:right">Trades</th>
+              <th style="padding:6px 10px;text-align:right">Win Rate</th>
+              <th style="padding:6px 10px;text-align:right">Avg P&L%</th>
+              <th style="padding:6px 10px;text-align:right">Note</th>
+            </tr>
+          </thead>
+          <tbody id="hold-duration-tbody">
+            <tr><td colspan="5" style="padding:20px;text-align:center;color:var(--text-muted)">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+    <!-- Monthly Performance Table -->
+    <div class="card">
+      <div class="chart-title">Monthly Performance</div>
+      <div class="chart-sub">Trade count, win rate and P&L per month</div>
+      <div style="overflow-x:auto;margin-top:12px">
+        <table style="width:100%;border-collapse:collapse;font-size:13px">
+          <thead>
+            <tr style="color:var(--text-muted);text-align:left;border-bottom:1px solid var(--border)">
+              <th style="padding:6px 10px">Month</th>
+              <th style="padding:6px 10px;text-align:right">Trades</th>
+              <th style="padding:6px 10px;text-align:right">Wins</th>
+              <th style="padding:6px 10px;text-align:right">Win Rate</th>
+              <th style="padding:6px 10px;text-align:right">P&L ₹</th>
+            </tr>
+          </thead>
+          <tbody id="monthly-perf-tbody">
+            <tr><td colspan="5" style="padding:20px;text-align:center;color:var(--text-muted)">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- Indexed Equity Curve -->
+  <div class="card" style="margin-top:14px">
+    <div class="chart-title">Indexed Equity Curve (by Trade #)</div>
+    <div class="chart-sub">Pure system performance — trade number on X axis, indexed return % from starting capital · reveals if edge is improving</div>
+    <div id="chart-indexed-equity" style="height:240px;"></div>
   </div>
 
   <!-- Calendar Heatmap -->
@@ -1548,6 +1621,30 @@ function renderPerfStats(closed, open, portfolioValue, initialCapital) {
   const rmBadge = document.getElementById('perf-rmultiple-badge');
   if (rmBadge) rmBadge.className = 'stat-badge ' + (rMultiple >= 1.5 ? 'badge-green' : rMultiple >= 1 ? 'badge-amber' : 'badge-red');
 
+  // ── Profit Factor ──
+  const grossWins = wins.reduce((s,t) => s + t.finalPl, 0);
+  const grossLosses = Math.abs(losses.reduce((s,t) => s + t.finalPl, 0));
+  const profitFactor = grossLosses > 0 ? grossWins / grossLosses : (grossWins > 0 ? Infinity : 0);
+  const pfEl = document.getElementById('perf-profit-factor');
+  const pfBadge = document.getElementById('perf-profit-factor-badge');
+  set('perf-profit-factor', isFinite(profitFactor) ? profitFactor.toFixed(2) : '∞');
+  if (pfEl) pfEl.style.color = profitFactor >= 2 ? 'var(--green)' : profitFactor >= 1 ? 'var(--amber)' : 'var(--red)';
+  if (pfBadge) {
+    if (profitFactor >= 2) { pfBadge.className = 'stat-badge badge-green'; pfBadge.textContent = '✓ Strong edge (>2)'; }
+    else if (profitFactor >= 1) { pfBadge.className = 'stat-badge badge-amber'; pfBadge.textContent = 'Marginal edge (1–2)'; }
+    else { pfBadge.className = 'stat-badge badge-red'; pfBadge.textContent = '⚠ Losing system (<1)'; }
+  }
+
+  // ── Max consecutive wins/losses ──
+  const sortedForStreaks = [...closed].filter(t => t.closeDate).sort((a,b) => parseDate(a.closeDate) - parseDate(b.closeDate));
+  let maxW = 0, maxL = 0, curW = 0, curL = 0;
+  sortedForStreaks.forEach(t => {
+    if (t.finalPlPct > 0) { curW++; curL = 0; maxW = Math.max(maxW, curW); }
+    else { curL++; curW = 0; maxL = Math.max(maxL, curL); }
+  });
+  set('perf-max-consec-wins', maxW);
+  set('perf-max-consec-losses', maxL);
+
   // ── Win rate: closed vs open, plus combined ──
   set('perf-final-wr', finalWR.toFixed(1) + '%');
   const openWinning = open.filter(t => t.notionalPl > 0).length;
@@ -2087,6 +2184,127 @@ function initPerfCharts(closed, initialCapital, open) {
     plotOptions: { bar: { columnWidth: '80%', distributed: true } }, legend: { show: false }, dataLabels: { enabled: false },
   });
   rmChart.render(); perfCharts.push(rmChart);
+
+  // ── Hold Duration → Win Rate table ──
+  const holdBucketDefs = [
+    { label: 'SL hit same day', min: 0, max: 0, note: 'Avoid — often chasing' },
+    { label: '1–2 days', min: 1, max: 2, note: '' },
+    { label: '3–5 days', min: 3, max: 5, note: '' },
+    { label: '6–10 days', min: 6, max: 10, note: '★ Often sweet spot' },
+    { label: '11–15 days', min: 11, max: 15, note: '' },
+    { label: '16–30 days', min: 16, max: 30, note: '' },
+    { label: '31+ days (zombie?)', min: 31, max: Infinity, note: 'Review hold rules' },
+  ];
+  const holdTbody = document.getElementById('hold-duration-tbody');
+  if (holdTbody) {
+    let bestBucketWR = -1, bestBucketIdx = -1;
+    const bucketData = holdBucketDefs.map((b, idx) => {
+      const trades = sorted.filter(t => { const age = parseInt(t.age) || 0; return age >= b.min && age <= b.max; });
+      const bWins = trades.filter(t => t.finalPlPct > 0);
+      const wr = trades.length > 0 ? bWins.length / trades.length * 100 : null;
+      const avg = trades.length > 0 ? trades.reduce((s,t) => s + t.finalPlPct, 0) / trades.length : null;
+      if (wr !== null && wr > bestBucketWR) { bestBucketWR = wr; bestBucketIdx = idx; }
+      return { ...b, trades, wr, avg };
+    });
+    holdTbody.innerHTML = bucketData.map((b, idx) => {
+      if (b.trades.length === 0) return '';
+      const wrColor = b.wr >= 60 ? 'var(--green)' : b.wr >= 40 ? 'var(--amber)' : 'var(--red)';
+      const avgColor = b.avg >= 0 ? 'var(--green)' : 'var(--red)';
+      const isBest = idx === bestBucketIdx;
+      return `<tr style="border-bottom:1px solid var(--border)${isBest ? ';background:var(--green-soft)' : ''}">
+        <td style="padding:8px 10px;font-weight:${isBest ? '700' : '500'}">${b.label}${isBest ? ' ★' : ''}</td>
+        <td style="padding:8px 10px;text-align:right;color:var(--text-muted)">${b.trades.length}</td>
+        <td style="padding:8px 10px;text-align:right;font-weight:700;color:${wrColor}">${b.wr.toFixed(0)}%</td>
+        <td style="padding:8px 10px;text-align:right;color:${avgColor}">${b.avg >= 0 ? '+' : ''}${b.avg.toFixed(1)}%</td>
+        <td style="padding:8px 10px;text-align:right;font-size:11px;color:var(--text-muted)">${b.note}</td>
+      </tr>`;
+    }).join('');
+  }
+
+  // ── Monthly Performance table ──
+  const monthlyMap = {};
+  sorted.forEach(t => {
+    if (!t.closeDate) return;
+    const d = parseDate(t.closeDate); if (isNaN(d)) return;
+    const key = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+    if (!monthlyMap[key]) monthlyMap[key] = { wins: 0, total: 0, pl: 0 };
+    monthlyMap[key].total++;
+    if (t.finalPlPct > 0) monthlyMap[key].wins++;
+    monthlyMap[key].pl += t.finalPl;
+  });
+  const monthlyTbody = document.getElementById('monthly-perf-tbody');
+  if (monthlyTbody) {
+    const mKeys = Object.keys(monthlyMap).sort();
+    if (mKeys.length === 0) {
+      monthlyTbody.innerHTML = '<tr><td colspan="5" style="padding:20px;text-align:center;color:var(--text-muted)">No closed trades data</td></tr>';
+    } else {
+      const MNAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      monthlyTbody.innerHTML = mKeys.map(k => {
+        const m = monthlyMap[k];
+        const wr = m.total > 0 ? m.wins / m.total * 100 : 0;
+        const [yr, mo] = k.split('-');
+        const label = MNAMES[parseInt(mo)-1] + ' ' + yr.slice(2);
+        const wrColor = wr >= 60 ? 'var(--green)' : wr >= 40 ? 'var(--amber)' : 'var(--red)';
+        const plColor = m.pl >= 0 ? 'var(--green)' : 'var(--red)';
+        return `<tr style="border-bottom:1px solid var(--border)">
+          <td style="padding:7px 10px;font-weight:600">${label}</td>
+          <td style="padding:7px 10px;text-align:right;color:var(--text-muted)">${m.total}</td>
+          <td style="padding:7px 10px;text-align:right;color:var(--text-muted)">${m.wins}</td>
+          <td style="padding:7px 10px;text-align:right;font-weight:700;color:${wrColor}">${wr.toFixed(0)}%</td>
+          <td style="padding:7px 10px;text-align:right;font-weight:600;color:${plColor}">${m.pl >= 0 ? '+' : ''}₹${Math.round(m.pl).toLocaleString('en-IN')}</td>
+        </tr>`;
+      }).join('');
+    }
+  }
+
+  // ── Indexed Equity Curve (by trade number) ──
+  const indexedEl = document.getElementById('chart-indexed-equity');
+  if (indexedEl && sorted.length > 0) {
+    let eq2 = initialCapital || 0;
+    const indexedData = [], winData = [], lossData = [];
+    sorted.forEach((t, i) => {
+      eq2 += t.finalPl;
+      const ret = initialCapital > 0 ? (eq2 - initialCapital) / initialCapital * 100 : 0;
+      indexedData.push(parseFloat(ret.toFixed(2)));
+      if (t.finalPlPct >= 0) { winData.push({ x: i+1, y: parseFloat(ret.toFixed(2)) }); lossData.push({ x: i+1, y: null }); }
+      else { lossData.push({ x: i+1, y: parseFloat(ret.toFixed(2)) }); winData.push({ x: i+1, y: null }); }
+    });
+    // Add today's combined point (realised + open unrealised)
+    const openArr2 = open || [];
+    const totalUnrealised2 = openArr2.reduce((s,t) => s + (t.notionalPl||0), 0);
+    const combRet = initialCapital > 0 ? ((eq2 + totalUnrealised2 - initialCapital) / initialCapital * 100) : 0;
+    const todaySeries2 = indexedData.map(() => null);
+    todaySeries2.push(null); // last closed point handled by main series
+    const todayIndexed = totalUnrealised2 !== 0 ? [
+      ...indexedData.map(() => null),
+      parseFloat(combRet.toFixed(2))
+    ] : null;
+
+    const peakLine = Math.max(...indexedData);
+    const idxChart = new ApexCharts(indexedEl, {
+      ...baseOpts(240), chart: { ...baseOpts(240).chart, type: 'line' },
+      series: [
+        { name: 'Realised Return %', data: indexedData, type: 'area' },
+        ...(todayIndexed ? [{ name: 'Incl. Unrealised', data: todayIndexed, type: 'line' }] : []),
+      ],
+      xaxis: { ...baseOpts().xaxis, categories: sorted.map((_,i) => i+1).concat(todayIndexed ? ['Now'] : []), title: { text: 'Trade #', style: { color: c.text, fontSize: '11px' } }, labels: { ...baseOpts().xaxis.labels, hideOverlappingLabels: true } },
+      yaxis: { labels: { style: { colors: c.text, fontSize:'11px' }, formatter: v => v != null ? (v>=0?'+':'')+v.toFixed(1)+'%' : '' } },
+      colors: [eq2 >= (initialCapital||0) ? c.green : c.red, c.amber],
+      fill: { type: ['gradient','solid'], gradient: { shadeIntensity:1, opacityFrom:0.3, opacityTo:0.02 } },
+      stroke: { curve: 'smooth', width: [2, 2], dashArray: [0, 6] },
+      dataLabels: { enabled: false },
+      markers: { size: [0, 6] },
+      annotations: {
+        yaxis: [
+          { y: 0, borderColor: c.text, strokeDashArray: 2, label: { text: 'Break-even', style: { color: c.text, fontSize: '10px', background: 'transparent' } } },
+          ...(peakLine > 0 ? [{ y: peakLine, borderColor: c.green, strokeDashArray: 4, label: { text: 'Peak '+peakLine.toFixed(1)+'%', style: { color: c.green, fontSize: '10px', background: 'transparent' } } }] : []),
+        ]
+      },
+      legend: { show: !!todayIndexed, labels: { colors: c.text } },
+      tooltip: { ...baseOpts().tooltip, x: { formatter: v => 'Trade #' + v }, y: { formatter: v => v != null ? (v>=0?'+':'')+v.toFixed(2)+'%' : '' } },
+    });
+    idxChart.render(); perfCharts.push(idxChart);
+  }
 
   // Win rate by ENTRY day (openDate) — per the trader insight: entry day predicts outcome
   const dowBuckets = [{w:0,t:0},{w:0,t:0},{w:0,t:0},{w:0,t:0},{w:0,t:0}]; // Mon-Fri
