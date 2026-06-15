@@ -4155,7 +4155,12 @@ function initAnalysisCharts(open, closed) {
   try { const vel = new ApexCharts(document.getElementById('chart-velocity'), {
     ...baseOpts(240), chart: { ...baseOpts(240).chart, type: 'bar' },
     series: [{ name:'New Positions', data: velData }],
-    xaxis: { ...baseOpts().xaxis, categories: wkKeys.map(k=>k.replace(/\d{4}-/,'')), labels: { ...baseOpts().xaxis.labels, rotate:-45, hideOverlappingLabels:true } },
+    xaxis: { ...baseOpts().xaxis, categories: wkKeys.map(k => {
+      const [yr, wPart] = k.split('-W'); const wn = parseInt(wPart);
+      const jan1 = new Date(parseInt(yr), 0, 1);
+      const d = new Date(jan1.getTime() + (wn - 1) * 7 * 86400000);
+      return d.toLocaleDateString('en-IN', { day:'numeric', month:'short' });
+    }), labels: { ...baseOpts().xaxis.labels, rotate:-45, hideOverlappingLabels:true } },
     yaxis: { labels: { style:{colors:c.text,fontSize:'11px'} }, tickAmount:5 },
     colors: velData.map((v,i) => wkKeys[i]===_curWkKey ? c.accent : v>=3 ? c.amber : c.green),
     plotOptions: { bar: { columnWidth:'60%', distributed:true, borderRadius:3 } },
@@ -4189,8 +4194,8 @@ function initAnalysisCharts(open, closed) {
     const avgPl = trades => trades.length ? trades.reduce((s,t)=>s+t.finalPlPct,0)/trades.length : null;
     const highAvg = avgPl(highWkTrades), normAvg = avgPl(normWkTrades);
 
-    let velTxt = `Avg ${avgVel}/week · peak ${maxVel}/week · ${overWks} week${overWks!==1?'s':''} ≥3 entries`;
-    if (curWkVal > 0) velTxt += ` · <strong style="color:var(--accent)">This week: ${curWkVal}</strong>`;
+    let velTxt = `Avg ${avgVel} entries/week · peak ${maxVel}`;
+    if (curWkVal > 0) velTxt += ` · <strong style="color:var(--accent)">This week: ${curWkVal} so far</strong>`;
 
     if (highAvg !== null && normAvg !== null && highWkTrades.length >= 3) {
       const diff = highAvg - normAvg;
