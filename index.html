@@ -1653,11 +1653,19 @@ async function fetchData() {
 
 async function refreshData() {
   const btn = document.querySelector('[title="Refresh"]');
-  if (btn) btn.textContent = '⟳';
+  if (btn) { btn.textContent = '⟳'; btn.disabled = true; }
   document.body.classList.add('loading');
-  const data = await fetchData();
+  let data;
+  try {
+    data = await fetchData();
+  } catch(e) {
+    showToast('Refresh failed: ' + e.message, 'red');
+    if (btn) { btn.textContent = '↻'; btn.disabled = false; }
+    document.body.classList.remove('loading');
+    return;
+  }
   document.body.classList.remove('loading');
-  if (!data) { if (btn) btn.textContent = '↻'; return; }
+  if (!data) { if (btn) { btn.textContent = '↻'; btn.disabled = false; } return; }
   window._data = data;
   const cfg = loadConfig();
   renderDashboard(data, cfg);
@@ -1673,7 +1681,8 @@ async function refreshData() {
   const ri = document.querySelector('.refresh-info');
   if (ri) ri.textContent = 'Updated at ' + ts;
   localStorage.setItem('tj_last_refresh', Date.now());
-  if (btn) btn.textContent = '↻';
+  if (btn) { btn.textContent = '↻'; btn.disabled = false; }
+  showToast('Data refreshed ✓', 'green');
 }
 
 // ── DASHBOARD ────────────────────────────────────────
@@ -3684,11 +3693,11 @@ async function fetchFnoData() {
 
 async function refreshFnoData() {
   const btn = document.querySelector('[title="Refresh"]');
-  if (btn) btn.textContent = '⟳';
+  if (btn) { btn.textContent = '⟳'; btn.disabled = true; }
   document.body.classList.add('loading');
   const data = await fetchFnoData();
   document.body.classList.remove('loading');
-  if (btn) btn.textContent = '↻';
+  if (btn) { btn.textContent = '↻'; btn.disabled = false; }
   if (!data) {
     const alertsEl = document.getElementById('fno-alerts');
     if (alertsEl) alertsEl.innerHTML = '<div style="padding:16px;color:var(--red);font-size:13px">⚠ Could not load F&O data. Check: (1) Apps Script redeployed with new version? (2) NSEFO sheet name correct?</div>';
@@ -3699,6 +3708,7 @@ async function refreshFnoData() {
   renderFnoWatchlist(data.watchlist);
   const ri = document.querySelector('.refresh-info');
   if (ri) ri.textContent = 'F&O updated ' + new Date().toLocaleTimeString('en-IN', {hour:'2-digit',minute:'2-digit'});
+  showToast('F&O data refreshed ✓', 'green');
 }
 
 function renderFnoDashboard(watchlist) {
