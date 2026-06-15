@@ -762,10 +762,18 @@ tbody tr:hover { filter: brightness(0.97); }
     </div>
   </div>
 
-  <div class="section-title" style="margin-top:20px">Open Position P&amp;L Waterfall</div>
-  <div class="card" style="padding:16px 20px">
-    <div id="waterfall-wrap" style="display:flex;flex-direction:column;gap:6px">
-      <div style="color:var(--text-muted);font-size:13px;text-align:center;padding:12px">Loading…</div>
+  <div class="alert-group" style="margin-top:20px">
+    <div class="alert-group-header" style="background:var(--surface2);color:var(--text-primary)"
+         onclick="toggleCollapsible('waterfall-body', this)">
+      <span>📊</span>
+      <span style="flex:1;font-size:12px;font-weight:700">Open Position P&amp;L Waterfall</span>
+      <span id="waterfall-count" class="ag-count" style="background:rgba(255,255,255,0.08);color:var(--text-secondary)">—</span>
+      <span class="ag-chevron">▶</span>
+    </div>
+    <div class="alert-group-body" id="waterfall-body" style="padding:12px 16px">
+      <div id="waterfall-wrap" style="display:flex;flex-direction:column;gap:6px">
+        <div style="color:var(--text-muted);font-size:13px;text-align:center;padding:12px">Loading…</div>
+      </div>
     </div>
   </div>
 
@@ -2000,9 +2008,11 @@ function renderDashboard(data, cfg) {
 
     // Open P&L Waterfall
     const wfWrap = document.getElementById('waterfall-wrap');
+    const wfCount = document.getElementById('waterfall-count');
     if (wfWrap) {
       const wfItems = open.map(t => ({ stock: t.stock, plPct: t.plPct || 0, notionalPl: t.notionalPl || 0 }))
         .sort((a, b) => b.plPct - a.plPct);
+      if (wfCount) wfCount.textContent = wfItems.length + ' positions';
       if (wfItems.length === 0) { wfWrap.innerHTML = '<div style="color:var(--text-muted);font-size:13px;text-align:center;padding:12px">No open positions</div>'; return; }
       const maxAbs = Math.max(...wfItems.map(t => Math.abs(t.plPct)), 0.1);
       wfWrap.innerHTML = wfItems.map(t => {
