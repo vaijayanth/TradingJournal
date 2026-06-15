@@ -4062,7 +4062,8 @@ function initAnalysisCharts(open, closed) {
 
   // Risk per trade vs recommended tier
   const allRisks = [...closed, ...open].filter(t => t.initRiskRs > 0).map(t => t.initRiskRs);
-  const riskCapRs = initialCapital * 0.008;
+  const _ic = (window._data && window._data.initialCapital) || 5000000;
+  const riskCapRs = _ic * 0.008;
   const recommendedTier = Math.min(1000 + Math.floor(closed.length / 100) * 500, riskCapRs);
   const nextTierAt = Math.ceil((closed.length + 1) / 100) * 100;
   const tradesToNextTier = nextTierAt - closed.length;
