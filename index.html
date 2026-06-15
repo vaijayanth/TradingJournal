@@ -1338,14 +1338,16 @@ tbody tr:hover { filter: brightness(0.97); }
   <div class="section-title">Pattern Analysis</div>
   <div class="grid-2" style="margin-bottom:14px">
     <div class="card">
-      <div class="chart-title">Trade Age vs P&L%</div>
-      <div class="chart-sub">Closed trades (green/red) + open positions (amber) — hold time vs outcome</div>
+      <div class="chart-title">Cut Fast, Run Long?</div>
+      <div class="chart-sub">Red = closed losses · Green = closed wins · Amber = open positions (still running, not final)</div>
       <div id="chart-scatter" style="height:240px;"></div>
-      <details style="margin-top:10px">
-        <summary style="font-size:12px;font-weight:600;color:var(--text-muted);cursor:pointer;padding:4px 0;user-select:none">What to look for &amp; action ▸</summary>
+      <div id="scatter-insight" style="margin-top:8px;font-size:12px;color:var(--text-muted);line-height:1.8"></div>
+      <details style="margin-top:6px">
+        <summary style="font-size:12px;font-weight:600;color:var(--text-muted);cursor:pointer;padding:4px 0;user-select:none">How to read this chart ▸</summary>
         <div style="padding:10px 12px;background:var(--surface2);border-radius:8px;font-size:12px;line-height:1.7;color:var(--text-secondary);margin-top:6px">
-          Green = closed winners, red = closed losers, amber = open positions (unrealised). Amber in top-right = system working — winners running long.<br>
-          <strong>Action:</strong> If big closed winners are all short-held, you may be exiting too early. Let green run, cut red fast.
+          <strong>Ideal Minervini pattern:</strong> Red dots cluster bottom-left (small losses, cut quickly). Green/amber stretch up and right (big gains, held long).<br>
+          <strong>Warning signs:</strong> Red dots spread far right = holding losses too long. Green dots all cramped left = exiting winners too early.<br>
+          <strong>Amber note:</strong> Open positions show their gain <em>so far</em> — not their final outcome. They will move right as they age. These are typically your biggest winners.
         </div>
       </details>
     </div>
@@ -4110,30 +4112,30 @@ function initAnalysisCharts(open, closed) {
     legend: { show: true, position: 'top', fontSize: '11px', labels: { colors: c.text } },
   }); sc.render(); analysisCharts.push(sc); } catch(e) { console.warn('chart-scatter failed', e); }
 
-  // Hold time sweet spot callout
-  const holdBuckets = {'1-7d':[], '8-14d':[], '15-30d':[], '31-60d':[], '60d+':[]};
-  closed.forEach(t => {
-    const age = parseInt(t.age) || 0;
-    if (age <= 7) holdBuckets['1-7d'].push(t);
-    else if (age <= 14) holdBuckets['8-14d'].push(t);
-    else if (age <= 30) holdBuckets['15-30d'].push(t);
-    else if (age <= 60) holdBuckets['31-60d'].push(t);
-    else holdBuckets['60d+'].push(t);
-  });
-  const bucketStats = Object.entries(holdBuckets).map(([label, trades]) => ({
-    label,
-    avg: trades.length ? trades.reduce((s,t)=>s+t.finalPlPct,0)/trades.length : null,
-    n: trades.length
-  })).filter(b => b.n >= 3 && b.avg !== null);
-  if (bucketStats.length) {
-    const best = bucketStats.reduce((a,b) => b.avg > a.avg ? b : a);
-    const scatterCard = document.querySelector('#chart-scatter')?.closest('.card');
-    if (scatterCard) {
-      const callout = document.createElement('div');
-      callout.style.cssText = 'margin-top:10px;padding:8px 12px;background:var(--green-soft);border-radius:6px;font-size:12px;color:var(--text-primary)';
-      callout.innerHTML = `🎯 <strong>Sweet spot:</strong> Trades held <strong>${best.label}</strong> average ${best.avg >= 0 ? '+' : ''}${best.avg.toFixed(1)}% (n=${best.n})`;
-      scatterCard.appendChild(callout);
+  // Scatter insight line
+  const scatterInsEl = document.getElementById('scatter-insight');
+  if (scatterInsEl && closed.length > 0) {
+    const cWinners = closed.filter(t => t.finalPlPct > 0 && t.age > 0);
+    const cLosers  = closed.filter(t => t.finalPlPct < 0 && t.age > 0);
+    const avgWinAge  = cWinners.length ? cWinners.reduce((s,t)=>s+(parseInt(t.age)||0),0)/cWinners.length : 0;
+    const avgLossAge = cLosers.length  ? cLosers.reduce((s,t)=>s+(parseInt(t.age)||0),0)/cLosers.length  : 0;
+    const openWins = open.filter(t => (t.plPct||0) > 0);
+    const avgOpenAge = openWins.length ? openWins.reduce((s,t)=>s+(parseInt(t.age)||0),0)/openWins.length : 0;
+    const avgOpenPl  = openWins.length ? openWins.reduce((s,t)=>s+(t.plPct||0),0)/openWins.length : 0;
+
+    let ins = '';
+    if (avgLossAge > 0) ins += `Avg closed loss held <strong>${Math.round(avgLossAge)}d</strong>`;
+    if (avgWinAge > 0)  ins += ` · avg closed win held <strong>${Math.round(avgWinAge)}d</strong>`;
+    if (avgWinAge > 0 && avgLossAge > 0) {
+      const ratio = avgWinAge / avgLossAge;
+      if (ratio >= 2) ins += ` <span style="color:var(--green)">✅ Winners held ${ratio.toFixed(1)}× longer — running profits correctly</span>`;
+      else if (ratio >= 1.2) ins += ` <span style="color:var(--amber)">⚠ Winners only ${ratio.toFixed(1)}× longer than losers — let winners run more</span>`;
+      else ins += ` <span style="color:var(--red)">🚨 Losers held as long as winners — cutting profits, holding losses</span>`;
     }
+    if (openWins.length > 0) {
+      ins += `<br>📗 <strong>${openWins.length} open winner${openWins.length>1?'s':''}</strong> averaging <strong>+${avgOpenPl.toFixed(1)}%</strong> at ${Math.round(avgOpenAge)}d avg — amber dots, your real runners (not yet final)`;
+    }
+    scatterInsEl.innerHTML = ins;
   }
 
   // Entry Velocity
