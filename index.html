@@ -4321,6 +4321,9 @@ function switchStrategy(mode) {
     if (fnoNav)    fnoNav.style.display   = '';
     if (swingPages) swingPages.style.display = 'none';
     if (fnoPages)   fnoPages.style.display   = '';
+    // Always activate the Dashboard tab when switching to F&O
+    const fnoDashBtn = fnoNav ? fnoNav.querySelector('.nav-tab') : null;
+    if (fnoDashBtn) showFnoPage('fno-dashboard', fnoDashBtn);
     // Fetch F&O data if not already loaded
     if (!window._fnoData) {
       refreshFnoData();
