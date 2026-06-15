@@ -620,7 +620,10 @@ tbody tr:hover { filter: brightness(0.97); }
     <button class="nav-tab" onclick="showPage('config', this)">Config</button>
   </div>
   <div class="nav-right">
-    <span class="refresh-info">Updated 2 min ago</span>
+    <div style="text-align:right;line-height:1.4">
+      <span class="refresh-info">Updated 2 min ago</span>
+      <div id="signal-run-info" style="font-size:10px;color:var(--text-muted);white-space:nowrap"></div>
+    </div>
     <button class="btn-icon" title="Refresh" onclick="window._strategy==='fno'?refreshFnoData():refreshData()">↻</button>
     <button class="btn-icon" title="Toggle theme" onclick="toggleTheme()">🌙</button>
   </div>
@@ -1828,6 +1831,8 @@ async function refreshData() {
   const ts = now.toLocaleTimeString('en-IN', { hour:'2-digit', minute:'2-digit' });
   const ri = document.querySelector('.refresh-info');
   if (ri) ri.textContent = 'Updated at ' + ts;
+  const sri = document.getElementById('signal-run-info');
+  if (sri && data.signalRunAt) sri.textContent = 'Signals: ' + data.signalRunAt;
   localStorage.setItem('tj_last_refresh', Date.now());
   if (btn) { btn.textContent = '↻'; btn.disabled = false; }
   showToast('Data refreshed ✓', 'green');
