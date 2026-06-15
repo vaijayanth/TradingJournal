@@ -1149,7 +1149,12 @@ tbody tr:hover { filter: brightness(0.97); }
 <!-- ════ ANALYSIS ════ -->
 <div id="page-analysis" class="page">
 
-  <!-- Setup Type Breakdown -->
+  <!-- Closed-trade bias note -->
+  <div style="margin-bottom:16px;padding:10px 14px;background:rgba(255,159,10,0.08);border-left:3px solid var(--amber);border-radius:6px;font-size:12.5px;color:var(--text-secondary);line-height:1.6">
+    ⚡ <strong>Momentum system note:</strong> Closed trades skew negative (stops taken fast). Open positions hold the unrealised gains. All insights below are closed-only patterns — cross-reference with the Positions tab for the full picture.
+  </div>
+
+  <!-- 1. Setup Type Breakdown -->
   <div class="section-title">Setup Type vs Outcome</div>
   <div class="card" style="margin-bottom:14px">
     <div class="chart-title">Performance by Trade Setup (Entry Label)</div>
@@ -1177,115 +1182,8 @@ tbody tr:hover { filter: brightness(0.97); }
     <div class="ema-insight" id="ema-insight" style="margin-top:12px">—</div>
   </div>
 
-  <!-- Partial Exit Analysis -->
-  <div class="section-title" style="margin-top:20px">Partial Exit Analysis</div>
-  <div class="grid-3" style="margin-bottom:14px">
-    <div class="card card-sm">
-      <div class="stat-label">With Partial Exit</div>
-      <div style="font-size:24px;font-weight:700;margin-top:4px" id="partial-yes-wr">—</div>
-      <div class="stat-sub">Win Rate</div>
-      <div style="font-size:16px;font-weight:700;margin-top:8px" id="partial-yes-avg">—</div>
-      <div class="stat-sub">Avg Final P&L%</div>
-      <div style="font-size:14px;font-weight:700;margin-top:6px;color:var(--green)" id="partial-yes-gain-after">—</div>
-      <div class="stat-sub">Avg gain <em>after</em> partial taken</div>
-      <div style="font-size:13px;margin-top:4px;color:var(--text-muted)" id="partial-yes-n">n = —</div>
-    </div>
-    <div class="card card-sm">
-      <div class="stat-label">Without Partial Exit</div>
-      <div style="font-size:24px;font-weight:700;margin-top:4px" id="partial-no-wr">—</div>
-      <div class="stat-sub">Win Rate</div>
-      <div style="font-size:16px;font-weight:700;margin-top:8px" id="partial-no-avg">—</div>
-      <div class="stat-sub">Avg P&L%</div>
-      <div style="font-size:13px;margin-top:4px;color:var(--text-muted)" id="partial-no-n">n = —</div>
-    </div>
-    <div class="card card-sm">
-      <div class="stat-label">Partial Exit Verdict</div>
-      <div style="font-size:15px;font-weight:700;margin-top:8px;line-height:1.5" id="partial-insight">—</div>
-    </div>
-  </div>
-
-  <!-- Behavioural Patterns -->
-  <div class="section-title" style="margin-top:20px">Behavioural Patterns</div>
-  <div class="grid-2" style="margin-bottom:14px">
-    <div class="card card-sm">
-      <div class="stat-label">After 3+ Consecutive Losses</div>
-      <div style="font-size:22px;font-weight:700;margin-top:6px" id="consec-loss-next-wr">—</div>
-      <div class="stat-sub">Win rate on next trade</div>
-      <div style="font-size:16px;font-weight:700;margin-top:8px" id="consec-loss-next-avg">—</div>
-      <div class="stat-sub">Avg P&amp;L% on next trade</div>
-      <div style="font-size:12px;margin-top:8px;color:var(--text-muted)" id="consec-loss-insight">—</div>
-    </div>
-    <div class="card card-sm">
-      <div class="stat-label">Position Sizing Consistency</div>
-      <div style="font-size:22px;font-weight:700;margin-top:6px" id="sizing-cv">—</div>
-      <div class="stat-sub">Coefficient of variation (lower = more consistent)</div>
-      <div style="font-size:16px;font-weight:700;margin-top:8px" id="sizing-range">—</div>
-      <div class="stat-sub" id="sizing-range-sub">Min → Max initial risk ₹</div>
-      <div class="stat-badge" style="margin-top:8px" id="sizing-badge">—</div>
-    </div>
-  </div>
-
-  <!-- Unlock Advanced Analytics -->
-  <div class="section-title" style="margin-top:20px">Unlock Advanced Analytics — Add These Columns to Your Sheet</div>
-  <div style="font-size:12px;color:var(--text-muted);margin-bottom:12px">Inspired by real trader analysis: MAE + MFE:MAE ratio separated 14% win rate from 100% across 24 consecutive wins</div>
-  <div class="grid-3" style="margin-bottom:14px">
-    <div class="card card-sm" style="border:1px dashed var(--border)">
-      <div class="stat-label" style="color:var(--red)">🔑 MAE % — Most Powerful Signal</div>
-      <div style="font-size:13px;margin-top:8px;line-height:1.6;color:var(--text-secondary)">
-        Max Adverse Excursion — how far the trade went <strong>against you</strong> before recovering or stopping out.<br><br>
-        <strong>Real data:</strong> MAE &lt;1.5% → 100% WR · MAE &gt;3% → 21% WR<br><br>
-        <strong>Add col O:</strong> Formula <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">=MIN(low range during trade)</code> → compute <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">=(entry-min)/entry*100</code>
-      </div>
-      <div class="stat-badge badge-red" style="margin-top:10px">Add column O → maeCol in Config</div>
-    </div>
-    <div class="card card-sm" style="border:1px dashed var(--border)">
-      <div class="stat-label" style="color:var(--red)">🔑 MFE % — The Game Filter</div>
-      <div style="font-size:13px;margin-top:8px;line-height:1.6;color:var(--text-secondary)">
-        Max Favorable Excursion — highest point reached while in the trade.<br><br>
-        <strong>Real data:</strong> MFE:MAE &gt;3x → 100% WR on 24 consecutive trades · &lt;3x → 14% WR<br><br>
-        <strong>Add col P:</strong> Formula <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">=(max-entry)/entry*100</code> during trade
-      </div>
-      <div class="stat-badge badge-red" style="margin-top:10px">Add column P → mfeCol in Config</div>
-    </div>
-    <div class="card card-sm" style="border:1px dashed var(--border)">
-      <div class="stat-label" style="color:var(--amber)">⏰ Entry Time</div>
-      <div style="font-size:13px;margin-top:8px;line-height:1.6;color:var(--text-secondary)">
-        What time did you enter? Real analysis showed 09:00–11:00 IST (GTT) = 0% WR · 15:00–15:30 IST = 78% WR<br><br>
-        <strong>Add col Q:</strong> Entry time as text e.g. <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">09:15</code> or <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">15:00</code>
-      </div>
-      <div class="stat-badge badge-amber" style="margin-top:10px">Add column Q → entryTimeCol in Config</div>
-    </div>
-    <div class="card card-sm" style="border:1px dashed var(--border)">
-      <div class="stat-label" style="color:var(--amber)">🏷 Trade Quality Tag</div>
-      <div style="font-size:13px;margin-top:8px;line-height:1.6;color:var(--text-secondary)">
-        Tag each trade honestly at exit:<br>
-        <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">Rule ✓</code> / <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">Emotional</code> / <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">Moved Stop</code> / <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">Late Entry</code> / <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">Oversized</code><br><br>
-        This is the single most powerful improvement tool.
-      </div>
-      <div class="stat-badge badge-amber" style="margin-top:10px">Add column T → qualityTagCol in Config</div>
-    </div>
-    <div class="card card-sm" style="border:1px dashed var(--border)">
-      <div class="stat-label" style="color:var(--text-muted)">🏭 Sector</div>
-      <div style="font-size:13px;margin-top:8px;line-height:1.6;color:var(--text-secondary)">
-        IT / BFSI / Pharma / Auto / FMCG etc.<br><br>
-        Reveals hidden concentration — when market rotates, correlated positions all hit stop simultaneously.
-      </div>
-      <div class="stat-badge badge-amber" style="margin-top:10px">Add column N → sectorCol in Config</div>
-    </div>
-    <div class="card card-sm" style="border:1px dashed var(--border)">
-      <div class="stat-label" style="color:var(--text-muted)">📝 Exit Reason</div>
-      <div style="font-size:13px;margin-top:8px;line-height:1.6;color:var(--text-secondary)">
-        <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">Stop</code> / <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">Target</code> / <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">Rule-based</code> / <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">Time</code><br><br>
-        17 of 18 losing trades in the example had correct entries — the leak was in exit management. This column proves it.
-      </div>
-      <div class="stat-badge badge-amber" style="margin-top:10px">Add column G → exitReasonCol in Config</div>
-    </div>
-  </div>
-
-  <!-- ── Trade Management Analysis ── -->
+  <!-- 2. Trade Management -->
   <div class="section-title" style="margin-top:24px">Trade Management</div>
-
-  <!-- Insight strip -->
   <div class="grid-4" style="margin-bottom:14px">
     <div class="card card-sm">
       <div class="stat-label">Avg Init Risk</div>
@@ -1308,102 +1206,201 @@ tbody tr:hover { filter: brightness(0.97); }
       <div class="stat-sub" id="tm-median-win-sub">50th pct of winning trades</div>
     </div>
   </div>
-
-  <!-- Insight callout -->
   <div class="card" style="margin-bottom:14px;border-left:3px solid var(--accent)">
     <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em">Breakeven Stop Insight</div>
     <div id="tm-be-insight" style="font-size:13px;line-height:1.7;color:var(--text-secondary)">Loading…</div>
   </div>
-
   <div class="grid-2" style="margin-bottom:14px">
     <div class="card">
       <div class="chart-title">Init Risk % Distribution</div>
       <div class="chart-sub">Are your stops consistently sized or all over the place?</div>
       <div id="chart-tm-risk-dist" style="height:220px"></div>
-      <div style="margin-top:12px;padding:10px 12px;background:var(--surface2);border-radius:8px;font-size:12px;line-height:1.7;color:var(--text-secondary)">
-        <strong style="color:var(--text-primary)">What to look for:</strong> The bulk of bars should land in the <strong>1–2% risk zone</strong>. If they're spread across all buckets you're not sizing consistently — each trade carries different risk which makes your system hard to evaluate.<br>
-        <strong style="color:var(--text-primary)">Action:</strong> If you see many trades &gt;3% risk, those stops are too wide — you're giving the stock too much room and risking too much capital. If most are &lt;1%, stops may be too tight and getting hit by normal noise.
-      </div>
+      <details style="margin-top:10px">
+        <summary style="font-size:12px;font-weight:600;color:var(--text-muted);cursor:pointer;padding:4px 0;user-select:none">What to look for &amp; action ▸</summary>
+        <div style="padding:10px 12px;background:var(--surface2);border-radius:8px;font-size:12px;line-height:1.7;color:var(--text-secondary);margin-top:6px">
+          Bulk of bars should land in the <strong>1–2% risk zone</strong>. Spread across all buckets = inconsistent sizing.<br>
+          <strong>Action:</strong> Many &gt;3% → stops too wide. Most &lt;1% → stops may be too tight, getting hit by noise.
+        </div>
+      </details>
     </div>
     <div class="card">
       <div class="chart-title">Win Rate by Risk Size</div>
       <div class="chart-sub">Do tighter or wider stops produce better outcomes?</div>
       <div id="chart-tm-wr-by-risk" style="height:220px"></div>
-      <div style="margin-top:12px;padding:10px 12px;background:var(--surface2);border-radius:8px;font-size:12px;line-height:1.7;color:var(--text-secondary)">
-        <strong style="color:var(--text-primary)">What to look for:</strong> If tighter stops (&lt;1%) win less often, they're too close to price noise and getting triggered prematurely. If wider stops (&gt;3%) win more but your losses are big, you're trading win rate for pain.<br>
-        <strong style="color:var(--text-primary)">Action:</strong> Find the risk bucket with the <strong>best win rate</strong> — that's your edge zone. Move your stop placement towards that range. Ideally 1–2% risk should have the highest or equal win rate.
-      </div>
+      <details style="margin-top:10px">
+        <summary style="font-size:12px;font-weight:600;color:var(--text-muted);cursor:pointer;padding:4px 0;user-select:none">What to look for &amp; action ▸</summary>
+        <div style="padding:10px 12px;background:var(--surface2);border-radius:8px;font-size:12px;line-height:1.7;color:var(--text-secondary);margin-top:6px">
+          Find the risk bucket with the <strong>best win rate</strong> — that's your edge zone. Tighter stops winning less = too close to noise.<br>
+          <strong>Action:</strong> Move stop placement toward your best-win-rate bucket. Ideally 1–2% risk = highest win rate.
+        </div>
+      </details>
     </div>
     <div class="card">
       <div class="chart-title">Winner Size Distribution</div>
       <div class="chart-sub">Where do winners close? — calibrates when to move stop to breakeven</div>
       <div id="chart-tm-winner-dist" style="height:220px"></div>
-      <div style="margin-top:12px;padding:10px 12px;background:var(--surface2);border-radius:8px;font-size:12px;line-height:1.7;color:var(--text-secondary)">
-        <strong style="color:var(--text-primary)">What to look for:</strong> If most winners cluster in <strong>0–2%</strong>, your winners are tiny — exits are too early or setups aren't running. You want a right-skewed shape: most bars in 2–10%+ with a long tail.<br>
-        <strong style="color:var(--text-primary)">Action:</strong> The <em>BE stop zone</em> annotation marks 2–5%. If &gt;70% of your winners are above that line, moving stop to breakeven at +2% profit is safe. If most winners close below it, <strong>don't</strong> add a breakeven rule yet — you'll stop yourself out of winners.
-      </div>
+      <details style="margin-top:10px">
+        <summary style="font-size:12px;font-weight:600;color:var(--text-muted);cursor:pointer;padding:4px 0;user-select:none">What to look for &amp; action ▸</summary>
+        <div style="padding:10px 12px;background:var(--surface2);border-radius:8px;font-size:12px;line-height:1.7;color:var(--text-secondary);margin-top:6px">
+          You want a right-skewed shape: most bars in 2–10%+. The BE stop zone annotation marks 2–5%.<br>
+          <strong>Action:</strong> &gt;70% of winners above that line → moving stop to BE at +2% is safe. If most close below it, don't add a BE rule yet.
+        </div>
+      </details>
     </div>
     <div class="card">
       <div class="chart-title">Loss Size Distribution</div>
       <div class="chart-sub">Are losses clean (near init risk) or messy (overrun)?</div>
       <div id="chart-tm-loss-dist" style="height:220px"></div>
-      <div style="margin-top:12px;padding:10px 12px;background:var(--surface2);border-radius:8px;font-size:12px;line-height:1.7;color:var(--text-secondary)">
-        <strong style="color:var(--text-primary)">What to look for:</strong> Losses should cluster tightly around your avg init risk bucket (marked in amber). If you see a large spike in <strong>5–8% or &gt;8%</strong>, those are <em>uncontrolled losses</em> — stops moved, gap-downs, or held through the stop.<br>
-        <strong style="color:var(--text-primary)">Action:</strong> Any loss more than 2× your init risk is a process failure, not a market failure. Count them. If &gt;10% of your losses are outsized, that's the single biggest lever to fix — one big loss can wipe 5–10 normal stops.
-      </div>
+      <details style="margin-top:10px">
+        <summary style="font-size:12px;font-weight:600;color:var(--text-muted);cursor:pointer;padding:4px 0;user-select:none">What to look for &amp; action ▸</summary>
+        <div style="padding:10px 12px;background:var(--surface2);border-radius:8px;font-size:12px;line-height:1.7;color:var(--text-secondary);margin-top:6px">
+          Losses should cluster tightly around your avg init risk (marked in amber). Large spike in <strong>5–8% or &gt;8%</strong> = uncontrolled losses.<br>
+          <strong>Action:</strong> Any loss &gt;2× init risk is a process failure. If &gt;10% of losses are outsized, fixing this is your biggest lever.
+        </div>
+      </details>
     </div>
   </div>
 
-  <!-- 2-col chart grid -->
+  <!-- 3. Partial Exit Analysis -->
+  <div class="section-title" style="margin-top:20px">Partial Exit Analysis</div>
+  <div class="grid-3" style="margin-bottom:14px">
+    <div class="card card-sm">
+      <div class="stat-label">With Partial Exit</div>
+      <div style="font-size:24px;font-weight:700;margin-top:4px" id="partial-yes-wr">—</div>
+      <div class="stat-sub">Win Rate</div>
+      <div style="font-size:16px;font-weight:700;margin-top:8px" id="partial-yes-avg">—</div>
+      <div class="stat-sub">Avg Final P&L%</div>
+      <div style="font-size:14px;font-weight:700;margin-top:6px;color:var(--green)" id="partial-yes-gain-after">—</div>
+      <div class="stat-sub" title="How much further the trade ran after the partial exit was taken (final P&L% minus partial trigger %)">Avg additional gain after partial ⓘ</div>
+      <div style="font-size:13px;margin-top:4px;color:var(--text-muted)" id="partial-yes-n">n = —</div>
+    </div>
+    <div class="card card-sm">
+      <div class="stat-label">Without Partial Exit</div>
+      <div style="font-size:24px;font-weight:700;margin-top:4px" id="partial-no-wr">—</div>
+      <div class="stat-sub">Win Rate</div>
+      <div style="font-size:16px;font-weight:700;margin-top:8px" id="partial-no-avg">—</div>
+      <div class="stat-sub">Avg P&L%</div>
+      <div style="font-size:13px;margin-top:4px;color:var(--text-muted)" id="partial-no-n">n = —</div>
+    </div>
+    <div class="card card-sm">
+      <div class="stat-label">Partial Exit Verdict</div>
+      <div style="font-size:15px;font-weight:700;margin-top:8px;line-height:1.5" id="partial-insight">—</div>
+    </div>
+  </div>
+
+  <!-- 4. Behavioural Patterns -->
+  <div class="section-title" style="margin-top:20px">Behavioural Patterns</div>
+  <div class="grid-2" style="margin-bottom:14px">
+    <div class="card">
+      <div class="stat-label">After 3+ Consecutive Losses</div>
+      <div style="font-size:22px;font-weight:700;margin-top:6px" id="consec-loss-next-wr">—</div>
+      <div class="stat-sub">Win rate on next trade</div>
+      <div style="font-size:16px;font-weight:700;margin-top:8px" id="consec-loss-next-avg">—</div>
+      <div class="stat-sub">Avg P&amp;L% on next trade</div>
+      <div style="font-size:12px;margin-top:8px;color:var(--text-muted)" id="consec-loss-insight">—</div>
+    </div>
+    <div class="card">
+      <div class="stat-label">Position Sizing Consistency</div>
+      <div style="font-size:22px;font-weight:700;margin-top:6px" id="sizing-cv">—</div>
+      <div class="stat-sub">Coefficient of variation (lower = more consistent)</div>
+      <div style="font-size:16px;font-weight:700;margin-top:8px" id="sizing-range">—</div>
+      <div class="stat-sub" id="sizing-range-sub">Min → Max initial risk ₹</div>
+      <div class="stat-badge" style="margin-top:8px" id="sizing-badge">—</div>
+    </div>
+  </div>
+
+  <!-- 5. Pattern Analysis -->
   <div class="section-title">Pattern Analysis</div>
-  <div class="grid-2">
+  <div class="grid-2" style="margin-bottom:14px">
     <div class="card">
       <div class="chart-title">Trade Age vs P&L%</div>
-      <div class="chart-sub">Hold time vs outcome — are you exiting too early?</div>
+      <div class="chart-sub">Closed trades (green/red) + open positions (amber) — hold time vs outcome</div>
       <div id="chart-scatter" style="height:240px;"></div>
-      <div style="margin-top:12px;padding:10px 12px;background:var(--surface2);border-radius:8px;font-size:12px;line-height:1.7;color:var(--text-secondary)">
-        <strong style="color:var(--text-primary)">What to look for:</strong> Green dots (winners) should cluster in the <strong>top-right</strong> — held longer, bigger gain. If your biggest winners are all held &lt;10 days, you're exiting too early. Red dots (losers) should cluster bottom-left — stopped quickly.<br>
-        <strong style="color:var(--text-primary)">Action:</strong> If you see green dots scattered left (short hold, good gain) that's fine — quick winners happen. But if most big winners are also short-held, ask if you're taking profit too early out of fear. The goal: let green run, cut red fast.
-      </div>
+      <details style="margin-top:10px">
+        <summary style="font-size:12px;font-weight:600;color:var(--text-muted);cursor:pointer;padding:4px 0;user-select:none">What to look for &amp; action ▸</summary>
+        <div style="padding:10px 12px;background:var(--surface2);border-radius:8px;font-size:12px;line-height:1.7;color:var(--text-secondary);margin-top:6px">
+          Green = closed winners, red = closed losers, amber = open positions (unrealised). Amber in top-right = system working — winners running long.<br>
+          <strong>Action:</strong> If big closed winners are all short-held, you may be exiting too early. Let green run, cut red fast.
+        </div>
+      </details>
     </div>
     <div class="card">
       <div class="chart-title">Entry Velocity</div>
-      <div class="chart-sub">New positions per week — primary overtrading detector</div>
+      <div class="chart-sub">New positions opened per week — primary overtrading detector</div>
       <div id="chart-velocity" style="height:240px;"></div>
-      <div style="margin-top:12px;padding:10px 12px;background:var(--surface2);border-radius:8px;font-size:12px;line-height:1.7;color:var(--text-secondary)">
-        <strong style="color:var(--text-primary)">What to look for:</strong> Weeks with <strong>&gt;3 new entries</strong> are a warning sign. Overtrading usually happens after a loss streak (revenge trading) or a big win (overconfidence). The amber line marks the threshold.<br>
-        <strong style="color:var(--text-primary)">Action:</strong> Find your worst-performing weeks and cross-check with entry velocity spikes — they usually correlate. Consider a hard rule: <em>max 2–3 new positions per week</em>. Sitting in cash is also a position.
-      </div>
-    </div>
-    <div class="card">
-      <div class="chart-title">Win Rate by Setup Type</div>
-      <div class="chart-sub">Which setups hit most often</div>
-      <div id="chart-setup-wr" style="height:240px"></div>
-      <div class="chart-placeholder" id="chart-setup-wr-placeholder" style="height:240px;display:none">
-        <div class="placeholder-icon">🔒</div>
-        <div class="placeholder-title">Setup Type Not Mapped</div>
-        <div class="placeholder-desc">Add a Setup Type column to your Google Sheet and map it in Config to unlock this chart.</div>
-      </div>
-      <div style="margin-top:12px;padding:10px 12px;background:var(--surface2);border-radius:8px;font-size:12px;line-height:1.7;color:var(--text-secondary)">
-        <strong style="color:var(--text-primary)">What to look for:</strong> Green bars (&gt;50%) = setups with statistical edge. Red bars (&lt;35%) = setups that are not working — you may be misidentifying them or trading them in wrong market conditions.<br>
-        <strong style="color:var(--text-primary)">Action:</strong> Stop trading red-bar setups until you understand why they fail. Double down on green-bar setups. If all setups are similar win rate, you likely need more data or clearer setup definitions.
-      </div>
-    </div>
-    <div class="card">
-      <div class="chart-title">Avg P&L % by Setup Type</div>
-      <div class="chart-sub">Which setups deliver the most return on average</div>
-      <div id="chart-setup-avgpl" style="height:240px"></div>
-      <div class="chart-placeholder" id="chart-setup-avgpl-placeholder" style="height:240px;display:none">
-        <div class="placeholder-icon">🔒</div>
-        <div class="placeholder-title">Setup Type Not Mapped</div>
-        <div class="placeholder-desc">Add a Setup Type column to your Google Sheet and map it in Config to unlock this chart.</div>
-      </div>
-      <div style="margin-top:12px;padding:10px 12px;background:var(--surface2);border-radius:8px;font-size:12px;line-height:1.7;color:var(--text-secondary)">
-        <strong style="color:var(--text-primary)">What to look for:</strong> A setup with high win rate (previous chart) but negative avg P&L means wins are small and losses are large — the setup has no edge. The best setups show <strong>both</strong> positive avg P&L and decent win rate.<br>
-        <strong style="color:var(--text-primary)">Action:</strong> Cross-reference with the Win Rate chart. A setup with 60% win rate but -0.5% avg P&L is worse than a 40% setup with +3% avg P&L. Prioritise the setups that are green in <em>both</em> charts.
-      </div>
+      <div id="velocity-insight" style="margin-top:8px;font-size:12px;color:var(--text-muted)"></div>
+      <details style="margin-top:6px">
+        <summary style="font-size:12px;font-weight:600;color:var(--text-muted);cursor:pointer;padding:4px 0;user-select:none">What to look for &amp; action ▸</summary>
+        <div style="padding:10px 12px;background:var(--surface2);border-radius:8px;font-size:12px;line-height:1.7;color:var(--text-secondary);margin-top:6px">
+          Weeks with <strong>&gt;3 new entries</strong> are a warning sign. Overtrading often follows a loss streak or a big win.<br>
+          <strong>Action:</strong> Find worst-performing weeks and cross-check with velocity spikes. Consider max 2–3 new positions per week.
+        </div>
+      </details>
     </div>
   </div>
+
+  <!-- 6. Unlock Advanced Analytics (collapsible) -->
+  <details style="margin-top:20px" id="unlock-analytics">
+    <summary style="cursor:pointer;display:flex;align-items:center;gap:8px;padding:10px 0;font-size:14px;font-weight:700;color:var(--text-primary);border-top:1px solid var(--border);user-select:none">
+      🔓 Unlock Advanced Analytics — Add These Columns to Your Sheet
+      <span style="font-size:12px;font-weight:400;color:var(--text-muted)">(click to expand)</span>
+    </summary>
+    <div style="font-size:12px;color:var(--text-muted);margin:8px 0 12px">Inspired by real trader analysis: MAE + MFE:MAE ratio separated 14% win rate from 100% across 24 consecutive wins</div>
+    <div class="grid-3" style="margin-bottom:14px">
+      <div class="card card-sm" style="border:1px dashed var(--border)">
+        <div class="stat-label" style="color:var(--red)">🔑 MAE % — Most Powerful Signal</div>
+        <div style="font-size:13px;margin-top:8px;line-height:1.6;color:var(--text-secondary)">
+          Max Adverse Excursion — how far the trade went <strong>against you</strong> before recovering or stopping out.<br><br>
+          <strong>Real data:</strong> MAE &lt;1.5% → 100% WR · MAE &gt;3% → 21% WR<br><br>
+          <strong>Add col O:</strong> Formula <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">=MIN(low range during trade)</code> → compute <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">=(entry-min)/entry*100</code>
+        </div>
+        <div class="stat-badge badge-red" style="margin-top:10px">Add column O → maeCol in Config</div>
+      </div>
+      <div class="card card-sm" style="border:1px dashed var(--border)">
+        <div class="stat-label" style="color:var(--red)">🔑 MFE % — The Game Filter</div>
+        <div style="font-size:13px;margin-top:8px;line-height:1.6;color:var(--text-secondary)">
+          Max Favorable Excursion — highest point reached while in the trade.<br><br>
+          <strong>Real data:</strong> MFE:MAE &gt;3x → 100% WR on 24 consecutive trades · &lt;3x → 14% WR<br><br>
+          <strong>Add col P:</strong> Formula <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">=(max-entry)/entry*100</code> during trade
+        </div>
+        <div class="stat-badge badge-red" style="margin-top:10px">Add column P → mfeCol in Config</div>
+      </div>
+      <div class="card card-sm" style="border:1px dashed var(--border)">
+        <div class="stat-label" style="color:var(--amber)">⏰ Entry Time</div>
+        <div style="font-size:13px;margin-top:8px;line-height:1.6;color:var(--text-secondary)">
+          What time did you enter? Real analysis showed 09:00–11:00 IST (GTT) = 0% WR · 15:00–15:30 IST = 78% WR<br><br>
+          <strong>Add col Q:</strong> Entry time as text e.g. <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">09:15</code> or <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">15:00</code>
+        </div>
+        <div class="stat-badge badge-amber" style="margin-top:10px">Add column Q → entryTimeCol in Config</div>
+      </div>
+      <div class="card card-sm" style="border:1px dashed var(--border)">
+        <div class="stat-label" style="color:var(--amber)">🏷 Trade Quality Tag</div>
+        <div style="font-size:13px;margin-top:8px;line-height:1.6;color:var(--text-secondary)">
+          Tag each trade honestly at exit:<br>
+          <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">Rule ✓</code> / <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">Emotional</code> / <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">Moved Stop</code> / <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">Late Entry</code> / <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">Oversized</code><br><br>
+          This is the single most powerful improvement tool.
+        </div>
+        <div class="stat-badge badge-amber" style="margin-top:10px">Add column T → qualityTagCol in Config</div>
+      </div>
+      <div class="card card-sm" style="border:1px dashed var(--border)">
+        <div class="stat-label" style="color:var(--text-muted)">🏭 Sector</div>
+        <div style="font-size:13px;margin-top:8px;line-height:1.6;color:var(--text-secondary)">
+          IT / BFSI / Pharma / Auto / FMCG etc.<br><br>
+          Reveals hidden concentration — when market rotates, correlated positions all hit stop simultaneously.
+        </div>
+        <div class="stat-badge badge-amber" style="margin-top:10px">Add column N → sectorCol in Config</div>
+      </div>
+      <div class="card card-sm" style="border:1px dashed var(--border)">
+        <div class="stat-label" style="color:var(--text-muted)">📝 Exit Reason</div>
+        <div style="font-size:13px;margin-top:8px;line-height:1.6;color:var(--text-secondary)">
+          <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">Stop</code> / <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">Target</code> / <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">Rule-based</code> / <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">Time</code><br><br>
+          17 of 18 losing trades in the example had correct entries — the leak was in exit management. This column proves it.
+        </div>
+        <div class="stat-badge badge-amber" style="margin-top:10px">Add column G → exitReasonCol in Config</div>
+      </div>
+    </div>
+  </details>
+
 </div>
 
 <!-- ════ POSITIONS ════ -->
@@ -3996,19 +3993,22 @@ function initAnalysisCharts(open, closed) {
     }
   }
 
-  // Scatter
+  // Scatter — closed wins, closed losses, + open positions (amber)
   const sorted = [...closed].filter(t => t.closeDate).sort((a,b) => parseDate(a.closeDate)-parseDate(b.closeDate));
+  const openScatter = open.filter(t => t.age > 0 && t.plPct != null);
   const sc = new ApexCharts(document.getElementById('chart-scatter'), {
     ...baseOpts(240), chart: { ...baseOpts(240).chart, type: 'scatter', zoom: { enabled: false } },
     series: [
-      { name:'Win', data: sorted.filter(t=>t.finalPlPct>=0&&t.age>0).map(t=>[t.age, parseFloat(t.finalPlPct.toFixed(1))]) },
-      { name:'Loss', data: sorted.filter(t=>t.finalPlPct<0&&t.age>0).map(t=>[t.age, parseFloat(t.finalPlPct.toFixed(1))]) },
+      { name:'Closed Win', data: sorted.filter(t=>t.finalPlPct>=0&&t.age>0).map(t=>[t.age, parseFloat(t.finalPlPct.toFixed(1))]) },
+      { name:'Closed Loss', data: sorted.filter(t=>t.finalPlPct<0&&t.age>0).map(t=>[t.age, parseFloat(t.finalPlPct.toFixed(1))]) },
+      { name:'Open (live)', data: openScatter.map(t=>[parseInt(t.age)||0, parseFloat((t.plPct||0).toFixed(1))]) },
     ],
     xaxis: { ...baseOpts().xaxis, title: { text:'Hold Days', style:{color:c.text} }, min: 0 },
-    yaxis: { labels: { style:{colors:c.text,fontSize:'11px'}, formatter: v => v+'%' }, title: { text:'Final P&L%', style:{color:c.text} } },
-    colors: [c.green, c.red], markers: { size: 6 },
+    yaxis: { labels: { style:{colors:c.text,fontSize:'11px'}, formatter: v => v+'%' }, title: { text:'P&L%', style:{color:c.text} } },
+    colors: [c.green, c.red, c.amber], markers: { size: [6, 6, 7] },
     annotations: { yaxis: [{ y: 0, borderColor: c.text, strokeDashArray: 3 }] },
     tooltip: { ...baseOpts().tooltip, x: { formatter: v => v+' days' }, y: { formatter: v => v+'%' } },
+    legend: { show: true, position: 'top', fontSize: '11px', labels: { colors: c.text } },
   });
   sc.render(); analysisCharts.push(sc);
 
@@ -4048,18 +4048,31 @@ function initAnalysisCharts(open, closed) {
     const key = d.getFullYear()+'-W'+String(wk).padStart(2,'0');
     wkMap[key] = (wkMap[key]||0)+1;
   });
+  const _vnow = new Date(), _vjan1 = new Date(_vnow.getFullYear(),0,1);
+  const _vwk = Math.ceil(((_vnow-_vjan1)/86400000+_vjan1.getDay()+1)/7);
+  const _curWkKey = _vnow.getFullYear()+'-W'+String(_vwk).padStart(2,'0');
   const wkKeys = Object.keys(wkMap).sort(), velData = wkKeys.map(k => wkMap[k]);
   const vel = new ApexCharts(document.getElementById('chart-velocity'), {
     ...baseOpts(240), chart: { ...baseOpts(240).chart, type: 'bar' },
     series: [{ name:'New Positions', data: velData }],
     xaxis: { ...baseOpts().xaxis, categories: wkKeys.map(k=>k.replace(/\d{4}-/,'')), labels: { ...baseOpts().xaxis.labels, rotate:-45, hideOverlappingLabels:true } },
     yaxis: { labels: { style:{colors:c.text,fontSize:'11px'} }, tickAmount:5 },
-    colors: velData.map(v => v>=3?c.amber:c.accent),
+    colors: velData.map((v,i) => wkKeys[i]===_curWkKey ? c.accent : v>=3 ? c.amber : c.green),
     plotOptions: { bar: { columnWidth:'60%', distributed:true, borderRadius:3 } },
     legend: { show:false }, dataLabels: { enabled:false },
-    annotations: { yaxis: [{ y:3, label:{text:'Overtrading threshold',style:{color:c.amber,fontSize:'11px'}}, borderColor:c.amber, strokeDashArray:4 }] },
+    annotations: { yaxis: [{ y:3, label:{text:'Overtrading threshold',style:{color:c.amber,fontSize:'11px',background:'transparent'}}, borderColor:c.amber, strokeDashArray:4 }] },
   });
   vel.render(); analysisCharts.push(vel);
+  const velInsEl = document.getElementById('velocity-insight');
+  if (velInsEl && wkKeys.length > 0) {
+    const avgVel = (velData.reduce((s,v)=>s+v,0)/velData.length).toFixed(1);
+    const maxVel = Math.max(...velData);
+    const overWks = velData.filter(v=>v>=3).length;
+    const curWkVal = wkMap[_curWkKey] || 0;
+    let velTxt = `Avg ${avgVel}/week · peak ${maxVel} · ${overWks} week${overWks!==1?'s':''} above threshold`;
+    if (curWkVal > 0) velTxt += ` · <strong style="color:var(--accent)">This week: ${curWkVal}</strong>`;
+    velInsEl.innerHTML = velTxt;
+  }
 
   // ── TRADE MANAGEMENT ANALYSIS ──────────────────────
   const tmSet = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
