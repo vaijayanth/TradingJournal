@@ -1343,9 +1343,10 @@ tbody tr:hover { filter: brightness(0.97); }
           <th>Stock</th>
           <th>Age</th>
           <th>Entry ₹</th>
+          <th>CMP ₹</th>
           <th title="MAX(manual stop J, 7-day low I)">Eff Stop ₹</th>
           <th title="% from effective stop = MAX(J, I)">% from Stop</th>
-          <th>Notional P&L%</th>
+          <th>P&L%</th>
           <th>Partial</th>
           <th>21 EMA</th>
           <th>HA</th>
@@ -1981,6 +1982,7 @@ function renderPositionsReal(open, cfg) {
         <td><span class="stock-name">${t.stock}</span>${t.dataError ? ' <span style="font-size:10px;color:var(--red)">⚠</span>' : ''}${t.signalCount >= 2 ? ` <span title="${t.signalCount} signals firing — priority action needed" style="font-size:10px;background:var(--red);color:#fff;border-radius:8px;padding:1px 5px;margin-left:3px;font-weight:700">${t.signalCount}⚡</span>` : ''}</td>
         <td>${t.age}d</td>
         <td>₹${t.entryPrice.toLocaleString('en-IN')}</td>
+        <td class="${pnlClass}" style="font-weight:700">₹${t.cmp.toLocaleString('en-IN')}</td>
         <td title="Effective stop: MAX(manual ₹${t.stopLoss.toLocaleString('en-IN')}, 7d low ₹${t.sevenDayLow.toLocaleString('en-IN')}) = ₹${t.effStop.toLocaleString('en-IN')}">₹${t.effStop.toLocaleString('en-IN')}</td>
         <td class="${fromStopClass} fw-700">${t.effPct >= 0 ? '+' : ''}${t.effPct.toFixed(1)}%</td>
         <td class="${pnlClass}">${t.plPct >= 0 ? '+' : ''}${t.plPct.toFixed(1)}%</td>
@@ -1989,7 +1991,7 @@ function renderPositionsReal(open, cfg) {
         <td><span class="tag ${haClass} ${haChangedClass}" style="${haWarnStyle}" title="${t.haWarn ? '⚠ Profit at risk — HA Red with healthy gain, consider protecting' : haChanged ? 'HA colour just changed — momentum shift!' : ''}">${t.haWarn ? '⚠ ' : ''}${haLabel}</span></td>
       </tr>
       <tr class="expand-row" id="expand-${i}">
-        <td colspan="9" style="padding:0">
+        <td colspan="10" style="padding:0">
           <div class="expand-content">
             <div class="expand-item"><div class="expand-label">Entry Date</div><div class="expand-value">${t.openDate || '—'}</div></div>
             <div class="expand-item"><div class="expand-label">Manual Stop (J)</div><div class="expand-value">₹${t.stopLoss.toLocaleString('en-IN')}</div></div>
