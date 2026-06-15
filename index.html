@@ -869,6 +869,16 @@ tbody tr:hover { filter: brightness(0.97); }
         </div>
       </div>
     </div>
+    <!-- R-Expectancy -->
+    <div class="card card-sm">
+      <div class="stat-label">R-Expectancy (per trade)</div>
+      <div class="stat-value" style="font-size:30px; margin-top:4px" id="perf-r-expectancy">—</div>
+      <div class="stat-badge badge-green" style="margin-top:6px" id="perf-r-expectancy-badge">—</div>
+      <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
+        <div style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:4px">HOW TO READ</div>
+        <div class="stat-sub" style="line-height:1.5">WR × AvgWinR − (1−WR) × 1R<br>Positive = system has edge</div>
+      </div>
+    </div>
     <!-- Profit Factor + Sharpe -->
     <div class="card card-sm">
       <div class="stat-label">Profit Factor</div>
@@ -2167,6 +2177,20 @@ function renderPerfStats(closed, open, portfolioValue, initialCapital) {
   set('perf-rmultiple-badge', rMultiple >= 1.5 ? '✓ Asymmetric edge' : rMultiple >= 1 ? 'Edge — room to improve' : '⚠ Below 1R — check exit rules');
   const rmBadge = document.getElementById('perf-rmultiple-badge');
   if (rmBadge) rmBadge.className = 'stat-badge ' + (rMultiple >= 1.5 ? 'badge-green' : rMultiple >= 1 ? 'badge-amber' : 'badge-red');
+
+  // ── R-Expectancy ──
+  // Per trade: WR × AvgWinR − LossRate × 1R (losses always cost exactly 1R by definition)
+  const wrFrac = closed.length > 0 ? wins.length / closed.length : 0;
+  const rExpectancy = avgFinalLoss !== 0 ? (wrFrac * rMultiple) - ((1 - wrFrac) * 1) : 0;
+  set('perf-r-expectancy', rExpectancy.toFixed(2) + 'R');
+  const rExpEl = document.getElementById('perf-r-expectancy');
+  if (rExpEl) rExpEl.style.color = rExpectancy > 0 ? 'var(--green)' : 'var(--red)';
+  const rExpBadge = document.getElementById('perf-r-expectancy-badge');
+  if (rExpBadge) {
+    const label = rExpectancy >= 0.5 ? '✓ Strong edge' : rExpectancy > 0 ? 'Positive — keep at it' : '⚠ Negative — review exits';
+    rExpBadge.textContent = label;
+    rExpBadge.className = 'stat-badge ' + (rExpectancy >= 0.5 ? 'badge-green' : rExpectancy > 0 ? 'badge-amber' : 'badge-red');
+  }
 
   // ── Profit Factor ──
   const grossWins = wins.reduce((s,t) => s + t.finalPl, 0);
