@@ -1101,7 +1101,7 @@ tbody tr:hover { filter: brightness(0.97); }
   <!-- Indexed Equity Curve -->
   <div class="card" style="margin-top:14px">
     <div class="chart-title">Indexed Equity Curve (by Trade #)</div>
-    <div class="chart-sub">Realised return % by trade # · amber dot = combined incl. open MTM · shows true system performance</div>
+    <div class="chart-sub">Realised return % by trade # · amber line = combined incl. open MTM · shows true system performance</div>
     <div id="chart-indexed-equity" style="height:260px;"></div>
     <div id="insight-indexed-equity" class="chart-insight"></div>
   </div>
@@ -3484,30 +3484,19 @@ function initPerfCharts(closed, initialCapital, open) {
       realisedPoints.push(ret);
     });
 
-    // Combined "Now" point — dashed line from last realised point to the combined value
+    // Combined "Now" value — shown as a point annotation, not a second series
     const totalOpenMTM2 = (open||[]).reduce((s,t) => s + (t.notionalPl||0), 0);
-    const lastRet = realisedPoints[realisedPoints.length - 1] ?? 0;
     const combRet2 = initialCapital > 0 ? parseFloat(((eq2inner + totalOpenMTM2 - initialCapital) / initialCapital * 100).toFixed(2)) : 0;
+    const lastRet = realisedPoints[realisedPoints.length - 1] ?? 0;
     const hasCombined = totalOpenMTM2 !== 0;
 
-    // X-axis: trade numbers, capped at 15 ticks for readability; append "Now" if combined shown
     const xCats = sorted.map((_,i) => i+1);
-    // Combined series: null for all points except last realised (anchor) + "Now"
-    const combData = hasCombined
-      ? [...realisedPoints.map((_, i) => i === realisedPoints.length - 1 ? lastRet : null), combRet2]
-      : null;
-    if (hasCombined) xCats.push('Now');
-
     const realisedColor = eq2inner >= (initialCapital||0) ? c.green : c.red;
-    const allSeries = [
-      { name: 'Realised %', data: hasCombined ? [...realisedPoints, null] : realisedPoints },
-      ...(hasCombined ? [{ name: 'Incl. Open MTM', data: combData }] : []),
-    ];
 
     const idxChart = new ApexCharts(indexedEl, {
       ...baseOpts(260),
-      chart: { ...baseOpts(260).chart, type: 'line' },
-      series: allSeries,
+      chart: { ...baseOpts(260).chart, type: 'area' },
+      series: [{ name: 'Realised %', data: realisedPoints }],
       xaxis: {
         ...baseOpts().xaxis,
         categories: xCats,
@@ -3516,31 +3505,23 @@ function initPerfCharts(closed, initialCapital, open) {
         labels: { ...baseOpts().xaxis.labels, rotate: 0, hideOverlappingLabels: true },
       },
       yaxis: { labels: { style: { colors: c.text, fontSize:'11px' }, formatter: v => v != null ? (v>=0?'+':'')+v.toFixed(1)+'%' : '' } },
-      colors: [realisedColor, c.amber],
-      fill: { type: ['gradient', 'solid'], gradient: { shadeIntensity:1, opacityFrom:0.3, opacityTo:0.02 } },
-      stroke: { curve: 'smooth', width: [2, 2], dashArray: [0, 5] },
+      colors: [realisedColor],
+      fill: { type: 'gradient', gradient: { shadeIntensity:1, opacityFrom:0.35, opacityTo:0.02 } },
+      stroke: { curve: 'smooth', width: 2.5 },
       dataLabels: { enabled: false },
-      markers: {
-        size: [0, 8],
-        colors: [c.amber, c.amber],
-        strokeColors: [c.amber, c.amber],
-        strokeWidth: 0,
-        discrete: hasCombined ? [{ seriesIndex: 1, dataPointIndex: xCats.length - 1, size: 8, fillColor: c.amber, strokeColor: c.amber }] : [],
-      },
+      markers: { size: 0 },
       annotations: {
         yaxis: [
           { y: 0, borderColor: c.text, strokeDashArray: 3, label: { text: 'Break-even', style: { color: c.text, fontSize: '10px', background: 'transparent' }, offsetX: 8 } },
+          ...(hasCombined ? [{ y: combRet2, borderColor: c.amber, strokeDashArray: 5,
+            label: { text: `Combined ${combRet2>=0?'+':''}${combRet2.toFixed(1)}% (incl. open MTM)`, borderColor: 'transparent',
+              style: { color: c.amber, background: 'var(--surface2)', fontSize: '11px', fontWeight: 700, padding: { left:6, right:6, top:3, bottom:3 } } } }] : []),
         ],
-        points: hasCombined ? [{
-          x: 'Now', y: combRet2,
-          marker: { size: 0 },
-          label: { text: (combRet2>=0?'+':'')+combRet2.toFixed(1)+'% combined', style: { color: c.amber, background: 'transparent', fontSize: '11px', fontWeight: 700 }, offsetY: -10 }
-        }] : [],
       },
-      legend: { show: hasCombined, labels: { colors: c.text }, fontSize: '11px', position: 'top', horizontalAlign: 'right' },
+      legend: { show: false },
       tooltip: {
         ...baseOpts().tooltip,
-        x: { formatter: (v, { dataPointIndex }) => dataPointIndex === xCats.length - 1 && hasCombined ? 'Now (incl. open MTM)' : 'Trade #' + xCats[dataPointIndex] },
+        x: { formatter: (_, { dataPointIndex }) => 'Trade #' + xCats[dataPointIndex] },
         y: { formatter: v => v != null ? (v>=0?'+':'')+v.toFixed(2)+'%' : '—' },
       },
     });
