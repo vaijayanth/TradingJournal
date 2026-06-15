@@ -3464,9 +3464,9 @@ function initPerfCharts(closed, initialCapital, open) {
   // 2. P&L Distribution
   const rightTail = wins2.filter(t => t.finalPlPct > 10).length;
   const rightTailPct = wins2.length > 0 ? rightTail / wins2.length * 100 : 0;
-  const lossOver5 = losses2.filter(t => t.finalPlPct < -5).length;
+  const lossOver5 = losses2.filter(t => t.initRiskRs > 0 ? Math.abs(t.finalPl) > t.initRiskRs * 1.5 : t.finalPlPct < -5).length;
   if (lossOver5 > 0) {
-    ins('insight-distribution','red',`⚠ <strong>${lossOver5} loss${lossOver5>1?'es':''} exceeded −5%</strong> — these are stops that weren't taken. Every loss beyond your plan costs 2–3 good trades.<br>→ <strong>Action:</strong> Identify these trades in Closed Trades tab. Were you below the 7-day low and held? Enforce the rule — no exceptions.`);
+    ins('insight-distribution','red',`⚠ <strong>${lossOver5} loss${lossOver5>1?'es':''} exceeded 1.5× planned risk</strong> — these are stops that weren't taken on time. Every loss beyond your plan costs 2–3 good trades.<br>→ <strong>Action:</strong> Identify these trades in Closed Trades tab. Were you below the 7-day low and held? Enforce the rule — no exceptions.`);
   } else if (rightTailPct < 20 && wins2.length >= 5) {
     ins('insight-distribution','amber',`⚡ Only ${rightTailPct.toFixed(0)}% of winners exceed +10% — you may be exiting too early. Avg win: ${fmtPct(avgWin2)} vs avg loss: −${avgLoss2.toFixed(1)}%.<br>→ <strong>Action:</strong> Check Hold Duration table. If winners are exited before 7-day low triggers, let the trail do its job.`);
   } else {
