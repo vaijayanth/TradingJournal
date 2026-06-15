@@ -3622,9 +3622,24 @@ document.addEventListener('DOMContentLoaded', () => {
     const ri = document.querySelector('.refresh-info');
     if (ri) ri.textContent = 'No data — configure in Config tab';
   }
+  window._strategy = 'swing'; // default strategy on load
 });
 
-// ── F&O MODULE ────────────────────────────────────────────────────────────
+// ════════════════════════════════════════════════════════════════════════════
+// ██  SWING MODULE — END                                                    ██
+// ════════════════════════════════════════════════════════════════════════════
+// Everything above this line is Swing trading journal logic.
+// Data source: TRADES sheet · Functions: renderDashboard, renderPositionsReal,
+// renderPerfStats, initPerfCharts, renderClosedTradesReal, initAnalysisCharts
+// ────────────────────────────────────────────────────────────────────────────
+
+// ════════════════════════════════════════════════════════════════════════════
+// ██  F&O MODULE — START                                                    ██
+// ════════════════════════════════════════════════════════════════════════════
+// Data source: NSEFO sheet · Strategy: Credit spreads (put spread / call spread)
+// Functions prefixed fno* · Entry point: switchStrategy('fno')
+// Completely isolated — no shared state with Swing module except cfg.url
+// ────────────────────────────────────────────────────────────────────────────
 
 function fnoScore(s) {
   // Bullish signals (max 6)
