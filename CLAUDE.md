@@ -174,3 +174,100 @@ const effPct = (t.cmp && effStop) ? ((t.cmp - effStop) / t.cmp * 100) : t.pctFro
 - `portfolioValue` from sheet cell AK26 is the source of truth for portfolio headline
 - `alertCount` badge uses effective stop MAX(J,I) not col W
 - Closed trade count: Apps Script filters `flag === 'NO' && finalPl !== 0` to exclude watchlist
+
+---
+
+## F&O Module
+
+### Overview
+Second strategy module — NSE credit spreads watchlist. Toggled via top-level strategy switcher.
+- Sheet: `NSEFO` (same Google Sheet, different tab)
+- Apps Script: same URL, pass `?mode=fno` (or body param `mode=fno`)
+- No trading journal — just a watchlist with signal scoring and spread recommendation
+
+### Strategy
+- **Uptrend** → open **Put Spread** (sell 0.2 delta PE, buy hedge 2 strikes lower)
+- **Downtrend** → open **Call Spread** (sell 0.2 delta CE, buy hedge 2 strikes higher)
+- **Exit sell leg** if premium doubles (risk management)
+- **Add Call Spread** when HA turns Red on an existing spread position (downtrend accelerates profit)
+
+### NSEFO Sheet Column Mapping
+Cols A–E are empty. Data starts at col F (index 5).
+
+| Index | Column | Field | JS key |
+|---|---|---|---|
+| 5 | F | DATE | date |
+| 6 | G | STOCK | stock |
+| 7 | H | CMP | cmp |
+| 8 | I | 200 EMA ABOVE | ema200 (bool) |
+| 9 | J | 50 EMA ABOVE | ema50 (bool) |
+| 10 | K | 20 EMA ABOVE | ema20 (bool) |
+| 11 | L | HK COLOR | haColour ("Red"/"Green") |
+| 12 | M | HK CHANGED TODAY? | haChanged (bool) |
+| 13 | N | ATH | ath (bool) |
+| 14 | O | 52WH | wk52h (bool) |
+| 15 | P | 21DH | dh21 (bool) |
+| 16 | Q | 7DH | dh7 (bool) |
+| 17 | R | GAPUP | hasGapUp (bool) |
+| 18 | S | 200 EMA CROSS | ema200cross (bool) |
+| 19 | T | 50 EMA CROSS | ema50cross (bool) |
+| 20 | U | 21 EMA CROSS | ema21cross (bool) |
+| 21 | V | 7DL | sevenDayLow |
+| 22 | W | %FROM 7DL | pctFrom7DL |
+| 23 | X | SPREAD ACTIVE | spreadActive (bool) |
+
+### Signal Scoring
+```javascript
+function fnoScore(s) {
+  const bull = [s.ema200, s.ema50, s.ema20, s.haColour.toLowerCase()==='green',
+    s.ath||s.wk52h||s.dh21||s.dh7, s.hasGapUp].filter(Boolean).length; // max 6
+  const bear = [!s.ema200, !s.ema50, !s.ema20, s.haColour.toLowerCase()==='red'].filter(Boolean).length; // max 4
+  return { bull, bear };
+}
+function fnoTrend(s) {
+  const { bull, bear } = fnoScore(s);
+  if (bull >= 4) return 'bullish';
+  if (bear >= 3) return 'bearish';
+  return 'mixed';
+}
+function fnoAction(s) {
+  const trend = fnoTrend(s);
+  const haRed = s.haColour.toLowerCase() === 'red';
+  const haRedToday = haRed && s.haChanged;
+  if (s.spreadActive && haRedToday) return 'add-call';
+  if (trend === 'bullish' && !haRed) return 'put-spread';
+  if (trend === 'bearish' || (haRedToday && !s.spreadActive)) return 'call-spread';
+  return 'wait';
+}
+```
+
+### Apps Script — F&O Mode
+When `mode=fno`, Apps Script reads NSEFO sheet and returns:
+```json
+{ "success": true, "watchlist": [...], "fetchedAt": "..." }
+```
+Each watchlist item maps NSEFO columns using row indices 5–23 (0-based).
+
+**CRITICAL**: Apps Script must use `row[6]` for STOCK (col G), not `row[0]`. All column offsets are 5+ from 0.
+
+### Code Structure (F&O Isolation)
+- All F&O JS functions prefixed `fno*`
+- `window._fnoData` stores F&O data (never mixed with `window._data`)
+- `window._strategy` = `'swing'` | `'fno'`
+- HTML: `#fno-pages` (hidden by default), `#fno-nav-tabs` (hidden by default)
+- HTML: `#swing-pages` (visible by default)
+- Boundary comments in index.html mark SWING MODULE END / F&O MODULE START
+
+### Strategy Switcher
+```html
+<div class="strategy-bar">
+  <button class="sw-btn active" id="sw-swing" onclick="switchStrategy('swing')">📈 Swing</button>
+  <button class="sw-btn" id="sw-fno" onclick="switchStrategy('fno')">📊 F&amp;O</button>
+</div>
+```
+`switchStrategy(mode)` toggles visibility of `#swing-pages`/`#fno-pages` and `#fno-nav-tabs`, sets `window._strategy`, triggers data fetch for the selected module.
+
+### F&O Entry Points
+- `refreshFnoData()` — fetches from Apps Script with `mode=fno`, stores in `window._fnoData`
+- `renderFnoDashboard(data)` — summary cards for F&O tab
+- `renderFnoWatchlist(data)` — watchlist table with signal badges and action recommendation
