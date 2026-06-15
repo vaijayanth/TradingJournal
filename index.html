@@ -4132,53 +4132,74 @@ function initAnalysisCharts(open, closed) {
     const lossRMults = tmLosers.filter(t => (t.initRiskRs||0) > 0).map(t => Math.abs((t.finalPl||0) / t.initRiskRs));
     const avgLossR = lossRMults.length > 0 ? (lossRMults.reduce((s,v)=>s+v,0)/lossRMults.length) : 0;
 
-    // ── Find optimal trigger: lowest T where false-stop rate < 10% ──
-    // "False stop" = winner that closes below T — would be exited at 0% by the BE rule, losing that P&L
+    // ── Trigger analysis: cost of each BE trigger level ──
+    // "Cost" = winner that closes BELOW the trigger — it never reached the trigger, so the BE rule
+    // never fired on it. It's unaffected. But it means our sample of "saved" trades is limited to
+    // losers that briefly went above the trigger (we don't have MFE, so we show what we can).
+    // Key insight: if two triggers have the SAME cost (same # winners below), use the LOWER one —
+    // earlier protection for free.
     const candidates = [2, 3, 4, 5, 6, 7, 8, 10];
     const triggerAnalysis = candidates.map(T => {
-      const falseStops = tmWinners.filter(t => t.finalPlPct < T).length;
-      const falseStopRate = falseStops / tmWinners.length * 100;
-      const safePct = 100 - falseStopRate;
-      const costIfFired = tmWinners.filter(t => t.finalPlPct < T)
-        .reduce((s,t) => s + t.finalPlPct, 0) / tmWinners.length; // avg P&L% lost per trade by stopping at 0%
-      return { T, falseStops, falseStopRate, safePct, costIfFired };
+      const below = tmWinners.filter(t => t.finalPlPct < T).length;
+      return { T, below, rate: below / tmWinners.length * 100 };
     });
-    // Recommended trigger = lowest T with <10% false-stop rate
-    const recommended = triggerAnalysis.find(a => a.falseStopRate < 10) || triggerAnalysis[triggerAnalysis.length - 1];
-    const currentAnalysis = triggerAnalysis.find(a => a.T === 5) || triggerAnalysis[3];
+    const currentA = triggerAnalysis.find(a => a.T === 5);
+    // Optimal = lowest T that doesn't add more winners being cut than the minimum seen
+    const minBelow = Math.min(...triggerAnalysis.map(a => a.below));
+    const optimal = triggerAnalysis.find(a => a.below === minBelow); // lowest trigger with fewest winners affected
 
     let beText = '';
 
-    // ── Section 1: BE stop calibration ──
-    beText += `<strong>Breakeven Stop Trigger Analysis</strong><br>`;
-    beText += `Of your <strong>${tmWinners.length} closed winners</strong>: `;
-    beText += `<strong>${p5}%</strong> clear +5% · <strong>${p10}%</strong> clear +10% · <strong>${p15}%</strong> clear +15%.<br><br>`;
+    // ── Winner size distribution buckets ──
+    const wBuckets = [
+      { label:'0–2%',  count: tmWinners.filter(t=>t.finalPlPct>=0  && t.finalPlPct<2).length },
+      { label:'2–5%',  count: tmWinners.filter(t=>t.finalPlPct>=2  && t.finalPlPct<5).length },
+      { label:'5–10%', count: tmWinners.filter(t=>t.finalPlPct>=5  && t.finalPlPct<10).length },
+      { label:'10–20%',count: tmWinners.filter(t=>t.finalPlPct>=10 && t.finalPlPct<20).length },
+      { label:'20%+',  count: tmWinners.filter(t=>t.finalPlPct>=20).length },
+    ];
 
-    // Trigger comparison table
-    beText += `<strong>False-stop rate at each trigger level</strong> (winners that close below trigger → stopped at 0% instead):<br>`;
-    beText += `<span style="font-size:12px;line-height:2">`;
+    beText += `<strong>Where your ${tmWinners.length} winners actually close:</strong><br>`;
+    beText += `<span style="font-size:12px;line-height:1.9">`;
+    wBuckets.forEach(b => {
+      if (b.count === 0) return;
+      const bar = '█'.repeat(Math.round(b.count / tmWinners.length * 20));
+      const pct = (b.count / tmWinners.length * 100).toFixed(0);
+      beText += `&nbsp;&nbsp;<span style="font-family:monospace">${b.label.padEnd(7,' ')}</span> ${bar} ${b.count} trade${b.count!==1?'s':''} (${pct}%)<br>`;
+    });
+    beText += `</span><br>`;
+
+    // ── BE trigger recommendation ──
+    beText += `<strong>Should you move stop to breakeven earlier than +5%?</strong><br>`;
+    beText += `<span style="font-size:12px;line-height:1.9">`;
     triggerAnalysis.forEach(a => {
       const isCurrent = a.T === 5;
-      const isRecommended = a.T === recommended.T;
-      const rateColor = a.falseStopRate < 10 ? 'var(--green)' : a.falseStopRate < 20 ? 'var(--amber)' : 'var(--red)';
-      const tag = isCurrent && isRecommended ? ' ← current ✅' : isCurrent ? ' ← current' : isRecommended ? ' ← <strong>recommended</strong>' : '';
-      beText += `&nbsp;&nbsp;+${a.T}% trigger: <span style="color:${rateColor};font-weight:700">${a.falseStopRate.toFixed(0)}% false-stop rate</span> (${a.falseStops} winner${a.falseStops!==1?'s':''} cut short)${tag}<br>`;
+      const isOptimal = a.T === optimal.T;
+      const prevA = triggerAnalysis[triggerAnalysis.indexOf(a) - 1];
+      const addedCost = prevA ? a.below - prevA.below : a.below;
+      const rateColor = a.rate < 15 ? 'var(--green)' : a.rate < 30 ? 'var(--amber)' : 'var(--red)';
+      const costStr = addedCost > 0
+        ? ` +${addedCost} extra winner${addedCost!==1?'s':''} affected`
+        : ` no extra cost vs +${prevA ? prevA.T : 0}%`;
+      const tag = isOptimal && isCurrent ? ' ✅ current & optimal'
+        : isOptimal ? ' ← <strong style="color:var(--green)">move here — earlier protection, no extra cost</strong>'
+        : isCurrent ? ' ← current'
+        : '';
+      beText += `&nbsp;&nbsp;<strong>+${a.T}%</strong>: ${a.below} winner${a.below!==1?'s':''} close below this (${a.rate.toFixed(0)}% cost)${tag}<br>`;
     });
     beText += `</span>`;
 
     // Verdict
-    if (recommended.T < 5) {
-      beText += `<br>💡 <strong>Recommendation: tighten your BE trigger from +5% to +${recommended.T}%.</strong> `;
-      beText += `At +${recommended.T}%, only ${recommended.falseStopRate.toFixed(0)}% of your winners close below the trigger — `;
-      beText += `you'd protect yourself earlier with minimal cost to your winners. `;
-      beText += `Your current +5% trigger has a ${currentAnalysis.falseStopRate.toFixed(0)}% false-stop rate — `;
-      beText += `those ${currentAnalysis.falseStops} winners close below +5% and get stopped at 0% instead of their actual exit.`;
-    } else if (recommended.T === 5) {
-      beText += `<br>✅ <strong>Your +5% BE trigger is optimal based on your trade history.</strong> `;
-      beText += `Only ${currentAnalysis.falseStopRate.toFixed(0)}% of winners close below +5% — you're rarely cutting winners short.`;
+    if (optimal.T < 5) {
+      beText += `<br>💡 <strong>Verdict: Move your BE stop trigger from +5% to +${optimal.T}%.</strong> `;
+      beText += `The number of winners affected is the same (${optimal.below}) — those small winners never reach +5% anyway so your current rule doesn't help OR hurt them. `;
+      beText += `But at +${optimal.T}% you move the stop to breakeven <em>earlier</em>, which means more of your eventual losers (that briefly went to +${optimal.T}%) would be exited at 0% instead of a loss. That's free protection.`;
+    } else if (optimal.T === 5) {
+      beText += `<br>✅ <strong>Verdict: Your +5% BE trigger is already optimal.</strong> `;
+      beText += `A tighter trigger would start cutting more winners short with no benefit.`;
     } else {
-      beText += `<br>⚠️ <strong>Even +${recommended.T}% has a ${recommended.falseStopRate.toFixed(0)}% false-stop rate — your winners are short-lived.</strong> `;
-      beText += `Focus on finding setups that run farther before tightening the BE stop rule.`;
+      beText += `<br>⚠️ <strong>Verdict: Your winners are short — even a low trigger cuts many short.</strong> `;
+      beText += `Focus on finding setups that run farther before tightening the BE stop rule. Add MFE column to know definitively.`;
     }
 
     // ── Section 2: R-multiple framing ──
