@@ -3831,24 +3831,16 @@ function fnoRenderAlerts(watchlist) {
     const extended = parseFloat(s.pctFrom7DL) > 8;
 
     if (s.spreadActive && haRed && s.haChanged)
-      allAlerts.push({ group:'add-call', score:10, icon:'🔄',
-        title:`${s.stock} — HA turned Red today (spread active)`,
-        desc:`HA just flipped red. Add a call spread now: sell 0.2Δ CE, buy hedge 2 strikes above.` });
+      allAlerts.push({ group:'add-call', score:10, stock:s.stock });
 
     if (s.spreadActive && haRed && !s.haChanged)
-      allAlerts.push({ group:'exit-risk', score:5, icon:'⚠',
-        title:`${s.stock} — Active spread, HA has been Red`,
-        desc:`HA is red but didn't change today. Check broker terminal — exit if premium has doubled (2×).` });
+      allAlerts.push({ group:'exit-risk', score:5, stock:s.stock });
 
     if (!s.spreadActive && action === 'put-spread')
-      allAlerts.push({ group:'new-put', score:bull, icon:'🟢',
-        title:`${s.stock} — Put Spread setup (${bull}/6 signals)${tags}`,
-        desc:`${bull >= 5 ? 'Strong' : 'Moderate'} bullish alignment. Sell 0.2Δ PE + buy hedge 2 strikes lower.${extended ? ' <span style="color:var(--amber)">Extended from 7DL — consider waiting for pullback.</span>' : ''}` });
+      allAlerts.push({ group:'new-put', score:bull, stock:s.stock });
 
     if (!s.spreadActive && action === 'call-spread')
-      allAlerts.push({ group:'new-call', score:bear, icon:'⬇',
-        title:`${s.stock} — Call Spread setup (${bear}/4 bearish signals)`,
-        desc:`Bearish alignment. Sell 0.2Δ CE + buy hedge 2 strikes above.` });
+      allAlerts.push({ group:'new-call', score:bear, stock:s.stock });
   });
 
   const groups = [
@@ -3866,6 +3858,56 @@ function fnoRenderAlerts(watchlist) {
     const items = allAlerts.filter(a => a.group === g.key).sort((a,b) => b.score - a.score);
     if (items.length === 0) return '';
     const isOpen = g.autoOpen;
+
+    // Table headers per group type
+    const isActiveGroup = g.key === 'add-call' || g.key === 'exit-risk';
+    const thead = isActiveGroup
+      ? `<tr><th>Stock</th><th>CMP</th><th>HA Status</th><th>% from 7DL</th><th>Action</th></tr>`
+      : `<tr><th>Stock</th><th>CMP</th><th>Score</th><th>Breakouts</th><th>% from 7DL</th><th>Action</th><th>Note</th></tr>`;
+
+    const tbody = items.map(a => {
+      const s = watchlist.find(w => w.stock === a.stock);
+      if (!s) return '';
+      const haLabel = s.haColour + (s.haChanged ? ' 🔄' : '');
+      const haClass = s.haColour.toLowerCase()==='green' ? 'pnl-pos' : 'pnl-neg';
+      const actionBadge = g.key==='add-call'
+        ? `<span class="fno-badge fno-badge-call">🔄 Add Call</span>`
+        : g.key==='exit-risk'
+          ? `<span class="fno-badge" style="background:var(--amber-soft);color:var(--amber);border:1px solid rgba(245,158,11,.3)">⚠ Monitor</span>`
+          : g.key==='new-put'
+            ? `<span class="fno-badge fno-badge-put">🟢 Put Spread</span>`
+            : `<span class="fno-badge fno-badge-call">⬇ Call Spread</span>`;
+      const { bull, bear } = fnoScore(s);
+      const trend = fnoTrend(s);
+      const pips = trend==='bullish'
+        ? Array(6).fill(0).map((_,i)=>`<div class="fno-score-pip${i<bull?' bull':''}"></div>`).join('')
+        : Array(4).fill(0).map((_,i)=>`<div class="fno-score-pip${i<bear?' bear':''}"></div>`).join('');
+      const breakouts = [s.ath?'ATH':null, s.wk52h?'52W-H':null, s.hasGapUp?'Gap↑':null, s.dh21?'21D-H':null].filter(Boolean)
+        .map(t=>`<span style="background:var(--accent-soft);color:var(--accent);padding:1px 5px;border-radius:4px;font-size:10px;margin-right:2px">${t}</span>`).join('') || '—';
+      const extended = parseFloat(s.pctFrom7DL) > 8;
+      const note = extended ? `<span style="color:var(--amber);font-size:10px">Extended &gt;8%</span>` : '—';
+
+      if (isActiveGroup) {
+        return `<tr>
+          <td><span class="stock-name">${s.stock}</span></td>
+          <td>₹${s.cmp.toLocaleString('en-IN')}</td>
+          <td class="${haClass}">${haLabel}</td>
+          <td>${s.pctFrom7DL||'—'}</td>
+          <td>${actionBadge}</td>
+        </tr>`;
+      } else {
+        return `<tr>
+          <td><span class="stock-name">${s.stock}</span></td>
+          <td>₹${s.cmp.toLocaleString('en-IN')}</td>
+          <td><div class="fno-score-bar">${pips}</div><div style="font-size:10px;color:var(--text-muted)">${trend==='bullish'?bull+'/6':bear+'/4'}</div></td>
+          <td>${breakouts}</td>
+          <td>${s.pctFrom7DL||'—'}</td>
+          <td>${actionBadge}</td>
+          <td>${note}</td>
+        </tr>`;
+      }
+    }).join('');
+
     return `
       <div class="alert-group" style="margin-bottom:6px">
         <div class="alert-group-header${isOpen?' open':''}" id="fno-ag-hdr-${g.key}"
@@ -3876,12 +3918,13 @@ function fnoRenderAlerts(watchlist) {
           <span style="background:${g.bg};border:1px solid ${g.color}30;color:${g.color};padding:1px 8px;border-radius:10px;font-size:11px;font-weight:700">${items.length}</span>
           <span class="ag-chevron" style="color:${g.color}">${isOpen?'▼':'▶'}</span>
         </div>
-        <div class="alert-group-body${isOpen?' open':''}" id="fno-ag-body-${g.key}">
-          ${items.map(a => `
-            <div class="alert-banner alert-${g.key==='new-put'?'green':g.key==='add-call'?'red':'amber'}">
-              <div class="alert-icon">${a.icon}</div>
-              <div class="alert-text"><div class="alert-title">${a.title}</div><div class="alert-desc">${a.desc}</div></div>
-            </div>`).join('')}
+        <div class="alert-group-body${isOpen?' open':''}" id="fno-ag-body-${g.key}" style="padding:0">
+          <div style="overflow-x:auto">
+            <table class="trades-table" style="font-size:12px">
+              <thead>${thead}</thead>
+              <tbody>${tbody}</tbody>
+            </table>
+          </div>
         </div>
       </div>`;
   }).join('');
