@@ -3294,44 +3294,44 @@ function initPerfCharts(closed, initialCapital, open) {
   });
   distChart.render(); perfCharts.push(distChart);
 
-  // True R-multiple: finalPl ÷ initRiskRs. Fall back to % proxy if initRiskRs missing.
+  // True R-multiple: finalPl ÷ initRiskRs (closed) + notionalPl ÷ initRiskRs (open, live)
   const tradesWithR = sorted.filter(t => t.initRiskRs > 0);
-  const usesTrueR = tradesWithR.length >= sorted.length * 0.5; // >50% have initRiskRs
+  const usesTrueR = tradesWithR.length >= sorted.length * 0.5;
   const rSubEl = document.getElementById('rmultiple-sub');
-  const rBins   = ['≤-3R', '-2R', '-1R', '-0.5R', '0', '+0.5R', '+1R', '+2R', '+3R', '+5R', '>5R'];
-  const rCuts   = [-3, -2, -1, -0.5, 0, 0.5, 1, 2, 3, 5];
-  const rData   = new Array(rBins.length).fill(0);
+  const rBins = ['≤-3R', '-2R', '-1R', '-0.5R', '0', '+0.5R', '+1R', '+2R', '+3R', '+5R', '>5R'];
+  const rCuts = [-3, -2, -1, -0.5, 0, 0.5, 1, 2, 3, 5];
+  const rBin = r => { let i = rCuts.findIndex(cut => r < cut); return i === -1 ? rBins.length - 1 : Math.max(0, i); };
+  const rData = new Array(rBins.length).fill(0);
+  const rDataOpen = new Array(rBins.length).fill(0);
   if (usesTrueR) {
-    if (rSubEl) rSubEl.textContent = `True R = Final P&L ÷ Planned Risk · ${tradesWithR.length} closed trades`;
-    tradesWithR.forEach(t => {
-      const r = t.finalPl / t.initRiskRs;
-      let i = rCuts.findIndex(cut => r < cut);
-      if (i === -1) i = rBins.length - 1; // >5R bucket
-      else if (i === 0) i = 0;            // ≤-3R bucket
-      rData[i]++;
-    });
+    if (rSubEl) rSubEl.textContent = `True R = P&L ÷ Planned Risk · ${tradesWithR.length} closed · ${open.filter(t=>t.initRiskRs>0).length} open (live)`;
+    tradesWithR.forEach(t => rData[rBin(t.finalPl / t.initRiskRs)]++);
   } else {
-    // Fallback: bin by % rounded, mapped to same 11 bins using avgLoss as 1R proxy
-    if (rSubEl) rSubEl.textContent = `P&L % distribution (col K missing for most trades — map initRiskRsCol in Config)`;
+    if (rSubEl) rSubEl.textContent = `P&L % distribution — map col K (initRiskRsCol) in Config for true R`;
     const aLoss = losses2.length > 0 ? Math.abs(losses2.reduce((s,t)=>s+t.finalPlPct,0)/losses2.length) : 2;
-    sorted.forEach(t => {
-      const r = aLoss > 0 ? t.finalPlPct / aLoss : 0;
-      let i = rCuts.findIndex(cut => r < cut);
-      if (i === -1) i = rBins.length - 1;
-      else if (i === 0) i = 0;
-      rData[i]++;
-    });
+    sorted.forEach(t => rData[rBin(aLoss > 0 ? t.finalPlPct / aLoss : 0)]++);
   }
-  // Colour: loss bins red, breakeven amber, win bins green
-  const rColors = rData.map((_,i) => i < 4 ? c.red : i === 4 ? c.amber : c.green);
+  // Open positions — live unrealised R (notionalPl ÷ initRiskRs)
+  const openWithRisk = open.filter(t => t.initRiskRs > 0 && t.notionalPl !== 0);
+  openWithRisk.forEach(t => rDataOpen[rBin(t.notionalPl / t.initRiskRs)]++);
+  const hasOpenR = openWithRisk.length > 0;
+
+  // Closed: solid red/amber/green. Open: translucent purple-ish teal to distinguish
+  const rColors       = rBins.map((_,i) => i < 4 ? c.red   : i === 4 ? c.amber : c.green);
+  const rColorsOpen   = rBins.map((_,i) => i < 4 ? 'rgba(255,99,99,0.35)' : i === 4 ? 'rgba(255,159,10,0.35)' : 'rgba(52,199,89,0.35)');
+
+  const rmSeries = [{ name: 'Closed trades', data: rData }];
+  if (hasOpenR) rmSeries.push({ name: 'Open (live R)', data: rDataOpen });
+
   const rmChart = new ApexCharts(document.getElementById('chart-rmultiple'), {
-    ...baseOpts(220), chart: { ...baseOpts(220).chart, type: 'bar' },
-    series: [{ name: 'Trades', data: rData }],
-    xaxis: { ...baseOpts().xaxis, categories: rBins, title: { text: usesTrueR ? 'R-Multiple (finalPl ÷ initRiskRs)' : 'R-Multiple (proxy)', style: { color: c.text } } },
-    colors: rColors,
-    plotOptions: { bar: { columnWidth: '80%', distributed: true } }, legend: { show: false },
+    ...baseOpts(240), chart: { ...baseOpts(240).chart, type: 'bar', stacked: false },
+    series: rmSeries,
+    xaxis: { ...baseOpts().xaxis, categories: rBins, title: { text: usesTrueR ? 'R-Multiple (P&L ÷ Planned Risk ₹)' : 'R-Multiple (proxy)', style: { color: c.text } } },
+    colors: hasOpenR ? [...rColors, ...rColorsOpen] : rColors,
+    plotOptions: { bar: { columnWidth: hasOpenR ? '70%' : '80%', distributed: false, rangeBarGroupRows: false } },
+    legend: { show: hasOpenR, position: 'top', labels: { colors: c.text }, fontSize: '11px' },
     dataLabels: { enabled: true, style: { fontSize: '10px', colors: ['#fff'] }, formatter: v => v > 0 ? v : '' },
-    annotations: { xaxis: [{ x: '0', borderColor: c.amber, borderWidth: 2, label: { text: 'Breakeven', style: { color: c.amber, background: 'transparent', fontSize: '10px' } } }] },
+    annotations: { xaxis: [{ x: '0', borderColor: c.amber, borderWidth: 2, label: { text: 'BE', style: { color: c.amber, background: 'transparent', fontSize: '10px' } } }] },
   });
   rmChart.render(); perfCharts.push(rmChart);
 
@@ -3533,8 +3533,12 @@ function initPerfCharts(closed, initialCapital, open) {
   const lossesOver1R = trueLossR.filter(r => Math.abs(r) > 1.2).length;
   const winsOver2R = trueWinR.filter(r => r >= 2).length;
   const winsOver3R = trueWinR.filter(r => r >= 3).length;
-  const openWinnersR = open.filter(t => (t.notionalPl||0) > 0);
-  const openNote = openWinnersR.length > 0 ? `<br><span style="opacity:0.7;font-size:11px">⚠ Closed-trade bias: ${openWinnersR.length} open winner${openWinnersR.length>1?'s':''} (unrealised) not included — true right tail is larger.</span>` : '';
+  const openWinnersR = open.filter(t => (t.notionalPl||0) > 0 && t.initRiskRs > 0);
+  const avgOpenR = openWinnersR.length > 0 ? openWinnersR.reduce((s,t)=>s+(t.notionalPl/t.initRiskRs),0)/openWinnersR.length : 0;
+  const openLosersR = open.filter(t => (t.notionalPl||0) < 0 && t.initRiskRs > 0);
+  const openNote = openWithRisk.length > 0
+    ? `<br><span style="opacity:0.7;font-size:11px">📊 Live open positions: ${openWinnersR.length} winners averaging +${avgOpenR.toFixed(2)}R unrealised · ${openLosersR.length} currently below entry. Shown as translucent bars in chart.</span>`
+    : '';
   const lossNote = lossesOver1R > 0 ? ` <strong>${lossesOver1R} loss${lossesOver1R>1?'es':''} exceeded −1.2R</strong> — stops not taken cleanly.` : ' Losses are tight (all within ~1R).';
   if (displayR < 1) {
     ins('insight-rmultiple','red',`⚠ <strong>R-Multiple ${displayR.toFixed(2)} — below 1R</strong>. Avg win: +${avgTrueWinR.toFixed(2)}R, avg loss: −${avgTrueLossR.toFixed(2)}R.${lossNote}<br>→ <strong>Action:</strong> (1) Cut losses faster — stop = 7-day low, no exceptions. (2) Hold winners longer — ${winsOver2R} trade${winsOver2R!==1?'s':''} reached 2R+, lean on those patterns.${openNote}`);
