@@ -1092,7 +1092,7 @@ tbody tr:hover { filter: brightness(0.97); }
     </div>
     <div class="card">
       <div class="chart-title">Win Rate Trend (Monthly)</div>
-      <div class="chart-sub">Are you improving? Win rate by calendar month</div>
+      <div class="chart-sub">Closed-trade win rate by month · current month excluded (winners still open)</div>
       <div id="chart-wr-trend" style="height:220px;"></div>
       <div id="insight-wr-trend" class="chart-insight"></div>
     </div>
@@ -3675,17 +3675,22 @@ function initPerfCharts(closed, initialCapital, open) {
   }
 
   // 7. Win Rate Trend
-  const recent3WR = mWRData.slice(-3);
-  const early3WR = mWRData.slice(0, 3);
+  // Exclude current (incomplete) month from trend comparison — it has no closed winners yet
+  const completedWRKeys = mWRKeys.filter(k => k !== mNowKey);
+  const completedWRData = completedWRKeys.map(k => parseFloat((monthWR[k].wins/monthWR[k].total*100).toFixed(1)));
+  const recent3WR = completedWRData.slice(-3);
+  const early3WR = completedWRData.slice(0, 3);
   const recentAvg = recent3WR.length > 0 ? recent3WR.reduce((s,v)=>s+v,0)/recent3WR.length : 0;
   const earlyAvg = early3WR.length > 0 ? early3WR.reduce((s,v)=>s+v,0)/early3WR.length : 0;
   const trend = recentAvg - earlyAvg;
+  const openWinnersNow = open.filter(t=>(t.notionalPl||0)>0).length;
+  const wrBiasNote = `<br><span style="opacity:0.7;font-size:11px">⚠ Closed-trade bias: momentum strategy closes losses fast and holds winners open — monthly win rate understates true performance. ${openWinnersNow > 0 ? `${openWinnersNow} open position${openWinnersNow!==1?'s':''} currently in profit (unrealised) are not counted here.` : ''} Current month excluded (incomplete).</span>`;
   if (trend > 10) {
-    ins('insight-wr-trend','green',`✓ Win rate improving — recent 3 months avg ${recentAvg.toFixed(0)}% vs earlier ${earlyAvg.toFixed(0)}%. You are getting better at setup selection.<br>→ <strong>Action:</strong> Document what you're doing differently now. Write it down — this is your evolving playbook.`);
+    ins('insight-wr-trend','green',`✓ Win rate improving — recent completed months avg ${recentAvg.toFixed(0)}% vs earlier ${earlyAvg.toFixed(0)}%. You are getting better at setup selection.${wrBiasNote}<br>→ <strong>Action:</strong> Document what you're doing differently now. Write it down — this is your evolving playbook.`);
   } else if (trend < -10) {
-    ins('insight-wr-trend','red',`⚠ <strong>Win rate declining</strong> — recent 3 months avg ${recentAvg.toFixed(0)}% vs earlier ${earlyAvg.toFixed(0)}%. Setup quality may be slipping or market character changed.<br>→ <strong>Action:</strong> Stop entering marginal setups. Only trade A+ — tight base, clear level, volume confirmation. Reduce trade frequency until WR recovers above 45%.`);
+    ins('insight-wr-trend','red',`⚠ <strong>Win rate declining</strong> — recent completed months avg ${recentAvg.toFixed(0)}% vs earlier ${earlyAvg.toFixed(0)}%. Setup quality may be slipping or market character changed.${wrBiasNote}<br>→ <strong>Action:</strong> Stop entering marginal setups. Only trade A+ — tight base, clear level, volume confirmation. Reduce trade frequency until WR recovers above 45%.`);
   } else {
-    ins('insight-wr-trend','amber',`⚡ Win rate trend flat — recent ${recentAvg.toFixed(0)}% vs earlier ${earlyAvg.toFixed(0)}%. Consistency is good but look for an improvement trajectory.<br>→ <strong>Action:</strong> Run a post-trade review on your last 10 losses. Is there a repeating pattern? Eliminate the worst setup type first.`);
+    ins('insight-wr-trend','amber',`⚡ Win rate trend flat — recent completed months avg ${recentAvg.toFixed(0)}% vs earlier ${earlyAvg.toFixed(0)}%. Consistency is good but look for an improvement trajectory.${wrBiasNote}<br>→ <strong>Action:</strong> Run a post-trade review on your last 10 losses. Is there a repeating pattern? Eliminate the worst setup type first.`);
   }
 
   // 8. Indexed equity (slope analysis)
