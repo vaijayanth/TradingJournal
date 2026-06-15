@@ -1029,8 +1029,13 @@ tbody tr:hover { filter: brightness(0.97); }
 
   <!-- Calendar Heatmap -->
   <div class="card" style="margin-top:14px">
-    <div class="chart-title">P&L Calendar — 2025</div>
-    <div class="chart-sub">Daily realised P&L anchored on exit date · Hover for details</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
+      <div>
+        <div class="chart-title" id="cal-title">P&L Calendar</div>
+        <div class="chart-sub">Daily realised P&L anchored on exit date · Hover for details</div>
+      </div>
+      <div id="cal-year-btns" style="display:flex;gap:4px;flex-wrap:wrap"></div>
+    </div>
     <div class="cal-grid" id="cal-grid"></div>
     <div class="flex-row" style="margin-top:14px; gap:20px; font-size:11px; color:var(--text-muted)">
       <div class="flex-row" style="gap:4px"><div style="width:12px;height:12px;border-radius:2px;background:#10B981"></div> Strong profit</div>
@@ -2534,12 +2539,15 @@ function renderStreakReal(closed) {
 function renderStreak() { /* data loaded on refresh */ }
 
 // ── CALENDAR (REAL DATA) ─────────────────────────────
-function renderCalendarReal(closed) {
+function renderCalendarReal(closed, forceYear) {
   const grid = document.getElementById('cal-grid');
   const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   const dayHeaders = ['S','M','T','W','T','F','S'];
 
-  // Group by close date
+  // Cache closed trades for year-switch without refetch
+  window._calClosed = closed;
+
+  // Group by close date (all years)
   const dayMap = {};
   closed.forEach(t => {
     if (!t.closeDate) return;
@@ -2552,8 +2560,28 @@ function renderCalendarReal(closed) {
   });
 
   const allDates = Object.values(dayMap).map(v => v.date);
-  const year = allDates.length > 0 ? Math.max(...allDates.map(d => d.getFullYear())) : new Date().getFullYear();
-  const maxAbs = Math.max(...Object.values(dayMap).map(v => Math.abs(v.pl)), 1);
+  const allYears = [...new Set(allDates.map(d => d.getFullYear()))].sort();
+  const latestYear = allYears.length > 0 ? Math.max(...allYears) : new Date().getFullYear();
+  const year = forceYear || window._calYear || latestYear;
+  window._calYear = year;
+
+  // Render year selector buttons
+  const yearBtns = document.getElementById('cal-year-btns');
+  if (yearBtns) {
+    yearBtns.innerHTML = allYears.map(y =>
+      `<button onclick="renderCalendarReal(window._calClosed,${y})"
+        style="padding:4px 10px;border-radius:16px;border:1px solid var(--border);
+               background:${y===year?'var(--accent)':'var(--surface)'};
+               color:${y===year?'#fff':'var(--text-secondary)'};
+               font-size:12px;font-weight:600;cursor:pointer">${y}</button>`
+    ).join('');
+  }
+  const titleEl = document.getElementById('cal-title');
+  if (titleEl) titleEl.textContent = `P&L Calendar — ${year}`;
+
+  // Filter dayMap to selected year only for intensity scaling
+  const yearEntries = Object.fromEntries(Object.entries(dayMap).filter(([k]) => k.startsWith(year + '-')));
+  const maxAbs = Math.max(...Object.values(yearEntries).map(v => Math.abs(v.pl)), 1);
   const isLeap = (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
   const daysInMonth = [31, isLeap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
@@ -2564,7 +2592,7 @@ function renderCalendarReal(closed) {
     dayHeaders.forEach(d => { html += `<div class="cal-day-header">${d}</div>`; });
     for (let e = 0; e < firstDay; e++) html += `<div class="cal-cell empty"></div>`;
     for (let day = 1; day <= daysInMonth[mi]; day++) {
-      const entry = dayMap[`${year}-${mi}-${day}`];
+      const entry = yearEntries[`${year}-${mi}-${day}`];
       if (entry) {
         const ratio = Math.abs(entry.pl) / maxAbs;
         const cls = entry.pl >= 0 ? (ratio > 0.66 ? 'profit-3' : ratio > 0.33 ? 'profit-2' : 'profit-1') : (ratio > 0.66 ? 'loss-3' : ratio > 0.33 ? 'loss-2' : 'loss-1');
