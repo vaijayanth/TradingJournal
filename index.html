@@ -2007,6 +2007,22 @@ function renderPositionsReal(open, cfg) {
             <div class="expand-item"><div class="expand-label">CMP</div><div class="expand-value">₹${t.cmp.toLocaleString('en-IN')}</div></div>
             <div class="expand-item"><div class="expand-label">Initial Risk ₹</div><div class="expand-value">₹${t.initRiskRs.toLocaleString('en-IN')}</div></div>
             <div class="expand-item"><div class="expand-label">Initial Risk %</div><div class="expand-value">${t.initRiskPct.toFixed(2)}% of capital</div></div>
+            ${(function(){
+              const partialTargetPrice = Math.round(t.entryPrice * (1 + (cfg.partialTrigger||10) / 100));
+              const gapToTrigger = partialTargetPrice - t.cmp;
+              const gapPct = t.cmp > 0 ? ((partialTargetPrice - t.cmp) / t.cmp * 100) : 0;
+              const beTargetPrice = t.entryPrice;
+              const beGapPct = t.cmp > 0 ? ((beTargetPrice - t.cmp) / t.cmp * 100) : 0;
+              const alreadyPartial = t.partialTaken === 'Y';
+              const atPartial = t.plPct >= (cfg.partialTrigger||10);
+              const atBE = t.plPct >= 5;
+              if (alreadyPartial) return `
+                <div class="expand-item" style="grid-column:span 2"><div class="expand-label">Partial Target</div><div class="expand-value" style="color:var(--green);font-size:12px">✓ Partial taken at ${cfg.partialTrigger||10}% · Trailing remainder via 7-day low</div></div>`;
+              if (atPartial) return `
+                <div class="expand-item" style="grid-column:span 2"><div class="expand-label">Partial Target ₹</div><div class="expand-value" style="color:var(--amber);font-size:12px;font-weight:700">⚡ ₹${partialTargetPrice.toLocaleString('en-IN')} hit — take 50% now!</div></div>`;
+              return `
+                <div class="expand-item" style="grid-column:span 2"><div class="expand-label">Partial Target ₹</div><div class="expand-value" style="font-size:12px">₹${partialTargetPrice.toLocaleString('en-IN')} <span style="color:var(--text-muted)">(+${cfg.partialTrigger||10}%)</span> · <span style="${gapPct<=3?'color:var(--amber);font-weight:700':'color:var(--text-muted)'}">₹${Math.abs(gapToTrigger).toLocaleString('en-IN')} away (${Math.abs(gapPct).toFixed(1)}%${gapPct<=3?' — close!':''})</span>${atBE&&!alreadyPartial?` · <span style="color:var(--green)">Breakeven stop: ₹${beTargetPrice.toLocaleString('en-IN')}</span>`:''}</div></div>`;
+            })()}
             <div class="expand-item" style="grid-column:span 2"><div class="expand-label">Partial Status</div><div class="expand-value" style="font-size:12px">${(function(){ const daysSinceEntry = t.age ? parseInt(t.age) : 0; const partialDue = t.plPct >= cfg.partialTrigger && t.partialTaken !== 'Y'; return partialDue ? '<span style="color:var(--amber)">⚠ Partial overdue — up ' + t.plPct.toFixed(1) + '% for ' + daysSinceEntry + 'd</span>' : t.partialTaken === 'Y' ? '<span style="color:var(--green)">✓ Partial taken</span>' : '—'; })()}</div></div>
             <div class="expand-item" style="grid-column:span 3"><div class="expand-label">Trail Guidance</div><div class="expand-value" style="font-size:12px">${(function(){
               if (t.partialTaken === 'Y') {
