@@ -1997,11 +1997,11 @@ function renderDashboard(data, cfg) {
     } else {
       // Group alerts by priority order
       const groups = [
-        { key:'red',     icon:'🔴', label:'Exit Triggered',         color:'var(--red)',   bg:'var(--red-soft)',   countBg:'rgba(255,69,58,0.2)',   autoOpen: true  },
-        { key:'ema',     icon:'📉', label:'Below 21 EMA — Protect Profits', color:'var(--red)', bg:'var(--red-soft)', countBg:'rgba(255,69,58,0.2)', autoOpen: true },
-        { key:'ha-warn', icon:'⚠',  label:'Profit at Risk — HA Red', color:'var(--red)',   bg:'var(--red-soft)',   countBg:'rgba(255,69,58,0.2)',   autoOpen: true  },
+        { key:'red',     icon:'🔴', label:'Exit Triggered',         color:'var(--red)',   bg:'var(--red-soft)',   countBg:'rgba(255,69,58,0.2)',   autoOpen: false },
+        { key:'ema',     icon:'📉', label:'Below 21 EMA — Protect Profits', color:'var(--red)', bg:'var(--red-soft)', countBg:'rgba(255,69,58,0.2)', autoOpen: false },
+        { key:'ha-warn', icon:'⚠',  label:'Profit at Risk — HA Red', color:'var(--red)',   bg:'var(--red-soft)',   countBg:'rgba(255,69,58,0.2)',   autoOpen: false },
         { key:'ha',      icon:'🔄', label:'HA Momentum Shift',       color:'var(--amber)', bg:'var(--amber-soft)', countBg:'rgba(255,159,10,0.2)', autoOpen: false },
-        { key:'breakeven', icon:'🛡', label:'Move Stop to Breakeven', color:'var(--amber)', bg:'var(--amber-soft)', countBg:'rgba(255,159,10,0.2)', autoOpen: true  },
+        { key:'breakeven', icon:'🛡', label:'Move Stop to Breakeven', color:'var(--amber)', bg:'var(--amber-soft)', countBg:'rgba(255,159,10,0.2)', autoOpen: false },
         { key:'amber',   icon:'🟡', label:'Near Stop / Review',      color:'var(--amber)', bg:'var(--amber-soft)', countBg:'rgba(255,159,10,0.2)', autoOpen: false },
         { key:'green',   icon:'🟢', label:'Partial Exit Pending',    color:'var(--green)', bg:'var(--green-soft)', countBg:'rgba(52,199,89,0.2)',  autoOpen: false },
       ];
@@ -4279,10 +4279,10 @@ function fnoRenderAlerts(watchlist) {
   });
 
   const groups = [
-    { key:'add-call',  icon:'🔄', label:'Add Call Spread — Action Required', color:'var(--red)',   bg:'var(--red-soft)',   autoOpen:true  },
-    { key:'reversal',  icon:'🔁', label:'Reversal Watch — Extended + HA Flip', color:'var(--amber)', bg:'var(--amber-soft)', autoOpen:true  },
-    { key:'exit-risk', icon:'⚠',  label:'Exit Risk — Monitor Premium',       color:'var(--amber)', bg:'var(--amber-soft)', autoOpen:true  },
-    { key:'new-put',   icon:'🟢', label:'New Put Spread Candidates',          color:'var(--green)', bg:'var(--green-soft)', autoOpen:true  },
+    { key:'add-call',  icon:'🔄', label:'Add Call Spread — Action Required', color:'var(--red)',   bg:'var(--red-soft)',   autoOpen:false },
+    { key:'reversal',  icon:'🔁', label:'Reversal Watch — Extended + HA Flip', color:'var(--amber)', bg:'var(--amber-soft)', autoOpen:false },
+    { key:'exit-risk', icon:'⚠',  label:'Exit Risk — Monitor Premium',       color:'var(--amber)', bg:'var(--amber-soft)', autoOpen:false },
+    { key:'new-put',   icon:'🟢', label:'New Put Spread Candidates',          color:'var(--green)', bg:'var(--green-soft)', autoOpen:false },
     { key:'new-call',  icon:'⬇',  label:'New Call Spread Candidates',         color:'var(--red)',   bg:'var(--red-soft)',   autoOpen:false },
   ];
 
