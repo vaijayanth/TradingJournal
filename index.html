@@ -677,8 +677,15 @@ tbody tr:hover { filter: brightness(0.97); }
       </div>
     </div>
 
-    <!-- Heat Gauge spanning 2 cols -->
-    <div class="card card-sm heat-card">
+    <div class="card card-sm">
+      <div class="stat-label">Risk Per Trade</div>
+      <div class="stat-value" id="dash-risk-tier">—</div>
+      <div class="stat-sub" id="dash-risk-tier-sub">Based on closed trade count</div>
+      <div class="stat-badge badge-blue" id="dash-risk-tier-badge">—</div>
+    </div>
+
+    <!-- Heat Gauge -->
+    <div class="card card-sm">
       <div class="stat-label" style="margin-bottom:14px">Portfolio Heat</div>
 
       <div class="heat-row">
@@ -1640,6 +1647,20 @@ function renderDashboard(data, cfg) {
   const retEl = document.getElementById('dash-return');
   if (retEl) { retEl.className = 'stat-value ' + (totalReturn >= 0 ? 'green' : 'red'); }
 
+  // Risk tier card — ₹1000 start, +₹500 per 100 closed trades, cap 0.8% of portfolio
+  const riskCapRs = initialCapital > 0 ? Math.round(initialCapital * 0.008) : 40000;
+  const tierStep = Math.floor(closed.length / 100);
+  const riskTierRs = Math.min(1000 + tierStep * 500, riskCapRs);
+  const nextTierAt = (tierStep + 1) * 100;
+  const tradesUntilNext = riskTierRs < riskCapRs ? (nextTierAt - closed.length) : 0;
+  set('dash-risk-tier', '₹' + riskTierRs.toLocaleString('en-IN'));
+  set('dash-risk-tier-sub', `Tier ${tierStep + 1} · ${closed.length} closed trades`);
+  const rtBadge = document.getElementById('dash-risk-tier-badge');
+  if (rtBadge) {
+    if (riskTierRs >= riskCapRs) { rtBadge.className = 'stat-badge badge-green'; rtBadge.textContent = 'At cap (0.8% of portfolio)'; }
+    else { rtBadge.className = 'stat-badge badge-blue'; rtBadge.textContent = `Next tier in ${tradesUntilNext} trade${tradesUntilNext !== 1 ? 's' : ''}`; }
+  }
+
   // Risk cards
   set('dash-init-risk', fmt(totalInitRisk));
   set('dash-init-risk-badge', totalHeat.toFixed(2) + '% of capital');
@@ -1678,6 +1699,9 @@ function renderDashboard(data, cfg) {
       if ((t.ema21 || '').trim().toLowerCase() === 'below' && t.plPct > 0) {
         alerts.push({ type:'red', icon:'📉', title:`${t.stock} — Below 21 EMA (+${t.plPct.toFixed(1)}%)`, desc:`Price has crossed below 21 EMA. Position is profitable — consider tightening stop to protect gains.` });
       }
+      if (t.plPct >= 5 && t.stopLoss < t.entryPrice) {
+        alerts.push({ type:'amber', icon:'🛡', title:`${t.stock} — Move Stop to Breakeven (+${t.plPct.toFixed(1)}%)`, desc:`Position up ${t.plPct.toFixed(1)}%. Per your strategy, move col J stop to entry price ₹${t.entryPrice.toLocaleString('en-IN')} to make this trade risk-free.` });
+      }
       if (t.plPct >= cfg.partialTrigger && t.partialTaken === 'N') alerts.push({ type:'green', icon:'🟢', title:`${t.stock} — Partial Exit Pending (+${t.plPct.toFixed(1)}%)`, desc:`At +${cfg.partialTrigger}% trigger. Partial exit not yet taken. Act today.` });
       const cfg_maxAge = cfg.maxAge || 60;
       if (t.age && parseInt(t.age) > cfg_maxAge && t.partialTaken !== 'Y') {
@@ -1699,6 +1723,7 @@ function renderDashboard(data, cfg) {
         { key:'ema',     icon:'📉', label:'Below 21 EMA — Protect Profits', color:'var(--red)', bg:'var(--red-soft)', countBg:'rgba(255,69,58,0.2)', autoOpen: true },
         { key:'ha-warn', icon:'⚠',  label:'Profit at Risk — HA Red', color:'var(--red)',   bg:'var(--red-soft)',   countBg:'rgba(255,69,58,0.2)',   autoOpen: true  },
         { key:'ha',      icon:'🔄', label:'HA Momentum Shift',       color:'var(--amber)', bg:'var(--amber-soft)', countBg:'rgba(255,159,10,0.2)', autoOpen: false },
+        { key:'breakeven', icon:'🛡', label:'Move Stop to Breakeven', color:'var(--amber)', bg:'var(--amber-soft)', countBg:'rgba(255,159,10,0.2)', autoOpen: true  },
         { key:'amber',   icon:'🟡', label:'Near Stop / Review',      color:'var(--amber)', bg:'var(--amber-soft)', countBg:'rgba(255,159,10,0.2)', autoOpen: false },
         { key:'green',   icon:'🟢', label:'Partial Exit Pending',    color:'var(--green)', bg:'var(--green-soft)', countBg:'rgba(52,199,89,0.2)',  autoOpen: false },
       ];
@@ -1706,6 +1731,7 @@ function renderDashboard(data, cfg) {
       // Tag each alert with a group key
       const tagged = alerts.map(a => {
         if (a.icon === '📉') return { ...a, groupKey: 'ema' };
+        if (a.icon === '🛡') return { ...a, groupKey: 'breakeven' };
         if (a.icon === '⚠') return { ...a, groupKey: 'ha-warn' };
         if (a.icon === '🔄') return { ...a, groupKey: 'ha' };
         return { ...a, groupKey: a.type };
@@ -1792,6 +1818,16 @@ function renderPositionsReal(open, cfg) {
             <div class="expand-item"><div class="expand-label">Initial Risk ₹</div><div class="expand-value">₹${t.initRiskRs.toLocaleString('en-IN')}</div></div>
             <div class="expand-item"><div class="expand-label">Initial Risk %</div><div class="expand-value">${t.initRiskPct.toFixed(2)}% of capital</div></div>
             <div class="expand-item" style="grid-column:span 2"><div class="expand-label">Partial Status</div><div class="expand-value" style="font-size:12px">${(function(){ const daysSinceEntry = t.age ? parseInt(t.age) : 0; const partialDue = t.plPct >= cfg.partialTrigger && t.partialTaken !== 'Y'; return partialDue ? '<span style="color:var(--amber)">⚠ Partial overdue — up ' + t.plPct.toFixed(1) + '% for ' + daysSinceEntry + 'd</span>' : t.partialTaken === 'Y' ? '<span style="color:var(--green)">✓ Partial taken</span>' : '—'; })()}</div></div>
+            <div class="expand-item" style="grid-column:span 3"><div class="expand-label">Trail Guidance</div><div class="expand-value" style="font-size:12px">${(function(){
+              if (t.partialTaken === 'Y') {
+                const trailStop = t.effStop;
+                const trailPct = t.effPct;
+                return '<span style="color:var(--green)">✓ Partial taken — trailing remainder · Active trail: ₹' + trailStop.toLocaleString('en-IN') + ' (' + (trailPct >= 0 ? '+' : '') + trailPct.toFixed(1) + '% buffer) · Let winners run via 7-day low trail</span>';
+              }
+              if (t.plPct >= 5 && t.stopLoss < t.entryPrice) return '<span style="color:var(--amber)">⚠ Move col J stop to entry ₹' + t.entryPrice.toLocaleString('en-IN') + ' — make trade risk-free</span>';
+              if (t.plPct >= 5) return '<span style="color:var(--green)">✓ Breakeven stop in place — trail via 7-day low (₹' + t.sevenDayLow.toLocaleString('en-IN') + ')</span>';
+              return '<span style="color:var(--text-muted)">—</span>';
+            })()}</div></div>
             ${haColour ? `<div class="expand-item"><div class="expand-label">HA Colour</div><div class="expand-value"><span class="tag ${haClass} ${haChangedClass}">${haLabel}</span>${haChanged ? ' <span style="color:var(--amber);font-size:11px">— momentum shift, review stop</span>' : ''}</div></div>` : ''}
           </div>
         </td>
