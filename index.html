@@ -1964,7 +1964,15 @@ function renderDashboard(data, cfg) {
     open.forEach(t => {
       const effStop = Math.max(t.stopLoss || 0, t.sevenDayLow || 0);
       const effPct = (t.cmp && effStop) ? ((t.cmp - effStop) / t.cmp * 100) : t.pctFromStop;
-      if (effPct <= 0) alerts.push({ type:'red', icon:'🔴', title:`${t.stock} — Exit Rule Triggered`, desc:`Price at or below effective stop (MAX of manual stop ₹${t.stopLoss.toLocaleString('en-IN')}, 7-day low ₹${t.sevenDayLow.toLocaleString('en-IN')}). Mechanical exit required.` });
+      if (effPct <= 0) {
+        // Identify which specific exit rule(s) fired
+        const rules = [];
+        if (t.cmp && t.sevenDayLow && t.cmp <= t.sevenDayLow) rules.push(`7-Day Low breached (CMP ₹${t.cmp.toLocaleString('en-IN')} ≤ 7DL ₹${t.sevenDayLow.toLocaleString('en-IN')})`);
+        if (t.cmp && t.stopLoss && t.cmp <= t.stopLoss) rules.push(`Manual stop hit (CMP ₹${t.cmp.toLocaleString('en-IN')} ≤ Stop ₹${t.stopLoss.toLocaleString('en-IN')})`);
+        const ruleStr = rules.length > 0 ? rules.join(' · ') : `Price at/below effective stop ₹${Math.max(t.stopLoss||0, t.sevenDayLow||0).toLocaleString('en-IN')}`;
+        const shortRule = rules.length > 0 ? rules.map(r => r.split('(')[0].trim()).join(' + ') : 'Stop breached';
+        alerts.push({ type:'red', icon:'🔴', title:`${t.stock} — ${shortRule}`, desc:`${ruleStr}. Effective stop = MAX(J, 7DL) = ₹${Math.max(t.stopLoss||0, t.sevenDayLow||0).toLocaleString('en-IN')}. Mechanical exit required — no exceptions.` });
+      }
       else if (effPct <= cfg.stopProximity) alerts.push({ type:'amber', icon:'🟡', title:`${t.stock} — Within ${effPct.toFixed(1)}% of Stop`, desc:`Only ${effPct.toFixed(1)}% above effective stop (MAX of ₹${t.stopLoss.toLocaleString('en-IN')}, ₹${t.sevenDayLow.toLocaleString('en-IN')}). Review before market open.` });
       if ((t.ema21 || '').trim().toLowerCase() === 'below' && t.plPct > 0) {
         alerts.push({ type:'red', icon:'📉', title:`${t.stock} — Below 21 EMA (+${t.plPct.toFixed(1)}%)`, desc:`Price has crossed below 21 EMA. Position is profitable — consider tightening stop to protect gains.` });
