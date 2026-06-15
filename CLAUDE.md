@@ -271,3 +271,62 @@ Each watchlist item maps NSEFO columns using row indices 5–23 (0-based).
 - `refreshFnoData()` — fetches from Apps Script with `mode=fno`, stores in `window._fnoData`
 - `renderFnoDashboard(data)` — summary cards for F&O tab
 - `renderFnoWatchlist(data)` — watchlist table with signal badges and action recommendation
+
+---
+
+## Pending Backlog (Guru Audit — Minervini / O'Neil)
+
+These were identified in a guru-perspective audit and deferred. Implement when ready.
+
+### 🔴 High Priority (needs external data or new sheet columns)
+
+1. **Market Timing / Tape Health signal**
+   - NIFTY trend status on Dashboard: "Confirmed Uptrend / Under Pressure / Correction"
+   - Distribution day count (NIFTY close lower on higher volume = 1 distribution day)
+   - % of NIFTY500 stocks above 200-day MA (breadth gauge)
+   - *Needs: NIFTY OHLCV data feed or manual input cell in sheet*
+
+2. **MAE / MFE Analysis (Maximum Adverse / Favorable Excursion)**
+   - MAE: how far did price go against you before stopping? If MAE = −2% but stop = −7%, you held 5% of pain unnecessarily
+   - MFE: peak unrealised gain before exit — measures "how much did you give back?"
+   - *Needs: new columns in TRADES sheet — MAE%, MFE% captured at close*
+
+3. **Relative Performance vs NIFTY**
+   - Monthly return overlay vs NIFTY on equity curve
+   - Alpha = your return − NIFTY return for the same period
+   - *Needs: NIFTY monthly return data (can be a static lookup table or sheet column)*
+
+4. **Trade Grade (A/B/C Setup Quality)**
+   - Grade entered at time of trade (A = perfect VCP/pivot, B = good, C = marginal)
+   - Analysis tab breakdown: win rate, avg P&L, R-multiple by grade
+   - Minervini data: A-grade ~70% WR, C-grade ~35% WR
+   - *Needs: new column in TRADES sheet — setup grade*
+
+### 🟡 Medium Priority (mostly computation, minimal new data)
+
+5. **Pivot Entry Precision**
+   - % extended at entry = (entryPrice − pivotPrice) / pivotPrice
+   - O'Neil rule: never buy more than 5% above pivot
+   - *Needs: pivot price column in TRADES sheet*
+
+6. **Base Stage Count**
+   - 1st-stage base success ~65%, 3rd-stage ~25%
+   - Track which stage breakout this was
+   - *Needs: base count column in TRADES sheet*
+
+7. **Position Concentration Risk card (Dashboard)**
+   - Top-3 positions as % of total portfolio notional
+   - Sector concentration (if sector column added)
+   - *Can be computed from existing open positions data*
+
+8. **Pyramid / Add-on Entry Tracking**
+   - Minervini adds to winners at first pullback/flag
+   - Track initial entries vs add-on entries separately
+   - *Needs: entry type column (Initial / Add-on) in TRADES sheet*
+
+### 🟢 Lower Priority
+
+9. **Win Rate in first 10 days vs after** — most breakout failures resolve quickly; compute from age column
+10. **Peak MTM "gave back" metric** — requires MFE column (see item 2)
+11. **Sector rotation view** — requires sector column in sheet
+12. **Psychology / discipline log** — free-text note per trade; *needs notes column in sheet*
