@@ -843,7 +843,7 @@ tbody tr:hover { filter: brightness(0.97); }
     <!-- RoP -->
     <div class="card card-sm">
       <div class="stat-label">Return on Portfolio</div>
-      <div class="stat-value green" style="font-size:28px; margin-top:4px" id="perf-rop">—</div>
+      <div class="stat-value" style="font-size:28px; margin-top:4px" id="perf-rop">—</div>
       <div class="stat-sub" style="font-size:12px" id="perf-rop-sub">Realised (closed)</div>
       <div style="margin-top:6px; font-size:20px; font-weight:700" id="perf-rop-combined">—</div>
       <div class="stat-sub" style="font-size:12px" id="perf-rop-combined-sub">Combined (realised + unrealised)</div>
@@ -966,12 +966,8 @@ tbody tr:hover { filter: brightness(0.97); }
         <div class="stat-sub" id="perf-sharpe-sub">Return ÷ Volatility</div>
       </div>
       <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
-        <div style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:4px">OPEN MTM</div>
-        <div style="display:flex;gap:12px">
-          <div><div style="font-size:13px;font-weight:700;color:var(--green)" id="perf-avg-notional-win">—</div><div class="stat-sub" style="font-size:10px">Avg winning</div></div>
-          <div style="color:var(--border)">|</div>
-          <div><div style="font-size:13px;font-weight:700;color:var(--red)" id="perf-avg-notional-loss">—</div><div class="stat-sub" style="font-size:10px">Avg losing</div></div>
-        </div>
+        <div style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:4px">BENCHMARKS</div>
+        <div class="stat-sub" style="line-height:1.6">Profit Factor &gt;1.5 = edge · &gt;2.0 = strong<br>Sharpe &gt;1.0 = good · &gt;2.0 = excellent</div>
       </div>
     </div>
   </div>
@@ -1008,7 +1004,7 @@ tbody tr:hover { filter: brightness(0.97); }
     </div>
     <div class="card">
       <div class="chart-title">Win / Loss Streak</div>
-      <div class="chart-sub">Trade sequence — shows if losses cluster or are random</div>
+      <div class="chart-sub">Trade sequence · momentum strategy: losses close fast (visible here), winners run open (not shown) — don't over-read losing streaks</div>
       <div id="streak-container" style="padding-top:8px">
         <div class="streak-wrap" id="streak-blocks"></div>
         <div class="streak-legend" style="margin-top:10px">
@@ -1057,6 +1053,17 @@ tbody tr:hover { filter: brightness(0.97); }
       </div>
       <div id="insight-hold" class="chart-insight"></div>
     </div>
+    <!-- Win Rate Trend -->
+    <div class="card">
+      <div class="chart-title">Win Rate Trend (Monthly)</div>
+      <div class="chart-sub">Closed-trade win rate by month · current month excluded (winners still open)</div>
+      <div id="chart-wr-trend" style="height:220px;"></div>
+      <div id="insight-wr-trend" class="chart-insight"></div>
+    </div>
+  </div>
+
+  <!-- Monthly Performance + P&L Chart -->
+  <div class="grid-2" style="margin-top:14px">
     <!-- Monthly Performance Table -->
     <div class="card">
       <div class="chart-title">Monthly Performance</div>
@@ -1080,21 +1087,12 @@ tbody tr:hover { filter: brightness(0.97); }
       </div>
       <div id="insight-monthly-table" class="chart-insight"></div>
     </div>
-  </div>
-
-  <!-- Monthly P&L + Win Rate Trend -->
-  <div class="grid-2" style="margin-top:14px">
+    <!-- Monthly P&L Chart -->
     <div class="card">
       <div class="chart-title">Monthly P&L</div>
       <div class="chart-sub">Realised P&L by month · current month adds open position MTM (blue)</div>
       <div id="chart-monthly" style="height:220px;"></div>
       <div id="insight-monthly" class="chart-insight"></div>
-    </div>
-    <div class="card">
-      <div class="chart-title">Win Rate Trend (Monthly)</div>
-      <div class="chart-sub">Closed-trade win rate by month · current month excluded (winners still open)</div>
-      <div id="chart-wr-trend" style="height:220px;"></div>
-      <div id="insight-wr-trend" class="chart-insight"></div>
     </div>
   </div>
 
@@ -1115,6 +1113,7 @@ tbody tr:hover { filter: brightness(0.97); }
       </div>
       <div id="cal-year-btns" style="display:flex;gap:4px;flex-wrap:wrap"></div>
     </div>
+    <div id="cal-annual-summary" style="margin:8px 0 4px;font-size:12px;color:var(--text-muted)"></div>
     <div class="cal-grid" id="cal-grid"></div>
     <div class="flex-row" style="margin-top:14px; gap:20px; font-size:11px; color:var(--text-muted)">
       <div class="flex-row" style="gap:4px"><div class="cal-cell profit-3" style="width:12px;height:12px;border-radius:2px;aspect-ratio:unset"></div> Strong profit</div>
@@ -2696,6 +2695,7 @@ function setPeriod(btn, period) {
     labelEl.textContent = `Showing: ${label} · ${closed.length} closed trade${closed.length !== 1 ? 's' : ''}`;
   }
   renderPerfStats(closed, d.open, d.portfolioValue, d.initialCapital);
+  renderCalendarReal(closed);
   if (window._perfChartsInit) {
     perfCharts.forEach(c => c.destroy()); perfCharts = [];
     initPerfCharts(closed, d.initialCapital, period === 'all' ? d.open : []);
@@ -2856,6 +2856,15 @@ function renderCalendarReal(closed, forceYear) {
   // Filter dayMap to selected year only for intensity scaling
   const yearEntries = Object.fromEntries(Object.entries(dayMap).filter(([k]) => k.startsWith(year + '-')));
   const maxAbs = Math.max(...Object.values(yearEntries).map(v => Math.abs(v.pl)), 1);
+  // Annual summary
+  const annualSummaryEl = document.getElementById('cal-annual-summary');
+  if (annualSummaryEl) {
+    const yearPl = Object.values(yearEntries).reduce((s,v)=>s+v.pl, 0);
+    const yearTradingDays = Object.keys(yearEntries).length;
+    const yearWinDays = Object.values(yearEntries).filter(v=>v.pl>0).length;
+    const plColor = yearPl >= 0 ? 'var(--green)' : 'var(--red)';
+    annualSummaryEl.innerHTML = `<span style="color:${plColor};font-weight:700">${yearPl>=0?'+':''}₹${Math.round(Math.abs(yearPl)).toLocaleString('en-IN')}</span> &nbsp;·&nbsp; ${yearTradingDays} exit days &nbsp;·&nbsp; <span style="color:var(--green)">${yearWinDays} green</span> / <span style="color:var(--red)">${yearTradingDays-yearWinDays} red</span>`;
+  }
   const isLeap = (year % 4 === 0 && year % 100 !== 0) || (year % 400 === 0);
   const daysInMonth = [31, isLeap ? 29 : 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
 
@@ -3664,10 +3673,12 @@ function initPerfCharts(closed, initialCapital, open) {
   const bestDayWR = Math.max(...dowWR.filter(v=>v!=null));
   const worstDayWR = Math.min(...dowWR.filter(v=>v!=null));
   const daySpread = bestDayWR - worstDayWR;
+  const lowSampleDays = dowBuckets.filter(b => b.t > 0 && b.t < 5).map((b,i) => ['Mon','Tue','Wed','Thu','Fri'][dowBuckets.indexOf(b)]).filter(Boolean);
+  const sampleWarning = lowSampleDays.length > 0 ? `<br><span style="opacity:0.7;font-size:11px">⚠ Low sample size on ${lowSampleDays.join(', ')} (< 5 trades) — results not statistically reliable for those days.</span>` : '';
   if (daySpread > 25 && sorted.length >= 20) {
-    ins('insight-dayofweek','amber',`⚡ <strong>${bestDay} is your best entry day (${bestDayWR.toFixed(0)}% WR)</strong> vs ${worstDay} worst (${worstDayWR.toFixed(0)}% WR) — ${daySpread.toFixed(0)}pt spread. Statistically significant.<br>→ <strong>Action:</strong> Be more selective about entries on ${worstDay}. If a setup appears on ${worstDay}, wait for ${bestDay}–${['Mon','Tue','Wed','Thu','Fri'][(dowWR.indexOf(Math.max(...dowWR.filter(v=>v!=null)))+1)%5]} if momentum allows.`);
+    ins('insight-dayofweek','amber',`⚡ <strong>${bestDay} is your best entry day (${bestDayWR.toFixed(0)}% WR)</strong> vs ${worstDay} worst (${worstDayWR.toFixed(0)}% WR) — ${daySpread.toFixed(0)}pt spread.${sampleWarning}<br>→ <strong>Action:</strong> Be more selective about entries on ${worstDay}. If a setup appears on ${worstDay}, wait for ${bestDay}–${['Mon','Tue','Wed','Thu','Fri'][(dowWR.indexOf(Math.max(...dowWR.filter(v=>v!=null)))+1)%5]} if momentum allows.`);
   } else {
-    ins('insight-dayofweek','green',`✓ Entry day win rate spread of ${daySpread.toFixed(0)}pts — no strong day-of-week bias. Best: ${bestDay} (${bestDayWR.toFixed(0)}%). Entries are well-distributed.<br>→ <strong>Keep doing:</strong> Continue entering on confirmed setups regardless of day. Quality of setup matters more than day of week.`);
+    ins('insight-dayofweek','green',`✓ Entry day win rate spread of ${daySpread.toFixed(0)}pts — no strong day-of-week bias. Best: ${bestDay} (${bestDayWR.toFixed(0)}%). Entries are well-distributed.${sampleWarning}<br>→ <strong>Keep doing:</strong> Continue entering on confirmed setups regardless of day. Quality of setup matters more than day of week.`);
   }
 
   // 6. Monthly P&L (use combined for current month when judging)
