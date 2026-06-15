@@ -3715,7 +3715,9 @@ function fnoAction(s) {
   const haRed = s.haColour.toLowerCase() === 'red';
   const haRedToday = haRed && s.haChanged;
   if (s.spreadActive && haRedToday) return 'add-call'; // existing spread + HA flipped red
-  if (trend === 'bullish' && !haRed) return 'put-spread';
+  // Hard gate: put spreads REQUIRE stock above 200 EMA — selling puts below 200 EMA is structurally wrong
+  if (trend === 'bullish' && !haRed && s.ema200) return 'put-spread';
+  // Call spreads: bearish trend regardless of 200 EMA (intermediate downtrend valid above 200 EMA too)
   if (trend === 'bearish' || (haRedToday && !s.spreadActive)) return 'call-spread';
   return 'wait';
 }
