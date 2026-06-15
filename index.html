@@ -1212,15 +1212,15 @@ tbody tr:hover { filter: brightness(0.97); }
   </div>
   <div class="grid-2" style="margin-bottom:14px">
     <div class="card">
-      <div class="chart-title">Init Risk % Distribution</div>
-      <div class="chart-sub">Are your stops consistently sized or all over the place?</div>
+      <div class="chart-title">₹ Risk per Trade Distribution</div>
+      <div class="chart-sub">Are you consistently risking ~₹1,000 or is your sizing drifting?</div>
       <div id="chart-tm-risk-dist" style="height:220px"></div>
       <details style="margin-top:10px">
         <summary style="font-size:12px;font-weight:600;color:var(--text-muted);cursor:pointer;padding:4px 0;user-select:none">What to look for &amp; action ▸</summary>
         <div style="padding:10px 12px;background:var(--surface2);border-radius:8px;font-size:12px;line-height:1.7;color:var(--text-secondary);margin-top:6px">
-          For VCP/breakout entries, <strong>3–7% stop distance is the healthy zone</strong> — tight enough for good R:R, wide enough to survive intraday noise. Variation across buckets is <em>intentional</em>: fixed ₹ risk means wider stop = smaller position.<br>
-          <strong>&lt;2%:</strong> too tight — normal volatility will stop you out before the trade works.<br>
-          <strong>&gt;10%:</strong> too wide — you need a huge move just to 1:1 your risk.
+          Your rule is ₹1,000 risk per trade. The bulk of bars should sit in <strong>₹500–1.5K</strong>.<br>
+          <strong>Oversized (&gt;₹2K):</strong> you broke your own rule — likely on a high-conviction trade. Fine occasionally, dangerous as a habit.<br>
+          <strong>Undersized (&lt;₹500):</strong> lost conviction after losses? Sizing down when fearful then missing recoveries is a common trap.
         </div>
       </details>
     </div>
@@ -4262,63 +4262,56 @@ function initAnalysisCharts(open, closed) {
     beInsightEl.textContent = 'Not enough closed trades to compute breakeven stop analysis.';
   }
 
-  // ── Stop Distance % Distribution (col L = stop % from entry = initRiskPct) ──
-  // Buckets sized for Minervini VCP/breakout trades where 3–7% is the healthy stop zone.
-  // Note: variation in % is EXPECTED — fixed ₹ risk means wider stop = smaller position. That's correct.
-  const withRiskPctOnly = tmClosed.filter(t => t.initRiskPct && Math.abs(t.initRiskPct) > 0);
-  const riskBuckets = {'<2%':0,'2–3%':0,'3–5%':0,'5–7%':0,'7–10%':0,'>10%':0};
-  withRiskPctOnly.forEach(t => {
-    const r = Math.abs(t.initRiskPct);
-    if (r < 2)       riskBuckets['<2%']++;
-    else if (r < 3)  riskBuckets['2–3%']++;
-    else if (r < 5)  riskBuckets['3–5%']++;
-    else if (r < 7)  riskBuckets['5–7%']++;
-    else if (r < 10) riskBuckets['7–10%']++;
-    else             riskBuckets['>10%']++;
+  // ── ₹ Risk per Trade Distribution (col K = initRiskRs) ──
+  // Since ₹ risk is fixed at ~₹1K, this chart shows whether you're actually consistent.
+  // Buckets centred around ₹1,000 — drift above or below is a sizing discipline issue.
+  const withRiskRsOnly = tmClosed.filter(t => (t.initRiskRs||0) > 0);
+  const rsStep = 500;
+  const rsBuckets = {'<₹500':0,'₹500–1K':0,'₹1K–1.5K':0,'₹1.5K–2K':0,'₹2K–3K':0,'>₹3K':0};
+  withRiskRsOnly.forEach(t => {
+    const r = t.initRiskRs;
+    if (r < 500)        rsBuckets['<₹500']++;
+    else if (r < 1000)  rsBuckets['₹500–1K']++;
+    else if (r < 1500)  rsBuckets['₹1K–1.5K']++;
+    else if (r < 2000)  rsBuckets['₹1.5K–2K']++;
+    else if (r < 3000)  rsBuckets['₹2K–3K']++;
+    else                rsBuckets['>₹3K']++;
   });
-  const riskKeys = Object.keys(riskBuckets);
-  const riskData = riskKeys.map(k => riskBuckets[k]);
-  // Color: <2% = red (too tight, noise risk), 2-3% = amber, 3-7% = green (sweet spot), >7% = amber, >10% = red
-  const riskColors = [c.red, c.amber, c.green, c.green, c.amber, c.red];
-  // Avg stop distance
-  const avgStopDist = withRiskPctOnly.length > 0
-    ? withRiskPctOnly.reduce((s,t) => s + Math.abs(t.initRiskPct), 0) / withRiskPctOnly.length : 0;
+  const rsKeys = Object.keys(rsBuckets);
+  const rsData = rsKeys.map(k => rsBuckets[k]);
+  // Green = the ₹1K band, amber = adjacent, red = far out
+  const rsColors = [c.red, c.amber, c.green, c.amber, c.red, c.red];
   const riskDistEl = document.getElementById('chart-tm-risk-dist');
-  if (riskDistEl && withRiskPctOnly.length > 0) {
+  if (riskDistEl && withRiskRsOnly.length > 0) {
     const rdChart = new ApexCharts(riskDistEl, {
       ...baseOpts(220), chart: { ...baseOpts(220).chart, type: 'bar' },
-      series: [{ name: 'Trades', data: riskData }],
-      xaxis: { ...baseOpts().xaxis, categories: riskKeys },
+      series: [{ name: 'Trades', data: rsData }],
+      xaxis: { ...baseOpts().xaxis, categories: rsKeys },
       yaxis: { labels: { style:{colors:c.text,fontSize:'11px'} }, title: { text:'# trades', style:{color:c.text,fontSize:'10px'} } },
-      colors: riskColors,
+      colors: rsColors,
       plotOptions: { bar: { columnWidth:'65%', distributed:true, borderRadius:3 } },
       legend: { show:false },
       dataLabels: { enabled: true, formatter: v => v > 0 ? v : '', style:{fontSize:'11px',colors:[c.text]} },
-      annotations: {
-        xaxis: [{ x: '3–5%', borderColor: c.green, label: { text: 'VCP sweet spot', style:{color:c.green,fontSize:'10px',background:'transparent'}, position:'top', orientation:'horizontal' } }],
-        yaxis: avgStopDist > 0 ? [] : [],
-      },
+      annotations: { xaxis: [{ x: '₹1K–1.5K', borderColor: c.green, label: { text: 'Target zone', style:{color:c.green,fontSize:'10px',background:'transparent'}, position:'top', orientation:'horizontal' } }] },
       tooltip: { ...baseOpts().tooltip, y: { formatter: (v, {dataPointIndex}) => {
-        const impliedPos = avgInitRiskRs > 0 && riskKeys[dataPointIndex]
-          ? '≈ ₹' + Math.round(avgInitRiskRs / (parseFloat(riskKeys[dataPointIndex]) / 100 || 0.04)).toLocaleString('en-IN') + ' position'
-          : '';
-        return v + ' trade' + (v!==1?'s':'') + (impliedPos ? ' · ' + impliedPos : '');
+        const pct = withRiskRsOnly.length > 0 ? (v / withRiskRsOnly.length * 100).toFixed(0) : 0;
+        return v + ' trade' + (v!==1?'s':'') + ' (' + pct + '%)';
       }}},
     });
     rdChart.render(); analysisCharts.push(rdChart);
-    // Add insight below chart
-    if (avgStopDist > 0) {
-      const riskInsEl = document.createElement('div');
-      riskInsEl.style.cssText = 'margin-top:8px;font-size:12px;color:var(--text-muted)';
-      const tightCount = withRiskPctOnly.filter(t => Math.abs(t.initRiskPct) < 2).length;
-      const wideCount = withRiskPctOnly.filter(t => Math.abs(t.initRiskPct) > 10).length;
-      let riskTxt = `Avg stop distance: <strong>${avgStopDist.toFixed(1)}%</strong> from entry`;
-      if (avgInitRiskRs > 0) riskTxt += ` · implies avg position ≈ <strong>₹${Math.round(avgInitRiskRs / (avgStopDist/100)).toLocaleString('en-IN')}</strong>`;
-      if (tightCount > 0) riskTxt += ` · ⚠️ ${tightCount} trade${tightCount!==1?'s':''} with &lt;2% stop (noise risk)`;
-      if (wideCount > 0) riskTxt += ` · ⚠️ ${wideCount} trade${wideCount!==1?'s':''} with &gt;10% stop (poor R:R)`;
-      riskInsEl.innerHTML = riskTxt;
-      riskDistEl.parentElement.appendChild(riskInsEl);
-    }
+    // Dynamic insight
+    const rsInsEl = document.createElement('div');
+    rsInsEl.style.cssText = 'margin-top:8px;font-size:12px;color:var(--text-muted);line-height:1.8';
+    const onTarget = (rsBuckets['₹500–1K'] + rsBuckets['₹1K–1.5K']);
+    const onTargetPct = withRiskRsOnly.length > 0 ? (onTarget / withRiskRsOnly.length * 100).toFixed(0) : 0;
+    const overRisked = rsBuckets['₹2K–3K'] + rsBuckets['>₹3K'];
+    const underRisked = rsBuckets['<₹500'];
+    let rsIns = `<strong>${onTargetPct}%</strong> of trades within ₹500–1.5K range`;
+    if (overRisked > 0) rsIns += ` · ⚠️ ${overRisked} trade${overRisked!==1?'s':''} risked &gt;₹2K — oversized`;
+    if (underRisked > 0) rsIns += ` · ⚠️ ${underRisked} trade${underRisked!==1?'s':''} risked &lt;₹500 — undersized (lost conviction?)`;
+    if (parseInt(onTargetPct) >= 80) rsIns += ` · ✅ Consistent position sizing`;
+    rsInsEl.innerHTML = rsIns;
+    riskDistEl.parentElement.appendChild(rsInsEl);
   }
 
   // ── Win Rate by Risk Bucket ──
