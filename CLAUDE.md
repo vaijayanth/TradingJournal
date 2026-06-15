@@ -51,7 +51,20 @@ Connected to a Google Sheet via Apps Script as a JSON middleware.
 - **portfolioValue (AI26)**: already reflects full portfolio including open positions at market price. `portfolioValue - initialCapital` = true combined P&L.
 - **Date format from Apps Script**: `dd-MMM-yyyy` (e.g., `21-Apr-2026`) — NOT parseable by `new Date()`. Use `parseDate()` helper everywhere.
 
-## Trading Style (IMPORTANT)
+## Trading Strategy (IMPORTANT — Minervini momentum style)
+- **Entry**: 52-week high breakouts, VCP (Volatility Contraction Pattern) style
+- **Stop Loss — 3 triggers (all active simultaneously):**
+  1. 7-day low (col I) — always the base trail
+  2. Manual stop col J — user sets this; moves to entry price (breakeven) once trade reaches +5% profit
+  3. 21 EMA breach (col F = "Below") — exit signal for profitable trades
+  - **Effective stop = MAX(J, I)** — whichever is tighter. Once J is moved to entry price at +5%, MAX naturally enforces the breakeven floor
+- **Profit taking**: 50% partial exit at +10%, remainder trailed via 7-day low
+- **Risk sizing progression**:
+  - Start: ₹1,000 risk per trade
+  - Increase: +₹500 every 100 closed trades
+  - Cap: 0.8% of portfolio (at ₹50L initial = ₹40,000 max)
+  - Formula in code: `Math.min(1000 + Math.floor(closed.length / 100) * 500, initialCapital * 0.008)`
+- **Initial capital**: ₹50,00,000 (₹50L)
 - **Cut losses fast, run profits**: stops are taken quickly → closed trades are mostly small losses
 - **Winners held open for a long time** → unrealized MTM (col Y) is where real gains sit
 - **True performance picture = realized + unrealized combined**
@@ -109,9 +122,55 @@ All KPIs (expectancy, win rate, RoP, equity curve) must show **combined realized
 - Entry velocity by week
 - Monthly P&L bar chart
 
+## Authentication
+- Password gate is hardcoded in source — works on ALL devices without setup
+- Password: `test1234`
+- Hash (SHA-256): `937e8d5fbb48bd4949536cd65b8d35c426b80d2f830c5c308e2cdec422ae2244`
+- Stored in `AUTH_HASH` constant in index.html
+- To change password globally: update `AUTH_HASH` in source with new SHA-256 hash and push
+- localStorage override still works — setting password via Config tab overrides for that browser only
+- Reset URL: append `?reset=1` to clear localStorage auth
+
+## Apps Script — Key Rules
+- Flag col B: `YES` = open trade, `NO` = closed trade or watchlist
+- **Closed trade filter**: `flag === 'NO' && trade.finalPl !== 0` — excludes watchlist rows (NO flag but blank col AD)
+- Col AH (haChanged): sheet stores TRUE/FALSE boolean — Apps Script converts to `'Y'`/`'N'` string
+- Portfolio cell: `AK26`, Initial capital cell: `AK20` (shifted when AG/AH columns were added)
+
+## Heikin-Ashi Columns (AG/AH)
+- Col AG: current HA candle colour ("Red"/"Green") — `haColour`
+- Col AH: did colour change today? (TRUE/FALSE boolean in sheet) — `haChanged` = 'Y'/'N'
+- `haWarn`: profit ≥ 5% AND haColour = "red" — momentum fading on a winner
+
+## Alert Groups (Dashboard) — priority order
+1. 🔴 Exit Triggered — effPct ≤ 0
+2. 📉 Below 21 EMA — ema21 = "Below" AND plPct > 0
+3. 🛡 Move Stop to Breakeven — plPct ≥ 5% AND stopLoss < entryPrice
+4. ⚠ Profit at Risk — HA Red — plPct ≥ 5% AND haColour = "red"
+5. 🔄 HA Momentum Shift — haChanged = 'Y'
+6. 🟡 Near Stop / Review — effPct ≤ stopProximity
+7. 🟢 Partial Exit Pending — plPct ≥ partialTrigger AND partialTaken = 'N'
+
+## Effective Stop Logic
+```javascript
+const effStop = Math.max(t.stopLoss || 0, t.sevenDayLow || 0);
+const effPct = (t.cmp && effStop) ? ((t.cmp - effStop) / t.cmp * 100) : t.pctFromStop;
+```
+- Used everywhere for alerts, sort order, and table display
+- Positions table header: "Eff Stop ₹" (not "Stop ₹")
+- Expand row shows: Manual Stop (J), 7-Day Low (I), Effective Stop separately
+
+## Risk Tier Card (Dashboard)
+- Shows current recommended risk per trade based on closed trade count
+- `riskTierRs = Math.min(1000 + Math.floor(closed.length / 100) * 500, riskCapRs)`
+- `riskCapRs = initialCapital * 0.008`
+- Badge shows "Next tier in N trades" or "At cap"
+
 ## Recent Fixes Applied
 - Drawdown Y-axis: `toFixed(2)` to prevent floating-point scientific notation
 - Date parsing: `parseDate()` everywhere (Apps Script returns `dd-MMM-yyyy`)
 - Period filter (30/90 days): actually filters closed trades and re-renders
 - Config URL: auto-saves on blur (no need to click Save)
-- `portfolioValue` from sheet cell AI26 is the source of truth for portfolio headline
+- `portfolioValue` from sheet cell AK26 is the source of truth for portfolio headline
+- `alertCount` badge uses effective stop MAX(J,I) not col W
+- Closed trade count: Apps Script filters `flag === 'NO' && finalPl !== 0` to exclude watchlist
