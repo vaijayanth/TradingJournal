@@ -1809,9 +1809,13 @@ function renderDashboard(data, cfg) {
   const tradesUntilNext = riskTierRs < riskCapRs ? (nextTierAt - closed.length) : 0;
   set('dash-risk-tier', '₹' + riskTierRs.toLocaleString('en-IN'));
   set('dash-risk-tier-sub', `Tier ${tierStep + 1} · ${closed.length} closed trades`);
+  const oversizedPositions = open.filter(t => (t.initRiskRs || 0) > riskTierRs * 1.2);
   const rtBadge = document.getElementById('dash-risk-tier-badge');
   if (rtBadge) {
-    if (riskTierRs >= riskCapRs) { rtBadge.className = 'stat-badge badge-green'; rtBadge.textContent = 'At cap (0.8% of portfolio)'; }
+    if (oversizedPositions.length > 0) {
+      rtBadge.className = 'stat-badge badge-red';
+      rtBadge.textContent = `⚠ ${oversizedPositions.length} position${oversizedPositions.length > 1 ? 's' : ''} oversized vs ₹${riskTierRs.toLocaleString('en-IN')} tier`;
+    } else if (riskTierRs >= riskCapRs) { rtBadge.className = 'stat-badge badge-green'; rtBadge.textContent = 'At cap (0.8% of portfolio)'; }
     else { rtBadge.className = 'stat-badge badge-blue'; rtBadge.textContent = `Next tier in ${tradesUntilNext} trade${tradesUntilNext !== 1 ? 's' : ''}`; }
   }
 
