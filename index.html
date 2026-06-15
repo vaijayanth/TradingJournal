@@ -3316,9 +3316,9 @@ function initPerfCharts(closed, initialCapital, open) {
   openWithRisk.forEach(t => rDataOpen[rBin(t.notionalPl / t.initRiskRs)]++);
   const hasOpenR = openWithRisk.length > 0;
 
-  // Closed: solid red/amber/green. Open: translucent purple-ish teal to distinguish
-  const rColors       = rBins.map((_,i) => i < 4 ? c.red   : i === 4 ? c.amber : c.green);
-  const rColorsOpen   = rBins.map((_,i) => i < 4 ? 'rgba(255,99,99,0.35)' : i === 4 ? 'rgba(255,159,10,0.35)' : 'rgba(52,199,89,0.35)');
+  // Closed: solid red/amber/green. Open: uniform blue — clearly distinct series
+  const rColors       = rBins.map((_,i) => i < 4 ? c.red : i === 4 ? c.amber : c.green);
+  const rColorsOpen   = rBins.map(() => 'rgba(99,179,237,0.85)'); // blue for all open bars
 
   const rmSeries = [{ name: 'Closed trades', data: rData }];
   if (hasOpenR) rmSeries.push({ name: 'Open (live R)', data: rDataOpen });
