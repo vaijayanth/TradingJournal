@@ -1068,15 +1068,16 @@ tbody tr:hover { filter: brightness(0.97); }
             <th style="padding:6px 10px">Setup</th>
             <th style="padding:6px 10px;text-align:right">Trades</th>
             <th style="padding:6px 10px;text-align:right">Win Rate</th>
+            <th style="padding:6px 10px;text-align:right" title="Avg Win ÷ Avg Loss">R-Multiple</th>
+            <th style="padding:6px 10px;text-align:right" title="WR × R − (1−WR) × 1: edge per trade in R units">Expectancy R</th>
             <th style="padding:6px 10px;text-align:right">Avg P&L%</th>
             <th style="padding:6px 10px;text-align:right">Avg Win%</th>
             <th style="padding:6px 10px;text-align:right">Avg Loss%</th>
-            <th style="padding:6px 10px;text-align:right">R-Multiple</th>
             <th style="padding:6px 10px;text-align:right">Total P&L</th>
           </tr>
         </thead>
         <tbody id="setup-breakdown-tbody">
-          <tr><td colspan="8" style="padding:20px;text-align:center;color:var(--text-muted)">Loading…</td></tr>
+          <tr><td colspan="9" style="padding:20px;text-align:center;color:var(--text-muted)">Loading…</td></tr>
         </tbody>
       </table>
     </div>
@@ -3201,7 +3202,10 @@ function initAnalysisCharts(open, closed) {
     const aw = wins.length > 0 ? wins.reduce((s,t) => s+t.finalPlPct, 0)/wins.length : 0;
     const al = losses.length > 0 ? Math.abs(losses.reduce((s,t) => s+t.finalPlPct, 0)/losses.length) : 0;
     const totalPl = trades.reduce((s,t) => s+t.finalPl, 0);
-    return { wr, avg, r: al > 0 ? aw/al : 0, aw, al: -Math.abs(al), n: trades.length, totalPl };
+    const r = al > 0 ? aw/al : 0;
+    const wrFrac = trades.length > 0 ? wins.length / trades.length : 0;
+    const rExp = al > 0 ? (wrFrac * r) - ((1 - wrFrac) * 1) : 0;
+    return { wr, avg, r, rExp, aw, al: -Math.abs(al), n: trades.length, totalPl };
   };
 
   const setupMap = {};
@@ -3216,21 +3220,24 @@ function initAnalysisCharts(open, closed) {
   const tbody = document.getElementById('setup-breakdown-tbody');
   if (tbody) {
     if (setupKeys.length === 0 || (setupKeys.length === 1 && setupKeys[0] === 'Unlabelled')) {
-      tbody.innerHTML = '<tr><td colspan="8" style="padding:20px;text-align:center;color:var(--text-muted)">No setup type data — add labels in column S of your sheet</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="9" style="padding:20px;text-align:center;color:var(--text-muted)">No setup type data — add labels in column S of your sheet</td></tr>';
     } else {
       tbody.innerHTML = setupKeys.map(s => {
         const st = calcStats(setupMap[s]);
         const wrColor = st.wr >= 50 ? 'var(--green)' : st.wr >= 30 ? 'var(--amber)' : 'var(--red)';
         const avgColor = st.avg >= 0 ? 'var(--green)' : 'var(--red)';
         const plColor = st.totalPl >= 0 ? 'var(--green)' : 'var(--red)';
+        const rExpColor = st.rExp > 0 ? 'var(--green)' : 'var(--red)';
+        const rExpStr = (st.rExp >= 0 ? '+' : '') + st.rExp.toFixed(2) + 'R';
         return `<tr style="border-bottom:1px solid var(--border)">
           <td style="padding:8px 10px;font-weight:600">${s}</td>
           <td style="padding:8px 10px;text-align:right;color:var(--text-muted)">${st.n}</td>
           <td style="padding:8px 10px;text-align:right;font-weight:700;color:${wrColor}">${st.wr.toFixed(0)}%</td>
+          <td style="padding:8px 10px;text-align:right">${st.r.toFixed(1)}R</td>
+          <td style="padding:8px 10px;text-align:right;font-weight:700;color:${rExpColor}">${rExpStr}</td>
           <td style="padding:8px 10px;text-align:right;color:${avgColor}">${(st.avg>=0?'+':'')+st.avg.toFixed(1)}%</td>
           <td style="padding:8px 10px;text-align:right;color:var(--green)">${st.aw > 0 ? '+'+st.aw.toFixed(1)+'%' : '—'}</td>
           <td style="padding:8px 10px;text-align:right;color:var(--red)">${st.al < 0 ? st.al.toFixed(1)+'%' : '—'}</td>
-          <td style="padding:8px 10px;text-align:right">${st.r.toFixed(1)}R</td>
           <td style="padding:8px 10px;text-align:right;font-weight:600;color:${plColor}">${fmtRsA(st.totalPl)}</td>
         </tr>`;
       }).join('');
