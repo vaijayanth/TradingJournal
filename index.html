@@ -1021,7 +1021,7 @@ tbody tr:hover { filter: brightness(0.97); }
     </div>
     <div class="card">
       <div class="chart-title">R-Multiple Distribution</div>
-      <div class="chart-sub">Edge shape across all closed trades</div>
+      <div class="chart-sub" id="rmultiple-sub">True R = Final P&L ÷ Planned Risk (₹) · closed trades only</div>
       <div id="chart-rmultiple" style="height:220px;"></div>
       <div id="insight-rmultiple" class="chart-insight"></div>
     </div>
@@ -3294,15 +3294,44 @@ function initPerfCharts(closed, initialCapital, open) {
   });
   distChart.render(); perfCharts.push(distChart);
 
-  const rBins = ['-6+','-5','-4','-3','-2','-1','0','1','2','3','4','5','6+'];
-  const rData = new Array(rBins.length).fill(0);
-  sorted.forEach(t => { const v = Math.round(t.finalPlPct); let i = v+6; if(v<=-6)i=0; else if(v>=6)i=12; rData[i]++; });
+  // True R-multiple: finalPl ÷ initRiskRs. Fall back to % proxy if initRiskRs missing.
+  const tradesWithR = sorted.filter(t => t.initRiskRs > 0);
+  const usesTrueR = tradesWithR.length >= sorted.length * 0.5; // >50% have initRiskRs
+  const rSubEl = document.getElementById('rmultiple-sub');
+  const rBins   = ['≤-3R', '-2R', '-1R', '-0.5R', '0', '+0.5R', '+1R', '+2R', '+3R', '+5R', '>5R'];
+  const rCuts   = [-3, -2, -1, -0.5, 0, 0.5, 1, 2, 3, 5];
+  const rData   = new Array(rBins.length).fill(0);
+  if (usesTrueR) {
+    if (rSubEl) rSubEl.textContent = `True R = Final P&L ÷ Planned Risk · ${tradesWithR.length} closed trades`;
+    tradesWithR.forEach(t => {
+      const r = t.finalPl / t.initRiskRs;
+      let i = rCuts.findIndex(cut => r < cut);
+      if (i === -1) i = rBins.length - 1; // >5R bucket
+      else if (i === 0) i = 0;            // ≤-3R bucket
+      rData[i]++;
+    });
+  } else {
+    // Fallback: bin by % rounded, mapped to same 11 bins using avgLoss as 1R proxy
+    if (rSubEl) rSubEl.textContent = `P&L % distribution (col K missing for most trades — map initRiskRsCol in Config)`;
+    const aLoss = losses2.length > 0 ? Math.abs(losses2.reduce((s,t)=>s+t.finalPlPct,0)/losses2.length) : 2;
+    sorted.forEach(t => {
+      const r = aLoss > 0 ? t.finalPlPct / aLoss : 0;
+      let i = rCuts.findIndex(cut => r < cut);
+      if (i === -1) i = rBins.length - 1;
+      else if (i === 0) i = 0;
+      rData[i]++;
+    });
+  }
+  // Colour: loss bins red, breakeven amber, win bins green
+  const rColors = rData.map((_,i) => i < 4 ? c.red : i === 4 ? c.amber : c.green);
   const rmChart = new ApexCharts(document.getElementById('chart-rmultiple'), {
     ...baseOpts(220), chart: { ...baseOpts(220).chart, type: 'bar' },
     series: [{ name: 'Trades', data: rData }],
-    xaxis: { ...baseOpts().xaxis, categories: rBins, title: { text: 'Final P&L%', style: { color: c.text } } },
-    colors: rData.map((_,i) => i<6 ? c.red : i===6 ? c.amber : c.green),
-    plotOptions: { bar: { columnWidth: '80%', distributed: true } }, legend: { show: false }, dataLabels: { enabled: false },
+    xaxis: { ...baseOpts().xaxis, categories: rBins, title: { text: usesTrueR ? 'R-Multiple (finalPl ÷ initRiskRs)' : 'R-Multiple (proxy)', style: { color: c.text } } },
+    colors: rColors,
+    plotOptions: { bar: { columnWidth: '80%', distributed: true } }, legend: { show: false },
+    dataLabels: { enabled: true, style: { fontSize: '10px', colors: ['#fff'] }, formatter: v => v > 0 ? v : '' },
+    annotations: { xaxis: [{ x: '0', borderColor: c.amber, borderWidth: 2, label: { text: 'Breakeven', style: { color: c.amber, background: 'transparent', fontSize: '10px' } } }] },
   });
   rmChart.render(); perfCharts.push(rmChart);
 
@@ -3493,13 +3522,26 @@ function initPerfCharts(closed, initialCapital, open) {
   }
 
   // 4. R-Multiple Distribution
-  const posR = sorted.filter(t => t.finalPlPct > 0 && avgLoss2 > 0 && (t.finalPlPct / avgLoss2) >= 2).length;
-  if (rMult < 1) {
-    ins('insight-rmultiple','red',`⚠ <strong>R-Multiple ${rMult.toFixed(2)} — below 1R</strong>. Wins average ${fmtPct(avgWin2)} but losses average −${avgLoss2.toFixed(1)}%. The system is eating itself.<br>→ <strong>Action:</strong> Two levers: (1) Cut losses faster — tighten stop to 7-day low strictly. (2) Hold winners longer — let the partial trail run without manual exits.`);
-  } else if (rMult < 1.5) {
-    ins('insight-rmultiple','amber',`⚡ R-Multiple ${rMult.toFixed(2)} — positive but room to grow. ${posR} trade${posR!==1?'s':''} delivered 2R+. Target is 1.5R+.<br>→ <strong>Action:</strong> Analyse your best 2R+ trades — what did you do differently? Hold time, setup type, market phase? Replicate that pattern.`);
+  const rTradesForInsight = sorted.filter(t => t.initRiskRs > 0);
+  const trueRValues = rTradesForInsight.map(t => t.finalPl / t.initRiskRs);
+  const trueWinR = trueRValues.filter(r => r > 0);
+  const trueLossR = trueRValues.filter(r => r < 0);
+  const avgTrueWinR = trueWinR.length > 0 ? trueWinR.reduce((s,r)=>s+r,0)/trueWinR.length : 0;
+  const avgTrueLossR = trueLossR.length > 0 ? Math.abs(trueLossR.reduce((s,r)=>s+r,0)/trueLossR.length) : 1;
+  const trueRMult = avgTrueLossR > 0 ? avgTrueWinR / avgTrueLossR : rMult;
+  const displayR = usesTrueR ? trueRMult : rMult;
+  const lossesOver1R = trueLossR.filter(r => Math.abs(r) > 1.2).length;
+  const winsOver2R = trueWinR.filter(r => r >= 2).length;
+  const winsOver3R = trueWinR.filter(r => r >= 3).length;
+  const openWinnersR = open.filter(t => (t.notionalPl||0) > 0);
+  const openNote = openWinnersR.length > 0 ? `<br><span style="opacity:0.7;font-size:11px">⚠ Closed-trade bias: ${openWinnersR.length} open winner${openWinnersR.length>1?'s':''} (unrealised) not included — true right tail is larger.</span>` : '';
+  const lossNote = lossesOver1R > 0 ? ` <strong>${lossesOver1R} loss${lossesOver1R>1?'es':''} exceeded −1.2R</strong> — stops not taken cleanly.` : ' Losses are tight (all within ~1R).';
+  if (displayR < 1) {
+    ins('insight-rmultiple','red',`⚠ <strong>R-Multiple ${displayR.toFixed(2)} — below 1R</strong>. Avg win: +${avgTrueWinR.toFixed(2)}R, avg loss: −${avgTrueLossR.toFixed(2)}R.${lossNote}<br>→ <strong>Action:</strong> (1) Cut losses faster — stop = 7-day low, no exceptions. (2) Hold winners longer — ${winsOver2R} trade${winsOver2R!==1?'s':''} reached 2R+, lean on those patterns.${openNote}`);
+  } else if (displayR < 1.5) {
+    ins('insight-rmultiple','amber',`⚡ <strong>R-Multiple ${displayR.toFixed(2)}</strong> — positive edge, room to grow. ${winsOver2R} trade${winsOver2R!==1?'s':''} reached 2R+, ${winsOver3R} reached 3R+.${lossNote}<br>→ <strong>Action:</strong> Study your 2R+ trades — setup type, hold time, market phase. Replicate. Target is avg win ≥ 1.5R.${openNote}`);
   } else {
-    ins('insight-rmultiple','green',`✓ R-Multiple ${rMult.toFixed(2)} — strong asymmetry. You win ${rMult.toFixed(1)}× what you lose on average. This is a professional-grade edge.<br>→ <strong>Keep doing:</strong> The risk-reward ratio is excellent. Scale by increasing position size at the next tier, not by trading more frequently.`);
+    ins('insight-rmultiple','green',`✓ <strong>R-Multiple ${displayR.toFixed(2)} — strong asymmetry</strong>. Avg win +${avgTrueWinR.toFixed(2)}R vs avg loss −${avgTrueLossR.toFixed(2)}R. ${winsOver3R} trade${winsOver3R!==1?'s':''} hit 3R+.${lossNote}<br>→ <strong>Keep doing:</strong> This is professional-grade edge. Scale position size at next tier — don't trade more frequently, trade bigger on A+ setups.${openNote}`);
   }
 
   // 5. Win Rate by Entry Day
