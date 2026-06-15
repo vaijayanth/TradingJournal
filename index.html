@@ -4132,22 +4132,53 @@ function initAnalysisCharts(open, closed) {
     const lossRMults = tmLosers.filter(t => (t.initRiskRs||0) > 0).map(t => Math.abs((t.finalPl||0) / t.initRiskRs));
     const avgLossR = lossRMults.length > 0 ? (lossRMults.reduce((s,v)=>s+v,0)/lossRMults.length) : 0;
 
+    // ── Find optimal trigger: lowest T where false-stop rate < 10% ──
+    // "False stop" = winner that closes below T — would be exited at 0% by the BE rule, losing that P&L
+    const candidates = [2, 3, 4, 5, 6, 7, 8, 10];
+    const triggerAnalysis = candidates.map(T => {
+      const falseStops = tmWinners.filter(t => t.finalPlPct < T).length;
+      const falseStopRate = falseStops / tmWinners.length * 100;
+      const safePct = 100 - falseStopRate;
+      const costIfFired = tmWinners.filter(t => t.finalPlPct < T)
+        .reduce((s,t) => s + t.finalPlPct, 0) / tmWinners.length; // avg P&L% lost per trade by stopping at 0%
+      return { T, falseStops, falseStopRate, safePct, costIfFired };
+    });
+    // Recommended trigger = lowest T with <10% false-stop rate
+    const recommended = triggerAnalysis.find(a => a.falseStopRate < 10) || triggerAnalysis[triggerAnalysis.length - 1];
+    const currentAnalysis = triggerAnalysis.find(a => a.T === 5) || triggerAnalysis[3];
+
     let beText = '';
 
     // ── Section 1: BE stop calibration ──
-    beText += `<strong>Your breakeven stop trigger: +5% profit</strong><br>`;
-    beText += `Of your <strong>${tmWinners.length} winning trades</strong>: `;
-    beText += `<strong>${p5}%</strong> clear +5% (BE fires) · <strong>${p10}%</strong> clear +10% (partial trigger) · <strong>${p15}%</strong> clear +15%.<br>`;
+    beText += `<strong>Breakeven Stop Trigger Analysis</strong><br>`;
+    beText += `Of your <strong>${tmWinners.length} closed winners</strong>: `;
+    beText += `<strong>${p5}%</strong> clear +5% · <strong>${p10}%</strong> clear +10% · <strong>${p15}%</strong> clear +15%.<br><br>`;
 
-    if (parseInt(p5) >= 70) {
-      beText += `✅ <strong>+5% BE trigger is well-calibrated</strong> — ${p5}% of your winners run past it. Only ${below5} of ${tmWinners.length} winners `;
-      beText += `close below +5% and would've been stopped at breakeven (0%) — an acceptable false-stop rate.`;
-    } else if (parseInt(p5) >= 50) {
-      beText += `⚠️ <strong>+5% BE trigger is borderline</strong> — ${100 - parseInt(p5)}% of winners close below +5% and would be stopped at 0% if the rule fires. `;
-      beText += `Your setups may not be running enough before you move the stop — wait for confirmation before tightening.`;
+    // Trigger comparison table
+    beText += `<strong>False-stop rate at each trigger level</strong> (winners that close below trigger → stopped at 0% instead):<br>`;
+    beText += `<span style="font-size:12px;line-height:2">`;
+    triggerAnalysis.forEach(a => {
+      const isCurrent = a.T === 5;
+      const isRecommended = a.T === recommended.T;
+      const rateColor = a.falseStopRate < 10 ? 'var(--green)' : a.falseStopRate < 20 ? 'var(--amber)' : 'var(--red)';
+      const tag = isCurrent && isRecommended ? ' ← current ✅' : isCurrent ? ' ← current' : isRecommended ? ' ← <strong>recommended</strong>' : '';
+      beText += `&nbsp;&nbsp;+${a.T}% trigger: <span style="color:${rateColor};font-weight:700">${a.falseStopRate.toFixed(0)}% false-stop rate</span> (${a.falseStops} winner${a.falseStops!==1?'s':''} cut short)${tag}<br>`;
+    });
+    beText += `</span>`;
+
+    // Verdict
+    if (recommended.T < 5) {
+      beText += `<br>💡 <strong>Recommendation: tighten your BE trigger from +5% to +${recommended.T}%.</strong> `;
+      beText += `At +${recommended.T}%, only ${recommended.falseStopRate.toFixed(0)}% of your winners close below the trigger — `;
+      beText += `you'd protect yourself earlier with minimal cost to your winners. `;
+      beText += `Your current +5% trigger has a ${currentAnalysis.falseStopRate.toFixed(0)}% false-stop rate — `;
+      beText += `those ${currentAnalysis.falseStops} winners close below +5% and get stopped at 0% instead of their actual exit.`;
+    } else if (recommended.T === 5) {
+      beText += `<br>✅ <strong>Your +5% BE trigger is optimal based on your trade history.</strong> `;
+      beText += `Only ${currentAnalysis.falseStopRate.toFixed(0)}% of winners close below +5% — you're rarely cutting winners short.`;
     } else {
-      beText += `🚨 <strong>${100 - parseInt(p5)}% of your winners never reach +5%</strong> — most winning trades close below your BE trigger. `;
-      beText += `Moving stop to breakeven at +5% would kill most of your small winners. Consider raising the trigger to +8–10% or only applying it to strong-momentum setups.`;
+      beText += `<br>⚠️ <strong>Even +${recommended.T}% has a ${recommended.falseStopRate.toFixed(0)}% false-stop rate — your winners are short-lived.</strong> `;
+      beText += `Focus on finding setups that run farther before tightening the BE stop rule.`;
     }
 
     // ── Section 2: R-multiple framing ──
