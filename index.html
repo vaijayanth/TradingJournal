@@ -4087,7 +4087,7 @@ function initAnalysisCharts(open, closed) {
   const avgActualLossRs = tmLosers.length > 0 ? tmLosers.reduce((s,t) => s + Math.abs(t.finalPl||0), 0) / tmLosers.length : 0;
   const slippageRs = avgActualLossRs - avgInitRiskRs;
   // Keep % for the breakeven analysis section
-  const withRiskPct = tmClosed.filter(t => t.initRiskPct && Math.abs(t.initRiskPct) > 0);
+  const withRiskPct = tmClosed.filter(t => t.initRiskPct && Math.abs(t.initRiskPct) > 0); // used for avgInitRisk % and loss dist annotation
   const avgInitRisk = withRiskPct.length > 0 ? withRiskPct.reduce((s,t) => s + Math.abs(t.initRiskPct), 0) / withRiskPct.length : 0;
   const avgActualLoss = tmLosers.length > 0 ? tmLosers.reduce((s,t) => s + Math.abs(t.finalPlPct), 0) / tmLosers.length : 0;
   const slippage = avgActualLoss - avgInitRisk;
@@ -4109,51 +4109,72 @@ function initAnalysisCharts(open, closed) {
   tmSet('tm-slippage-sub', '₹ over planned per stopped trade');
   tmSet('tm-median-win', medianWin > 0 ? '+' + medianWin.toFixed(2) + '%' : '—');
 
-  // ── Breakeven stop insight ──
+  // ── Breakeven stop insight (Minervini system: BE stop at +5%, partial at +10%) ──
   const beInsightEl = document.getElementById('tm-be-insight');
   if (beInsightEl && tmWinners.length > 0) {
-    const beTriggers = [1, 1.5, 2, 2.5, 3];
-    // Winners that close BELOW the trigger = would have been stopped at breakeven (0%) → net saved from loss if they were losers
-    // We interpret: if a winner closes at +1.2% and trigger is +2%, it would NOT have been affected (it closed before reaching +2%)
-    // A more useful framing: what % of winners close ABOVE each trigger level (those are the ones that safely passed the BE stop)
-    const insights = beTriggers.map(trigger => {
-      const safeWinners = tmWinners.filter(t => t.finalPlPct >= trigger).length; // winners that hit trigger and went further
-      const cutEarly = tmWinners.filter(t => t.finalPlPct < trigger && t.finalPlPct > 0).length; // small winners below trigger
-      const savedLosers = tmLosers.filter(t => Math.abs(t.finalPlPct) > 0.3).length; // approx losers that had a chance to hit trigger
-      return { trigger, safeWinners, cutEarly, savedPct: tmLosers.length > 0 ? (savedLosers / tmLosers.length * 100) : 0 };
-    });
-
-    // Find the trigger where cutEarly is small (<15% of winners) and explain it
-    const bestTrigger = insights.find(i => i.cutEarly / tmWinners.length < 0.15) || insights[2];
-    const cutEarlyPct = (bestTrigger.cutEarly / tmWinners.length * 100).toFixed(0);
-    const safeWinPct = (bestTrigger.safeWinners / tmWinners.length * 100).toFixed(0);
-
-    // Pct of winners above various thresholds
-    const above2 = tmWinners.filter(t => t.finalPlPct >= 2).length;
-    const above5 = tmWinners.filter(t => t.finalPlPct >= 5).length;
+    // Winner distribution at your actual trigger levels
+    const above5  = tmWinners.filter(t => t.finalPlPct >= 5).length;
     const above10 = tmWinners.filter(t => t.finalPlPct >= 10).length;
-    const p2 = (above2 / tmWinners.length * 100).toFixed(0);
-    const p5 = (above5 / tmWinners.length * 100).toFixed(0);
+    const above15 = tmWinners.filter(t => t.finalPlPct >= 15).length;
+    const below5  = tmWinners.filter(t => t.finalPlPct < 5).length;
+    const p5  = (above5  / tmWinners.length * 100).toFixed(0);
     const p10 = (above10 / tmWinners.length * 100).toFixed(0);
+    const p15 = (above15 / tmWinners.length * 100).toFixed(0);
 
-    let beText = `Of your <strong>${tmWinners.length} winning trades</strong>: `;
-    beText += `<strong>${p2}%</strong> close above +2% · <strong>${p5}%</strong> above +5% · <strong>${p10}%</strong> above +10%.<br>`;
+    // R-multiple of winners in ₹ terms (1R = initRiskRs)
+    const rMults = tmWinners.filter(t => (t.initRiskRs||0) > 0).map(t => (t.finalPl||0) / t.initRiskRs);
+    const avgR = rMults.length > 0 ? (rMults.reduce((s,v)=>s+v,0)/rMults.length) : 0;
+    const maxR = rMults.length > 0 ? Math.max(...rMults) : 0;
+    const rGt3 = rMults.filter(v=>v>=3).length;
+    const rGt5 = rMults.filter(v=>v>=5).length;
 
-    if (parseInt(p2) >= 70) {
-      beText += `✅ <strong>Moving stop to breakeven at +2% makes sense</strong> — ${p2}% of your winners would clear the trigger and run. `;
-      beText += `Only ${100 - parseInt(p2)}% of winners close between 0–2% so you'd rarely cut a winner early.`;
-    } else if (parseInt(p2) >= 50) {
-      beText += `⚠️ <strong>A +2% breakeven trigger is borderline</strong> — ${100 - parseInt(p2)}% of winners close below +2% and would be stopped at 0% instead. `;
-      beText += `Consider a tighter trigger of +1% or only apply it to high-conviction setups.`;
+    // Losers R-multiple
+    const lossRMults = tmLosers.filter(t => (t.initRiskRs||0) > 0).map(t => Math.abs((t.finalPl||0) / t.initRiskRs));
+    const avgLossR = lossRMults.length > 0 ? (lossRMults.reduce((s,v)=>s+v,0)/lossRMults.length) : 0;
+
+    let beText = '';
+
+    // ── Section 1: BE stop calibration ──
+    beText += `<strong>Your breakeven stop trigger: +5% profit</strong><br>`;
+    beText += `Of your <strong>${tmWinners.length} winning trades</strong>: `;
+    beText += `<strong>${p5}%</strong> clear +5% (BE fires) · <strong>${p10}%</strong> clear +10% (partial trigger) · <strong>${p15}%</strong> clear +15%.<br>`;
+
+    if (parseInt(p5) >= 70) {
+      beText += `✅ <strong>+5% BE trigger is well-calibrated</strong> — ${p5}% of your winners run past it. Only ${below5} of ${tmWinners.length} winners `;
+      beText += `close below +5% and would've been stopped at breakeven (0%) — an acceptable false-stop rate.`;
+    } else if (parseInt(p5) >= 50) {
+      beText += `⚠️ <strong>+5% BE trigger is borderline</strong> — ${100 - parseInt(p5)}% of winners close below +5% and would be stopped at 0% if the rule fires. `;
+      beText += `Your setups may not be running enough before you move the stop — wait for confirmation before tightening.`;
     } else {
-      beText += `⚠️ <strong>Breakeven stop at +2% would cut ${100 - parseInt(p2)}% of your winners early</strong> — most of your winning trades close below +2%. `;
-      beText += `Your winners are small — focus on letting trades run before adding a breakeven rule.`;
+      beText += `🚨 <strong>${100 - parseInt(p5)}% of your winners never reach +5%</strong> — most winning trades close below your BE trigger. `;
+      beText += `Moving stop to breakeven at +5% would kill most of your small winners. Consider raising the trigger to +8–10% or only applying it to strong-momentum setups.`;
     }
 
+    // ── Section 2: R-multiple framing ──
+    if (rMults.length >= 3) {
+      beText += `<br><br><strong>R-Multiple (winners, in ₹ terms):</strong> `;
+      beText += `avg <strong>${avgR.toFixed(1)}R</strong> · best <strong>${maxR.toFixed(1)}R</strong> · `;
+      beText += `${rGt3} trade${rGt3!==1?'s':''} &gt;3R · ${rGt5} trade${rGt5!==1?'s':''} &gt;5R.<br>`;
+      if (avgLossR > 0) {
+        beText += `Your losers average <strong>${avgLossR.toFixed(2)}R</strong> loss. `;
+        const ratio = avgR / (avgLossR || 1);
+        if (ratio >= 2) {
+          beText += `✅ Win:Loss R-ratio of <strong>${ratio.toFixed(1)}:1</strong> — you're getting paid more than 2× your risk on wins. Strong edge.`;
+        } else if (ratio >= 1) {
+          beText += `⚠️ Win:Loss R-ratio of <strong>${ratio.toFixed(1)}:1</strong> — you need a win rate above ${(1/(1+ratio)*100).toFixed(0)}% to break even at this ratio.`;
+        } else {
+          beText += `🚨 Win:Loss R-ratio is below 1:1 — your average win is smaller than your average loss in ₹ terms. Fix this before scaling size.`;
+        }
+      }
+    }
+
+    // ── Section 3: Stop discipline ──
     if (slippageRs > 500) {
-      beText += `<br><br>📌 <strong>Stop slippage alert:</strong> your actual losses average ₹${Math.round(slippageRs).toLocaleString('en-IN')} more than your planned ₹ risk — check for gap-downs or late stop executions.`;
+      beText += `<br><br>📌 <strong>Stop slippage:</strong> actual losses average ₹${Math.round(slippageRs).toLocaleString('en-IN')} over planned ₹ risk. Check for gap-downs or stops held past trigger price.`;
     } else if (slippageRs <= 0) {
-      beText += `<br><br>✅ <strong>Stop discipline is solid</strong> — actual ₹ losses are at or within your planned init risk.`;
+      beText += `<br><br>✅ <strong>Stop discipline is solid</strong> — actual ₹ losses are at or within your planned ₹ risk. Clean execution.`;
+    } else {
+      beText += `<br><br>⚠️ <strong>Minor slippage:</strong> ₹${Math.round(slippageRs).toLocaleString('en-IN')} over planned per stop — acceptable but worth watching.`;
     }
 
     beInsightEl.innerHTML = beText;
@@ -4162,8 +4183,10 @@ function initAnalysisCharts(open, closed) {
   }
 
   // ── Init Risk % Distribution histogram ──
+  // Use initRiskPct (col L) for the % charts — separate from withRisk which filters on initRiskRs
+  const withRiskPctOnly = tmClosed.filter(t => t.initRiskPct && Math.abs(t.initRiskPct) > 0);
   const riskBuckets = {'<0.5%':0,'0.5–1%':0,'1–1.5%':0,'1.5–2%':0,'2–2.5%':0,'2.5–3%':0,'>3%':0};
-  withRisk.forEach(t => {
+  withRiskPctOnly.forEach(t => {
     const r = Math.abs(t.initRiskPct);
     if (r < 0.5) riskBuckets['<0.5%']++;
     else if (r < 1) riskBuckets['0.5–1%']++;
@@ -4176,7 +4199,7 @@ function initAnalysisCharts(open, closed) {
   const riskKeys = Object.keys(riskBuckets);
   const riskData = riskKeys.map(k => riskBuckets[k]);
   const riskDistEl = document.getElementById('chart-tm-risk-dist');
-  if (riskDistEl && withRisk.length > 0) {
+  if (riskDistEl && withRiskPctOnly.length > 0) {
     const rdChart = new ApexCharts(riskDistEl, {
       ...baseOpts(220), chart: { ...baseOpts(220).chart, type: 'bar' },
       series: [{ name: 'Trades', data: riskData }],
@@ -4194,7 +4217,7 @@ function initAnalysisCharts(open, closed) {
 
   // ── Win Rate by Risk Bucket ──
   const riskWR = {};
-  withRisk.forEach(t => {
+  withRiskPctOnly.forEach(t => {
     const r = Math.abs(t.initRiskPct);
     const bucket = r < 1 ? '<1%' : r < 1.5 ? '1–1.5%' : r < 2 ? '1.5–2%' : r < 3 ? '2–3%' : '>3%';
     if (!riskWR[bucket]) riskWR[bucket] = {w:0,t:0};
