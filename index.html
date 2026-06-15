@@ -1962,7 +1962,14 @@ function renderPositionsReal(open, cfg) {
     // Count simultaneous signals — ≥2 means priority trade to action
     const signalCount = [alertType==='red'||alertType==='amber', haWarn, emaBelow, needsBreakeven, (t.haChanged||'').toUpperCase()==='Y'].filter(Boolean).length;
     return { ...t, alertType, haWarn, effStop, effPct, emaBelow, needsBreakeven, signalCount };
-  }).sort((a, b) => a.effPct - b.effPct);
+  }).sort((a, b) => {
+    // Priority order: 1) Exit triggered (red), 2) Partial due (green), 3) Near stop (amber), 4) Rest by % from stop
+    const priority = t => t.alertType === 'red' ? 0 : t.alertType === 'green' ? 1 : t.alertType === 'amber' ? 2 : 3;
+    const pa = priority(a), pb = priority(b);
+    if (pa !== pb) return pa - pb;
+    // Within same priority group: sort by % from stop ascending (closest to danger first)
+    return a.effPct - b.effPct;
+  });
 
   trades.forEach((t, i) => {
     const haColour = (t.haColour || '').trim();
@@ -2026,7 +2033,7 @@ function renderPositionsReal(open, cfg) {
   });
 
   const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
-  set('pos-count-text', `${open.length} active trades · Sorted by risk proximity · Read-only`);
+  set('pos-count-text', `${open.length} active trades · Exit → Partial Due → Near Stop → rest · Read-only`);
   const reds = trades.filter(t => t.alertType === 'red').length;
   const ambers = trades.filter(t => t.alertType === 'amber').length;
   const greens = trades.filter(t => t.alertType === 'green').length;
@@ -2395,9 +2402,12 @@ function sortTable(key) {
   const sorted = [...d.open].sort((a, b) => {
     if (key === 'age') return (parseInt(b.age) || 0) - (parseInt(a.age) || 0);
     if (key === 'pnl') return b.plPct - a.plPct;
-    // Sort by effective stop (MAX of J, I) — closest to danger first
+    // Priority sort: Exit → Partial Due → Near Stop → rest, then by % from stop within each group
     const ea = Math.max(a.stopLoss||0,a.sevenDayLow||0); const epA = (a.cmp&&ea)?((a.cmp-ea)/a.cmp*100):a.pctFromStop;
     const eb = Math.max(b.stopLoss||0,b.sevenDayLow||0); const epB = (b.cmp&&eb)?((b.cmp-eb)/b.cmp*100):b.pctFromStop;
+    const pri = (t, ep) => ep<=0?0:(t.plPct>=(cfg.partialTrigger||10)&&t.partialTaken==='N')?1:ep<=(cfg.stopProximity||2)?2:3;
+    const pa = pri(a,epA), pb = pri(b,epB);
+    if (pa !== pb) return pa - pb;
     return epA - epB;
   });
   renderPositionsReal(sorted, cfg);
