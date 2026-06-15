@@ -1456,6 +1456,10 @@ tbody tr:hover { filter: brightness(0.97); }
         <input type="number" id="cfg-partial-trigger" class="config-input config-input-sm" step="0.5">
       </div>
       <div class="config-field">
+        <label class="config-label">Breakeven Trigger (%)</label>
+        <input type="number" id="cfg-be-trigger" class="config-input config-input-sm" step="0.5">
+      </div>
+      <div class="config-field">
         <label class="config-label">Stop Proximity Alert (%)</label>
         <input type="number" id="cfg-stop-proximity" class="config-input config-input-sm" step="0.5">
       </div>
@@ -1604,7 +1608,7 @@ const DEFAULT_CONFIG = {
   finalPlPctCol: 'AE', ageCol: 'AF',
   haColourCol: 'AG', haChangedCol: 'AH',
   portfolioCell: 'AK26', initialCapCell: 'AK20',
-  maxHeat: 5, partialTrigger: 10, stopProximity: 2, heatGreen: 2.5, heatAmber: 4, maxAge: 60, maxPositions: 15,
+  maxHeat: 5, partialTrigger: 10, beTrigger: 5, stopProximity: 2, heatGreen: 2.5, heatAmber: 4, maxAge: 60, maxPositions: 15,
 };
 
 function loadConfig() {
@@ -1784,7 +1788,7 @@ function renderDashboard(data, cfg) {
   const alertCount = open.filter(t => {
     const es = Math.max(t.stopLoss || 0, t.sevenDayLow || 0);
     const ep = (t.cmp && es) ? ((t.cmp - es) / t.cmp * 100) : t.pctFromStop;
-    return ep <= 0 || ep <= cfg.stopProximity || (t.plPct >= cfg.partialTrigger && t.partialTaken === 'N') || (t.plPct >= 5 && t.stopLoss < t.entryPrice) || ((t.ema21||'').trim().toLowerCase()==='below' && t.plPct > 0);
+    return ep <= 0 || ep <= cfg.stopProximity || (t.plPct >= cfg.partialTrigger && t.partialTaken === 'N') || (t.plPct >= cfg.beTrigger && t.stopLoss < t.entryPrice) || ((t.ema21||'').trim().toLowerCase()==='below' && t.plPct > 0);
   }).length;
   set('dash-open-count', open.length);
   set('dash-closed-count', closed.length);
@@ -1858,7 +1862,7 @@ function renderDashboard(data, cfg) {
       if ((t.ema21 || '').trim().toLowerCase() === 'below' && t.plPct > 0) {
         alerts.push({ type:'red', icon:'📉', title:`${t.stock} — Below 21 EMA (+${t.plPct.toFixed(1)}%)`, desc:`Price has crossed below 21 EMA. Position is profitable — consider tightening stop to protect gains.` });
       }
-      if (t.plPct >= 5 && t.stopLoss < t.entryPrice) {
+      if (t.plPct >= cfg.beTrigger && t.stopLoss < t.entryPrice) {
         alerts.push({ type:'amber', icon:'🛡', title:`${t.stock} — Move Stop to Breakeven (+${t.plPct.toFixed(1)}%)`, desc:`Position up ${t.plPct.toFixed(1)}%. Per your strategy, move col J stop to entry price ₹${t.entryPrice.toLocaleString('en-IN')} to make this trade risk-free.` });
       }
       if (t.plPct >= cfg.partialTrigger && t.partialTaken === 'N') alerts.push({ type:'green', icon:'🟢', title:`${t.stock} — Partial Exit Pending (+${t.plPct.toFixed(1)}%)`, desc:`At +${cfg.partialTrigger}% trigger. Partial exit not yet taken. Act today.` });
@@ -1869,7 +1873,7 @@ function renderDashboard(data, cfg) {
       if ((t.haChanged || '').toUpperCase() === 'Y' && t.haColour) {
         alerts.push({ type:'amber', icon:'🔄', title:`${t.stock} — HA colour flipped to ${t.haColour}`, desc:`Heikin-Ashi candle colour changed — momentum shift signal. Review position and consider tightening stop.` });
       }
-      if (t.plPct >= 5 && (t.haColour || '').trim().toLowerCase() === 'red') {
+      if (t.plPct >= cfg.beTrigger && (t.haColour || '').trim().toLowerCase() === 'red') {
         alerts.push({ type:'amber', icon:'⚠', title:`${t.stock} — Profit at risk: +${t.plPct.toFixed(1)}% but HA is Red`, desc:`Healthy gain but Heikin-Ashi momentum has turned red. Consider tightening stop or taking partial profits to protect gains.` });
       }
     });
@@ -1960,9 +1964,9 @@ function renderPositionsReal(open, cfg) {
     if (effPct <= 0) alertType = 'red';
     else if (effPct <= cfg.stopProximity) alertType = 'amber';
     if (t.plPct >= cfg.partialTrigger && t.partialTaken === 'N') alertType = 'green';
-    const haWarn = t.plPct >= 5 && (t.haColour || '').trim().toLowerCase() === 'red';
+    const haWarn = t.plPct >= cfg.beTrigger && (t.haColour || '').trim().toLowerCase() === 'red';
     const emaBelow = (t.ema21 || '').trim().toLowerCase() === 'below' && t.plPct > 0;
-    const needsBreakeven = t.plPct >= 5 && t.stopLoss < t.entryPrice;
+    const needsBreakeven = t.plPct >= cfg.beTrigger && t.stopLoss < t.entryPrice;
     // Count simultaneous signals — ≥2 means priority trade to action
     const signalCount = [alertType==='red'||alertType==='amber', haWarn, emaBelow, needsBreakeven, (t.haChanged||'').toUpperCase()==='Y'].filter(Boolean).length;
     return { ...t, alertType, haWarn, effStop, effPct, emaBelow, needsBreakeven, signalCount };
@@ -2019,7 +2023,7 @@ function renderPositionsReal(open, cfg) {
               const beGapPct = t.cmp > 0 ? ((beTargetPrice - t.cmp) / t.cmp * 100) : 0;
               const alreadyPartial = t.partialTaken === 'Y';
               const atPartial = t.plPct >= (cfg.partialTrigger||10);
-              const atBE = t.plPct >= 5;
+              const atBE = t.plPct >= (cfg.beTrigger||5);
               if (alreadyPartial) return `
                 <div class="expand-item" style="grid-column:span 2"><div class="expand-label">Partial Target</div><div class="expand-value" style="color:var(--green);font-size:12px">✓ Partial taken at ${cfg.partialTrigger||10}% · Trailing remainder via 7-day low</div></div>`;
               if (atPartial) return `
@@ -2034,8 +2038,8 @@ function renderPositionsReal(open, cfg) {
                 const trailPct = t.effPct;
                 return '<span style="color:var(--green)">✓ Partial taken — trailing remainder · Active trail: ₹' + trailStop.toLocaleString('en-IN') + ' (' + (trailPct >= 0 ? '+' : '') + trailPct.toFixed(1) + '% buffer) · Let winners run via 7-day low trail</span>';
               }
-              if (t.plPct >= 5 && t.stopLoss < t.entryPrice) return '<span style="color:var(--amber)">⚠ Move col J stop to entry ₹' + t.entryPrice.toLocaleString('en-IN') + ' — make trade risk-free</span>';
-              if (t.plPct >= 5) return '<span style="color:var(--green)">✓ Breakeven stop in place — trail via 7-day low (₹' + t.sevenDayLow.toLocaleString('en-IN') + ')</span>';
+              if (t.plPct >= (cfg.beTrigger||5) && t.stopLoss < t.entryPrice) return '<span style="color:var(--amber)">⚠ Move col J stop to entry ₹' + t.entryPrice.toLocaleString('en-IN') + ' — make trade risk-free</span>';
+              if (t.plPct >= (cfg.beTrigger||5)) return '<span style="color:var(--green)">✓ Breakeven stop in place — trail via 7-day low (₹' + t.sevenDayLow.toLocaleString('en-IN') + ')</span>';
               return '<span style="color:var(--text-muted)">—</span>';
             })()}</div></div>
             ${haColour ? `<div class="expand-item"><div class="expand-label">HA Colour</div><div class="expand-value"><span class="tag ${haClass} ${haChangedClass}">${haLabel}</span>${haChanged ? ' <span style="color:var(--amber);font-size:11px">— momentum shift, review stop</span>' : ''}</div></div>` : ''}
@@ -2624,6 +2628,7 @@ function populateConfigPage() {
   setVal('cfg-initial-cap-cell', cfg.initialCapCell);
   setVal('cfg-max-heat', cfg.maxHeat);
   setVal('cfg-partial-trigger', cfg.partialTrigger);
+  setVal('cfg-be-trigger', cfg.beTrigger);
   setVal('cfg-stop-proximity', cfg.stopProximity);
   setVal('cfg-heat-green', cfg.heatGreen);
   setVal('cfg-heat-amber', cfg.heatAmber);
@@ -2683,6 +2688,7 @@ function saveAllConfig() {
   cfg.initialCapCell = getVal('cfg-initial-cap-cell', cfg.initialCapCell).toUpperCase() || cfg.initialCapCell;
   cfg.maxHeat = parseFloat(getVal('cfg-max-heat', cfg.maxHeat)) || cfg.maxHeat;
   cfg.partialTrigger = parseFloat(getVal('cfg-partial-trigger', cfg.partialTrigger)) || cfg.partialTrigger;
+  cfg.beTrigger = parseFloat(getVal('cfg-be-trigger', cfg.beTrigger)) || cfg.beTrigger;
   cfg.stopProximity = parseFloat(getVal('cfg-stop-proximity', cfg.stopProximity)) || cfg.stopProximity;
   cfg.heatGreen = parseFloat(getVal('cfg-heat-green', cfg.heatGreen)) || cfg.heatGreen;
   cfg.heatAmber = parseFloat(getVal('cfg-heat-amber', cfg.heatAmber)) || cfg.heatAmber;
