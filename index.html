@@ -4081,23 +4081,32 @@ function initAnalysisCharts(open, closed) {
   const tmWinners = tmClosed.filter(t => t.finalPlPct > 0);
   const tmLosers = tmClosed.filter(t => t.finalPlPct < 0);
 
-  // Init risk % — use initRiskPct col L
-  const withRisk = tmClosed.filter(t => t.initRiskPct && Math.abs(t.initRiskPct) > 0);
-  const avgInitRisk = withRisk.length > 0 ? withRisk.reduce((s,t) => s + Math.abs(t.initRiskPct), 0) / withRisk.length : 0;
+  // Init risk ₹ (col K = initRiskRs) vs actual loss ₹ (col AD = finalPl) — both in ₹ so apples-to-apples
+  const withRisk = tmClosed.filter(t => t.initRiskRs && t.initRiskRs > 0);
+  const avgInitRiskRs = withRisk.length > 0 ? withRisk.reduce((s,t) => s + t.initRiskRs, 0) / withRisk.length : 0;
+  const avgActualLossRs = tmLosers.length > 0 ? tmLosers.reduce((s,t) => s + Math.abs(t.finalPl||0), 0) / tmLosers.length : 0;
+  const slippageRs = avgActualLossRs - avgInitRiskRs;
+  // Keep % for the breakeven analysis section
+  const withRiskPct = tmClosed.filter(t => t.initRiskPct && Math.abs(t.initRiskPct) > 0);
+  const avgInitRisk = withRiskPct.length > 0 ? withRiskPct.reduce((s,t) => s + Math.abs(t.initRiskPct), 0) / withRiskPct.length : 0;
   const avgActualLoss = tmLosers.length > 0 ? tmLosers.reduce((s,t) => s + Math.abs(t.finalPlPct), 0) / tmLosers.length : 0;
   const slippage = avgActualLoss - avgInitRisk;
 
   const sortedWinPct = [...tmWinners].map(t => t.finalPlPct).sort((a,b) => a - b);
   const medianWin = sortedWinPct.length > 0 ? sortedWinPct[Math.floor(sortedWinPct.length / 2)] : 0;
 
-  tmSet('tm-avg-risk', avgInitRisk > 0 ? '-' + avgInitRisk.toFixed(2) + '%' : '—');
-  tmSet('tm-avg-loss', avgActualLoss > 0 ? '-' + avgActualLoss.toFixed(2) + '%' : '—');
+  const fmtRs2 = v => '₹' + Math.round(Math.abs(v)).toLocaleString('en-IN');
+  tmSet('tm-avg-risk', avgInitRiskRs > 0 ? fmtRs2(avgInitRiskRs) : '—');
+  tmSet('tm-avg-risk-sub', 'avg planned ₹ risk per trade');
+  tmSet('tm-avg-loss', avgActualLossRs > 0 ? fmtRs2(avgActualLossRs) : '—');
+  tmSet('tm-avg-loss-sub', 'avg ₹ lost on stopped-out trades');
 
   const slippageEl = document.getElementById('tm-slippage');
   if (slippageEl) {
-    slippageEl.textContent = slippage > 0 ? '+' + slippage.toFixed(2) + '%' : slippage.toFixed(2) + '%';
-    slippageEl.style.color = slippage > 0.5 ? 'var(--red)' : slippage <= 0 ? 'var(--green)' : 'var(--amber)';
+    slippageEl.textContent = slippageRs > 0 ? '+' + fmtRs2(slippageRs) : (slippageRs < 0 ? '-' + fmtRs2(slippageRs) : '₹0');
+    slippageEl.style.color = slippageRs > 500 ? 'var(--red)' : slippageRs <= 0 ? 'var(--green)' : 'var(--amber)';
   }
+  tmSet('tm-slippage-sub', '₹ over planned per stopped trade');
   tmSet('tm-median-win', medianWin > 0 ? '+' + medianWin.toFixed(2) + '%' : '—');
 
   // ── Breakeven stop insight ──
@@ -4141,10 +4150,10 @@ function initAnalysisCharts(open, closed) {
       beText += `Your winners are small — focus on letting trades run before adding a breakeven rule.`;
     }
 
-    if (slippage > 0.5) {
-      beText += `<br><br>📌 <strong>Stop slippage alert:</strong> your actual losses average ${slippage.toFixed(2)}% more than your init risk — check for gap-downs or late stop executions.`;
-    } else if (slippage <= 0) {
-      beText += `<br><br>✅ <strong>Stop discipline is solid</strong> — actual losses are at or within your planned init risk.`;
+    if (slippageRs > 500) {
+      beText += `<br><br>📌 <strong>Stop slippage alert:</strong> your actual losses average ₹${Math.round(slippageRs).toLocaleString('en-IN')} more than your planned ₹ risk — check for gap-downs or late stop executions.`;
+    } else if (slippageRs <= 0) {
+      beText += `<br><br>✅ <strong>Stop discipline is solid</strong> — actual ₹ losses are at or within your planned init risk.`;
     }
 
     beInsightEl.innerHTML = beText;
