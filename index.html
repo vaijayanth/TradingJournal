@@ -1060,23 +1060,25 @@ tbody tr:hover { filter: brightness(0.97); }
     <!-- Monthly Performance Table -->
     <div class="card">
       <div class="chart-title">Monthly Performance</div>
-      <div class="chart-sub">Trade count, win rate and P&L per month</div>
+      <div class="chart-sub">Closed P&L by month · current month includes unrealised MTM of open positions</div>
       <div style="overflow-x:auto;margin-top:12px">
         <table style="width:100%;border-collapse:collapse;font-size:13px">
           <thead>
             <tr style="color:var(--text-muted);text-align:left;border-bottom:1px solid var(--border)">
               <th style="padding:6px 10px">Month</th>
               <th style="padding:6px 10px;text-align:right">Trades</th>
-              <th style="padding:6px 10px;text-align:right">Wins</th>
               <th style="padding:6px 10px;text-align:right">Win Rate</th>
-              <th style="padding:6px 10px;text-align:right">P&L ₹</th>
+              <th style="padding:6px 10px;text-align:right">Realised ₹</th>
+              <th style="padding:6px 10px;text-align:right">Unrealised ₹</th>
+              <th style="padding:6px 10px;text-align:right">Combined ₹</th>
             </tr>
           </thead>
           <tbody id="monthly-perf-tbody">
-            <tr><td colspan="5" style="padding:20px;text-align:center;color:var(--text-muted)">Loading…</td></tr>
+            <tr><td colspan="6" style="padding:20px;text-align:center;color:var(--text-muted)">Loading…</td></tr>
           </tbody>
         </table>
       </div>
+      <div id="insight-monthly-table" class="chart-insight"></div>
     </div>
   </div>
 
@@ -2548,32 +2550,62 @@ function renderPerfStats(closed, open, portfolioValue, initialCapital) {
     if (!t.closeDate) return;
     const d = parseDate(t.closeDate); if (isNaN(d)) return;
     const key = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
-    if (!monthlyMap2[key]) monthlyMap2[key]={wins:0,total:0,pl:0};
+    if (!monthlyMap2[key]) monthlyMap2[key]={wins:0,total:0,pl:0,unreal:0};
     monthlyMap2[key].total++;
     if (t.finalPlPct>0) monthlyMap2[key].wins++;
     monthlyMap2[key].pl+=t.finalPl;
   });
+  // Add unrealised MTM for the current month from open positions (opened this month)
+  const nowKey = new Date().getFullYear()+'-'+String(new Date().getMonth()+1).padStart(2,'0');
+  const totalOpenMTM = open.reduce((s,t)=>s+(t.notionalPl||0),0);
+  if (!monthlyMap2[nowKey]) monthlyMap2[nowKey]={wins:0,total:0,pl:0,unreal:0};
+  monthlyMap2[nowKey].unreal = totalOpenMTM; // all open MTM belongs to current period
+  monthlyMap2[nowKey].isCurrent = true;
+
   const monthlyTbody2 = document.getElementById('monthly-perf-tbody');
   if (monthlyTbody2) {
     const mKeys2 = Object.keys(monthlyMap2).sort();
     const MNAMES4 = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     monthlyTbody2.innerHTML = mKeys2.length===0
-      ? '<tr><td colspan="5" style="padding:20px;text-align:center;color:var(--text-muted)">No closed trades data</td></tr>'
+      ? '<tr><td colspan="6" style="padding:20px;text-align:center;color:var(--text-muted)">No data</td></tr>'
       : mKeys2.map(k => {
         const m=monthlyMap2[k];
         const wr=m.total>0?m.wins/m.total*100:0;
         const [yr,mo]=k.split('-');
         const label=MNAMES4[parseInt(mo)-1]+' '+yr.slice(2);
         const wrColor=wr>=60?'var(--green)':wr>=40?'var(--amber)':'var(--red)';
+        const combined=m.pl+(m.unreal||0);
         const plColor=m.pl>=0?'var(--green)':'var(--red)';
-        return `<tr style="border-bottom:1px solid var(--border)">
-          <td style="padding:7px 10px;font-weight:600">${label}</td>
-          <td style="padding:7px 10px;text-align:right;color:var(--text-muted)">${m.total}</td>
-          <td style="padding:7px 10px;text-align:right;color:var(--text-muted)">${m.wins}</td>
-          <td style="padding:7px 10px;text-align:right;font-weight:700;color:${wrColor}">${wr.toFixed(0)}%</td>
-          <td style="padding:7px 10px;text-align:right;font-weight:600;color:${plColor}">${m.pl>=0?'+':''}₹${Math.round(m.pl).toLocaleString('en-IN')}</td>
+        const combColor=combined>=0?'var(--green)':'var(--red)';
+        const unreal=m.unreal||0;
+        const isNow=m.isCurrent;
+        const fmtRs2 = v => (v>=0?'+':'')+'₹'+Math.abs(Math.round(v)).toLocaleString('en-IN');
+        return `<tr style="border-bottom:1px solid var(--border)${isNow?';background:rgba(99,179,237,0.06)':''}">
+          <td style="padding:7px 10px;font-weight:600">${label}${isNow?' <span style="font-size:10px;color:var(--accent);font-weight:400">live</span>':''}</td>
+          <td style="padding:7px 10px;text-align:right;color:var(--text-muted)">${m.total||'—'}</td>
+          <td style="padding:7px 10px;text-align:right;font-weight:700;color:${m.total>0?wrColor:'var(--text-muted)'}">${m.total>0?wr.toFixed(0)+'%':'—'}</td>
+          <td style="padding:7px 10px;text-align:right;font-weight:600;color:${plColor}">${m.pl!==0?fmtRs2(m.pl):'—'}</td>
+          <td style="padding:7px 10px;text-align:right;color:${unreal>=0?'var(--green)':'var(--red)'};font-style:italic">${unreal!==0?fmtRs2(unreal):'—'}</td>
+          <td style="padding:7px 10px;text-align:right;font-weight:700;color:${combColor};${isNow?'border-left:2px solid var(--accent)':''}">${isNow||unreal!==0?fmtRs2(combined):(m.pl!==0?fmtRs2(m.pl):'—')}</td>
         </tr>`;
       }).join('');
+
+    // Insight for monthly table
+    const insMonthlyTable = document.getElementById('insight-monthly-table');
+    if (insMonthlyTable) {
+      const currentM = monthlyMap2[nowKey];
+      const realisedThis = currentM ? currentM.pl : 0;
+      const unrealThis = currentM ? (currentM.unreal||0) : 0;
+      const combinedThis = realisedThis + unrealThis;
+      if (unrealThis !== 0) {
+        const color = combinedThis >= 0 ? 'green' : realisedThis < 0 && combinedThis > 0 ? 'amber' : 'amber';
+        const msg = realisedThis < 0 && combinedThis > 0
+          ? `⚡ <strong>Current month looks red on realised (${(realisedThis>=0?'+':'')+'₹'+Math.abs(Math.round(realisedThis)).toLocaleString('en-IN')}) but is actually positive when open positions are included.</strong> Unrealised MTM across all open positions: +₹${Math.abs(Math.round(unrealThis)).toLocaleString('en-IN')}. Combined: ${(combinedThis>=0?'+':'')+'₹'+Math.abs(Math.round(combinedThis)).toLocaleString('en-IN')}.<br>→ This is expected for a cut-fast/hold-long strategy — stops close this month, winners stay open. Judge the month by the combined column.`
+          : `📊 <strong>Current month (live):</strong> Realised ${(realisedThis>=0?'+':'')+'₹'+Math.abs(Math.round(realisedThis)).toLocaleString('en-IN')} from closed trades · Unrealised ${(unrealThis>=0?'+':'')+'₹'+Math.abs(Math.round(unrealThis)).toLocaleString('en-IN')} MTM on all open positions · Combined ${(combinedThis>=0?'+':'')+'₹'+Math.abs(Math.round(combinedThis)).toLocaleString('en-IN')}.<br>→ The "Combined" column is the true month-to-date picture. Past months show realised only (open positions from those months are now closed or still running).`;
+        insMonthlyTable.className = `chart-insight ${color}`;
+        insMonthlyTable.innerHTML = msg;
+      }
+    }
   }
 }
 
