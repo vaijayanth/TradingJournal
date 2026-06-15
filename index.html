@@ -3425,6 +3425,7 @@ function initAnalysisCharts(open, closed) {
 // ── AUTH ─────────────────────────────────────────────
 const AUTH_KEY = 'tj_auth_hash';
 const AUTH_SESSION = 'tj_authed';
+const AUTH_HASH = '937e8d5fbb48bd4949536cd65b8d35c426b80d2f830c5c308e2cdec422ae2244'; // hardcoded — change password via Config tab to override
 
 async function sha256(str) {
   const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(str));
@@ -3433,7 +3434,7 @@ async function sha256(str) {
 
 async function checkPassword() {
   const pw = document.getElementById('auth-password').value;
-  const stored = localStorage.getItem(AUTH_KEY);
+  const stored = localStorage.getItem(AUTH_KEY) || AUTH_HASH;
   const hash = await sha256(pw);
   if (hash === stored) {
     sessionStorage.setItem(AUTH_SESSION, '1');
@@ -3463,10 +3464,9 @@ async function setJournalPassword() {
 }
 
 function initAuth() {
-  const hash = localStorage.getItem(AUTH_KEY);
+  const hash = localStorage.getItem(AUTH_KEY) || AUTH_HASH;
   const stateEl = document.getElementById('cfg-password-state');
-  if (stateEl) stateEl.textContent = hash ? 'Password is set ✓' : 'No password set — journal is unprotected';
-  if (!hash) return; // no password configured
+  if (stateEl) stateEl.textContent = 'Password is set ✓';
   if (sessionStorage.getItem(AUTH_SESSION)) return; // already authenticated this session
   const overlay = document.getElementById('auth-overlay');
   overlay.style.display = 'flex';
