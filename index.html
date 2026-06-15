@@ -3859,17 +3859,24 @@ function fnoRenderAlerts(watchlist) {
     if (items.length === 0) return '';
     const isOpen = g.autoOpen;
 
-    // Table headers per group type
-    const isActiveGroup = g.key === 'add-call' || g.key === 'exit-risk';
-    const thead = isActiveGroup
-      ? `<tr><th>Stock</th><th>CMP</th><th>HA Status</th><th>% from 7DL</th><th>Action</th></tr>`
-      : `<tr><th>Stock</th><th>CMP</th><th>Score</th><th>Breakouts</th><th>% from 7DL</th><th>Action</th><th>Note</th></tr>`;
+    const thead = `<tr><th>Stock</th><th>Alert</th><th>Action</th></tr>`;
 
     const tbody = items.map(a => {
       const s = watchlist.find(w => w.stock === a.stock);
       if (!s) return '';
-      const haLabel = s.haColour + (s.haChanged ? ' 🔄' : '');
-      const haClass = s.haColour.toLowerCase()==='green' ? 'pnl-pos' : 'pnl-neg';
+      const { bull, bear } = fnoScore(s);
+      const trend = fnoTrend(s);
+      const haRed = s.haColour.toLowerCase() === 'red';
+      const extended = parseFloat(s.pctFrom7DL) > 8;
+
+      const alertText = g.key==='add-call'
+        ? `HA turned Red today · spread active`
+        : g.key==='exit-risk'
+          ? `HA is Red (ongoing) · check if premium doubled`
+          : g.key==='new-put'
+            ? `${bull}/6 bullish signals${extended?' · <span style="color:var(--amber)">extended from 7DL</span>':''}`
+            : `${bear}/4 bearish signals`;
+
       const actionBadge = g.key==='add-call'
         ? `<span class="fno-badge fno-badge-call">🔄 Add Call</span>`
         : g.key==='exit-risk'
@@ -3877,35 +3884,12 @@ function fnoRenderAlerts(watchlist) {
           : g.key==='new-put'
             ? `<span class="fno-badge fno-badge-put">🟢 Put Spread</span>`
             : `<span class="fno-badge fno-badge-call">⬇ Call Spread</span>`;
-      const { bull, bear } = fnoScore(s);
-      const trend = fnoTrend(s);
-      const pips = trend==='bullish'
-        ? Array(6).fill(0).map((_,i)=>`<div class="fno-score-pip${i<bull?' bull':''}"></div>`).join('')
-        : Array(4).fill(0).map((_,i)=>`<div class="fno-score-pip${i<bear?' bear':''}"></div>`).join('');
-      const breakouts = [s.ath?'ATH':null, s.wk52h?'52W-H':null, s.hasGapUp?'Gap↑':null, s.dh21?'21D-H':null].filter(Boolean)
-        .map(t=>`<span style="background:var(--accent-soft);color:var(--accent);padding:1px 5px;border-radius:4px;font-size:10px;margin-right:2px">${t}</span>`).join('') || '—';
-      const extended = parseFloat(s.pctFrom7DL) > 8;
-      const note = extended ? `<span style="color:var(--amber);font-size:10px">Extended &gt;8%</span>` : '—';
 
-      if (isActiveGroup) {
-        return `<tr>
-          <td><span class="stock-name">${s.stock}</span></td>
-          <td>₹${s.cmp.toLocaleString('en-IN')}</td>
-          <td class="${haClass}">${haLabel}</td>
-          <td>${s.pctFrom7DL||'—'}</td>
-          <td>${actionBadge}</td>
-        </tr>`;
-      } else {
-        return `<tr>
-          <td><span class="stock-name">${s.stock}</span></td>
-          <td>₹${s.cmp.toLocaleString('en-IN')}</td>
-          <td><div class="fno-score-bar">${pips}</div><div style="font-size:10px;color:var(--text-muted)">${trend==='bullish'?bull+'/6':bear+'/4'}</div></td>
-          <td>${breakouts}</td>
-          <td>${s.pctFrom7DL||'—'}</td>
-          <td>${actionBadge}</td>
-          <td>${note}</td>
-        </tr>`;
-      }
+      return `<tr>
+        <td><span class="stock-name">${s.stock}</span></td>
+        <td style="color:var(--text-secondary)">${alertText}</td>
+        <td>${actionBadge}</td>
+      </tr>`;
     }).join('');
 
     return `
