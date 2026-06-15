@@ -1238,14 +1238,15 @@ tbody tr:hover { filter: brightness(0.97); }
       </details>
     </div>
     <div class="card">
-      <div class="chart-title">Winner Size Distribution</div>
-      <div class="chart-sub">Where do winners close? — calibrates when to move stop to breakeven</div>
+      <div class="chart-title">Closed Winner Size Distribution</div>
+      <div class="chart-sub">Where do closed winners exit? (open positions excluded — they're your bigger wins)</div>
       <div id="chart-tm-winner-dist" style="height:220px"></div>
       <details style="margin-top:10px">
         <summary style="font-size:12px;font-weight:600;color:var(--text-muted);cursor:pointer;padding:4px 0;user-select:none">What to look for &amp; action ▸</summary>
         <div style="padding:10px 12px;background:var(--surface2);border-radius:8px;font-size:12px;line-height:1.7;color:var(--text-secondary);margin-top:6px">
-          You want a right-skewed shape: most bars in 2–10%+. The BE stop zone annotation marks 2–5%.<br>
-          <strong>Action:</strong> &gt;70% of winners above that line → moving stop to BE at +2% is safe. If most close below it, don't add a BE rule yet.
+          Markers show your two key triggers: <strong>+5% (move stop to breakeven)</strong> and <strong>+10% (take 50% partial)</strong>.<br>
+          In a trailing-stop system, most closed winners will look small — that's normal. Your big wins are still open, trailing via the 7-day low.<br>
+          <strong>Watch for:</strong> many winners clustered in 0–2% means exits are too early or setups are not running at all.
         </div>
       </details>
     </div>
@@ -4367,15 +4368,16 @@ function initAnalysisCharts(open, closed) {
   }
 
   // ── Winner Size Distribution ──
-  const winBuckets = {'0–2%':0,'2–5%':0,'5–8%':0,'8–12%':0,'12–20%':0,'>20%':0};
+  // NOTE: only closed winners. Open positions (your big runners) are excluded — see note below.
+  const winBuckets = {'0–2%':0,'2–5%':0,'5–10%':0,'10–15%':0,'15–20%':0,'>20%':0};
   tmWinners.forEach(t => {
     const p = t.finalPlPct;
-    if (p < 2) winBuckets['0–2%']++;
-    else if (p < 5) winBuckets['2–5%']++;
-    else if (p < 8) winBuckets['5–8%']++;
-    else if (p < 12) winBuckets['8–12%']++;
-    else if (p < 20) winBuckets['12–20%']++;
-    else winBuckets['>20%']++;
+    if (p < 2)       winBuckets['0–2%']++;
+    else if (p < 5)  winBuckets['2–5%']++;
+    else if (p < 10) winBuckets['5–10%']++;
+    else if (p < 15) winBuckets['10–15%']++;
+    else if (p < 20) winBuckets['15–20%']++;
+    else             winBuckets['>20%']++;
   });
   const winKeys = Object.keys(winBuckets);
   const winData = winKeys.map(k => winBuckets[k]);
@@ -4385,23 +4387,46 @@ function initAnalysisCharts(open, closed) {
       ...baseOpts(220), chart: { ...baseOpts(220).chart, type: 'bar' },
       series: [{ name: 'Winners', data: winData }],
       xaxis: { ...baseOpts().xaxis, categories: winKeys },
-      yaxis: { labels: { style:{colors:c.text,fontSize:'11px'} }, title: { text:'# winners', style:{color:c.text,fontSize:'10px'} } },
+      yaxis: { labels: { style:{colors:c.text,fontSize:'11px'} }, title: { text:'# closed winners', style:{color:c.text,fontSize:'10px'} } },
       colors: winData.map((_, i) => {
-        const intensity = ['rgba(52,199,89,0.4)','rgba(52,199,89,0.55)','rgba(52,199,89,0.7)','rgba(52,199,89,0.85)','var(--green)','var(--green)'];
+        const intensity = ['rgba(52,199,89,0.35)','rgba(52,199,89,0.5)','rgba(52,199,89,0.65)','rgba(52,199,89,0.8)','var(--green)','var(--green)'];
         return intensity[i] || c.green;
       }),
       plotOptions: { bar: { columnWidth:'65%', distributed:true, borderRadius:3 } },
       legend: { show:false },
       dataLabels: { enabled: true, formatter: v => v > 0 ? v : '', style:{fontSize:'11px',colors:['#fff']} },
       annotations: {
-        xaxis: [{ x: '2–5%', borderColor: c.accent, strokeDashArray: 4, label: { text: 'BE stop zone', style:{color:c.accent,fontSize:'10px',background:'transparent'}, orientation:'horizontal', position:'top' } }],
+        xaxis: [
+          { x: '5–10%', borderColor: c.accent, strokeDashArray: 4, label: { text: '↑ BE stop (+5%)', style:{color:c.accent,fontSize:'10px',background:'transparent'}, orientation:'horizontal', position:'top' } },
+          { x: '10–15%', borderColor: c.amber, strokeDashArray: 4, label: { text: '↑ Partial (+10%)', style:{color:c.amber,fontSize:'10px',background:'transparent'}, orientation:'horizontal', position:'top' } },
+        ],
       },
       tooltip: { ...baseOpts().tooltip, y: { formatter: (v, {dataPointIndex}) => {
         const pct = tmWinners.length > 0 ? (v / tmWinners.length * 100).toFixed(0) : 0;
-        return v + ' trade' + (v!==1?'s':'') + ' (' + pct + '% of winners)';
+        return v + ' trade' + (v!==1?'s':'') + ' (' + pct + '% of closed winners)';
       }}},
     });
     wdChart.render(); analysisCharts.push(wdChart);
+
+    // Dynamic insight
+    const winInsEl = document.createElement('div');
+    winInsEl.style.cssText = 'margin-top:8px;font-size:12px;color:var(--text-muted);line-height:1.8';
+    const avgWin = tmWinners.reduce((s,t)=>s+t.finalPlPct,0)/tmWinners.length;
+    const hitsPartial = tmWinners.filter(t=>t.finalPlPct>=10).length;
+    const hitsBE = tmWinners.filter(t=>t.finalPlPct>=5).length;
+    const smallWins = tmWinners.filter(t=>t.finalPlPct<5).length;
+    let winIns = `Avg closed winner: <strong>+${avgWin.toFixed(1)}%</strong> · ${hitsBE} of ${tmWinners.length} (${(hitsBE/tmWinners.length*100).toFixed(0)}%) clear +5% BE trigger · ${hitsPartial} (${(hitsPartial/tmWinners.length*100).toFixed(0)}%) reach +10% partial`;
+    if (smallWins > 0) winIns += `<br>⚡ ${smallWins} winner${smallWins!==1?'s':''} close below +5% — these are never touched by your BE stop rule (they exit before the rule fires)`;
+    // Open positions note
+    if (open.length > 0) {
+      const openWins = open.filter(t=>(t.plPct||0)>0);
+      if (openWins.length > 0) {
+        const avgOpenPl = openWins.reduce((s,t)=>s+(t.plPct||0),0)/openWins.length;
+        winIns += `<br>📗 <strong>${openWins.length} open positions averaging +${avgOpenPl.toFixed(1)}% unrealised</strong> — these are your real winners, not yet in this chart`;
+      }
+    }
+    winInsEl.innerHTML = winIns;
+    winDistEl.parentElement.appendChild(winInsEl);
   }
 
   // ── Loss Size Distribution ──
