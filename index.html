@@ -1311,8 +1311,8 @@ tbody tr:hover { filter: brightness(0.97); }
           <th>Stock</th>
           <th>Age</th>
           <th>Entry ₹</th>
-          <th>Stop ₹</th>
-          <th>% from Stop</th>
+          <th title="MAX(manual stop J, 7-day low I)">Eff Stop ₹</th>
+          <th title="% from effective stop = MAX(J, I)">% from Stop</th>
           <th>Notional P&L%</th>
           <th>Partial</th>
           <th>21 EMA</th>
@@ -1631,7 +1631,11 @@ function renderDashboard(data, cfg) {
   if (dExpEl) dExpEl.style.color = dExp >= 0 ? 'var(--green)' : 'var(--red)';
 
   // Open/Closed count card in Risk section
-  const alertCount = open.filter(t => t.pctFromStop <= 0 || (t.pctFromStop > 0 && t.pctFromStop <= cfg.stopProximity) || (t.plPct >= cfg.partialTrigger && t.partialTaken === 'N')).length;
+  const alertCount = open.filter(t => {
+    const es = Math.max(t.stopLoss || 0, t.sevenDayLow || 0);
+    const ep = (t.cmp && es) ? ((t.cmp - es) / t.cmp * 100) : t.pctFromStop;
+    return ep <= 0 || ep <= cfg.stopProximity || (t.plPct >= cfg.partialTrigger && t.partialTaken === 'N') || (t.plPct >= 5 && t.stopLoss < t.entryPrice) || ((t.ema21||'').trim().toLowerCase()==='below' && t.plPct > 0);
+  }).length;
   set('dash-open-count', open.length);
   set('dash-closed-count', closed.length);
   const openBadge = document.getElementById('dash-open-badge');
@@ -1779,7 +1783,11 @@ function renderPositionsReal(open, cfg) {
     else if (effPct <= cfg.stopProximity) alertType = 'amber';
     if (t.plPct >= cfg.partialTrigger && t.partialTaken === 'N') alertType = 'green';
     const haWarn = t.plPct >= 5 && (t.haColour || '').trim().toLowerCase() === 'red';
-    return { ...t, alertType, haWarn, effStop, effPct };
+    const emaBelow = (t.ema21 || '').trim().toLowerCase() === 'below' && t.plPct > 0;
+    const needsBreakeven = t.plPct >= 5 && t.stopLoss < t.entryPrice;
+    // Count simultaneous signals — ≥2 means priority trade to action
+    const signalCount = [alertType==='red'||alertType==='amber', haWarn, emaBelow, needsBreakeven, (t.haChanged||'').toUpperCase()==='Y'].filter(Boolean).length;
+    return { ...t, alertType, haWarn, effStop, effPct, emaBelow, needsBreakeven, signalCount };
   }).sort((a, b) => a.effPct - b.effPct);
 
   trades.forEach((t, i) => {
@@ -1797,7 +1805,7 @@ function renderPositionsReal(open, cfg) {
     const haWarnStyle = t.haWarn ? 'box-shadow:0 0 0 2px var(--red);' : '';
     tbody.innerHTML += `
       <tr class="${rowClass}" onclick="toggleExpand(${i})">
-        <td><span class="stock-name">${t.stock}</span>${t.dataError ? ' <span style="font-size:10px;color:var(--red)">⚠</span>' : ''}</td>
+        <td><span class="stock-name">${t.stock}</span>${t.dataError ? ' <span style="font-size:10px;color:var(--red)">⚠</span>' : ''}${t.signalCount >= 2 ? ` <span title="${t.signalCount} signals firing — priority action needed" style="font-size:10px;background:var(--red);color:#fff;border-radius:8px;padding:1px 5px;margin-left:3px;font-weight:700">${t.signalCount}⚡</span>` : ''}</td>
         <td>${t.age}d</td>
         <td>₹${t.entryPrice.toLocaleString('en-IN')}</td>
         <td title="Effective stop: MAX(manual ₹${t.stopLoss.toLocaleString('en-IN')}, 7d low ₹${t.sevenDayLow.toLocaleString('en-IN')}) = ₹${t.effStop.toLocaleString('en-IN')}">₹${t.effStop.toLocaleString('en-IN')}</td>
@@ -1829,6 +1837,14 @@ function renderPositionsReal(open, cfg) {
               return '<span style="color:var(--text-muted)">—</span>';
             })()}</div></div>
             ${haColour ? `<div class="expand-item"><div class="expand-label">HA Colour</div><div class="expand-value"><span class="tag ${haClass} ${haChangedClass}">${haLabel}</span>${haChanged ? ' <span style="color:var(--amber);font-size:11px">— momentum shift, review stop</span>' : ''}</div></div>` : ''}
+            ${t.signalCount > 0 ? `<div class="expand-item" style="grid-column:span 3"><div class="expand-label">Active Signals</div><div class="expand-value" style="font-size:12px;display:flex;flex-wrap:wrap;gap:6px">
+              ${t.alertType==='red' ? '<span style="background:var(--red-soft);color:var(--red);padding:2px 7px;border-radius:10px;font-weight:600">🔴 Exit</span>' : ''}
+              ${t.alertType==='amber' ? '<span style="background:var(--amber-soft);color:var(--amber);padding:2px 7px;border-radius:10px;font-weight:600">🟡 Near Stop</span>' : ''}
+              ${t.needsBreakeven ? '<span style="background:var(--amber-soft);color:var(--amber);padding:2px 7px;border-radius:10px;font-weight:600">🛡 Move to BE</span>' : ''}
+              ${t.emaBelow ? '<span style="background:var(--red-soft);color:var(--red);padding:2px 7px;border-radius:10px;font-weight:600">📉 Below EMA</span>' : ''}
+              ${t.haWarn ? '<span style="background:var(--red-soft);color:var(--red);padding:2px 7px;border-radius:10px;font-weight:600">⚠ HA Red</span>' : ''}
+              ${haChanged ? '<span style="background:var(--amber-soft);color:var(--amber);padding:2px 7px;border-radius:10px;font-weight:600">🔄 HA Flip</span>' : ''}
+            </div></div>` : ''}
           </div>
         </td>
       </tr>`;
@@ -2204,7 +2220,10 @@ function sortTable(key) {
   const sorted = [...d.open].sort((a, b) => {
     if (key === 'age') return (parseInt(b.age) || 0) - (parseInt(a.age) || 0);
     if (key === 'pnl') return b.plPct - a.plPct;
-    return a.pctFromStop - b.pctFromStop; // default: closest to stop first
+    // Sort by effective stop (MAX of J, I) — closest to danger first
+    const ea = Math.max(a.stopLoss||0,a.sevenDayLow||0); const epA = (a.cmp&&ea)?((a.cmp-ea)/a.cmp*100):a.pctFromStop;
+    const eb = Math.max(b.stopLoss||0,b.sevenDayLow||0); const epB = (b.cmp&&eb)?((b.cmp-eb)/b.cmp*100):b.pctFromStop;
+    return epA - epB;
   });
   renderPositionsReal(sorted, cfg);
 }
