@@ -1117,10 +1117,10 @@ tbody tr:hover { filter: brightness(0.97); }
     </div>
     <div class="cal-grid" id="cal-grid"></div>
     <div class="flex-row" style="margin-top:14px; gap:20px; font-size:11px; color:var(--text-muted)">
-      <div class="flex-row" style="gap:4px"><div style="width:12px;height:12px;border-radius:2px;background:#10B981"></div> Strong profit</div>
-      <div class="flex-row" style="gap:4px"><div style="width:12px;height:12px;border-radius:2px;background:#BBF7D0"></div> Small profit</div>
-      <div class="flex-row" style="gap:4px"><div style="width:12px;height:12px;border-radius:2px;background:#EF4444"></div> Strong loss</div>
-      <div class="flex-row" style="gap:4px"><div style="width:12px;height:12px;border-radius:2px;background:#FECACA"></div> Small loss</div>
+      <div class="flex-row" style="gap:4px"><div class="cal-cell profit-3" style="width:12px;height:12px;border-radius:2px;aspect-ratio:unset"></div> Strong profit</div>
+      <div class="flex-row" style="gap:4px"><div class="cal-cell profit-1" style="width:12px;height:12px;border-radius:2px;aspect-ratio:unset"></div> Small profit</div>
+      <div class="flex-row" style="gap:4px"><div class="cal-cell loss-3" style="width:12px;height:12px;border-radius:2px;aspect-ratio:unset"></div> Strong loss</div>
+      <div class="flex-row" style="gap:4px"><div class="cal-cell loss-1" style="width:12px;height:12px;border-radius:2px;aspect-ratio:unset"></div> Small loss</div>
       <div class="flex-row" style="gap:4px"><div style="width:12px;height:12px;border-radius:2px;background:var(--surface2);border:1px solid var(--border)"></div> No trade</div>
     </div>
   </div>
@@ -2870,9 +2870,15 @@ function renderCalendarReal(closed, forceYear) {
       if (entry) {
         const ratio = Math.abs(entry.pl) / maxAbs;
         const cls = entry.pl >= 0 ? (ratio > 0.66 ? 'profit-3' : ratio > 0.33 ? 'profit-2' : 'profit-1') : (ratio > 0.66 ? 'loss-3' : ratio > 0.33 ? 'loss-2' : 'loss-1');
-        const stocks = entry.trades.map(t => t.stock).join(', ');
         const plFmt = (entry.pl >= 0 ? '+₹' : '-₹') + Math.round(Math.abs(entry.pl)).toLocaleString('en-IN');
-        const tip = JSON.stringify({ pnl: plFmt, stock: stocks, partial: entry.trades.some(t => t.partialTaken === 'Y') ? 'Y' : 'N', setup: entry.trades.map(t => t.setupType || '—').join(', ') }).replace(/"/g, '&quot;');
+        const tradesInfo = entry.trades.map(t => ({
+          stock: t.stock || '—',
+          pl: (t.finalPl >= 0 ? '+₹' : '-₹') + Math.round(Math.abs(t.finalPl)).toLocaleString('en-IN'),
+          plSign: t.finalPl >= 0 ? '+' : '-',
+          setup: t.setupType || '—',
+          partial: t.partialTaken === 'Y' ? 'Y' : 'N'
+        }));
+        const tip = JSON.stringify({ pnl: plFmt, trades: tradesInfo }).replace(/"/g, '&quot;');
         html += `<div class="cal-cell ${cls}" data-trade="${tip}" data-date="${m} ${day}" onmouseenter="showCalTooltip(event,this)" onmouseleave="hideCalTooltip()"></div>`;
       } else {
         html += `<div class="cal-cell no-trade"></div>`;
@@ -2892,25 +2898,29 @@ function renderCalendarReal(closed, forceYear) {
 
 function showCalTooltip(e, el) {
   const tt = document.getElementById('cal-tooltip');
-  const trade = JSON.parse(el.getAttribute('data-trade').replace(/&quot;/g, '"'));
+  const data = JSON.parse(el.getAttribute('data-trade').replace(/&quot;/g, '"'));
   const date = el.getAttribute('data-date');
-  const isProfit = trade.pnl.startsWith('+');
-  const color = isProfit ? 'var(--green)' : 'var(--red)';
+  const isProfit = data.pnl.startsWith('+');
+  const totalColor = isProfit ? 'var(--green)' : 'var(--red)';
+  const tradesHtml = data.trades.map(t => {
+    const tColor = t.plSign === '+' ? 'var(--green)' : 'var(--red)';
+    return `<div style="border-top:1px solid var(--border);margin-top:6px;padding-top:6px">
+      <div style="display:flex;justify-content:space-between;gap:16px">
+        <span style="font-weight:700;color:var(--text-primary)">${t.stock}</span>
+        <span style="font-weight:700;color:${tColor}">${t.pl}</span>
+      </div>
+      <div style="display:flex;gap:12px;margin-top:2px;font-size:11px;color:var(--text-muted)">
+        <span>${t.setup}</span>${t.partial==='Y'?'<span style="color:var(--green)">· partial exit</span>':''}
+      </div>
+    </div>`;
+  }).join('');
   tt.innerHTML = `
-    <div style="font-weight:700;font-size:13px;color:var(--text-primary);margin-bottom:5px">${trade.stock}</div>
-    <div style="color:var(--text-muted);font-size:11px;margin-bottom:6px">${date}</div>
-    <div style="display:flex;justify-content:space-between;gap:16px">
-      <span style="color:var(--text-secondary)">Final P&L</span>
-      <span style="font-weight:700;color:${color}">${trade.pnl}</span>
+    <div style="display:flex;justify-content:space-between;align-items:baseline;gap:16px;margin-bottom:2px">
+      <span style="color:var(--text-muted);font-size:11px">${date}</span>
+      <span style="font-weight:700;font-size:13px;color:${totalColor}">${data.pnl}</span>
     </div>
-    <div style="display:flex;justify-content:space-between;gap:16px">
-      <span style="color:var(--text-secondary)">Partial exit</span>
-      <span style="font-weight:600;color:${trade.partial==='Y'?'var(--green)':'var(--text-muted)'}">${trade.partial}</span>
-    </div>
-    <div style="display:flex;justify-content:space-between;gap:16px">
-      <span style="color:var(--text-secondary)">Setup</span>
-      <span style="font-weight:600;color:var(--accent)">${trade.setup}</span>
-    </div>
+    ${data.trades.length > 1 ? `<div style="font-size:10px;color:var(--text-muted);margin-bottom:2px">${data.trades.length} trades closed</div>` : ''}
+    ${tradesHtml}
   `;
   tt.style.display = 'block';
   positionCalTooltip(e, tt);
