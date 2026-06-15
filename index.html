@@ -757,8 +757,11 @@ tbody tr:hover { filter: brightness(0.97); }
 <div id="page-performance" class="page">
 
   <!-- Period Filter -->
-  <div class="flex-row" style="margin-bottom:20px; justify-content:space-between; align-items:center;">
-    <div style="font-size:14px; font-weight:700; color:var(--text-primary)">Performance Analytics</div>
+  <div class="flex-row" style="margin-bottom:12px; justify-content:space-between; align-items:center;">
+    <div>
+      <div style="font-size:14px; font-weight:700; color:var(--text-primary)">Performance Analytics</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:2px" id="perf-period-label">Showing: All Time</div>
+    </div>
     <div class="period-filter">
       <button class="period-btn active" onclick="setPeriod(this,'all')">All Time</button>
       <button class="period-btn" onclick="setPeriod(this,'90')">Last 90 Days</button>
@@ -1055,8 +1058,8 @@ tbody tr:hover { filter: brightness(0.97); }
       <table>
         <thead>
           <tr>
-            <th>Stock</th><th>Entry Date</th><th>Exit Date</th><th>Days Held</th>
-            <th>Entry ₹</th><th>Final P&L%</th><th>Notional P&L%</th><th>Partial</th><th>21 EMA</th>
+            <th>Stock</th><th>Setup</th><th>Entry Date</th><th>Exit Date</th><th>Days Held</th>
+            <th>Entry ₹</th><th>Init Risk ₹</th><th>Final P&L%</th><th>Notional P&L%</th><th>Partial</th><th>21 EMA</th>
           </tr>
         </thead>
         <tbody id="closed-trades-tbody"></tbody>
@@ -1104,7 +1107,9 @@ tbody tr:hover { filter: brightness(0.97); }
       <div style="font-size:24px;font-weight:700;margin-top:4px" id="partial-yes-wr">—</div>
       <div class="stat-sub">Win Rate</div>
       <div style="font-size:16px;font-weight:700;margin-top:8px" id="partial-yes-avg">—</div>
-      <div class="stat-sub">Avg P&L%</div>
+      <div class="stat-sub">Avg Final P&L%</div>
+      <div style="font-size:14px;font-weight:700;margin-top:6px;color:var(--green)" id="partial-yes-gain-after">—</div>
+      <div class="stat-sub">Avg gain <em>after</em> partial taken</div>
       <div style="font-size:13px;margin-top:4px;color:var(--text-muted)" id="partial-yes-n">n = —</div>
     </div>
     <div class="card card-sm">
@@ -1494,6 +1499,14 @@ tbody tr:hover { filter: brightness(0.97); }
         <label class="config-label">Heat Gauge — Amber below (%)</label>
         <input type="number" id="cfg-heat-amber" class="config-input config-input-sm" step="0.5">
       </div>
+      <div class="config-field">
+        <label class="config-label">Max Positions (alert when over)</label>
+        <input type="number" id="cfg-max-positions" class="config-input config-input-sm" step="1" min="1">
+      </div>
+      <div class="config-field">
+        <label class="config-label">Max Trade Age — days before review</label>
+        <input type="number" id="cfg-max-age" class="config-input config-input-sm" step="1" min="1">
+      </div>
     </div>
   </div>
 
@@ -1725,6 +1738,8 @@ async function refreshData() {
   renderDashboard(data, cfg);
   renderPositionsReal(data.open, cfg);
   renderPerfStats(data.closed, data.open, data.portfolioValue, data.initialCapital);
+  const _perfLabel = document.getElementById('perf-period-label');
+  if (_perfLabel) _perfLabel.textContent = `Showing: All Time · ${data.closed.length} closed trades`;
   renderClosedTradesReal(data.closed);
   renderCalendarReal(data.closed);
   renderStreakReal(data.closed);
@@ -2352,12 +2367,15 @@ function renderClosedTradesReal(closed) {
     const nPnlClass = t.plPct >= 0 ? 'pnl-pos' : 'pnl-neg';
     const emaClass = (t.ema21 || '').toLowerCase() === 'above' ? 'tag-above' : 'tag-below';
     const partialClass = t.partialTaken === 'Y' ? 'tag-y' : 'tag-n';
+    const initRiskFmt = t.initRiskRs ? '₹' + Math.round(t.initRiskRs).toLocaleString('en-IN') : '—';
     return `<tr>
       <td><span class="stock-name">${t.stock}</span></td>
+      <td style="color:var(--text-secondary);font-size:11px">${t.setupType || '—'}</td>
       <td>${t.openDate || '—'}</td>
       <td>${t.closeDate || '—'}</td>
       <td>${t.age || '—'}d</td>
       <td>₹${t.entryPrice.toLocaleString('en-IN')}</td>
+      <td style="color:var(--text-secondary)">${initRiskFmt}</td>
       <td class="${pnlClass}">${t.finalPlPct >= 0 ? '+' : ''}${t.finalPlPct.toFixed(1)}%</td>
       <td class="${nPnlClass}">${t.plPct >= 0 ? '+' : ''}${t.plPct.toFixed(1)}%</td>
       <td><span class="tag ${partialClass}">${t.partialTaken}</span></td>
@@ -2420,6 +2438,11 @@ function setPeriod(btn, period) {
     const cutoff = new Date();
     cutoff.setDate(cutoff.getDate() - parseInt(period));
     closed = d.closed.filter(t => t.closeDate && parseDate(t.closeDate) >= cutoff);
+  }
+  const labelEl = document.getElementById('perf-period-label');
+  if (labelEl) {
+    const label = period === 'all' ? 'All Time' : `Last ${period} Days`;
+    labelEl.textContent = `Showing: ${label} · ${closed.length} closed trade${closed.length !== 1 ? 's' : ''}`;
   }
   renderPerfStats(closed, d.open, d.portfolioValue, d.initialCapital);
   if (window._perfChartsInit) {
@@ -2707,6 +2730,8 @@ function populateConfigPage() {
   setVal('cfg-stop-proximity', cfg.stopProximity);
   setVal('cfg-heat-green', cfg.heatGreen);
   setVal('cfg-heat-amber', cfg.heatAmber);
+  setVal('cfg-max-positions', cfg.maxPositions);
+  setVal('cfg-max-age', cfg.maxAge);
   updateConnStatus(cfg.url ? 'configured' : 'not-configured');
 }
 
@@ -2767,11 +2792,23 @@ function saveAllConfig() {
   cfg.stopProximity = parseFloat(getVal('cfg-stop-proximity', cfg.stopProximity)) || cfg.stopProximity;
   cfg.heatGreen = parseFloat(getVal('cfg-heat-green', cfg.heatGreen)) || cfg.heatGreen;
   cfg.heatAmber = parseFloat(getVal('cfg-heat-amber', cfg.heatAmber)) || cfg.heatAmber;
+  cfg.maxPositions = parseInt(getVal('cfg-max-positions', cfg.maxPositions)) || cfg.maxPositions;
+  cfg.maxAge = parseInt(getVal('cfg-max-age', cfg.maxAge)) || cfg.maxAge;
   ['flagCol','stockCol','openDateCol','closeDateCol','ema21Col','cmpCol','sevenDayLowCol','stopLossCol',
    'initRiskRsCol','initRiskPctCol','entryPriceCol','setupTypeCol','pctFromStopCol','plPctCol',
    'notionalPlCol','partialQtyCol','partialPriceCol','partialPlCol','finalExitPriceCol','finalPlCol','finalPlPctCol','ageCol',
    'haColourCol','haChangedCol'
-  ].forEach(key => { const v = getVal('cfg-' + key, cfg[key]).toUpperCase(); if (v) cfg[key] = v; });
+  ].forEach(key => { const v = getVal('cfg-' + key, cfg[key]).toUpperCase().trim(); if (v) cfg[key] = v; });
+  // Validate column letters — warn if any col mapping looks wrong (not A-ZZ pattern)
+  const colKeys = ['flagCol','stockCol','openDateCol','closeDateCol','ema21Col','cmpCol','sevenDayLowCol','stopLossCol',
+    'initRiskRsCol','initRiskPctCol','entryPriceCol','setupTypeCol','pctFromStopCol','plPctCol',
+    'notionalPlCol','partialQtyCol','partialPriceCol','partialPlCol','finalExitPriceCol','finalPlCol','finalPlPctCol','ageCol',
+    'haColourCol','haChangedCol'];
+  const badCols = colKeys.filter(k => cfg[k] && !/^[A-Z]{1,3}$/.test(cfg[k]));
+  if (badCols.length > 0) {
+    showToast('⚠ Invalid column(s): ' + badCols.map(k => k.replace('Col','') + '=' + cfg[k]).join(', '), 'red');
+    return;
+  }
   saveConfig(cfg);
   showToast('Configuration saved!', 'green');
   updateConnStatus(cfg.url ? 'configured' : 'not-configured');
@@ -3370,8 +3407,14 @@ function initAnalysisCharts(open, closed) {
     };
   };
   const py = pStats(partialYes), pn = pStats(partialNo);
+  // Avg gain after partial: final P&L% minus partial trigger (10%) = how much extra was captured after taking partial
+  const cfg_pt = (loadConfig().partialTrigger || 10);
+  const gainAfterPartial = partialYes.length
+    ? partialYes.reduce((s,t) => s + Math.max(0, t.finalPlPct - cfg_pt), 0) / partialYes.length
+    : 0;
   set('partial-yes-wr', py.wr.toFixed(0)+'%');
   set('partial-yes-avg', (py.avg>=0?'+':'')+py.avg.toFixed(1)+'%');
+  set('partial-yes-gain-after', gainAfterPartial > 0 ? '+'+gainAfterPartial.toFixed(1)+'%' : '—');
   set('partial-yes-n', 'n = '+py.n+' trades');
   set('partial-no-wr', pn.wr.toFixed(0)+'%');
   set('partial-no-avg', (pn.avg>=0?'+':'')+pn.avg.toFixed(1)+'%');
@@ -3438,8 +3481,8 @@ function initAnalysisCharts(open, closed) {
   const sc = new ApexCharts(document.getElementById('chart-scatter'), {
     ...baseOpts(240), chart: { ...baseOpts(240).chart, type: 'scatter', zoom: { enabled: false } },
     series: [
-      { name:'Win', data: sorted.filter(t=>t.finalPlPct>=0).map(t=>[t.age, parseFloat(t.finalPlPct.toFixed(1))]) },
-      { name:'Loss', data: sorted.filter(t=>t.finalPlPct<0).map(t=>[t.age, parseFloat(t.finalPlPct.toFixed(1))]) },
+      { name:'Win', data: sorted.filter(t=>t.finalPlPct>=0&&t.age>0).map(t=>[t.age, parseFloat(t.finalPlPct.toFixed(1))]) },
+      { name:'Loss', data: sorted.filter(t=>t.finalPlPct<0&&t.age>0).map(t=>[t.age, parseFloat(t.finalPlPct.toFixed(1))]) },
     ],
     xaxis: { ...baseOpts().xaxis, title: { text:'Hold Days', style:{color:c.text} }, min: 0 },
     yaxis: { labels: { style:{colors:c.text,fontSize:'11px'}, formatter: v => v+'%' }, title: { text:'Final P&L%', style:{color:c.text} } },
@@ -3952,10 +3995,14 @@ function fnoRenderActiveSpreads(watchlist) {
       : warning
         ? `<span class="fno-badge" style="background:var(--amber-soft);color:var(--amber);border:1px solid rgba(245,158,11,.3)">Monitor Premium</span>`
         : `<span class="fno-badge fno-badge-put">Hold</span>`;
+    const cmpFmt = s.cmp ? '₹' + s.cmp.toLocaleString('en-IN') : '—';
+    const pct7dl = s.pctFrom7DL != null && s.pctFrom7DL !== ''
+      ? (v => (v >= 0 ? '+' : '') + v.toFixed(1) + '% from 7DL')(parseFloat(s.pctFrom7DL) * 100) : '';
     return `
       <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;border-left:3px solid ${borderColor};background:var(--surface2);border-radius:0;border-bottom:1px solid var(--border)">
         <span style="font-size:15px">${statusIcon}</span>
         <span class="stock-name" style="width:90px;flex-shrink:0">${s.stock}</span>
+        <span style="font-size:12px;color:var(--text-muted);width:80px;flex-shrink:0">${cmpFmt} <span style="font-size:10px">${pct7dl}</span></span>
         <span style="font-size:11.5px;color:var(--text-secondary);flex:1">${statusText}</span>
         ${badge}
       </div>`;
