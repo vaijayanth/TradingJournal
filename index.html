@@ -1101,7 +1101,7 @@ tbody tr:hover { filter: brightness(0.97); }
   <!-- Indexed Equity Curve -->
   <div class="card" style="margin-top:14px">
     <div class="chart-title">Indexed Equity Curve (by Trade #)</div>
-    <div class="chart-sub">Pure system performance — trade number on X axis, indexed return % from starting capital · reveals if edge is improving</div>
+    <div class="chart-sub">Realised return % by trade # · amber dot = combined incl. open MTM · shows true system performance</div>
     <div id="chart-indexed-equity" style="height:240px;"></div>
     <div id="insight-indexed-equity" class="chart-insight"></div>
   </div>
@@ -3475,47 +3475,60 @@ function initPerfCharts(closed, initialCapital, open) {
   const indexedEl = document.getElementById('chart-indexed-equity');
   if (indexedEl && sorted.length > 0) {
     let eq2 = initialCapital || 0;
-    const indexedData = [], winData = [], lossData = [];
+    const realisedPoints = []; // {x, y} — one per closed trade
     sorted.forEach((t, i) => {
       eq2 += t.finalPl;
-      const ret = initialCapital > 0 ? (eq2 - initialCapital) / initialCapital * 100 : 0;
-      indexedData.push(parseFloat(ret.toFixed(2)));
-      if (t.finalPlPct >= 0) { winData.push({ x: i+1, y: parseFloat(ret.toFixed(2)) }); lossData.push({ x: i+1, y: null }); }
-      else { lossData.push({ x: i+1, y: parseFloat(ret.toFixed(2)) }); winData.push({ x: i+1, y: null }); }
+      const ret = initialCapital > 0 ? parseFloat(((eq2 - initialCapital) / initialCapital * 100).toFixed(2)) : 0;
+      realisedPoints.push(ret);
     });
-    // Add today's combined point (realised + open unrealised)
-    const openArr2 = open || [];
-    const totalUnrealised2 = openArr2.reduce((s,t) => s + (t.notionalPl||0), 0);
-    const combRet = initialCapital > 0 ? ((eq2 + totalUnrealised2 - initialCapital) / initialCapital * 100) : 0;
-    const todaySeries2 = indexedData.map(() => null);
-    todaySeries2.push(null); // last closed point handled by main series
-    const todayIndexed = totalUnrealised2 !== 0 ? [
-      ...indexedData.map(() => null),
-      parseFloat(combRet.toFixed(2))
-    ] : null;
 
-    const peakLine = Math.max(...indexedData);
+    // Combined "Now" point — extend curve to realised + all open MTM
+    const totalOpenMTM2 = (open||[]).reduce((s,t) => s + (t.notionalPl||0), 0);
+    const combRet2 = initialCapital > 0 ? parseFloat(((eq2 + totalOpenMTM2 - initialCapital) / initialCapital * 100).toFixed(2)) : 0;
+    const hasCombined = totalOpenMTM2 !== 0;
+
+    // Realised series (area) — N points. Combined series (dashed line) — last realised point + "Now"
+    const xCats = sorted.map((_,i) => i+1);
+    const combData = hasCombined
+      ? [...realisedPoints.map(() => null), combRet2]
+      : null;
+    if (hasCombined) xCats.push('Now');
+
+    const peakRealised = Math.max(...realisedPoints, 0);
+    const allSeries = [
+      { name: 'Realised %', data: hasCombined ? [...realisedPoints, null] : realisedPoints },
+      ...(hasCombined ? [{ name: 'Incl. Open MTM', data: combData }] : []),
+    ];
+
     const idxChart = new ApexCharts(indexedEl, {
-      ...baseOpts(240), chart: { ...baseOpts(240).chart, type: 'line' },
-      series: [
-        { name: 'Realised Return %', data: indexedData, type: 'area' },
-        ...(todayIndexed ? [{ name: 'Incl. Unrealised', data: todayIndexed, type: 'line' }] : []),
-      ],
-      xaxis: { ...baseOpts().xaxis, categories: sorted.map((_,i) => i+1).concat(todayIndexed ? ['Now'] : []), title: { text: 'Trade #', style: { color: c.text, fontSize: '11px' } }, tickAmount: Math.min(10, sorted.length), labels: { ...baseOpts().xaxis.labels, hideOverlappingLabels: true } },
+      ...baseOpts(240),
+      chart: { ...baseOpts(240).chart, type: 'line' },
+      series: allSeries,
+      xaxis: {
+        ...baseOpts().xaxis,
+        categories: xCats,
+        title: { text: 'Trade #', style: { color: c.text, fontSize: '11px' } },
+        tickAmount: Math.min(10, xCats.length),
+        labels: { ...baseOpts().xaxis.labels, hideOverlappingLabels: true },
+      },
       yaxis: { labels: { style: { colors: c.text, fontSize:'11px' }, formatter: v => v != null ? (v>=0?'+':'')+v.toFixed(1)+'%' : '' } },
       colors: [eq2 >= (initialCapital||0) ? c.green : c.red, c.amber],
-      fill: { type: ['gradient','solid'], gradient: { shadeIntensity:1, opacityFrom:0.3, opacityTo:0.02 } },
-      stroke: { curve: 'smooth', width: [2, 2], dashArray: [0, 6] },
+      fill: { type: ['gradient', 'solid'], gradient: { shadeIntensity:1, opacityFrom:0.25, opacityTo:0.02 } },
+      stroke: { curve: 'monotoneCubic', width: [2, 2], dashArray: [0, 6] },
       dataLabels: { enabled: false },
-      markers: { size: [0, 6] },
+      markers: { size: [0, 7], colors: [c.amber], strokeColors: c.amber },
       annotations: {
         yaxis: [
           { y: 0, borderColor: c.text, strokeDashArray: 2, label: { text: 'Break-even', style: { color: c.text, fontSize: '10px', background: 'transparent' } } },
-          ...(peakLine > 0 ? [{ y: peakLine, borderColor: c.green, strokeDashArray: 4, label: { text: 'Peak '+peakLine.toFixed(1)+'%', style: { color: c.green, fontSize: '10px', background: 'transparent' } } }] : []),
+          ...(peakRealised > 0 ? [{ y: peakRealised, borderColor: c.green, strokeDashArray: 4, label: { text: 'Peak '+peakRealised.toFixed(1)+'%', style: { color: c.green, fontSize: '10px', background: 'transparent' } } }] : []),
         ]
       },
-      legend: { show: !!todayIndexed, labels: { colors: c.text } },
-      tooltip: { ...baseOpts().tooltip, x: { formatter: v => 'Trade #' + v }, y: { formatter: v => v != null ? (v>=0?'+':'')+v.toFixed(2)+'%' : '' } },
+      legend: { show: hasCombined, labels: { colors: c.text }, fontSize: '11px' },
+      tooltip: {
+        ...baseOpts().tooltip,
+        x: { formatter: (v, { dataPointIndex }) => dataPointIndex === xCats.length - 1 && hasCombined ? 'Now (incl. open MTM)' : 'Trade #' + xCats[dataPointIndex] },
+        y: { formatter: v => v != null ? (v>=0?'+':'')+v.toFixed(2)+'%' : '—' },
+      },
     });
     idxChart.render(); perfCharts.push(idxChart);
   }
@@ -3699,11 +3712,21 @@ function initPerfCharts(closed, initialCapital, open) {
     const last10 = sorted.slice(-10);
     const f10pl = first10.reduce((s,t)=>s+t.finalPl,0);
     const l10pl = last10.reduce((s,t)=>s+t.finalPl,0);
-    const improvement = l10pl > f10pl;
-    if (improvement) {
-      ins('insight-indexed-equity','green',`✓ Your last 10 trades generated ${l10pl >= 0 ? '+' : ''}₹${Math.round(l10pl).toLocaleString('en-IN')} vs first 10: ${f10pl >= 0 ? '+' : ''}₹${Math.round(f10pl).toLocaleString('en-IN')}. Edge is improving over time.<br>→ <strong>Action:</strong> This upward slope confirms your learning. Scale position size by one tier to capture the improving edge.`);
+    const totalOpenMTM2 = (open||[]).reduce((s,t)=>s+(t.notionalPl||0),0);
+    const openCount = (open||[]).length;
+    const openWinnersCount = (open||[]).filter(t=>(t.notionalPl||0)>0).length;
+    const realisedRetPct = initialCapital > 0 ? ((eq2 - initialCapital) / initialCapital * 100) : 0;
+    const combinedRetPct = initialCapital > 0 ? ((eq2 + totalOpenMTM2 - initialCapital) / initialCapital * 100) : 0;
+    const openNote = openCount > 0
+      ? ` <span style="opacity:0.7;font-size:11px">Amber dot = combined incl. ${openCount} open position${openCount!==1?'s':''} (${openWinnersCount} in profit): ${combinedRetPct>=0?'+':''}${combinedRetPct.toFixed(1)}% vs realised-only ${realisedRetPct>=0?'+':''}${realisedRetPct.toFixed(1)}%.</span>`
+      : '';
+    const biasNote = `<br><span style="opacity:0.7;font-size:11px">⚠ Last 10 closed trades skew toward losses in a momentum system — winners stay open and aren't captured here yet.</span>`;
+    if (l10pl > f10pl) {
+      ins('insight-indexed-equity','green',`✓ Last 10 closed trades: ${l10pl>=0?'+':''}₹${Math.round(l10pl).toLocaleString('en-IN')} vs first 10: ${f10pl>=0?'+':''}₹${Math.round(f10pl).toLocaleString('en-IN')}. Realised edge improving.${openNote}${biasNote}<br>→ <strong>Action:</strong> Upward slope confirms learning. Consider scaling position size by one tier.`);
+    } else if (realisedRetPct < 0 && combinedRetPct > 0) {
+      ins('insight-indexed-equity','amber',`⚡ Realised curve is below break-even (${realisedRetPct.toFixed(1)}%) but combined with open MTM you are at ${combinedRetPct>=0?'+':''}${combinedRetPct.toFixed(1)}%. The system is working — winners are running open.${openNote}${biasNote}<br>→ <strong>Action:</strong> Hold your open winners. The real performance picture is the amber dot, not the green/red line alone.`);
     } else {
-      ins('insight-indexed-equity','amber',`⚡ Last 10 trades: ${l10pl >= 0 ? '+' : ''}₹${Math.round(l10pl).toLocaleString('en-IN')} vs first 10: ${f10pl >= 0 ? '+' : ''}₹${Math.round(f10pl).toLocaleString('en-IN')}. Recent results weaker than early results.<br>→ <strong>Action:</strong> Review last 10 trades for setup quality. Are you trading more but with lower conviction? Raise the bar — only trade your highest-conviction setups.`);
+      ins('insight-indexed-equity','amber',`⚡ Last 10 closed trades: ${l10pl>=0?'+':''}₹${Math.round(l10pl).toLocaleString('en-IN')} vs first 10: ${f10pl>=0?'+':''}₹${Math.round(f10pl).toLocaleString('en-IN')}. Recent closed results weaker — but winners may still be running open.${openNote}${biasNote}<br>→ <strong>Action:</strong> Review last 10 closed trades for setup quality. Only trade A+ — tight base, clear level, volume confirmation.`);
     }
   }
 }
