@@ -829,7 +829,7 @@ tbody tr:hover { filter: brightness(0.97); }
       <div style="font-size:12px;color:var(--text-muted);margin-top:4px" id="perf-capture-sub">—</div>
       <div style="margin-top:10px;display:flex;gap:16px">
         <div>
-          <div style="font-size:14px;font-weight:700;color:var(--green)" id="perf-notional-pl">—</div>
+          <div style="font-size:14px;font-weight:700;color:var(--green)" id="perf-notional-pl-hero">—</div>
           <div style="font-size:11px;color:var(--text-muted)">Unrealised (open)</div>
         </div>
         <div style="color:var(--border)">+</div>
@@ -2305,6 +2305,8 @@ function renderPerfStats(closed, open, portfolioValue, initialCapital) {
   set('perf-notional-plpct', hasOpenData ? fmtPct(notionalRoP) : '—');
   const notionalPlEl = document.getElementById('perf-notional-pl');
   if (notionalPlEl) notionalPlEl.style.color = totalNotionalPl >= 0 ? 'var(--green)' : 'var(--red)';
+  const notionalHeroEl = document.getElementById('perf-notional-pl-hero');
+  if (notionalHeroEl) { notionalHeroEl.textContent = hasOpenData ? fmtRs(totalNotionalPl) : (open.length ? '₹0' : 'N/A'); notionalHeroEl.style.color = totalNotionalPl >= 0 ? 'var(--green)' : 'var(--red)'; }
   set('perf-left-table', hasOpenData
     ? `Unrealised (col Y) across ${openWithData.length} open positions`
     : open.length ? 'Open positions have no mark-to-market data (col Y)' : 'No open positions');
