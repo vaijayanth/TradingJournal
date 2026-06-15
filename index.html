@@ -1269,23 +1269,21 @@ tbody tr:hover { filter: brightness(0.97); }
   <div class="section-title" style="margin-top:20px">Partial Exit Analysis</div>
   <div class="grid-3" style="margin-bottom:14px">
     <div class="card card-sm">
-      <div class="stat-label">Took Partial Exit</div>
-      <div style="font-size:24px;font-weight:700;margin-top:4px" id="partial-yes-wr">—</div>
-      <div class="stat-sub">Win Rate (closed trades)</div>
-      <div style="font-size:16px;font-weight:700;margin-top:8px" id="partial-yes-avg">—</div>
-      <div class="stat-sub">Avg Final P&L%</div>
-      <div style="font-size:14px;font-weight:700;margin-top:6px;color:var(--green)" id="partial-yes-gain-after">—</div>
-      <div class="stat-sub" title="Among trades that took partial: how much extra did the remainder capture beyond the trigger level?">Avg remainder gain past trigger ⓘ</div>
-      <div style="font-size:13px;margin-top:4px;color:var(--text-muted)" id="partial-yes-n">n = —</div>
+      <div class="stat-label">Took 50% Partial at +<span id="partial-trigger-label-a">10</span>%</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:4px;line-height:1.5">Sold half the position at trigger, held remainder via 7-day low trail</div>
+      <div style="font-size:28px;font-weight:700;margin-top:10px" id="partial-yes-avg">—</div>
+      <div class="stat-sub">Avg blended final P&L%</div>
+      <div style="font-size:16px;font-weight:700;margin-top:8px;color:var(--green)" id="partial-yes-gain-after">—</div>
+      <div class="stat-sub" title="How much extra did the remaining 50% capture beyond the trigger? e.g. +5% means the remainder ran to +15% on average">Remainder ran avg X% past trigger ⓘ</div>
+      <div style="font-size:13px;margin-top:6px;color:var(--text-muted)" id="partial-yes-n">n = —</div>
     </div>
     <div class="card card-sm">
-      <div class="stat-label">Reached Trigger, No Partial</div>
-      <div style="font-size:24px;font-weight:700;margin-top:4px" id="partial-no-wr">—</div>
-      <div class="stat-sub">Win Rate</div>
-      <div style="font-size:16px;font-weight:700;margin-top:8px" id="partial-no-avg">—</div>
-      <div class="stat-sub">Avg Final P&L%</div>
-      <div style="font-size:11px;margin-top:6px;color:var(--text-muted);line-height:1.5">Closed trades that hit +<span id="partial-trigger-label">10</span>% but no partial taken — did they run further or give back?</div>
-      <div style="font-size:13px;margin-top:4px;color:var(--text-muted)" id="partial-no-n">n = —</div>
+      <div class="stat-label">Hit +<span id="partial-trigger-label">10</span>%, Held Full Position</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:4px;line-height:1.5">Closed trades that reached trigger but no partial was taken — full position held to close</div>
+      <div style="font-size:28px;font-weight:700;margin-top:10px" id="partial-no-avg">—</div>
+      <div class="stat-sub">Avg final P&L%</div>
+      <div style="font-size:13px;font-weight:600;margin-top:8px" id="partial-compare">—</div>
+      <div style="font-size:13px;margin-top:6px;color:var(--text-muted)" id="partial-no-n">n = —</div>
     </div>
     <div class="card card-sm">
       <div class="stat-label">Action Now</div>
@@ -3941,19 +3939,29 @@ function initAnalysisCharts(open, closed) {
   const gainAfterPartial = partialYes.length
     ? partialYes.reduce((s,t) => s + Math.max(0, t.finalPlPct - PARTIAL_TRIGGER), 0) / partialYes.length
     : 0;
-  set('partial-yes-wr', py.wr.toFixed(0)+'%');
   set('partial-yes-avg', (py.avg>=0?'+':'')+py.avg.toFixed(1)+'%');
   set('partial-yes-gain-after', gainAfterPartial > 0 ? '+'+gainAfterPartial.toFixed(1)+'%' : '—');
-  set('partial-yes-n', 'n = '+py.n+' trades');
+  set('partial-yes-n', 'n = '+py.n+' closed trades');
   set('partial-trigger-label', PARTIAL_TRIGGER);
+  set('partial-trigger-label-a', PARTIAL_TRIGGER);
   if (pn.n > 0) {
-    set('partial-no-wr', pn.wr.toFixed(0)+'%');
     set('partial-no-avg', (pn.avg>=0?'+':'')+pn.avg.toFixed(1)+'%');
-    set('partial-no-n', 'n = '+pn.n+' trades');
+    set('partial-no-n', 'n = '+pn.n+' closed trades');
+    const diff = pn.avg - py.avg;
+    const compareEl = document.getElementById('partial-compare');
+    if (compareEl) {
+      if (diff > 0.5) {
+        compareEl.innerHTML = `<span style="color:var(--amber)">↑ ${diff.toFixed(1)}% more than taking partial — your runners run far</span>`;
+      } else if (diff < -0.5) {
+        compareEl.innerHTML = `<span style="color:var(--green)">↓ ${Math.abs(diff).toFixed(1)}% less — partial exit protected gains</span>`;
+      } else {
+        compareEl.innerHTML = `<span style="color:var(--text-muted)">Similar outcome either way</span>`;
+      }
+    }
   } else {
-    set('partial-no-wr', '—');
     set('partial-no-avg', '—');
-    set('partial-no-n', 'No closed trades reached +' + PARTIAL_TRIGGER + '% without partial');
+    set('partial-no-n', 'No closed trades hit +' + PARTIAL_TRIGGER + '% without partial yet');
+    const compareEl = document.getElementById('partial-compare'); if (compareEl) compareEl.textContent = '';
   }
 
   // Action Now: open positions pending partial exit
