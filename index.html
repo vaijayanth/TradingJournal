@@ -3473,15 +3473,18 @@ function initPerfCharts(closed, initialCapital, open) {
     ins('insight-distribution','green',`✓ Loss discipline solid — no runaway losses. ${rightTailPct.toFixed(0)}% of winners exceed +10%, avg win ${fmtPct(avgWin2)} vs avg loss −${avgLoss2.toFixed(1)}%.<br>→ <strong>Keep doing:</strong> This asymmetry is the edge. Protect it by never moving stops wider on losers.`);
   }
 
-  // 3. Streak
-  let maxConsecLoss = 0, curLoss = 0;
+  // 3. Streak — closed trades only; momentum strategy bias: losses close fast, winners stay open
+  let maxConsecLoss = 0, curLoss = 0, curConsecLoss = 0;
   sorted.forEach(t => { if (t.finalPlPct < 0) { curLoss++; maxConsecLoss = Math.max(maxConsecLoss, curLoss); } else curLoss = 0; });
+  // Current streak
+  for (let i = sorted.length - 1; i >= 0; i--) { if (sorted[i].finalPlPct < 0) curConsecLoss++; else break; }
+  const strategyNote = `<br><span style="opacity:0.7;font-size:11px">⚠ Closed-trade bias: your strategy cuts losses fast (close quickly) and holds winners long (stay open). Streaks look worse than reality — open winners are not counted here.</span>`;
   if (maxConsecLoss >= 5) {
-    ins('insight-streak','red',`⚠ <strong>${maxConsecLoss} consecutive losses</strong> at peak — this tests psychology hard. After 3+ losses in a row, many traders widen stops to "recover" — which makes it worse.<br>→ <strong>Action:</strong> Rule: after 3 consecutive losses, reduce next position size by 50% until a win. Protect capital and confidence.`);
+    ins('insight-streak','amber',`⚡ <strong>${maxConsecLoss} consecutive closed losses</strong> at peak — normal in momentum strategies where stops are taken fast. Current run: ${curConsecLoss} losses.<br>→ <strong>Action:</strong> Check if loss cluster was in one month (regime change) or spread out (random noise). After 3 consecutive losses, consider reducing next position size by 50%.${strategyNote}`);
   } else if (maxConsecLoss >= 3) {
-    ins('insight-streak','amber',`⚡ Max ${maxConsecLoss} consecutive losses. Normal in momentum strategies (market regime changes cause clusters). Check if losses are random or concentrated in specific months.<br>→ <strong>Action:</strong> If clustered in one month, that month may have been low-quality setups. Raise selectivity in choppy markets.`);
+    ins('insight-streak','green',`✓ Max ${maxConsecLoss} consecutive closed losses — acceptable for a cut-fast strategy. Current run: ${curConsecLoss}.<br>→ <strong>Keep doing:</strong> Loss clusters in momentum are expected during choppy/sideways markets. The key is that each loss is small. Check that no single loss in the streak exceeded 1.5× planned risk.${strategyNote}`);
   } else {
-    ins('insight-streak','green',`✓ Max ${maxConsecLoss} consecutive losses — healthy streak control. Losses appear distributed, not clustered. Your setup selectivity is working.<br>→ <strong>Keep doing:</strong> Only take A+ setups. A smaller trade list with better quality is more profitable than trading everything.`);
+    ins('insight-streak','green',`✓ Max ${maxConsecLoss} consecutive closed losses — excellent streak control. Your setup selectivity and fast stop execution are working well.<br>→ <strong>Keep doing:</strong> Only take A+ setups. A smaller trade list with better quality beats trading everything.${strategyNote}`);
   }
 
   // 4. R-Multiple Distribution
