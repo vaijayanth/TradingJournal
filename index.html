@@ -896,6 +896,41 @@ tbody tr:hover { filter: brightness(0.97); }
         <div class="stat-sub" style="line-height:1.5">WR × AvgWinR − (1−WR) × 1R<br>Positive = system has edge</div>
       </div>
     </div>
+    <!-- Hold Time Asymmetry -->
+    <div class="card card-sm">
+      <div class="stat-label">Hold Time: Winners vs Losers</div>
+      <div style="display:flex;gap:16px;align-items:flex-end;margin-top:8px">
+        <div>
+          <div style="font-size:26px;font-weight:700;color:var(--green)" id="perf-hold-win">—</div>
+          <div class="stat-sub">Avg days — winners</div>
+        </div>
+        <div style="color:var(--border);font-size:20px">vs</div>
+        <div>
+          <div style="font-size:26px;font-weight:700;color:var(--red)" id="perf-hold-loss">—</div>
+          <div class="stat-sub">Avg days — losers</div>
+        </div>
+      </div>
+      <div class="stat-badge badge-green" style="margin-top:8px" id="perf-hold-badge">—</div>
+      <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
+        <div style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:4px">MINERVINI RULE</div>
+        <div class="stat-sub" style="line-height:1.5">Winners held longer than losers = discipline. Reverse = cutting winners, holding losers.</div>
+      </div>
+    </div>
+    <!-- MAR Ratio -->
+    <div class="card card-sm">
+      <div class="stat-label">MAR Ratio (CAGR ÷ Max DD)</div>
+      <div class="stat-value" style="font-size:30px;margin-top:4px" id="perf-mar">—</div>
+      <div class="stat-badge badge-green" style="margin-top:6px" id="perf-mar-badge">—</div>
+      <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
+        <div style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:6px">COMPONENTS</div>
+        <div style="display:flex;gap:12px">
+          <div><div style="font-size:14px;font-weight:700" id="perf-mar-cagr">—</div><div class="stat-sub">CAGR</div></div>
+          <div style="color:var(--border)">|</div>
+          <div><div style="font-size:14px;font-weight:700;color:var(--red)" id="perf-mar-dd">—</div><div class="stat-sub">Max DD</div></div>
+        </div>
+        <div style="margin-top:6px;font-size:11px;color:var(--text-muted)">Target: &gt;3.0 · World-class: &gt;5.0</div>
+      </div>
+    </div>
     <!-- Profit Factor + Sharpe -->
     <div class="card card-sm">
       <div class="stat-label">Profit Factor</div>
@@ -2252,6 +2287,54 @@ function renderPerfStats(closed, open, portfolioValue, initialCapital) {
     const label = rExpectancy >= 0.5 ? '✓ Strong edge' : rExpectancy > 0 ? 'Positive — keep at it' : '⚠ Negative — review exits';
     rExpBadge.textContent = label;
     rExpBadge.className = 'stat-badge ' + (rExpectancy >= 0.5 ? 'badge-green' : rExpectancy > 0 ? 'badge-amber' : 'badge-red');
+  }
+
+  // ── Hold Time Asymmetry ──
+  const winnersWithAge = wins.filter(t => t.age > 0);
+  const losersWithAge = losses.filter(t => t.age > 0);
+  const avgHoldWin = winnersWithAge.length > 0 ? winnersWithAge.reduce((s,t) => s + parseInt(t.age), 0) / winnersWithAge.length : 0;
+  const avgHoldLoss = losersWithAge.length > 0 ? losersWithAge.reduce((s,t) => s + parseInt(t.age), 0) / losersWithAge.length : 0;
+  set('perf-hold-win', avgHoldWin > 0 ? Math.round(avgHoldWin) + 'd' : '—');
+  set('perf-hold-loss', avgHoldLoss > 0 ? Math.round(avgHoldLoss) + 'd' : '—');
+  const holdBadge = document.getElementById('perf-hold-badge');
+  if (holdBadge && avgHoldWin > 0 && avgHoldLoss > 0) {
+    const ratio = avgHoldWin / avgHoldLoss;
+    if (ratio >= 1.5) {
+      holdBadge.className = 'stat-badge badge-green';
+      holdBadge.textContent = `✓ Winners held ${ratio.toFixed(1)}× longer — excellent discipline`;
+    } else if (ratio >= 1.0) {
+      holdBadge.className = 'stat-badge badge-amber';
+      holdBadge.textContent = `⚡ Winners held ${ratio.toFixed(1)}× longer — good, push to 2×`;
+    } else {
+      holdBadge.className = 'stat-badge badge-red';
+      holdBadge.textContent = `⚠ Losers held ${(1/ratio).toFixed(1)}× longer than winners — reverse this`;
+    }
+  }
+
+  // ── MAR Ratio (CAGR ÷ Max Drawdown) ──
+  const closedWithDate = closed.filter(t => t.closeDate);
+  let marCagr = 0, marMaxDD = 0;
+  if (closedWithDate.length >= 2 && initialCapital > 0) {
+    const dates = closedWithDate.map(t => parseDate(t.closeDate)).filter(d => !isNaN(d));
+    const firstDate = new Date(Math.min(...dates));
+    const lastDate = new Date(Math.max(...dates));
+    const yearsFrac = (lastDate - firstDate) / (365.25 * 24 * 3600 * 1000);
+    const sortedForDD = [...closedWithDate].sort((a,b) => parseDate(a.closeDate) - parseDate(b.closeDate));
+    let eq = initialCapital, peak = eq;
+    sortedForDD.forEach(t => { eq += t.finalPl; if (eq > peak) peak = eq; const dd = (eq - peak) / peak * 100; if (dd < marMaxDD) marMaxDD = dd; });
+    const finalEqMAR = initialCapital + totalFinalPl;
+    if (yearsFrac > 0 && finalEqMAR > 0) marCagr = (Math.pow(finalEqMAR / initialCapital, 1 / yearsFrac) - 1) * 100;
+  }
+  const mar = marMaxDD < 0 ? marCagr / Math.abs(marMaxDD) : 0;
+  set('perf-mar', mar > 0 ? mar.toFixed(2) : '—');
+  set('perf-mar-cagr', marCagr !== 0 ? (marCagr >= 0 ? '+' : '') + marCagr.toFixed(1) + '%' : '—');
+  set('perf-mar-dd', marMaxDD !== 0 ? marMaxDD.toFixed(1) + '%' : '—');
+  const marEl = document.getElementById('perf-mar');
+  const marBadge = document.getElementById('perf-mar-badge');
+  if (marEl && mar > 0) marEl.style.color = mar >= 5 ? 'var(--green)' : mar >= 3 ? 'var(--amber)' : 'var(--red)';
+  if (marBadge && mar > 0) {
+    marBadge.className = 'stat-badge ' + (mar >= 5 ? 'badge-green' : mar >= 3 ? 'badge-amber' : 'badge-red');
+    marBadge.textContent = mar >= 5 ? '✓ World-class (>5)' : mar >= 3 ? '✓ Professional grade (>3)' : '⚠ Below 3 — improve return or cut drawdown';
   }
 
   // ── Profit Factor ──
