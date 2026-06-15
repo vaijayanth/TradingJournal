@@ -1887,23 +1887,46 @@ function renderDashboard(data, cfg) {
         const headerId = 'ag-hdr-' + g.key;
         const bodyId   = 'ag-body-' + g.key;
         const isOpen   = g.autoOpen;
+        const tbody = items.map(a => {
+          // Extract stock name from title (always first word before ' — ')
+          const stockName = a.title.split(' — ')[0];
+          const detail = a.title.split(' — ')[1] || '';
+          const badge = g.key === 'red'
+            ? `<span class="fno-badge fno-badge-call">🔴 Exit Now</span>`
+            : g.key === 'ema'
+              ? `<span class="fno-badge fno-badge-call">📉 Protect Profits</span>`
+              : g.key === 'ha-warn'
+                ? `<span class="fno-badge" style="background:var(--red-soft);color:var(--red);border:1px solid rgba(239,68,68,.3)">⚠ Tighten Stop</span>`
+                : g.key === 'breakeven'
+                  ? `<span class="fno-badge" style="background:var(--amber-soft);color:var(--amber);border:1px solid rgba(245,158,11,.3)">🛡 Move to BE</span>`
+                  : g.key === 'ha'
+                    ? `<span class="fno-badge" style="background:var(--amber-soft);color:var(--amber);border:1px solid rgba(245,158,11,.3)">🔄 Review</span>`
+                    : g.key === 'green'
+                      ? `<span class="fno-badge fno-badge-put">🟢 Take Partial</span>`
+                      : `<span class="fno-badge" style="background:var(--amber-soft);color:var(--amber);border:1px solid rgba(245,158,11,.3)">🟡 Review Stop</span>`;
+          return `<tr style="cursor:pointer" onclick="showPage('positions',document.querySelectorAll('.nav-tab')[3])">
+            <td><span class="stock-name">${stockName}</span></td>
+            <td style="color:var(--text-secondary)">${detail}</td>
+            <td>${badge}</td>
+          </tr>`;
+        }).join('');
         return `
           <div class="alert-group">
             <div class="alert-group-header ${isOpen ? 'open' : ''}" id="${headerId}"
                  style="background:${g.bg};color:${g.color}"
                  onclick="toggleAlertGroup('${g.key}')">
               <span>${g.icon}</span>
-              <span>${g.label}</span>
+              <span style="flex:1;font-size:12px;font-weight:700">${g.label}</span>
               <span class="ag-count" style="background:${g.countBg};color:${g.color}">${items.length}</span>
               <span class="ag-chevron">▶</span>
             </div>
-            <div class="alert-group-body ${isOpen ? 'open' : ''}" id="${bodyId}">
-              ${items.map(a => `
-                <div class="alert-banner alert-${a.type}" onclick="showPage('positions',document.querySelectorAll('.nav-tab')[3])">
-                  <div class="alert-icon">${a.icon}</div>
-                  <div class="alert-text"><div class="alert-title">${a.title}</div><div class="alert-desc">${a.desc}</div></div>
-                  <span class="alert-arrow">→ Positions</span>
-                </div>`).join('')}
+            <div class="alert-group-body ${isOpen ? 'open' : ''}" id="${bodyId}" style="padding:0">
+              <div style="overflow-x:auto">
+                <table class="trades-table" style="font-size:12px">
+                  <thead><tr><th>Stock</th><th>Alert</th><th>Action</th></tr></thead>
+                  <tbody>${tbody}</tbody>
+                </table>
+              </div>
             </div>
           </div>`;
       }).join('');
