@@ -1252,13 +1252,14 @@ tbody tr:hover { filter: brightness(0.97); }
     </div>
     <div class="card">
       <div class="chart-title">Loss Size Distribution</div>
-      <div class="chart-sub">Are losses clean (near init risk) or messy (overrun)?</div>
+      <div class="chart-sub">How large are closed losses as % of the position?</div>
       <div id="chart-tm-loss-dist" style="height:220px"></div>
+      <div id="loss-dist-insight" style="margin-top:8px;font-size:12px;color:var(--text-secondary)"></div>
       <details style="margin-top:10px">
         <summary style="font-size:12px;font-weight:600;color:var(--text-muted);cursor:pointer;padding:4px 0;user-select:none">What to look for &amp; action ▸</summary>
         <div style="padding:10px 12px;background:var(--surface2);border-radius:8px;font-size:12px;line-height:1.7;color:var(--text-secondary);margin-top:6px">
-          Losses should cluster tightly around your avg init risk (marked in amber). Large spike in <strong>5–8% or &gt;8%</strong> = uncontrolled losses.<br>
-          <strong>Action:</strong> Any loss &gt;2× init risk is a process failure. If &gt;10% of losses are outsized, fixing this is your biggest lever.
+          Amber line = your average actual loss. Most losses should fall in <strong>0–3%</strong> (clean, near stop). A long tail into <strong>5–8% or &gt;8%</strong> = stops overrun or not taken — a process failure.<br>
+          <strong>Action:</strong> If &gt;10% of losses are in the 5%+ buckets, that's your biggest lever to pull. Compare avg actual loss ₹ vs avg init risk ₹ in the KPI cards above.
         </div>
       </details>
     </div>
@@ -4458,7 +4459,11 @@ function initAnalysisCharts(open, closed) {
       legend: { show:false },
       dataLabels: { enabled: true, formatter: v => v > 0 ? v : '', style:{fontSize:'11px',colors:['#fff']} },
       annotations: {
-        xaxis: avgInitRisk > 0 ? [{ x: avgInitRisk < 1 ? '0–1%' : avgInitRisk < 2 ? '1–2%' : '2–3%', borderColor: c.amber, strokeDashArray: 4, label: { text: 'Avg init risk', style:{color:c.amber,fontSize:'10px',background:'transparent'}, orientation:'horizontal', position:'top' } }] : [],
+        xaxis: avgActualLoss > 0 ? [{
+          x: avgActualLoss < 1 ? '0–1%' : avgActualLoss < 2 ? '1–2%' : avgActualLoss < 3 ? '2–3%' : avgActualLoss < 5 ? '3–5%' : avgActualLoss < 8 ? '5–8%' : '>8%',
+          borderColor: c.amber, strokeDashArray: 4,
+          label: { text: 'Avg loss ' + avgActualLoss.toFixed(1) + '%', style:{color:c.amber,fontSize:'10px',background:'transparent'}, orientation:'horizontal', position:'top' }
+        }] : [],
       },
       tooltip: { ...baseOpts().tooltip, y: { formatter: (v, {dataPointIndex}) => {
         const pct = tmLosers.length > 0 ? (v / tmLosers.length * 100).toFixed(0) : 0;
@@ -4466,6 +4471,24 @@ function initAnalysisCharts(open, closed) {
       }}},
     });
     ldChart.render(); analysisCharts.push(ldChart);
+
+    // Loss dist insight text
+    const lossInsEl = document.getElementById('loss-dist-insight');
+    if (lossInsEl) {
+      const outsized = tmLosers.filter(t => Math.abs(t.finalPlPct) >= 5).length;
+      const outsizedPct = tmLosers.length > 0 ? (outsized / tmLosers.length * 100).toFixed(0) : 0;
+      const slippageRsSign = slippageRs >= 0 ? '+' : '';
+      let lossIns = `Avg actual loss: <strong>${avgActualLoss.toFixed(1)}%</strong> of position`;
+      if (avgInitRiskRs > 0) {
+        lossIns += ` · ₹ slippage vs init risk: <strong style="color:${slippageRs > 200 ? 'var(--red)' : 'var(--text-secondary)'}">${slippageRsSign}₹${Math.abs(slippageRs).toFixed(0)}</strong>`;
+      }
+      if (outsized > 0) {
+        lossIns += ` · <span style="color:var(--red)">${outsized} loss${outsized>1?'es':''} (${outsizedPct}%) ≥5% — review discipline</span>`;
+      } else {
+        lossIns += ` · <span style="color:var(--green)">No outsized losses (≥5%) — clean</span>`;
+      }
+      lossInsEl.innerHTML = lossIns;
+    }
   }
 }
 
