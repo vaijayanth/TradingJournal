@@ -548,6 +548,28 @@ tbody tr:hover { filter: brightness(0.97); }
   nav { padding: 0 12px; gap: 8px; }
   .nav-logo span { display: none; }
 }
+/* ── F&O MODULE ── */
+.strategy-bar { display:flex; align-items:center; gap:8px; padding:6px 20px; background:var(--surface); border-bottom:1px solid var(--border); }
+.strategy-bar-label { font-size:11px; color:var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:0.5px; margin-right:4px; }
+.sw-btn { padding:5px 16px; border-radius:20px; border:1.5px solid var(--border); background:transparent; color:var(--text-secondary); font-size:13px; font-weight:600; cursor:pointer; transition:all 0.15s; }
+.sw-btn.active { background:var(--accent); border-color:var(--accent); color:#fff; }
+.fno-score-bar { display:flex; gap:2px; align-items:center; }
+.fno-score-pip { width:10px; height:10px; border-radius:2px; background:var(--border); }
+.fno-score-pip.bull { background:var(--green); }
+.fno-score-pip.bear { background:var(--red); }
+.fno-badge { display:inline-block; padding:2px 8px; border-radius:10px; font-size:11px; font-weight:700; }
+.fno-badge-put  { background:rgba(52,199,89,0.15);  color:var(--green); }
+.fno-badge-call { background:rgba(255,69,58,0.15);  color:var(--red); }
+.fno-badge-wait { background:var(--border); color:var(--text-muted); }
+.fno-badge-active { background:rgba(10,132,255,0.15); color:var(--accent); }
+.fno-row-active { background: rgba(10,132,255,0.04) !important; }
+.fno-row-alert  { background: rgba(255,159,10,0.06) !important; }
+.fno-tag { display:inline-block; padding:1px 5px; border-radius:6px; font-size:10px; font-weight:600; margin:1px; }
+.fno-tag-yes { background:rgba(52,199,89,0.15); color:var(--green); }
+.fno-tag-no  { background:var(--border); color:var(--text-muted); }
+.fno-tag-red { background:rgba(255,69,58,0.15); color:var(--red); }
+.fno-alert-strip { display:flex; flex-wrap:wrap; gap:8px; margin-bottom:16px; }
+@media(max-width:768px){ .strategy-bar { padding:6px 12px; } .sw-btn { padding:4px 12px; font-size:12px; } }
 </style>
 </head>
 <body>
@@ -566,6 +588,13 @@ tbody tr:hover { filter: brightness(0.97); }
   </div>
 </div>
 
+<!-- ════ STRATEGY SWITCHER ════ -->
+<div class="strategy-bar">
+  <span class="strategy-bar-label">Strategy</span>
+  <button class="sw-btn active" id="sw-swing" onclick="switchStrategy('swing')">📈 Swing</button>
+  <button class="sw-btn" id="sw-fno" onclick="switchStrategy('fno')">📊 F&amp;O</button>
+</div>
+
 <!-- ════ NAVBAR ════ -->
 <nav>
   <div class="nav-logo">📈 <span>Trading</span>Journal</div>
@@ -582,6 +611,9 @@ tbody tr:hover { filter: brightness(0.97); }
     <button class="btn-icon" title="Toggle theme" onclick="toggleTheme()">🌙</button>
   </div>
 </nav>
+
+<!-- ════ SWING PAGES WRAPPER ════ -->
+<div id="swing-pages">
 
 <!-- ════ DASHBOARD ════ -->
 <div id="page-dashboard" class="page active">
@@ -1455,6 +1487,94 @@ tbody tr:hover { filter: brightness(0.97); }
     </div>
   </div>
 </div>
+
+</div><!-- end swing-pages -->
+
+<!-- ════ F&O NAV ════ -->
+<div id="fno-nav-tabs" style="display:none" class="nav-tabs" style="padding:0 20px;border-bottom:1px solid var(--border)">
+  <button class="nav-tab active" onclick="showFnoPage('fno-dashboard', this)">Dashboard</button>
+  <button class="nav-tab" onclick="showFnoPage('fno-watchlist', this)">Watchlist</button>
+</div>
+
+<!-- ════ F&O PAGES ════ -->
+<div id="fno-pages" style="display:none">
+
+  <!-- F&O Dashboard -->
+  <div id="page-fno-dashboard" class="page active">
+    <div class="section-title">F&amp;O Overview</div>
+    <div class="grid-4" style="margin-bottom:16px">
+      <div class="card card-sm">
+        <div class="stat-label">Watchlist Stocks</div>
+        <div class="stat-value" id="fno-total">—</div>
+        <div class="stat-sub">NSE F&amp;O monitored</div>
+      </div>
+      <div class="card card-sm">
+        <div class="stat-label">Active Spreads</div>
+        <div class="stat-value" id="fno-active" style="color:var(--accent)">—</div>
+        <div class="stat-sub" style="font-size:11px;color:var(--amber)">⚠ Exit if premium doubles</div>
+      </div>
+      <div class="card card-sm">
+        <div class="stat-label">Put Spread Candidates</div>
+        <div class="stat-value green" id="fno-put-cands">—</div>
+        <div class="stat-sub">Bullish alignment ≥ 4/6</div>
+      </div>
+      <div class="card card-sm">
+        <div class="stat-label">Call Spread Candidates</div>
+        <div class="stat-value red" id="fno-call-cands">—</div>
+        <div class="stat-sub">Bearish alignment ≥ 3/4</div>
+      </div>
+    </div>
+
+    <div class="section-title">Alerts</div>
+    <div id="fno-alerts" style="margin-bottom:20px">
+      <div style="padding:16px;text-align:center;color:var(--text-muted);font-size:13px">Loading…</div>
+    </div>
+
+    <div class="section-title">Top Candidates</div>
+    <div id="fno-top-candidates">
+      <div style="padding:16px;text-align:center;color:var(--text-muted);font-size:13px">Loading…</div>
+    </div>
+  </div>
+
+  <!-- F&O Watchlist -->
+  <div id="page-fno-watchlist" class="page" style="display:none">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div class="section-title" style="margin:0">Full Watchlist</div>
+      <div style="font-size:12px;color:var(--text-muted)" id="fno-wl-count">—</div>
+    </div>
+    <div style="overflow-x:auto">
+      <table class="trades-table" style="font-size:12px;min-width:900px">
+        <thead>
+          <tr>
+            <th>Stock</th>
+            <th>CMP</th>
+            <th>Trend</th>
+            <th>Bull Score</th>
+            <th>Bear Score</th>
+            <th>HA</th>
+            <th title="200 EMA Above">200E</th>
+            <th title="50 EMA Above">50E</th>
+            <th title="20 EMA Above">20E</th>
+            <th>Breakouts</th>
+            <th>% from 7DL</th>
+            <th>Action</th>
+          </tr>
+        </thead>
+        <tbody id="fno-watchlist-tbody">
+          <tr><td colspan="12" style="text-align:center;color:var(--text-muted);padding:20px">Loading…</td></tr>
+        </tbody>
+      </table>
+    </div>
+    <div style="margin-top:16px;padding:12px;background:var(--surface);border-radius:10px;border:1px solid var(--border);font-size:12px;color:var(--text-secondary)">
+      <strong>Your strategy:</strong>
+      Uptrend → Sell 0.2Δ PE + buy hedge 2 strikes lower (Put Spread) ·
+      Downtrend → Sell 0.2Δ CE + buy hedge 2 strikes above (Call Spread) ·
+      HA turns Red on active spread → consider adding Call Spread ·
+      <span style="color:var(--amber)">⚠ Exit any spread if premium doubles (2×)</span>
+    </div>
+  </div>
+
+</div><!-- end fno-pages -->
 
 <!-- ════════════════════ SCRIPTS ════════════════════ -->
 <script>
@@ -3503,6 +3623,227 @@ document.addEventListener('DOMContentLoaded', () => {
     if (ri) ri.textContent = 'No data — configure in Config tab';
   }
 });
+
+// ── F&O MODULE ────────────────────────────────────────────────────────────
+
+function fnoScore(s) {
+  // Bullish signals (max 6)
+  const bull = [s.ema200, s.ema50, s.ema20, s.haColour.toLowerCase()==='green',
+    s.ath||s.wk52h||s.dh21||s.dh7, s.hasGapUp].filter(Boolean).length;
+  // Bearish signals (max 4)
+  const bear = [!s.ema200, !s.ema50, !s.ema20, s.haColour.toLowerCase()==='red'].filter(Boolean).length;
+  return { bull, bear };
+}
+
+function fnoTrend(s) {
+  const { bull, bear } = fnoScore(s);
+  if (bull >= 4) return 'bullish';
+  if (bear >= 3) return 'bearish';
+  return 'mixed';
+}
+
+function fnoAction(s) {
+  const trend = fnoTrend(s);
+  const haRed = s.haColour.toLowerCase() === 'red';
+  const haRedToday = haRed && s.haChanged;
+  if (s.spreadActive && haRedToday) return 'add-call'; // existing spread + HA flipped red
+  if (trend === 'bullish' && !haRed) return 'put-spread';
+  if (trend === 'bearish' || (haRedToday && !s.spreadActive)) return 'call-spread';
+  return 'wait';
+}
+
+async function fetchFnoData() {
+  const cfg = loadConfig();
+  if (!cfg.url) return null;
+  const params = new URLSearchParams({ mode: 'fno', sheet: 'NSEFO' });
+  try {
+    const res = await fetch(cfg.url + '?' + params.toString(), { redirect: 'follow' });
+    const data = await res.json();
+    if (!data.success) throw new Error(data.error || 'Unknown');
+    return data;
+  } catch(e) {
+    showToast('F&O fetch error: ' + e.message, 'red');
+    return null;
+  }
+}
+
+async function refreshFnoData() {
+  const btn = document.querySelector('[title="Refresh"]');
+  if (btn) btn.textContent = '⟳';
+  document.body.classList.add('loading');
+  const data = await fetchFnoData();
+  document.body.classList.remove('loading');
+  if (btn) btn.textContent = '↻';
+  if (!data) return;
+  window._fnoData = data;
+  renderFnoDashboard(data.watchlist);
+  renderFnoWatchlist(data.watchlist);
+  const ri = document.querySelector('.refresh-info');
+  if (ri) ri.textContent = 'F&O updated ' + new Date().toLocaleTimeString('en-IN', {hour:'2-digit',minute:'2-digit'});
+}
+
+function renderFnoDashboard(watchlist) {
+  const total = watchlist.length;
+  const active = watchlist.filter(s => s.spreadActive).length;
+  const putCandidates = watchlist.filter(s => !s.spreadActive && fnoAction(s) === 'put-spread').length;
+  const callCandidates = watchlist.filter(s => fnoAction(s) === 'call-spread' || fnoAction(s) === 'add-call').length;
+  const haAlerts = watchlist.filter(s => s.spreadActive && s.haColour.toLowerCase()==='red' && s.haChanged).length;
+
+  const set = (id,v) => { const el=document.getElementById(id); if(el) el.textContent=v; };
+  set('fno-total', total);
+  set('fno-active', active);
+  set('fno-put-cands', putCandidates);
+  set('fno-call-cands', callCandidates);
+
+  // Alerts
+  const alertsEl = document.getElementById('fno-alerts');
+  if (alertsEl) {
+    const alerts = [];
+    watchlist.forEach(s => {
+      const action = fnoAction(s);
+      if (action === 'add-call')
+        alerts.push({ priority:'red', icon:'🔄', title:`${s.stock} — HA turned Red (Spread Active)`, desc:`HA momentum just flipped red. Per your strategy, consider adding a Call Spread to this position.` });
+      if (s.spreadActive && s.haColour.toLowerCase()==='red' && !s.haChanged)
+        alerts.push({ priority:'amber', icon:'⚠', title:`${s.stock} — Active spread, HA is Red`, desc:`Spread is live and HA has been red (not just today). Monitor premium — exit if it doubles.` });
+      if (!s.spreadActive && action === 'put-spread' && fnoScore(s).bull >= 5)
+        alerts.push({ priority:'green', icon:'🟢', title:`${s.stock} — Strong Put Spread setup (${fnoScore(s).bull}/6 signals)`, desc:`Bullish alignment strong. Consider selling put spread — sell 0.2Δ PE, buy hedge 2 strikes lower.` });
+      if (!s.spreadActive && action === 'call-spread' && fnoScore(s).bear >= 3)
+        alerts.push({ priority:'green', icon:'🔴', title:`${s.stock} — Call Spread setup (${fnoScore(s).bear}/4 bearish signals)`, desc:`Bearish alignment. Consider selling call spread — sell 0.2Δ CE, buy hedge 2 strikes above.` });
+    });
+
+    // Reminder on all active spreads
+    if (active > 0) {
+      alerts.unshift({ priority:'blue', icon:'📋', title:`${active} active spread${active>1?'s':''} — monitor premium`, desc:`Exit any spread if premium doubles (2× entry). No premium data in app — check manually in broker terminal.` });
+    }
+
+    if (alerts.length === 0) {
+      alertsEl.innerHTML = '<div style="padding:16px;text-align:center;color:var(--text-muted);font-size:13px">✓ No alerts — watchlist within parameters</div>';
+    } else {
+      const colorMap = { red:'var(--red)', amber:'var(--amber)', green:'var(--green)', blue:'var(--accent)' };
+      const bgMap    = { red:'var(--red-soft)', amber:'var(--amber-soft)', green:'var(--green-soft)', blue:'var(--accent-soft)' };
+      alertsEl.innerHTML = alerts.map(a => `
+        <div class="alert-banner alert-${a.priority==='blue'?'amber':a.priority}" style="border-left:3px solid ${colorMap[a.priority]||'var(--accent)'}">
+          <div class="alert-icon">${a.icon}</div>
+          <div class="alert-text"><div class="alert-title">${a.title}</div><div class="alert-desc">${a.desc}</div></div>
+        </div>`).join('');
+    }
+  }
+
+  // Top candidates table
+  const topEl = document.getElementById('fno-top-candidates');
+  if (topEl) {
+    const candidates = watchlist
+      .filter(s => fnoAction(s) !== 'wait')
+      .sort((a,b) => {
+        const scoreA = fnoScore(a); const scoreB = fnoScore(b);
+        return (Math.max(scoreB.bull, scoreB.bear*1.5)) - (Math.max(scoreA.bull, scoreA.bear*1.5));
+      }).slice(0,8);
+
+    if (candidates.length === 0) {
+      topEl.innerHTML = '<div style="padding:16px;text-align:center;color:var(--text-muted);font-size:13px">No strong candidates right now</div>';
+    } else {
+      topEl.innerHTML = `<table class="trades-table" style="font-size:12px">
+        <thead><tr><th>Stock</th><th>CMP</th><th>Trend</th><th>Score</th><th>HA</th><th>% from 7DL</th><th>Action</th></tr></thead>
+        <tbody>${candidates.map(s => {
+          const { bull, bear } = fnoScore(s);
+          const action = fnoAction(s);
+          const trend = fnoTrend(s);
+          const haLabel = s.haColour + (s.haChanged ? ' 🔄' : '');
+          const haClass = s.haColour.toLowerCase()==='green' ? 'pnl-pos' : 'pnl-neg';
+          const actionLabel = action==='put-spread'?'🟢 Put Spread':action==='call-spread'?'🔴 Call Spread':action==='add-call'?'🔄 Add Call':'⚪ Wait';
+          const actionBadge = action==='put-spread'?'fno-badge-put':action==='call-spread'||action==='add-call'?'fno-badge-call':'fno-badge-wait';
+          const pips = trend==='bullish'
+            ? Array(6).fill(0).map((_,i)=>`<div class="fno-score-pip${i<bull?' bull':''}"></div>`).join('')
+            : Array(4).fill(0).map((_,i)=>`<div class="fno-score-pip${i<bear?' bear':''}"></div>`).join('');
+          return `<tr class="${s.spreadActive?'fno-row-active':''}${action==='add-call'?'fno-row-alert':''}">
+            <td><span class="stock-name">${s.stock}</span>${s.spreadActive?` <span class="fno-badge fno-badge-active">LIVE</span>`:''}</td>
+            <td>₹${s.cmp.toLocaleString('en-IN')}</td>
+            <td>${trend==='bullish'?'🟢 Bullish':trend==='bearish'?'🔴 Bearish':'⚪ Mixed'}</td>
+            <td><div class="fno-score-bar">${pips}</div><div style="font-size:10px;color:var(--text-muted)">${trend==='bullish'?bull+'/6':bear+'/4'}</div></td>
+            <td class="${haClass}">${haLabel}</td>
+            <td>${s.pctFrom7DL||'—'}</td>
+            <td><span class="fno-badge ${actionBadge}">${actionLabel}</span></td>
+          </tr>`;
+        }).join('')}</tbody></table>`;
+    }
+  }
+}
+
+function renderFnoWatchlist(watchlist) {
+  const tbody = document.getElementById('fno-watchlist-tbody');
+  if (!tbody) return;
+
+  const sorted = [...watchlist].sort((a,b) => {
+    if (a.spreadActive !== b.spreadActive) return a.spreadActive ? -1 : 1;
+    return fnoScore(b).bull - fnoScore(a).bull;
+  });
+
+  tbody.innerHTML = sorted.map(s => {
+    const { bull, bear } = fnoScore(s);
+    const action = fnoAction(s);
+    const trend = fnoTrend(s);
+    const haRed = s.haColour.toLowerCase()==='red';
+    const haClass = haRed ? 'pnl-neg' : 'pnl-pos';
+    const actionBadge = action==='put-spread'?'fno-badge-put':action==='call-spread'||action==='add-call'?'fno-badge-call':'fno-badge-wait';
+    const actionLabel = action==='put-spread'?'🟢 Put Spread':action==='call-spread'?'🔴 Call Spread':action==='add-call'?'🔄 Add Call':'⚪ Wait';
+    const bullPips = Array(6).fill(0).map((_,i)=>`<div class="fno-score-pip${i<bull?' bull':''}"></div>`).join('');
+    const bearPips = Array(4).fill(0).map((_,i)=>`<div class="fno-score-pip${i<bear?' bear':''}"></div>`).join('');
+    const bk = s => s ? '<span class="fno-tag fno-tag-yes">✓</span>' : '<span class="fno-tag fno-tag-no">—</span>';
+    const rowClass = s.spreadActive ? 'fno-row-active' : action==='add-call' ? 'fno-row-alert' : '';
+    return `<tr class="${rowClass}">
+      <td><span class="stock-name">${s.stock}</span>${s.spreadActive?` <span class="fno-badge fno-badge-active">LIVE</span>`:''}</td>
+      <td>₹${s.cmp.toLocaleString('en-IN')}</td>
+      <td>${trend==='bullish'?'🟢 Bullish':trend==='bearish'?'🔴 Bearish':'⚪ Mixed'}</td>
+      <td><div class="fno-score-bar">${bullPips}</div><div style="font-size:10px;color:var(--text-muted)">${bull}/6 bull</div></td>
+      <td><div class="fno-score-bar">${bearPips}</div><div style="font-size:10px;color:var(--text-muted)">${bear}/4 bear</div></td>
+      <td class="${haClass}">${s.haColour}${s.haChanged?' 🔄':''}</td>
+      <td>${bk(s.ema200)}</td><td>${bk(s.ema50)}</td><td>${bk(s.ema20)}</td>
+      <td>${s.ath?'<span class="fno-tag fno-tag-yes">ATH</span>':''}${s.wk52h?'<span class="fno-tag fno-tag-yes">52W</span>':''}${s.dh21?'<span class="fno-tag fno-tag-yes">21D</span>':''}${s.dh7?'<span class="fno-tag fno-tag-yes">7D</span>':''}</td>
+      <td>${s.pctFrom7DL||'—'}</td>
+      <td><span class="fno-badge ${actionBadge}">${actionLabel}</span></td>
+    </tr>`;
+  }).join('');
+
+  document.getElementById('fno-wl-count').textContent = sorted.length + ' stocks · sorted by spread active, then bullish score';
+}
+
+function showFnoPage(id, btn) {
+  document.querySelectorAll('#fno-pages .page').forEach(p => { p.style.display='none'; p.classList.remove('active'); });
+  document.querySelectorAll('#fno-nav-tabs .nav-tab').forEach(t => t.classList.remove('active'));
+  const el = document.getElementById('page-' + id);
+  if (el) { el.style.display=''; el.classList.add('active'); }
+  if (btn) btn.classList.add('active');
+}
+
+function switchStrategy(mode) {
+  window._strategy = mode;
+  document.getElementById('sw-swing').classList.toggle('active', mode==='swing');
+  document.getElementById('sw-fno').classList.toggle('active', mode==='fno');
+
+  const swingNav = document.querySelector('.nav-tabs');
+  const fnoNav   = document.getElementById('fno-nav-tabs');
+  const swingPages = document.getElementById('swing-pages');
+  const fnoPages   = document.getElementById('fno-pages');
+
+  if (mode === 'swing') {
+    swingNav.style.display = '';
+    if (fnoNav)    fnoNav.style.display   = 'none';
+    if (swingPages) swingPages.style.display = '';
+    if (fnoPages)   fnoPages.style.display   = 'none';
+  } else {
+    swingNav.style.display = 'none';
+    if (fnoNav)    fnoNav.style.display   = '';
+    if (swingPages) swingPages.style.display = 'none';
+    if (fnoPages)   fnoPages.style.display   = '';
+    // Fetch F&O data if not already loaded
+    if (!window._fnoData) {
+      refreshFnoData();
+    } else {
+      renderFnoDashboard(window._fnoData.watchlist);
+      renderFnoWatchlist(window._fnoData.watchlist);
+    }
+  }
+}
 </script>
 </body>
 </html>
