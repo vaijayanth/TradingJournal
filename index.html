@@ -3800,6 +3800,9 @@ function initAnalysisCharts(open, closed) {
   if (!closed) closed = []; if (!open) open = [];
   const c = chartColors();
   const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  const _cfg = loadConfig();
+  const BE_TRIGGER = _cfg.beTrigger || 5;       // move stop to breakeven at this % profit
+  const PARTIAL_TRIGGER = _cfg.partialTrigger || 10; // take 50% partial at this % profit
 
   // ── Setup Type Breakdown ──
   const calcStats = trades => {
@@ -3928,9 +3931,8 @@ function initAnalysisCharts(open, closed) {
   };
   const py = pStats(partialYes), pn = pStats(partialNo);
   // Avg gain after partial: final P&L% minus partial trigger (10%) = how much extra was captured after taking partial
-  const cfg_pt = (loadConfig().partialTrigger || 10);
   const gainAfterPartial = partialYes.length
-    ? partialYes.reduce((s,t) => s + Math.max(0, t.finalPlPct - cfg_pt), 0) / partialYes.length
+    ? partialYes.reduce((s,t) => s + Math.max(0, t.finalPlPct - PARTIAL_TRIGGER), 0) / partialYes.length
     : 0;
   set('partial-yes-wr', py.wr.toFixed(0)+'%');
   set('partial-yes-avg', (py.avg>=0?'+':'')+py.avg.toFixed(1)+'%');
@@ -4112,14 +4114,13 @@ function initAnalysisCharts(open, closed) {
   tmSet('tm-slippage-sub', '₹ over planned per stopped trade');
   tmSet('tm-median-win', medianWin > 0 ? '+' + medianWin.toFixed(2) + '%' : '—');
 
-  // ── Breakeven stop insight (Minervini system: BE stop at +5%, partial at +10%) ──
+  // ── Breakeven stop insight — uses BE_TRIGGER and PARTIAL_TRIGGER from Config ──
   const beInsightEl = document.getElementById('tm-be-insight');
   if (beInsightEl && tmWinners.length > 0) {
-    // Winner distribution at your actual trigger levels
-    const above5  = tmWinners.filter(t => t.finalPlPct >= 5).length;
-    const above10 = tmWinners.filter(t => t.finalPlPct >= 10).length;
+    const above5  = tmWinners.filter(t => t.finalPlPct >= BE_TRIGGER).length;
+    const above10 = tmWinners.filter(t => t.finalPlPct >= PARTIAL_TRIGGER).length;
     const above15 = tmWinners.filter(t => t.finalPlPct >= 15).length;
-    const below5  = tmWinners.filter(t => t.finalPlPct < 5).length;
+    const below5  = tmWinners.filter(t => t.finalPlPct < BE_TRIGGER).length;
     const p5  = (above5  / tmWinners.length * 100).toFixed(0);
     const p10 = (above10 / tmWinners.length * 100).toFixed(0);
     const p15 = (above15 / tmWinners.length * 100).toFixed(0);
@@ -4156,7 +4157,7 @@ function initAnalysisCharts(open, closed) {
       const below = tmWinners.filter(t => t.finalPlPct < T).length;
       return { T, below, rate: below / tmWinners.length * 100 };
     });
-    const currentA = triggerAnalysis.find(a => a.T === 5);
+    const currentA = triggerAnalysis.find(a => a.T === BE_TRIGGER) || triggerAnalysis.find(a => a.T === 5);
     // Optimal = lowest T that doesn't add more winners being cut than the minimum seen
     const minBelow = Math.min(...triggerAnalysis.map(a => a.below));
     const optimal = triggerAnalysis.find(a => a.below === minBelow); // lowest trigger with fewest winners affected
@@ -4183,10 +4184,10 @@ function initAnalysisCharts(open, closed) {
     beText += `</span><br>`;
 
     // ── BE trigger recommendation ──
-    beText += `<strong>Should you move stop to breakeven earlier than +5%?</strong><br>`;
+    beText += `<strong>Should you move stop to breakeven earlier than +${BE_TRIGGER}%?</strong><br>`;
     beText += `<span style="font-size:12px;line-height:1.9">`;
     triggerAnalysis.forEach(a => {
-      const isCurrent = a.T === 5;
+      const isCurrent = a.T === BE_TRIGGER;
       const isOptimal = a.T === optimal.T;
       const prevA = triggerAnalysis[triggerAnalysis.indexOf(a) - 1];
       const addedCost = prevA ? a.below - prevA.below : a.below;
@@ -4204,11 +4205,11 @@ function initAnalysisCharts(open, closed) {
 
     // Verdict
     if (optimal.T < 5) {
-      beText += `<br>💡 <strong>Verdict: Move your BE stop trigger from +5% to +${optimal.T}%.</strong> `;
-      beText += `The number of winners affected is the same (${optimal.below}) — those small winners never reach +5% anyway so your current rule doesn't help OR hurt them. `;
+      beText += `<br>💡 <strong>Verdict: Move your BE stop trigger from +${BE_TRIGGER}% to +${optimal.T}%.</strong> `;
+      beText += `The number of winners affected is the same (${optimal.below}) — those small winners never reach +${BE_TRIGGER}% anyway so your current rule doesn't help OR hurt them. `;
       beText += `But at +${optimal.T}% you move the stop to breakeven <em>earlier</em>, which means more of your eventual losers (that briefly went to +${optimal.T}%) would be exited at 0% instead of a loss. That's free protection.`;
-    } else if (optimal.T === 5) {
-      beText += `<br>✅ <strong>Verdict: Your +5% BE trigger is already optimal.</strong> `;
+    } else if (optimal.T === BE_TRIGGER) {
+      beText += `<br>✅ <strong>Verdict: Your +${BE_TRIGGER}% BE trigger is already optimal.</strong> `;
       beText += `A tighter trigger would start cutting more winners short with no benefit.`;
     } else {
       beText += `<br>⚠️ <strong>Verdict: Your winners are short — even a low trigger cuts many short.</strong> `;
@@ -4397,8 +4398,8 @@ function initAnalysisCharts(open, closed) {
       dataLabels: { enabled: true, formatter: v => v > 0 ? v : '', style:{fontSize:'11px',colors:['#fff']} },
       annotations: {
         xaxis: [
-          { x: '5–10%', borderColor: c.accent, strokeDashArray: 4, label: { text: '↑ BE stop (+5%)', style:{color:c.accent,fontSize:'10px',background:'transparent'}, orientation:'horizontal', position:'top' } },
-          { x: '10–15%', borderColor: c.amber, strokeDashArray: 4, label: { text: '↑ Partial (+10%)', style:{color:c.amber,fontSize:'10px',background:'transparent'}, orientation:'horizontal', position:'top' } },
+          { x: winKeys.find(k=>{ const lo=parseFloat(k); return BE_TRIGGER>=lo && BE_TRIGGER<(parseFloat(k.split('–')[1])||999); }) || winKeys[2], borderColor: c.accent, strokeDashArray: 4, label: { text: `↑ BE stop (+${BE_TRIGGER}%)`, style:{color:c.accent,fontSize:'10px',background:'transparent'}, orientation:'horizontal', position:'top' } },
+          { x: winKeys.find(k=>{ const lo=parseFloat(k); return PARTIAL_TRIGGER>=lo && PARTIAL_TRIGGER<(parseFloat(k.split('–')[1])||999); }) || winKeys[3], borderColor: c.amber, strokeDashArray: 4, label: { text: `↑ Partial (+${PARTIAL_TRIGGER}%)`, style:{color:c.amber,fontSize:'10px',background:'transparent'}, orientation:'horizontal', position:'top' } },
         ],
       },
       tooltip: { ...baseOpts().tooltip, y: { formatter: (v, {dataPointIndex}) => {
@@ -4412,11 +4413,11 @@ function initAnalysisCharts(open, closed) {
     const winInsEl = document.createElement('div');
     winInsEl.style.cssText = 'margin-top:8px;font-size:12px;color:var(--text-muted);line-height:1.8';
     const avgWin = tmWinners.reduce((s,t)=>s+t.finalPlPct,0)/tmWinners.length;
-    const hitsPartial = tmWinners.filter(t=>t.finalPlPct>=10).length;
-    const hitsBE = tmWinners.filter(t=>t.finalPlPct>=5).length;
-    const smallWins = tmWinners.filter(t=>t.finalPlPct<5).length;
-    let winIns = `Avg closed winner: <strong>+${avgWin.toFixed(1)}%</strong> · ${hitsBE} of ${tmWinners.length} (${(hitsBE/tmWinners.length*100).toFixed(0)}%) clear +5% BE trigger · ${hitsPartial} (${(hitsPartial/tmWinners.length*100).toFixed(0)}%) reach +10% partial`;
-    if (smallWins > 0) winIns += `<br>⚡ ${smallWins} winner${smallWins!==1?'s':''} close below +5% — these are never touched by your BE stop rule (they exit before the rule fires)`;
+    const hitsPartial = tmWinners.filter(t=>t.finalPlPct>=PARTIAL_TRIGGER).length;
+    const hitsBE = tmWinners.filter(t=>t.finalPlPct>=BE_TRIGGER).length;
+    const smallWins = tmWinners.filter(t=>t.finalPlPct<BE_TRIGGER).length;
+    let winIns = `Avg closed winner: <strong>+${avgWin.toFixed(1)}%</strong> · ${hitsBE} of ${tmWinners.length} (${(hitsBE/tmWinners.length*100).toFixed(0)}%) clear +${BE_TRIGGER}% BE trigger · ${hitsPartial} (${(hitsPartial/tmWinners.length*100).toFixed(0)}%) reach +${PARTIAL_TRIGGER}% partial`;
+    if (smallWins > 0) winIns += `<br>⚡ ${smallWins} winner${smallWins!==1?'s':''} close below +${BE_TRIGGER}% — these are never touched by your BE stop rule (they exit before the rule fires)`;
     // Open positions note
     if (open.length > 0) {
       const openWins = open.filter(t=>(t.plPct||0)>0);
