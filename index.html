@@ -3537,11 +3537,19 @@ function initPerfCharts(closed, initialCapital, open) {
   const winsOver2R = trueWinR.filter(r => r >= 2).length;
   const winsOver3R = trueWinR.filter(r => r >= 3).length;
   const openWinnersR = open.filter(t => (t.notionalPl||0) > 0 && t.initRiskRs > 0);
-  const avgOpenR = openWinnersR.length > 0 ? openWinnersR.reduce((s,t)=>s+(t.notionalPl/t.initRiskRs),0)/openWinnersR.length : 0;
-  const openLosersR = open.filter(t => (t.notionalPl||0) < 0 && t.initRiskRs > 0);
-  const openNote = openWithRisk.length > 0
-    ? `<br><span style="opacity:0.7;font-size:11px">📊 Live open positions: ${openWinnersR.length} winners averaging +${avgOpenR.toFixed(2)}R unrealised · ${openLosersR.length} currently below entry. Shown as translucent bars in chart.</span>`
-    : '';
+  const openLosersR  = open.filter(t => (t.notionalPl||0) < 0 && t.initRiskRs > 0);
+  const openFlatR    = open.filter(t => (t.notionalPl||0) === 0 && t.initRiskRs > 0);
+  const avgOpenWinR  = openWinnersR.length > 0 ? openWinnersR.reduce((s,t)=>s+(t.notionalPl/t.initRiskRs),0)/openWinnersR.length : 0;
+  const avgOpenLossR = openLosersR.length > 0 ? Math.abs(openLosersR.reduce((s,t)=>s+(t.notionalPl/t.initRiskRs),0)/openLosersR.length) : 0;
+  const openOver2R   = openWinnersR.filter(t => t.notionalPl/t.initRiskRs >= 2).length;
+  const openOver3R   = openWinnersR.filter(t => t.notionalPl/t.initRiskRs >= 3).length;
+  const bestOpenR    = openWithRisk.length > 0 ? Math.max(...openWithRisk.map(t => t.notionalPl/t.initRiskRs)) : 0;
+  const openNote = openWithRisk.length > 0 ? (() => {
+    const trend = avgOpenWinR >= 2 ? 'running well into multi-R territory' : avgOpenWinR >= 1 ? 'in positive R but not yet extended' : 'still early stage';
+    const lossWarning = openLosersR.length > 0 ? ` ⚠ ${openLosersR.length} open position${openLosersR.length>1?'s are':' is'} currently at −${avgOpenLossR.toFixed(2)}R — monitor stops.` : '';
+    const bigRunners = openOver3R > 0 ? ` ${openOver3R} position${openOver3R>1?'s are':' is'} running at 3R+ (best: +${bestOpenR.toFixed(1)}R) — let the trail do its job, don't exit early.` : openOver2R > 0 ? ` ${openOver2R} position${openOver2R>1?'s':''} at 2R+ (best: +${bestOpenR.toFixed(1)}R).` : '';
+    return `<br><br><strong>📊 Live open book (blue bars):</strong> ${openWinnersR.length} winner${openWinnersR.length!==1?'s':''} averaging +${avgOpenWinR.toFixed(2)}R · ${openFlatR.length} near entry · ${openLosersR.length} below entry. Open winners are <em>${trend}</em>.${bigRunners}${lossWarning}<br>→ <strong>Open action:</strong> ${openOver3R > 0 ? `Your ${openOver3R} biggest runner${openOver3R>1?'s are':' is'} carrying the book. Trail via 7-day low — do not take profits early.` : openLosersR.length > openWinnersR.length ? 'More open positions are below entry than above — check if setups are still valid or if market regime has changed.' : 'Open book is healthy. Stay patient, let positions trail to their stops.'}`;
+  })() : '';
   const lossNote = lossesOver1R > 0 ? ` <strong>${lossesOver1R} loss${lossesOver1R>1?'es':''} exceeded −1.2R</strong> — stops not taken cleanly.` : ' Losses are tight (all within ~1R).';
   if (displayR < 1) {
     ins('insight-rmultiple','red',`⚠ <strong>R-Multiple ${displayR.toFixed(2)} — below 1R</strong>. Avg win: +${avgTrueWinR.toFixed(2)}R, avg loss: −${avgTrueLossR.toFixed(2)}R.${lossNote}<br>→ <strong>Action:</strong> (1) Cut losses faster — stop = 7-day low, no exceptions. (2) Hold winners longer — ${winsOver2R} trade${winsOver2R!==1?'s':''} reached 2R+, lean on those patterns.${openNote}`);
