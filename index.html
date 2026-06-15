@@ -730,6 +730,14 @@ tbody tr:hover { filter: brightness(0.97); }
       <div class="stat-badge badge-blue" id="dash-risk-tier-badge">—</div>
     </div>
 
+    <!-- Position Concentration -->
+    <div class="card card-sm">
+      <div class="stat-label">Position Concentration</div>
+      <div class="stat-value" id="dash-conc-pct">—</div>
+      <div class="stat-sub" id="dash-conc-sub">Top 3 positions as % of portfolio</div>
+      <div class="stat-badge badge-blue" id="dash-conc-badge">—</div>
+    </div>
+
     <!-- Heat Gauge -->
     <div class="card card-sm">
       <div class="stat-label" style="margin-bottom:14px">Portfolio Heat</div>
@@ -751,6 +759,13 @@ tbody tr:hover { filter: brightness(0.97); }
       <div style="margin-top:10px">
         <div class="stat-badge" id="heat-status-badge" style="font-size:12px">—</div>
       </div>
+    </div>
+  </div>
+
+  <div class="section-title" style="margin-top:20px">Open Position P&amp;L Waterfall</div>
+  <div class="card" style="padding:16px 20px">
+    <div id="waterfall-wrap" style="display:flex;flex-direction:column;gap:6px">
+      <div style="color:var(--text-muted);font-size:13px;text-align:center;padding:12px">Loading…</div>
     </div>
   </div>
 
@@ -1702,7 +1717,7 @@ const DEFAULT_CONFIG = {
   sheet: 'TRADES', headerRows: '1',
   flagCol: 'B', stockCol: 'E', openDateCol: 'C', closeDateCol: 'D',
   ema21Col: 'F', cmpCol: 'H', sevenDayLowCol: 'I', stopLossCol: 'J',
-  initRiskRsCol: 'K', initRiskPctCol: 'L', entryPriceCol: 'R',
+  initRiskRsCol: 'K', initRiskPctCol: 'L', qtyCol: 'Q', entryPriceCol: 'R',
   setupTypeCol: 'S', pctFromStopCol: 'W', plPctCol: 'X',
   notionalPlCol: 'Y', partialQtyCol: 'Z', partialPriceCol: 'AA',
   partialPlCol: 'AB', finalExitPriceCol: 'AC', finalPlCol: 'AD',
@@ -1748,7 +1763,7 @@ async function fetchData() {
     ema21Col: cfg.ema21Col, cmpCol: cfg.cmpCol,
     sevenDayLowCol: cfg.sevenDayLowCol, stopLossCol: cfg.stopLossCol,
     initRiskRsCol: cfg.initRiskRsCol, initRiskPctCol: cfg.initRiskPctCol,
-    entryPriceCol: cfg.entryPriceCol, setupTypeCol: cfg.setupTypeCol,
+    qtyCol: cfg.qtyCol, entryPriceCol: cfg.entryPriceCol, setupTypeCol: cfg.setupTypeCol,
     pctFromStopCol: cfg.pctFromStopCol, plPctCol: cfg.plPctCol,
     notionalPlCol: cfg.notionalPlCol, partialQtyCol: cfg.partialQtyCol,
     partialPriceCol: cfg.partialPriceCol, partialPlCol: cfg.partialPlCol,
@@ -1953,6 +1968,59 @@ function renderDashboard(data, cfg) {
   }
   const posHeat = document.getElementById('pos-heat-badge');
   if (posHeat) posHeat.textContent = 'Portfolio Heat: ' + totalHeat.toFixed(2) + '%' + (protectedCount > 0 ? ` (${protectedCount} protected)` : '');
+
+  // Position Concentration card — uses qty (col Q) × entryPrice for notional size
+  (function() {
+    const withNotional = open.map(t => {
+      const qty = parseFloat(t.qty) || 0;
+      const notional = qty > 0 ? qty * (t.entryPrice || 0) : 0;
+      return { stock: t.stock, notional, plPct: t.plPct || 0, notionalPl: t.notionalPl || 0 };
+    }).filter(t => t.notional > 0).sort((a, b) => b.notional - a.notional);
+    const totalNotional = withNotional.reduce((s, t) => s + t.notional, 0);
+    const top3 = withNotional.slice(0, 3);
+    const top3Notional = top3.reduce((s, t) => s + t.notional, 0);
+    const concPct = portfolioValue > 0 && top3Notional > 0 ? (top3Notional / portfolioValue * 100) : 0;
+    const concEl = document.getElementById('dash-conc-pct');
+    const concBadge = document.getElementById('dash-conc-badge');
+    const concSub = document.getElementById('dash-conc-sub');
+    if (concPct > 0) {
+      if (concEl) { concEl.textContent = concPct.toFixed(1) + '%'; concEl.className = 'stat-value ' + (concPct > 50 ? 'red' : concPct > 35 ? 'amber' : 'green'); }
+      if (concSub) concSub.textContent = top3.map(t => t.stock).join(' · ') + ' (top 3)';
+      if (concBadge) {
+        if (concPct > 50) { concBadge.className = 'stat-badge badge-red'; concBadge.textContent = '⚠ High concentration — correlated risk'; }
+        else if (concPct > 35) { concBadge.className = 'stat-badge badge-amber'; concBadge.textContent = 'Moderate concentration'; }
+        else { concBadge.className = 'stat-badge badge-green'; concBadge.textContent = '✓ Well distributed'; }
+      }
+    } else if (open.length > 0) {
+      // No qty data available — fallback note
+      if (concEl) { concEl.textContent = '—'; concEl.className = 'stat-value'; }
+      if (concSub) concSub.textContent = 'Top 3 positions as % of portfolio';
+      if (concBadge) { concBadge.className = 'stat-badge badge-blue'; concBadge.textContent = 'Map col Q (Initial Qty) in Config'; }
+    }
+
+    // Open P&L Waterfall
+    const wfWrap = document.getElementById('waterfall-wrap');
+    if (wfWrap) {
+      const wfItems = open.map(t => ({ stock: t.stock, plPct: t.plPct || 0, notionalPl: t.notionalPl || 0 }))
+        .sort((a, b) => b.plPct - a.plPct);
+      if (wfItems.length === 0) { wfWrap.innerHTML = '<div style="color:var(--text-muted);font-size:13px;text-align:center;padding:12px">No open positions</div>'; return; }
+      const maxAbs = Math.max(...wfItems.map(t => Math.abs(t.plPct)), 0.1);
+      wfWrap.innerHTML = wfItems.map(t => {
+        const barPct = Math.min(100, Math.abs(t.plPct) / maxAbs * 100);
+        const isPos = t.plPct >= 0;
+        const color = isPos ? 'var(--green)' : 'var(--red)';
+        const plLabel = (isPos ? '+' : '') + t.plPct.toFixed(1) + '%';
+        const plRs = t.notionalPl !== 0 ? ' · ' + (t.notionalPl >= 0 ? '+' : '') + '₹' + Math.abs(Math.round(t.notionalPl)).toLocaleString('en-IN') : '';
+        return `<div style="display:flex;align-items:center;gap:10px;font-size:12px">
+          <div style="width:72px;text-align:right;font-weight:600;color:var(--text-primary);flex-shrink:0">${t.stock}</div>
+          <div style="flex:1;background:var(--surface2);border-radius:4px;height:18px;overflow:hidden">
+            <div style="width:${barPct}%;height:100%;background:${color};opacity:0.85;border-radius:4px;transition:width 0.4s"></div>
+          </div>
+          <div style="width:100px;flex-shrink:0;color:${color};font-weight:600">${plLabel}${plRs}</div>
+        </div>`;
+      }).join('');
+    }
+  })();
 
   // Alerts
   const alertsWrap = document.getElementById('alerts-wrap');
@@ -2802,6 +2870,7 @@ function renderColMappings() {
     { label: 'Stop Loss Price', key: 'stopLossCol' },
     { label: 'Initial Risk ₹', key: 'initRiskRsCol' },
     { label: 'Initial Risk %', key: 'initRiskPctCol' },
+    { label: 'Initial Qty', key: 'qtyCol' },
     { label: 'Entry Price', key: 'entryPriceCol' },
     { label: 'Setup Type', key: 'setupTypeCol', optional: true },
     { label: '% from Stop Loss', key: 'pctFromStopCol' },
@@ -2905,13 +2974,13 @@ function saveAllConfig() {
   cfg.maxPositions = parseInt(getVal('cfg-max-positions', cfg.maxPositions)) || cfg.maxPositions;
   cfg.maxAge = parseInt(getVal('cfg-max-age', cfg.maxAge)) || cfg.maxAge;
   ['flagCol','stockCol','openDateCol','closeDateCol','ema21Col','cmpCol','sevenDayLowCol','stopLossCol',
-   'initRiskRsCol','initRiskPctCol','entryPriceCol','setupTypeCol','pctFromStopCol','plPctCol',
+   'initRiskRsCol','initRiskPctCol','qtyCol','entryPriceCol','setupTypeCol','pctFromStopCol','plPctCol',
    'notionalPlCol','partialQtyCol','partialPriceCol','partialPlCol','finalExitPriceCol','finalPlCol','finalPlPctCol','ageCol',
    'haColourCol','haChangedCol'
   ].forEach(key => { const v = getVal('cfg-' + key, cfg[key]).toUpperCase().trim(); if (v) cfg[key] = v; });
   // Validate column letters — warn if any col mapping looks wrong (not A-ZZ pattern)
   const colKeys = ['flagCol','stockCol','openDateCol','closeDateCol','ema21Col','cmpCol','sevenDayLowCol','stopLossCol',
-    'initRiskRsCol','initRiskPctCol','entryPriceCol','setupTypeCol','pctFromStopCol','plPctCol',
+    'initRiskRsCol','initRiskPctCol','qtyCol','entryPriceCol','setupTypeCol','pctFromStopCol','plPctCol',
     'notionalPlCol','partialQtyCol','partialPriceCol','partialPlCol','finalExitPriceCol','finalPlCol','finalPlPctCol','ageCol',
     'haColourCol','haChangedCol'];
   const badCols = colKeys.filter(k => cfg[k] && !/^[A-Z]{1,3}$/.test(cfg[k]));
