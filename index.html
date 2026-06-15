@@ -3846,10 +3846,10 @@ function fnoRenderAlerts(watchlist) {
     // Reversal signals — extended move + HA flip
     if (extended && haRed && s.haChanged && trend === 'bullish')
       allAlerts.push({ group:'reversal', score: parseFloat(s.pctFrom7DL)||0, stock:s.stock,
-        reversalType:'top', detail:`+${s.pctFrom7DL}% from 7DL · HA just turned Red — momentum fading` });
+        reversalType:'top', detail:`+${parseFloat(s.pctFrom7DL).toFixed(1)}% from 7DL · HA just turned Red — momentum fading` });
     if (extended && haGreen && s.haChanged && trend === 'bearish')
       allAlerts.push({ group:'reversal', score: parseFloat(s.pctFrom7DL)||0, stock:s.stock,
-        reversalType:'bottom', detail:`${s.pctFrom7DL}% from 7DL · HA just turned Green — downtrend may be stalling` });
+        reversalType:'bottom', detail:`+${parseFloat(s.pctFrom7DL).toFixed(1)}% from 7DL · HA just turned Green — downtrend may be stalling` });
   });
 
   const groups = [
@@ -3980,7 +3980,7 @@ function fnoRenderTopCandidates(watchlist) {
         <td>${trend==='bullish'?'🟢 Bullish':trend==='bearish'?'🔴 Bearish':'⚪ Mixed'}</td>
         <td><div class="fno-score-bar">${pips}</div><div style="font-size:10px;color:var(--text-muted)">${trend==='bullish'?bull+'/6':bear+'/4'}</div></td>
         <td class="${haClass}">${haLabel}</td>
-        <td>${s.pctFrom7DL||'—'}</td>
+        <td>${s.pctFrom7DL!=null&&s.pctFrom7DL!==''?'+'+parseFloat(s.pctFrom7DL).toFixed(1)+'%':'—'}</td>
         <td><span class="fno-badge ${actionBadge}">${actionLabel}</span></td>
       </tr>`;
     }).join('')}</tbody></table>`;
@@ -4016,7 +4016,7 @@ function renderFnoWatchlist(watchlist) {
       <td class="${haClass}">${s.haColour}${s.haChanged?' 🔄':''}</td>
       <td>${bk(s.ema200)}</td><td>${bk(s.ema50)}</td><td>${bk(s.ema20)}</td>
       <td>${s.ath?'<span class="fno-tag fno-tag-yes">ATH</span>':''}${s.wk52h?'<span class="fno-tag fno-tag-yes">52W</span>':''}${s.dh21?'<span class="fno-tag fno-tag-yes">21D</span>':''}${s.dh7?'<span class="fno-tag fno-tag-yes">7D</span>':''}</td>
-      <td>${s.pctFrom7DL||'—'}</td>
+      <td>${s.pctFrom7DL!=null&&s.pctFrom7DL!==''?'+'+parseFloat(s.pctFrom7DL).toFixed(1)+'%':'—'}</td>
       <td><span class="fno-badge ${actionBadge}">${actionLabel}</span></td>
     </tr>`;
   }).join('');
