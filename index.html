@@ -1832,7 +1832,18 @@ async function refreshData() {
   const ri = document.querySelector('.refresh-info');
   if (ri) ri.textContent = 'Updated at ' + ts;
   const sri = document.getElementById('signal-run-info');
-  if (sri && data.signalRunAt) sri.textContent = 'Signals: ' + data.signalRunAt;
+  if (sri && data.signalRunAt) {
+    try {
+      const sd = new Date(data.signalRunAt.replace(' ', 'T'));
+      const nth = n => n + (['st','nd','rd'][((n%100-20)%10-1)]||'th');
+      const sDay = nth(sd.getDate());
+      const sMon = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][sd.getMonth()];
+      const sH = sd.getHours() % 12 || 12;
+      const sM = String(sd.getMinutes()).padStart(2,'0');
+      const sAmPm = sd.getHours() >= 12 ? 'pm' : 'am';
+      sri.textContent = `Signals: ${sDay} ${sMon}, ${sH}:${sM} ${sAmPm}`;
+    } catch { sri.textContent = 'Signals: ' + data.signalRunAt; }
+  }
   localStorage.setItem('tj_last_refresh', Date.now());
   if (btn) { btn.textContent = '↻'; btn.disabled = false; }
   showToast('Data refreshed ✓', 'green');
