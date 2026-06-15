@@ -3827,8 +3827,9 @@ function fnoRenderAlerts(watchlist) {
     const action = fnoAction(s);
     const { bull, bear } = fnoScore(s);
     const haRed = s.haColour.toLowerCase() === 'red';
-    const tags = [s.ath?'ATH':null, s.wk52h?'52W-H':null, s.hasGapUp?'GapUp':null].filter(Boolean).map(t=>`<span style="background:var(--accent-soft);color:var(--accent);padding:1px 5px;border-radius:4px;font-size:10px;margin-left:4px">${t}</span>`).join('');
+    const haGreen = !haRed;
     const extended = parseFloat(s.pctFrom7DL) > 8;
+    const trend = fnoTrend(s);
 
     if (s.spreadActive && haRed && s.haChanged)
       allAlerts.push({ group:'add-call', score:10, stock:s.stock });
@@ -3841,10 +3842,19 @@ function fnoRenderAlerts(watchlist) {
 
     if (!s.spreadActive && action === 'call-spread')
       allAlerts.push({ group:'new-call', score:bear, stock:s.stock });
+
+    // Reversal signals — extended move + HA flip
+    if (extended && haRed && s.haChanged && trend === 'bullish')
+      allAlerts.push({ group:'reversal', score: parseFloat(s.pctFrom7DL)||0, stock:s.stock,
+        reversalType:'top', detail:`+${s.pctFrom7DL}% from 7DL · HA just turned Red — momentum fading` });
+    if (extended && haGreen && s.haChanged && trend === 'bearish')
+      allAlerts.push({ group:'reversal', score: parseFloat(s.pctFrom7DL)||0, stock:s.stock,
+        reversalType:'bottom', detail:`${s.pctFrom7DL}% from 7DL · HA just turned Green — downtrend may be stalling` });
   });
 
   const groups = [
     { key:'add-call',  icon:'🔄', label:'Add Call Spread — Action Required', color:'var(--red)',   bg:'var(--red-soft)',   autoOpen:true  },
+    { key:'reversal',  icon:'🔁', label:'Reversal Watch — Extended + HA Flip', color:'var(--amber)', bg:'var(--amber-soft)', autoOpen:true  },
     { key:'exit-risk', icon:'⚠',  label:'Exit Risk — Monitor Premium',       color:'var(--amber)', bg:'var(--amber-soft)', autoOpen:true  },
     { key:'new-put',   icon:'🟢', label:'New Put Spread Candidates',          color:'var(--green)', bg:'var(--green-soft)', autoOpen:true  },
     { key:'new-call',  icon:'⬇',  label:'New Call Spread Candidates',         color:'var(--red)',   bg:'var(--red-soft)',   autoOpen:false },
@@ -3868,6 +3878,17 @@ function fnoRenderAlerts(watchlist) {
       const trend = fnoTrend(s);
       const haRed = s.haColour.toLowerCase() === 'red';
       const extended = parseFloat(s.pctFrom7DL) > 8;
+
+      if (g.key === 'reversal') {
+        const badge = a.reversalType === 'top'
+          ? `<span class="fno-badge fno-badge-call">⬇ Possible Top</span>`
+          : `<span class="fno-badge fno-badge-put">⬆ Possible Bottom</span>`;
+        return `<tr>
+          <td><span class="stock-name">${s.stock}</span></td>
+          <td style="color:var(--text-secondary)">${a.detail}</td>
+          <td>${badge}</td>
+        </tr>`;
+      }
 
       const alertText = g.key==='add-call'
         ? `HA turned Red today · spread active`
