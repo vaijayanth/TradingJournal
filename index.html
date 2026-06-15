@@ -1491,7 +1491,7 @@ tbody tr:hover { filter: brightness(0.97); }
 </div><!-- end swing-pages -->
 
 <!-- ════ F&O NAV ════ -->
-<div id="fno-nav-tabs" style="display:none" class="nav-tabs" style="padding:0 20px;border-bottom:1px solid var(--border)">
+<div id="fno-nav-tabs" style="display:none;padding:0 20px;border-bottom:1px solid var(--border)" class="nav-tabs">
   <button class="nav-tab active" onclick="showFnoPage('fno-dashboard', this)">Dashboard</button>
   <button class="nav-tab" onclick="showFnoPage('fno-watchlist', this)">Watchlist</button>
 </div>
@@ -3674,7 +3674,11 @@ async function refreshFnoData() {
   const data = await fetchFnoData();
   document.body.classList.remove('loading');
   if (btn) btn.textContent = '↻';
-  if (!data) return;
+  if (!data) {
+    const alertsEl = document.getElementById('fno-alerts');
+    if (alertsEl) alertsEl.innerHTML = '<div style="padding:16px;color:var(--red);font-size:13px">⚠ Could not load F&O data. Check: (1) Apps Script redeployed with new version? (2) NSEFO sheet name correct?</div>';
+    return;
+  }
   window._fnoData = data;
   renderFnoDashboard(data.watchlist);
   renderFnoWatchlist(data.watchlist);
