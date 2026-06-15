@@ -4128,6 +4128,16 @@ function initAnalysisCharts(open, closed) {
     const rGt3 = rMults.filter(v=>v>=3).length;
     const rGt5 = rMults.filter(v=>v>=5).length;
 
+    // Open position R-multiples (unrealised, using notionalPl from col Y)
+    const openRMults = open.filter(t => (t.initRiskRs||0) > 0 && (t.notionalPl||0) !== 0)
+      .map(t => ({ stock: t.stock, r: (t.notionalPl||0) / t.initRiskRs }));
+    const openWinR = openRMults.filter(o => o.r > 0);
+    const openAvgR = openWinR.length > 0 ? openWinR.reduce((s,o)=>s+o.r,0)/openWinR.length : 0;
+    const openMaxR = openWinR.length > 0 ? Math.max(...openWinR.map(o=>o.r)) : 0;
+    const openGt3 = openWinR.filter(o=>o.r>=3).length;
+    const openGt5 = openWinR.filter(o=>o.r>=5).length;
+    const openGt10 = openWinR.filter(o=>o.r>=10).length;
+
     // Losers R-multiple
     const lossRMults = tmLosers.filter(t => (t.initRiskRs||0) > 0).map(t => Math.abs((t.finalPl||0) / t.initRiskRs));
     const avgLossR = lossRMults.length > 0 ? (lossRMults.reduce((s,v)=>s+v,0)/lossRMults.length) : 0;
@@ -4204,18 +4214,35 @@ function initAnalysisCharts(open, closed) {
 
     // ── Section 2: R-multiple framing ──
     if (rMults.length >= 3) {
-      beText += `<br><br><strong>R-Multiple (winners, in ₹ terms):</strong> `;
-      beText += `avg <strong>${avgR.toFixed(1)}R</strong> · best <strong>${maxR.toFixed(1)}R</strong> · `;
-      beText += `${rGt3} trade${rGt3!==1?'s':''} &gt;3R · ${rGt5} trade${rGt5!==1?'s':''} &gt;5R.<br>`;
+      beText += `<br><br><strong>R-Multiple analysis (1R = your planned ₹ risk per trade)</strong><br>`;
+
+      // Closed winners
+      beText += `<span style="font-size:12px;line-height:1.9">`;
+      beText += `📕 <strong>Closed winners:</strong> avg <strong>${avgR.toFixed(1)}R</strong> · best <strong>${maxR.toFixed(1)}R</strong> · ${rGt3} trade${rGt3!==1?'s':''} &gt;3R · ${rGt5} &gt;5R<br>`;
+
+      // Open positions (the real picture for a momentum system)
+      if (openWinR.length > 0) {
+        beText += `📗 <strong>Open positions (unrealised, live):</strong> avg <strong>${openAvgR.toFixed(1)}R</strong> · best <strong>${openMaxR.toFixed(1)}R</strong> · ${openGt3} &gt;3R · ${openGt5} &gt;5R · ${openGt10} &gt;10R<br>`;
+        const topOpen = [...openWinR].sort((a,b)=>b.r-a.r).slice(0,3).map(o=>`${o.stock} ${o.r.toFixed(1)}R`).join(' · ');
+        if (topOpen) beText += `&nbsp;&nbsp;Top runners: <em>${topOpen}</em><br>`;
+        beText += `⚡ <em style="color:var(--amber)">Closed R looks low because your big winners are still running open. This is correct momentum-system behaviour.</em><br>`;
+      }
+      beText += `</span>`;
+
+      // Win:loss ratio based on closed (honest) + note
       if (avgLossR > 0) {
-        beText += `Your losers average <strong>${avgLossR.toFixed(2)}R</strong> loss. `;
         const ratio = avgR / (avgLossR || 1);
-        if (ratio >= 2) {
-          beText += `✅ Win:Loss R-ratio of <strong>${ratio.toFixed(1)}:1</strong> — you're getting paid more than 2× your risk on wins. Strong edge.`;
+        const ratioWithOpen = openWinR.length > 0
+          ? ((rMults.reduce((s,v)=>s+v,0) + openWinR.reduce((s,o)=>s+o.r,0)) / (rMults.length + openWinR.length)) / avgLossR
+          : ratio;
+        beText += `<br>Closed win:loss R-ratio: <strong>${ratio.toFixed(1)}:1</strong>`;
+        if (openWinR.length > 0) beText += ` · Combined (incl. open): <strong style="color:var(--green)">${ratioWithOpen.toFixed(1)}:1</strong>`;
+        if (ratioWithOpen >= 2) {
+          beText += `<br>✅ <strong>Combined R-ratio above 2:1 — solid edge.</strong> Your system is working: small closed losses, big open runners.`;
+        } else if (ratio < 1 && openWinR.length > 0) {
+          beText += `<br>⚠️ Closed-only ratio looks weak, but open positions lift it significantly. Let the runners run.`;
         } else if (ratio >= 1) {
-          beText += `⚠️ Win:Loss R-ratio of <strong>${ratio.toFixed(1)}:1</strong> — you need a win rate above ${(1/(1+ratio)*100).toFixed(0)}% to break even at this ratio.`;
-        } else {
-          beText += `🚨 Win:Loss R-ratio is below 1:1 — your average win is smaller than your average loss in ₹ terms. Fix this before scaling size.`;
+          beText += ` — you need a win rate above ${(1/(1+ratio)*100).toFixed(0)}% to break even on closed trades alone.`;
         }
       }
     }
