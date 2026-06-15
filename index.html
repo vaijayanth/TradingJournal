@@ -3316,9 +3316,8 @@ function initPerfCharts(closed, initialCapital, open) {
   openWithRisk.forEach(t => rDataOpen[rBin(t.notionalPl / t.initRiskRs)]++);
   const hasOpenR = openWithRisk.length > 0;
 
-  // Closed: solid red/amber/green. Open: uniform blue — clearly distinct series
-  const rColors       = rBins.map((_,i) => i < 4 ? c.red : i === 4 ? c.amber : c.green);
-  const rColorsOpen   = rBins.map(() => 'rgba(99,179,237,0.85)'); // blue for all open bars
+  // Per-bin colors for closed series
+  const rColors = rBins.map((_,i) => i < 4 ? c.red : i === 4 ? c.amber : c.green);
 
   const rmSeries = [{ name: 'Closed trades', data: rData }];
   if (hasOpenR) rmSeries.push({ name: 'Open (live R)', data: rDataOpen });
@@ -3327,9 +3326,13 @@ function initPerfCharts(closed, initialCapital, open) {
     ...baseOpts(240), chart: { ...baseOpts(240).chart, type: 'bar', stacked: false },
     series: rmSeries,
     xaxis: { ...baseOpts().xaxis, categories: rBins, title: { text: usesTrueR ? 'R-Multiple (P&L ÷ Planned Risk ₹)' : 'R-Multiple (proxy)', style: { color: c.text } } },
-    colors: hasOpenR ? [...rColors, ...rColorsOpen] : rColors,
-    plotOptions: { bar: { columnWidth: hasOpenR ? '70%' : '80%', distributed: false, rangeBarGroupRows: false } },
-    legend: { show: hasOpenR, position: 'top', labels: { colors: c.text }, fontSize: '11px' },
+    colors: [function({ seriesIndex, dataPointIndex }) {
+      if (seriesIndex === 1) return 'rgba(99,179,237,0.9)'; // open = blue
+      return rColors[dataPointIndex] || c.green;            // closed = red/amber/green per bin
+    }],
+    plotOptions: { bar: { columnWidth: hasOpenR ? '70%' : '80%', distributed: false } },
+    legend: { show: hasOpenR, position: 'top', labels: { colors: c.text }, fontSize: '11px',
+      markers: { fillColors: [rColors[6], 'rgba(99,179,237,0.9)'] } },
     dataLabels: { enabled: true, style: { fontSize: '10px', colors: ['#fff'] }, formatter: v => v > 0 ? v : '' },
     annotations: { xaxis: [{ x: '0', borderColor: c.amber, borderWidth: 2, label: { text: 'BE', style: { color: c.amber, background: 'transparent', fontSize: '10px' } } }] },
   });
