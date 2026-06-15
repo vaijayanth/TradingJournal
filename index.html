@@ -2053,7 +2053,7 @@ function renderDashboard(data, cfg) {
       if (t.age && parseInt(t.age) > cfg_maxAge && t.partialTaken !== 'Y') {
         alerts.push({ type:'amber', icon:'🕐', title:`${t.stock} — Held ${t.age} days, no partial taken`, desc:`Position is ${t.age} days old and partial exit hasn't been taken. Review your exit plan.` });
       }
-      if ((t.haChanged || '').toUpperCase() === 'Y' && t.haColour) {
+      if (String(t.haChanged || '').toUpperCase() === 'Y' && t.haColour) {
         alerts.push({ type:'amber', icon:'🔄', title:`${t.stock} — HA colour flipped to ${t.haColour}`, desc:`Heikin-Ashi candle colour changed — momentum shift signal. Review position and consider tightening stop.` });
       }
       if (t.plPct >= cfg.beTrigger && (t.haColour || '').trim().toLowerCase() === 'red') {
@@ -2151,7 +2151,7 @@ function renderPositionsReal(open, cfg) {
     const emaBelow = (t.ema21 || '').trim().toLowerCase() === 'below' && t.plPct > 0;
     const needsBreakeven = t.plPct >= cfg.beTrigger && t.stopLoss < t.entryPrice;
     // Count simultaneous signals — ≥2 means priority trade to action
-    const signalCount = [alertType==='red'||alertType==='amber', haWarn, emaBelow, needsBreakeven, (t.haChanged||'').toUpperCase()==='Y'].filter(Boolean).length;
+    const signalCount = [alertType==='red'||alertType==='amber', haWarn, emaBelow, needsBreakeven, String(t.haChanged || '').toUpperCase()==='Y'].filter(Boolean).length;
     return { ...t, alertType, haWarn, effStop, effPct, emaBelow, needsBreakeven, signalCount };
   }).sort((a, b) => {
     // Priority order: 1) Exit triggered (red), 2) Partial due (green), 3) Near stop (amber), 4) Rest by % from stop
@@ -2164,7 +2164,7 @@ function renderPositionsReal(open, cfg) {
 
   trades.forEach((t, i) => {
     const haColour = (t.haColour || '').trim();
-    const haChanged = (t.haChanged || '').toUpperCase() === 'Y';
+    const haChanged = String(t.haChanged || '').toUpperCase() === 'Y';
     const rowClass = [t.alertType !== 'none' ? 'row-' + t.alertType : '', haChanged ? 'row-ha' : '', t.haWarn ? 'row-ha-warn' : ''].filter(Boolean).join(' ');
     const pnlClass = t.plPct >= 0 ? 'pnl-pos' : 'pnl-neg';
     const emaStr = (t.ema21 || '').trim();
@@ -2244,7 +2244,7 @@ function renderPositionsReal(open, cfg) {
   const reds = trades.filter(t => t.alertType === 'red').length;
   const ambers = trades.filter(t => t.alertType === 'amber').length;
   const greens = trades.filter(t => t.alertType === 'green').length;
-  const has = trades.filter(t => (t.haChanged || '').toUpperCase() === 'Y' || t.haWarn).length;
+  const has = trades.filter(t => String(t.haChanged || '').toUpperCase() === 'Y' || t.haWarn).length;
   set('strip-red', `🔴 ${reds} exit triggered`);
   set('strip-amber', `🟡 ${ambers} near stop`);
   set('strip-green', `🟢 ${greens} partial pending`);
