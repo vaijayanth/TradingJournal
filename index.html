@@ -607,7 +607,7 @@ tbody tr:hover { filter: brightness(0.97); }
   </div>
   <div class="nav-right">
     <span class="refresh-info">Updated 2 min ago</span>
-    <button class="btn-icon" title="Refresh" onclick="refreshData()">↻</button>
+    <button class="btn-icon" title="Refresh" onclick="window._strategy==='fno'?refreshFnoData():refreshData()">↻</button>
     <button class="btn-icon" title="Toggle theme" onclick="toggleTheme()">🌙</button>
   </div>
 </nav>
