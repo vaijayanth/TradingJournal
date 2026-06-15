@@ -352,6 +352,13 @@ nav {
   font-size: 12.5px; font-weight: 600; color: var(--accent);
   margin-top: 12px;
 }
+.chart-insight {
+  margin-top: 10px; padding: 10px 14px; border-radius: 8px;
+  font-size: 12px; line-height: 1.6; display: none;
+}
+.chart-insight.green { background: rgba(52,199,89,0.08); border-left: 3px solid var(--green); color: var(--text-primary); display: block; }
+.chart-insight.amber { background: rgba(255,159,10,0.08); border-left: 3px solid var(--amber); color: var(--text-primary); display: block; }
+.chart-insight.red   { background: rgba(255,69,58,0.08);  border-left: 3px solid var(--red);   color: var(--text-primary); display: block; }
 .ema-divider {
   display: flex; align-items: center; justify-content: center;
   padding: 0 16px;
@@ -931,6 +938,7 @@ tbody tr:hover { filter: brightness(0.97); }
     </div>
     <div id="chart-equity" style="height:260px;"></div>
     <div id="chart-drawdown" style="height:0;overflow:hidden;transition:height .3s;margin-top:0"></div>
+    <div id="insight-equity" class="chart-insight"></div>
   </div>
 
   <div class="grid-2">
@@ -938,6 +946,7 @@ tbody tr:hover { filter: brightness(0.97); }
       <div class="chart-title">P&L Distribution</div>
       <div class="chart-sub">How often you win big vs lose small — losses should cluster left, wins should have a long right tail</div>
       <div id="chart-distribution" style="height:220px;"></div>
+      <div id="insight-distribution" class="chart-insight"></div>
     </div>
     <div class="card">
       <div class="chart-title">Win / Loss Streak</div>
@@ -950,16 +959,19 @@ tbody tr:hover { filter: brightness(0.97); }
         </div>
         <div style="margin-top:8px; font-size:12px; color:var(--text-muted)" id="streak-info">—</div>
       </div>
+      <div id="insight-streak" class="chart-insight"></div>
     </div>
     <div class="card">
       <div class="chart-title">R-Multiple Distribution</div>
       <div class="chart-sub">Edge shape across all closed trades</div>
       <div id="chart-rmultiple" style="height:220px;"></div>
+      <div id="insight-rmultiple" class="chart-insight"></div>
     </div>
     <div class="card">
       <div class="chart-title">Win Rate by Entry Day</div>
       <div class="chart-sub">Which day you enter matters — based on closed trades entry date</div>
       <div id="chart-dayofweek" style="height:220px;"></div>
+      <div id="insight-dayofweek" class="chart-insight"></div>
     </div>
   </div>
 
@@ -1015,11 +1027,13 @@ tbody tr:hover { filter: brightness(0.97); }
       <div class="chart-title">Monthly P&L</div>
       <div class="chart-sub">Realised P&L by calendar month</div>
       <div id="chart-monthly" style="height:220px;"></div>
+      <div id="insight-monthly" class="chart-insight"></div>
     </div>
     <div class="card">
       <div class="chart-title">Win Rate Trend (Monthly)</div>
       <div class="chart-sub">Are you improving? Win rate by calendar month</div>
       <div id="chart-wr-trend" style="height:220px;"></div>
+      <div id="insight-wr-trend" class="chart-insight"></div>
     </div>
   </div>
 
@@ -1028,6 +1042,7 @@ tbody tr:hover { filter: brightness(0.97); }
     <div class="chart-title">Indexed Equity Curve (by Trade #)</div>
     <div class="chart-sub">Pure system performance — trade number on X axis, indexed return % from starting capital · reveals if edge is improving</div>
     <div id="chart-indexed-equity" style="height:240px;"></div>
+    <div id="insight-indexed-equity" class="chart-insight"></div>
   </div>
 
   <!-- Calendar Heatmap -->
@@ -3245,6 +3260,121 @@ function initPerfCharts(closed, initialCapital, open) {
     tooltip: { ...baseOpts().tooltip, y: { formatter: (v, {dataPointIndex}) => v != null ? v+'% win rate ('+dowBuckets[dataPointIndex].w+' of '+dowN[dataPointIndex]+' trades)' : 'No trades' } },
   });
   dowChart.render(); perfCharts.push(dowChart);
+
+  // ── Per-chart insights ──────────────────────────────
+  function ins(id, cls, html) {
+    const el = document.getElementById(id);
+    if (!el) return;
+    el.className = 'chart-insight ' + cls;
+    el.innerHTML = html;
+  }
+  const fmtPct = v => (v >= 0 ? '+' : '') + v.toFixed(1) + '%';
+  const wins2 = sorted.filter(t => t.finalPlPct > 0);
+  const losses2 = sorted.filter(t => t.finalPlPct < 0);
+  const wr = sorted.length > 0 ? wins2.length / sorted.length * 100 : 0;
+  const avgWin2 = wins2.length > 0 ? wins2.reduce((s,t)=>s+t.finalPlPct,0)/wins2.length : 0;
+  const avgLoss2 = losses2.length > 0 ? Math.abs(losses2.reduce((s,t)=>s+t.finalPlPct,0)/losses2.length) : 0;
+  const rMult = avgLoss2 > 0 ? avgWin2 / avgLoss2 : 0;
+
+  // 1. Equity curve
+  const maxDD = ddData.length > 0 ? Math.min(...ddData) : 0;
+  const finalEq = eqData.filter(v=>v!=null).slice(-1)[0] || initialCapital;
+  const realRet = initialCapital > 0 ? (finalEq - initialCapital) / initialCapital * 100 : 0;
+  const todayRet = todayEq && initialCapital > 0 ? (todayEq - initialCapital) / initialCapital * 100 : null;
+  if (maxDD < -20) {
+    ins('insight-equity','red',`⚠ <strong>Max drawdown ${maxDD.toFixed(1)}%</strong> — exceeds the 20% danger zone. Review position sizing and stop discipline. Are you cutting losses fast enough?<br>→ <strong>Action:</strong> Audit your 5 largest losses. Were stops taken promptly or were they held hoping for recovery?`);
+  } else if (maxDD < -10) {
+    ins('insight-equity','amber',`⚡ Max drawdown ${maxDD.toFixed(1)}% — moderate. Realised return ${fmtPct(realRet)}${todayRet !== null ? ` · Combined incl. open positions: ${fmtPct(todayRet)}` : ''}.<br>→ <strong>Action:</strong> If drawdown periods correlate with overtrading, reduce new entries during losing streaks.`);
+  } else {
+    ins('insight-equity','green',`✓ Max drawdown ${maxDD.toFixed(1)}% — well controlled. Realised return ${fmtPct(realRet)}${todayRet !== null ? ` · Combined incl. open positions: ${fmtPct(todayRet)}` : ''}.<br>→ <strong>Keep doing:</strong> Tight stops, fast cuts. Stay consistent with the same discipline on every trade.`);
+  }
+
+  // 2. P&L Distribution
+  const rightTail = wins2.filter(t => t.finalPlPct > 10).length;
+  const rightTailPct = wins2.length > 0 ? rightTail / wins2.length * 100 : 0;
+  const lossOver5 = losses2.filter(t => t.finalPlPct < -5).length;
+  if (lossOver5 > 0) {
+    ins('insight-distribution','red',`⚠ <strong>${lossOver5} loss${lossOver5>1?'es':''} exceeded −5%</strong> — these are stops that weren't taken. Every loss beyond your plan costs 2–3 good trades.<br>→ <strong>Action:</strong> Identify these trades in Closed Trades tab. Were you below the 7-day low and held? Enforce the rule — no exceptions.`);
+  } else if (rightTailPct < 20 && wins2.length >= 5) {
+    ins('insight-distribution','amber',`⚡ Only ${rightTailPct.toFixed(0)}% of winners exceed +10% — you may be exiting too early. Avg win: ${fmtPct(avgWin2)} vs avg loss: −${avgLoss2.toFixed(1)}%.<br>→ <strong>Action:</strong> Check Hold Duration table. If winners are exited before 7-day low triggers, let the trail do its job.`);
+  } else {
+    ins('insight-distribution','green',`✓ Loss discipline solid — no runaway losses. ${rightTailPct.toFixed(0)}% of winners exceed +10%, avg win ${fmtPct(avgWin2)} vs avg loss −${avgLoss2.toFixed(1)}%.<br>→ <strong>Keep doing:</strong> This asymmetry is the edge. Protect it by never moving stops wider on losers.`);
+  }
+
+  // 3. Streak
+  let maxConsecLoss = 0, curLoss = 0;
+  sorted.forEach(t => { if (t.finalPlPct < 0) { curLoss++; maxConsecLoss = Math.max(maxConsecLoss, curLoss); } else curLoss = 0; });
+  if (maxConsecLoss >= 5) {
+    ins('insight-streak','red',`⚠ <strong>${maxConsecLoss} consecutive losses</strong> at peak — this tests psychology hard. After 3+ losses in a row, many traders widen stops to "recover" — which makes it worse.<br>→ <strong>Action:</strong> Rule: after 3 consecutive losses, reduce next position size by 50% until a win. Protect capital and confidence.`);
+  } else if (maxConsecLoss >= 3) {
+    ins('insight-streak','amber',`⚡ Max ${maxConsecLoss} consecutive losses. Normal in momentum strategies (market regime changes cause clusters). Check if losses are random or concentrated in specific months.<br>→ <strong>Action:</strong> If clustered in one month, that month may have been low-quality setups. Raise selectivity in choppy markets.`);
+  } else {
+    ins('insight-streak','green',`✓ Max ${maxConsecLoss} consecutive losses — healthy streak control. Losses appear distributed, not clustered. Your setup selectivity is working.<br>→ <strong>Keep doing:</strong> Only take A+ setups. A smaller trade list with better quality is more profitable than trading everything.`);
+  }
+
+  // 4. R-Multiple Distribution
+  const posR = sorted.filter(t => t.finalPlPct > 0 && avgLoss2 > 0 && (t.finalPlPct / avgLoss2) >= 2).length;
+  if (rMult < 1) {
+    ins('insight-rmultiple','red',`⚠ <strong>R-Multiple ${rMult.toFixed(2)} — below 1R</strong>. Wins average ${fmtPct(avgWin2)} but losses average −${avgLoss2.toFixed(1)}%. The system is eating itself.<br>→ <strong>Action:</strong> Two levers: (1) Cut losses faster — tighten stop to 7-day low strictly. (2) Hold winners longer — let the partial trail run without manual exits.`);
+  } else if (rMult < 1.5) {
+    ins('insight-rmultiple','amber',`⚡ R-Multiple ${rMult.toFixed(2)} — positive but room to grow. ${posR} trade${posR!==1?'s':''} delivered 2R+. Target is 1.5R+.<br>→ <strong>Action:</strong> Analyse your best 2R+ trades — what did you do differently? Hold time, setup type, market phase? Replicate that pattern.`);
+  } else {
+    ins('insight-rmultiple','green',`✓ R-Multiple ${rMult.toFixed(2)} — strong asymmetry. You win ${rMult.toFixed(1)}× what you lose on average. This is a professional-grade edge.<br>→ <strong>Keep doing:</strong> The risk-reward ratio is excellent. Scale by increasing position size at the next tier, not by trading more frequently.`);
+  }
+
+  // 5. Win Rate by Entry Day
+  const bestDay = ['Mon','Tue','Wed','Thu','Fri'][dowWR.indexOf(Math.max(...dowWR.filter(v=>v!=null)))];
+  const worstDay = ['Mon','Tue','Wed','Thu','Fri'][dowWR.indexOf(Math.min(...dowWR.filter(v=>v!=null)))];
+  const bestDayWR = Math.max(...dowWR.filter(v=>v!=null));
+  const worstDayWR = Math.min(...dowWR.filter(v=>v!=null));
+  const daySpread = bestDayWR - worstDayWR;
+  if (daySpread > 25 && sorted.length >= 20) {
+    ins('insight-dayofweek','amber',`⚡ <strong>${bestDay} is your best entry day (${bestDayWR.toFixed(0)}% WR)</strong> vs ${worstDay} worst (${worstDayWR.toFixed(0)}% WR) — ${daySpread.toFixed(0)}pt spread. Statistically significant.<br>→ <strong>Action:</strong> Be more selective about entries on ${worstDay}. If a setup appears on ${worstDay}, wait for ${bestDay}–${['Mon','Tue','Wed','Thu','Fri'][(dowWR.indexOf(Math.max(...dowWR.filter(v=>v!=null)))+1)%5]} if momentum allows.`);
+  } else {
+    ins('insight-dayofweek','green',`✓ Entry day win rate spread of ${daySpread.toFixed(0)}pts — no strong day-of-week bias. Best: ${bestDay} (${bestDayWR.toFixed(0)}%). Entries are well-distributed.<br>→ <strong>Keep doing:</strong> Continue entering on confirmed setups regardless of day. Quality of setup matters more than day of week.`);
+  }
+
+  // 6. Monthly P&L
+  const mValues = Object.values(mMap);
+  const profitMonths = mValues.filter(v => v > 0).length;
+  const lossMonths = mValues.filter(v => v < 0).length;
+  const bestMonth = Math.max(...mValues);
+  const worstMonth = Math.min(...mValues);
+  if (lossMonths > profitMonths) {
+    ins('insight-monthly','red',`⚠ <strong>More losing months (${lossMonths}) than winning months (${profitMonths})</strong>. Best month: +₹${Math.round(bestMonth).toLocaleString('en-IN')}, worst: −₹${Math.round(Math.abs(worstMonth)).toLocaleString('en-IN')}.<br>→ <strong>Action:</strong> Check what's different in losing months — more trades? Different setup types? Lower quality entries? Quality over quantity.`);
+  } else if (lossMonths > 0) {
+    ins('insight-monthly','amber',`⚡ ${profitMonths} winning months, ${lossMonths} losing. Losing months are normal — the key is their size. Worst month: −₹${Math.round(Math.abs(worstMonth)).toLocaleString('en-IN')} vs best: +₹${Math.round(bestMonth).toLocaleString('en-IN')}.<br>→ <strong>Action:</strong> If worst month loss > 2× your avg monthly gain, that's a risk management gap to address.`);
+  } else {
+    ins('insight-monthly','green',`✓ ${profitMonths} profitable months with 0 losing months. Best: +₹${Math.round(bestMonth).toLocaleString('en-IN')}. Exceptional consistency.<br>→ <strong>Keep doing:</strong> This level of month-over-month consistency is rare. Consider whether you can scale size now.`);
+  }
+
+  // 7. Win Rate Trend
+  const recent3WR = mWRData.slice(-3);
+  const early3WR = mWRData.slice(0, 3);
+  const recentAvg = recent3WR.length > 0 ? recent3WR.reduce((s,v)=>s+v,0)/recent3WR.length : 0;
+  const earlyAvg = early3WR.length > 0 ? early3WR.reduce((s,v)=>s+v,0)/early3WR.length : 0;
+  const trend = recentAvg - earlyAvg;
+  if (trend > 10) {
+    ins('insight-wr-trend','green',`✓ Win rate improving — recent 3 months avg ${recentAvg.toFixed(0)}% vs earlier ${earlyAvg.toFixed(0)}%. You are getting better at setup selection.<br>→ <strong>Action:</strong> Document what you're doing differently now. Write it down — this is your evolving playbook.`);
+  } else if (trend < -10) {
+    ins('insight-wr-trend','red',`⚠ <strong>Win rate declining</strong> — recent 3 months avg ${recentAvg.toFixed(0)}% vs earlier ${earlyAvg.toFixed(0)}%. Setup quality may be slipping or market character changed.<br>→ <strong>Action:</strong> Stop entering marginal setups. Only trade A+ — tight base, clear level, volume confirmation. Reduce trade frequency until WR recovers above 45%.`);
+  } else {
+    ins('insight-wr-trend','amber',`⚡ Win rate trend flat — recent ${recentAvg.toFixed(0)}% vs earlier ${earlyAvg.toFixed(0)}%. Consistency is good but look for an improvement trajectory.<br>→ <strong>Action:</strong> Run a post-trade review on your last 10 losses. Is there a repeating pattern? Eliminate the worst setup type first.`);
+  }
+
+  // 8. Indexed equity (slope analysis)
+  if (sorted.length >= 10) {
+    const first10 = sorted.slice(0, 10);
+    const last10 = sorted.slice(-10);
+    const f10pl = first10.reduce((s,t)=>s+t.finalPl,0);
+    const l10pl = last10.reduce((s,t)=>s+t.finalPl,0);
+    const improvement = l10pl > f10pl;
+    if (improvement) {
+      ins('insight-indexed-equity','green',`✓ Your last 10 trades generated ${l10pl >= 0 ? '+' : ''}₹${Math.round(l10pl).toLocaleString('en-IN')} vs first 10: ${f10pl >= 0 ? '+' : ''}₹${Math.round(f10pl).toLocaleString('en-IN')}. Edge is improving over time.<br>→ <strong>Action:</strong> This upward slope confirms your learning. Scale position size by one tier to capture the improving edge.`);
+    } else {
+      ins('insight-indexed-equity','amber',`⚡ Last 10 trades: ${l10pl >= 0 ? '+' : ''}₹${Math.round(l10pl).toLocaleString('en-IN')} vs first 10: ${f10pl >= 0 ? '+' : ''}₹${Math.round(f10pl).toLocaleString('en-IN')}. Recent results weaker than early results.<br>→ <strong>Action:</strong> Review last 10 trades for setup quality. Are you trading more but with lower conviction? Raise the bar — only trade your highest-conviction setups.`);
+    }
+  }
 }
 
 // ── EQUITY CURVE GLOBALS (pill + DD toggle, safe before init) ──
