@@ -1086,7 +1086,7 @@ tbody tr:hover { filter: brightness(0.97); }
   <div class="grid-2" style="margin-top:14px">
     <div class="card">
       <div class="chart-title">Monthly P&L</div>
-      <div class="chart-sub">Realised P&L by calendar month</div>
+      <div class="chart-sub">Realised P&L by month · current month adds open position MTM (blue)</div>
       <div id="chart-monthly" style="height:220px;"></div>
       <div id="insight-monthly" class="chart-insight"></div>
     </div>
@@ -3409,18 +3409,38 @@ function initPerfCharts(closed, initialCapital, open) {
     const key = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
     mMap[key] = (mMap[key]||0)+t.finalPl;
   });
-  const mKeys = Object.keys(mMap).sort(), mData = mKeys.map(k=>Math.round(mMap[k]));
+  // Add current month if not already present (might have no closed trades yet)
+  const mNowKey = new Date().getFullYear()+'-'+String(new Date().getMonth()+1).padStart(2,'0');
+  if (!mMap[mNowKey]) mMap[mNowKey] = 0;
+  const totalOpenMTMChart = open.reduce((s,t)=>s+(t.notionalPl||0),0);
+  const mKeys = Object.keys(mMap).sort();
+  const mData = mKeys.map(k=>Math.round(mMap[k]));
+  // Unrealised series: only current month gets the open MTM value, rest null
+  const mUnrealData = mKeys.map(k => k === mNowKey ? Math.round(totalOpenMTMChart) : null);
   if (mKeys.length > 0) {
     const MNAMES2 = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const mCats = mKeys.map(k => { const [y,m]=k.split('-'); return MNAMES2[parseInt(m)-1]+' '+y.slice(2); });
     const mp = new ApexCharts(document.getElementById('chart-monthly'), {
-      ...baseOpts(220), chart: { ...baseOpts(220).chart, type: 'bar' },
-      series: [{ name:'Monthly P&L ₹', data: mData }],
-      xaxis: { ...baseOpts().xaxis, categories: mKeys.map(k => { const [y,m]=k.split('-'); return MNAMES2[parseInt(m)-1]+' '+y.slice(2); }) },
+      ...baseOpts(220),
+      chart: { ...baseOpts(220).chart, type: 'bar', stacked: true },
+      series: [
+        { name:'Realised ₹', data: mData },
+        { name:'Unrealised (open) ₹', data: mUnrealData },
+      ],
+      xaxis: { ...baseOpts().xaxis, categories: mCats },
       yaxis: { labels: { style:{colors:c.text,fontSize:'11px'}, formatter: v=>(v>=0?'+':'')+v.toLocaleString('en-IN') } },
-      colors: mData.map(v=>v>=0?c.green:c.red),
-      plotOptions: { bar: { columnWidth:'60%', distributed:true, borderRadius:4 } },
-      legend: { show:false }, dataLabels: { enabled:false },
+      colors: [
+        function({ dataPointIndex }) {
+          return mData[dataPointIndex] >= 0 ? c.green : c.red;
+        },
+        'rgba(99,179,237,0.85)',
+      ],
+      plotOptions: { bar: { columnWidth:'60%', distributed:false, borderRadius:3 } },
+      legend: { show: true, labels:{colors:c.text}, fontSize:'11px', position:'top', horizontalAlign:'right',
+        markers:{ fillColors:[c.green, 'rgba(99,179,237,0.85)'] } },
+      dataLabels: { enabled:false },
       annotations: { yaxis: [{ y:0, borderColor:c.text, strokeDashArray:2 }] },
+      tooltip: { y: { formatter: v => v == null ? '—' : (v>=0?'+':'')+v.toLocaleString('en-IN') } },
     });
     mp.render(); perfCharts.push(mp);
   }
@@ -3632,18 +3652,26 @@ function initPerfCharts(closed, initialCapital, open) {
     ins('insight-dayofweek','green',`✓ Entry day win rate spread of ${daySpread.toFixed(0)}pts — no strong day-of-week bias. Best: ${bestDay} (${bestDayWR.toFixed(0)}%). Entries are well-distributed.<br>→ <strong>Keep doing:</strong> Continue entering on confirmed setups regardless of day. Quality of setup matters more than day of week.`);
   }
 
-  // 6. Monthly P&L
-  const mValues = Object.values(mMap);
+  // 6. Monthly P&L (use combined for current month when judging)
+  const mCombined = { ...mMap };
+  if (totalOpenMTMChart !== 0) mCombined[mNowKey] = (mCombined[mNowKey] || 0) + totalOpenMTMChart;
+  const mValues = Object.values(mCombined);
   const profitMonths = mValues.filter(v => v > 0).length;
   const lossMonths = mValues.filter(v => v < 0).length;
   const bestMonth = Math.max(...mValues);
   const worstMonth = Math.min(...mValues);
+  const nowCombined = mCombined[mNowKey] || 0;
+  const nowRealised = mMap[mNowKey] || 0;
+  const nowUnreal = totalOpenMTMChart;
+  const currentMonthNote = nowUnreal !== 0
+    ? ` <span style="opacity:0.7;font-size:11px">(Current month: realised ${nowRealised >= 0 ? '+' : ''}₹${Math.round(nowRealised).toLocaleString('en-IN')} + unrealised ${nowUnreal >= 0 ? '+' : ''}₹${Math.round(nowUnreal).toLocaleString('en-IN')} = combined ${nowCombined >= 0 ? '+' : ''}₹${Math.round(nowCombined).toLocaleString('en-IN')} — blue bar shows live open MTM)</span>`
+    : '';
   if (lossMonths > profitMonths) {
-    ins('insight-monthly','red',`⚠ <strong>More losing months (${lossMonths}) than winning months (${profitMonths})</strong>. Best month: +₹${Math.round(bestMonth).toLocaleString('en-IN')}, worst: −₹${Math.round(Math.abs(worstMonth)).toLocaleString('en-IN')}.<br>→ <strong>Action:</strong> Check what's different in losing months — more trades? Different setup types? Lower quality entries? Quality over quantity.`);
+    ins('insight-monthly','red',`⚠ <strong>More losing months (${lossMonths}) than winning months (${profitMonths})</strong>. Best month: +₹${Math.round(bestMonth).toLocaleString('en-IN')}, worst: −₹${Math.round(Math.abs(worstMonth)).toLocaleString('en-IN')}.${currentMonthNote}<br>→ <strong>Action:</strong> Check what's different in losing months — more trades? Different setup types? Lower quality entries? Quality over quantity.`);
   } else if (lossMonths > 0) {
-    ins('insight-monthly','amber',`⚡ ${profitMonths} winning months, ${lossMonths} losing. Losing months are normal — the key is their size. Worst month: −₹${Math.round(Math.abs(worstMonth)).toLocaleString('en-IN')} vs best: +₹${Math.round(bestMonth).toLocaleString('en-IN')}.<br>→ <strong>Action:</strong> If worst month loss > 2× your avg monthly gain, that's a risk management gap to address.`);
+    ins('insight-monthly','amber',`⚡ ${profitMonths} winning months, ${lossMonths} losing. Losing months are normal — the key is their size. Worst: −₹${Math.round(Math.abs(worstMonth)).toLocaleString('en-IN')} vs best: +₹${Math.round(bestMonth).toLocaleString('en-IN')}.${currentMonthNote}<br>→ <strong>Action:</strong> If worst month loss > 2× avg monthly gain, that's a risk management gap to address.`);
   } else {
-    ins('insight-monthly','green',`✓ ${profitMonths} profitable months with 0 losing months. Best: +₹${Math.round(bestMonth).toLocaleString('en-IN')}. Exceptional consistency.<br>→ <strong>Keep doing:</strong> This level of month-over-month consistency is rare. Consider whether you can scale size now.`);
+    ins('insight-monthly','green',`✓ ${profitMonths} profitable months with 0 losing months. Best: +₹${Math.round(bestMonth).toLocaleString('en-IN')}. Exceptional consistency.${currentMonthNote}<br>→ <strong>Keep doing:</strong> This level of month-over-month consistency is rare. Consider whether you can scale size now.`);
   }
 
   // 7. Win Rate Trend
