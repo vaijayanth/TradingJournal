@@ -1225,14 +1225,15 @@ tbody tr:hover { filter: brightness(0.97); }
       </details>
     </div>
     <div class="card">
-      <div class="chart-title">Win Rate by Stop Distance</div>
-      <div class="chart-sub">Do tighter or wider stops produce better win rates?</div>
+      <div class="chart-title">Win Rate by Hold Duration</div>
+      <div class="chart-sub">Do short or long holds win more often — and where is your P&L edge?</div>
       <div id="chart-tm-wr-by-risk" style="height:220px"></div>
       <details style="margin-top:10px">
         <summary style="font-size:12px;font-weight:600;color:var(--text-muted);cursor:pointer;padding:4px 0;user-select:none">What to look for &amp; action ▸</summary>
         <div style="padding:10px 12px;background:var(--surface2);border-radius:8px;font-size:12px;line-height:1.7;color:var(--text-secondary);margin-top:6px">
-          The bucket with the highest win rate = your optimal stop placement zone. If tight stops (&lt;2%) win <em>less</em>, they're getting hit by noise before the trade works.<br>
-          <strong>Action:</strong> Target the stop distance where win rate peaks. For most Minervini setups this is 3–5% — below the VCP low or pivot base.
+          <strong>Short holds (1–7 days) with low WR:</strong> breakouts are failing quickly — market conditions may be weak or entries are chasing.<br>
+          <strong>Long holds (30d+) with high WR:</strong> your best winners need time — don't exit early.<br>
+          <strong>Action:</strong> Find the hold bucket with best avg P&L (shown in tooltip) — that's your sweet spot to target.
         </div>
       </details>
     </div>
@@ -4315,68 +4316,56 @@ function initAnalysisCharts(open, closed) {
   }
 
   // ── Win Rate by Risk Bucket ──
-  const riskWR = {};
-  // Also track avg P&L by bucket — WR alone is incomplete (need both WR and avg outcome)
-  withRiskPctOnly.forEach(t => {
-    const r = Math.abs(t.initRiskPct);
-    const bucket = r < 2 ? '<2%' : r < 3 ? '2–3%' : r < 5 ? '3–5%' : r < 7 ? '5–7%' : r < 10 ? '7–10%' : '>10%';
-    if (!riskWR[bucket]) riskWR[bucket] = {w:0,t:0,plSum:0};
-    riskWR[bucket].t++;
-    riskWR[bucket].plSum += t.finalPlPct;
-    if (t.finalPlPct > 0) riskWR[bucket].w++;
+  // ── Win Rate by Hold Duration ──
+  const holdWR = {'1–7d':{w:0,t:0,pl:0},'8–14d':{w:0,t:0,pl:0},'15–30d':{w:0,t:0,pl:0},'31–60d':{w:0,t:0,pl:0},'60d+':{w:0,t:0,pl:0}};
+  tmClosed.filter(t => t.age > 0).forEach(t => {
+    const age = parseInt(t.age) || 0;
+    const b = age <= 7 ? '1–7d' : age <= 14 ? '8–14d' : age <= 30 ? '15–30d' : age <= 60 ? '31–60d' : '60d+';
+    holdWR[b].t++; holdWR[b].pl += t.finalPlPct;
+    if (t.finalPlPct > 0) holdWR[b].w++;
   });
-  const riskWRKeys = ['<2%','2–3%','3–5%','5–7%','7–10%','>10%'].filter(k => riskWR[k] && riskWR[k].t > 0);
-  const riskWRData = riskWRKeys.map(k => parseFloat((riskWR[k].w / riskWR[k].t * 100).toFixed(1)));
-  const riskWRCounts = riskWRKeys.map(k => riskWR[k].t);
-  const riskAvgPl = riskWRKeys.map(k => parseFloat((riskWR[k].plSum / riskWR[k].t).toFixed(2)));
+  const holdKeys = ['1–7d','8–14d','15–30d','31–60d','60d+'].filter(k => holdWR[k].t > 0);
+  const holdWRData = holdKeys.map(k => parseFloat((holdWR[k].w / holdWR[k].t * 100).toFixed(1)));
+  const holdCounts = holdKeys.map(k => holdWR[k].t);
+  const holdAvgPl = holdKeys.map(k => parseFloat((holdWR[k].pl / holdWR[k].t).toFixed(2)));
   const wrByRiskEl = document.getElementById('chart-tm-wr-by-risk');
-  if (wrByRiskEl && riskWRKeys.length > 0) {
-    const wrRiskChart = new ApexCharts(wrByRiskEl, {
+  if (wrByRiskEl && holdKeys.length > 0) {
+    const holdWRChart = new ApexCharts(wrByRiskEl, {
       ...baseOpts(220), chart: { ...baseOpts(220).chart, type: 'bar' },
-      series: [{ name: 'Win Rate %', data: riskWRData }],
-      xaxis: { ...baseOpts().xaxis, categories: riskWRKeys.map((k,i) => k + ' (n=' + riskWRCounts[i] + ')') },
+      series: [{ name: 'Win Rate %', data: holdWRData }],
+      xaxis: { ...baseOpts().xaxis, categories: holdKeys.map((k,i) => k + ' (n=' + holdCounts[i] + ')') },
       yaxis: { labels: { style:{colors:c.text,fontSize:'11px'}, formatter: v => v+'%' }, min:0, max:100 },
-      colors: riskWRData.map(v => v >= 50 ? c.green : v >= 35 ? c.amber : c.red),
+      colors: holdWRData.map(v => v >= 50 ? c.green : v >= 35 ? c.amber : c.red),
       plotOptions: { bar: { columnWidth:'55%', distributed:true, borderRadius:4 } },
       legend: { show:false },
       dataLabels: { enabled: true, formatter: v => v+'%', style:{fontSize:'11px'} },
       annotations: { yaxis: [{ y:50, borderColor:c.text, strokeDashArray:3, label:{text:'50%',style:{color:c.text,fontSize:'10px',background:'transparent'}} }] },
       tooltip: { ...baseOpts().tooltip, y: { formatter: (v, {dataPointIndex}) => {
-        const k = riskWRKeys[dataPointIndex];
-        const avgPl = riskAvgPl[dataPointIndex];
-        const impliedPos = avgInitRiskRs > 0 ? '≈ ₹' + Math.round(avgInitRiskRs / (parseFloat(k) / 100 || 0.04)).toLocaleString('en-IN') + ' position' : '';
-        return `${v}% WR · avg P&L ${avgPl >= 0 ? '+' : ''}${avgPl}% · ${impliedPos}`;
+        const avgPl = holdAvgPl[dataPointIndex];
+        return `${v}% WR · avg P&L ${avgPl >= 0 ? '+' : ''}${avgPl}% · ${holdCounts[dataPointIndex]} trades`;
       }}},
     });
-    wrRiskChart.render(); analysisCharts.push(wrRiskChart);
+    holdWRChart.render(); analysisCharts.push(holdWRChart);
 
-    // Dynamic insight below chart
-    const wrRiskInsEl = document.createElement('div');
-    wrRiskInsEl.style.cssText = 'margin-top:8px;font-size:12px;color:var(--text-muted);line-height:1.8';
-    const edgeBuckets = riskWRKeys.map((k,i) => ({ k, wr: riskWRData[i], avg: riskAvgPl[i], n: riskWRCounts[i] }))
-      .filter(b => b.n >= 3);
-    let wrInsHtml = '';
-    if (edgeBuckets.length > 0) {
-      // Best bucket = highest avg P&L (not just win rate) with n>=3
-      const best = edgeBuckets.reduce((a, b) => b.avg > a.avg ? b : a);
-      const worst = edgeBuckets.reduce((a, b) => b.avg < a.avg ? b : a);
-      wrInsHtml += `🎯 <strong>Best edge zone: ${best.k} stops</strong> — ${best.wr}% WR, avg ${best.avg >= 0 ? '+' : ''}${best.avg}% per trade`;
-      if (worst.k !== best.k) wrInsHtml += ` · Weakest: ${worst.k} (${worst.wr}% WR, avg ${worst.avg}%)`;
-
-      // Dangerous case: tight stop + low WR = large position losing often
-      const tightBucket = edgeBuckets.find(b => b.k === '<2%');
-      if (tightBucket && tightBucket.wr < 40 && avgInitRiskRs > 0) {
-        const impliedPos = Math.round(avgInitRiskRs / 0.01).toLocaleString('en-IN');
-        wrInsHtml += `<br>⚠️ <strong>Your &lt;2% stop trades have ${tightBucket.wr}% WR and imply ~₹${impliedPos} positions</strong> — large exposure, low success. These are your biggest risk per trade. Widen the stop or skip these setups.`;
-      }
-      // Flag low sample sizes
-      const lowN = riskWRKeys.filter((k,i) => riskWRCounts[i] < 3);
-      if (lowN.length > 0) wrInsHtml += `<br><span style="opacity:0.7">⚠ Low sample (n&lt;3) for ${lowN.join(', ')} — treat those bars as indicative only</span>`;
+    // Dynamic insight
+    const holdInsEl = document.createElement('div');
+    holdInsEl.style.cssText = 'margin-top:8px;font-size:12px;color:var(--text-muted);line-height:1.8';
+    const edgeH = holdKeys.map((k,i) => ({k, wr:holdWRData[i], avg:holdAvgPl[i], n:holdCounts[i]})).filter(b=>b.n>=3);
+    let holdIns = '';
+    if (edgeH.length > 0) {
+      const best = edgeH.reduce((a,b) => b.avg > a.avg ? b : a);
+      const worst = edgeH.reduce((a,b) => b.avg < a.avg ? b : a);
+      holdIns += `🎯 <strong>Best hold zone: ${best.k}</strong> — ${best.wr}% WR, avg <strong>${best.avg >= 0 ? '+' : ''}${best.avg}%</strong>`;
+      if (worst.k !== best.k) holdIns += ` · Weakest: ${worst.k} (${worst.wr}% WR, avg ${worst.avg}%)`;
+      const shortH = edgeH.find(b => b.k === '1–7d');
+      if (shortH && shortH.wr < 35) holdIns += `<br>⚠️ Short holds (1–7d) winning only ${shortH.wr}% — breakouts failing quickly. Check market conditions at time of entry.`;
+      const lowN = holdKeys.filter((k,i) => holdCounts[i] < 3);
+      if (lowN.length > 0) holdIns += `<br><span style="opacity:0.7">⚠ Low sample (n&lt;3) for ${lowN.join(', ')}</span>`;
     } else {
-      wrInsHtml = 'Not enough trades per bucket (need n≥3) for reliable win rate by stop distance.';
+      holdIns = 'Need n≥3 per bucket for reliable win rate by hold duration.';
     }
-    wrRiskInsEl.innerHTML = wrInsHtml;
-    wrByRiskEl.parentElement.appendChild(wrRiskInsEl);
+    holdInsEl.innerHTML = holdIns;
+    wrByRiskEl.parentElement.appendChild(holdInsEl);
   }
 
   // ── Winner Size Distribution ──
