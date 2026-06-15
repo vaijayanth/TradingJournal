@@ -1704,7 +1704,16 @@ function renderDashboard(data, cfg) {
   const totalUnrealisedPl = open.reduce((s, t) => s + (t.notionalPl || 0), 0);
   const totalCombinedPl = totalFinalPl + totalUnrealisedPl;
   const totalInitRisk = open.reduce((s, t) => s + t.initRiskRs, 0);
-  const totalHeat = open.reduce((s, t) => s + t.initRiskPct, 0);
+  // Current heat: zero out positions where stop has moved to breakeven or better
+  const totalHeat = open.reduce((s, t) => {
+    const effStop = Math.max(t.stopLoss || 0, t.sevenDayLow || 0);
+    const atBreakeven = effStop >= t.entryPrice;
+    return s + (atBreakeven ? 0 : t.initRiskPct);
+  }, 0);
+  const protectedCount = open.filter(t => {
+    const effStop = Math.max(t.stopLoss || 0, t.sevenDayLow || 0);
+    return effStop >= t.entryPrice;
+  }).length;
   const fmt = v => '₹' + Math.abs(v).toLocaleString('en-IN', { maximumFractionDigits: 0 });
   const fmtSigned = v => (v >= 0 ? '+' : '-') + fmt(v);
 
@@ -1820,13 +1829,14 @@ function renderDashboard(data, cfg) {
   set('heat-amber-marker', cfg.heatAmber + '% 🟡');
   set('heat-max-marker', cfg.maxHeat + '% 🔴 ceiling');
   const heatStatus = document.getElementById('heat-status-badge');
+  const protectedNote = protectedCount > 0 ? ` · ${protectedCount} position${protectedCount>1?'s':''} at breakeven excluded` : '';
   if (heatStatus) {
-    if (totalHeat <= cfg.heatGreen) { heatStatus.className = 'stat-badge badge-green'; heatStatus.textContent = '✓ GREEN — Capacity for new positions'; }
-    else if (totalHeat <= cfg.heatAmber) { heatStatus.className = 'stat-badge badge-amber'; heatStatus.textContent = '⚠ AMBER — Approaching ceiling. Reduce size.'; }
-    else { heatStatus.className = 'stat-badge badge-red'; heatStatus.textContent = '🚫 RED — Above limit. No new positions.'; }
+    if (totalHeat <= cfg.heatGreen) { heatStatus.className = 'stat-badge badge-green'; heatStatus.textContent = '✓ GREEN — Capacity for new positions' + protectedNote; }
+    else if (totalHeat <= cfg.heatAmber) { heatStatus.className = 'stat-badge badge-amber'; heatStatus.textContent = '⚠ AMBER — Approaching ceiling. Reduce size.' + protectedNote; }
+    else { heatStatus.className = 'stat-badge badge-red'; heatStatus.textContent = '🚫 RED — Above limit. No new positions.' + protectedNote; }
   }
   const posHeat = document.getElementById('pos-heat-badge');
-  if (posHeat) posHeat.textContent = 'Portfolio Heat: ' + totalHeat.toFixed(2) + '%';
+  if (posHeat) posHeat.textContent = 'Portfolio Heat: ' + totalHeat.toFixed(2) + '%' + (protectedCount > 0 ? ` (${protectedCount} protected)` : '');
 
   // Alerts
   const alertsWrap = document.getElementById('alerts-wrap');
