@@ -1038,7 +1038,7 @@ tbody tr:hover { filter: brightness(0.97); }
     <!-- Hold Duration → Win Rate -->
     <div class="card">
       <div class="chart-title">Hold Duration → Win Rate</div>
-      <div class="chart-sub">Identifies your sweet spot and zombie hold zones</div>
+      <div class="chart-sub">Closed trades only · longer holds = winners running · short holds = stops taken</div>
       <div style="overflow-x:auto;margin-top:12px">
         <table style="width:100%;border-collapse:collapse;font-size:13px" id="hold-duration-table">
           <thead>
@@ -1055,6 +1055,7 @@ tbody tr:hover { filter: brightness(0.97); }
           </tbody>
         </table>
       </div>
+      <div id="insight-hold" class="chart-insight"></div>
     </div>
     <!-- Monthly Performance Table -->
     <div class="card">
@@ -2479,13 +2480,13 @@ function renderPerfStats(closed, open, portfolioValue, initialCapital) {
   // ── Hold Duration → Win Rate table (populated here so it works before chart init) ──
   const sortedByClose = [...closed].filter(t => t.closeDate).sort((a,b) => parseDate(a.closeDate)-parseDate(b.closeDate));
   const holdBucketDefs2 = [
-    {label:'SL hit same day',min:0,max:0,note:'Avoid — often chasing'},
-    {label:'1–2 days',min:1,max:2,note:''},
-    {label:'3–5 days',min:3,max:5,note:''},
-    {label:'6–10 days',min:6,max:10,note:'★ Often sweet spot'},
-    {label:'11–15 days',min:11,max:15,note:''},
-    {label:'16–30 days',min:16,max:30,note:''},
-    {label:'31+ days (zombie?)',min:31,max:Infinity,note:'Review hold rules'},
+    {label:'Same day exit',min:0,max:0,note:'Gap-down / immediate stop'},
+    {label:'1–5 days',min:1,max:5,note:'Fast stop — expected'},
+    {label:'6–15 days',min:6,max:15,note:'Early resolution'},
+    {label:'16–30 days',min:16,max:30,note:'Developing winner'},
+    {label:'31–60 days',min:31,max:60,note:'Running winner ✓'},
+    {label:'61–90 days',min:61,max:90,note:'Strong runner ✓✓'},
+    {label:'90+ days',min:91,max:Infinity,note:'Multi-bagger zone 🚀'},
   ];
   const holdTbody2 = document.getElementById('hold-duration-tbody');
   if (holdTbody2) {
@@ -2506,11 +2507,39 @@ function renderPerfStats(closed, open, portfolioValue, initialCapital) {
       return `<tr style="border-bottom:1px solid var(--border)${isBest?';background:var(--green-soft)':''}">
         <td style="padding:8px 10px;font-weight:${isBest?'700':'500'}">${b.label}${isBest?' ★':''}</td>
         <td style="padding:8px 10px;text-align:right;color:var(--text-muted)">${b.trades.length}</td>
-        <td style="padding:8px 10px;text-align:right;font-weight:700;color:${wrColor}">${b.wr.toFixed(0)}%</td>
-        <td style="padding:8px 10px;text-align:right;color:${avgColor}">${b.avg>=0?'+':''}${b.avg.toFixed(1)}%</td>
+        <td style="padding:8px 10px;text-align:right;font-weight:700;color:${wrColor}">${b.wr!==null?b.wr.toFixed(0)+'%':'—'}</td>
+        <td style="padding:8px 10px;text-align:right;color:${avgColor}">${b.avg!==null?(b.avg>=0?'+':'')+b.avg.toFixed(1)+'%':'—'}</td>
         <td style="padding:8px 10px;text-align:right;font-size:11px;color:var(--text-muted)">${b.note}</td>
       </tr>`;
     }).join('');
+
+    // Hold duration insight
+    const insHold = document.getElementById('insight-hold');
+    if (insHold) {
+      const withData = bd2.filter(b => b.trades.length >= 3 && b.wr !== null);
+      const sweetSpot = withData.reduce((best, b) => (!best || b.avg > best.avg) ? b : best, null);
+      const shortTrades = bd2.filter(b => b.max <= 5).reduce((s,b)=>s+b.trades.length,0);
+      const longBuckets = bd2.filter(b => b.min >= 31 && b.trades.length > 0);
+      const longCount = longBuckets.reduce((s,b)=>s+b.trades.length,0);
+      const longWR = longCount > 0 ? longBuckets.reduce((s,b)=>s+(b.wr||0)*b.trades.length,0)/longCount : 0;
+      const longAvg = longCount > 0 ? longBuckets.reduce((s,b)=>s+(b.avg||0)*b.trades.length,0)/longCount : 0;
+      const shortPct = closed.length > 0 ? shortTrades/closed.length*100 : 0;
+      const openLongRunners = open.filter(t => parseInt(t.age||0) >= 31).length;
+      const openRunnerNote = openLongRunners > 0 ? ` <strong>${openLongRunners} open position${openLongRunners>1?'s are':' is'} currently 30d+ old</strong> — these active runners will shift long-hold stats significantly when they eventually close.` : '';
+      let color, msg;
+      if (sweetSpot && sweetSpot.min >= 31) {
+        color = 'green';
+        msg = `✓ <strong>Edge compounds with hold time — strategy confirmed.</strong> The ${sweetSpot.label} bucket shows the best avg P&L (${sweetSpot.avg>=0?'+':''}${sweetSpot.avg.toFixed(1)}%, ${sweetSpot.trades.length} closed trades, ${sweetSpot.wr.toFixed(0)}% WR). Short holds (≤5 days, ${shortPct.toFixed(0)}% of trades) are your fast stops — exactly right.${openRunnerNote}<br>→ <strong>Action:</strong> Never exit a long runner just because of time. Exit only when the 7-day low stop triggers. Your patience IS the edge.`;
+      } else if (sweetSpot && sweetSpot.min <= 10) {
+        color = 'amber';
+        msg = `⚡ <strong>Closed data shows short holds performing best — but this is a bias, not the truth.</strong> Long-hold winners are likely still <em>open</em> (not yet in closed data). ${shortPct.toFixed(0)}% of closed trades exited ≤5 days (stops). The ${longCount} long-hold closed trades show ${longAvg>=0?'+':''}${longAvg.toFixed(1)}% avg.${openRunnerNote}<br>→ <strong>Don't conclude</strong> short holds are better. Your real winners are in the open portfolio. Wait for them to close before judging the long-hold buckets.`;
+      } else {
+        color = 'green';
+        msg = `✓ <strong>${shortPct.toFixed(0)}% of closed trades were ≤5 days</strong> — stop discipline working. Long holds (31d+): ${longCount} closed, ${longWR.toFixed(0)}% WR, avg ${longAvg>=0?'+':''}${longAvg.toFixed(1)}%.${openRunnerNote}<br>→ <strong>Pattern to expect:</strong> Short holds = small losses (stops), long holds = big wins. If long-hold avg P&L is still low, you may be trimming winners too early or stops are moving in the wrong direction.`;
+      }
+      insHold.className = `chart-insight ${color}`;
+      insHold.innerHTML = msg;
+    }
   }
 
   // ── Monthly Performance table ──
