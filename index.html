@@ -1166,6 +1166,7 @@ tbody tr:hover { filter: brightness(0.97); }
             <th style="padding:6px 10px">Setup</th>
             <th style="padding:6px 10px;text-align:right">Trades</th>
             <th style="padding:6px 10px;text-align:right">Win Rate</th>
+            <th style="padding:6px 10px;text-align:right" title="Last 30 closed trades win rate">WR (Last 30)</th>
             <th style="padding:6px 10px;text-align:right" title="Avg Win ÷ Avg Loss">R-Multiple</th>
             <th style="padding:6px 10px;text-align:right" title="WR × R − (1−WR) × 1: edge per trade in R units">Expectancy R</th>
             <th style="padding:6px 10px;text-align:right">Avg P&L%</th>
@@ -1175,7 +1176,7 @@ tbody tr:hover { filter: brightness(0.97); }
           </tr>
         </thead>
         <tbody id="setup-breakdown-tbody">
-          <tr><td colspan="9" style="padding:20px;text-align:center;color:var(--text-muted)">Loading…</td></tr>
+          <tr><td colspan="10" style="padding:20px;text-align:center;color:var(--text-muted)">Loading…</td></tr>
         </tbody>
       </table>
     </div>
@@ -1198,7 +1199,7 @@ tbody tr:hover { filter: brightness(0.97); }
     <div class="card card-sm">
       <div class="stat-label">Stop Slippage</div>
       <div class="stat-value" id="tm-slippage">—</div>
-      <div class="stat-sub" id="tm-slippage-sub">loss beyond planned risk</div>
+      <div class="stat-sub" id="tm-slippage-sub">vs planned risk</div>
     </div>
     <div class="card card-sm">
       <div class="stat-label">Median Winner</div>
@@ -1274,7 +1275,7 @@ tbody tr:hover { filter: brightness(0.97); }
       <div style="font-size:28px;font-weight:700;margin-top:10px" id="partial-yes-avg">—</div>
       <div class="stat-sub">Avg blended final P&L%</div>
       <div style="font-size:16px;font-weight:700;margin-top:8px;color:var(--green)" id="partial-yes-gain-after">—</div>
-      <div class="stat-sub" title="How much extra did the remaining 50% capture beyond the trigger? e.g. +5% means the remainder ran to +15% on average">Remainder ran avg X% past trigger ⓘ</div>
+      <div class="stat-sub" title="How much extra did the remaining 50% capture beyond the trigger? e.g. +5% means the remainder ran to +15% on average">Remainder captured past trigger ⓘ</div>
       <div style="font-size:13px;margin-top:6px;color:var(--text-muted)" id="partial-yes-n">n = —</div>
     </div>
     <div class="card card-sm">
@@ -1334,6 +1335,39 @@ tbody tr:hover { filter: brightness(0.97); }
     </div>
   </div>
 
+  <div class="grid-2" style="margin-bottom:14px">
+    <div class="card">
+      <div class="stat-label">Current Streak</div>
+      <div style="display:flex;align-items:baseline;gap:10px;margin-top:8px">
+        <div style="font-size:32px;font-weight:700" id="cur-streak-count">—</div>
+        <div style="font-size:16px;font-weight:600" id="cur-streak-type" style="color:var(--text-muted)"></div>
+      </div>
+      <div class="stat-sub" id="cur-streak-sub">in a row (most recent closed trades)</div>
+      <div style="font-size:12px;font-weight:600;margin-top:8px;line-height:1.6" id="cur-streak-msg">—</div>
+    </div>
+    <div class="card">
+      <div class="stat-label">Learning Curve — First 30 vs Last 30</div>
+      <div style="display:flex;gap:20px;margin-top:8px">
+        <div>
+          <div style="font-size:11px;color:var(--text-muted);margin-bottom:2px">First 30 trades</div>
+          <div style="font-size:20px;font-weight:700" id="lc-early-wr">—</div>
+          <div class="stat-sub">Win Rate</div>
+          <div style="font-size:14px;font-weight:600;margin-top:4px" id="lc-early-avg">—</div>
+          <div class="stat-sub">Avg P&L%</div>
+        </div>
+        <div style="color:var(--text-muted);font-size:22px;align-self:center">→</div>
+        <div>
+          <div style="font-size:11px;color:var(--text-muted);margin-bottom:2px">Last 30 trades</div>
+          <div style="font-size:20px;font-weight:700" id="lc-recent-wr">—</div>
+          <div class="stat-sub">Win Rate</div>
+          <div style="font-size:14px;font-weight:600;margin-top:4px" id="lc-recent-avg">—</div>
+          <div class="stat-sub">Avg P&L%</div>
+        </div>
+      </div>
+      <div style="font-size:12px;font-weight:600;margin-top:10px;line-height:1.6" id="lc-verdict">—</div>
+    </div>
+  </div>
+
   <!-- 5. Pattern Analysis -->
   <div class="section-title">Pattern Analysis</div>
   <div class="grid-2" style="margin-bottom:14px">
@@ -1364,6 +1398,13 @@ tbody tr:hover { filter: brightness(0.97); }
         </div>
       </details>
     </div>
+  </div>
+
+  <!-- 5b. Monthly P&L -->
+  <div class="card" style="margin-bottom:14px">
+    <div class="chart-title">Monthly P&L</div>
+    <div class="chart-sub">Realised closed P&L per month · blue = unrealised open MTM added to current month</div>
+    <div id="chart-analysis-monthly" style="height:240px;"></div>
   </div>
 
   <!-- 6. Unlock Advanced Analytics (collapsible) -->
@@ -3851,22 +3892,41 @@ function initAnalysisCharts(open, closed) {
   const setupKeys = Object.keys(setupMap).filter(s => s !== 'Unlabelled').sort((a,b) => setupMap[b].length - setupMap[a].length);
   const fmtRsA = v => (v < 0 ? '-' : '+') + '₹' + Math.abs(Math.round(v)).toLocaleString('en-IN');
 
+  // Last 30 closed trades for recency column
+  const last30 = [...closed].sort((a,b) => parseDate(b.closeDate)-parseDate(a.closeDate)).slice(0,30);
+  const last30Map = {};
+  last30.forEach(t => {
+    const s = (t.setupType || 'Unlabelled').trim() || 'Unlabelled';
+    if (!last30Map[s]) last30Map[s] = [];
+    last30Map[s].push(t);
+  });
+
   const tbody = document.getElementById('setup-breakdown-tbody');
   if (tbody) {
     if (setupKeys.length === 0 || (setupKeys.length === 1 && setupKeys[0] === 'Unlabelled')) {
-      tbody.innerHTML = '<tr><td colspan="9" style="padding:20px;text-align:center;color:var(--text-muted)">No setup type data — add labels in column S of your sheet</td></tr>';
+      tbody.innerHTML = '<tr><td colspan="10" style="padding:20px;text-align:center;color:var(--text-muted)">No setup type data — add labels in column S of your sheet</td></tr>';
     } else {
       tbody.innerHTML = setupKeys.map(s => {
         const st = calcStats(setupMap[s]);
+        const recent = last30Map[s] || [];
+        const recentWr = recent.length > 0 ? recent.filter(t => t.finalPlPct > 0).length / recent.length * 100 : null;
         const wrColor = st.wr >= 50 ? 'var(--green)' : st.wr >= 30 ? 'var(--amber)' : 'var(--red)';
         const avgColor = st.avg >= 0 ? 'var(--green)' : 'var(--red)';
         const plColor = st.totalPl >= 0 ? 'var(--green)' : 'var(--red)';
         const rExpColor = st.rExp > 0 ? 'var(--green)' : 'var(--red)';
         const rExpStr = (st.rExp >= 0 ? '+' : '') + st.rExp.toFixed(2) + 'R';
+        let recentWrCell = '—';
+        if (recentWr !== null) {
+          const rWrColor = recentWr >= 50 ? 'var(--green)' : recentWr >= 30 ? 'var(--amber)' : 'var(--red)';
+          const arrow = recentWr > st.wr ? '↑' : recentWr < st.wr ? '↓' : '=';
+          const arrowColor = recentWr > st.wr ? 'var(--green)' : recentWr < st.wr ? 'var(--red)' : 'var(--text-muted)';
+          recentWrCell = `<span style="color:${rWrColor};font-weight:700">${recentWr.toFixed(0)}%</span> <span style="color:${arrowColor};font-size:11px">${arrow}</span><span style="color:var(--text-muted);font-size:11px"> n=${recent.length}</span>`;
+        }
         return `<tr style="border-bottom:1px solid var(--border)">
           <td style="padding:8px 10px;font-weight:600">${s}</td>
           <td style="padding:8px 10px;text-align:right;color:var(--text-muted)">${st.n}</td>
           <td style="padding:8px 10px;text-align:right;font-weight:700;color:${wrColor}">${st.wr.toFixed(0)}%</td>
+          <td style="padding:8px 10px;text-align:right">${recentWrCell}</td>
           <td style="padding:8px 10px;text-align:right">${st.r.toFixed(1)}R</td>
           <td style="padding:8px 10px;text-align:right;font-weight:700;color:${rExpColor}">${rExpStr}</td>
           <td style="padding:8px 10px;text-align:right;color:${avgColor}">${(st.avg>=0?'+':'')+st.avg.toFixed(1)}%</td>
@@ -4094,6 +4154,55 @@ function initAnalysisCharts(open, closed) {
     }
   }
 
+  // Current Streak
+  if (sortedByDate.length > 0) {
+    let curStreakCount = 1;
+    const lastOutcome = sortedByDate[sortedByDate.length-1].finalPlPct >= 0 ? 'W' : 'L';
+    for (let i = sortedByDate.length - 2; i >= 0; i--) {
+      const outcome = sortedByDate[i].finalPlPct >= 0 ? 'W' : 'L';
+      if (outcome === lastOutcome) curStreakCount++; else break;
+    }
+    const streakEl = document.getElementById('cur-streak-count');
+    const typeEl = document.getElementById('cur-streak-type');
+    const msgEl = document.getElementById('cur-streak-msg');
+    if (streakEl) { streakEl.textContent = curStreakCount; streakEl.style.color = lastOutcome === 'W' ? 'var(--green)' : 'var(--red)'; }
+    if (typeEl) { typeEl.textContent = lastOutcome === 'W' ? 'wins' : 'losses'; typeEl.style.color = lastOutcome === 'W' ? 'var(--green)' : 'var(--red)'; }
+    if (msgEl) {
+      if (lastOutcome === 'W' && curStreakCount >= 3) msgEl.innerHTML = `<span style="color:var(--green)">✓ Hot streak — tighten stops, let runners run. Don't add size yet.</span>`;
+      else if (lastOutcome === 'L' && curStreakCount >= 3) msgEl.innerHTML = `<span style="color:var(--red)">🚨 ${curStreakCount} consecutive losses — reduce next trade size by 50%. Only take A+ setups.</span>`;
+      else if (lastOutcome === 'L' && curStreakCount === 2) msgEl.innerHTML = `<span style="color:var(--amber)">⚠ 2 losses in a row — review last setup before next entry.</span>`;
+      else msgEl.innerHTML = `<span style="color:var(--text-muted)">Normal range — no action needed.</span>`;
+    }
+  }
+
+  // Learning Curve — first 30 vs last 30
+  if (sortedByDate.length >= 10) {
+    const first30 = sortedByDate.slice(0, 30);
+    const lc30 = sortedByDate.slice(-30);
+    const lcCalc = arr => ({
+      wr: arr.filter(t => t.finalPlPct > 0).length / arr.length * 100,
+      avg: arr.reduce((s,t) => s + t.finalPlPct, 0) / arr.length,
+    });
+    const early = lcCalc(first30);
+    const recent = lcCalc(lc30);
+    const wrDiff = recent.wr - early.wr;
+    const avgDiff = recent.avg - early.avg;
+    set('lc-early-wr', early.wr.toFixed(0) + '%');
+    set('lc-recent-wr', recent.wr.toFixed(0) + '%');
+    set('lc-early-avg', (early.avg >= 0 ? '+' : '') + early.avg.toFixed(1) + '%');
+    set('lc-recent-avg', (recent.avg >= 0 ? '+' : '') + recent.avg.toFixed(1) + '%');
+    const recentWrEl = document.getElementById('lc-recent-wr');
+    if (recentWrEl) recentWrEl.style.color = wrDiff > 5 ? 'var(--green)' : wrDiff < -5 ? 'var(--red)' : 'var(--amber)';
+    const verdictEl2 = document.getElementById('lc-verdict');
+    if (verdictEl2) {
+      if (wrDiff > 5 && avgDiff > 0) verdictEl2.innerHTML = `<span style="color:var(--green)">✓ You are improving — WR +${wrDiff.toFixed(0)}pp and avg P&L up ${avgDiff.toFixed(1)}pp vs your first 30 trades.</span>`;
+      else if (wrDiff < -5 || avgDiff < -1) verdictEl2.innerHTML = `<span style="color:var(--red)">⚠ Performance declining vs early trades. Review recent setups — are you deviating from your process?</span>`;
+      else verdictEl2.innerHTML = `<span style="color:var(--amber)">→ Roughly stable. WR ${wrDiff >= 0 ? '+' : ''}${wrDiff.toFixed(0)}pp, avg P&L ${avgDiff >= 0 ? '+' : ''}${avgDiff.toFixed(1)}pp vs first 30.</span>`;
+    }
+  } else {
+    set('lc-early-wr', 'Need 10+'); set('lc-recent-wr', 'trades'); set('lc-early-avg', ''); set('lc-recent-avg', '');
+  }
+
   // Scatter — closed wins, closed losses, + open positions (amber)
   const sorted = [...closed].filter(t => t.closeDate).sort((a,b) => parseDate(a.closeDate)-parseDate(b.closeDate));
   const openScatter = open.filter(t => t.age > 0 && t.plPct != null);
@@ -4210,6 +4319,38 @@ function initAnalysisCharts(open, closed) {
     velInsEl.innerHTML = velTxt;
   }
 
+  // ── Monthly P&L (Analysis tab) ──
+  const mMapA = {};
+  closed.forEach(t => {
+    if (!t.closeDate) return;
+    const d = parseDate(t.closeDate); if (isNaN(d)) return;
+    const key = d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0');
+    mMapA[key] = (mMapA[key]||0) + t.finalPl;
+  });
+  const mNowKeyA = new Date().getFullYear()+'-'+String(new Date().getMonth()+1).padStart(2,'0');
+  if (!mMapA[mNowKeyA]) mMapA[mNowKeyA] = 0;
+  const mKeysA = Object.keys(mMapA).sort();
+  const mDataA = mKeysA.map(k => Math.round(mMapA[k]));
+  const totalOpenMTMA = open.reduce((s,t)=>s+(t.notionalPl||0),0);
+  const mUnrealA = mKeysA.map(k => k === mNowKeyA ? Math.round(totalOpenMTMA) : null);
+  if (mKeysA.length > 0) {
+    const MNAMES_A = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const mCatsA = mKeysA.map(k => { const [y,m]=k.split('-'); return MNAMES_A[parseInt(m)-1]+' '+y.slice(2); });
+    try { const mpa = new ApexCharts(document.getElementById('chart-analysis-monthly'), {
+      ...baseOpts(240), chart: { ...baseOpts(240).chart, type: 'bar', stacked: true },
+      series: [{ name:'Realised ₹', data: mDataA }, { name:'Unrealised (open) ₹', data: mUnrealA }],
+      xaxis: { ...baseOpts().xaxis, categories: mCatsA },
+      yaxis: { labels: { style:{colors:c.text,fontSize:'11px'}, formatter: v=>(v>=0?'+':'')+v.toLocaleString('en-IN') } },
+      colors: [function({ dataPointIndex }) { return mDataA[dataPointIndex] >= 0 ? c.green : c.red; }, 'rgba(99,179,237,0.85)'],
+      plotOptions: { bar: { columnWidth:'60%', distributed:false, borderRadius:3 } },
+      legend: { show: true, labels:{colors:c.text}, fontSize:'11px', position:'top', horizontalAlign:'right',
+        markers:{ fillColors:[c.green, 'rgba(99,179,237,0.85)'] } },
+      dataLabels: { enabled:false },
+      annotations: { yaxis: [{ y:0, borderColor:c.text, strokeDashArray:2 }] },
+      tooltip: { y: { formatter: v => v == null ? '—' : (v>=0?'+':'')+v.toLocaleString('en-IN') } },
+    }); mpa.render(); analysisCharts.push(mpa); } catch(e) { console.warn('chart-analysis-monthly failed', e); }
+  }
+
   // ── TRADE MANAGEMENT ANALYSIS ──────────────────────
   const tmSet = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
 
@@ -4239,10 +4380,11 @@ function initAnalysisCharts(open, closed) {
 
   const slippageEl = document.getElementById('tm-slippage');
   if (slippageEl) {
-    slippageEl.textContent = slippageRs > 0 ? '+' + fmtRs2(slippageRs) : (slippageRs < 0 ? '-' + fmtRs2(slippageRs) : '₹0');
-    slippageEl.style.color = slippageRs > 500 ? 'var(--red)' : slippageRs <= 0 ? 'var(--green)' : 'var(--amber)';
+    // negative slippage = you lose LESS than planned = green
+    slippageEl.textContent = (slippageRs >= 0 ? '+' : '−') + fmtRs2(Math.abs(slippageRs));
+    slippageEl.style.color = slippageRs <= 0 ? 'var(--green)' : slippageRs <= 300 ? 'var(--amber)' : 'var(--red)';
   }
-  tmSet('tm-slippage-sub', '₹ over planned per stopped trade');
+  tmSet('tm-slippage-sub', slippageRs <= 0 ? 'avg ₹ saved vs planned stop' : 'avg ₹ over planned per stop');
   tmSet('tm-median-win', medianWin > 0 ? '+' + medianWin.toFixed(2) + '%' : '—');
 
   // ── Breakeven stop insight — uses BE_TRIGGER and PARTIAL_TRIGGER from Config ──
