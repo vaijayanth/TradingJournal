@@ -1352,15 +1352,15 @@ tbody tr:hover { filter: brightness(0.97); }
       </details>
     </div>
     <div class="card">
-      <div class="chart-title">Entry Velocity</div>
-      <div class="chart-sub">New positions opened per week — primary overtrading detector</div>
+      <div class="chart-title">New Positions Per Week</div>
+      <div class="chart-sub">Amber = weeks with ≥3 entries · bright = current week</div>
       <div id="chart-velocity" style="height:240px;"></div>
-      <div id="velocity-insight" style="margin-top:8px;font-size:12px;color:var(--text-muted)"></div>
+      <div id="velocity-insight" style="margin-top:8px;font-size:12px;color:var(--text-muted);line-height:1.8"></div>
       <details style="margin-top:6px">
-        <summary style="font-size:12px;font-weight:600;color:var(--text-muted);cursor:pointer;padding:4px 0;user-select:none">What to look for &amp; action ▸</summary>
+        <summary style="font-size:12px;font-weight:600;color:var(--text-muted);cursor:pointer;padding:4px 0;user-select:none">How to read this ▸</summary>
         <div style="padding:10px 12px;background:var(--surface2);border-radius:8px;font-size:12px;line-height:1.7;color:var(--text-secondary);margin-top:6px">
-          Weeks with <strong>&gt;3 new entries</strong> are a warning sign. Overtrading often follows a loss streak or a big win.<br>
-          <strong>Action:</strong> Find worst-performing weeks and cross-check with velocity spikes. Consider max 2–3 new positions per week.
+          The key question is not just <em>how many</em> entries per week, but whether high-entry weeks perform worse. If they do → overtrading. If they don't → you were catching genuine breakout clusters.<br>
+          <strong>Warning:</strong> Spike weeks that immediately follow a 3+ loss streak are the highest-risk entries (revenge trading or forcing trades in a bad market).
         </div>
       </details>
     </div>
@@ -4168,8 +4168,40 @@ function initAnalysisCharts(open, closed) {
     const maxVel = Math.max(...velData);
     const overWks = velData.filter(v=>v>=3).length;
     const curWkVal = wkMap[_curWkKey] || 0;
-    let velTxt = `Avg ${avgVel}/week · peak ${maxVel} · ${overWks} week${overWks!==1?'s':''} above threshold`;
+
+    // Performance comparison: high-velocity weeks vs normal weeks (on closed trades)
+    const tradesByWk = {};
+    closed.forEach(t => {
+      if (!t.openDate) return;
+      const d = parseDate(t.openDate); if (isNaN(d)) return;
+      const jan1 = new Date(d.getFullYear(),0,1);
+      const wk = Math.ceil((((d-jan1)/86400000)+jan1.getDay()+1)/7);
+      const key = d.getFullYear()+'-W'+String(wk).padStart(2,'0');
+      if (!tradesByWk[key]) tradesByWk[key] = [];
+      tradesByWk[key].push(t);
+    });
+    const highWkTrades = [], normWkTrades = [];
+    wkKeys.forEach((k,i) => {
+      const trades = tradesByWk[k] || [];
+      if (velData[i] >= 3) highWkTrades.push(...trades);
+      else normWkTrades.push(...trades);
+    });
+    const avgPl = trades => trades.length ? trades.reduce((s,t)=>s+t.finalPlPct,0)/trades.length : null;
+    const highAvg = avgPl(highWkTrades), normAvg = avgPl(normWkTrades);
+
+    let velTxt = `Avg ${avgVel}/week · peak ${maxVel}/week · ${overWks} week${overWks!==1?'s':''} ≥3 entries`;
     if (curWkVal > 0) velTxt += ` · <strong style="color:var(--accent)">This week: ${curWkVal}</strong>`;
+
+    if (highAvg !== null && normAvg !== null && highWkTrades.length >= 3) {
+      const diff = highAvg - normAvg;
+      if (diff < -0.5) {
+        velTxt += `<br>⚠ High-entry weeks avg <strong style="color:var(--red)">${highAvg.toFixed(1)}%</strong> vs normal weeks <strong>${normAvg.toFixed(1)}%</strong> — busy weeks underperform. Possible overtrading.`;
+      } else if (diff > 0.5) {
+        velTxt += `<br>✅ High-entry weeks avg <strong style="color:var(--green)">${highAvg.toFixed(1)}%</strong> vs normal weeks <strong>${normAvg.toFixed(1)}%</strong> — spike weeks are catching real breakout clusters.`;
+      } else {
+        velTxt += `<br>High-entry weeks avg <strong>${highAvg.toFixed(1)}%</strong> vs normal <strong>${normAvg.toFixed(1)}%</strong> — no meaningful difference.`;
+      }
+    }
     velInsEl.innerHTML = velTxt;
   }
 
