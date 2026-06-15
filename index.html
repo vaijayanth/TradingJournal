@@ -3472,19 +3472,21 @@ function initPerfCharts(closed, initialCapital, open) {
   }
 
   // ── Indexed Equity Curve (by trade number) ──
+  let eq2 = initialCapital || 0;
+  sorted.forEach(t => { eq2 += t.finalPl; }); // pre-compute final realised equity for insight
   const indexedEl = document.getElementById('chart-indexed-equity');
   if (indexedEl && sorted.length > 0) {
-    let eq2 = initialCapital || 0;
+    let eq2inner = initialCapital || 0;
     const realisedPoints = []; // {x, y} — one per closed trade
     sorted.forEach((t, i) => {
-      eq2 += t.finalPl;
-      const ret = initialCapital > 0 ? parseFloat(((eq2 - initialCapital) / initialCapital * 100).toFixed(2)) : 0;
+      eq2inner += t.finalPl;
+      const ret = initialCapital > 0 ? parseFloat(((eq2inner - initialCapital) / initialCapital * 100).toFixed(2)) : 0;
       realisedPoints.push(ret);
     });
 
     // Combined "Now" point — extend curve to realised + all open MTM
     const totalOpenMTM2 = (open||[]).reduce((s,t) => s + (t.notionalPl||0), 0);
-    const combRet2 = initialCapital > 0 ? parseFloat(((eq2 + totalOpenMTM2 - initialCapital) / initialCapital * 100).toFixed(2)) : 0;
+    const combRet2 = initialCapital > 0 ? parseFloat(((eq2inner + totalOpenMTM2 - initialCapital) / initialCapital * 100).toFixed(2)) : 0;
     const hasCombined = totalOpenMTM2 !== 0;
 
     // Realised series (area) — N points. Combined series (dashed line) — last realised point + "Now"
@@ -3512,7 +3514,7 @@ function initPerfCharts(closed, initialCapital, open) {
         labels: { ...baseOpts().xaxis.labels, hideOverlappingLabels: true },
       },
       yaxis: { labels: { style: { colors: c.text, fontSize:'11px' }, formatter: v => v != null ? (v>=0?'+':'')+v.toFixed(1)+'%' : '' } },
-      colors: [eq2 >= (initialCapital||0) ? c.green : c.red, c.amber],
+      colors: [eq2inner >= (initialCapital||0) ? c.green : c.red, c.amber],
       fill: { type: ['gradient', 'solid'], gradient: { shadeIntensity:1, opacityFrom:0.25, opacityTo:0.02 } },
       stroke: { curve: 'monotoneCubic', width: [2, 2], dashArray: [0, 6] },
       dataLabels: { enabled: false },
