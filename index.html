@@ -1218,20 +1218,21 @@ tbody tr:hover { filter: brightness(0.97); }
       <details style="margin-top:10px">
         <summary style="font-size:12px;font-weight:600;color:var(--text-muted);cursor:pointer;padding:4px 0;user-select:none">What to look for &amp; action ▸</summary>
         <div style="padding:10px 12px;background:var(--surface2);border-radius:8px;font-size:12px;line-height:1.7;color:var(--text-secondary);margin-top:6px">
-          Bulk of bars should land in the <strong>1–2% risk zone</strong>. Spread across all buckets = inconsistent sizing.<br>
-          <strong>Action:</strong> Many &gt;3% → stops too wide. Most &lt;1% → stops may be too tight, getting hit by noise.
+          For VCP/breakout entries, <strong>3–7% stop distance is the healthy zone</strong> — tight enough for good R:R, wide enough to survive intraday noise. Variation across buckets is <em>intentional</em>: fixed ₹ risk means wider stop = smaller position.<br>
+          <strong>&lt;2%:</strong> too tight — normal volatility will stop you out before the trade works.<br>
+          <strong>&gt;10%:</strong> too wide — you need a huge move just to 1:1 your risk.
         </div>
       </details>
     </div>
     <div class="card">
-      <div class="chart-title">Win Rate by Risk Size</div>
-      <div class="chart-sub">Do tighter or wider stops produce better outcomes?</div>
+      <div class="chart-title">Win Rate by Stop Distance</div>
+      <div class="chart-sub">Do tighter or wider stops produce better win rates?</div>
       <div id="chart-tm-wr-by-risk" style="height:220px"></div>
       <details style="margin-top:10px">
         <summary style="font-size:12px;font-weight:600;color:var(--text-muted);cursor:pointer;padding:4px 0;user-select:none">What to look for &amp; action ▸</summary>
         <div style="padding:10px 12px;background:var(--surface2);border-radius:8px;font-size:12px;line-height:1.7;color:var(--text-secondary);margin-top:6px">
-          Find the risk bucket with the <strong>best win rate</strong> — that's your edge zone. Tighter stops winning less = too close to noise.<br>
-          <strong>Action:</strong> Move stop placement toward your best-win-rate bucket. Ideally 1–2% risk = highest win rate.
+          The bucket with the highest win rate = your optimal stop placement zone. If tight stops (&lt;2%) win <em>less</em>, they're getting hit by noise before the trade works.<br>
+          <strong>Action:</strong> Target the stop distance where win rate peaks. For most Minervini setups this is 3–5% — below the VCP low or pivot base.
         </div>
       </details>
     </div>
@@ -4261,22 +4262,27 @@ function initAnalysisCharts(open, closed) {
     beInsightEl.textContent = 'Not enough closed trades to compute breakeven stop analysis.';
   }
 
-  // ── Init Risk % Distribution histogram ──
-  // Use initRiskPct (col L) for the % charts — separate from withRisk which filters on initRiskRs
+  // ── Stop Distance % Distribution (col L = stop % from entry = initRiskPct) ──
+  // Buckets sized for Minervini VCP/breakout trades where 3–7% is the healthy stop zone.
+  // Note: variation in % is EXPECTED — fixed ₹ risk means wider stop = smaller position. That's correct.
   const withRiskPctOnly = tmClosed.filter(t => t.initRiskPct && Math.abs(t.initRiskPct) > 0);
-  const riskBuckets = {'<0.5%':0,'0.5–1%':0,'1–1.5%':0,'1.5–2%':0,'2–2.5%':0,'2.5–3%':0,'>3%':0};
+  const riskBuckets = {'<2%':0,'2–3%':0,'3–5%':0,'5–7%':0,'7–10%':0,'>10%':0};
   withRiskPctOnly.forEach(t => {
     const r = Math.abs(t.initRiskPct);
-    if (r < 0.5) riskBuckets['<0.5%']++;
-    else if (r < 1) riskBuckets['0.5–1%']++;
-    else if (r < 1.5) riskBuckets['1–1.5%']++;
-    else if (r < 2) riskBuckets['1.5–2%']++;
-    else if (r < 2.5) riskBuckets['2–2.5%']++;
-    else if (r < 3) riskBuckets['2.5–3%']++;
-    else riskBuckets['>3%']++;
+    if (r < 2)       riskBuckets['<2%']++;
+    else if (r < 3)  riskBuckets['2–3%']++;
+    else if (r < 5)  riskBuckets['3–5%']++;
+    else if (r < 7)  riskBuckets['5–7%']++;
+    else if (r < 10) riskBuckets['7–10%']++;
+    else             riskBuckets['>10%']++;
   });
   const riskKeys = Object.keys(riskBuckets);
   const riskData = riskKeys.map(k => riskBuckets[k]);
+  // Color: <2% = red (too tight, noise risk), 2-3% = amber, 3-7% = green (sweet spot), >7% = amber, >10% = red
+  const riskColors = [c.red, c.amber, c.green, c.green, c.amber, c.red];
+  // Avg stop distance
+  const avgStopDist = withRiskPctOnly.length > 0
+    ? withRiskPctOnly.reduce((s,t) => s + Math.abs(t.initRiskPct), 0) / withRiskPctOnly.length : 0;
   const riskDistEl = document.getElementById('chart-tm-risk-dist');
   if (riskDistEl && withRiskPctOnly.length > 0) {
     const rdChart = new ApexCharts(riskDistEl, {
@@ -4284,26 +4290,47 @@ function initAnalysisCharts(open, closed) {
       series: [{ name: 'Trades', data: riskData }],
       xaxis: { ...baseOpts().xaxis, categories: riskKeys },
       yaxis: { labels: { style:{colors:c.text,fontSize:'11px'} }, title: { text:'# trades', style:{color:c.text,fontSize:'10px'} } },
-      colors: riskData.map((_, i) => i <= 1 ? c.green : i <= 3 ? c.accent : c.red),
+      colors: riskColors,
       plotOptions: { bar: { columnWidth:'65%', distributed:true, borderRadius:3 } },
       legend: { show:false },
       dataLabels: { enabled: true, formatter: v => v > 0 ? v : '', style:{fontSize:'11px',colors:[c.text]} },
-      annotations: { xaxis: [{ x: '1–1.5%', borderColor: c.green, label: { text: 'Sweet spot', style:{color:c.green,fontSize:'10px',background:'transparent'}, position:'top', orientation:'horizontal' } }] },
-      tooltip: { ...baseOpts().tooltip, y: { formatter: v => v + ' trade' + (v!==1?'s':'') } },
+      annotations: {
+        xaxis: [{ x: '3–5%', borderColor: c.green, label: { text: 'VCP sweet spot', style:{color:c.green,fontSize:'10px',background:'transparent'}, position:'top', orientation:'horizontal' } }],
+        yaxis: avgStopDist > 0 ? [] : [],
+      },
+      tooltip: { ...baseOpts().tooltip, y: { formatter: (v, {dataPointIndex}) => {
+        const impliedPos = avgInitRiskRs > 0 && riskKeys[dataPointIndex]
+          ? '≈ ₹' + Math.round(avgInitRiskRs / (parseFloat(riskKeys[dataPointIndex]) / 100 || 0.04)).toLocaleString('en-IN') + ' position'
+          : '';
+        return v + ' trade' + (v!==1?'s':'') + (impliedPos ? ' · ' + impliedPos : '');
+      }}},
     });
     rdChart.render(); analysisCharts.push(rdChart);
+    // Add insight below chart
+    if (avgStopDist > 0) {
+      const riskInsEl = document.createElement('div');
+      riskInsEl.style.cssText = 'margin-top:8px;font-size:12px;color:var(--text-muted)';
+      const tightCount = withRiskPctOnly.filter(t => Math.abs(t.initRiskPct) < 2).length;
+      const wideCount = withRiskPctOnly.filter(t => Math.abs(t.initRiskPct) > 10).length;
+      let riskTxt = `Avg stop distance: <strong>${avgStopDist.toFixed(1)}%</strong> from entry`;
+      if (avgInitRiskRs > 0) riskTxt += ` · implies avg position ≈ <strong>₹${Math.round(avgInitRiskRs / (avgStopDist/100)).toLocaleString('en-IN')}</strong>`;
+      if (tightCount > 0) riskTxt += ` · ⚠️ ${tightCount} trade${tightCount!==1?'s':''} with &lt;2% stop (noise risk)`;
+      if (wideCount > 0) riskTxt += ` · ⚠️ ${wideCount} trade${wideCount!==1?'s':''} with &gt;10% stop (poor R:R)`;
+      riskInsEl.innerHTML = riskTxt;
+      riskDistEl.parentElement.appendChild(riskInsEl);
+    }
   }
 
   // ── Win Rate by Risk Bucket ──
   const riskWR = {};
   withRiskPctOnly.forEach(t => {
     const r = Math.abs(t.initRiskPct);
-    const bucket = r < 1 ? '<1%' : r < 1.5 ? '1–1.5%' : r < 2 ? '1.5–2%' : r < 3 ? '2–3%' : '>3%';
+    const bucket = r < 2 ? '<2%' : r < 3 ? '2–3%' : r < 5 ? '3–5%' : r < 7 ? '5–7%' : r < 10 ? '7–10%' : '>10%';
     if (!riskWR[bucket]) riskWR[bucket] = {w:0,t:0};
     riskWR[bucket].t++;
     if (t.finalPlPct > 0) riskWR[bucket].w++;
   });
-  const riskWRKeys = ['<1%','1–1.5%','1.5–2%','2–3%','>3%'].filter(k => riskWR[k] && riskWR[k].t > 0);
+  const riskWRKeys = ['<2%','2–3%','3–5%','5–7%','7–10%','>10%'].filter(k => riskWR[k] && riskWR[k].t > 0);
   const riskWRData = riskWRKeys.map(k => parseFloat((riskWR[k].w / riskWR[k].t * 100).toFixed(1)));
   const riskWRCounts = riskWRKeys.map(k => riskWR[k].t);
   const wrByRiskEl = document.getElementById('chart-tm-wr-by-risk');
