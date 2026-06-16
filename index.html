@@ -4408,13 +4408,14 @@ function initAnalysisCharts(open, closed) {
     const avgMfeWin = avg(maeWinners, t => t.mfe);
     const avgFinalWin = avg(maeWinners, t => t.finalPlPct);
     const givebackPct = avgMfeWin > 0 ? (1 - avgFinalWin / avgMfeWin) * 100 : 0;
-    const lockPct = Math.max(50, Math.min(80, Math.round(100 - givebackPct + 15)));
+    const curPartialTrigger = (loadConfig().partialTrigger || 10);
+    const suggestedTrigger = Math.max(5, Math.min(curPartialTrigger - 2, Math.round(avgMfeWin * 0.4)));
     setTxt('mfe-peak-val', '+' + avgMfeWin.toFixed(1) + '%');
     setTxt('mfe-kept-val', '+' + avgFinalWin.toFixed(1) + '%');
     setTxt('mfe-plain', `On average, your winners touched <strong>+${avgMfeWin.toFixed(1)}%</strong> at their best moment, but you walked away with <strong style="color:var(--green)">+${avgFinalWin.toFixed(1)}%</strong> — giving back about <strong style="color:${givebackPct > 50 ? 'var(--red)' : 'var(--amber)'}">${givebackPct.toFixed(0)}%</strong> of the peak gain.<br><br>` +
-      (givebackPct > 50
-        ? `<strong>Action:</strong> Your trailing stop is too loose. Once a trade is up <strong>+${(avgMfeWin*0.5).toFixed(0)}%</strong> or more, tighten your trail so you're locking in at least <strong style="color:var(--green)">${lockPct}%</strong> of the peak gain reached so far — not just trailing the raw 7-day low.`
-        : `<strong>Action:</strong> Your give-back is within a healthy range — this is just the normal cost of letting winners run. No change needed.`));
+      (givebackPct > 50 && suggestedTrigger < curPartialTrigger
+        ? `<strong>Action:</strong> You only exit when your 7-day-low/manual trail is hit, so this give-back is mostly happening between your peak and where the trail finally catches up. The lever you control is your <strong>partial-exit trigger</strong> (currently <strong>+${curPartialTrigger}%</strong>) — locking in 50% earlier, at around <strong style="color:var(--green)">+${suggestedTrigger}%</strong>, would bank more of the move before the pullback erases it. The trail still handles the remaining 50% as it does today.`
+        : `<strong>Action:</strong> Your give-back is within a healthy range for a system that exits purely on the trailing stop — this is just the normal cost of letting winners run. No change needed.`));
 
     const ratio = avgMaeWin > 0 ? avgMfeWin / avgMaeWin : 0;
     const highRatioTrades = maeMfeTrades.filter(t => t.mae > 0 && (t.mfe / t.mae) >= 3);
