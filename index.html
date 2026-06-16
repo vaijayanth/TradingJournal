@@ -1729,10 +1729,14 @@ tbody tr:hover { filter: brightness(0.97); }
     </div>
 
     <!-- Active Spreads Panel -->
-    <div class="section-title">Active Spreads <span id="fno-active-count" style="font-size:10px;background:var(--accent-soft);color:var(--accent);padding:2px 8px;border-radius:10px;margin-left:6px;text-transform:none;letter-spacing:0">—</span></div>
-    <div id="fno-active-spreads" style="margin-bottom:4px">
-      <div style="padding:16px;text-align:center;color:var(--text-muted);font-size:13px">Loading…</div>
-    </div>
+    <details open style="margin-bottom:4px">
+      <summary class="section-title" style="cursor:pointer;user-select:none;display:flex;align-items:center;gap:6px">
+        Active Spreads <span id="fno-active-count" style="font-size:10px;background:var(--accent-soft);color:var(--accent);padding:2px 8px;border-radius:10px;text-transform:none;letter-spacing:0">—</span>
+      </summary>
+      <div id="fno-active-spreads">
+        <div style="padding:16px;text-align:center;color:var(--text-muted);font-size:13px">Loading…</div>
+      </div>
+    </details>
 
     <!-- Alerts -->
     <div class="section-title">Alerts</div>
@@ -1741,10 +1745,14 @@ tbody tr:hover { filter: brightness(0.97); }
     </div>
 
     <!-- Top Candidates -->
-    <div class="section-title">Top Candidates</div>
-    <div id="fno-top-candidates">
-      <div style="padding:16px;text-align:center;color:var(--text-muted);font-size:13px">Loading…</div>
-    </div>
+    <details open>
+      <summary class="section-title" style="cursor:pointer;user-select:none;display:flex;align-items:center;gap:6px">
+        Top Candidates
+      </summary>
+      <div id="fno-top-candidates">
+        <div style="padding:16px;text-align:center;color:var(--text-muted);font-size:13px">Loading…</div>
+      </div>
+    </details>
   </div>
 
   <!-- F&O Watchlist -->
@@ -1768,29 +1776,32 @@ tbody tr:hover { filter: brightness(0.97); }
       </div>
       <div style="margin-left:auto;font-size:12px;color:var(--text-muted)" id="fno-wl-count">—</div>
     </div>
-    <div style="overflow-x:auto">
-      <table class="trades-table" style="font-size:12px;min-width:900px">
-        <thead>
-          <tr>
-            <th class="fno-sort-th" onclick="fnoSetSort('stock')">Stock <span class="fno-sort-icon" id="fno-sort-stock"></span></th>
-            <th class="fno-sort-th" onclick="fnoSetSort('cmp')">CMP <span class="fno-sort-icon" id="fno-sort-cmp"></span></th>
-            <th>Trend</th>
-            <th class="fno-sort-th" onclick="fnoSetSort('bull')">Bull Score <span class="fno-sort-icon" id="fno-sort-bull"></span></th>
-            <th class="fno-sort-th" onclick="fnoSetSort('bear')">Bear Score <span class="fno-sort-icon" id="fno-sort-bear"></span></th>
-            <th>HA</th>
-            <th title="200 EMA Above">200E</th>
-            <th title="50 EMA Above">50E</th>
-            <th title="20 EMA Above">20E</th>
-            <th>Breakouts</th>
-            <th class="fno-sort-th" onclick="fnoSetSort('pct7dl')">% from 7DL <span class="fno-sort-icon" id="fno-sort-pct7dl"></span></th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody id="fno-watchlist-tbody">
-          <tr><td colspan="12" style="text-align:center;color:var(--text-muted);padding:20px">Loading…</td></tr>
-        </tbody>
-      </table>
-    </div>
+    <details open>
+      <summary style="cursor:pointer;user-select:none;font-size:12px;font-weight:600;color:var(--text-muted);margin-bottom:6px">Full Watchlist</summary>
+      <div style="overflow-x:auto">
+        <table class="trades-table" style="font-size:12px;min-width:900px">
+          <thead>
+            <tr>
+              <th class="fno-sort-th" onclick="fnoSetSort('stock')">Stock <span class="fno-sort-icon" id="fno-sort-stock"></span></th>
+              <th class="fno-sort-th" onclick="fnoSetSort('cmp')">CMP <span class="fno-sort-icon" id="fno-sort-cmp"></span></th>
+              <th>Trend</th>
+              <th class="fno-sort-th" onclick="fnoSetSort('bull')">Bull Score <span class="fno-sort-icon" id="fno-sort-bull"></span></th>
+              <th class="fno-sort-th" onclick="fnoSetSort('bear')">Bear Score <span class="fno-sort-icon" id="fno-sort-bear"></span></th>
+              <th>HA</th>
+              <th title="200 EMA Above">200E</th>
+              <th title="50 EMA Above">50E</th>
+              <th title="20 EMA Above">20E</th>
+              <th>Breakouts</th>
+              <th class="fno-sort-th" onclick="fnoSetSort('pct7dl')">% from 7DL <span class="fno-sort-icon" id="fno-sort-pct7dl"></span></th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody id="fno-watchlist-tbody">
+            <tr><td colspan="12" style="text-align:center;color:var(--text-muted);padding:20px">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </details>
     <div style="margin-top:16px;padding:12px;background:var(--surface);border-radius:10px;border:1px solid var(--border);font-size:12px;color:var(--text-secondary)">
       <strong>Your strategy:</strong>
       Uptrend → Sell 0.2Δ PE + buy hedge 2 strikes lower (Put Spread) ·
