@@ -1407,32 +1407,35 @@ tbody tr:hover { filter: brightness(0.97); }
     <div id="chart-analysis-monthly" style="height:240px;"></div>
   </div>
 
+  <!-- 5c. MAE / MFE Analysis -->
+  <div class="section-title" style="margin-top:20px">MAE / MFE — Trade Excursion Analysis</div>
+  <div class="grid-2" style="margin-bottom:14px">
+    <div class="card">
+      <div class="chart-title">MAE % — Pain Before Recovery</div>
+      <div class="chart-sub">Winners vs losers: how far did price move against you before the trade resolved?</div>
+      <div id="chart-mae-dist" style="height:220px"></div>
+      <div id="mae-insight" style="margin-top:8px;font-size:12px;color:var(--text-secondary);line-height:1.7"></div>
+    </div>
+    <div class="card">
+      <div class="chart-title">MFE % — Peak Gain Reached</div>
+      <div class="chart-sub">How much upside did each trade touch before you exited?</div>
+      <div id="chart-mfe-dist" style="height:220px"></div>
+      <div id="mfe-insight" style="margin-top:8px;font-size:12px;color:var(--text-secondary);line-height:1.7"></div>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:14px;border-left:3px solid var(--accent)">
+    <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em">MFE:MAE Ratio — Edge Finder</div>
+    <div id="mfe-mae-insight" style="font-size:13px;line-height:1.7;color:var(--text-secondary)">Loading…</div>
+  </div>
+
   <!-- 6. Unlock Advanced Analytics (collapsible) -->
   <details style="margin-top:20px" id="unlock-analytics">
     <summary style="cursor:pointer;display:flex;align-items:center;gap:8px;padding:10px 0;font-size:14px;font-weight:700;color:var(--text-primary);border-top:1px solid var(--border);user-select:none">
-      🔓 Unlock Advanced Analytics — Add These Columns to Your Sheet
+      🔓 Unlock More Advanced Analytics — Add These Columns to Your Sheet
       <span style="font-size:12px;font-weight:400;color:var(--text-muted)">(click to expand)</span>
     </summary>
-    <div style="font-size:12px;color:var(--text-muted);margin:8px 0 12px">Inspired by real trader analysis: MAE + MFE:MAE ratio separated 14% win rate from 100% across 24 consecutive wins</div>
+    <div style="font-size:12px;color:var(--text-muted);margin:8px 0 12px">MAE/MFE are now live above (columns AL/AM). These are still pending:</div>
     <div class="grid-3" style="margin-bottom:14px">
-      <div class="card card-sm" style="border:1px dashed var(--border)">
-        <div class="stat-label" style="color:var(--red)">🔑 MAE % — Most Powerful Signal</div>
-        <div style="font-size:13px;margin-top:8px;line-height:1.6;color:var(--text-secondary)">
-          Max Adverse Excursion — how far the trade went <strong>against you</strong> before recovering or stopping out.<br><br>
-          <strong>Real data:</strong> MAE &lt;1.5% → 100% WR · MAE &gt;3% → 21% WR<br><br>
-          <strong>Add col O:</strong> Formula <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">=MIN(low range during trade)</code> → compute <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">=(entry-min)/entry*100</code>
-        </div>
-        <div class="stat-badge badge-red" style="margin-top:10px">Add column O → maeCol in Config</div>
-      </div>
-      <div class="card card-sm" style="border:1px dashed var(--border)">
-        <div class="stat-label" style="color:var(--red)">🔑 MFE % — The Game Filter</div>
-        <div style="font-size:13px;margin-top:8px;line-height:1.6;color:var(--text-secondary)">
-          Max Favorable Excursion — highest point reached while in the trade.<br><br>
-          <strong>Real data:</strong> MFE:MAE &gt;3x → 100% WR on 24 consecutive trades · &lt;3x → 14% WR<br><br>
-          <strong>Add col P:</strong> Formula <code style="font-size:11px;background:var(--border);padding:1px 4px;border-radius:3px">=(max-entry)/entry*100</code> during trade
-        </div>
-        <div class="stat-badge badge-red" style="margin-top:10px">Add column P → mfeCol in Config</div>
-      </div>
       <div class="card card-sm" style="border:1px dashed var(--border)">
         <div class="stat-label" style="color:var(--amber)">⏰ Entry Time</div>
         <div style="font-size:13px;margin-top:8px;line-height:1.6;color:var(--text-secondary)">
@@ -1801,6 +1804,7 @@ const DEFAULT_CONFIG = {
   partialPlCol: 'AB', finalExitPriceCol: 'AC', finalPlCol: 'AD',
   finalPlPctCol: 'AE', ageCol: 'AF',
   haColourCol: 'AG', haChangedCol: 'AH',
+  maeCol: 'AL', mfeCol: 'AM',
   portfolioCell: 'AK26', initialCapCell: 'AK20',
   maxHeat: 5, partialTrigger: 10, beTrigger: 5, stopProximity: 2, heatGreen: 2.5, heatAmber: 4, maxAge: 60, maxPositions: 15,
 };
@@ -1848,6 +1852,7 @@ async function fetchData() {
     finalExitPriceCol: cfg.finalExitPriceCol, finalPlCol: cfg.finalPlCol,
     finalPlPctCol: cfg.finalPlPctCol, ageCol: cfg.ageCol,
     haColourCol: cfg.haColourCol, haChangedCol: cfg.haChangedCol,
+    maeCol: cfg.maeCol, mfeCol: cfg.mfeCol,
     portfolioCell: cfg.portfolioCell, initialCapCell: cfg.initialCapCell,
   });
   try {
@@ -3058,6 +3063,8 @@ function renderColMappings() {
     { label: 'Trade Age (days)', key: 'ageCol' },
     { label: 'HA Colour (AG)', key: 'haColourCol', optional: true },
     { label: 'HA Colour Changed (AH)', key: 'haChangedCol', optional: true },
+    { label: 'MAE % — Max Adverse Excursion (AL)', key: 'maeCol', optional: true },
+    { label: 'MFE % — Max Favorable Excursion (AM)', key: 'mfeCol', optional: true },
   ];
   const container = document.getElementById('col-mappings');
   container.innerHTML = fields.map(f => `
@@ -3149,13 +3156,13 @@ function saveAllConfig() {
   ['flagCol','stockCol','openDateCol','closeDateCol','ema21Col','cmpCol','sevenDayLowCol','stopLossCol',
    'initRiskRsCol','initRiskPctCol','qtyCol','entryPriceCol','setupTypeCol','pctFromStopCol','plPctCol',
    'notionalPlCol','partialQtyCol','partialPriceCol','partialPlCol','finalExitPriceCol','finalPlCol','finalPlPctCol','ageCol',
-   'haColourCol','haChangedCol'
+   'haColourCol','haChangedCol','maeCol','mfeCol'
   ].forEach(key => { const v = getVal('cfg-' + key, cfg[key]).toUpperCase().trim(); if (v) cfg[key] = v; });
   // Validate column letters — warn if any col mapping looks wrong (not A-ZZ pattern)
   const colKeys = ['flagCol','stockCol','openDateCol','closeDateCol','ema21Col','cmpCol','sevenDayLowCol','stopLossCol',
     'initRiskRsCol','initRiskPctCol','qtyCol','entryPriceCol','setupTypeCol','pctFromStopCol','plPctCol',
     'notionalPlCol','partialQtyCol','partialPriceCol','partialPlCol','finalExitPriceCol','finalPlCol','finalPlPctCol','ageCol',
-    'haColourCol','haChangedCol'];
+    'haColourCol','haChangedCol','maeCol','mfeCol'];
   const badCols = colKeys.filter(k => cfg[k] && !/^[A-Z]{1,3}$/.test(cfg[k]));
   if (badCols.length > 0) {
     showToast('⚠ Invalid column(s): ' + badCols.map(k => k.replace('Col','') + '=' + cfg[k]).join(', '), 'red');
@@ -4349,6 +4356,87 @@ function initAnalysisCharts(open, closed) {
       annotations: { yaxis: [{ y:0, borderColor:c.text, strokeDashArray:2 }] },
       tooltip: { y: { formatter: v => v == null ? '—' : (v>=0?'+':'')+v.toLocaleString('en-IN') } },
     }); mpa.render(); analysisCharts.push(mpa); } catch(e) { console.warn('chart-analysis-monthly failed', e); }
+  }
+
+  // ── MAE / MFE Analysis ──
+  const maeMfeTrades = closed.filter(t => t.mae > 0 || t.mfe > 0);
+  const maeBucket = v => v < 2 ? '0–2%' : v < 4 ? '2–4%' : v < 6 ? '4–6%' : v < 10 ? '6–10%' : '>10%';
+  const maeBuckets = ['0–2%','2–4%','4–6%','6–10%','>10%'];
+  if (maeMfeTrades.length > 0) {
+    const maeWinners = maeMfeTrades.filter(t => t.finalPlPct > 0);
+    const maeLosers = maeMfeTrades.filter(t => t.finalPlPct < 0);
+    const bucketCount = (arr, fn) => maeBuckets.map(b => arr.filter(t => maeBucket(fn(t)) === b).length);
+    try { const maeChart = new ApexCharts(document.getElementById('chart-mae-dist'), {
+      ...baseOpts(220), chart: { ...baseOpts(220).chart, type: 'bar' },
+      series: [
+        { name: 'Winners', data: bucketCount(maeWinners, t => t.mae) },
+        { name: 'Losers', data: bucketCount(maeLosers, t => t.mae) },
+      ],
+      xaxis: { ...baseOpts().xaxis, categories: maeBuckets },
+      yaxis: { labels: { style:{colors:c.text,fontSize:'11px'} } },
+      colors: [c.green, c.red],
+      plotOptions: { bar: { columnWidth: '65%', borderRadius: 3 } },
+      legend: { show: true, labels: { colors: c.text }, fontSize: '11px' },
+      dataLabels: { enabled: false },
+    }); maeChart.render(); analysisCharts.push(maeChart); } catch(e) { console.warn('chart-mae-dist failed', e); }
+
+    const mfeWinners = maeWinners, mfeLosers = maeLosers;
+    const mfeBucketFn = v => v < 5 ? '0–5%' : v < 10 ? '5–10%' : v < 20 ? '10–20%' : v < 35 ? '20–35%' : '>35%';
+    const mfeBuckets = ['0–5%','5–10%','10–20%','20–35%','>35%'];
+    const mfeBucketCount = (arr) => mfeBuckets.map(b => arr.filter(t => mfeBucketFn(t.mfe) === b).length);
+    try { const mfeChart = new ApexCharts(document.getElementById('chart-mfe-dist'), {
+      ...baseOpts(220), chart: { ...baseOpts(220).chart, type: 'bar' },
+      series: [
+        { name: 'Winners', data: mfeBucketCount(mfeWinners) },
+        { name: 'Losers', data: mfeBucketCount(mfeLosers) },
+      ],
+      xaxis: { ...baseOpts().xaxis, categories: mfeBuckets },
+      yaxis: { labels: { style:{colors:c.text,fontSize:'11px'} } },
+      colors: [c.green, c.red],
+      plotOptions: { bar: { columnWidth: '65%', borderRadius: 3 } },
+      legend: { show: true, labels: { colors: c.text }, fontSize: '11px' },
+      dataLabels: { enabled: false },
+    }); mfeChart.render(); analysisCharts.push(mfeChart); } catch(e) { console.warn('chart-mfe-dist failed', e); }
+
+    const avgMaeWin = maeWinners.length ? maeWinners.reduce((s,t)=>s+t.mae,0)/maeWinners.length : 0;
+    const avgMaeLoss = maeLosers.length ? maeLosers.reduce((s,t)=>s+t.mae,0)/maeLosers.length : 0;
+    const maeInsEl = document.getElementById('mae-insight');
+    if (maeInsEl) {
+      maeInsEl.innerHTML = `Avg MAE on winners: <strong style="color:var(--green)">${avgMaeWin.toFixed(1)}%</strong> · on losers: <strong style="color:var(--red)">${avgMaeLoss.toFixed(1)}%</strong><br>` +
+        (avgMaeWin < avgMaeLoss * 0.6
+          ? `→ Winners barely dip before running — your stop has room to tighten without getting shaken out of good trades.`
+          : `→ Winners and losers show similar early pain — hard to tell them apart early, which is normal for breakout entries.`);
+    }
+
+    const avgMfeWin = mfeWinners.length ? mfeWinners.reduce((s,t)=>s+t.mfe,0)/mfeWinners.length : 0;
+    const avgFinalWin = maeWinners.length ? maeWinners.reduce((s,t)=>s+t.finalPlPct,0)/maeWinners.length : 0;
+    const givebackPct = avgMfeWin > 0 ? (1 - avgFinalWin / avgMfeWin) * 100 : 0;
+    const mfeInsEl = document.getElementById('mfe-insight');
+    if (mfeInsEl) {
+      mfeInsEl.innerHTML = `Avg peak gain on winners: <strong>${avgMfeWin.toFixed(1)}%</strong> · avg final result: <strong style="color:var(--green)">+${avgFinalWin.toFixed(1)}%</strong><br>` +
+        `→ You're giving back <strong style="color:${givebackPct > 50 ? 'var(--red)' : 'var(--amber)'}">${givebackPct.toFixed(0)}%</strong> of the peak move on average. Some give-back is the cost of trailing winners — but &gt;60% consistently means your trail is too loose.`;
+    }
+
+    const ratioEl = document.getElementById('mfe-mae-insight');
+    if (ratioEl && maeWinners.length >= 5) {
+      const ratio = avgMaeWin > 0 ? avgMfeWin / avgMaeWin : 0;
+      const highRatioTrades = maeMfeTrades.filter(t => t.mae > 0 && (t.mfe / t.mae) >= 3);
+      const lowRatioTrades = maeMfeTrades.filter(t => t.mae > 0 && (t.mfe / t.mae) < 3);
+      const hrWR = highRatioTrades.length ? highRatioTrades.filter(t=>t.finalPlPct>0).length / highRatioTrades.length * 100 : 0;
+      const lrWR = lowRatioTrades.length ? lowRatioTrades.filter(t=>t.finalPlPct>0).length / lowRatioTrades.length * 100 : 0;
+      ratioEl.innerHTML = `Avg MFE:MAE on winners ≈ <strong>${ratio.toFixed(1)}x</strong>.<br>` +
+        `Trades with MFE:MAE ≥ 3x (favourable move was at least 3× the pain endured): <strong style="color:var(--green)">${hrWR.toFixed(0)}% win rate</strong> (n=${highRatioTrades.length}) — vs <strong style="color:var(--red)">${lrWR.toFixed(0)}% win rate</strong> for trades below 3x (n=${lowRatioTrades.length}).<br>` +
+        `→ <strong>Action:</strong> If this gap holds up over more trades, look at what's common across your high-ratio setups (entry trigger, setup type, market regime) — that's your repeatable edge.`;
+    } else if (ratioEl) {
+      ratioEl.textContent = 'Need at least 5 closed trades with MAE/MFE data to compute a reliable ratio.';
+    }
+  } else {
+    const maeInsEl = document.getElementById('mae-insight');
+    const mfeInsEl = document.getElementById('mfe-insight');
+    const ratioEl = document.getElementById('mfe-mae-insight');
+    if (maeInsEl) maeInsEl.textContent = 'No MAE data yet — add column AL formulas to your sheet.';
+    if (mfeInsEl) mfeInsEl.textContent = 'No MFE data yet — add column AM formulas to your sheet.';
+    if (ratioEl) ratioEl.textContent = 'Waiting on MAE/MFE data.';
   }
 
   // ── TRADE MANAGEMENT ANALYSIS ──────────────────────
