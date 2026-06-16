@@ -1695,6 +1695,7 @@ tbody tr:hover { filter: brightness(0.97); }
   <button class="nav-tab active" onclick="showFnoPage('fno-dashboard', this)">Dashboard</button>
   <button class="nav-tab" onclick="showFnoPage('fno-watchlist', this)">Watchlist</button>
 </div>
+<div id="fno-broker-tabs" style="display:none;padding:8px 20px;border-bottom:1px solid var(--border);gap:6px;flex-wrap:wrap" class="nav-tabs"></div>
 
 <!-- ════ F&O PAGES ════ -->
 <div id="fno-pages" style="display:none">
@@ -1773,9 +1774,6 @@ tbody tr:hover { filter: brightness(0.97); }
         <button class="fno-pill fno-pill-sec" onclick="fnoSetPill('trend','bullish',this)">🟢 Bullish</button>
         <button class="fno-pill fno-pill-sec" onclick="fnoSetPill('trend','bearish',this)">🔴 Bearish</button>
         <button class="fno-pill fno-pill-sec" onclick="fnoSetPill('trend','mixed',this)">⚪ Mixed</button>
-      </div>
-      <div style="display:flex;gap:4px;flex-wrap:wrap" id="fno-broker-pills">
-        <button class="fno-pill fno-pill-sec active" onclick="fnoSetPill('broker','all',this)">All Brokers</button>
       </div>
       <div style="margin-left:auto;font-size:12px;color:var(--text-muted)" id="fno-wl-count">—</div>
     </div>
@@ -5053,9 +5051,10 @@ async function refreshFnoData() {
     return;
   }
   window._fnoData = data;
-  fnoRenderBrokerPills(data.watchlist);
-  renderFnoDashboard(data.watchlist);
-  renderFnoWatchlist(data.watchlist);
+  fnoRenderBrokerTabs(data.watchlist);
+  const list = fnoFilteredWatchlist();
+  renderFnoDashboard(list);
+  renderFnoWatchlist(list);
   const ri = document.querySelector('.refresh-info');
   if (ri) ri.textContent = 'F&O updated ' + new Date().toLocaleTimeString('en-IN', {hour:'2-digit',minute:'2-digit'});
   showToast('F&O data refreshed ✓', 'green');
@@ -5399,7 +5398,7 @@ function fnoRenderTopCandidates(watchlist) {
 // F&O watchlist filter/sort state
 window._fnoFilterAction = 'all';
 window._fnoFilterTrend  = 'all';
-window._fnoFilterBroker = 'all';
+window._fnoActiveBroker = 'all'; // global broker tab — filters Dashboard + Watchlist together
 window._fnoSortCol      = null; // null = default (spread first, then bull score)
 window._fnoSortDir      = 1;    // 1 = asc, -1 = desc
 
@@ -5407,26 +5406,42 @@ function fnoSetPill(type, value, btn) {
   if (type === 'action') {
     window._fnoFilterAction = value;
     document.querySelectorAll('#fno-action-pills .fno-pill').forEach(b => b.classList.remove('active'));
-  } else if (type === 'trend') {
+  } else {
     window._fnoFilterTrend = value;
     document.querySelectorAll('#fno-trend-pills .fno-pill').forEach(b => b.classList.remove('active'));
-  } else {
-    window._fnoFilterBroker = value;
-    document.querySelectorAll('#fno-broker-pills .fno-pill').forEach(b => b.classList.remove('active'));
   }
   btn.classList.add('active');
   fnoApplyFilters();
 }
 
-// Build broker filter pills dynamically from whatever broker values appear in the watchlist
-function fnoRenderBrokerPills(watchlist) {
-  const el = document.getElementById('fno-broker-pills');
+// Returns the watchlist scoped to the currently-selected broker tab — feeds both Dashboard and Watchlist renders
+function fnoFilteredWatchlist() {
+  if (!window._fnoData) return [];
+  const all = window._fnoData.watchlist;
+  if (window._fnoActiveBroker === 'all') return all;
+  return all.filter(s => (s.broker || '') === window._fnoActiveBroker);
+}
+
+// Build broker tab bar dynamically from whatever broker values appear in the watchlist.
+// Selecting a tab re-renders the entire F&O Dashboard + Watchlist scoped to that broker.
+function fnoRenderBrokerTabs(watchlist) {
+  const el = document.getElementById('fno-broker-tabs');
   if (!el) return;
   const brokers = [...new Set(watchlist.map(s => s.broker).filter(Boolean))].sort();
-  if (brokers.length === 0) { el.innerHTML = ''; return; }
-  const current = window._fnoFilterBroker || 'all';
-  el.innerHTML = `<button class="fno-pill fno-pill-sec${current==='all'?' active':''}" onclick="fnoSetPill('broker','all',this)">All Brokers</button>` +
-    brokers.map(b => `<button class="fno-pill fno-pill-sec${current===b?' active':''}" onclick="fnoSetPill('broker','${b.replace(/'/g,"\\'")}',this)">${b}</button>`).join('');
+  if (brokers.length === 0) { el.style.display = 'none'; el.innerHTML = ''; return; }
+  el.style.display = 'flex';
+  const current = window._fnoActiveBroker || 'all';
+  el.innerHTML = `<button class="nav-tab${current==='all'?' active':''}" onclick="fnoSetBrokerTab('all',this)">All Brokers</button>` +
+    brokers.map(b => `<button class="nav-tab${current===b?' active':''}" onclick="fnoSetBrokerTab('${b.replace(/'/g,"\\'")}',this)">${b}</button>`).join('');
+}
+
+function fnoSetBrokerTab(value, btn) {
+  window._fnoActiveBroker = value;
+  document.querySelectorAll('#fno-broker-tabs .nav-tab').forEach(b => b.classList.remove('active'));
+  btn.classList.add('active');
+  const list = fnoFilteredWatchlist();
+  renderFnoDashboard(list);
+  renderFnoWatchlist(list);
 }
 
 function fnoSetSort(col) {
@@ -5437,7 +5452,7 @@ function fnoSetSort(col) {
 
 function fnoApplyFilters() {
   if (!window._fnoData) return;
-  renderFnoWatchlist(window._fnoData.watchlist);
+  renderFnoWatchlist(fnoFilteredWatchlist());
 }
 
 function renderFnoWatchlist(watchlist) {
@@ -5448,12 +5463,10 @@ function renderFnoWatchlist(watchlist) {
   const query = (document.getElementById('fno-wl-search')?.value || '').trim().toLowerCase();
   const actionF = window._fnoFilterAction || 'all';
   const trendF  = window._fnoFilterTrend  || 'all';
-  const brokerF = window._fnoFilterBroker || 'all';
   let list = watchlist.filter(s => {
     if (query && !s.stock.toLowerCase().includes(query)) return false;
     if (actionF !== 'all' && fnoAction(s) !== actionF) return false;
     if (trendF  !== 'all' && fnoTrend(s)  !== trendF)  return false;
-    if (brokerF !== 'all' && (s.broker || '—') !== brokerF) return false;
     return true;
   });
 
@@ -5536,12 +5549,14 @@ function switchStrategy(mode) {
 
   const swingNav = document.querySelector('.nav-tabs');
   const fnoNav   = document.getElementById('fno-nav-tabs');
+  const fnoBrokerTabs = document.getElementById('fno-broker-tabs');
   const swingPages = document.getElementById('swing-pages');
   const fnoPages   = document.getElementById('fno-pages');
 
   if (mode === 'swing') {
     swingNav.style.display = '';
     if (fnoNav)    fnoNav.style.display   = 'none';
+    if (fnoBrokerTabs) fnoBrokerTabs.style.display = 'none';
     if (swingPages) swingPages.style.display = '';
     if (fnoPages)   fnoPages.style.display   = 'none';
   } else {
@@ -5556,8 +5571,10 @@ function switchStrategy(mode) {
     if (!window._fnoData) {
       refreshFnoData();
     } else {
-      renderFnoDashboard(window._fnoData.watchlist);
-      renderFnoWatchlist(window._fnoData.watchlist);
+      fnoRenderBrokerTabs(window._fnoData.watchlist);
+      const list = fnoFilteredWatchlist();
+      renderFnoDashboard(list);
+      renderFnoWatchlist(list);
     }
   }
 }
