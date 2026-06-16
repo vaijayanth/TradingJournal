@@ -1438,6 +1438,7 @@ tbody tr:hover { filter: brightness(0.97); }
     <div class="chart-title">Best Point Reached vs Where You Ended Up</div>
     <div class="chart-sub">For both winners and losers — shows how much of the available move was captured, and whether losers were ever green</div>
     <div id="chart-mfe-vs-final" style="height:220px"></div>
+    <div style="font-size:12px;margin-top:10px;color:var(--text-secondary);line-height:1.6" id="mfe-final-plain">—</div>
   </div>
 
   <!-- 6. Unlock Advanced Analytics (collapsible) -->
@@ -4444,10 +4445,22 @@ function initAnalysisCharts(open, closed) {
       legend: { show: true, labels: { colors: c.text }, fontSize: '11px' },
       dataLabels: { enabled: true, formatter: v => v.toFixed(1) + '%', style: { fontSize: '10px' } },
     }); mfeFinalChart.render(); analysisCharts.push(mfeFinalChart); } catch(e) { console.warn('chart-mfe-vs-final failed', e); }
+
+    const avgMfeLoss = avg(maeLosers, t => t.mfe);
+    const wasGreenThreshold = 1;
+    const losersWereGreen = maeLosers.filter(t => t.mfe >= wasGreenThreshold);
+    const pctLosersWereGreen = maeLosers.length ? (losersWereGreen.length / maeLosers.length * 100) : 0;
+    const winCapturePct = avgMfeWin > 0 ? (avgFinalWin / avgMfeWin * 100) : 0;
+    setTxt('mfe-final-plain', `Winners kept <strong style="color:var(--green)">${winCapturePct.toFixed(0)}%</strong> of their best move (peak +${avgMfeWin.toFixed(1)}% → final +${avgFinalWin.toFixed(1)}%). ` +
+      (pctLosersWereGreen > 0
+        ? `<strong style="color:var(--amber)">${pctLosersWereGreen.toFixed(0)}%</strong> of your losing trades were actually green at some point — up to <strong>+${avgMfeLoss.toFixed(1)}%</strong> on average — before turning into a loss.<br><br>` +
+          `<strong>Action:</strong> A trade that goes green and then reverses all the way to a loss is exactly what your <strong>HA Red on a profitable trade</strong> alert on the Dashboard is meant to catch. If you're seeing that alert fire and not acting on it, that's the gap — treat it as a serious signal to tighten the stop or exit, not just a watch-item.`
+        : `None of your losing trades were ever green — they went straight down from entry, so this isn't a "letting a winner turn into a loser" problem, it's purely an entry-timing one (see the 7-day-low / stop distance above).`));
   } else {
     setTxt('mae-plain', 'Need at least 5 closed trades with MAE/MFE data.');
     setTxt('mfe-plain', 'Need at least 5 closed trades with MAE/MFE data.');
     setTxt('ratio-plain', 'Waiting on more MAE/MFE data.');
+    setTxt('mfe-final-plain', 'Waiting on more MAE/MFE data.');
   }
 
   // ── TRADE MANAGEMENT ANALYSIS ──────────────────────
