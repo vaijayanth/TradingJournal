@@ -5124,8 +5124,19 @@ function fnoRenderActiveSpreads(watchlist) {
       </div>`;
   }).join('');
 
+  // Concentration check — approximate spread side from current 200 EMA stance
+  // (put spreads are gated on being above 200 EMA; if it's since flipped below, that side likely turned into a call-spread/add-call situation)
+  const putLike = active.filter(s => s.ema200).length;
+  const callLike = active.length - putLike;
+  const dominant = putLike >= callLike ? putLike : callLike;
+  const dominantLabel = putLike >= callLike ? 'put-spread side (above 200 EMA)' : 'call-spread side (below 200 EMA)';
+  const concentrationWarning = active.length >= 3 && (dominant / active.length) >= 0.75
+    ? `<div style="padding:10px 14px;font-size:11.5px;color:var(--amber);background:var(--amber-soft);border-bottom:1px solid var(--border)">⚠ <strong>Concentration risk:</strong> ${dominant} of ${active.length} active spreads are on the same ${dominantLabel}. A single market-wide reversal could hit most of these on the same day — consider trimming size on new adds until this balances out.</div>`
+    : '';
+
   el.innerHTML = `
     <div class="card" style="padding:0;overflow:hidden;margin-bottom:4px">
+      ${concentrationWarning}
       ${rows}
       <div style="padding:8px 14px;font-size:11px;color:var(--text-muted);background:var(--surface)">⚠ Exit any spread if premium doubles (2×). Check broker terminal for live premiums.</div>
     </div>`;
@@ -5230,13 +5241,14 @@ function fnoRenderAlerts(watchlist) {
         </tr>`;
       }
 
+      const freshTag = ` · <span style="color:${extended ? 'var(--amber)' : 'var(--green)'}">${extended ? '⚠ extended from 7DL — chase risk' : '✓ fresh signal'}</span>`;
       const alertText = g.key==='add-call'
         ? `HA turned Red today · spread active`
         : g.key==='exit-risk'
           ? `HA is Red (ongoing) · check if premium doubled`
           : g.key==='new-put'
-            ? `${bull}/6 bullish signals${extended?' · <span style="color:var(--amber)">extended from 7DL</span>':''}`
-            : `${bear}/4 bearish signals`;
+            ? `${bull}/6 bullish signals${freshTag}`
+            : `${bear}/4 bearish signals${freshTag}`;
 
       const actionBadge = g.key==='add-call'
         ? `<span class="fno-badge fno-badge-call">🔄 Add Call</span>`
@@ -5314,13 +5326,17 @@ function fnoRenderTopCandidates(watchlist) {
       const pips = trend==='bullish'
         ? Array(6).fill(0).map((_,i)=>`<div class="fno-score-pip${i<bull?' bull':''}"></div>`).join('')
         : Array(4).fill(0).map((_,i)=>`<div class="fno-score-pip${i<bear?' bear':''}"></div>`).join('');
+      const extended = parseFloat(s.pctFrom7DL) * 100 > 8;
+      const pct7dlVal = s.pctFrom7DL!=null&&s.pctFrom7DL!==''?(v=>v>=0?'+'+v.toFixed(1)+'%':v.toFixed(1)+'%')(parseFloat(s.pctFrom7DL)*100):'—';
+      const freshness = (action==='put-spread'||action==='call-spread') && s.pctFrom7DL!=null && s.pctFrom7DL!==''
+        ? `<div style="font-size:10px;color:${extended?'var(--amber)':'var(--green)'}">${extended?'⚠ extended':'✓ fresh'}</div>` : '';
       return `<tr class="${s.spreadActive?'fno-row-active':''}${action==='add-call'?' fno-row-alert':''}">
         <td><span class="stock-name">${s.stock}</span>${s.spreadActive?` <span class="fno-badge fno-badge-active">LIVE</span>`:''}</td>
         <td>₹${s.cmp.toLocaleString('en-IN')}</td>
         <td>${trend==='bullish'?'🟢 Bullish':trend==='bearish'?'🔴 Bearish':'⚪ Mixed'}</td>
         <td><div class="fno-score-bar">${pips}</div><div style="font-size:10px;color:var(--text-muted)">${trend==='bullish'?bull+'/6':bear+'/4'}</div></td>
         <td class="${haClass}">${haLabel}</td>
-        <td>${s.pctFrom7DL!=null&&s.pctFrom7DL!==''?(v=>v>=0?'+'+v.toFixed(1)+'%':v.toFixed(1)+'%')(parseFloat(s.pctFrom7DL)*100):'—'}</td>
+        <td>${pct7dlVal}${freshness}</td>
         <td><span class="fno-badge ${actionBadge}">${actionLabel}</span></td>
       </tr>`;
     }).join('')}</tbody></table>`;
