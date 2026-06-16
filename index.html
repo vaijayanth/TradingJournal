@@ -1774,6 +1774,9 @@ tbody tr:hover { filter: brightness(0.97); }
         <button class="fno-pill fno-pill-sec" onclick="fnoSetPill('trend','bearish',this)">🔴 Bearish</button>
         <button class="fno-pill fno-pill-sec" onclick="fnoSetPill('trend','mixed',this)">⚪ Mixed</button>
       </div>
+      <div style="display:flex;gap:4px;flex-wrap:wrap" id="fno-broker-pills">
+        <button class="fno-pill fno-pill-sec active" onclick="fnoSetPill('broker','all',this)">All Brokers</button>
+      </div>
       <div style="margin-left:auto;font-size:12px;color:var(--text-muted)" id="fno-wl-count">—</div>
     </div>
     <details>
@@ -1783,6 +1786,7 @@ tbody tr:hover { filter: brightness(0.97); }
           <thead>
             <tr>
               <th class="fno-sort-th" onclick="fnoSetSort('stock')">Stock <span class="fno-sort-icon" id="fno-sort-stock"></span></th>
+              <th class="fno-sort-th" onclick="fnoSetSort('broker')">Broker <span class="fno-sort-icon" id="fno-sort-broker"></span></th>
               <th class="fno-sort-th" onclick="fnoSetSort('cmp')">CMP <span class="fno-sort-icon" id="fno-sort-cmp"></span></th>
               <th>Trend</th>
               <th class="fno-sort-th" onclick="fnoSetSort('bull')">Bull Score <span class="fno-sort-icon" id="fno-sort-bull"></span></th>
@@ -1792,12 +1796,13 @@ tbody tr:hover { filter: brightness(0.97); }
               <th title="50 EMA Above">50E</th>
               <th title="20 EMA Above">20E</th>
               <th>Breakouts</th>
+              <th title="Fresh EMA cross today">Fresh Cross</th>
               <th class="fno-sort-th" onclick="fnoSetSort('pct7dl')">% from 7DL <span class="fno-sort-icon" id="fno-sort-pct7dl"></span></th>
               <th>Action</th>
             </tr>
           </thead>
           <tbody id="fno-watchlist-tbody">
-            <tr><td colspan="12" style="text-align:center;color:var(--text-muted);padding:20px">Loading…</td></tr>
+            <tr><td colspan="14" style="text-align:center;color:var(--text-muted);padding:20px">Loading…</td></tr>
           </tbody>
         </table>
       </div>
@@ -4999,6 +5004,15 @@ function fnoTrend(s) {
   return 'mixed';
 }
 
+// Fresh EMA cross today — stronger/timelier than "already above/below" (which could be 40 days old)
+function fnoFreshCross(s) {
+  const crosses = [];
+  if (s.ema200cross) crosses.push('200E');
+  if (s.ema50cross)  crosses.push('50E');
+  if (s.ema21cross)  crosses.push('21E');
+  return crosses;
+}
+
 function fnoAction(s) {
   const trend = fnoTrend(s);
   const haRed = s.haColour.toLowerCase() === 'red';
@@ -5039,6 +5053,7 @@ async function refreshFnoData() {
     return;
   }
   window._fnoData = data;
+  fnoRenderBrokerPills(data.watchlist);
   renderFnoDashboard(data.watchlist);
   renderFnoWatchlist(data.watchlist);
   const ri = document.querySelector('.refresh-info');
@@ -5126,6 +5141,7 @@ function fnoRenderActiveSpreads(watchlist) {
       ? (v => (v >= 0 ? '+' : '') + v.toFixed(1) + '%')(parseFloat(s.pctFrom7DL) * 100) : '—';
     return `<tr class="${critical ? 'fno-row-alert' : ''}">
         <td><span class="stock-name">${s.stock}</span></td>
+        <td>${s.broker ? `<span class="fno-tag fno-tag-yes">${s.broker}</span>` : '—'}</td>
         <td>${cmpFmt}</td>
         <td>${pct7dl}</td>
         <td>${statusIcon} <span style="color:var(--text-secondary)">${statusText}</span></td>
@@ -5143,12 +5159,26 @@ function fnoRenderActiveSpreads(watchlist) {
     ? `<div style="padding:10px 14px;font-size:11.5px;color:var(--amber);background:var(--amber-soft);border-bottom:1px solid var(--border)">⚠ <strong>Concentration risk:</strong> ${dominant} of ${active.length} active spreads are on the same ${dominantLabel}. A single market-wide reversal could hit most of these on the same day — consider trimming size on new adds until this balances out.</div>`
     : '';
 
+  // Per-broker concentration — same idea, but split by which broker holds the position (the user's actual risk-management axis)
+  const brokerCounts = {};
+  active.forEach(s => { const b = s.broker || 'Unassigned'; brokerCounts[b] = (brokerCounts[b]||0) + 1; });
+  const brokerEntries = Object.entries(brokerCounts);
+  const brokerWarning = brokerEntries.length >= 2 && active.length >= 3
+    ? (() => {
+        const [topBroker, topCount] = brokerEntries.sort((a,b)=>b[1]-a[1])[0];
+        return topCount / active.length >= 0.75
+          ? `<div style="padding:10px 14px;font-size:11.5px;color:var(--amber);background:var(--amber-soft);border-bottom:1px solid var(--border)">⚠ <strong>Broker concentration:</strong> ${topCount} of ${active.length} active spreads are with <strong>${topBroker}</strong>. Consider routing new adds to your other broker to keep risk split.</div>`
+          : '';
+      })()
+    : '';
+
   el.innerHTML = `
     <div class="card" style="padding:0;overflow:hidden;margin-bottom:4px">
       ${concentrationWarning}
+      ${brokerWarning}
       <div style="overflow-x:auto">
         <table class="trades-table" style="font-size:12px">
-          <thead><tr><th>Stock</th><th>CMP</th><th>% from 7DL</th><th>Status</th><th>Action</th></tr></thead>
+          <thead><tr><th>Stock</th><th>Broker</th><th>CMP</th><th>% from 7DL</th><th>Status</th><th>Action</th></tr></thead>
           <tbody>${rows}</tbody>
         </table>
       </div>
@@ -5227,12 +5257,14 @@ function fnoRenderAlerts(watchlist) {
       const haRed = s.haColour.toLowerCase() === 'red';
       const extended = parseFloat(s.pctFrom7DL) * 100 > 8;
 
+      const brokerTag = s.broker ? ` <span class="fno-tag fno-tag-yes" style="margin-left:4px">${s.broker}</span>` : '';
+
       if (g.key === 'reversal') {
         const badge = a.reversalType === 'top'
           ? `<span class="fno-badge fno-badge-call">⬇ Possible Top</span>`
           : `<span class="fno-badge fno-badge-put">⬆ Possible Bottom</span>`;
         return `<tr>
-          <td><span class="stock-name">${s.stock}</span></td>
+          <td><span class="stock-name">${s.stock}</span>${brokerTag}</td>
           <td style="color:var(--text-secondary)">${a.detail}</td>
           <td>${badge}</td>
         </tr>`;
@@ -5244,7 +5276,7 @@ function fnoRenderAlerts(watchlist) {
           : trend === 'bullish' ? `Confirms uptrend (${bull}/6 bullish) — fresh put spread candidate`
           : `Early flip only — trend not confirmed yet (${bull}/6 bullish)`;
         return `<tr>
-          <td><span class="stock-name">${s.stock}</span></td>
+          <td><span class="stock-name">${s.stock}</span>${brokerTag}</td>
           <td style="color:var(--text-secondary)">${ctx}</td>
           <td><span class="fno-badge fno-badge-put">⬆ Flipped Green</span></td>
         </tr>`;
@@ -5256,7 +5288,7 @@ function fnoRenderAlerts(watchlist) {
           : trend === 'bearish' ? `Confirms downtrend (${bear}/4 bearish) — fresh call spread candidate`
           : `Early flip only — trend not confirmed yet (${bear}/4 bearish)`;
         return `<tr>
-          <td><span class="stock-name">${s.stock}</span></td>
+          <td><span class="stock-name">${s.stock}</span>${brokerTag}</td>
           <td style="color:var(--text-secondary)">${ctx}</td>
           <td><span class="fno-badge fno-badge-call">⬇ Flipped Red</span></td>
         </tr>`;
@@ -5280,7 +5312,7 @@ function fnoRenderAlerts(watchlist) {
             : `<span class="fno-badge fno-badge-call">⬇ Call Spread</span>`;
 
       return `<tr>
-        <td><span class="stock-name">${s.stock}</span></td>
+        <td><span class="stock-name">${s.stock}</span>${brokerTag}</td>
         <td style="color:var(--text-secondary)">${alertText}</td>
         <td>${actionBadge}</td>
       </tr>`;
@@ -5335,7 +5367,7 @@ function fnoRenderTopCandidates(watchlist) {
   }
 
   topEl.innerHTML = `<table class="trades-table" style="font-size:12px">
-    <thead><tr><th>Stock</th><th>CMP</th><th>Trend</th><th>Score</th><th>HA</th><th>% from 7DL</th><th>Action</th></tr></thead>
+    <thead><tr><th>Stock</th><th>Broker</th><th>CMP</th><th>Trend</th><th>Score</th><th>HA</th><th>% from 7DL</th><th>Action</th></tr></thead>
     <tbody>${candidates.map(s => {
       const { bull, bear } = fnoScore(s);
       const action = fnoAction(s);
@@ -5353,6 +5385,7 @@ function fnoRenderTopCandidates(watchlist) {
         ? `<div style="font-size:10px;color:${extended?'var(--amber)':'var(--green)'}">${extended?'⚠ extended':'✓ fresh'}</div>` : '';
       return `<tr class="${s.spreadActive?'fno-row-active':''}${action==='add-call'?' fno-row-alert':''}">
         <td><span class="stock-name">${s.stock}</span>${s.spreadActive?` <span class="fno-badge fno-badge-active">LIVE</span>`:''}</td>
+        <td>${s.broker ? `<span class="fno-tag fno-tag-yes">${s.broker}</span>` : '—'}</td>
         <td>₹${s.cmp.toLocaleString('en-IN')}</td>
         <td>${trend==='bullish'?'🟢 Bullish':trend==='bearish'?'🔴 Bearish':'⚪ Mixed'}</td>
         <td><div class="fno-score-bar">${pips}</div><div style="font-size:10px;color:var(--text-muted)">${trend==='bullish'?bull+'/6':bear+'/4'}</div></td>
@@ -5366,6 +5399,7 @@ function fnoRenderTopCandidates(watchlist) {
 // F&O watchlist filter/sort state
 window._fnoFilterAction = 'all';
 window._fnoFilterTrend  = 'all';
+window._fnoFilterBroker = 'all';
 window._fnoSortCol      = null; // null = default (spread first, then bull score)
 window._fnoSortDir      = 1;    // 1 = asc, -1 = desc
 
@@ -5373,12 +5407,26 @@ function fnoSetPill(type, value, btn) {
   if (type === 'action') {
     window._fnoFilterAction = value;
     document.querySelectorAll('#fno-action-pills .fno-pill').forEach(b => b.classList.remove('active'));
-  } else {
+  } else if (type === 'trend') {
     window._fnoFilterTrend = value;
     document.querySelectorAll('#fno-trend-pills .fno-pill').forEach(b => b.classList.remove('active'));
+  } else {
+    window._fnoFilterBroker = value;
+    document.querySelectorAll('#fno-broker-pills .fno-pill').forEach(b => b.classList.remove('active'));
   }
   btn.classList.add('active');
   fnoApplyFilters();
+}
+
+// Build broker filter pills dynamically from whatever broker values appear in the watchlist
+function fnoRenderBrokerPills(watchlist) {
+  const el = document.getElementById('fno-broker-pills');
+  if (!el) return;
+  const brokers = [...new Set(watchlist.map(s => s.broker).filter(Boolean))].sort();
+  if (brokers.length === 0) { el.innerHTML = ''; return; }
+  const current = window._fnoFilterBroker || 'all';
+  el.innerHTML = `<button class="fno-pill fno-pill-sec${current==='all'?' active':''}" onclick="fnoSetPill('broker','all',this)">All Brokers</button>` +
+    brokers.map(b => `<button class="fno-pill fno-pill-sec${current===b?' active':''}" onclick="fnoSetPill('broker','${b.replace(/'/g,"\\'")}',this)">${b}</button>`).join('');
 }
 
 function fnoSetSort(col) {
@@ -5400,10 +5448,12 @@ function renderFnoWatchlist(watchlist) {
   const query = (document.getElementById('fno-wl-search')?.value || '').trim().toLowerCase();
   const actionF = window._fnoFilterAction || 'all';
   const trendF  = window._fnoFilterTrend  || 'all';
+  const brokerF = window._fnoFilterBroker || 'all';
   let list = watchlist.filter(s => {
     if (query && !s.stock.toLowerCase().includes(query)) return false;
     if (actionF !== 'all' && fnoAction(s) !== actionF) return false;
     if (trendF  !== 'all' && fnoTrend(s)  !== trendF)  return false;
+    if (brokerF !== 'all' && (s.broker || '—') !== brokerF) return false;
     return true;
   });
 
@@ -5414,6 +5464,7 @@ function renderFnoWatchlist(watchlist) {
     list = [...list].sort((a, b) => {
       let av, bv;
       if (sortCol === 'stock')  { av = a.stock; bv = b.stock; return sortDir * av.localeCompare(bv); }
+      if (sortCol === 'broker') { av = a.broker || ''; bv = b.broker || ''; return sortDir * av.localeCompare(bv); }
       if (sortCol === 'cmp')    { av = a.cmp || 0; bv = b.cmp || 0; }
       if (sortCol === 'bull')   { av = fnoScore(a).bull; bv = fnoScore(b).bull; }
       if (sortCol === 'bear')   { av = fnoScore(a).bear; bv = fnoScore(b).bear; }
@@ -5428,7 +5479,7 @@ function renderFnoWatchlist(watchlist) {
   }
 
   // Update sort icons
-  ['stock','cmp','bull','bear','pct7dl'].forEach(col => {
+  ['stock','broker','cmp','bull','bear','pct7dl'].forEach(col => {
     const el = document.getElementById('fno-sort-' + col);
     if (!el) return;
     if (sortCol === col) el.textContent = sortDir > 0 ? '▲' : '▼';
@@ -5447,8 +5498,12 @@ function renderFnoWatchlist(watchlist) {
     const bearPips = Array(4).fill(0).map((_,i)=>`<div class="fno-score-pip${i<bear?' bear':''}"></div>`).join('');
     const bk = v => v ? '<span class="fno-tag fno-tag-yes">✓</span>' : '<span class="fno-tag fno-tag-no">—</span>';
     const rowClass = s.spreadActive ? 'fno-row-active' : action==='add-call' ? 'fno-row-alert' : '';
+    const freshCross = fnoFreshCross(s);
+    const pct7dlFmt = s.pctFrom7DL!=null&&s.pctFrom7DL!==''?(v=>v>=0?'+'+v.toFixed(1)+'%':v.toFixed(1)+'%')(parseFloat(s.pctFrom7DL)*100):'—';
+    const sevenDlTitle = s.sevenDayLow ? `7-Day Low: ₹${parseFloat(s.sevenDayLow).toLocaleString('en-IN')}` : '';
     return `<tr class="${rowClass}">
       <td><span class="stock-name">${s.stock}</span>${s.spreadActive?` <span class="fno-badge fno-badge-active">LIVE</span>`:''}</td>
+      <td>${s.broker ? `<span class="fno-tag fno-tag-yes">${s.broker}</span>` : '—'}</td>
       <td>₹${s.cmp.toLocaleString('en-IN')}</td>
       <td>${trend==='bullish'?'🟢 Bullish':trend==='bearish'?'🔴 Bearish':'⚪ Mixed'}</td>
       <td><div class="fno-score-bar">${bullPips}</div><div style="font-size:10px;color:var(--text-muted)">${bull}/6 bull</div></td>
@@ -5456,10 +5511,11 @@ function renderFnoWatchlist(watchlist) {
       <td class="${haClass}">${s.haColour}${s.haChanged?' 🔄':''}</td>
       <td>${bk(s.ema200)}</td><td>${bk(s.ema50)}</td><td>${bk(s.ema20)}</td>
       <td>${s.ath?'<span class="fno-tag fno-tag-yes">ATH</span>':''}${s.wk52h?'<span class="fno-tag fno-tag-yes">52W</span>':''}${s.dh21?'<span class="fno-tag fno-tag-yes">21D</span>':''}${s.dh7?'<span class="fno-tag fno-tag-yes">7D</span>':''}</td>
-      <td>${s.pctFrom7DL!=null&&s.pctFrom7DL!==''?(v=>v>=0?'+'+v.toFixed(1)+'%':v.toFixed(1)+'%')(parseFloat(s.pctFrom7DL)*100):'—'}</td>
+      <td>${freshCross.length ? `<span class="fno-tag fno-tag-yes" title="Fresh cross today">⚡ ${freshCross.join(', ')}</span>` : '—'}</td>
+      <td title="${sevenDlTitle}">${pct7dlFmt}</td>
       <td><span class="fno-badge ${actionBadge}">${actionLabel}</span></td>
     </tr>`;
-  }).join('') || '<tr><td colspan="12" style="text-align:center;color:var(--text-muted);padding:20px">No stocks match filter</td></tr>';
+  }).join('') || '<tr><td colspan="14" style="text-align:center;color:var(--text-muted);padding:20px">No stocks match filter</td></tr>';
 
   const countEl = document.getElementById('fno-wl-count');
   if (countEl) countEl.textContent = list.length + ' of ' + watchlist.length + ' stocks';

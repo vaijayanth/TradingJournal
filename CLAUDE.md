@@ -210,7 +210,7 @@ Cols A–E are empty. Data starts at col F (index 5).
 
 | Index | Column | Field | JS key |
 |---|---|---|---|
-| 5 | F | DATE | date |
+| 5 | F | BROKER | broker (string, e.g. "Zerodha"/"Upstox" — used to split risk across brokers) |
 | 6 | G | STOCK | stock |
 | 7 | H | CMP | cmp |
 | 8 | I | 200 EMA ABOVE | ema200 (bool) |
@@ -263,6 +263,8 @@ When `mode=fno`, Apps Script reads NSEFO sheet and returns:
 Each watchlist item maps NSEFO columns using row indices 5–23 (0-based).
 
 **CRITICAL**: Apps Script must use `row[6]` for STOCK (col G), not `row[0]`. All column offsets are 5+ from 0.
+
+**CRITICAL**: Apps Script must map `row[5]` (col F) to JS key **`broker`** (not `date` — col F header is BROKER, the doc previously said DATE which was wrong/stale). The front-end (`fnoRenderBrokerPills`, `renderFnoWatchlist`, `fnoRenderActiveSpreads`, `fnoRenderTopCandidates`, `fnoRenderAlerts`) reads `s.broker` directly and will show "—" for every row until the Apps Script returns it under that key. Also confirm the Apps Script actually populates `ema200cross`/`ema50cross`/`ema21cross` (cols S/T/U) and `sevenDayLow` (col V) in the response — the front-end now consumes all of these (`fnoFreshCross()` for the "Fresh Cross" badge, raw 7DL value as a tooltip on the "% from 7DL" column) but they were previously fetched-and-unused, so it's unverified whether the script was ever actually wired to return them.
 
 ### Code Structure (F&O Isolation)
 - All F&O JS functions prefixed `fno*`
