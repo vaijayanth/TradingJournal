@@ -5103,7 +5103,6 @@ function fnoRenderActiveSpreads(watchlist) {
     const haRed = s.haColour.toLowerCase() === 'red';
     const critical = haRed && s.haChanged;
     const warning  = haRed && !s.haChanged;
-    const borderColor = critical ? 'var(--red)' : warning ? 'var(--amber)' : 'var(--green)';
     const statusIcon = critical ? '🔴' : warning ? '⚠' : '✅';
     const statusText = critical ? 'HA turned Red today — Add Call Spread' : warning ? 'HA is Red (ongoing) — Monitor premium, exit if 2×' : 'HA Green — Hold position';
     const badge = critical
@@ -5113,15 +5112,14 @@ function fnoRenderActiveSpreads(watchlist) {
         : `<span class="fno-badge fno-badge-put">Hold</span>`;
     const cmpFmt = s.cmp ? '₹' + s.cmp.toLocaleString('en-IN') : '—';
     const pct7dl = s.pctFrom7DL != null && s.pctFrom7DL !== ''
-      ? (v => (v >= 0 ? '+' : '') + v.toFixed(1) + '% from 7DL')(parseFloat(s.pctFrom7DL) * 100) : '';
-    return `
-      <div style="display:flex;align-items:center;gap:12px;padding:10px 14px;border-left:3px solid ${borderColor};background:var(--surface2);border-radius:0;border-bottom:1px solid var(--border)">
-        <span style="font-size:15px">${statusIcon}</span>
-        <span class="stock-name" style="width:90px;flex-shrink:0">${s.stock}</span>
-        <span style="font-size:12px;color:var(--text-muted);width:80px;flex-shrink:0">${cmpFmt} <span style="font-size:10px">${pct7dl}</span></span>
-        <span style="font-size:11.5px;color:var(--text-secondary);flex:1">${statusText}</span>
-        ${badge}
-      </div>`;
+      ? (v => (v >= 0 ? '+' : '') + v.toFixed(1) + '%')(parseFloat(s.pctFrom7DL) * 100) : '—';
+    return `<tr class="${critical ? 'fno-row-alert' : ''}">
+        <td><span class="stock-name">${s.stock}</span></td>
+        <td>${cmpFmt}</td>
+        <td>${pct7dl}</td>
+        <td>${statusIcon} <span style="color:var(--text-secondary)">${statusText}</span></td>
+        <td>${badge}</td>
+      </tr>`;
   }).join('');
 
   // Concentration check — approximate spread side from current 200 EMA stance
@@ -5137,7 +5135,12 @@ function fnoRenderActiveSpreads(watchlist) {
   el.innerHTML = `
     <div class="card" style="padding:0;overflow:hidden;margin-bottom:4px">
       ${concentrationWarning}
-      ${rows}
+      <div style="overflow-x:auto">
+        <table class="trades-table" style="font-size:12px">
+          <thead><tr><th>Stock</th><th>CMP</th><th>% from 7DL</th><th>Status</th><th>Action</th></tr></thead>
+          <tbody>${rows}</tbody>
+        </table>
+      </div>
       <div style="padding:8px 14px;font-size:11px;color:var(--text-muted);background:var(--surface)">⚠ Exit any spread if premium doubles (2×). Check broker terminal for live premiums.</div>
     </div>`;
 }
@@ -5165,9 +5168,9 @@ function fnoRenderAlerts(watchlist) {
     if (s.spreadActive && haRed && !s.haChanged)
       allAlerts.push({ group:'exit-risk', score:5, stock:s.stock });
 
-    // Today's HA flip — both directions, every stock (not just active spreads / extended moves)
+    // Today's HA flip — separated into Green (put-spread bucket) and Red (call-spread bucket)
     if (s.haChanged)
-      allAlerts.push({ group:'ha-flip', score: haRed ? bear : bull, stock:s.stock, direction: haRed ? 'down' : 'up' });
+      allAlerts.push({ group: haRed ? 'ha-flip-red' : 'ha-flip-green', score: haRed ? bear : bull, stock:s.stock, direction: haRed ? 'down' : 'up' });
 
     if (!s.spreadActive && action === 'put-spread')
       allAlerts.push({ group:'new-put', score:bull, stock:s.stock });
@@ -5185,8 +5188,9 @@ function fnoRenderAlerts(watchlist) {
   });
 
   const groups = [
-    { key:'add-call',  icon:'🔄', label:'Add Call Spread — Action Required', color:'var(--red)',   bg:'var(--red-soft)',   autoOpen:false },
-    { key:'ha-flip',   icon:'🔀', label:"Today's HA Flip — Up & Down",        color:'var(--accent)', bg:'var(--accent-soft)', autoOpen:true },
+    { key:'add-call',     icon:'🔄', label:'Add Call Spread — Action Required',  color:'var(--red)',   bg:'var(--red-soft)',   autoOpen:false },
+    { key:'ha-flip-green',icon:'⬆',  label:'Today’s HA Flip — Green (Put Bucket)',  color:'var(--green)', bg:'var(--green-soft)', autoOpen:true },
+    { key:'ha-flip-red',  icon:'⬇',  label:'Today’s HA Flip — Red (Call Bucket)',   color:'var(--red)',   bg:'var(--red-soft)',   autoOpen:true },
     { key:'reversal',  icon:'🔁', label:'Reversal Watch — Extended + HA Flip', color:'var(--amber)', bg:'var(--amber-soft)', autoOpen:false },
     { key:'exit-risk', icon:'⚠',  label:'Exit Risk — Monitor Premium',       color:'var(--amber)', bg:'var(--amber-soft)', autoOpen:false },
     { key:'new-put',   icon:'🟢', label:'New Put Spread Candidates',          color:'var(--green)', bg:'var(--green-soft)', autoOpen:false },
@@ -5223,21 +5227,27 @@ function fnoRenderAlerts(watchlist) {
         </tr>`;
       }
 
-      if (g.key === 'ha-flip') {
-        const badge = a.direction === 'up'
-          ? `<span class="fno-badge fno-badge-put">⬆ Flipped Green</span>`
-          : `<span class="fno-badge fno-badge-call">⬇ Flipped Red</span>`;
-        const ctx = a.direction === 'up'
-          ? (s.spreadActive ? 'Active spread — momentum improving, watch for early exit on the put spread hedge'
-              : trend === 'bullish' ? `Confirms uptrend (${bull}/6 bullish) — fresh put spread candidate`
-              : `Early flip only — trend not confirmed yet (${bull}/6 bullish)`)
-          : (s.spreadActive ? 'Active spread — this is your Add Call Spread trigger'
-              : trend === 'bearish' ? `Confirms downtrend (${bear}/4 bearish) — fresh call spread candidate`
-              : `Early flip only — trend not confirmed yet (${bear}/4 bearish)`);
+      if (g.key === 'ha-flip-green') {
+        const ctx = s.spreadActive
+          ? 'Active spread — momentum improving, watch for early exit on the put spread hedge'
+          : trend === 'bullish' ? `Confirms uptrend (${bull}/6 bullish) — fresh put spread candidate`
+          : `Early flip only — trend not confirmed yet (${bull}/6 bullish)`;
         return `<tr>
           <td><span class="stock-name">${s.stock}</span></td>
           <td style="color:var(--text-secondary)">${ctx}</td>
-          <td>${badge}</td>
+          <td><span class="fno-badge fno-badge-put">⬆ Flipped Green</span></td>
+        </tr>`;
+      }
+
+      if (g.key === 'ha-flip-red') {
+        const ctx = s.spreadActive
+          ? 'Active spread — this is your Add Call Spread trigger'
+          : trend === 'bearish' ? `Confirms downtrend (${bear}/4 bearish) — fresh call spread candidate`
+          : `Early flip only — trend not confirmed yet (${bear}/4 bearish)`;
+        return `<tr>
+          <td><span class="stock-name">${s.stock}</span></td>
+          <td style="color:var(--text-secondary)">${ctx}</td>
+          <td><span class="fno-badge fno-badge-call">⬇ Flipped Red</span></td>
         </tr>`;
       }
 
