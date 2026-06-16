@@ -292,7 +292,19 @@ Each watchlist item maps NSEFO columns using row indices 5–23 (0-based).
 
 These were identified in a guru-perspective audit and deferred. Implement when ready.
 
-**Status as of 2026-06-16**: Analysis tab UI audit fully implemented (bugs + 4 features — see Analysis Tab section above and `git log` on `claude/beautiful-hamilton-fwa55n`). All changes pushed, working tree clean. Next logical step: pick from the backlog below, starting with item 7 (Position Concentration Risk — no new sheet columns needed, can implement immediately) or item 1 (Market Timing — highest strategic value but needs a NIFTY data feed decision first).
+**Status as of 2026-06-16**: Analysis tab UI audit fully implemented (bugs + 4 features). MAE/MFE Analysis (item 2 below) also fully implemented and verified live — see below. All changes pushed, working tree clean. Next logical step: item 7 (Position Concentration Risk — no new sheet columns needed, can implement immediately) or item 1 (Market Timing — highest strategic value but needs a NIFTY data feed decision first).
+
+### ✅ Done
+
+**MAE / MFE Analysis** — completed 2026-06-16.
+- Sheet: cols `AL` (MAE%) / `AM` (MFE%) added — chosen because `O`/`P`/`M`/`N`/`T`/`U`/`V`/`G` were all already in use for other calcs, and `AI`/`AK` border the existing summary block. `AL`/`AM` were the first genuinely free columns past the summary section.
+- Formula (per row, drag down): `=IFERROR((R2-MIN(INDEX(GOOGLEFINANCE("NSE:"&E2,"low",C2,IF(D2="",TODAY(),D2)),0,2)))/R2*100,"")` for MAE, mirrored with `MAX`/`"high"` for MFE.
+  - **Critical gotcha**: `GOOGLEFINANCE(...,"low"/"high",start,end)` returns a 2-column `{Date, Price}` array. Wrapping the whole thing in `MIN()`/`MAX()` without `INDEX(...,0,2)` lets the numeric date serials (e.g. ~46200 for 2026) leak into the comparison — `MAX()` picks the date instead of the price, producing absurd values like `57127`. `MIN()` looked fine by coincidence (date serials are always bigger than any stock low), `MAX()` broke visibly. Always use `INDEX(...,0,2)` to extract just the price column.
+  - Cell format: plain **Number**, not Percentage — the formula already multiplies by 100, so the value is e.g. `5.49` meaning 5.49%.
+- Config: `maeCol: 'AL'`, `mfeCol: 'AM'` added to `DEFAULT_CONFIG`, `fetchData()` params, and Config page column-mapping UI (optional fields).
+- Apps Script (hosted on Google, not in this repo): patched to add `mae`/`mfe` to the column index map (`c.mae`/`c.mfe`) and the per-trade response object, using `toNum()` not `toPct()` (sheet already stores the percentage directly, not a fraction).
+- Analysis tab: new "MAE / MFE — Trade Excursion Analysis" section (between Pattern Analysis and Unlock Advanced Analytics) — MAE distribution chart (winners vs losers, bucketed), MFE distribution chart, give-back insight (`1 - avgFinalPl/avgMFE`), and MFE:MAE ratio win-rate comparison (≥3x vs <3x bucket). Verified live: 94% WR at ≥3x ratio vs 7% WR below, n=16/58.
+- "Unlock Advanced Analytics" collapsible: MAE/MFE cards removed (now live above), renamed to "Unlock **More** Advanced Analytics" — Entry Time / Trade Quality Tag / Sector remain as pending columns there.
 
 ### 🔴 High Priority (needs external data or new sheet columns)
 
@@ -301,11 +313,6 @@ These were identified in a guru-perspective audit and deferred. Implement when r
    - Distribution day count (NIFTY close lower on higher volume = 1 distribution day)
    - % of NIFTY500 stocks above 200-day MA (breadth gauge)
    - *Needs: NIFTY OHLCV data feed or manual input cell in sheet*
-
-2. **MAE / MFE Analysis (Maximum Adverse / Favorable Excursion)**
-   - MAE: how far did price go against you before stopping? If MAE = −2% but stop = −7%, you held 5% of pain unnecessarily
-   - MFE: peak unrealised gain before exit — measures "how much did you give back?"
-   - *Needs: new columns in TRADES sheet — MAE%, MFE% captured at close*
 
 3. **Relative Performance vs NIFTY**
    - Monthly return overlay vs NIFTY on equity curve
