@@ -115,12 +115,22 @@ All KPIs (expectancy, win rate, RoP, equity curve) must show **combined realized
 - Drawdown chart: closed trades only (no Today point — unrealised MTM is not a true drawdown)
 
 ## Analysis Tab
-- Setup Type breakdown table (col S) — win rate, avg P&L%, R-multiple, total P&L per setup
-- Win Rate by Setup bar chart
-- EMA analysis REMOVED (col F is live formula, not entry-time)
-- Scatter: hold days vs P&L%
-- Entry velocity by week
-- Monthly P&L bar chart
+`initAnalysisCharts(open, closed)` reads `BE_TRIGGER`/`PARTIAL_TRIGGER` from Config and `window._data.initialCapital` (NOT a function param — must read from global, `destroyAndReinitAnalysis()` calls this fn standalone). All 8+ ApexCharts calls wrapped in try-catch so one bad chart doesn't abort the rest of the function.
+
+Sections, top to bottom:
+1. **Setup Type breakdown table** (col S) — win rate, **WR (Last 30)** recency column with ↑↓ arrow vs all-time WR, R-multiple, Expectancy R, avg P&L%/win%/loss%, total P&L per setup
+2. **Win Rate by Setup** + **Avg P&L% by Setup** bar charts
+3. **Trade Management** — ₹ Risk per Trade distribution, Winner vs Loser Hold Duration, Closed Winner Size Distribution, Loss Size Distribution. KPI cards: avg risk, avg actual loss, **Stop Slippage** (negative/saved = green, positive/over-stop = red/amber), median winner
+4. **Partial Exit Analysis** — comparison of trades that took partial at trigger vs those that reached trigger but held full position; "Action Now" card lists pending partials
+5. **Behavioural Patterns**:
+   - After 3+ Consecutive Losses — next-trade WR vs overall WR
+   - Risk per Trade vs Recommended Tier
+   - **Current Streak** — live win/loss streak count, colour-coded (red 🚨 at 3+ losses, green ✓ on hot streak)
+   - **Learning Curve** — first 30 vs last 30 closed trades: WR + avg P&L% with improving/declining/stable verdict
+6. **Pattern Analysis** — "Cut Fast, Run Long?" scatter (hold days vs P&L%, red/green/amber for loss/win/open), Entry Velocity by week (with high-velocity-week performance comparison), **Monthly P&L bar chart** (realised + current-month unrealised MTM — same chart as Performance tab, now also here)
+7. Unlock Advanced Analytics (collapsible) — MAE/MFE, entry time, trade quality tag, sector: all need new sheet columns, see Pending Backlog
+
+EMA analysis REMOVED (col F is live formula, not entry-time — never use for analysis).
 
 ## Authentication
 - Password gate is hardcoded in source — works on ALL devices without setup
@@ -174,6 +184,10 @@ const effPct = (t.cmp && effStop) ? ((t.cmp - effStop) / t.cmp * 100) : t.pctFro
 - `portfolioValue` from sheet cell AK26 is the source of truth for portfolio headline
 - `alertCount` badge uses effective stop MAX(J,I) not col W
 - Closed trade count: Apps Script filters `flag === 'NO' && finalPl !== 0` to exclude watchlist
+- Analysis tab: `initialCapital` read from `window._data` (was crashing on standalone re-init)
+- Analysis tab: all chart instantiations wrapped in try-catch (one bad chart no longer aborts KPI population)
+- Analysis tab: Stop Slippage colour fixed (negative/saved = green, was backwards)
+- Analysis tab: added Current Streak, Learning Curve, Setup Type WR (Last 30), Monthly P&L chart (see Analysis Tab section above) — completed 2026-06-16
 
 ---
 
@@ -277,6 +291,8 @@ Each watchlist item maps NSEFO columns using row indices 5–23 (0-based).
 ## Pending Backlog (Guru Audit — Minervini / O'Neil)
 
 These were identified in a guru-perspective audit and deferred. Implement when ready.
+
+**Status as of 2026-06-16**: Analysis tab UI audit fully implemented (bugs + 4 features — see Analysis Tab section above and `git log` on `claude/beautiful-hamilton-fwa55n`). All changes pushed, working tree clean. Next logical step: pick from the backlog below, starting with item 7 (Position Concentration Risk — no new sheet columns needed, can implement immediately) or item 1 (Market Timing — highest strategic value but needs a NIFTY data feed decision first).
 
 ### 🔴 High Priority (needs external data or new sheet columns)
 
