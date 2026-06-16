@@ -5154,6 +5154,10 @@ function fnoRenderAlerts(watchlist) {
     if (s.spreadActive && haRed && !s.haChanged)
       allAlerts.push({ group:'exit-risk', score:5, stock:s.stock });
 
+    // Today's HA flip — both directions, every stock (not just active spreads / extended moves)
+    if (s.haChanged)
+      allAlerts.push({ group:'ha-flip', score: haRed ? bear : bull, stock:s.stock, direction: haRed ? 'down' : 'up' });
+
     if (!s.spreadActive && action === 'put-spread')
       allAlerts.push({ group:'new-put', score:bull, stock:s.stock });
 
@@ -5171,6 +5175,7 @@ function fnoRenderAlerts(watchlist) {
 
   const groups = [
     { key:'add-call',  icon:'🔄', label:'Add Call Spread — Action Required', color:'var(--red)',   bg:'var(--red-soft)',   autoOpen:false },
+    { key:'ha-flip',   icon:'🔀', label:"Today's HA Flip — Up & Down",        color:'var(--accent)', bg:'var(--accent-soft)', autoOpen:true },
     { key:'reversal',  icon:'🔁', label:'Reversal Watch — Extended + HA Flip', color:'var(--amber)', bg:'var(--amber-soft)', autoOpen:false },
     { key:'exit-risk', icon:'⚠',  label:'Exit Risk — Monitor Premium',       color:'var(--amber)', bg:'var(--amber-soft)', autoOpen:false },
     { key:'new-put',   icon:'🟢', label:'New Put Spread Candidates',          color:'var(--green)', bg:'var(--green-soft)', autoOpen:false },
@@ -5203,6 +5208,24 @@ function fnoRenderAlerts(watchlist) {
         return `<tr>
           <td><span class="stock-name">${s.stock}</span></td>
           <td style="color:var(--text-secondary)">${a.detail}</td>
+          <td>${badge}</td>
+        </tr>`;
+      }
+
+      if (g.key === 'ha-flip') {
+        const badge = a.direction === 'up'
+          ? `<span class="fno-badge fno-badge-put">⬆ Flipped Green</span>`
+          : `<span class="fno-badge fno-badge-call">⬇ Flipped Red</span>`;
+        const ctx = a.direction === 'up'
+          ? (s.spreadActive ? 'Active spread — momentum improving, watch for early exit on the put spread hedge'
+              : trend === 'bullish' ? `Confirms uptrend (${bull}/6 bullish) — fresh put spread candidate`
+              : `Early flip only — trend not confirmed yet (${bull}/6 bullish)`)
+          : (s.spreadActive ? 'Active spread — this is your Add Call Spread trigger'
+              : trend === 'bearish' ? `Confirms downtrend (${bear}/4 bearish) — fresh call spread candidate`
+              : `Early flip only — trend not confirmed yet (${bear}/4 bearish)`);
+        return `<tr>
+          <td><span class="stock-name">${s.stock}</span></td>
+          <td style="color:var(--text-secondary)">${ctx}</td>
           <td>${badge}</td>
         </tr>`;
       }
