@@ -4397,16 +4397,24 @@ function initAnalysisCharts(open, closed) {
     const avgMaeLoss = avg(maeLosers, t => t.mae);
     setTxt('mae-win-val', avgMaeWin.toFixed(1) + '%');
     setTxt('mae-loss-val', avgMaeLoss.toFixed(1) + '%');
+    const stopLo = Math.max(1, Math.floor(avgMaeWin + 1));
+    const stopHi = Math.ceil(avgMaeWin + 3);
     setTxt('mae-plain', avgMaeWin < avgMaeLoss * 0.6
-      ? `Winners barely dip before they take off. Losers hurt a lot more, a lot earlier. If a trade is already down more than <strong>${avgMaeLoss.toFixed(0)}%</strong> early on, it's behaving like your past losers.`
-      : `Winners and losers dip a similar amount early on — hard to tell them apart in the first few days, which is normal for breakout-style entries.`);
+      ? `Winners barely dip before they take off. Losers hurt a lot more, a lot earlier.<br><br>` +
+        `<strong>Action:</strong> Your winners almost never fall below <strong>${avgMaeWin.toFixed(1)}%</strong> from entry. Consider tightening your stop from the 7-day low to around <strong style="color:var(--green)">${stopLo}–${stopHi}%</strong> below entry instead — that would cut your losers (which dip ${avgMaeLoss.toFixed(0)}% on average) much sooner, without shaking you out of trades that were going to work anyway.`
+      : `Winners and losers dip a similar amount early on — hard to tell them apart in the first few days, which is normal for breakout-style entries.<br><br>` +
+        `<strong>Action:</strong> No clear early warning line here yet — keep using your 7-day-low/21-EMA stop as-is rather than tightening based on this alone.`);
 
     const avgMfeWin = avg(maeWinners, t => t.mfe);
     const avgFinalWin = avg(maeWinners, t => t.finalPlPct);
     const givebackPct = avgMfeWin > 0 ? (1 - avgFinalWin / avgMfeWin) * 100 : 0;
+    const lockPct = Math.max(50, Math.min(80, Math.round(100 - givebackPct + 15)));
     setTxt('mfe-peak-val', '+' + avgMfeWin.toFixed(1) + '%');
     setTxt('mfe-kept-val', '+' + avgFinalWin.toFixed(1) + '%');
-    setTxt('mfe-plain', `On average, your winners touched <strong>+${avgMfeWin.toFixed(1)}%</strong> at their best moment, but you walked away with <strong style="color:var(--green)">+${avgFinalWin.toFixed(1)}%</strong>. That means you're giving back about <strong style="color:${givebackPct > 50 ? 'var(--red)' : 'var(--amber)'}">${givebackPct.toFixed(0)}%</strong> of the peak gain on the way out. Some give-back is normal — it's the cost of letting winners run — but if this number keeps creeping past 60%, your trailing stop is too loose.`);
+    setTxt('mfe-plain', `On average, your winners touched <strong>+${avgMfeWin.toFixed(1)}%</strong> at their best moment, but you walked away with <strong style="color:var(--green)">+${avgFinalWin.toFixed(1)}%</strong> — giving back about <strong style="color:${givebackPct > 50 ? 'var(--red)' : 'var(--amber)'}">${givebackPct.toFixed(0)}%</strong> of the peak gain.<br><br>` +
+      (givebackPct > 50
+        ? `<strong>Action:</strong> Your trailing stop is too loose. Once a trade is up <strong>+${(avgMfeWin*0.5).toFixed(0)}%</strong> or more, tighten your trail so you're locking in at least <strong style="color:var(--green)">${lockPct}%</strong> of the peak gain reached so far — not just trailing the raw 7-day low.`
+        : `<strong>Action:</strong> Your give-back is within a healthy range — this is just the normal cost of letting winners run. No change needed.`));
 
     const ratio = avgMaeWin > 0 ? avgMfeWin / avgMaeWin : 0;
     const highRatioTrades = maeMfeTrades.filter(t => t.mae > 0 && (t.mfe / t.mae) >= 3);
@@ -4418,7 +4426,9 @@ function initAnalysisCharts(open, closed) {
       ? `<span style="color:var(--green)">Yes — early movers tend to win</span>`
       : `<span style="color:var(--amber)">Not a clear signal yet</span>`);
     setTxt('ratio-plain', `Trades that moved at least <strong>3× more in your favour than against you</strong> early on finished as winners <strong style="color:var(--green)">${hrWR.toFixed(0)}% of the time</strong> (n=${highRatioTrades.length}). Trades that didn't show that early strength only won <strong style="color:var(--red)">${lrWR.toFixed(0)}% of the time</strong> (n=${lowRatioTrades.length}).<br><br>` +
-      `This is a <strong>heads-up signal, not a stop-loss rule</strong> — it never overrides your 7-day-low / 21-EMA stop. Use it only to decide how much confidence to put in a <em>new</em> trade, never to hold past your stop on an existing one.`);
+      `<strong>Action:</strong> ${goodSignal
+        ? `If a new trade hasn't shown a 3× favourable-to-adverse move within its first few days, treat it as lower-confidence — don't add to it or increase size. If it has, you can hold with more conviction. Never use this to skip or delay your actual 7-day-low / 21-EMA stop.`
+        : `Not enough of a gap yet to act on — keep sizing trades the same way regardless of early ratio, and re-check this once you have more closed trades.`}`);
 
     try { const mfeFinalChart = new ApexCharts(document.getElementById('chart-mfe-vs-final'), {
       ...baseOpts(220), chart: { ...baseOpts(220).chart, type: 'bar' },
