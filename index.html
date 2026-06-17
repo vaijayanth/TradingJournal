@@ -682,6 +682,12 @@ tbody tr:hover { filter: brightness(0.97); }
         <div style="flex:1;min-width:100px;padding:4px 16px;border-right:1px solid var(--border)">
           <div style="font-size:11px;color:var(--text-muted);font-weight:600">Win Rate</div>
           <div style="font-size:18px;font-weight:700;margin-top:2px" id="dash-sys-wr">—</div>
+          <div style="font-size:10px;color:var(--text-muted);margin-top:2px" id="dash-sys-wr-recent">last 20: —</div>
+        </div>
+        <div style="flex:1;min-width:100px;padding:4px 16px;border-right:1px solid var(--border)">
+          <div style="font-size:11px;color:var(--text-muted);font-weight:600">Avg Loss Size</div>
+          <div style="font-size:18px;font-weight:700;margin-top:2px" id="dash-sys-avgloss">—</div>
+          <div style="font-size:10px;color:var(--text-muted);margin-top:2px" id="dash-sys-avgloss-sub">vs 7% Minervini rule</div>
         </div>
         <div style="flex:1;min-width:100px;padding:4px 16px;border-right:1px solid var(--border)">
           <div style="font-size:11px;color:var(--text-muted);font-weight:600">Profit Factor</div>
@@ -697,6 +703,58 @@ tbody tr:hover { filter: brightness(0.97); }
         </div>
       </div>
     </div>
+  </div>
+
+  <!-- Open Portfolio Health + Loss Discipline -->
+  <div class="grid-2" style="margin-top:14px">
+
+    <!-- Open Portfolio Health -->
+    <div class="card card-sm" id="open-health-card">
+      <div class="stat-label">Open Portfolio Health</div>
+      <div style="display:flex;gap:16px;margin-top:8px;align-items:flex-end">
+        <div>
+          <div style="font-size:22px;font-weight:700;color:var(--green)" id="dash-open-profitable">—</div>
+          <div class="stat-sub">Profitable</div>
+        </div>
+        <div style="color:var(--border);font-size:20px;padding-bottom:2px">|</div>
+        <div>
+          <div style="font-size:22px;font-weight:700;color:var(--red)" id="dash-open-losing">—</div>
+          <div class="stat-sub">In Loss</div>
+        </div>
+        <div style="color:var(--border);font-size:20px;padding-bottom:2px">|</div>
+        <div>
+          <div style="font-size:22px;font-weight:700;color:var(--text-muted)" id="dash-open-flat">—</div>
+          <div class="stat-sub">Flat</div>
+        </div>
+      </div>
+      <div style="margin-top:10px;height:6px;border-radius:3px;background:var(--surface2);overflow:hidden">
+        <div id="dash-health-bar" style="height:100%;border-radius:3px;transition:width 0.4s"></div>
+      </div>
+      <div class="stat-badge" id="dash-health-badge" style="margin-top:8px">—</div>
+    </div>
+
+    <!-- Loss Discipline -->
+    <div class="card card-sm" id="loss-discipline-card">
+      <div class="stat-label">Loss Discipline</div>
+      <div style="display:flex;gap:16px;margin-top:8px;align-items:flex-end">
+        <div>
+          <div style="font-size:22px;font-weight:700" id="dash-avgloss-val">—</div>
+          <div class="stat-sub">Avg loss size</div>
+        </div>
+        <div style="color:var(--border);font-size:20px;padding-bottom:2px">|</div>
+        <div>
+          <div style="font-size:22px;font-weight:700" id="dash-slippage-val">—</div>
+          <div class="stat-sub">Avg stop slip</div>
+        </div>
+        <div style="color:var(--border);font-size:20px;padding-bottom:2px">|</div>
+        <div>
+          <div style="font-size:22px;font-weight:700;color:var(--text-muted)" id="dash-days-winner">—</div>
+          <div class="stat-sub">Days since win</div>
+        </div>
+      </div>
+      <div class="stat-badge" id="dash-discipline-badge" style="margin-top:16px">—</div>
+    </div>
+
   </div>
 
   <div class="section-title" style="margin-top:20px">Risk & Heat</div>
@@ -2028,6 +2086,113 @@ function renderDashboard(data, cfg) {
   const dExpEl = document.getElementById('dash-sys-exp');
   set('dash-sys-exp', (dExp >= 0 ? '+' : '') + dExp.toFixed(1) + '%');
   if (dExpEl) dExpEl.style.color = dExp >= 0 ? 'var(--green)' : 'var(--red)';
+
+  // Avg loss size (system health strip — second metric)
+  const last20 = closed.slice(-20);
+  const last20WR = last20.length > 0 ? last20.filter(t => t.finalPlPct > 0).length / last20.length * 100 : null;
+  const recentWREl = document.getElementById('dash-sys-wr-recent');
+  if (recentWREl && last20.length >= 5) {
+    recentWREl.textContent = `last ${last20.length}: ${last20WR.toFixed(0)}%`;
+    recentWREl.style.color = last20WR >= dWR + 5 ? 'var(--green)' : last20WR < dWR - 5 ? 'var(--red)' : 'var(--text-muted)';
+  }
+  const dLossers = closed.filter(t => t.finalPlPct < 0);
+  const avgLossSz = dLossers.length > 0 ? dLossers.reduce((s,t) => s + Math.abs(t.finalPlPct), 0) / dLossers.length : 0;
+  const avgLossEl = document.getElementById('dash-sys-avgloss');
+  if (avgLossEl) {
+    avgLossEl.textContent = dLossers.length > 0 ? avgLossSz.toFixed(1) + '%' : '—';
+    avgLossEl.style.color = avgLossSz <= 5 ? 'var(--green)' : avgLossSz <= 7 ? 'var(--amber)' : 'var(--red)';
+  }
+  const avgLossSubEl = document.getElementById('dash-sys-avgloss-sub');
+  if (avgLossSubEl) {
+    if (avgLossSz <= 5) avgLossSubEl.textContent = '✓ Tight — cutting fast';
+    else if (avgLossSz <= 7) avgLossSubEl.textContent = '⚠ Approaching 7% limit';
+    else avgLossSubEl.textContent = '🚨 Above 7% — holding losers too long';
+    avgLossSubEl.style.color = avgLossSz <= 5 ? 'var(--green)' : avgLossSz <= 7 ? 'var(--amber)' : 'var(--red)';
+  }
+
+  // ── Open Portfolio Health card ──────────────────────────────────────────
+  (function() {
+    const profitable = open.filter(t => (t.notionalPl || 0) > 0);
+    const losing     = open.filter(t => (t.notionalPl || 0) < 0);
+    const flat       = open.filter(t => (t.notionalPl || 0) === 0);
+    set('dash-open-profitable', profitable.length);
+    set('dash-open-losing', losing.length);
+    set('dash-open-flat', flat.length);
+    const healthPct = open.length > 0 ? profitable.length / open.length * 100 : 0;
+    const bar = document.getElementById('dash-health-bar');
+    if (bar) {
+      bar.style.width = healthPct + '%';
+      bar.style.background = healthPct >= 60 ? 'var(--green)' : healthPct >= 40 ? 'var(--amber)' : 'var(--red)';
+    }
+    const badge = document.getElementById('dash-health-badge');
+    if (badge && open.length > 0) {
+      if (healthPct >= 60) {
+        badge.className = 'stat-badge badge-green';
+        badge.textContent = `✓ ${healthPct.toFixed(0)}% of runners are profitable — system working`;
+      } else if (healthPct >= 40) {
+        badge.className = 'stat-badge badge-amber';
+        badge.textContent = `⚠ Only ${healthPct.toFixed(0)}% profitable — entries may be early or market is mixed`;
+      } else {
+        badge.className = 'stat-badge badge-red';
+        badge.textContent = `🚨 Only ${healthPct.toFixed(0)}% profitable — review entry quality or step aside`;
+      }
+    } else if (badge) {
+      badge.className = 'stat-badge badge-blue';
+      badge.textContent = 'No open positions';
+    }
+  })();
+
+  // ── Loss Discipline card ────────────────────────────────────────────────
+  (function() {
+    const losers = closed.filter(t => t.finalPlPct < 0);
+    const avgLoss = losers.length > 0 ? losers.reduce((s,t) => s + Math.abs(t.finalPlPct), 0) / losers.length : 0;
+
+    // Stop slippage: how much did each loser overshoot the planned risk?
+    // Planned risk = initRiskPct; actual loss = |finalPlPct|
+    // Positive slippage = held past stop; negative = exited before stop (discipline)
+    const slippageTrades = losers.filter(t => t.initRiskPct > 0);
+    const avgSlippage = slippageTrades.length > 0
+      ? slippageTrades.reduce((s,t) => s + (Math.abs(t.finalPlPct) - t.initRiskPct), 0) / slippageTrades.length : 0;
+
+    // Days since last closed winner
+    const winners = closed.filter(t => t.finalPlPct > 0 && t.closeDate).sort((a,b) => parseDate(b.closeDate) - parseDate(a.closeDate));
+    const daysSinceWin = winners.length > 0
+      ? Math.round((today - parseDate(winners[0].closeDate)) / 86400000) : null;
+
+    const avgLossValEl = document.getElementById('dash-avgloss-val');
+    if (avgLossValEl) {
+      avgLossValEl.textContent = losers.length > 0 ? avgLoss.toFixed(1) + '%' : '—';
+      avgLossValEl.style.color = avgLoss <= 5 ? 'var(--green)' : avgLoss <= 7 ? 'var(--amber)' : 'var(--red)';
+    }
+
+    const slipEl = document.getElementById('dash-slippage-val');
+    if (slipEl) {
+      slipEl.textContent = slippageTrades.length > 0 ? (avgSlippage >= 0 ? '+' : '') + avgSlippage.toFixed(1) + '%' : '—';
+      slipEl.style.color = avgSlippage <= 0 ? 'var(--green)' : avgSlippage <= 1.5 ? 'var(--amber)' : 'var(--red)';
+    }
+
+    const daysEl = document.getElementById('dash-days-winner');
+    if (daysEl) {
+      daysEl.textContent = daysSinceWin !== null ? daysSinceWin + 'd' : '—';
+      daysEl.style.color = daysSinceWin === null ? 'var(--text-muted)'
+        : daysSinceWin <= 14 ? 'var(--green)' : daysSinceWin <= 30 ? 'var(--amber)' : 'var(--red)';
+    }
+
+    const discBadge = document.getElementById('dash-discipline-badge');
+    if (discBadge) {
+      const issues = [];
+      if (avgLoss > 7) issues.push(`avg loss ${avgLoss.toFixed(1)}% > 7% rule`);
+      if (avgSlippage > 1.5) issues.push(`exits ${avgSlippage.toFixed(1)}% past stop on avg`);
+      if (daysSinceWin !== null && daysSinceWin > 30) issues.push(`no winner banked in ${daysSinceWin} days`);
+      if (issues.length === 0) {
+        discBadge.className = 'stat-badge badge-green';
+        discBadge.textContent = '✓ Cutting losses cleanly — discipline on track';
+      } else {
+        discBadge.className = 'stat-badge badge-red';
+        discBadge.textContent = '⚠ ' + issues.join(' · ');
+      }
+    }
+  })();
 
   // Open/Closed count card in Risk section
   const alertCount = open.filter(t => {
