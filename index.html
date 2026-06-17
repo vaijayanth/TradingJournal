@@ -711,10 +711,15 @@ tbody tr:hover { filter: brightness(0.97); }
     <!-- Open Portfolio Health -->
     <div class="card card-sm" id="open-health-card">
       <div class="stat-label">Open Portfolio Health</div>
-      <div style="display:flex;gap:16px;margin-top:8px;align-items:flex-end">
+      <div style="display:flex;gap:12px;margin-top:8px;align-items:flex-end;flex-wrap:wrap">
         <div>
           <div style="font-size:22px;font-weight:700;color:var(--green)" id="dash-open-profitable">—</div>
           <div class="stat-sub">Profitable</div>
+        </div>
+        <div style="color:var(--border);font-size:20px;padding-bottom:2px">|</div>
+        <div>
+          <div style="font-size:22px;font-weight:700;color:var(--accent)" id="dash-open-riskfree">—</div>
+          <div class="stat-sub">Risk Free</div>
         </div>
         <div style="color:var(--border);font-size:20px;padding-bottom:2px">|</div>
         <div>
@@ -2115,10 +2120,19 @@ function renderDashboard(data, cfg) {
     const profitable = open.filter(t => (t.notionalPl || 0) > 0);
     const losing     = open.filter(t => (t.notionalPl || 0) < 0);
     const flat       = open.filter(t => (t.notionalPl || 0) === 0);
+    // Risk-free = stop moved to breakeven or better (effStop >= entryPrice)
+    // These trades have zero or positive worst-case outcome even if stop is hit
+    const riskFree   = open.filter(t => {
+      const effStop = Math.max(t.stopLoss || 0, t.sevenDayLow || 0);
+      return effStop > 0 && t.entryPrice > 0 && effStop >= t.entryPrice;
+    });
     set('dash-open-profitable', profitable.length);
+    set('dash-open-riskfree', riskFree.length);
     set('dash-open-losing', losing.length);
     set('dash-open-flat', flat.length);
-    const healthPct = open.length > 0 ? profitable.length / open.length * 100 : 0;
+    // Health bar driven by profitable + risk-free vs total
+    const safeCount = new Set([...profitable, ...riskFree].map(t => t.stock)).size;
+    const healthPct = open.length > 0 ? safeCount / open.length * 100 : 0;
     const bar = document.getElementById('dash-health-bar');
     if (bar) {
       bar.style.width = healthPct + '%';
@@ -2126,15 +2140,16 @@ function renderDashboard(data, cfg) {
     }
     const badge = document.getElementById('dash-health-badge');
     if (badge && open.length > 0) {
+      const rfNote = riskFree.length > 0 ? ` · ${riskFree.length} at breakeven` : '';
       if (healthPct >= 60) {
         badge.className = 'stat-badge badge-green';
-        badge.textContent = `✓ ${healthPct.toFixed(0)}% of runners are profitable — system working`;
+        badge.textContent = `✓ ${healthPct.toFixed(0)}% safe (profitable + risk-free)${rfNote}`;
       } else if (healthPct >= 40) {
         badge.className = 'stat-badge badge-amber';
-        badge.textContent = `⚠ Only ${healthPct.toFixed(0)}% profitable — entries may be early or market is mixed`;
+        badge.textContent = `⚠ Only ${healthPct.toFixed(0)}% safe — entries may be early${rfNote}`;
       } else {
         badge.className = 'stat-badge badge-red';
-        badge.textContent = `🚨 Only ${healthPct.toFixed(0)}% profitable — review entry quality or step aside`;
+        badge.textContent = `🚨 Only ${healthPct.toFixed(0)}% safe — review entry quality or step aside`;
       }
     } else if (badge) {
       badge.className = 'stat-badge badge-blue';
