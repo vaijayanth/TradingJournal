@@ -4,6 +4,23 @@
 Single-file HTML trading journal (`index.html`) hosted on GitHub Pages at `https://vaijayanth.github.io/TradingJournal`.
 Connected to a Google Sheet via Apps Script as a JSON middleware.
 
+## SYSTEM DESIGN — READ BEFORE SUGGESTING ANYTHING
+
+This is a **Minervini/Bonde/Zanger momentum breakout system** with a deliberate asymmetric outcome structure:
+
+- **Losses are taken FAST and SMALL** — stops are mechanical and hit frequently. The closed trade log is dominated by small losses. This is by design, not a problem.
+- **Winners are held OPEN and RUN** — profitable trades stay open for weeks/months, trailing the 7-day low. The real gains sit in `notionalPl` (col Y), not in closed P&L.
+- **True performance = realised + unrealised combined** — closed-only P&L always looks negative. Never judge system health from closed trades alone.
+- **A "loss streak" on closed trades is NORMAL and MEANINGLESS** — do not suggest loss streak banners or closed-trade streak alerts. They will always be red and tell the user nothing.
+- **The right health checks for this system are:**
+  1. Are open positions profitable / risk-free? (open portfolio health)
+  2. Is avg closed loss size staying small (< 7%)?
+  3. Are stops being taken at the stop, not past it? (slippage)
+  4. Are winners still running (HA green, above 21 EMA)?
+  5. Days since last closed winner (system producing winners at all?)
+- **Never suggest metrics calibrated for balanced win/loss systems** (e.g., "your win rate is only 30% — this is bad"). For this system 30-40% WR with large winners is healthy.
+- **Profit Factor and R-Multiple are the correct system quality gauges**, not win rate alone.
+
 ## Repo & Branch
 - Repo: `vaijayanth/TradingJournal`
 - Active branch: `claude/beautiful-hamilton-fwa55n`
