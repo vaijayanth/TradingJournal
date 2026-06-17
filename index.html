@@ -2191,8 +2191,7 @@ function renderDashboard(data, cfg) {
     } else {
       // Group alerts by priority order
       const groups = [
-        { key:'red',     icon:'🔴', label:'Exit Triggered',         color:'var(--red)',   bg:'var(--red-soft)',   countBg:'rgba(255,69,58,0.2)',   autoOpen: false },
-        { key:'ema',     icon:'📉', label:'Below 21 EMA — Protect Profits', color:'var(--red)', bg:'var(--red-soft)', countBg:'rgba(255,69,58,0.2)', autoOpen: false },
+        { key:'red',     icon:'🔴', label:'Exit Triggered',          color:'var(--red)',   bg:'var(--red-soft)',   countBg:'rgba(255,69,58,0.2)',   autoOpen: false },
         { key:'ha-warn', icon:'⚠',  label:'Profit at Risk — HA Red', color:'var(--red)',   bg:'var(--red-soft)',   countBg:'rgba(255,69,58,0.2)',   autoOpen: false },
         { key:'ha',      icon:'🔄', label:'HA Momentum Shift',       color:'var(--amber)', bg:'var(--amber-soft)', countBg:'rgba(255,159,10,0.2)', autoOpen: false },
         { key:'breakeven', icon:'🛡', label:'Move Stop to Breakeven', color:'var(--amber)', bg:'var(--amber-soft)', countBg:'rgba(255,159,10,0.2)', autoOpen: false },
@@ -2201,8 +2200,9 @@ function renderDashboard(data, cfg) {
       ];
 
       // Tag each alert with a group key
+      // 21 EMA breach is a full exit trigger (same priority as stop breach) — goes into 'red' group
       const tagged = alerts.map(a => {
-        if (a.icon === '📉') return { ...a, groupKey: 'ema' };
+        if (a.icon === '📉') return { ...a, groupKey: 'red' };
         if (a.icon === '🛡') return { ...a, groupKey: 'breakeven' };
         if (a.icon === '⚠') return { ...a, groupKey: 'ha-warn' };
         if (a.icon === '🔄') return { ...a, groupKey: 'ha' };
@@ -2220,10 +2220,10 @@ function renderDashboard(data, cfg) {
           const stockName = a.title.split(' — ')[0];
           const detail = a.title.split(' — ')[1] || '';
           const badge = g.key === 'red'
-            ? `<span class="fno-badge fno-badge-call">🔴 Exit Now</span>`
-            : g.key === 'ema'
-              ? `<span class="fno-badge fno-badge-call">📉 Protect Profits</span>`
-              : g.key === 'ha-warn'
+            ? (a.icon === '📉'
+              ? `<span class="fno-badge fno-badge-call">📉 Exit — 21 EMA</span>`
+              : `<span class="fno-badge fno-badge-call">🔴 Exit Now</span>`)
+            : g.key === 'ha-warn'
                 ? `<span class="fno-badge" style="background:var(--red-soft);color:var(--red);border:1px solid rgba(239,68,68,.3)">⚠ Tighten Stop</span>`
                 : g.key === 'breakeven'
                   ? `<span class="fno-badge" style="background:var(--amber-soft);color:var(--amber);border:1px solid rgba(245,158,11,.3)">🛡 Move to BE</span>`
