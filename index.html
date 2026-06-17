@@ -2167,8 +2167,9 @@ function renderDashboard(data, cfg) {
         alerts.push({ type:'red', icon:'🔴', title:`${t.stock} — ${shortRule}`, desc:`${ruleStr}. Effective stop = MAX(J, 7DL) = ₹${Math.max(t.stopLoss||0, t.sevenDayLow||0).toLocaleString('en-IN')}. Mechanical exit required — no exceptions.` });
       }
       else if (effPct <= cfg.stopProximity) alerts.push({ type:'amber', icon:'🟡', title:`${t.stock} — Within ${effPct.toFixed(1)}% of Stop`, desc:`Only ${effPct.toFixed(1)}% above effective stop (MAX of ₹${t.stopLoss.toLocaleString('en-IN')}, ₹${t.sevenDayLow.toLocaleString('en-IN')}). Review before market open.` });
-      if ((t.ema21 || '').trim().toLowerCase() === 'below' && t.plPct > 0) {
-        alerts.push({ type:'red', icon:'📉', title:`${t.stock} — Below 21 EMA (+${t.plPct.toFixed(1)}%)`, desc:`Price has crossed below 21 EMA. Position is profitable — consider tightening stop to protect gains.` });
+      if ((t.ema21 || '').trim().toLowerCase() === 'below' && (t.plPct > 0 || t.notionalPl > 0)) {
+        const emaPlLabel = t.plPct > 0 ? `+${t.plPct.toFixed(1)}%` : `+₹${Math.round(t.notionalPl).toLocaleString('en-IN')}`;
+        alerts.push({ type:'red', icon:'📉', title:`${t.stock} — Below 21 EMA (${emaPlLabel})`, desc:`Price has crossed below 21 EMA. Position is profitable — consider tightening stop to protect gains.` });
       }
       if (t.plPct >= cfg.beTrigger && t.stopLoss < t.entryPrice) {
         alerts.push({ type:'amber', icon:'🛡', title:`${t.stock} — Move Stop to Breakeven (+${t.plPct.toFixed(1)}%)`, desc:`Position up ${t.plPct.toFixed(1)}%. Per your strategy, move col J stop to entry price ₹${t.entryPrice.toLocaleString('en-IN')} to make this trade risk-free.` });
