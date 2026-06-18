@@ -715,7 +715,11 @@ tbody tr:hover { filter: brightness(0.97); }
         <div>
           <div style="font-size:22px;font-weight:700;color:var(--green)" id="dash-open-profitable">—</div>
           <div class="stat-sub">Profitable / Risk Free</div>
-          <div style="font-size:10px;color:var(--text-muted)" id="dash-open-profitable-sub">MTM &gt; 0 or stop ≥ entry</div>
+        </div>
+        <div style="color:var(--border);font-size:20px;padding-bottom:2px">|</div>
+        <div>
+          <div style="font-size:22px;font-weight:700;color:var(--red)" id="dash-open-losing">—</div>
+          <div class="stat-sub">In Loss</div>
         </div>
       </div>
       <div style="margin-top:10px;height:6px;border-radius:3px;background:var(--surface2);overflow:hidden">
@@ -2103,15 +2107,15 @@ function renderDashboard(data, cfg) {
 
   // ── Open Portfolio Health card ──────────────────────────────────────────
   (function() {
-    // Safe = profitable (notionalPl > 0) OR risk-free (effStop >= entryPrice)
-    const safeSet = new Set();
+    // Safe = profitable (notionalPl > 0) OR risk-free (effStop >= entryPrice); In Loss = everything else
+    let safeCount = 0, lossCount = 0;
     open.forEach(t => {
       const effStop = Math.max(t.stopLoss || 0, t.sevenDayLow || 0);
       const isRiskFree = effStop > 0 && t.entryPrice > 0 && effStop >= t.entryPrice;
-      if ((t.notionalPl || 0) > 0 || isRiskFree) safeSet.add(t.stock);
+      if ((t.notionalPl || 0) > 0 || isRiskFree) safeCount++; else lossCount++;
     });
-    const safeCount = safeSet.size;
     set('dash-open-profitable', safeCount);
+    set('dash-open-losing', lossCount);
     const healthPct = open.length > 0 ? safeCount / open.length * 100 : 0;
     const bar = document.getElementById('dash-health-bar');
     if (bar) {
