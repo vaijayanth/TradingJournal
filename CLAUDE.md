@@ -48,7 +48,7 @@ This is a **Minervini/Bonde/Zanger momentum breakout system** with a deliberate 
 | Init Risk ₹ | K |
 | Init Risk % | L |
 | Entry Price | R |
-| Setup Type | S (static label at entry — use this for analysis) |
+| Setup Type | S (static label at entry — compound code, see below) |
 | % From Stop | W |
 | Notional P&L% | X (plPct — blank for closed trades) |
 | Notional P&L ₹ | Y (notionalPl — MTM, only filled for OPEN positions) |
@@ -64,7 +64,11 @@ This is a **Minervini/Bonde/Zanger momentum breakout system** with a deliberate 
 - **Column Y (notionalPl)**: mark-to-market, only populated for OPEN positions. Zero/blank for closed trades.
 - **Column X (plPct)**: also blank for closed trades in this sheet.
 - **Column F (ema21)**: live formula showing current EMA position — NOT entry-time value. Do NOT use for analysis.
-- **Setup Type (col S)**: static label entered at trade open — correct for analysis.
+- **Setup Type (col S)**: compound code `{PATTERN}_{SL}_{TIER}`. Parser: `parseSetupType(s)` → `{ pattern, slTier, label }`.
+  - Pattern: `BKT` = Breakout, `VCP` = VCP, `VCL` = VCL
+  - SL tier: `LT10` = stop < 10%, `GT10` = stop > 10%, `LT8` = stop < 8%, `GT8` = stop > 8%
+  - Examples: `BKT_SL_LT10`, `VCP_SL_LT8`, `VCL_SL_GT8`
+  - For grouping in analysis, group by `pattern` (BKT/VCP/VCL) and optionally by `slTier`
 - **portfolioValue (AK26)**: realised only — does NOT include open position unrealized P&L. True combined P&L = `(portfolioValue - initialCapital) + sum(notionalPl)` = `totalFinalPl + totalUnrealisedPl`.
 - **Date format from Apps Script**: `dd-MMM-yyyy` (e.g., `21-Apr-2026`) — NOT parseable by `new Date()`. Use `parseDate()` helper everywhere.
 

@@ -1916,6 +1916,21 @@ function loadConfig() {
 }
 function saveConfig(cfg) { localStorage.setItem(CONFIG_KEY, JSON.stringify(cfg)); }
 
+// ── SETUP TYPE PARSER ────────────────────────────────
+// Col S format: {PATTERN}_SL_{TIER}  e.g. BKT_SL_LT10, VCP_SL_LT8
+const SETUP_PATTERN_LABELS = { BKT: 'Breakout', VCP: 'VCP', VCL: 'VCL' };
+const SETUP_TIER_LABELS    = { LT10: '<10% SL', GT10: '>10% SL', LT8: '<8% SL', GT8: '>8% SL' };
+function parseSetupType(code) {
+  if (!code || code.trim() === '' || code === 'Unlabelled') return { pattern: '', tier: '', label: 'Unlabelled', patternLabel: 'Unlabelled' };
+  const parts = code.trim().split('_');
+  const pattern = parts[0] || code;
+  const tier    = parts[2] || '';
+  const patternLabel = SETUP_PATTERN_LABELS[pattern] || pattern;
+  const tierLabel    = SETUP_TIER_LABELS[tier] || tier;
+  const label = tierLabel ? `${patternLabel} · ${tierLabel}` : patternLabel;
+  return { pattern, tier, label, patternLabel };
+}
+
 // ── DATE PARSING ─────────────────────────────────────
 // Apps Script returns dates as "21-Apr-2026" (dd-MMM-yyyy).
 // new Date("21-Apr-2026") → Invalid Date in V8. Convert to "Apr 21, 2026".
@@ -4177,11 +4192,19 @@ function initAnalysisCharts(open, closed) {
     return { wr, avg, r, rExp, aw, al: -Math.abs(al), n: trades.length, totalPl };
   };
 
-  const setupMap = {};
+  // Group by full setup code; also build pattern-level rollup
+  const setupMap = {};       // key = friendly label (e.g. "Breakout · <10% SL")
+  const setupCodeMap = {};   // key = raw code, for lookup
+  const patternMap = {};     // key = pattern (BKT/VCP/VCL) for rollup
   closed.forEach(t => {
-    const s = (t.setupType || 'Unlabelled').trim() || 'Unlabelled';
-    if (!setupMap[s]) setupMap[s] = [];
-    setupMap[s].push(t);
+    const parsed = parseSetupType(t.setupType);
+    const key = parsed.label;
+    if (!setupMap[key]) setupMap[key] = [];
+    setupMap[key].push(t);
+    if (parsed.pattern) {
+      if (!patternMap[parsed.pattern]) patternMap[parsed.pattern] = [];
+      patternMap[parsed.pattern].push(t);
+    }
   });
   const setupKeys = Object.keys(setupMap).filter(s => s !== 'Unlabelled').sort((a,b) => setupMap[b].length - setupMap[a].length);
   const fmtRsA = v => (v < 0 ? '-' : '+') + '₹' + Math.abs(Math.round(v)).toLocaleString('en-IN');
@@ -4190,9 +4213,9 @@ function initAnalysisCharts(open, closed) {
   const last30 = [...closed].sort((a,b) => parseDate(b.closeDate)-parseDate(a.closeDate)).slice(0,30);
   const last30Map = {};
   last30.forEach(t => {
-    const s = (t.setupType || 'Unlabelled').trim() || 'Unlabelled';
-    if (!last30Map[s]) last30Map[s] = [];
-    last30Map[s].push(t);
+    const key = parseSetupType(t.setupType).label;
+    if (!last30Map[key]) last30Map[key] = [];
+    last30Map[key].push(t);
   });
 
   const tbody = document.getElementById('setup-breakdown-tbody');
@@ -4232,13 +4255,21 @@ function initAnalysisCharts(open, closed) {
     }
   }
 
-  // Insight: best setup by avg P&L
+  // Insight: best setup by avg P&L + pattern-level rollup
   const insEl = document.getElementById('ema-insight');
   if (insEl && setupKeys.length > 1) {
     const stats = setupKeys.map(s => ({ s, ...calcStats(setupMap[s]) }));
-    const best = stats.reduce((a, b) => b.avg > a.avg ? b : a);
+    const best  = stats.reduce((a, b) => b.avg > a.avg ? b : a);
     const worst = stats.reduce((a, b) => b.avg < a.avg ? b : a);
-    insEl.innerHTML = `→ Best setup: <strong>${best.s}</strong> (avg ${(best.avg>=0?'+':'')+best.avg.toFixed(1)}%, ${best.wr.toFixed(0)}% win rate, n=${best.n}) · Weakest: <strong>${worst.s}</strong> (avg ${worst.avg.toFixed(1)}%, n=${worst.n})`;
+    // Pattern-level rollup: BKT vs VCP vs VCL
+    const patternKeys = Object.keys(patternMap);
+    const patternSummary = patternKeys.length > 1
+      ? ' · Pattern: ' + patternKeys.map(p => {
+          const ps = calcStats(patternMap[p]);
+          return `<strong>${SETUP_PATTERN_LABELS[p]||p}</strong> ${ps.wr.toFixed(0)}%WR / ${(ps.avg>=0?'+':'')+ps.avg.toFixed(1)}% avg (n=${ps.n})`;
+        }).join(' vs ')
+      : '';
+    insEl.innerHTML = `→ Best: <strong>${best.s}</strong> (avg ${(best.avg>=0?'+':'')+best.avg.toFixed(1)}%, ${best.wr.toFixed(0)}%WR, n=${best.n}) · Weakest: <strong>${worst.s}</strong> (avg ${worst.avg.toFixed(1)}%, n=${worst.n})${patternSummary}`;
   } else if (insEl) {
     insEl.textContent = '→ Add setup type labels in column S to see which setups work best.';
   }
