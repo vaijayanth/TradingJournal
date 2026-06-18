@@ -715,21 +715,13 @@ tbody tr:hover { filter: brightness(0.97); }
         <div>
           <div style="font-size:22px;font-weight:700;color:var(--green)" id="dash-open-profitable">—</div>
           <div class="stat-sub">Profitable</div>
+          <div style="font-size:10px;color:var(--text-muted)" id="dash-open-profitable-sub">MTM &gt; 0</div>
         </div>
         <div style="color:var(--border);font-size:20px;padding-bottom:2px">|</div>
         <div>
           <div style="font-size:22px;font-weight:700;color:var(--accent)" id="dash-open-riskfree">—</div>
           <div class="stat-sub">Risk Free</div>
-        </div>
-        <div style="color:var(--border);font-size:20px;padding-bottom:2px">|</div>
-        <div>
-          <div style="font-size:22px;font-weight:700;color:var(--red)" id="dash-open-losing">—</div>
-          <div class="stat-sub">In Loss</div>
-        </div>
-        <div style="color:var(--border);font-size:20px;padding-bottom:2px">|</div>
-        <div>
-          <div style="font-size:22px;font-weight:700;color:var(--text-muted)" id="dash-open-flat">—</div>
-          <div class="stat-sub">Flat</div>
+          <div style="font-size:10px;color:var(--text-muted)">stop ≥ entry</div>
         </div>
       </div>
       <div style="margin-top:10px;height:6px;border-radius:3px;background:var(--surface2);overflow:hidden">
@@ -2117,21 +2109,23 @@ function renderDashboard(data, cfg) {
 
   // ── Open Portfolio Health card ──────────────────────────────────────────
   (function() {
-    // Mutually exclusive buckets — priority: Risk Free > Profitable > In Loss > Flat
+    // Independent counts — a trade can appear in both
+    const profitable = open.filter(t => (t.notionalPl || 0) > 0);
     const riskFree   = open.filter(t => {
       const effStop = Math.max(t.stopLoss || 0, t.sevenDayLow || 0);
       return effStop > 0 && t.entryPrice > 0 && effStop >= t.entryPrice;
     });
-    const riskFreeStocks = new Set(riskFree.map(t => t.stock));
-    const profitable = open.filter(t => (t.notionalPl || 0) > 0  && !riskFreeStocks.has(t.stock));
-    const losing     = open.filter(t => (t.notionalPl || 0) < 0  && !riskFreeStocks.has(t.stock));
-    const flat       = open.filter(t => (t.notionalPl || 0) === 0 && !riskFreeStocks.has(t.stock));
+    const both = open.filter(t => {
+      if ((t.notionalPl || 0) <= 0) return false;
+      const e = Math.max(t.stopLoss || 0, t.sevenDayLow || 0);
+      return e > 0 && t.entryPrice > 0 && e >= t.entryPrice;
+    });
     set('dash-open-profitable', profitable.length);
     set('dash-open-riskfree', riskFree.length);
-    set('dash-open-losing', losing.length);
-    set('dash-open-flat', flat.length);
-    // Health bar: (profitable + risk-free) as % of total open
-    const safeCount = profitable.length + riskFree.length;
+    const sub = document.getElementById('dash-open-profitable-sub');
+    if (sub) sub.textContent = both.length > 0 ? `${both.length} also risk-free` : 'MTM > 0';
+    // Health bar: % of open positions that are profitable
+    const safeCount = profitable.length;
     const healthPct = open.length > 0 ? safeCount / open.length * 100 : 0;
     const bar = document.getElementById('dash-health-bar');
     if (bar) {
@@ -2140,16 +2134,16 @@ function renderDashboard(data, cfg) {
     }
     const badge = document.getElementById('dash-health-badge');
     if (badge && open.length > 0) {
-      const rfNote = riskFree.length > 0 ? ` · ${riskFree.length} at breakeven` : '';
+      const rfNote = riskFree.length > 0 ? ` · ${riskFree.length} with stop ≥ entry` : '';
       if (healthPct >= 60) {
         badge.className = 'stat-badge badge-green';
-        badge.textContent = `✓ ${safeCount} of ${open.length} positions safe (profitable + risk-free)${rfNote}`;
+        badge.textContent = `✓ ${safeCount} of ${open.length} positions in profit${rfNote}`;
       } else if (healthPct >= 40) {
         badge.className = 'stat-badge badge-amber';
-        badge.textContent = `⚠ Only ${safeCount} of ${open.length} safe — entries may be early${rfNote}`;
+        badge.textContent = `⚠ Only ${safeCount} of ${open.length} in profit${rfNote}`;
       } else {
         badge.className = 'stat-badge badge-red';
-        badge.textContent = `🚨 Only ${safeCount} of ${open.length} safe — review entry quality or step aside`;
+        badge.textContent = `🚨 Only ${safeCount} of ${open.length} in profit${rfNote}`;
       }
     } else if (badge) {
       badge.className = 'stat-badge badge-blue';
