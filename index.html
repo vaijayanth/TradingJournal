@@ -5413,54 +5413,71 @@ function fnoRenderActiveSpreads(watchlist) {
   }
 
   const rows = active.map(s => {
-    const haRed    = s.haColour.toLowerCase() === 'red';
-    const haGreen  = !haRed;
-    const flipped  = s.haChanged;
-    const spread   = s.spreadActive; // 'CALL', 'PUT', 'CALLPUT'
+    const haRed   = s.haColour.toLowerCase() === 'red';
+    const haGreen = !haRed;
+    const flipped = s.haChanged;
+    const spread  = s.spreadActive; // 'CALL', 'PUT', 'CALLPUT'
+    const { bull, bear } = fnoScore(s);
 
-    let statusIcon, statusText, badge;
+    // Score thresholds: bull ≥ 4 = strong bullish, bear ≥ 3 = strong bearish
+    const strongBull = bull >= 4;
+    const strongBear = bear >= 3;
+
+    let statusIcon, statusText, badge, critical = false;
 
     if (spread === 'PUT') {
+      // PUT spread profits when stock is bullish — threatened by bearish signals
       if (haRed && flipped) {
-        statusIcon = '🔴'; statusText = 'HA turned Red today — add Call Spread to hedge';
+        critical = true;
+        statusIcon = '🔴'; statusText = `HA turned Red today (bear ${bear}/4) — add Call Spread to hedge`;
         badge = `<span class="fno-badge fno-badge-call">Add Call Spread</span>`;
-      } else if (haRed && !flipped) {
-        statusIcon = '⚠'; statusText = 'HA Red ongoing — monitor put premium, exit if 2×';
+      } else if (haRed || strongBear) {
+        const reasons = [haRed ? 'HA Red' : null, strongBear ? `bear ${bear}/4` : null].filter(Boolean).join(', ');
+        statusIcon = '⚠'; statusText = `${reasons} — monitor put premium, exit if 2×`;
         badge = `<span class="fno-badge" style="background:var(--amber-soft);color:var(--amber);border:1px solid rgba(245,158,11,.3)">Monitor Premium</span>`;
+      } else if (strongBull) {
+        statusIcon = '✅'; statusText = `Strong bull (${bull}/6) + HA Green — put spread in strong shape`;
+        badge = `<span class="fno-badge fno-badge-put">Strong Hold</span>`;
       } else {
-        statusIcon = '✅'; statusText = 'HA Green — stock bullish, put spread winning';
+        statusIcon = '✅'; statusText = `HA Green (bull ${bull}/6) — put spread winning`;
         badge = `<span class="fno-badge fno-badge-put">Hold</span>`;
       }
+
     } else if (spread === 'CALL') {
+      // CALL spread profits when stock is bearish — threatened by bullish signals
       if (haGreen && flipped) {
-        statusIcon = '🔴'; statusText = 'HA turned Green today — bullish reversal threatens call spread';
+        critical = true;
+        statusIcon = '🔴'; statusText = `HA turned Green today (bull ${bull}/6) — bullish reversal threatens call spread`;
         badge = `<span class="fno-badge fno-badge-call">Consider Exit</span>`;
-      } else if (haGreen && !flipped) {
-        statusIcon = '⚠'; statusText = 'HA Green ongoing — bullish, monitor call premium, exit if 2×';
+      } else if (haGreen || strongBull) {
+        const reasons = [haGreen ? 'HA Green' : null, strongBull ? `bull ${bull}/6` : null].filter(Boolean).join(', ');
+        statusIcon = '⚠'; statusText = `${reasons} — bullish pressure, monitor call premium, exit if 2×`;
         badge = `<span class="fno-badge" style="background:var(--amber-soft);color:var(--amber);border:1px solid rgba(245,158,11,.3)">Monitor Premium</span>`;
+      } else if (strongBear) {
+        statusIcon = '✅'; statusText = `Strong bear (${bear}/4) + HA Red — call spread in strong shape`;
+        badge = `<span class="fno-badge fno-badge-put">Strong Hold</span>`;
       } else {
-        statusIcon = '✅'; statusText = 'HA Red — stock bearish, call spread winning';
+        statusIcon = '✅'; statusText = `HA Red (bear ${bear}/4) — call spread winning`;
         badge = `<span class="fno-badge fno-badge-put">Hold</span>`;
       }
+
     } else { // CALLPUT
       if (flipped) {
-        const leg = haRed ? 'Put leg under pressure' : 'Call leg under pressure';
-        statusIcon = '⚠'; statusText = `HA flipped — ${leg}, monitor that premium`;
+        const leg = haRed ? 'Put leg' : 'Call leg';
+        const score = haRed ? `bear ${bear}/4` : `bull ${bull}/6`;
+        statusIcon = '⚠'; statusText = `HA flipped — ${leg} under pressure (${score}), monitor that premium`;
         badge = `<span class="fno-badge" style="background:var(--amber-soft);color:var(--amber);border:1px solid rgba(245,158,11,.3)">Check ${haRed ? 'Put' : 'Call'} Leg</span>`;
+      } else if (strongBull && !strongBear) {
+        statusIcon = '⚠'; statusText = `Strong bull (${bull}/6) — call leg at risk, put leg winning`;
+        badge = `<span class="fno-badge" style="background:var(--amber-soft);color:var(--amber);border:1px solid rgba(245,158,11,.3)">Monitor Call Leg</span>`;
+      } else if (strongBear && !strongBull) {
+        statusIcon = '⚠'; statusText = `Strong bear (${bear}/4) — put leg at risk, call leg winning`;
+        badge = `<span class="fno-badge" style="background:var(--amber-soft);color:var(--amber);border:1px solid rgba(245,158,11,.3)">Monitor Put Leg</span>`;
       } else {
-        statusIcon = '✅'; statusText = haRed ? 'HA Red — call leg winning, put leg at risk' : 'HA Green — put leg winning, call leg at risk';
+        statusIcon = '✅'; statusText = haRed ? `HA Red (bear ${bear}/4) — call leg winning` : `HA Green (bull ${bull}/6) — put leg winning`;
         badge = `<span class="fno-badge fno-badge-put">Hold Both</span>`;
       }
     }
-
-    const spreadBadge = spread === 'CALLPUT'
-      ? `<span class="fno-badge fno-badge-active">CALL+PUT</span>`
-      : `<span class="fno-badge fno-badge-active">${spread}</span>`;
-    const cmpFmt = s.cmp ? '₹' + s.cmp.toLocaleString('en-IN') : '—';
-    const pct7dl = s.pctFrom7DL != null && s.pctFrom7DL !== ''
-      ? (v => (v >= 0 ? '+' : '') + v.toFixed(1) + '%')(parseFloat(s.pctFrom7DL) * 100) : '—';
-    const critical = (spread === 'PUT' && haRed && flipped) || (spread === 'CALL' && haGreen && flipped);
-    return `<tr class="${critical ? 'fno-row-alert' : ''}">
         <td><span class="stock-name">${s.stock}</span></td>
         <td>${s.broker ? `<span class="fno-tag fno-tag-yes">${s.broker}</span>` : '—'}</td>
         <td>${spreadBadge}</td>
