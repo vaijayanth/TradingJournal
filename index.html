@@ -1760,6 +1760,14 @@ tbody tr:hover { filter: brightness(0.97); }
   <!-- F&O Dashboard -->
   <div id="page-fno-dashboard" class="page active">
 
+    <!-- NIFTYBEES Market Trend -->
+    <div id="fno-market-trend" style="margin-bottom:16px;padding:14px 18px;border-radius:8px;background:var(--surface2);display:flex;align-items:center;gap:16px;flex-wrap:wrap">
+      <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text-muted);white-space:nowrap">Market Direction</div>
+      <div style="font-size:20px;font-weight:700" id="fno-trend-label">—</div>
+      <div style="font-size:12px;color:var(--text-muted)" id="fno-trend-sub">—</div>
+      <div style="margin-left:auto;font-size:12px;font-weight:600" id="fno-trend-bias">—</div>
+    </div>
+
     <!-- Market Breadth -->
     <div class="section-title">Market Breadth</div>
     <div id="fno-breadth" style="margin-bottom:4px">
@@ -5299,6 +5307,43 @@ async function refreshFnoData() {
 
 function renderFnoDashboard(watchlist) {
   const set = (id,v) => { const el=document.getElementById(id); if(el) el.textContent=v; };
+
+  // ── NIFTYBEES Market Direction ──
+  // Always read from full watchlist (not broker-filtered) so it always shows
+  const allList = window._fnoData ? window._fnoData.watchlist : watchlist;
+  const niftybees = allList.find(s => s.stock.toUpperCase().includes('NIFTYBEES'));
+  const trendEl    = document.getElementById('fno-market-trend');
+  const trendLabel = document.getElementById('fno-trend-label');
+  const trendSub   = document.getElementById('fno-trend-sub');
+  const trendBias  = document.getElementById('fno-trend-bias');
+  if (niftybees && trendEl) {
+    const above50 = niftybees.ema50;   // 50 EMA ABOVE
+    const above21 = niftybees.ema20;   // 21 EMA ABOVE (col K in sheet = ema20 field)
+    const above200 = niftybees.ema200;
+    if (above50 && above21) {
+      trendEl.style.background = 'rgba(34,197,94,0.1)';
+      trendEl.style.borderLeft = '4px solid var(--green)';
+      if (trendLabel) { trendLabel.textContent = '📈 Uptrend'; trendLabel.style.color = 'var(--green)'; }
+      if (trendSub)   trendSub.textContent = 'NIFTYBEES above 50 EMA & 21 EMA — favour Put Spreads';
+      if (trendBias)  { trendBias.textContent = above200 ? '✓ Also above 200 EMA — strong bull' : '⚠ Below 200 EMA — intermediate caution'; trendBias.style.color = above200 ? 'var(--green)' : 'var(--amber)'; }
+    } else if (!above50 && !above21) {
+      trendEl.style.background = 'rgba(239,68,68,0.1)';
+      trendEl.style.borderLeft = '4px solid var(--red)';
+      if (trendLabel) { trendLabel.textContent = '📉 Downtrend'; trendLabel.style.color = 'var(--red)'; }
+      if (trendSub)   trendSub.textContent = 'NIFTYBEES below 50 EMA & 21 EMA — favour Call Spreads';
+      if (trendBias)  { trendBias.textContent = 'Avoid new Put Spreads'; trendBias.style.color = 'var(--red)'; }
+    } else {
+      trendEl.style.background = 'rgba(245,158,11,0.1)';
+      trendEl.style.borderLeft = '4px solid var(--amber)';
+      if (trendLabel) { trendLabel.textContent = '↔ Mixed'; trendLabel.style.color = 'var(--amber)'; }
+      if (trendSub)   trendSub.textContent = above50 ? 'NIFTYBEES above 50 EMA but below 21 EMA' : 'NIFTYBEES above 21 EMA but below 50 EMA';
+      if (trendBias)  { trendBias.textContent = 'Wait for clearer trend'; trendBias.style.color = 'var(--amber)'; }
+    }
+  } else if (trendEl) {
+    if (trendLabel) { trendLabel.textContent = '— No NIFTYBEES data'; trendLabel.style.color = 'var(--text-muted)'; }
+    if (trendSub)   trendSub.textContent = 'Add NIFTYBEES to NSEFO sheet to enable market direction';
+  }
+
   set('fno-total', watchlist.length);
   set('fno-put-cands', watchlist.filter(s => !s.spreadActive && fnoAction(s)==='put-spread').length);
   set('fno-call-cands', watchlist.filter(s => fnoAction(s)==='call-spread'||fnoAction(s)==='add-call').length);
