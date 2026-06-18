@@ -2117,10 +2117,10 @@ function renderDashboard(data, cfg) {
     else                                                { dPFSubEl.textContent = '🚨 open gains not covering losses yet'; dPFSubEl.style.color = 'var(--red)'; }
   }
 
-  // 4. Hold Ratio: avg winner hold (closed winners + open positions) vs avg loser hold
-  // Target: winners held 3×+ longer than losers — that's the edge for this style
+  // 4. Hold Ratio: avg winner hold (closed winners + open profitable) vs avg loser hold (closed losers only)
+  // Target: winners held 3×+ longer — that's the cut-fast/run-long edge
   const closedWinnerAge = dWins.filter(t => t.age > 0).map(t => t.age);
-  const openAge         = open.filter(t => t.age > 0).map(t => t.age);
+  const openAge         = open.filter(t => t.age > 0 && (t.notionalPl || 0) > 0).map(t => t.age); // only currently profitable open trades
   const allWinnerAge    = closedWinnerAge.concat(openAge);
   const avgWinAge  = allWinnerAge.length > 0 ? allWinnerAge.reduce((s,v) => s+v, 0) / allWinnerAge.length : 0;
   const avgLossAge = dLosses.filter(t => t.age > 0).length > 0
