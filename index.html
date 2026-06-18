@@ -5478,6 +5478,14 @@ function fnoRenderActiveSpreads(watchlist) {
         badge = `<span class="fno-badge fno-badge-put">Hold Both</span>`;
       }
     }
+
+    const spreadBadge = spread === 'CALLPUT'
+      ? `<span class="fno-badge fno-badge-active">CALL+PUT</span>`
+      : `<span class="fno-badge fno-badge-active">${spread}</span>`;
+    const cmpFmt = s.cmp ? '₹' + s.cmp.toLocaleString('en-IN') : '—';
+    const pct7dl = s.pctFrom7DL != null && s.pctFrom7DL !== ''
+      ? (v => (v >= 0 ? '+' : '') + v.toFixed(1) + '%')(parseFloat(s.pctFrom7DL) * 100) : '—';
+    return `<tr class="${critical ? 'fno-row-alert' : ''}">
         <td><span class="stock-name">${s.stock}</span></td>
         <td>${s.broker ? `<span class="fno-tag fno-tag-yes">${s.broker}</span>` : '—'}</td>
         <td>${spreadBadge}</td>
