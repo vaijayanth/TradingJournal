@@ -669,8 +669,9 @@ tbody tr:hover { filter: brightness(0.97); }
     <div class="card card-sm">
       <div class="stat-label">Return on Portfolio</div>
       <div class="stat-value green" id="dash-return">—</div>
-      <div class="stat-sub" id="dash-return-sub">Since inception</div>
-      <div class="stat-badge badge-green" id="dash-return-badge">▲ Compounding</div>
+      <div class="stat-sub" id="dash-return-sub">Combined (realised + open MTM)</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:4px" id="dash-return-breakdown">—</div>
+      <div class="stat-badge badge-green" id="dash-return-badge" style="margin-top:6px">▲ Compounding</div>
     </div>
   </div>
 
@@ -2254,8 +2255,13 @@ function renderDashboard(data, cfg) {
   // So this is the TRUE combined return (realised + unrealised), not closed-only
   const retStr = (totalReturn >= 0 ? '+' : '') + totalReturn.toFixed(1) + '%';
   const retRs   = totalCombinedPl;
+  const realisedPct  = initialCapital > 0 ? totalFinalPl / initialCapital * 100 : 0;
+  const unrealisedPct = initialCapital > 0 ? totalUnrealisedPl / initialCapital * 100 : 0;
   set('dash-return', retStr);
-  set('dash-return-sub', 'Combined (realised + open MTM) · ' + fmt(initialCapital) + ' base');
+  set('dash-return-sub', 'Combined · ' + fmt(initialCapital) + ' base');
+  set('dash-return-breakdown',
+    'Realised: ' + (realisedPct >= 0 ? '+' : '') + realisedPct.toFixed(1) + '%' +
+    '  ·  Open MTM: ' + (unrealisedPct >= 0 ? '+' : '') + unrealisedPct.toFixed(1) + '%');
   const retEl = document.getElementById('dash-return');
   if (retEl) { retEl.className = 'stat-value ' + (totalReturn >= 0 ? 'green' : 'red'); }
   const retBadge = document.getElementById('dash-return-badge');
