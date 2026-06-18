@@ -3008,7 +3008,7 @@ function renderClosedTradesReal(closed) {
     const initRiskFmt = t.initRiskRs ? '₹' + Math.round(t.initRiskRs).toLocaleString('en-IN') : '—';
     return `<tr>
       <td><span class="stock-name">${t.stock}</span></td>
-      <td style="color:var(--text-secondary);font-size:11px">${t.setupType || '—'}</td>
+      <td style="color:var(--text-secondary);font-size:11px">${parseSetupType(t.setupType).label}</td>
       <td>${t.openDate || '—'}</td>
       <td>${t.closeDate || '—'}</td>
       <td>${t.age || '—'}d</td>
@@ -3272,7 +3272,7 @@ function renderCalendarReal(closed, forceYear) {
           stock: t.stock || '—',
           pl: (t.finalPl >= 0 ? '+₹' : '-₹') + Math.round(Math.abs(t.finalPl)).toLocaleString('en-IN'),
           plSign: t.finalPl >= 0 ? '+' : '-',
-          setup: t.setupType || '—',
+          setup: parseSetupType(t.setupType).label,
           partial: t.partialTaken === 'Y' ? 'Y' : 'N'
         }));
         const tip = JSON.stringify({ pnl: plFmt, trades: tradesInfo }).replace(/"/g, '&quot;');
