@@ -921,7 +921,7 @@ tbody tr:hover { filter: brightness(0.97); }
     <div class="card card-sm">
       <div class="stat-label">Expectancy Per Trade</div>
       <div class="stat-value green" style="font-size:26px; margin-top:4px" id="perf-expectancy">—</div>
-      <div class="stat-sub" style="font-size:12px" id="perf-expectancy-sub">Realised avg (closed)</div>
+      <div class="stat-sub" style="font-size:12px" id="perf-expectancy-sub">Realised (closed stops — expected negative)</div>
       <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
         <div style="font-size:15px;font-weight:700" id="perf-expectancy-open">—</div>
         <div class="stat-sub" style="font-size:11px" id="perf-expectancy-open-sub">Avg unrealised ₹ (open)</div>
@@ -947,12 +947,13 @@ tbody tr:hover { filter: brightness(0.97); }
       </div>
       <div class="compare-gap" style="margin-top:8px" id="perf-wr-gap">—</div>
       <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
-        <div style="font-size:11px;color:var(--text-muted);font-weight:600">MAX STREAKS</div>
+        <div style="font-size:11px;color:var(--text-muted);font-weight:600">MAX STREAKS <span style="font-weight:400;opacity:.6">(closed only)</span></div>
         <div style="display:flex;gap:12px;margin-top:6px">
           <div><div style="font-size:18px;font-weight:700;color:var(--green)" id="perf-max-consec-wins">—</div><div class="stat-sub">wins</div></div>
           <div style="color:var(--border)">|</div>
-          <div><div style="font-size:18px;font-weight:700;color:var(--red)" id="perf-max-consec-losses">—</div><div class="stat-sub">losses</div></div>
+          <div><div style="font-size:18px;font-weight:700;color:var(--amber)" id="perf-max-consec-losses">—</div><div class="stat-sub">losses</div></div>
         </div>
+        <div class="stat-sub" style="margin-top:4px;font-style:italic">open winners not counted here</div>
       </div>
     </div>
     <!-- R-Multiple -->
@@ -1195,7 +1196,7 @@ tbody tr:hover { filter: brightness(0.97); }
         <thead>
           <tr>
             <th>Stock</th><th>Setup</th><th>Entry Date</th><th>Exit Date</th><th>Days Held</th>
-            <th>Entry ₹</th><th>Init Risk ₹</th><th>Final P&L%</th><th>Notional P&L%</th><th>Partial</th><th>21 EMA</th>
+            <th>Entry ₹</th><th>Init Risk ₹</th><th>Final P&L%</th><th>Final P&L ₹</th><th>Partial</th><th>21 EMA</th>
           </tr>
         </thead>
         <tbody id="closed-trades-tbody"></tbody>
@@ -2749,8 +2750,10 @@ function renderPerfStats(closed, open, portfolioValue, initialCapital) {
     const sharpe = stdDev > 0 ? mean / stdDev : 0;
     const sharpeEl = document.getElementById('perf-sharpe');
     set('perf-sharpe', sharpe.toFixed(2));
-    if (sharpeEl) sharpeEl.style.color = sharpe > 0.5 ? 'var(--green)' : sharpe > 0 ? 'var(--amber)' : 'var(--red)';
-    set('perf-sharpe-sub', sharpe > 0.5 ? 'Strong risk-adjusted edge' : sharpe > 0 ? 'Marginal edge — improve consistency' : 'Negative — losses outweigh consistency');
+    // Closed-only Sharpe is structurally negative for trailing-stop systems (closed returns dominated by small losses).
+    // Show amber not red — this is expected behaviour, not a signal to act.
+    if (sharpeEl) sharpeEl.style.color = sharpe > 0.5 ? 'var(--green)' : sharpe > -0.5 ? 'var(--amber)' : 'var(--red)';
+    set('perf-sharpe-sub', sharpe > 0.5 ? 'Strong risk-adjusted edge (closed trades)' : 'Closed trades only — expected negative; open winners excluded');
   }
 
   // ── R-Multiple (closed trades only — open have no % basis) ──
@@ -2864,7 +2867,8 @@ function renderPerfStats(closed, open, portfolioValue, initialCapital) {
   // ── Win rate: closed vs open, plus combined ──
   const wrEl = document.getElementById('perf-final-wr');
   set('perf-final-wr', finalWR.toFixed(1) + '%');
-  if (wrEl) wrEl.style.color = finalWR >= 50 ? 'var(--green)' : finalWR >= 35 ? 'var(--amber)' : 'var(--red)';
+  // Trailing-stop system: 25-35% closed WR is healthy (most winners still running open)
+  if (wrEl) wrEl.style.color = finalWR >= 40 ? 'var(--green)' : finalWR >= 20 ? 'var(--amber)' : 'var(--red)';
   const combWREl = document.getElementById('perf-combined-wr');
   set('perf-combined-wr', totalTrades ? combinedWR.toFixed(1) + '%' : 'N/A');
   if (combWREl) combWREl.style.color = combinedWR >= 40 ? 'var(--green)' : combinedWR >= 28 ? 'var(--amber)' : 'var(--red)';
@@ -3034,7 +3038,7 @@ function renderClosedTradesReal(closed) {
       <td>₹${t.entryPrice.toLocaleString('en-IN')}</td>
       <td style="color:var(--text-secondary)">${initRiskFmt}</td>
       <td class="${pnlClass}">${t.finalPlPct >= 0 ? '+' : ''}${t.finalPlPct.toFixed(1)}%</td>
-      <td class="${nPnlClass}">${t.plPct >= 0 ? '+' : ''}${t.plPct.toFixed(1)}%</td>
+      <td class="${t.finalPl >= 0 ? 'pnl-pos' : 'pnl-neg'}">${t.finalPl >= 0 ? '+' : ''}₹${Math.abs(Math.round(t.finalPl)).toLocaleString('en-IN')}</td>
       <td><span class="tag ${partialClass}">${t.partialTaken}</span></td>
       <td><span class="tag ${emaClass}">${t.ema21 || '—'}</span></td>
     </tr>`;
@@ -3815,7 +3819,8 @@ function initPerfCharts(closed, initialCapital, open) {
     tradesWithR.forEach(t => rData[rBin(t.finalPl / t.initRiskRs)]++);
   } else {
     if (rSubEl) rSubEl.textContent = `P&L % distribution — map col K (initRiskRsCol) in Config for true R`;
-    const aLoss = losses2.length > 0 ? Math.abs(losses2.reduce((s,t)=>s+t.finalPlPct,0)/losses2.length) : 2;
+    const _fallbackLosses = sorted.filter(t => t.finalPlPct < 0);
+    const aLoss = _fallbackLosses.length > 0 ? Math.abs(_fallbackLosses.reduce((s,t)=>s+t.finalPlPct,0)/_fallbackLosses.length) : 2;
     sorted.forEach(t => rData[rBin(aLoss > 0 ? t.finalPlPct / aLoss : 0)]++);
   }
   // Open positions — live unrealised R (notionalPl ÷ initRiskRs)
@@ -3911,7 +3916,7 @@ function initPerfCharts(closed, initialCapital, open) {
       xaxis: { ...baseOpts().xaxis, categories: mWRKeys.map(k => { const [y,m]=k.split('-'); return MNAMES3[parseInt(m)-1]+' '+y.slice(2); }), labels: { ...baseOpts().xaxis.labels, rotate: 0 } },
       yaxis: { labels: { style:{colors:c.text,fontSize:'11px'}, formatter: v => v+'%' }, min: 0, max: 100 },
       colors: [c.accent], stroke: { curve: 'smooth', width: 2 }, markers: { size: 5 },
-      annotations: { yaxis: [{ y: 50, borderColor: c.text, strokeDashArray: 3, label: { text: '50%', style:{color:c.text,fontSize:'10px',background:'transparent'} } }] },
+      annotations: { yaxis: [{ y: 30, borderColor: c.amber, strokeDashArray: 3, label: { text: '~30% expected', style:{color:c.amber,fontSize:'10px',background:'transparent'} } }] },
       dataLabels: { enabled: true, formatter: v => v+'%', style:{fontSize:'10px'} },
     });
     wrTrendChart.render(); perfCharts.push(wrTrendChart);
@@ -3991,11 +3996,11 @@ function initPerfCharts(closed, initialCapital, open) {
     series: [{ name: 'Win Rate %', data: dowWR }],
     xaxis: { ...baseOpts().xaxis, categories: dowN.map((n,i) => (['Mon','Tue','Wed','Thu','Fri'][i]) + ' (n='+n+')') },
     yaxis: { labels: { style: { colors: c.text, fontSize:'11px' }, formatter: v => v != null ? v+'%' : '' }, min: 0, max: 100 },
-    colors: dowWR.map(v => v === null ? c.amber : v >= 60 ? c.green : v >= 40 ? c.amber : c.red),
+    colors: dowWR.map(v => v === null ? c.amber : v >= 40 ? c.green : v >= 20 ? c.amber : c.red),
     plotOptions: { bar: { columnWidth:'55%', distributed:true, borderRadius:4 } },
     legend: { show: false },
     dataLabels: { enabled: true, formatter: v => v != null ? v+'%' : 'No data', style: { fontSize:'11px' } },
-    annotations: { yaxis: [{ y: 50, borderColor: c.text, strokeDashArray: 3, label: { text: '50%', style:{color:c.text,fontSize:'10px',background:'transparent'} } }] },
+    annotations: { yaxis: [{ y: 30, borderColor: c.amber, strokeDashArray: 3, label: { text: '~30% expected', style:{color:c.amber,fontSize:'10px',background:'transparent'} } }] },
     tooltip: { ...baseOpts().tooltip, y: { formatter: (v, {dataPointIndex}) => v != null ? v+'% win rate ('+dowBuckets[dataPointIndex].w+' of '+dowN[dataPointIndex]+' trades)' : 'No trades' } },
   });
   dowChart.render(); perfCharts.push(dowChart);
@@ -4323,10 +4328,10 @@ function initAnalysisCharts(open, closed) {
       series: [{ name: 'Win Rate %', data: wrStats.map(s => parseFloat(s.wr.toFixed(1))) }],
       xaxis: { ...baseOpts().xaxis, categories: setupKeys, labels: { ...baseOpts().xaxis.labels, rotate: -20, hideOverlappingLabels: true } },
       yaxis: { labels: { style:{colors:c.text,fontSize:'11px'}, formatter: v => v+'%' }, max: 100 },
-      colors: wrStats.map(s => s.wr >= 50 ? c.green : s.wr >= 30 ? c.amber : c.red),
+      colors: wrStats.map(s => s.wr >= 40 ? c.green : s.wr >= 20 ? c.amber : c.red),
       plotOptions: { bar: { columnWidth: '55%', distributed: true, borderRadius: 4 } },
       legend: { show: false }, dataLabels: { enabled: true, formatter: v => v+'%', style: { fontSize:'11px' } },
-      annotations: { yaxis: [{ y: 50, borderColor: c.text, strokeDashArray: 3, label: { text: '50%', style:{color:c.text,fontSize:'10px'} } }] },
+      annotations: { yaxis: [{ y: 30, borderColor: c.amber, strokeDashArray: 3, label: { text: '~30% target', style:{color:c.amber,fontSize:'10px'} } }] },
     }); setupWrChart.render(); analysisCharts.push(setupWrChart); } catch(e) { console.warn('chart-setup-wr failed', e); }
     setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
   } else if (setupWrPh) {
