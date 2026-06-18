@@ -2117,21 +2117,21 @@ function renderDashboard(data, cfg) {
 
   // ── Open Portfolio Health card ──────────────────────────────────────────
   (function() {
-    const profitable = open.filter(t => (t.notionalPl || 0) > 0);
-    const losing     = open.filter(t => (t.notionalPl || 0) < 0);
-    const flat       = open.filter(t => (t.notionalPl || 0) === 0);
-    // Risk-free = stop moved to breakeven or better (effStop >= entryPrice)
-    // These trades have zero or positive worst-case outcome even if stop is hit
+    // Mutually exclusive buckets — priority: Risk Free > Profitable > In Loss > Flat
     const riskFree   = open.filter(t => {
       const effStop = Math.max(t.stopLoss || 0, t.sevenDayLow || 0);
       return effStop > 0 && t.entryPrice > 0 && effStop >= t.entryPrice;
     });
+    const riskFreeStocks = new Set(riskFree.map(t => t.stock));
+    const profitable = open.filter(t => (t.notionalPl || 0) > 0  && !riskFreeStocks.has(t.stock));
+    const losing     = open.filter(t => (t.notionalPl || 0) < 0  && !riskFreeStocks.has(t.stock));
+    const flat       = open.filter(t => (t.notionalPl || 0) === 0 && !riskFreeStocks.has(t.stock));
     set('dash-open-profitable', profitable.length);
     set('dash-open-riskfree', riskFree.length);
     set('dash-open-losing', losing.length);
     set('dash-open-flat', flat.length);
-    // Health bar driven by profitable + risk-free vs total
-    const safeCount = new Set([...profitable, ...riskFree].map(t => t.stock)).size;
+    // Health bar: (profitable + risk-free) as % of total open
+    const safeCount = profitable.length + riskFree.length;
     const healthPct = open.length > 0 ? safeCount / open.length * 100 : 0;
     const bar = document.getElementById('dash-health-bar');
     if (bar) {
@@ -2143,13 +2143,13 @@ function renderDashboard(data, cfg) {
       const rfNote = riskFree.length > 0 ? ` · ${riskFree.length} at breakeven` : '';
       if (healthPct >= 60) {
         badge.className = 'stat-badge badge-green';
-        badge.textContent = `✓ ${healthPct.toFixed(0)}% safe (profitable + risk-free)${rfNote}`;
+        badge.textContent = `✓ ${safeCount} of ${open.length} positions safe (profitable + risk-free)${rfNote}`;
       } else if (healthPct >= 40) {
         badge.className = 'stat-badge badge-amber';
-        badge.textContent = `⚠ Only ${healthPct.toFixed(0)}% safe — entries may be early${rfNote}`;
+        badge.textContent = `⚠ Only ${safeCount} of ${open.length} safe — entries may be early${rfNote}`;
       } else {
         badge.className = 'stat-badge badge-red';
-        badge.textContent = `🚨 Only ${healthPct.toFixed(0)}% safe — review entry quality or step aside`;
+        badge.textContent = `🚨 Only ${safeCount} of ${open.length} safe — review entry quality or step aside`;
       }
     } else if (badge) {
       badge.className = 'stat-badge badge-blue';
