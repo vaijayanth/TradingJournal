@@ -41,7 +41,7 @@ function doGet(e) {
           ema21cross:  String(row[20]).trim().toLowerCase() === 'yes',
           sevenDayLow: parseFloat(row[21]) || 0,
           pctFrom7DL:  String(row[22]).trim(),
-          spreadActive:(row[23] === true || String(row[23]).toUpperCase() === 'TRUE'),
+          spreadActive: (() => { const v = String(row[23]).trim().toUpperCase(); return ['CALL','PUT','CALLPUT'].includes(v) ? v : ''; })(),
         });
       }
       return ContentService

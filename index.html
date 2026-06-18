@@ -5231,6 +5231,12 @@ document.addEventListener('DOMContentLoaded', () => {
 // Completely isolated — no shared state with Swing module except cfg.url
 // ────────────────────────────────────────────────────────────────────────────
 
+// spreadActive is now 'CALL' | 'PUT' | 'CALLPUT' | '' — helper functions
+function fnoHasSpread(s)    { return s.spreadActive === 'CALL' || s.spreadActive === 'PUT' || s.spreadActive === 'CALLPUT'; }
+function fnoSpreadLabel(s)  { return s.spreadActive === 'CALLPUT' ? 'CALL+PUT' : s.spreadActive || ''; }
+function fnoHasPutSpread(s) { return s.spreadActive === 'PUT'  || s.spreadActive === 'CALLPUT'; }
+function fnoHasCallSpread(s){ return s.spreadActive === 'CALL' || s.spreadActive === 'CALLPUT'; }
+
 function fnoScore(s) {
   // Bullish signals (max 6)
   const bull = [s.ema200, s.ema50, s.ema20, s.haColour.toLowerCase()==='green',
@@ -5260,11 +5266,11 @@ function fnoAction(s) {
   const trend = fnoTrend(s);
   const haRed = s.haColour.toLowerCase() === 'red';
   const haRedToday = haRed && s.haChanged;
-  if (s.spreadActive && haRedToday) return 'add-call'; // existing spread + HA flipped red
+  if (fnoHasPutSpread(s) && haRedToday) return 'add-call'; // PUT spread active + HA flipped red → add call leg
   // Hard gate: put spreads REQUIRE stock above 200 EMA — selling puts below 200 EMA is structurally wrong
   if (trend === 'bullish' && !haRed && s.ema200) return 'put-spread';
   // Call spreads: bearish trend regardless of 200 EMA (intermediate downtrend valid above 200 EMA too)
-  if (trend === 'bearish' || (haRedToday && !s.spreadActive)) return 'call-spread';
+  if (trend === 'bearish' || (haRedToday && !fnoHasSpread(s))) return 'call-spread';
   return 'wait';
 }
 
@@ -5345,7 +5351,7 @@ function renderFnoDashboard(watchlist) {
   }
 
   set('fno-total', watchlist.length);
-  set('fno-put-cands', watchlist.filter(s => !s.spreadActive && fnoAction(s)==='put-spread').length);
+  set('fno-put-cands', watchlist.filter(s => !fnoHasSpread(s) && fnoAction(s)==='put-spread').length);
   set('fno-call-cands', watchlist.filter(s => fnoAction(s)==='call-spread'||fnoAction(s)==='add-call').length);
   fnoRenderBreadth(watchlist);
   fnoRenderActiveSpreads(watchlist);
@@ -5398,7 +5404,7 @@ function fnoRenderActiveSpreads(watchlist) {
   const el = document.getElementById('fno-active-spreads');
   const countEl = document.getElementById('fno-active-count');
   if (!el) return;
-  const active = watchlist.filter(s => s.spreadActive);
+  const active = watchlist.filter(s => fnoHasSpread(s));
   if (countEl) countEl.textContent = active.length + ' active';
 
   if (active.length === 0) {
@@ -5484,20 +5490,20 @@ function fnoRenderAlerts(watchlist) {
     const extended = parseFloat(s.pctFrom7DL) * 100 > 8;
     const trend = fnoTrend(s);
 
-    if (s.spreadActive && haRed && s.haChanged)
-      allAlerts.push({ group:'add-call', score:10, stock:s.stock });
+    if (fnoHasPutSpread(s) && haRed && s.haChanged)
+      allAlerts.push({ group:'add-call', score:10, stock:s.stock, spreadType: fnoSpreadLabel(s) });
 
-    if (s.spreadActive && haRed && !s.haChanged)
-      allAlerts.push({ group:'exit-risk', score:5, stock:s.stock });
+    if (fnoHasSpread(s) && haRed && !s.haChanged)
+      allAlerts.push({ group:'exit-risk', score:5, stock:s.stock, spreadType: fnoSpreadLabel(s) });
 
     // Today's HA flip — separated into Green (put-spread bucket) and Red (call-spread bucket)
     if (s.haChanged)
       allAlerts.push({ group: haRed ? 'ha-flip-red' : 'ha-flip-green', score: haRed ? bear : bull, stock:s.stock, direction: haRed ? 'down' : 'up' });
 
-    if (!s.spreadActive && action === 'put-spread')
+    if (!fnoHasSpread(s) && action === 'put-spread')
       allAlerts.push({ group:'new-put', score:bull, stock:s.stock });
 
-    if (!s.spreadActive && action === 'call-spread')
+    if (!fnoHasSpread(s) && action === 'call-spread')
       allAlerts.push({ group:'new-call', score:bear, stock:s.stock });
 
     // Reversal signals — extended move + HA flip
@@ -5552,8 +5558,8 @@ function fnoRenderAlerts(watchlist) {
       }
 
       if (g.key === 'ha-flip-green') {
-        const ctx = s.spreadActive
-          ? 'Active spread — momentum improving, watch for early exit on the put spread hedge'
+        const ctx = fnoHasSpread(s)
+          ? `Active ${fnoSpreadLabel(s)} spread — momentum improving, watch for early exit on the put spread hedge`
           : trend === 'bullish' ? `Confirms uptrend (${bull}/6 bullish) — fresh put spread candidate`
           : `Early flip only — trend not confirmed yet (${bull}/6 bullish)`;
         return `<tr>
@@ -5564,8 +5570,8 @@ function fnoRenderAlerts(watchlist) {
       }
 
       if (g.key === 'ha-flip-red') {
-        const ctx = s.spreadActive
-          ? 'Active spread — this is your Add Call Spread trigger'
+        const ctx = fnoHasSpread(s)
+          ? `Active ${fnoSpreadLabel(s)} spread — this is your Add Call Spread trigger`
           : trend === 'bearish' ? `Confirms downtrend (${bear}/4 bearish) — fresh call spread candidate`
           : `Early flip only — trend not confirmed yet (${bear}/4 bearish)`;
         return `<tr>
@@ -5664,8 +5670,8 @@ function fnoRenderTopCandidates(watchlist) {
       const pct7dlVal = s.pctFrom7DL!=null&&s.pctFrom7DL!==''?(v=>v>=0?'+'+v.toFixed(1)+'%':v.toFixed(1)+'%')(parseFloat(s.pctFrom7DL)*100):'—';
       const freshness = (action==='put-spread'||action==='call-spread') && s.pctFrom7DL!=null && s.pctFrom7DL!==''
         ? `<div style="font-size:10px;color:${extended?'var(--amber)':'var(--green)'}">${extended?'⚠ extended':'✓ fresh'}</div>` : '';
-      return `<tr class="${s.spreadActive?'fno-row-active':''}${action==='add-call'?' fno-row-alert':''}">
-        <td><span class="stock-name">${s.stock}</span>${s.spreadActive?` <span class="fno-badge fno-badge-active">LIVE</span>`:''}</td>
+      return `<tr class="${fnoHasSpread(s)?'fno-row-active':''}${action==='add-call'?' fno-row-alert':''}">
+        <td><span class="stock-name">${s.stock}</span>${fnoHasSpread(s)?` <span class="fno-badge fno-badge-active">${fnoSpreadLabel(s)}</span>`:''}</td>
         <td>${s.broker ? `<span class="fno-tag fno-tag-yes">${s.broker}</span>` : '—'}</td>
         <td>₹${s.cmp.toLocaleString('en-IN')}</td>
         <td>${trend==='bullish'?'🟢 Bullish':trend==='bearish'?'🔴 Bearish':'⚪ Mixed'}</td>
@@ -5768,7 +5774,7 @@ function renderFnoWatchlist(watchlist) {
     });
   } else {
     list = [...list].sort((a,b) => {
-      if (a.spreadActive !== b.spreadActive) return a.spreadActive ? -1 : 1;
+      if (fnoHasSpread(a) !== fnoHasSpread(b)) return fnoHasSpread(a) ? -1 : 1;
       return fnoScore(b).bull - fnoScore(a).bull;
     });
   }
@@ -5792,12 +5798,12 @@ function renderFnoWatchlist(watchlist) {
     const bullPips = Array(6).fill(0).map((_,i)=>`<div class="fno-score-pip${i<bull?' bull':''}"></div>`).join('');
     const bearPips = Array(4).fill(0).map((_,i)=>`<div class="fno-score-pip${i<bear?' bear':''}"></div>`).join('');
     const bk = v => v ? '<span class="fno-tag fno-tag-yes">✓</span>' : '<span class="fno-tag fno-tag-no">—</span>';
-    const rowClass = s.spreadActive ? 'fno-row-active' : action==='add-call' ? 'fno-row-alert' : '';
+    const rowClass = fnoHasSpread(s) ? 'fno-row-active' : action==='add-call' ? 'fno-row-alert' : '';
     const freshCross = fnoFreshCross(s);
     const pct7dlFmt = s.pctFrom7DL!=null&&s.pctFrom7DL!==''?(v=>v>=0?'+'+v.toFixed(1)+'%':v.toFixed(1)+'%')(parseFloat(s.pctFrom7DL)*100):'—';
     const sevenDlTitle = s.sevenDayLow ? `7-Day Low: ₹${parseFloat(s.sevenDayLow).toLocaleString('en-IN')}` : '';
     return `<tr class="${rowClass}">
-      <td><span class="stock-name">${s.stock}</span>${s.spreadActive?` <span class="fno-badge fno-badge-active">LIVE</span>`:''}</td>
+      <td><span class="stock-name">${s.stock}</span>${fnoHasSpread(s)?` <span class="fno-badge fno-badge-active">${fnoSpreadLabel(s)}</span>`:''}</td>
       <td>${s.broker ? `<span class="fno-tag fno-tag-yes">${s.broker}</span>` : '—'}</td>
       <td>₹${s.cmp.toLocaleString('en-IN')}</td>
       <td>${trend==='bullish'?'🟢 Bullish':trend==='bearish'?'🔴 Bearish':'⚪ Mixed'}</td>
