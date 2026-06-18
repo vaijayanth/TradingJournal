@@ -2690,6 +2690,10 @@ function renderPerfStats(closed, open, portfolioValue, initialCapital) {
   const avgUnrealisedRs = open.length > 0 ? totalNotionalPl / open.length : 0;
   const combinedExpPct = totalTrades > 0 && initialCapital > 0
     ? combined / totalTrades / initialCapital * 100 : 0;
+  // Combined win rate (needed by R-Expectancy below, and Win Rate section)
+  const openWinning = open.filter(t => t.notionalPl > 0).length;
+  const combinedWins = wins.length + openWinning;
+  const combinedWR = totalTrades > 0 ? combinedWins / totalTrades * 100 : 0;
 
   // ── Notional breakdown in compare card ──
   set('perf-notional-pl', hasOpenData ? fmtRs(totalNotionalPl) : (open.length ? '₹0' : 'N/A'));
@@ -2852,9 +2856,6 @@ function renderPerfStats(closed, open, portfolioValue, initialCapital) {
   const wrEl = document.getElementById('perf-final-wr');
   set('perf-final-wr', finalWR.toFixed(1) + '%');
   if (wrEl) wrEl.style.color = finalWR >= 50 ? 'var(--green)' : finalWR >= 35 ? 'var(--amber)' : 'var(--red)';
-  const openWinning = open.filter(t => t.notionalPl > 0).length;
-  const combinedWins = wins.length + openWinning;
-  const combinedWR = totalTrades > 0 ? combinedWins / totalTrades * 100 : 0;
   const combWREl = document.getElementById('perf-combined-wr');
   set('perf-combined-wr', totalTrades ? combinedWR.toFixed(1) + '%' : 'N/A');
   if (combWREl) combWREl.style.color = combinedWR >= 40 ? 'var(--green)' : combinedWR >= 28 ? 'var(--amber)' : 'var(--red)';
