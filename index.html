@@ -3669,13 +3669,25 @@ function initPerfCharts(closed, initialCapital, open) {
       tradeLabels[tradeLabels.length-1] = t.stock + ' · ' + plSign + '₹' + Math.abs(Math.round(t.finalPl)).toLocaleString('en-IN') + ' · ' + t.closeDate;
     });
 
-    // Today point (unrealised MTM)
+    // Today point — dashed amber second series showing combined (realised + open MTM)
     const totalUnrealised2 = openArr.reduce((s,t) => s+(t.notionalPl||0), 0);
+    const todayData = retData.map(() => null); // null for all closed points
+    let todayTooltipLabel = '';
     if (month === 'all' && totalUnrealised2 !== 0) {
-      retData.push(null); // main series ends — dashed series handled separately
+      // Anchor point at last closed value so the dashed line visually connects
+      todayData[todayData.length - 1] = retData[retData.length - 1];
+      // Combined value at Today
+      const combinedRunEq = runEq + totalUnrealised2;
+      const todayVal = isAbsMode
+        ? parseFloat(combinedRunEq.toFixed(0))
+        : parseFloat(((combinedRunEq - cap) / cap * 100).toFixed(2));
+      todayData.push(todayVal);
+      retData.push(null);
       labels.push('Today');
-      tradeLabels.push('Open positions MTM · ' + (totalUnrealised2 >= 0 ? '+' : '') + '₹' + Math.abs(Math.round(totalUnrealised2)).toLocaleString('en-IN'));
+      todayTooltipLabel = 'Open MTM · ' + (totalUnrealised2 >= 0 ? '+' : '') + '₹' + Math.abs(Math.round(totalUnrealised2)).toLocaleString('en-IN');
+      tradeLabels.push(todayTooltipLabel);
     }
+    const hasTodaySeries = todayData.some(v => v !== null);
 
     const sparseLabels = labels.map((l, i) => {
       const step = Math.ceil(labels.length / 7);
@@ -3683,6 +3695,7 @@ function initPerfCharts(closed, initialCapital, open) {
     });
 
     const realisedColor2 = runEq >= cap ? c2.green : c2.red;
+    const amberColor = '#F6AD55';
     const ddOn = window._eqDDOn;
 
     // Destroy previous eq chart if exists
@@ -3693,21 +3706,25 @@ function initPerfCharts(closed, initialCapital, open) {
     const ddEl = document.getElementById('chart-drawdown');
     if (!eqEl) return;
 
+    const series = [{ name: 'Realised', data: retData }];
+    if (hasTodaySeries) series.push({ name: 'Combined (incl. open MTM)', data: todayData });
+
     window._eqChartInst = new ApexCharts(eqEl, {
       ...baseOpts(260), chart: { ...baseOpts(260).chart, type: 'area', id: 'eq-main' },
-      series: [{ name: 'Return %', data: retData }],
+      series,
       xaxis: { ...baseOpts().xaxis, categories: sparseLabels, labels: { ...baseOpts().xaxis.labels, rotate: 0, hideOverlappingLabels: true } },
       yaxis: { labels: { style:{colors:c2.text,fontSize:'11px'}, formatter: v => v != null ? (isAbsMode ? '₹'+Math.round(v).toLocaleString('en-IN') : (v>=0?'+':'')+v.toFixed(1)+'%') : '' } },
-      colors: [realisedColor2],
-      fill: { type: 'gradient', gradient: { shadeIntensity:1, opacityFrom: 0.3, opacityTo: 0.02, colorStops:[{offset:0,color:realisedColor2,opacity:0.3},{offset:100,color:realisedColor2,opacity:0.02}] } },
-      stroke: { curve: 'smooth', width: 2.5 },
+      colors: hasTodaySeries ? [realisedColor2, amberColor] : [realisedColor2],
+      fill: { type: 'gradient', gradient: { shadeIntensity:1, opacityFrom: 0.3, opacityTo: 0.02 } },
+      stroke: { curve: 'smooth', width: hasTodaySeries ? [2.5, 2.5] : [2.5], dashArray: hasTodaySeries ? [0, 6] : [0] },
       dataLabels: { enabled: false }, markers: { size: 0, hover: { size: 5 } },
       annotations: { yaxis: [{ y: isAbsMode ? cap : 0, borderColor: c2.text, strokeDashArray: 2, label:{text:'Break-even',style:{color:c2.text,fontSize:'10px',background:'transparent'}} }] },
-      tooltip: { ...baseOpts().tooltip, custom: ({ dataPointIndex }) => {
-        const label = tradeLabels[dataPointIndex] || '';
-        const val = retData[dataPointIndex];
+      tooltip: { ...baseOpts().tooltip, custom: ({ seriesIndex, dataPointIndex }) => {
+        const isToday = seriesIndex === 1;
+        const val = isToday ? todayData[dataPointIndex] : retData[dataPointIndex];
         if (val == null) return '';
-        const col = val >= 0 ? 'var(--green)' : 'var(--red)';
+        const label = isToday ? todayTooltipLabel : (tradeLabels[dataPointIndex] || '');
+        const col = isToday ? amberColor : (val >= 0 ? 'var(--green)' : 'var(--red)');
         let cumLine;
         if (isAbsMode) {
           const retPct = cap > 0 ? (val - cap) / cap * 100 : 0;
@@ -3716,9 +3733,10 @@ function initPerfCharts(closed, initialCapital, open) {
           const absVal = cap > 0 ? cap + val/100*cap : 0;
           cumLine = `${val>=0?'+':''}${val.toFixed(2)}% <span style="opacity:.7">(₹${Math.round(absVal).toLocaleString('en-IN')})</span>`;
         }
-        return `<div style="padding:8px 12px;font-size:12px;font-weight:600;color:${col};background:var(--surface);border:1px solid var(--border);border-radius:8px">${label}<br><span style="font-size:11px;color:var(--text-muted)">Capital: ${cumLine}</span></div>`;
+        const prefix = isToday ? 'Combined today: ' : 'Capital: ';
+        return `<div style="padding:8px 12px;font-size:12px;font-weight:600;color:${col};background:var(--surface);border:1px solid var(--border);border-radius:8px">${label}<br><span style="font-size:11px;color:var(--text-muted)">${prefix}${cumLine}</span></div>`;
       }},
-      legend: { show: false },
+      legend: { show: hasTodaySeries, labels:{colors:c2.text}, markers:{fillColors:[realisedColor2, amberColor]} },
     });
     window._eqChartInst.render();
 
