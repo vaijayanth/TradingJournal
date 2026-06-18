@@ -2249,13 +2249,21 @@ function renderDashboard(data, cfg) {
   const closedBadge = document.getElementById('dash-closed-badge');
   if (closedBadge) { closedBadge.className = 'stat-badge badge-blue'; closedBadge.textContent = closed.length + ' completed'; }
 
-  // Card 4: Return
+  // Card 4: Return — portfolioValue from AK26 already includes open positions at market price
+  // So this is the TRUE combined return (realised + unrealised), not closed-only
   const retStr = (totalReturn >= 0 ? '+' : '') + totalReturn.toFixed(1) + '%';
+  const retRs   = portfolioValue - initialCapital;
   set('dash-return', retStr);
-  set('dash-return-sub', 'Since inception · ' + fmt(initialCapital) + ' base');
-  set('dash-return-badge', totalReturn >= 0 ? '▲ Compounding' : '▼ Drawdown');
+  set('dash-return-sub', 'Combined (realised + open MTM) · ' + fmt(initialCapital) + ' base');
   const retEl = document.getElementById('dash-return');
   if (retEl) { retEl.className = 'stat-value ' + (totalReturn >= 0 ? 'green' : 'red'); }
+  const retBadge = document.getElementById('dash-return-badge');
+  if (retBadge) {
+    if (totalReturn >= 5)          { retBadge.className = 'stat-badge badge-green';  retBadge.textContent = '▲ ' + fmt(retRs) + ' ahead'; }
+    else if (totalReturn >= 0)     { retBadge.className = 'stat-badge badge-green';  retBadge.textContent = '▲ ' + fmt(retRs) + ' — building'; }
+    else if (totalReturn >= -2)    { retBadge.className = 'stat-badge badge-amber';  retBadge.textContent = 'Flat — open winners will show here as they run'; }
+    else                           { retBadge.className = 'stat-badge badge-red';    retBadge.textContent = '▼ ' + fmt(Math.abs(retRs)) + ' below base — review open positions'; }
+  }
 
   // Risk tier card — ₹1000 start, +₹500 per 100 closed trades, cap 0.8% of portfolio
   const riskCapRs = initialCapital > 0 ? Math.round(initialCapital * 0.008) : 40000;
