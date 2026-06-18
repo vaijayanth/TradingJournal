@@ -976,7 +976,8 @@ tbody tr:hover { filter: brightness(0.97); }
       <div class="stat-badge badge-green" style="margin-top:6px" id="perf-r-expectancy-badge">—</div>
       <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
         <div style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:4px">HOW TO READ</div>
-        <div class="stat-sub" style="line-height:1.5">WR × AvgWinR − (1−WR) × 1R<br>Positive = system has edge</div>
+        <div class="stat-sub" style="line-height:1.5">Combined WR × AvgWinR − (1−CombWR) × 1R<br>Uses combined WR (closed + open profitable)<br>because winners stay open for months</div>
+        <div class="stat-sub" style="margin-top:6px;font-style:italic" id="perf-r-expectancy-closed">—</div>
       </div>
     </div>
     <!-- Hold Time Asymmetry -->
@@ -2732,8 +2733,9 @@ function renderPerfStats(closed, open, portfolioValue, initialCapital) {
   if (expOpenEl) expOpenEl.style.color = avgUnrealisedRs >= 0 ? 'var(--green)' : 'var(--red)';
   set('perf-expectancy-open-sub', 'Avg unrealised ₹ per open trade (' + open.length + ')');
   const expCombEl = document.getElementById('perf-expectancy-combined');
-  set('perf-expectancy-combined', totalTrades ? fmtPct(combinedExpPct) : 'N/A');
-  if (expCombEl) expCombEl.style.color = combinedExpPct >= 0 ? 'var(--green)' : 'var(--red)';
+  const avgCombinedRs = totalTrades > 0 ? combined / totalTrades : 0;
+  set('perf-expectancy-combined', totalTrades ? fmtRs(avgCombinedRs) + ' / trade' : 'N/A');
+  if (expCombEl) expCombEl.style.color = avgCombinedRs >= 0 ? 'var(--green)' : 'var(--red)';
 
   // ── Sharpe-style: mean finalPlPct / std dev of finalPlPct ──
   if (closed.length > 1) {
@@ -2749,14 +2751,18 @@ function renderPerfStats(closed, open, portfolioValue, initialCapital) {
 
   // ── R-Multiple (closed trades only — open have no % basis) ──
   set('perf-rmultiple', rMultiple.toFixed(2) + 'R');
-  set('perf-rmultiple-badge', rMultiple >= 1.5 ? '✓ Asymmetric edge' : rMultiple >= 1 ? 'Edge — room to improve' : '⚠ Below 1R — check exit rules');
+  set('perf-rmultiple-badge', rMultiple >= 1.3 ? '✓ Asymmetric edge' : rMultiple >= 1 ? 'Edge — room to improve' : '⚠ Below 1R — check exit rules');
   const rmBadge = document.getElementById('perf-rmultiple-badge');
-  if (rmBadge) rmBadge.className = 'stat-badge ' + (rMultiple >= 1.5 ? 'badge-green' : rMultiple >= 1 ? 'badge-amber' : 'badge-red');
+  if (rmBadge) rmBadge.className = 'stat-badge ' + (rMultiple >= 1.3 ? 'badge-green' : rMultiple >= 1 ? 'badge-amber' : 'badge-red');
 
   // ── R-Expectancy ──
-  // Per trade: WR × AvgWinR − LossRate × 1R (losses always cost exactly 1R by definition)
-  const wrFrac = closed.length > 0 ? wins.length / closed.length : 0;
-  const rExpectancy = avgFinalLoss !== 0 ? (wrFrac * rMultiple) - ((1 - wrFrac) * 1) : 0;
+  // Uses COMBINED win rate (closed + open profitable) because in this trailing-stop system
+  // winners stay open for months — closed WR alone (~25%) is not the true win rate.
+  // AvgWin R is still from closed winners (only realised wins have a final %).
+  const combinedWRFrac = totalTrades > 0 ? combinedWins / totalTrades : 0;
+  const rExpectancy = avgFinalLoss !== 0 ? (combinedWRFrac * rMultiple) - ((1 - combinedWRFrac) * 1) : 0;
+  const closedWRFrac = closed.length > 0 ? wins.length / closed.length : 0;
+  const rExpClosed = avgFinalLoss !== 0 ? (closedWRFrac * rMultiple) - ((1 - closedWRFrac) * 1) : 0;
   set('perf-r-expectancy', rExpectancy.toFixed(2) + 'R');
   const rExpEl = document.getElementById('perf-r-expectancy');
   if (rExpEl) rExpEl.style.color = rExpectancy > 0 ? 'var(--green)' : 'var(--red)';
@@ -2766,6 +2772,9 @@ function renderPerfStats(closed, open, portfolioValue, initialCapital) {
     rExpBadge.textContent = label;
     rExpBadge.className = 'stat-badge ' + (rExpectancy >= 0.5 ? 'badge-green' : rExpectancy > 0 ? 'badge-amber' : 'badge-red');
   }
+  // Show closed-only R-Expectancy as context footnote
+  const rExpClosedEl = document.getElementById('perf-r-expectancy-closed');
+  if (rExpClosedEl) rExpClosedEl.textContent = 'Closed-only WR gives ' + rExpClosed.toFixed(2) + 'R (expected negative — winners still running)';
 
   // ── Hold Time Asymmetry ──
   const winnersWithAge = wins.filter(t => t.age > 0);
@@ -2848,7 +2857,7 @@ function renderPerfStats(closed, open, portfolioValue, initialCapital) {
   const combinedWR = totalTrades > 0 ? combinedWins / totalTrades * 100 : 0;
   const combWREl = document.getElementById('perf-combined-wr');
   set('perf-combined-wr', totalTrades ? combinedWR.toFixed(1) + '%' : 'N/A');
-  if (combWREl) combWREl.style.color = combinedWR >= 50 ? 'var(--green)' : 'var(--red)';
+  if (combWREl) combWREl.style.color = combinedWR >= 40 ? 'var(--green)' : combinedWR >= 28 ? 'var(--amber)' : 'var(--red)';
   set('perf-wr-gap', open.length
     ? `${openWinning} of ${open.length} open profitable · ${combinedWins} of ${totalTrades} total`
     : `${wins.length} of ${closed.length} closed trades profitable`);
