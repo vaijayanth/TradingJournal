@@ -31,7 +31,7 @@ This is a **Minervini/Bonde/Zanger momentum breakout system** with a deliberate 
 
 ## Google Sheet
 - Sheet name: `TRADES`
-- Portfolio value cell: `AK26` (live combined value including open positions at market price)
+- Portfolio value cell: `AK26` (realised only — initial capital + closed trade P&L. Does NOT include open position MTM from col Y)
 - Initial capital cell: `AK20`
 
 ## Column Mapping (DEFAULT_CONFIG)
@@ -65,7 +65,7 @@ This is a **Minervini/Bonde/Zanger momentum breakout system** with a deliberate 
 - **Column X (plPct)**: also blank for closed trades in this sheet.
 - **Column F (ema21)**: live formula showing current EMA position — NOT entry-time value. Do NOT use for analysis.
 - **Setup Type (col S)**: static label entered at trade open — correct for analysis.
-- **portfolioValue (AI26)**: already reflects full portfolio including open positions at market price. `portfolioValue - initialCapital` = true combined P&L.
+- **portfolioValue (AK26)**: realised only — does NOT include open position unrealized P&L. True combined P&L = `(portfolioValue - initialCapital) + sum(notionalPl)` = `totalFinalPl + totalUnrealisedPl`.
 - **Date format from Apps Script**: `dd-MMM-yyyy` (e.g., `21-Apr-2026`) — NOT parseable by `new Date()`. Use `parseDate()` helper everywhere.
 
 ## Trading Strategy (IMPORTANT — Minervini momentum style)

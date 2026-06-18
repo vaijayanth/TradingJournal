@@ -2005,10 +2005,11 @@ async function refreshData() {
 // ── DASHBOARD ────────────────────────────────────────
 function renderDashboard(data, cfg) {
   const { portfolioValue, initialCapital, open, closed } = data;
-  const totalReturn = initialCapital > 0 ? ((portfolioValue - initialCapital) / initialCapital * 100) : 0;
   const totalFinalPl = closed.reduce((s, t) => s + t.finalPl, 0);
   const totalUnrealisedPl = open.reduce((s, t) => s + (t.notionalPl || 0), 0);
   const totalCombinedPl = totalFinalPl + totalUnrealisedPl;
+  // AK26 = realised only (initial capital + closed P&L). Add open MTM (col Y) for true combined return.
+  const totalReturn = initialCapital > 0 ? (totalCombinedPl / initialCapital * 100) : 0;
   const totalInitRisk = open.reduce((s, t) => s + t.initRiskRs, 0);
   // Current heat: zero out positions where stop has moved to breakeven or better
   const totalHeat = open.reduce((s, t) => {
@@ -2252,7 +2253,7 @@ function renderDashboard(data, cfg) {
   // Card 4: Return — portfolioValue from AK26 already includes open positions at market price
   // So this is the TRUE combined return (realised + unrealised), not closed-only
   const retStr = (totalReturn >= 0 ? '+' : '') + totalReturn.toFixed(1) + '%';
-  const retRs   = portfolioValue - initialCapital;
+  const retRs   = totalCombinedPl;
   set('dash-return', retStr);
   set('dash-return-sub', 'Combined (realised + open MTM) · ' + fmt(initialCapital) + ' base');
   const retEl = document.getElementById('dash-return');
