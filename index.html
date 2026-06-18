@@ -2413,9 +2413,7 @@ function renderDashboard(data, cfg) {
   const alertsWrap = document.getElementById('alerts-wrap');
   if (alertsWrap) {
     const alerts = [];
-    if (open.length > (cfg.maxPositions || 15)) {
-      alerts.unshift({ type:'red', icon:'🚫', title:`${open.length} positions open — exceeds limit of ${cfg.maxPositions || 15}`, desc:'Too many concurrent positions increases correlation risk and dilutes focus. Consider closing weakest positions.' });
-    }
+    // Position count limit removed — system scales to 0.8% portfolio risk cap, not a fixed position count
     open.forEach(t => {
       const effStop = Math.max(t.stopLoss || 0, t.sevenDayLow || 0);
       const effPct = (t.cmp && effStop) ? ((t.cmp - effStop) / t.cmp * 100) : t.pctFromStop;
