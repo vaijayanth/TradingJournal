@@ -2145,12 +2145,11 @@ function renderDashboard(data, cfg) {
     const losers = closed.filter(t => t.finalPlPct < 0);
     const avgLoss = losers.length > 0 ? losers.reduce((s,t) => s + Math.abs(t.finalPlPct), 0) / losers.length : 0;
 
-    // Stop slippage: how much did each loser overshoot the planned risk?
-    // Planned risk = initRiskPct; actual loss = |finalPlPct|
-    // Positive slippage = held past stop; negative = exited before stop (discipline)
-    const slippageTrades = losers.filter(t => t.initRiskPct > 0);
+    // Stop slippage: (stopLoss - finalExitPrice) / entryPrice × 100
+    // Positive = exited below stop (held past it); negative = cut before stop (good)
+    const slippageTrades = losers.filter(t => t.stopLoss > 0 && t.finalExitPrice > 0 && t.entryPrice > 0);
     const avgSlippage = slippageTrades.length > 0
-      ? slippageTrades.reduce((s,t) => s + (Math.abs(t.finalPlPct) - t.initRiskPct), 0) / slippageTrades.length : 0;
+      ? slippageTrades.reduce((s,t) => s + (t.stopLoss - t.finalExitPrice) / t.entryPrice * 100, 0) / slippageTrades.length : 0;
 
     // Days since last closed winner
     const winners = closed.filter(t => t.finalPlPct > 0 && t.closeDate).sort((a,b) => parseDate(b.closeDate) - parseDate(a.closeDate));
@@ -2180,7 +2179,7 @@ function renderDashboard(data, cfg) {
     if (discBadge) {
       const issues = [];
       if (avgLoss > 7) issues.push(`avg loss ${avgLoss.toFixed(1)}% > 7% rule`);
-      if (avgSlippage > 1.5) issues.push(`exits ${avgSlippage.toFixed(1)}% past stop on avg`);
+      if (avgSlippage > 1.5) issues.push(`exits avg ${avgSlippage.toFixed(1)}% below stop price`);
       if (daysSinceWin !== null && daysSinceWin > 30) issues.push(`no winner banked in ${daysSinceWin} days`);
       if (issues.length === 0) {
         discBadge.className = 'stat-badge badge-green';
