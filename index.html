@@ -680,29 +680,29 @@ tbody tr:hover { filter: brightness(0.97); }
       <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em;margin-right:20px;white-space:nowrap">System Health</div>
       <div style="display:flex;flex:1;gap:0;flex-wrap:wrap">
         <div style="flex:1;min-width:110px;padding:4px 16px;border-right:1px solid var(--border)">
-          <div style="font-size:11px;color:var(--text-muted);font-weight:600">Win Rate (exits)</div>
+          <div style="font-size:11px;color:var(--text-muted);font-weight:600">Exit WR / Entry Hit</div>
           <div style="font-size:18px;font-weight:700;margin-top:2px" id="dash-sys-wr">—</div>
-          <div style="font-size:10px;color:var(--text-muted);margin-top:2px" id="dash-sys-wr-recent">entries working: —</div>
+          <div style="font-size:10px;margin-top:2px" id="dash-sys-wr-recent">entries working: —</div>
         </div>
         <div style="flex:1;min-width:100px;padding:4px 16px;border-right:1px solid var(--border)">
           <div style="font-size:11px;color:var(--text-muted);font-weight:600">Avg Loss Size</div>
           <div style="font-size:18px;font-weight:700;margin-top:2px" id="dash-sys-avgloss">—</div>
-          <div style="font-size:10px;color:var(--text-muted);margin-top:2px" id="dash-sys-avgloss-sub">vs 7% Minervini rule</div>
+          <div style="font-size:10px;margin-top:2px" id="dash-sys-avgloss-sub">vs 7% rule</div>
         </div>
         <div style="flex:1;min-width:100px;padding:4px 16px;border-right:1px solid var(--border)">
           <div style="font-size:11px;color:var(--text-muted);font-weight:600">Combined PF</div>
           <div style="font-size:18px;font-weight:700;margin-top:2px" id="dash-sys-pf">—</div>
-          <div style="font-size:10px;color:var(--text-muted);margin-top:2px">incl. open MTM</div>
+          <div style="font-size:10px;margin-top:2px" id="dash-sys-pf-sub">wins+open MTM / losses</div>
         </div>
         <div style="flex:1;min-width:100px;padding:4px 16px;border-right:1px solid var(--border)">
-          <div style="font-size:11px;color:var(--text-muted);font-weight:600">Hold Asymmetry</div>
+          <div style="font-size:11px;color:var(--text-muted);font-weight:600">Hold Ratio</div>
           <div style="font-size:18px;font-weight:700;margin-top:2px" id="dash-sys-r">—</div>
-          <div style="font-size:10px;color:var(--text-muted);margin-top:2px" id="dash-sys-hold-sub">winner days / loser days</div>
+          <div style="font-size:10px;margin-top:2px" id="dash-sys-hold-sub">winner days / loser days</div>
         </div>
         <div style="flex:1;min-width:100px;padding:4px 16px">
-          <div style="font-size:11px;color:var(--text-muted);font-weight:600">Open MTM</div>
+          <div style="font-size:11px;color:var(--text-muted);font-weight:600">Open Unrealised</div>
           <div style="font-size:18px;font-weight:700;margin-top:2px" id="dash-sys-exp">—</div>
-          <div style="font-size:10px;color:var(--text-muted);margin-top:2px">unrealised gain</div>
+          <div style="font-size:10px;margin-top:2px" id="dash-sys-exp-sub">% of capital</div>
         </div>
       </div>
     </div>
@@ -2065,71 +2065,90 @@ function renderDashboard(data, cfg) {
   const dWins   = closed.filter(t => t.finalPlPct > 0);
   const dLosses = closed.filter(t => t.finalPlPct < 0);
   const dWR     = closed.length > 0 ? dWins.length / closed.length * 100 : 0;
+  const totalOpenMTM = open.reduce((s,t) => s + (t.notionalPl || 0), 0);
 
-  // 1. Win Rate (exits) + Entry Success Rate
-  //    Entry success = open trades with notionalPl > 0  OR  closed winners
-  //    Uses all entries ever opened (open + closed)
-  const allEntries    = open.length + closed.length;
-  const openWinning   = open.filter(t => (t.notionalPl || 0) > 0).length;
-  const entrySucPct   = allEntries > 0 ? (openWinning + dWins.length) / allEntries * 100 : 0;
+  // 1. Exit WR + Entry Hit Rate
+  // Exit WR: % of closed trades that were winners (discipline check — should be 25-40% for this style)
+  // Entry Hit Rate: (open profitable + closed winners) / all entries — true "is my picking working?" signal
+  const allEntries  = open.length + closed.length;
+  const openWinning = open.filter(t => (t.notionalPl || 0) > 0).length;
+  const entryHitPct = allEntries > 0 ? (openWinning + dWins.length) / allEntries * 100 : 0;
   const dWREl = document.getElementById('dash-sys-wr');
-  set('dash-sys-wr', dWR.toFixed(1) + '%');
-  if (dWREl) dWREl.style.color = dWR >= 40 ? 'var(--green)' : dWR >= 25 ? 'var(--amber)' : 'var(--red)';
+  // For this style, 25-40% exit WR is healthy — don't show amber just because WR < 40
+  set('dash-sys-wr', dWR.toFixed(1) + '% / ' + entryHitPct.toFixed(0) + '%');
+  if (dWREl) dWREl.style.color = dWR >= 20 ? 'var(--green)' : dWR >= 12 ? 'var(--amber)' : 'var(--red)';
   const recentWREl = document.getElementById('dash-sys-wr-recent');
   if (recentWREl) {
-    recentWREl.textContent = `entries working: ${entrySucPct.toFixed(0)}%`;
-    recentWREl.style.color = entrySucPct >= 40 ? 'var(--green)' : entrySucPct >= 25 ? 'var(--amber)' : 'var(--red)';
+    const entryVerdict = entryHitPct >= 40 ? '✓ entries producing' : entryHitPct >= 25 ? '⚠ entries slow' : '🚨 entries not working';
+    recentWREl.textContent = entryVerdict;
+    recentWREl.style.color = entryHitPct >= 40 ? 'var(--green)' : entryHitPct >= 25 ? 'var(--amber)' : 'var(--red)';
   }
 
-  // 2. Avg loss size
-  const dLossers  = dLosses;
-  const avgLossSz = dLossers.length > 0 ? dLossers.reduce((s,t) => s + Math.abs(t.finalPlPct), 0) / dLossers.length : 0;
+  // 2. Avg loss size — calibrated: ≤5% great, ≤7% ok, >7% problem
+  const avgLossSz = dLosses.length > 0 ? dLosses.reduce((s,t) => s + Math.abs(t.finalPlPct), 0) / dLosses.length : 0;
   const avgLossEl = document.getElementById('dash-sys-avgloss');
   if (avgLossEl) {
-    avgLossEl.textContent = dLossers.length > 0 ? avgLossSz.toFixed(1) + '%' : '—';
+    avgLossEl.textContent = dLosses.length > 0 ? avgLossSz.toFixed(1) + '%' : '—';
     avgLossEl.style.color = avgLossSz <= 5 ? 'var(--green)' : avgLossSz <= 7 ? 'var(--amber)' : 'var(--red)';
   }
   const avgLossSubEl = document.getElementById('dash-sys-avgloss-sub');
   if (avgLossSubEl) {
-    if (avgLossSz <= 5) { avgLossSubEl.textContent = '✓ Tight — cutting fast'; avgLossSubEl.style.color = 'var(--green)'; }
-    else if (avgLossSz <= 7) { avgLossSubEl.textContent = '⚠ Approaching 7% limit'; avgLossSubEl.style.color = 'var(--amber)'; }
-    else { avgLossSubEl.textContent = '🚨 Above 7% — holding losers too long'; avgLossSubEl.style.color = 'var(--red)'; }
+    if (avgLossSz === 0) { avgLossSubEl.textContent = '—'; avgLossSubEl.style.color = 'var(--text-muted)'; }
+    else if (avgLossSz <= 5) { avgLossSubEl.textContent = '✓ cutting losses fast'; avgLossSubEl.style.color = 'var(--green)'; }
+    else if (avgLossSz <= 7) { avgLossSubEl.textContent = '⚠ near 7% limit — watch exits'; avgLossSubEl.style.color = 'var(--amber)'; }
+    else { avgLossSubEl.textContent = '🚨 holding losers too long'; avgLossSubEl.style.color = 'var(--red)'; }
   }
 
   // 3. Combined Profit Factor = (closed wins ₹ + open MTM ₹) / closed losses ₹
-  const dGrossWins  = dWins.reduce((s,t) => s + t.finalPl, 0);
-  const dGrossLoss  = Math.abs(dLosses.reduce((s,t) => s + t.finalPl, 0));
-  const totalOpenMTM = open.reduce((s,t) => s + (t.notionalPl || 0), 0);
-  const combinedPF  = dGrossLoss > 0 ? (dGrossWins + totalOpenMTM) / dGrossLoss : (dGrossWins + totalOpenMTM > 0 ? Infinity : 0);
-  const dPFEl = document.getElementById('dash-sys-pf');
+  // This is the TRUE system quality measure — includes running winners
+  // >2 = strong, >1.3 = healthy, >1 = marginal, <1 = system not paying yet
+  const dGrossWins = dWins.reduce((s,t) => s + t.finalPl, 0);
+  const dGrossLoss = Math.abs(dLosses.reduce((s,t) => s + t.finalPl, 0));
+  const combinedPF = dGrossLoss > 0 ? (dGrossWins + totalOpenMTM) / dGrossLoss : (dGrossWins + totalOpenMTM > 0 ? Infinity : 0);
+  const dPFEl    = document.getElementById('dash-sys-pf');
+  const dPFSubEl = document.getElementById('dash-sys-pf-sub');
   set('dash-sys-pf', isFinite(combinedPF) ? combinedPF.toFixed(2) : '∞');
-  if (dPFEl) dPFEl.style.color = combinedPF >= 2 ? 'var(--green)' : combinedPF >= 1 ? 'var(--amber)' : 'var(--red)';
+  if (dPFEl) dPFEl.style.color = combinedPF >= 1.5 ? 'var(--green)' : combinedPF >= 1 ? 'var(--amber)' : 'var(--red)';
+  if (dPFSubEl) {
+    if (!isFinite(combinedPF) || combinedPF >= 2)      { dPFSubEl.textContent = '✓ strong edge'; dPFSubEl.style.color = 'var(--green)'; }
+    else if (combinedPF >= 1.3)                         { dPFSubEl.textContent = '✓ system profitable'; dPFSubEl.style.color = 'var(--green)'; }
+    else if (combinedPF >= 1)                           { dPFSubEl.textContent = '⚠ marginal — need bigger winners'; dPFSubEl.style.color = 'var(--amber)'; }
+    else                                                { dPFSubEl.textContent = '🚨 open gains not covering losses yet'; dPFSubEl.style.color = 'var(--red)'; }
+  }
 
-  // 4. Hold Asymmetry: avg winner hold days vs avg loser hold days
-  //    Winners = closed winners (age known) + open positions (age = days open so far)
+  // 4. Hold Ratio: avg winner hold (closed winners + open positions) vs avg loser hold
+  // Target: winners held 3×+ longer than losers — that's the edge for this style
   const closedWinnerAge = dWins.filter(t => t.age > 0).map(t => t.age);
   const openAge         = open.filter(t => t.age > 0).map(t => t.age);
   const allWinnerAge    = closedWinnerAge.concat(openAge);
   const avgWinAge  = allWinnerAge.length > 0 ? allWinnerAge.reduce((s,v) => s+v, 0) / allWinnerAge.length : 0;
   const avgLossAge = dLosses.filter(t => t.age > 0).length > 0
-    ? dLosses.filter(t => t.age > 0).reduce((s,t) => s + t.age, 0) / dLosses.filter(t => t.age > 0).length : 0;
-  const dREl = document.getElementById('dash-sys-r');
+    ? dLosses.filter(t => t.age > 0).reduce((s,t) => s+t.age, 0) / dLosses.filter(t => t.age > 0).length : 0;
+  const holdRatio  = avgLossAge > 0 ? avgWinAge / avgLossAge : 0;
+  const dREl      = document.getElementById('dash-sys-r');
   const holdSubEl = document.getElementById('dash-sys-hold-sub');
   if (avgLossAge > 0 && avgWinAge > 0) {
-    set('dash-sys-r', Math.round(avgWinAge) + 'd / ' + Math.round(avgLossAge) + 'd');
-    if (dREl) dREl.style.color = avgWinAge >= avgLossAge * 2 ? 'var(--green)' : avgWinAge >= avgLossAge ? 'var(--amber)' : 'var(--red)';
-    if (holdSubEl) holdSubEl.textContent = 'winners held ' + (avgWinAge / avgLossAge).toFixed(1) + '× longer';
+    set('dash-sys-r', holdRatio.toFixed(1) + '×');
+    if (dREl) dREl.style.color = holdRatio >= 3 ? 'var(--green)' : holdRatio >= 2 ? 'var(--amber)' : 'var(--red)';
+    const holdVerd = holdRatio >= 3 ? '✓ running winners long' : holdRatio >= 2 ? '⚠ could hold winners longer' : '🚨 cutting winners too soon';
+    if (holdSubEl) { holdSubEl.textContent = holdVerd + ' (' + Math.round(avgWinAge) + 'd vs ' + Math.round(avgLossAge) + 'd)'; holdSubEl.style.color = holdRatio >= 3 ? 'var(--green)' : holdRatio >= 2 ? 'var(--amber)' : 'var(--red)'; }
   } else {
     set('dash-sys-r', '—');
+    if (holdSubEl) holdSubEl.textContent = 'winner days / loser days';
   }
 
-  // 5. Open MTM — total unrealized gain sitting in running positions
-  const dExpEl = document.getElementById('dash-sys-exp');
-  const openMTMStr = totalOpenMTM >= 0
-    ? '+₹' + Math.round(totalOpenMTM).toLocaleString('en-IN')
-    : '-₹' + Math.round(Math.abs(totalOpenMTM)).toLocaleString('en-IN');
+  // 5. Open Unrealised — as % of initial capital so it's meaningful regardless of ₹ size
+  const dExpEl    = document.getElementById('dash-sys-exp');
+  const dExpSubEl = document.getElementById('dash-sys-exp-sub');
+  const openMTMPct = initialCapital > 0 ? totalOpenMTM / initialCapital * 100 : 0;
+  const openMTMStr = (totalOpenMTM >= 0 ? '+' : '') + openMTMPct.toFixed(1) + '%';
   set('dash-sys-exp', openMTMStr);
-  if (dExpEl) dExpEl.style.color = totalOpenMTM >= 0 ? 'var(--green)' : 'var(--red)';
+  if (dExpEl) dExpEl.style.color = totalOpenMTM > 0 ? 'var(--green)' : totalOpenMTM < 0 ? 'var(--red)' : 'var(--text-muted)';
+  if (dExpSubEl) {
+    const rsStr = (totalOpenMTM >= 0 ? '+₹' : '-₹') + Math.round(Math.abs(totalOpenMTM)).toLocaleString('en-IN');
+    dExpSubEl.textContent = rsStr + ' unrealised';
+    dExpSubEl.style.color = totalOpenMTM > 0 ? 'var(--green)' : 'var(--text-muted)';
+  }
 
   // ── Open Portfolio Health card ──────────────────────────────────────────
   (function() {
