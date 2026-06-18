@@ -2028,8 +2028,9 @@ function renderDashboard(data, cfg) {
   const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
 
   // Card 1: Portfolio Value
-  set('dash-pv', fmt(portfolioValue));
-  set('dash-pv-sub', 'Initial: ' + fmt(initialCapital));
+  const combinedPortfolioValue = portfolioValue + totalUnrealisedPl;
+  set('dash-pv', fmt(combinedPortfolioValue));
+  set('dash-pv-sub', 'Initial: ' + fmt(initialCapital) + ' · Realised: ' + fmt(portfolioValue));
   const pvBadge = document.getElementById('dash-pv-badge');
   if (pvBadge) {
     pvBadge.className = 'stat-badge ' + (totalCombinedPl >= 0 ? 'badge-green' : 'badge-red');
