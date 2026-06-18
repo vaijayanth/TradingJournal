@@ -2030,10 +2030,11 @@ function renderDashboard(data, cfg) {
   // Card 1: Portfolio Value
   set('dash-pv', fmt(portfolioValue));
   set('dash-pv-sub', 'Initial: ' + fmt(initialCapital));
-  const pvDiff = portfolioValue - initialCapital;
-  set('dash-pv-badge', (pvDiff >= 0 ? '▲ +' : '▼ -') + fmt(pvDiff));
   const pvBadge = document.getElementById('dash-pv-badge');
-  if (pvBadge) { pvBadge.className = 'stat-badge ' + (pvDiff >= 0 ? 'badge-green' : 'badge-red'); }
+  if (pvBadge) {
+    pvBadge.className = 'stat-badge ' + (totalCombinedPl >= 0 ? 'badge-green' : 'badge-red');
+    pvBadge.textContent = (totalCombinedPl >= 0 ? '▲ +' : '▼ ') + fmt(Math.abs(totalCombinedPl)) + ' combined';
+  }
 
   // Card 2: Combined P&L (moved to prime position)
   const dashPlEl2 = document.getElementById('dash-realised-pl');
