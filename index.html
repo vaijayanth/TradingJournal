@@ -691,7 +691,7 @@ tbody tr:hover { filter: brightness(0.97); }
           <div style="font-size:10px;margin-top:2px" id="dash-sys-avgloss-sub">vs 7% rule</div>
         </div>
         <div style="flex:1;min-width:100px;padding:4px 16px;border-right:1px solid var(--border)">
-          <div style="font-size:11px;color:var(--text-muted);font-weight:600">Combined PF</div>
+          <div style="font-size:11px;color:var(--text-muted);font-weight:600">Combined Profit Factor</div>
           <div style="font-size:18px;font-weight:700;margin-top:2px" id="dash-sys-pf">—</div>
           <div style="font-size:10px;margin-top:2px" id="dash-sys-pf-sub">wins+open MTM / losses</div>
         </div>
@@ -2132,9 +2132,20 @@ function renderDashboard(data, cfg) {
   const holdSubEl = document.getElementById('dash-sys-hold-sub');
   if (avgLossAge > 0 && avgWinAge > 0) {
     set('dash-sys-r', holdRatio.toFixed(1) + '×');
-    if (dREl) dREl.style.color = holdRatio >= 3 ? 'var(--green)' : holdRatio >= 2 ? 'var(--amber)' : 'var(--red)';
-    const holdVerd = holdRatio >= 3 ? '✓ running winners long' : holdRatio >= 2 ? '⚠ could hold winners longer' : '🚨 cutting winners too soon';
-    if (holdSubEl) { holdSubEl.textContent = holdVerd + ' (' + Math.round(avgWinAge) + 'd vs ' + Math.round(avgLossAge) + 'd)'; holdSubEl.style.color = holdRatio >= 3 ? 'var(--green)' : holdRatio >= 2 ? 'var(--amber)' : 'var(--red)'; }
+    const openProfitableCount = open.filter(t => (t.notionalPl || 0) > 0).length;
+    let holdVerd, holdColor;
+    if (holdRatio >= 3) {
+      holdVerd = '✓ running winners long'; holdColor = 'var(--green)';
+    } else if (openProfitableCount >= 5) {
+      // Many winners still open and running — ratio will grow as they mature
+      holdVerd = '⏳ ' + openProfitableCount + ' winners still running — ratio will grow'; holdColor = 'var(--amber)';
+    } else if (holdRatio >= 2) {
+      holdVerd = '⚠ could hold winners longer'; holdColor = 'var(--amber)';
+    } else {
+      holdVerd = '🚨 cutting winners too soon'; holdColor = 'var(--red)';
+    }
+    if (holdSubEl) { holdSubEl.textContent = holdVerd + ' (' + Math.round(avgWinAge) + 'd vs ' + Math.round(avgLossAge) + 'd)'; holdSubEl.style.color = holdColor; }
+    if (dREl) dREl.style.color = holdColor;
   } else {
     set('dash-sys-r', '—');
     if (holdSubEl) holdSubEl.textContent = 'winner days / loser days';
