@@ -1017,9 +1017,9 @@ tbody tr:hover { filter: brightness(0.97); }
     </div>
     <!-- Profit Factor + Sharpe -->
     <div class="card card-sm">
-      <div class="stat-label">Profit Factor</div>
+      <div class="stat-label">Profit Factor (Combined)</div>
       <div style="font-size:30px;font-weight:700;margin-top:4px" id="perf-profit-factor">—</div>
-      <div class="stat-sub">Gross wins ÷ Gross losses</div>
+      <div class="stat-sub" id="perf-profit-factor-sub">Combined wins + open MTM ÷ closed losses</div>
       <div class="stat-badge" style="margin-top:6px" id="perf-profit-factor-badge">—</div>
       <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
         <div class="stat-label">Sharpe (Trade-Level)</div>
@@ -2813,7 +2813,8 @@ function renderPerfStats(closed, open, portfolioValue, initialCapital) {
     const sortedForDD = [...closedWithDate].sort((a,b) => parseDate(a.closeDate) - parseDate(b.closeDate));
     let eq = initialCapital, peak = eq;
     sortedForDD.forEach(t => { eq += t.finalPl; if (eq > peak) peak = eq; const dd = (eq - peak) / peak * 100; if (dd < marMaxDD) marMaxDD = dd; });
-    const finalEqMAR = initialCapital + totalFinalPl;
+    // Use combined equity (realised + open MTM) so CAGR reflects true portfolio growth
+    const finalEqMAR = initialCapital + totalFinalPl + totalNotionalPl;
     if (yearsFrac > 0 && finalEqMAR > 0) marCagr = (Math.pow(finalEqMAR / initialCapital, 1 / yearsFrac) - 1) * 100;
   }
   const mar = marMaxDD < 0 ? marCagr / Math.abs(marMaxDD) : 0;
@@ -2828,19 +2829,27 @@ function renderPerfStats(closed, open, portfolioValue, initialCapital) {
     marBadge.textContent = mar >= 5 ? '✓ World-class (>5)' : mar >= 3 ? '✓ Professional grade (>3)' : '⚠ Below 3 — improve return or cut drawdown';
   }
 
-  // ── Profit Factor ──
+  // ── Profit Factor (Combined) ──
+  // Closed wins + open unrealised MTM (col Y) as numerator — winners are still running open.
+  // Closed losses only as denominator — the actual cost incurred.
   const grossWins = wins.reduce((s,t) => s + t.finalPl, 0);
   const grossLosses = Math.abs(losses.reduce((s,t) => s + t.finalPl, 0));
-  const profitFactor = grossLosses > 0 ? grossWins / grossLosses : (grossWins > 0 ? Infinity : 0);
+  const grossOpenMTM = Math.max(0, totalNotionalPl); // only positive open MTM counts as "winning"
+  const combinedPF = grossLosses > 0 ? (grossWins + grossOpenMTM) / grossLosses : (grossWins + grossOpenMTM > 0 ? Infinity : 0);
+  const closedPF = grossLosses > 0 ? grossWins / grossLosses : (grossWins > 0 ? Infinity : 0);
   const pfEl = document.getElementById('perf-profit-factor');
   const pfBadge = document.getElementById('perf-profit-factor-badge');
-  set('perf-profit-factor', isFinite(profitFactor) ? profitFactor.toFixed(2) : '∞');
-  if (pfEl) pfEl.style.color = profitFactor >= 2 ? 'var(--green)' : profitFactor >= 1 ? 'var(--amber)' : 'var(--red)';
+  set('perf-profit-factor', isFinite(combinedPF) ? combinedPF.toFixed(2) : '∞');
+  if (pfEl) pfEl.style.color = combinedPF >= 1.5 ? 'var(--green)' : combinedPF >= 1 ? 'var(--amber)' : 'var(--red)';
   if (pfBadge) {
-    if (profitFactor >= 2) { pfBadge.className = 'stat-badge badge-green'; pfBadge.textContent = '✓ Strong edge (>2)'; }
-    else if (profitFactor >= 1) { pfBadge.className = 'stat-badge badge-amber'; pfBadge.textContent = 'Marginal edge (1–2)'; }
-    else { pfBadge.className = 'stat-badge badge-red'; pfBadge.textContent = '⚠ Losing system (<1)'; }
+    if (combinedPF >= 2) { pfBadge.className = 'stat-badge badge-green'; pfBadge.textContent = '✓ Strong edge (>2)'; }
+    else if (combinedPF >= 1.3) { pfBadge.className = 'stat-badge badge-green'; pfBadge.textContent = '✓ Healthy edge (>1.3)'; }
+    else if (combinedPF >= 1) { pfBadge.className = 'stat-badge badge-amber'; pfBadge.textContent = 'Marginal — winners need to run'; }
+    else { pfBadge.className = 'stat-badge badge-red'; pfBadge.textContent = '⚠ Below 1 — review system'; }
   }
+  // Show closed-only PF as footnote context
+  const pfSub = document.getElementById('perf-profit-factor-sub');
+  if (pfSub) pfSub.textContent = `Combined (closed wins + open MTM) ÷ closed losses · Closed-only: ${isFinite(closedPF) ? closedPF.toFixed(2) : '∞'}`;
 
   // ── Max consecutive wins/losses ──
   const sortedForStreaks = [...closed].filter(t => t.closeDate).sort((a,b) => parseDate(a.closeDate) - parseDate(b.closeDate));
