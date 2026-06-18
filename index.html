@@ -714,14 +714,8 @@ tbody tr:hover { filter: brightness(0.97); }
       <div style="display:flex;gap:12px;margin-top:8px;align-items:flex-end;flex-wrap:wrap">
         <div>
           <div style="font-size:22px;font-weight:700;color:var(--green)" id="dash-open-profitable">—</div>
-          <div class="stat-sub">Profitable</div>
-          <div style="font-size:10px;color:var(--text-muted)" id="dash-open-profitable-sub">MTM &gt; 0</div>
-        </div>
-        <div style="color:var(--border);font-size:20px;padding-bottom:2px">|</div>
-        <div>
-          <div style="font-size:22px;font-weight:700;color:var(--accent)" id="dash-open-riskfree">—</div>
-          <div class="stat-sub">Risk Free</div>
-          <div style="font-size:10px;color:var(--text-muted)">stop ≥ entry</div>
+          <div class="stat-sub">Profitable / Risk Free</div>
+          <div style="font-size:10px;color:var(--text-muted)" id="dash-open-profitable-sub">MTM &gt; 0 or stop ≥ entry</div>
         </div>
       </div>
       <div style="margin-top:10px;height:6px;border-radius:3px;background:var(--surface2);overflow:hidden">
@@ -2109,23 +2103,15 @@ function renderDashboard(data, cfg) {
 
   // ── Open Portfolio Health card ──────────────────────────────────────────
   (function() {
-    // Independent counts — a trade can appear in both
-    const profitable = open.filter(t => (t.notionalPl || 0) > 0);
-    const riskFree   = open.filter(t => {
+    // Safe = profitable (notionalPl > 0) OR risk-free (effStop >= entryPrice)
+    const safeSet = new Set();
+    open.forEach(t => {
       const effStop = Math.max(t.stopLoss || 0, t.sevenDayLow || 0);
-      return effStop > 0 && t.entryPrice > 0 && effStop >= t.entryPrice;
+      const isRiskFree = effStop > 0 && t.entryPrice > 0 && effStop >= t.entryPrice;
+      if ((t.notionalPl || 0) > 0 || isRiskFree) safeSet.add(t.stock);
     });
-    const both = open.filter(t => {
-      if ((t.notionalPl || 0) <= 0) return false;
-      const e = Math.max(t.stopLoss || 0, t.sevenDayLow || 0);
-      return e > 0 && t.entryPrice > 0 && e >= t.entryPrice;
-    });
-    set('dash-open-profitable', profitable.length);
-    set('dash-open-riskfree', riskFree.length);
-    const sub = document.getElementById('dash-open-profitable-sub');
-    if (sub) sub.textContent = both.length > 0 ? `${both.length} also risk-free` : 'MTM > 0';
-    // Health bar: % of open positions that are profitable
-    const safeCount = profitable.length;
+    const safeCount = safeSet.size;
+    set('dash-open-profitable', safeCount);
     const healthPct = open.length > 0 ? safeCount / open.length * 100 : 0;
     const bar = document.getElementById('dash-health-bar');
     if (bar) {
@@ -2134,16 +2120,15 @@ function renderDashboard(data, cfg) {
     }
     const badge = document.getElementById('dash-health-badge');
     if (badge && open.length > 0) {
-      const rfNote = riskFree.length > 0 ? ` · ${riskFree.length} with stop ≥ entry` : '';
       if (healthPct >= 60) {
         badge.className = 'stat-badge badge-green';
-        badge.textContent = `✓ ${safeCount} of ${open.length} positions in profit${rfNote}`;
+        badge.textContent = `✓ ${safeCount} of ${open.length} positions profitable or risk-free`;
       } else if (healthPct >= 40) {
         badge.className = 'stat-badge badge-amber';
-        badge.textContent = `⚠ Only ${safeCount} of ${open.length} in profit${rfNote}`;
+        badge.textContent = `⚠ Only ${safeCount} of ${open.length} profitable or risk-free`;
       } else {
         badge.className = 'stat-badge badge-red';
-        badge.textContent = `🚨 Only ${safeCount} of ${open.length} in profit${rfNote}`;
+        badge.textContent = `🚨 Only ${safeCount} of ${open.length} profitable or risk-free`;
       }
     } else if (badge) {
       badge.className = 'stat-badge badge-blue';
