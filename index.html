@@ -1418,13 +1418,14 @@ tbody tr:hover { filter: brightness(0.97); }
 
   <div class="grid-2" style="margin-bottom:14px">
     <div class="card">
-      <div class="stat-label">Current Streak</div>
+      <div class="stat-label">Current Streak <span style="font-weight:400;letter-spacing:0;text-transform:none;font-size:10px">— last 20 entries</span></div>
       <div style="display:flex;align-items:baseline;gap:10px;margin-top:8px">
         <div style="font-size:32px;font-weight:700" id="cur-streak-count">—</div>
-        <div style="font-size:16px;font-weight:600" id="cur-streak-type" style="color:var(--text-muted)"></div>
+        <div style="font-size:16px;font-weight:600" id="cur-streak-type"></div>
       </div>
-      <div class="stat-sub" id="cur-streak-sub">in a row (most recent closed trades)</div>
+      <div class="stat-sub" id="cur-streak-sub">in a row · open = profitable? · closed = final P&L</div>
       <div style="font-size:12px;font-weight:600;margin-top:8px;line-height:1.6" id="cur-streak-msg">—</div>
+      <div style="margin-top:10px;display:flex;gap:4px;flex-wrap:wrap" id="cur-streak-dots"></div>
     </div>
     <div class="card">
       <div class="stat-label">Am I Getting Better?</div>
@@ -4639,24 +4640,62 @@ function initAnalysisCharts(open, closed) {
     }
   }
 
-  // Current Streak
-  if (sortedByDate.length > 0) {
-    let curStreakCount = 1;
-    const lastOutcome = sortedByDate[sortedByDate.length-1].finalPlPct >= 0 ? 'W' : 'L';
-    for (let i = sortedByDate.length - 2; i >= 0; i--) {
-      const outcome = sortedByDate[i].finalPlPct >= 0 ? 'W' : 'L';
-      if (outcome === lastOutcome) curStreakCount++; else break;
+  // Current Streak — last 20 entries (open + closed) by entry date
+  // Open trade outcome = profitable if notionalPl > 0, else loss-so-far
+  // This shows setup quality trend, not just closed-trade bias
+  {
+    const last20 = [...closed, ...open]
+      .filter(t => t.openDate)
+      .sort((a,b) => parseDate(a.openDate) - parseDate(b.openDate))
+      .slice(-20);
+
+    const outcomes = last20.map(t => {
+      if (t.closeDate) return { r: t.finalPlPct >= 0 ? 'W' : 'L', open: false, stock: t.stock };
+      return { r: (t.notionalPl||0) >= 0 ? 'W' : 'L', open: true, stock: t.stock };
+    });
+
+    // Count streak from most recent backwards
+    let curStreakCount = 0;
+    const lastR = outcomes.length > 0 ? outcomes[outcomes.length-1].r : null;
+    if (lastR) {
+      for (let i = outcomes.length - 1; i >= 0; i--) {
+        if (outcomes[i].r === lastR) curStreakCount++; else break;
+      }
     }
+
+    // Win rate in last 20
+    const last20Wins = outcomes.filter(o => o.r === 'W').length;
+    const last20WR = outcomes.length > 0 ? Math.round(last20Wins / outcomes.length * 100) : 0;
+    const openCount20 = outcomes.filter(o => o.open).length;
+
     const streakEl = document.getElementById('cur-streak-count');
-    const typeEl = document.getElementById('cur-streak-type');
-    const msgEl = document.getElementById('cur-streak-msg');
-    if (streakEl) { streakEl.textContent = curStreakCount; streakEl.style.color = lastOutcome === 'W' ? 'var(--green)' : 'var(--red)'; }
-    if (typeEl) { typeEl.textContent = lastOutcome === 'W' ? 'wins' : 'losses'; typeEl.style.color = lastOutcome === 'W' ? 'var(--green)' : 'var(--red)'; }
+    const typeEl   = document.getElementById('cur-streak-type');
+    const msgEl    = document.getElementById('cur-streak-msg');
+    const dotsEl   = document.getElementById('cur-streak-dots');
+
+    if (streakEl) { streakEl.textContent = curStreakCount || '—'; streakEl.style.color = lastR === 'W' ? 'var(--green)' : lastR === 'L' ? 'var(--red)' : ''; }
+    if (typeEl)   { typeEl.textContent = lastR === 'W' ? 'wins' : lastR === 'L' ? 'losses' : ''; typeEl.style.color = lastR === 'W' ? 'var(--green)' : 'var(--red)'; }
+
+    const sub = document.getElementById('cur-streak-sub');
+    if (sub) sub.textContent = `in a row · last 20 entries: ${last20WR}% working${openCount20 > 0 ? ` (${openCount20} still open)` : ''}`;
+
     if (msgEl) {
-      if (lastOutcome === 'W' && curStreakCount >= 3) msgEl.innerHTML = `<span style="color:var(--green)">✓ Hot streak — tighten stops, let runners run. Don't add size yet.</span>`;
-      else if (lastOutcome === 'L' && curStreakCount >= 3) msgEl.innerHTML = `<span style="color:var(--red)">🚨 ${curStreakCount} consecutive losses — reduce next trade size by 50%. Only take A+ setups.</span>`;
-      else if (lastOutcome === 'L' && curStreakCount === 2) msgEl.innerHTML = `<span style="color:var(--amber)">⚠ 2 losses in a row — review last setup before next entry.</span>`;
-      else msgEl.innerHTML = `<span style="color:var(--text-muted)">Normal range — no action needed.</span>`;
+      if (!lastR) { msgEl.innerHTML = '<span style="color:var(--text-muted)">No trades yet.</span>'; }
+      else if (lastR === 'W' && curStreakCount >= 3) msgEl.innerHTML = `<span style="color:var(--green)">✓ On a roll — ${curStreakCount} in a row working. Stay disciplined, don't add size yet.</span>`;
+      else if (lastR === 'L' && curStreakCount >= 3) msgEl.innerHTML = `<span style="color:var(--red)">🚨 ${curStreakCount} recent entries not working. Pause, review last 3 setups — are they really A+? Consider sitting out one cycle.</span>`;
+      else if (lastR === 'L' && curStreakCount === 2) msgEl.innerHTML = `<span style="color:var(--amber)">⚠ Last 2 entries not working. Review setup quality before next entry.</span>`;
+      else msgEl.innerHTML = `<span style="color:var(--text-muted)">Normal — no action needed.</span>`;
+    }
+
+    // Dot timeline — oldest left, newest right
+    if (dotsEl) {
+      dotsEl.innerHTML = outcomes.map((o, i) => {
+        const col = o.r === 'W' ? 'var(--green)' : 'var(--red)';
+        const border = o.open ? '2px dashed ' + col : '2px solid ' + col;
+        const title = `${o.stock}${o.open ? ' (open)' : ' (closed)'}`;
+        const isStreak = i >= outcomes.length - curStreakCount;
+        return `<div title="${title}" style="width:18px;height:18px;border-radius:50%;background:${isStreak ? col : 'transparent'};border:${border};opacity:${isStreak ? 1 : 0.45};flex-shrink:0"></div>`;
+      }).join('');
     }
   }
 
