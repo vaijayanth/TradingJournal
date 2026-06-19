@@ -1862,7 +1862,12 @@ tbody tr:hover { filter: brightness(0.97); }
       <div class="card card-sm">
         <div class="stat-label">Call Spread Candidates</div>
         <div class="stat-value red" id="fno-call-cands">—</div>
-        <div class="stat-sub">Bearish alignment ≥ 3/4</div>
+        <div class="stat-sub">Bearish alignment ≥ 3/4 · no spread yet</div>
+      </div>
+      <div class="card card-sm">
+        <div class="stat-label">Add Call to PUT Spread</div>
+        <div class="stat-value" style="color:var(--amber)" id="fno-add-call-count">—</div>
+        <div class="stat-sub">PUT active + HA flipped Red today</div>
       </div>
     </div>
 
@@ -5776,7 +5781,8 @@ function renderFnoDashboard(watchlist) {
 
   set('fno-total', watchlist.length);
   set('fno-put-cands', watchlist.filter(s => !fnoHasSpread(s) && fnoAction(s)==='put-spread').length);
-  set('fno-call-cands', watchlist.filter(s => fnoAction(s)==='call-spread'||fnoAction(s)==='add-call').length);
+  set('fno-call-cands', watchlist.filter(s => !fnoHasSpread(s) && fnoAction(s)==='call-spread').length);
+  set('fno-add-call-count', watchlist.filter(s => fnoAction(s)==='add-call').length);
   fnoRenderBreadth(watchlist);
   fnoRenderActiveSpreads(watchlist);
   fnoRenderAlerts(watchlist);
@@ -5994,7 +6000,7 @@ function fnoRenderAlerts(watchlist) {
       allAlerts.push({ group:'reversal', score: parseFloat(s.pctFrom7DL)*100||0, stock:s.stock,
         reversalType:'top', detail:`${(parseFloat(s.pctFrom7DL)*100).toFixed(1)}% from 7DL · HA just turned Red — momentum fading` });
     if (extended && haGreen && s.haChanged && trend === 'bearish')
-      allAlerts.push({ group:'reversal', score: parseFloat(s.pctFrom7DL)||0, stock:s.stock,
+      allAlerts.push({ group:'reversal', score: parseFloat(s.pctFrom7DL)*100||0, stock:s.stock,
         reversalType:'bottom', detail:`${(parseFloat(s.pctFrom7DL)*100).toFixed(1)}% from 7DL · HA just turned Green — downtrend may be stalling` });
   });
 
