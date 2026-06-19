@@ -1385,12 +1385,12 @@ tbody tr:hover { filter: brightness(0.97); }
       <div style="display:flex;align-items:baseline;gap:12px;margin-top:6px">
         <div>
           <div style="font-size:22px;font-weight:700" id="consec-loss-next-wr">—</div>
-          <div class="stat-sub">WR after streak</div>
+          <div class="stat-sub">WR after losing run</div>
         </div>
         <div style="color:var(--text-muted);font-size:18px">vs</div>
         <div>
           <div style="font-size:22px;font-weight:700" id="consec-loss-overall-wr">—</div>
-          <div class="stat-sub">Overall WR</div>
+          <div class="stat-sub">Combined WR (baseline)</div>
         </div>
       </div>
       <div style="font-size:16px;font-weight:700;margin-top:10px" id="consec-loss-next-avg">—</div>
@@ -4562,46 +4562,64 @@ function initAnalysisCharts(open, closed) {
     }
   }
 
-  // Consecutive loss behaviour
-  const sortedByDate = [...closed].filter(t => t.closeDate).sort((a,b) => parseDate(a.closeDate) - parseDate(b.closeDate));
+  // Consecutive loss behaviour — entry-date order (open + closed combined)
+  // Using close-date-only always shows a "loss streak" because winners stay open for weeks.
+  // Instead: sort ALL trades by entry date, outcome = combined (notionalPl for open, finalPlPct for closed).
+  const sortedByEntry = [...closed, ...open]
+    .filter(t => t.openDate)
+    .sort((a,b) => parseDate(a.openDate) - parseDate(b.openDate))
+    .map(t => ({
+      ...t,
+      _outcome: t.closeDate ? (t.finalPlPct >= 0 ? 'W' : 'L') : ((t.notionalPl||0) >= 0 ? 'W' : 'L'),
+      _isOpen: !t.closeDate,
+    }));
+
   const nextTradeAfterStreak = [];
-  let streak = 0;
-  sortedByDate.forEach((t, i) => {
-    if (t.finalPlPct < 0) { streak++; } else { streak = 0; }
-    if (streak >= 3 && i + 1 < sortedByDate.length) {
-      nextTradeAfterStreak.push(sortedByDate[i + 1]);
+  let streak2 = 0;
+  sortedByEntry.forEach((t, i) => {
+    if (t._outcome === 'L') { streak2++; } else { streak2 = 0; }
+    if (streak2 >= 3 && i + 1 < sortedByEntry.length) {
+      nextTradeAfterStreak.push(sortedByEntry[i + 1]);
     }
   });
-  const overallWR = closed.length > 0 ? closed.filter(t => t.finalPlPct > 0).length / closed.length * 100 : 0;
+
+  // Combined overall WR (closed wins + open profitable) for fair comparison
+  const allTrades = sortedByEntry;
+  const allWins = allTrades.filter(t => t._outcome === 'W').length;
+  const overallWR = allTrades.length > 0 ? allWins / allTrades.length * 100 : 0;
   set('consec-loss-overall-wr', overallWR.toFixed(0) + '%');
   const overallWREl = document.getElementById('consec-loss-overall-wr');
   if (overallWREl) overallWREl.style.color = 'var(--text-secondary)';
+
   if (nextTradeAfterStreak.length >= 3) {
-    const nWins = nextTradeAfterStreak.filter(t => t.finalPlPct > 0).length;
+    const nWins = nextTradeAfterStreak.filter(t => t._outcome === 'W').length;
     const nWR = nWins / nextTradeAfterStreak.length * 100;
-    const nAvg = nextTradeAfterStreak.reduce((s,t) => s + t.finalPlPct, 0) / nextTradeAfterStreak.length;
+    // Avg P&L: closed trades use finalPlPct; open use notionalPl as rough %
+    const closedNext = nextTradeAfterStreak.filter(t => !t._isOpen);
+    const nAvg = closedNext.length > 0 ? closedNext.reduce((s,t) => s + t.finalPlPct, 0) / closedNext.length : null;
     const wrDrop = overallWR - nWR;
+    const openInNext = nextTradeAfterStreak.filter(t => t._isOpen).length;
     set('consec-loss-next-wr', nWR.toFixed(0) + '%');
     const wrEl = document.getElementById('consec-loss-next-wr');
-    if (wrEl) wrEl.style.color = nWR >= overallWR * 0.8 ? 'var(--amber)' : 'var(--red)';
-    set('consec-loss-next-avg', (nAvg >= 0 ? '+' : '') + nAvg.toFixed(1) + '%');
+    if (wrEl) wrEl.style.color = nWR >= overallWR * 0.85 ? 'var(--amber)' : 'var(--red)';
+    set('consec-loss-next-avg', nAvg !== null ? (nAvg >= 0 ? '+' : '') + nAvg.toFixed(1) + '%' : '—');
     const avgEl = document.getElementById('consec-loss-next-avg');
-    if (avgEl) avgEl.style.color = nAvg >= 0 ? 'var(--green)' : 'var(--red)';
-    set('consec-loss-insight', `Based on ${nextTradeAfterStreak.length} trades after a 3+ loss streak`);
+    if (avgEl && nAvg !== null) avgEl.style.color = nAvg >= 0 ? 'var(--green)' : 'var(--red)';
+    const openNote = openInNext > 0 ? ` · ${openInNext} still open` : '';
+    set('consec-loss-insight', `Based on ${nextTradeAfterStreak.length} entries after 3+ consecutive non-working trades${openNote}`);
     const verdictEl = document.getElementById('consec-loss-verdict');
     if (verdictEl) {
-      if (wrDrop > 15) {
-        verdictEl.innerHTML = `<span style="color:var(--red)">🚨 WR drops ${wrDrop.toFixed(0)}pp after a losing streak — strong tilt signal. Take a 1-day break after 3 consecutive losses before entering the next trade.</span>`;
-      } else if (wrDrop > 5) {
-        verdictEl.innerHTML = `<span style="color:var(--amber)">⚠ WR drops ${wrDrop.toFixed(0)}pp after a streak — mild tilt. Review your next trade setup extra carefully after 3 losses.</span>`;
-      } else {
-        verdictEl.innerHTML = `<span style="color:var(--green)">✓ WR holds steady after losing streaks — good emotional discipline.</span>`;
-      }
+      if (wrDrop > 15)
+        verdictEl.innerHTML = `<span style="color:var(--red)">🚨 Setup quality drops ${wrDrop.toFixed(0)}pp after a losing run — tilt signal. After 3 in a row not working, wait one day before your next entry and review the setup extra carefully.</span>`;
+      else if (wrDrop > 5)
+        verdictEl.innerHTML = `<span style="color:var(--amber)">⚠ Slight dip (${wrDrop.toFixed(0)}pp) after losing runs — stay aware. Review last setup before entering again after 3 losses.</span>`;
+      else
+        verdictEl.innerHTML = `<span style="color:var(--green)">✓ Setup quality holds steady after losing runs — good emotional discipline. You are not chasing or forcing after bad stretches.</span>`;
     }
   } else {
     set('consec-loss-next-wr', 'N/A');
     set('consec-loss-next-avg', 'N/A');
-    set('consec-loss-insight', 'Not enough consecutive loss sequences yet');
+    set('consec-loss-insight', 'Not enough consecutive losing sequences in entry history yet');
     const verdictEl = document.getElementById('consec-loss-verdict');
     if (verdictEl) verdictEl.textContent = '';
   }
