@@ -962,7 +962,7 @@ tbody tr:hover { filter: brightness(0.97); }
     </div>
     <!-- R-Multiple -->
     <div class="card card-sm">
-      <div class="stat-label">R-Multiple (Avg Win ÷ Avg Loss)</div>
+      <div class="stat-label">R-Multiple (₹ win ÷ ₹ planned risk)</div>
       <div class="stat-value" style="font-size:30px; margin-top:4px" id="perf-rmultiple">—</div>
       <div class="stat-badge badge-green" style="margin-top:6px" id="perf-rmultiple-badge">—</div>
       <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
@@ -1028,13 +1028,13 @@ tbody tr:hover { filter: brightness(0.97); }
       <div class="stat-sub" id="perf-profit-factor-sub">Combined wins + open MTM ÷ closed losses</div>
       <div class="stat-badge" style="margin-top:6px" id="perf-profit-factor-badge">—</div>
       <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
-        <div class="stat-label">Sharpe (Trade-Level)</div>
+        <div class="stat-label">Return Consistency (per trade)</div>
         <div style="font-size:20px;font-weight:700;margin-top:4px" id="perf-sharpe">—</div>
-        <div class="stat-sub" id="perf-sharpe-sub">Return ÷ Volatility</div>
+        <div class="stat-sub" id="perf-sharpe-sub">Avg closed P&L% ÷ std dev — closed only</div>
       </div>
       <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
         <div style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:4px">BENCHMARKS</div>
-        <div class="stat-sub" style="line-height:1.6">Profit Factor &gt;1.5 = edge · &gt;2.0 = strong<br>Sharpe &gt;1.0 = good · &gt;2.0 = excellent</div>
+        <div class="stat-sub" style="line-height:1.6">Profit Factor &gt;1.5 = edge · &gt;2.0 = strong<br>Consistency &gt;0 = positive closed trades · negative = expected (winners still open)</div>
       </div>
     </div>
   </div>
@@ -2763,7 +2763,16 @@ function renderPerfStats(closed, open, portfolioValue, initialCapital) {
   const avgFinalWin = wins.length > 0 ? wins.reduce((s,t) => s + t.finalPlPct, 0) / wins.length : 0;
   const avgFinalLoss = losses.length > 0 ? losses.reduce((s,t) => s + t.finalPlPct, 0) / losses.length : 0;
   const expectancy = closed.length > 0 ? closed.reduce((s,t) => s + t.finalPlPct, 0) / closed.length : 0;
-  const rMultiple = avgFinalLoss !== 0 ? Math.abs(avgFinalWin / avgFinalLoss) : 0;
+  // R-Multiple: use ₹ (finalPl / initRiskRs) when initRiskRs available — more accurate than %
+  // because position size varies (fixed ₹ risk ÷ stop% = position size, so % swings differ by stop width)
+  const winsWithRisk  = wins.filter(t => (t.initRiskRs||0) > 0);
+  const lossWithRisk  = losses.filter(t => (t.initRiskRs||0) > 0);
+  const rMultiple = (winsWithRisk.length > 0 && lossWithRisk.length > 0)
+    ? Math.abs(
+        (winsWithRisk.reduce((s,t) => s + t.finalPl / t.initRiskRs, 0) / winsWithRisk.length) /
+        (lossWithRisk.reduce((s,t) => s + t.finalPl / t.initRiskRs, 0) / lossWithRisk.length)
+      )
+    : (avgFinalLoss !== 0 ? Math.abs(avgFinalWin / avgFinalLoss) : 0); // fallback to % if no ₹ risk data
   const rop = initialCapital > 0 ? (totalFinalPl / initialCapital * 100) : 0;
 
   // ── Open trade (notional) stats — col Y (notionalPl) is mark-to-market for open positions ──
