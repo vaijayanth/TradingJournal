@@ -209,6 +209,41 @@ const effPct = (t.cmp && effStop) ? ((t.cmp - effStop) / t.cmp * 100) : t.pctFro
 - Analysis tab: all chart instantiations wrapped in try-catch (one bad chart no longer aborts KPI population)
 - Analysis tab: Stop Slippage colour fixed (negative/saved = green, was backwards)
 - Analysis tab: added Current Streak, Learning Curve, Setup Type WR (Last 30), Monthly P&L chart (see Analysis Tab section above) — completed 2026-06-16
+- Setup type: `parseSetupType(code)` helper parses compound codes (BKT/VCP/VCL_SL_LT10 etc.) into friendly labels. Used in positions table, closed trades table, and Analysis setup breakdown.
+- Position count limit alert REMOVED — system scales by 0.8% portfolio risk cap (not a fixed 15-position limit). Do NOT add a position count alert.
+
+## Performance Tab — Calibrated Metric Rules (CRITICAL)
+
+These metrics were audited 2026-06-19 and corrected for trailing-stop system behaviour. Do NOT revert these calibrations:
+
+### Combined vs Closed-only
+- **Profit Factor**: numerator = closed wins ₹ + open unrealised MTM; denominator = closed losses ₹. NOT closed-only. Closed-only PF shown as footnote.
+- **R-Expectancy**: uses **combined WR** (closed wins + open profitable / all trades), not closed WR. Closed-only WR of ~25% gives false negative (-0.38R); combined WR gives true edge (+0.19R). Footnote shows closed-only for context.
+- **MAR Ratio CAGR**: uses combined equity (realised + open MTM), not AK26 alone. Max DD still uses realised-only equity path (documented in card footnote).
+- **Combined Expectancy**: shown as ₹/trade (not % — rounds to 0.0% and is meaningless).
+
+### Win Rate Colour Thresholds (calibrated for this system)
+- **Closed WR**: green ≥40%, amber ≥20%, red <20% — (25-30% is NORMAL and HEALTHY)
+- **Combined WR**: green ≥40%, amber ≥28%, red <28%
+- **Win Rate Trend chart / Win Rate by Entry Day / Setup WR chart**: reference line at **30%** (not 50%). Bar colours: green ≥40%, amber ≥20%, red <20%.
+
+### Cards with "expected negative / closed-only" context
+- **Expectancy headline**: labelled "Realised (closed stops — expected negative)" — do not make it green
+- **Sharpe ratio**: closed-only, expected negative for this system → amber (not red) unless below -0.5. Label: "Closed trades only — expected negative; open winners excluded"
+- **Max Streaks**: loss count shown in amber (not red), with note "open winners not counted here"
+
+### Equity Curve
+- Main solid series: cumulative realised P&L (red/green area)
+- **Second dashed amber series**: all null for closed dates, connects from last closed value, extends to "Today" = realised + total open MTM. Renders as dashed amber with legend. **This is the true portfolio value line.**
+- Drawdown: closed trades only (no Today point)
+
+### Closed Trades Table
+- Column shows **"Final P&L ₹"** (actual exit P&L in ₹) — NOT "Notional P&L%" which is blank for all closed trades
+- Setup column shows parsed friendly label (e.g. "Breakout · <10% SL") not raw code
+
+### Alert System
+- No position count limit alert — user scales by 0.8% risk cap
+- Exit Triggered alerts only show genuine stop/EMA breaches
 
 ---
 
@@ -249,7 +284,7 @@ Cols A–E are empty. Data starts at col F (index 5).
 | 20 | U | 21 EMA CROSS | ema21cross (bool) |
 | 21 | V | 7DL | sevenDayLow |
 | 22 | W | %FROM 7DL | pctFrom7DL |
-| 23 | X | SPREAD ACTIVE | spreadActive (bool) |
+| 23 | X | SPREAD ACTIVE | spreadActive — string: `'CALL'` \| `'PUT'` \| `'CALLPUT'` \| `''` (empty = no spread active) |
 
 ### Signal Scoring
 ```javascript
@@ -265,13 +300,19 @@ function fnoTrend(s) {
   if (bear >= 3) return 'bearish';
   return 'mixed';
 }
+// Helpers for spreadActive string type
+function fnoHasSpread(s)    { return s.spreadActive === 'CALL' || s.spreadActive === 'PUT' || s.spreadActive === 'CALLPUT'; }
+function fnoHasPutSpread(s) { return s.spreadActive === 'PUT'  || s.spreadActive === 'CALLPUT'; }
+function fnoHasCallSpread(s){ return s.spreadActive === 'CALL' || s.spreadActive === 'CALLPUT'; }
+function fnoSpreadLabel(s)  { return s.spreadActive === 'CALLPUT' ? 'CALL+PUT' : s.spreadActive || ''; }
+
 function fnoAction(s) {
   const trend = fnoTrend(s);
   const haRed = s.haColour.toLowerCase() === 'red';
   const haRedToday = haRed && s.haChanged;
-  if (s.spreadActive && haRedToday) return 'add-call';
+  if (fnoHasPutSpread(s) && haRedToday) return 'add-call'; // only when PUT active
   if (trend === 'bullish' && !haRed) return 'put-spread';
-  if (trend === 'bearish' || (haRedToday && !s.spreadActive)) return 'call-spread';
+  if (trend === 'bearish' || (haRedToday && !fnoHasSpread(s))) return 'call-spread';
   return 'wait';
 }
 ```
