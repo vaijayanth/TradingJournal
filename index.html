@@ -1427,26 +1427,8 @@ tbody tr:hover { filter: brightness(0.97); }
       <div style="font-size:12px;font-weight:600;margin-top:8px;line-height:1.6" id="cur-streak-msg">—</div>
     </div>
     <div class="card">
-      <div class="stat-label">Learning Curve — First 30 vs Last 30 Entries</div>
-      <div style="font-size:10px;color:var(--text-muted);margin-bottom:8px">By entry date (open + closed) · WR = combined incl. open MTM · Avg P&L% = closed trades only</div>
-      <div style="display:flex;gap:20px;margin-top:8px">
-        <div>
-          <div style="font-size:11px;color:var(--text-muted);margin-bottom:2px">First 30 entries</div>
-          <div style="font-size:20px;font-weight:700" id="lc-early-wr">—</div>
-          <div class="stat-sub">Combined WR</div>
-          <div style="font-size:14px;font-weight:600;margin-top:4px" id="lc-early-avg">—</div>
-          <div class="stat-sub">Avg closed P&L%</div>
-        </div>
-        <div style="color:var(--text-muted);font-size:22px;align-self:center">→</div>
-        <div>
-          <div style="font-size:11px;color:var(--text-muted);margin-bottom:2px">Last 30 entries</div>
-          <div style="font-size:20px;font-weight:700" id="lc-recent-wr">—</div>
-          <div class="stat-sub">Combined WR</div>
-          <div style="font-size:14px;font-weight:600;margin-top:4px" id="lc-recent-avg">—</div>
-          <div class="stat-sub">Avg closed P&L%</div>
-        </div>
-      </div>
-      <div style="font-size:12px;font-weight:600;margin-top:10px;line-height:1.6" id="lc-verdict">—</div>
+      <div class="stat-label">Am I Getting Better?</div>
+      <div id="lc-main" style="margin-top:10px">—</div>
     </div>
   </div>
 
@@ -4678,45 +4660,89 @@ function initAnalysisCharts(open, closed) {
     }
   }
 
-  // Learning Curve — first 30 vs last 30 ENTRIES (not close date)
-  // Critical: must use entry cohorts, not close date. Recent close-date trades are
-  // dominated by stops (winners still open) — always looks worse, never meaningful.
-  // Instead: sort all trades (open+closed) by entry date, compare first 30 vs last 30
-  // using combined outcome (finalPl for closed, notionalPl for open).
+  // Learning Curve — plain English "Am I getting better?"
+  // Compare first 30 vs last 30 by ENTRY date (open+closed) to avoid recency bias
+  // (close-date comparison always looks bad because recent winners are still open)
   const allByEntry = [...closed, ...open].filter(t => t.openDate).sort((a,b) => parseDate(a.openDate)-parseDate(b.openDate));
-  if (allByEntry.length >= 10) {
-    const first30 = allByEntry.slice(0, 30);
-    const lc30    = allByEntry.slice(-30);
-    const lcCalc = arr => {
-      const closedIn = arr.filter(t => t.finalPlPct !== undefined && t.finalPlPct !== null && t.closeDate);
-      const openIn   = arr.filter(t => !t.closeDate);
-      // Win = closed with positive P&L, or open with positive MTM
-      const wins = closedIn.filter(t => t.finalPlPct > 0).length + openIn.filter(t => (t.notionalPl||0) > 0).length;
-      const wr = arr.length > 0 ? wins / arr.length * 100 : 0;
-      // Avg P&L%: closed trades use finalPlPct; open trades — skip (unrealised % unreliable cross-compare)
-      const avg = closedIn.length > 0 ? closedIn.reduce((s,t) => s + t.finalPlPct, 0) / closedIn.length : 0;
-      const openCount = openIn.length;
-      return { wr, avg, openCount, total: arr.length };
-    };
-    const early  = lcCalc(first30);
-    const recent = lcCalc(lc30);
-    const wrDiff  = recent.wr  - early.wr;
-    const avgDiff = recent.avg - early.avg;
-    set('lc-early-wr',   early.wr.toFixed(0)  + '%');
-    set('lc-recent-wr',  recent.wr.toFixed(0) + '%');
-    set('lc-early-avg',  (early.avg  >= 0 ? '+' : '') + early.avg.toFixed(1)  + '%');
-    set('lc-recent-avg', (recent.avg >= 0 ? '+' : '') + recent.avg.toFixed(1) + '%');
-    const recentWrEl = document.getElementById('lc-recent-wr');
-    if (recentWrEl) recentWrEl.style.color = wrDiff > 5 ? 'var(--green)' : wrDiff < -5 ? 'var(--red)' : 'var(--amber)';
-    const openNote = recent.openCount > 0 ? ` <span style="opacity:0.6;font-size:11px">(${recent.openCount} still open — combined WR includes their current MTM status)</span>` : '';
-    const verdictEl2 = document.getElementById('lc-verdict');
-    if (verdictEl2) {
-      if (wrDiff > 5 && avgDiff > 0) verdictEl2.innerHTML = `<span style="color:var(--green)">✓ Improving — combined WR +${wrDiff.toFixed(0)}pp and avg closed P&L up ${avgDiff.toFixed(1)}pp vs your first 30 entries.</span>${openNote}`;
-      else if (wrDiff < -5 || avgDiff < -1) verdictEl2.innerHTML = `<span style="color:var(--red)">⚠ Recent entry cohort weaker so far. WR ${wrDiff.toFixed(0)}pp, avg closed P&L ${avgDiff.toFixed(1)}pp vs first 30.</span>${openNote}`;
-      else verdictEl2.innerHTML = `<span style="color:var(--amber)">→ Consistent. WR ${wrDiff >= 0 ? '+' : ''}${wrDiff.toFixed(0)}pp, avg closed P&L ${avgDiff >= 0 ? '+' : ''}${avgDiff.toFixed(1)}pp vs first 30 entries.</span>${openNote}`;
+  const lcEl = document.getElementById('lc-main');
+  if (lcEl) {
+    if (allByEntry.length < 10) {
+      lcEl.innerHTML = '<div style="color:var(--text-muted);font-size:13px">Need at least 10 trades to show learning curve.</div>';
+    } else {
+      const first30 = allByEntry.slice(0, 30);
+      const lc30    = allByEntry.slice(-30);
+      const lcCalc = arr => {
+        const closedIn = arr.filter(t => t.closeDate);
+        const openIn   = arr.filter(t => !t.closeDate);
+        const wins = closedIn.filter(t => t.finalPlPct > 0).length + openIn.filter(t => (t.notionalPl||0) > 0).length;
+        const avgLoss = closedIn.filter(t => t.finalPlPct < 0).length > 0
+          ? closedIn.filter(t => t.finalPlPct < 0).reduce((s,t) => s + Math.abs(t.finalPlPct), 0) / closedIn.filter(t => t.finalPlPct < 0).length : 0;
+        const avgWin = closedIn.filter(t => t.finalPlPct > 0).length > 0
+          ? closedIn.filter(t => t.finalPlPct > 0).reduce((s,t) => s + t.finalPlPct, 0) / closedIn.filter(t => t.finalPlPct > 0).length : 0;
+        return { wins, total: arr.length, openCount: openIn.length, closedCount: closedIn.length, avgLoss, avgWin,
+          wr: arr.length > 0 ? wins / arr.length * 100 : 0 };
+      };
+      const early  = lcCalc(first30);
+      const recent = lcCalc(lc30);
+
+      // Too many still open in recent cohort — verdict is premature
+      const recentOpenPct = recent.openCount / recent.total * 100;
+      const tooEarly = recentOpenPct > 60;
+
+      // Plain-English signals
+      const lossImproved = recent.avgLoss > 0 && early.avgLoss > 0 && recent.avgLoss < early.avgLoss - 0.5;
+      const lossBetter   = recent.avgLoss > 0 && early.avgLoss > 0 && recent.avgLoss < early.avgLoss;
+      const winImproved  = recent.avgWin  > 0 && early.avgWin  > 0 && recent.avgWin  > early.avgWin  + 1;
+      const wrImproved   = recent.wr - early.wr > 5;
+      const wrDeclined   = recent.wr - early.wr < -10;
+
+      let colour = 'var(--amber)', icon = '→';
+      let headline = '', detail = '', action = '';
+
+      if (tooEarly) {
+        colour = 'var(--text-muted)'; icon = '⏳';
+        headline = `Too early to judge — ${recent.openCount} of your last 30 entries are still open.`;
+        detail = `Come back when more of those close. Your stops closed <strong>${recent.closedCount}</strong> trades so far from this group.`;
+        action = '';
+      } else if (wrImproved && (lossImproved || winImproved)) {
+        colour = 'var(--green)'; icon = '✓';
+        headline = `You are trading better than when you started.`;
+        detail = `Win rate in last 30 entries: <strong>${recent.wr.toFixed(0)}%</strong> vs <strong>${early.wr.toFixed(0)}%</strong> in first 30.`
+          + (lossImproved ? ` Avg loss tightened from <strong>${early.avgLoss.toFixed(1)}%</strong> to <strong>${recent.avgLoss.toFixed(1)}%</strong> — you are cutting faster.` : '')
+          + (winImproved  ? ` Avg winner grew from <strong>+${early.avgWin.toFixed(1)}%</strong> to <strong>+${recent.avgWin.toFixed(1)}%</strong> — you are holding longer.` : '');
+        action = 'Keep doing what you are doing. Document your current process before it drifts.';
+      } else if (wrDeclined && recent.avgLoss > early.avgLoss + 0.5) {
+        colour = 'var(--red)'; icon = '⚠';
+        headline = `Recent entries are underperforming your early trades.`;
+        detail = `Win rate dropped to <strong>${recent.wr.toFixed(0)}%</strong> from <strong>${early.wr.toFixed(0)}%</strong>, and avg loss grew from <strong>${early.avgLoss.toFixed(1)}%</strong> to <strong>${recent.avgLoss.toFixed(1)}%</strong>.`;
+        action = 'Two things to check: (1) Are you taking stops late? (2) Are you entering weaker setups? Pull your last 5 losers and compare entry quality to your early winners.';
+      } else if (!lossBetter && recent.avgLoss > early.avgLoss + 1) {
+        colour = 'var(--amber)'; icon = '⚠';
+        headline = `Losses are getting bigger — take stops faster.`;
+        detail = `Avg loss has crept from <strong>${early.avgLoss.toFixed(1)}%</strong> to <strong>${recent.avgLoss.toFixed(1)}%</strong>. This is the #1 thing that kills momentum systems.`;
+        action = 'Check your last 5 losses. Were you below your stop and still held? If yes, that is the habit to break first.';
+      } else if (lossBetter) {
+        colour = 'var(--green)'; icon = '✓';
+        headline = `You are cutting losses faster — that is the most important skill.`;
+        detail = `Avg loss tightened from <strong>${early.avgLoss.toFixed(1)}%</strong> to <strong>${recent.avgLoss.toFixed(1)}%</strong>.`
+          + ` Win rate: <strong>${recent.wr.toFixed(0)}%</strong> (was ${early.wr.toFixed(0)}%).`;
+        action = 'Discipline on stops is compounding. Keep it up.';
+      } else {
+        colour = 'var(--amber)'; icon = '→';
+        headline = `Roughly consistent with your earlier trades.`;
+        detail = `Win rate <strong>${recent.wr.toFixed(0)}%</strong> vs <strong>${early.wr.toFixed(0)}%</strong> early. Avg loss <strong>${recent.avgLoss.toFixed(1)}%</strong> vs <strong>${early.avgLoss.toFixed(1)}%</strong> early.`;
+        action = 'No red flags. Focus on holding winners longer — that is where the big edge compounds.';
+      }
+
+      const openNote = !tooEarly && recent.openCount > 0
+        ? `<div style="font-size:11px;color:var(--text-muted);margin-top:6px">${recent.openCount} of last 30 entries still open — verdict may shift as they close.</div>` : '';
+
+      lcEl.innerHTML = `
+        <div style="font-size:15px;font-weight:700;color:${colour};margin-bottom:6px">${icon} ${headline}</div>
+        <div style="font-size:13px;line-height:1.6;color:var(--text-secondary)">${detail}</div>
+        ${action ? `<div style="margin-top:10px;font-size:12px;color:var(--text-muted);border-top:1px solid var(--border);padding-top:8px"><strong>What to do:</strong> ${action}</div>` : ''}
+        ${openNote}`;
     }
-  } else {
-    set('lc-early-wr', 'Need 10+'); set('lc-recent-wr', 'trades'); set('lc-early-avg', ''); set('lc-recent-avg', '');
   }
 
   // Scatter — closed wins, closed losses, + open positions (amber)
