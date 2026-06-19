@@ -1344,6 +1344,10 @@ tbody tr:hover { filter: brightness(0.97); }
     <div style="font-size:12px;font-weight:700;color:var(--accent);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em">Breakeven Stop Insight</div>
     <div id="tm-be-insight" style="font-size:13px;line-height:1.7;color:var(--text-secondary)">Loading…</div>
   </div>
+  <div class="card" style="margin-bottom:14px;border-left:3px solid var(--green)">
+    <div style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em">BE Rule Change Tracker — +5% → +2% (from 19 Jun 2026)</div>
+    <div id="be-rule-tracker" style="font-size:13px;line-height:1.7;color:var(--text-secondary)">Loading…</div>
+  </div>
   <div class="grid-2" style="margin-bottom:14px">
     <div class="card">
       <div class="chart-title">₹ Risk per Trade Distribution</div>
@@ -1783,6 +1787,14 @@ tbody tr:hover { filter: brightness(0.97); }
         <input type="number" id="cfg-be-trigger" class="config-input config-input-sm" step="0.5">
       </div>
       <div class="config-field">
+        <label class="config-label">BE Rule Change Date <span style="font-weight:400;font-size:10px;color:var(--text-muted)">(dd-Mon-yyyy)</span></label>
+        <input type="text" id="cfg-be-rule-change-date" class="config-input config-input-sm" placeholder="19-Jun-2026">
+      </div>
+      <div class="config-field">
+        <label class="config-label">Old BE Trigger (%) <span style="font-weight:400;font-size:10px;color:var(--text-muted)">(for comparison)</span></label>
+        <input type="number" id="cfg-be-rule-old-trigger" class="config-input config-input-sm" step="0.5">
+      </div>
+      <div class="config-field">
         <label class="config-label">Stop Proximity Alert (%)</label>
         <input type="number" id="cfg-stop-proximity" class="config-input config-input-sm" step="0.5">
       </div>
@@ -1982,7 +1994,8 @@ const DEFAULT_CONFIG = {
   haColourCol: 'AG', haChangedCol: 'AH',
   maeCol: 'AL', mfeCol: 'AM',
   portfolioCell: 'AK26', initialCapCell: 'AK20',
-  maxHeat: 5, partialTrigger: 10, beTrigger: 5, stopProximity: 2, heatGreen: 2.5, heatAmber: 4, maxAge: 60, maxPositions: 15,
+  maxHeat: 5, partialTrigger: 10, beTrigger: 2, stopProximity: 2, heatGreen: 2.5, heatAmber: 4, maxAge: 60, maxPositions: 15,
+  beRuleChangeDate: '19-Jun-2026', beRuleOldTrigger: 5,
 };
 
 function loadConfig() {
@@ -3492,6 +3505,8 @@ function populateConfigPage() {
   setVal('cfg-max-heat', cfg.maxHeat);
   setVal('cfg-partial-trigger', cfg.partialTrigger);
   setVal('cfg-be-trigger', cfg.beTrigger);
+  setVal('cfg-be-rule-change-date', cfg.beRuleChangeDate || '');
+  setVal('cfg-be-rule-old-trigger', cfg.beRuleOldTrigger || '');
   setVal('cfg-stop-proximity', cfg.stopProximity);
   setVal('cfg-heat-green', cfg.heatGreen);
   setVal('cfg-heat-amber', cfg.heatAmber);
@@ -3554,6 +3569,8 @@ function saveAllConfig() {
   cfg.maxHeat = parseFloat(getVal('cfg-max-heat', cfg.maxHeat)) || cfg.maxHeat;
   cfg.partialTrigger = parseFloat(getVal('cfg-partial-trigger', cfg.partialTrigger)) || cfg.partialTrigger;
   cfg.beTrigger = parseFloat(getVal('cfg-be-trigger', cfg.beTrigger)) || cfg.beTrigger;
+  cfg.beRuleChangeDate = getVal('cfg-be-rule-change-date', cfg.beRuleChangeDate || '');
+  cfg.beRuleOldTrigger = parseFloat(getVal('cfg-be-rule-old-trigger', cfg.beRuleOldTrigger || 5)) || 5;
   cfg.stopProximity = parseFloat(getVal('cfg-stop-proximity', cfg.stopProximity)) || cfg.stopProximity;
   cfg.heatGreen = parseFloat(getVal('cfg-heat-green', cfg.heatGreen)) || cfg.heatGreen;
   cfg.heatAmber = parseFloat(getVal('cfg-heat-amber', cfg.heatAmber)) || cfg.heatAmber;
@@ -5213,6 +5230,81 @@ function initAnalysisCharts(open, closed) {
   } else if (beInsightEl) {
     beInsightEl.textContent = 'Not enough closed trades to compute breakeven stop analysis.';
   }
+
+  // ── BE Rule Change Tracker ──
+  // Compares entries before and after the BE trigger was changed from 5% → 2% on 19-Jun-2026.
+  // Uses entry date (open+closed combined) so open winners aren't invisible.
+  try {
+    const trackerEl = document.getElementById('be-rule-tracker');
+    if (trackerEl) {
+      const changeDate = parseDate(_cfg.beRuleChangeDate || '19-Jun-2026');
+      const oldTrigger = _cfg.beRuleOldTrigger || 5;
+      const newTrigger = _cfg.beTrigger || 2;
+      const allT = [...closed, ...open].filter(t => t.openDate);
+      const before = allT.filter(t => parseDate(t.openDate) < changeDate);
+      const after  = allT.filter(t => parseDate(t.openDate) >= changeDate);
+
+      const cohortStats = arr => {
+        const cl = arr.filter(t => t.closeDate);
+        const op = arr.filter(t => !t.closeDate);
+        const wins = cl.filter(t => t.finalPlPct > 0).length + op.filter(t => (t.notionalPl||0) > 0).length;
+        const wr = arr.length > 0 ? wins / arr.length * 100 : null;
+        const avgLoss = cl.filter(t => t.finalPlPct < 0).length > 0
+          ? cl.filter(t => t.finalPlPct < 0).reduce((s,t) => s + Math.abs(t.finalPlPct), 0) / cl.filter(t => t.finalPlPct < 0).length : null;
+        const avgWin = cl.filter(t => t.finalPlPct > 0).length > 0
+          ? cl.filter(t => t.finalPlPct > 0).reduce((s,t) => s + t.finalPlPct, 0) / cl.filter(t => t.finalPlPct > 0).length : null;
+        // Trades that hit BE threshold (useful to compare: did more trades survive past 2% vs 5%?)
+        const hitNew = cl.filter(t => t.finalPlPct >= newTrigger).length;
+        const hitOld = cl.filter(t => t.finalPlPct >= oldTrigger).length;
+        return { total: arr.length, openCount: op.length, closedCount: cl.length, wr, avgLoss, avgWin, hitNew, hitOld };
+      };
+
+      const B = cohortStats(before);
+      const A = cohortStats(after);
+      const fmt = (v, suf='%') => v !== null ? (v >= 0 ? '+' : '') + v.toFixed(1) + suf : '—';
+      const pct = v => v !== null ? v.toFixed(0) + '%' : '—';
+
+      if (after.length === 0) {
+        trackerEl.innerHTML = `<span style="color:var(--text-muted)">⏳ No entries yet under the new +${newTrigger}% rule (started ${_cfg.beRuleChangeDate}). This card will populate as you make new trades.</span>`;
+      } else {
+        const wrDiff = (A.wr !== null && B.wr !== null) ? A.wr - B.wr : null;
+        const lossColor = A.avgLoss !== null && B.avgLoss !== null
+          ? (A.avgLoss < B.avgLoss ? 'var(--green)' : A.avgLoss > B.avgLoss * 1.1 ? 'var(--red)' : 'var(--amber)') : 'var(--text-muted)';
+        const wrColor = wrDiff !== null ? (wrDiff > 3 ? 'var(--green)' : wrDiff < -3 ? 'var(--red)' : 'var(--amber)') : 'var(--text-muted)';
+
+        let verdict = '';
+        if (A.closedCount < 5) {
+          verdict = `<span style="color:var(--text-muted)">⏳ Only ${A.closedCount} closed trade${A.closedCount !== 1 ? 's' : ''} under new rule so far — too early for a verdict. Check back after 20+ close.</span>`;
+        } else if (wrDiff !== null && wrDiff > 5) {
+          verdict = `<span style="color:var(--green)">✓ Win rate up ${wrDiff.toFixed(0)}pp under the +${newTrigger}% rule — earlier breakeven protection is working.</span>`;
+        } else if (wrDiff !== null && wrDiff < -5) {
+          verdict = `<span style="color:var(--amber)">⚡ Win rate down ${Math.abs(wrDiff).toFixed(0)}pp so far — could be market conditions or sample size. Watch avg loss size as the primary signal.</span>`;
+        } else {
+          verdict = `<span style="color:var(--amber)">→ Too early or no significant difference yet. Key metric to watch: avg loss % — should fall as more trades get protected at +${newTrigger}%.</span>`;
+        }
+
+        trackerEl.innerHTML = `
+          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
+            <div style="padding:10px;background:var(--surface2);border-radius:8px">
+              <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Before — BE at +${oldTrigger}%</div>
+              <div style="font-size:11px;color:var(--text-secondary);margin-bottom:2px">${B.total} entries · ${B.closedCount} closed · ${B.openCount} open</div>
+              <div style="font-size:13px;margin-top:4px"><strong>WR:</strong> ${pct(B.wr)} &nbsp; <strong>Avg loss:</strong> ${B.avgLoss !== null ? '-'+B.avgLoss.toFixed(1)+'%' : '—'} &nbsp; <strong>Avg win:</strong> ${B.avgWin !== null ? '+'+B.avgWin.toFixed(1)+'%' : '—'}</div>
+            </div>
+            <div style="padding:10px;background:var(--surface2);border-radius:8px;border:1px solid var(--green)">
+              <div style="font-size:10px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">After — BE at +${newTrigger}% ← new rule</div>
+              <div style="font-size:11px;color:var(--text-secondary);margin-bottom:2px">${A.total} entries · ${A.closedCount} closed · ${A.openCount} open</div>
+              <div style="font-size:13px;margin-top:4px">
+                <strong>WR:</strong> <span style="color:${wrColor}">${pct(A.wr)}</span>
+                &nbsp; <strong>Avg loss:</strong> <span style="color:${lossColor}">${A.avgLoss !== null ? '-'+A.avgLoss.toFixed(1)+'%' : '—'}</span>
+                &nbsp; <strong>Avg win:</strong> ${A.avgWin !== null ? '+'+A.avgWin.toFixed(1)+'%' : '—'}
+              </div>
+            </div>
+          </div>
+          <div style="font-size:12px;font-weight:600">${verdict}</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:6px">Primary signal: avg loss % should decrease — more losers now exit at 0% (breakeven) instead of a full stop. Win rate change is secondary.</div>`;
+      }
+    }
+  } catch(e) { console.warn('BE rule tracker error:', e); }
 
   // ── ₹ Risk per Trade Distribution (col K = initRiskRs) ──
   // Since ₹ risk is fixed at ~₹1K, this chart shows whether you're actually consistent.
