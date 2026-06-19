@@ -1519,21 +1519,23 @@ tbody tr:hover { filter: brightness(0.97); }
   </div>
 
   <!-- 6. Stock Leaderboard -->
-  <div class="section-title" style="margin-top:20px">Stock Performance Leaderboard</div>
-  <div class="card" style="margin-bottom:14px">
-    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px">
-      <div>
-        <div class="chart-title" style="margin:0">Which Stocks Have Delivered?</div>
-        <div class="chart-sub">Realised P&L from closed trades + live unrealised MTM from open positions · sorted by total P&L</div>
+  <details style="margin-top:20px;margin-bottom:14px">
+    <summary class="section-title" style="cursor:pointer;user-select:none;display:flex;align-items:center;gap:6px">Stock Performance Leaderboard</summary>
+    <div class="card" style="margin-top:8px">
+      <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+        <div>
+          <div class="chart-title" style="margin:0">Which Stocks Have Delivered?</div>
+          <div class="chart-sub">Realised P&L from closed trades + live unrealised MTM from open positions · sorted by total P&L</div>
+        </div>
+        <div style="display:flex;gap:6px">
+          <button class="eq-pill active" id="stock-sort-pl" onclick="stockLeaderSort('pl',this)">By P&L ₹</button>
+          <button class="eq-pill" id="stock-sort-roi" onclick="stockLeaderSort('roi',this)">By Avg %</button>
+          <button class="eq-pill" id="stock-sort-trades" onclick="stockLeaderSort('trades',this)">By # Trades</button>
+        </div>
       </div>
-      <div style="display:flex;gap:6px">
-        <button class="eq-pill active" id="stock-sort-pl" onclick="stockLeaderSort('pl',this)">By P&L ₹</button>
-        <button class="eq-pill" id="stock-sort-roi" onclick="stockLeaderSort('roi',this)">By Avg %</button>
-        <button class="eq-pill" id="stock-sort-trades" onclick="stockLeaderSort('trades',this)">By # Trades</button>
-      </div>
+      <div id="stock-leaderboard-table"></div>
     </div>
-    <div id="stock-leaderboard-table"></div>
-  </div>
+  </details>
 
   <!-- 7. Projections & Outlook -->
   <div class="section-title" style="margin-top:20px">Projections &amp; Outlook</div>
