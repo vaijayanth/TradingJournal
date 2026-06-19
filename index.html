@@ -1501,7 +1501,24 @@ tbody tr:hover { filter: brightness(0.97); }
     <div style="font-size:12px;margin-top:10px;color:var(--text-secondary);line-height:1.6" id="mfe-final-plain">—</div>
   </div>
 
-  <!-- 6. Unlock Advanced Analytics (collapsible) -->
+  <!-- 6. Stock Leaderboard -->
+  <div class="section-title" style="margin-top:20px">Stock Performance Leaderboard</div>
+  <div class="card" style="margin-bottom:14px">
+    <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px">
+      <div>
+        <div class="chart-title" style="margin:0">Which Stocks Have Delivered?</div>
+        <div class="chart-sub">Realised P&L from closed trades + live unrealised MTM from open positions · sorted by total P&L</div>
+      </div>
+      <div style="display:flex;gap:6px">
+        <button class="eq-pill active" id="stock-sort-pl" onclick="stockLeaderSort('pl',this)">By P&L ₹</button>
+        <button class="eq-pill" id="stock-sort-roi" onclick="stockLeaderSort('roi',this)">By Avg %</button>
+        <button class="eq-pill" id="stock-sort-trades" onclick="stockLeaderSort('trades',this)">By # Trades</button>
+      </div>
+    </div>
+    <div id="stock-leaderboard-table"></div>
+  </div>
+
+  <!-- 7. Unlock Advanced Analytics (collapsible) -->
   <details style="margin-top:20px" id="unlock-analytics">
     <summary style="cursor:pointer;display:flex;align-items:center;gap:8px;padding:10px 0;font-size:14px;font-weight:700;color:var(--text-primary);border-top:1px solid var(--border);user-select:none">
       🔓 Unlock More Advanced Analytics — Add These Columns to Your Sheet
@@ -5201,6 +5218,143 @@ function initAnalysisCharts(open, closed) {
       lossInsEl.innerHTML = lossIns;
     }
   }
+
+  // ── Stock Leaderboard ──
+  window._stockLeaderData = buildStockLeaderData(open, closed);
+  window._stockLeaderSort = 'pl';
+  renderStockLeader('pl');
+}
+
+function buildStockLeaderData(open, closed) {
+  const map = {};
+  const fmtDate = d => d || '';
+
+  // Closed trades
+  closed.forEach(t => {
+    if (!t.stock) return;
+    const s = t.stock;
+    if (!map[s]) map[s] = { stock: s, closedTrades: [], openTrades: [], lastDate: '' };
+    map[s].closedTrades.push(t);
+    if (!map[s].lastDate || (t.closeDate && t.closeDate > map[s].lastDate)) map[s].lastDate = t.closeDate || '';
+  });
+
+  // Open trades
+  open.forEach(t => {
+    if (!t.stock) return;
+    const s = t.stock;
+    if (!map[s]) map[s] = { stock: s, closedTrades: [], openTrades: [], lastDate: '' };
+    map[s].openTrades.push(t);
+  });
+
+  return Object.values(map).map(r => {
+    const wins = r.closedTrades.filter(t => t.finalPl > 0);
+    const losses = r.closedTrades.filter(t => t.finalPl < 0);
+    const closedPl = r.closedTrades.reduce((s, t) => s + t.finalPl, 0);
+    const openPl = r.openTrades.reduce((s, t) => s + (t.notionalPl || 0), 0);
+    const totalPl = closedPl + openPl;
+    const totalTrades = r.closedTrades.length + r.openTrades.length;
+    // Avg % = avg of finalPlPct (closed) + avg of plPct (open)
+    const allPcts = [
+      ...r.closedTrades.map(t => t.finalPlPct || 0),
+      ...r.openTrades.map(t => t.plPct || 0),
+    ];
+    const avgPct = allPcts.length > 0 ? allPcts.reduce((s, v) => s + v, 0) / allPcts.length : 0;
+    const bestTrade = [...r.closedTrades].sort((a, b) => b.finalPl - a.finalPl)[0] || null;
+    const isRunning = r.openTrades.length > 0;
+    const currentOpenPl = openPl;
+    // Last activity date
+    const openDates = r.openTrades.map(t => t.openDate || '').filter(Boolean);
+    const closeDates = r.closedTrades.map(t => t.closeDate || '').filter(Boolean);
+    const allDates = [...openDates, ...closeDates].sort();
+    const latestDate = allDates[allDates.length - 1] || '';
+
+    return { stock: r.stock, totalTrades, closedCount: r.closedTrades.length, openCount: r.openTrades.length,
+      wins: wins.length, losses: losses.length, closedPl, openPl, totalPl, avgPct, bestTrade, isRunning, latestDate };
+  });
+}
+
+function stockLeaderSort(by, btn) {
+  window._stockLeaderSort = by;
+  document.querySelectorAll('#stock-sort-pl, #stock-sort-roi, #stock-sort-trades').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  renderStockLeader(by);
+}
+
+function renderStockLeader(sortBy) {
+  const el = document.getElementById('stock-leaderboard-table');
+  if (!el) return;
+  const rows = window._stockLeaderData || [];
+  if (!rows.length) { el.innerHTML = '<div class="chart-sub">No trade data yet.</div>'; return; }
+
+  const sorted = [...rows].sort((a, b) => {
+    if (sortBy === 'roi') return b.avgPct - a.avgPct;
+    if (sortBy === 'trades') return b.totalTrades - a.totalTrades;
+    return b.totalPl - a.totalPl;
+  });
+
+  const fmtRs = v => (v >= 0 ? '+₹' : '-₹') + Math.abs(Math.round(v)).toLocaleString('en-IN');
+  const fmtPct = v => (v >= 0 ? '+' : '') + v.toFixed(1) + '%';
+
+  // Rank medal
+  const medal = i => i === 0 ? '🥇' : i === 1 ? '🥈' : i === 2 ? '🥉' : `#${i+1}`;
+
+  const topPl = sorted[0]?.totalPl || 1;
+
+  el.innerHTML = `
+    <div style="overflow-x:auto">
+    <table style="width:100%;border-collapse:collapse;font-size:13px">
+      <thead>
+        <tr style="border-bottom:1px solid var(--border)">
+          <th style="padding:8px 10px;text-align:left;color:var(--text-muted);font-size:11px;font-weight:600">#</th>
+          <th style="padding:8px 10px;text-align:left;color:var(--text-muted);font-size:11px;font-weight:600">STOCK</th>
+          <th style="padding:8px 10px;text-align:center;color:var(--text-muted);font-size:11px;font-weight:600">TRADES</th>
+          <th style="padding:8px 10px;text-align:right;color:var(--text-muted);font-size:11px;font-weight:600">TOTAL P&L ₹</th>
+          <th style="padding:8px 10px;text-align:right;color:var(--text-muted);font-size:11px;font-weight:600">AVG %</th>
+          <th style="padding:8px 10px;text-align:center;color:var(--text-muted);font-size:11px;font-weight:600">W / L</th>
+          <th style="padding:8px 10px;text-align:left;color:var(--text-muted);font-size:11px;font-weight:600">STATUS</th>
+          <th style="padding:8px 10px;text-align:left;color:var(--text-muted);font-size:11px;font-weight:600">LAST ACTIVITY</th>
+        </tr>
+      </thead>
+      <tbody>
+        ${sorted.map((r, i) => {
+          const plCol = r.totalPl > 0 ? 'var(--green)' : r.totalPl < 0 ? 'var(--red)' : 'var(--text-secondary)';
+          const pctCol = r.avgPct > 0 ? 'var(--green)' : r.avgPct < 0 ? 'var(--red)' : 'var(--text-secondary)';
+          const barWidth = topPl !== 0 ? Math.max(0, Math.min(100, Math.abs(r.totalPl) / Math.abs(topPl) * 100)) : 0;
+          const barCol = r.totalPl >= 0 ? 'var(--green)' : 'var(--red)';
+          const openBadge = r.isRunning
+            ? `<span style="display:inline-block;padding:2px 7px;border-radius:10px;font-size:10px;font-weight:700;background:rgba(72,187,120,0.15);color:var(--green);border:1px solid rgba(72,187,120,0.3)">▶ Running (${r.openCount})</span>`
+            : `<span style="color:var(--text-muted);font-size:11px">Closed</span>`;
+          const openPlLine = r.isRunning && r.openPl !== 0
+            ? `<div style="font-size:10px;color:${r.openPl>=0?'var(--green)':'var(--red)'};margin-top:2px">${fmtRs(r.openPl)} open MTM</div>`
+            : '';
+          return `<tr style="border-bottom:1px solid var(--border);transition:background .15s" onmouseenter="this.style.background='var(--surface2)'" onmouseleave="this.style.background=''">
+            <td style="padding:10px 10px;font-size:14px">${medal(i)}</td>
+            <td style="padding:10px 10px">
+              <div style="font-weight:700;font-size:13px">${r.stock}</div>
+              <div style="height:3px;width:${barWidth}%;background:${barCol};border-radius:2px;margin-top:4px;max-width:120px"></div>
+            </td>
+            <td style="padding:10px 10px;text-align:center">
+              <span style="font-weight:700">${r.totalTrades}</span>
+              <div style="font-size:10px;color:var(--text-muted)">${r.closedCount} closed${r.openCount?` · ${r.openCount} open`:''}</div>
+            </td>
+            <td style="padding:10px 10px;text-align:right">
+              <div style="font-weight:700;color:${plCol}">${fmtRs(r.totalPl)}</div>
+              ${r.closedPl !== r.totalPl ? `<div style="font-size:10px;color:var(--text-muted)">${fmtRs(r.closedPl)} realised</div>` : ''}
+              ${openPlLine}
+            </td>
+            <td style="padding:10px 10px;text-align:right;font-weight:700;color:${pctCol}">${fmtPct(r.avgPct)}</td>
+            <td style="padding:10px 10px;text-align:center;font-size:12px">
+              <span style="color:var(--green)">${r.wins}W</span> / <span style="color:var(--red)">${r.losses}L</span>
+            </td>
+            <td style="padding:10px 10px">${openBadge}</td>
+            <td style="padding:10px 10px;font-size:11px;color:var(--text-muted)">${r.latestDate || '—'}</td>
+          </tr>`;
+        }).join('')}
+      </tbody>
+    </table>
+    </div>
+    <div style="margin-top:8px;font-size:11px;color:var(--text-muted)">Total P&L = realised (closed trades) + unrealised MTM (running positions). Avg % = mean of finalPlPct (closed) and plPct (open).</div>
+  `;
 }
 
 // ── INIT ─────────────────────────────────────────────
