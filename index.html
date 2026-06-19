@@ -1518,7 +1518,59 @@ tbody tr:hover { filter: brightness(0.97); }
     <div id="stock-leaderboard-table"></div>
   </div>
 
-  <!-- 7. Unlock Advanced Analytics (collapsible) -->
+  <!-- 7. Projections & Outlook -->
+  <div class="section-title" style="margin-top:20px">Projections &amp; Outlook</div>
+  <div class="chart-sub" style="margin-bottom:12px">Forward projections based on your historical edge — not guarantees. Assumes system continues at current calibration.</div>
+  <div class="grid-3" style="margin-bottom:12px">
+    <div class="card card-sm" id="proj-velocity-card">
+      <div class="stat-label">📈 Trade Velocity</div>
+      <div style="font-size:22px;font-weight:700;margin-top:6px" id="proj-velocity-rate">—</div>
+      <div class="stat-sub" id="proj-velocity-sub">trades / month (recent)</div>
+      <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
+        <div style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:4px">PROJECTED 12-MONTH P&L</div>
+        <div style="font-size:18px;font-weight:700" id="proj-annual-pl">—</div>
+        <div class="stat-sub" id="proj-annual-sub">at current edge per trade</div>
+      </div>
+    </div>
+    <div class="card card-sm" id="proj-partial-card">
+      <div class="stat-label">💰 Partial Exit Locked-in</div>
+      <div style="font-size:22px;font-weight:700;color:var(--green);margin-top:6px" id="proj-partial-rs">—</div>
+      <div class="stat-sub" id="proj-partial-sub">potential gain if partials triggered now</div>
+      <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
+        <div style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:4px">POSITIONS ELIGIBLE</div>
+        <div style="font-size:18px;font-weight:700" id="proj-partial-count">—</div>
+        <div class="stat-sub" id="proj-partial-detail">at or above partial trigger</div>
+      </div>
+    </div>
+    <div class="card card-sm" id="proj-tier-card">
+      <div class="stat-label">⚡ Risk Tier Progression</div>
+      <div style="font-size:22px;font-weight:700;margin-top:6px" id="proj-tier-current">—</div>
+      <div class="stat-sub">current risk per trade</div>
+      <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
+        <div style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:4px">NEXT TIER</div>
+        <div style="font-size:15px;font-weight:700" id="proj-tier-next">—</div>
+        <div class="stat-sub" id="proj-tier-sub">—</div>
+      </div>
+    </div>
+  </div>
+  <div class="grid-2" style="margin-bottom:14px">
+    <div class="card card-sm" id="proj-scenarios-card">
+      <div class="stat-label">🔭 Open Portfolio Scenarios</div>
+      <div class="stat-sub" style="margin-bottom:10px">What if all open positions closed today under different outcomes?</div>
+      <div id="proj-scenarios-rows"></div>
+    </div>
+    <div class="card card-sm" id="proj-breakeven-card">
+      <div class="stat-label">🎯 Realised Break-even</div>
+      <div style="font-size:22px;font-weight:700;margin-top:6px" id="proj-be-trades">—</div>
+      <div class="stat-sub" id="proj-be-sub">trades needed to recover closed P&L deficit</div>
+      <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
+        <div style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:4px">AT CURRENT R-EXPECTANCY</div>
+        <div style="font-size:13px;line-height:1.6" id="proj-be-detail">—</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 8. Unlock Advanced Analytics (collapsible) -->
   <details style="margin-top:20px" id="unlock-analytics">
     <summary style="cursor:pointer;display:flex;align-items:center;gap:8px;padding:10px 0;font-size:14px;font-weight:700;color:var(--text-primary);border-top:1px solid var(--border);user-select:none">
       🔓 Unlock More Advanced Analytics — Add These Columns to Your Sheet
@@ -5223,6 +5275,9 @@ function initAnalysisCharts(open, closed) {
   window._stockLeaderData = buildStockLeaderData(open, closed);
   window._stockLeaderSort = 'pl';
   renderStockLeader('pl');
+
+  // ── Projections & Outlook ──
+  try { renderProjections(open, closed); } catch(e) { console.warn('renderProjections failed', e); }
 }
 
 function buildStockLeaderData(open, closed) {
@@ -5355,6 +5410,148 @@ function renderStockLeader(sortBy) {
     </div>
     <div style="margin-top:8px;font-size:11px;color:var(--text-muted)">Total P&L = realised (closed trades) + unrealised MTM (running positions). Avg % = mean of finalPlPct (closed) and plPct (open).</div>
   `;
+}
+
+// ── PROJECTIONS & OUTLOOK ────────────────────────────
+function renderProjections(open, closed) {
+  const _ic = (window._data && window._data.initialCapital) || 5000000;
+  const _cfg = loadConfig();
+  const PARTIAL_TRIGGER = _cfg.partialTrigger || 10;
+  const fmtRs = v => (v >= 0 ? '+₹' : '-₹') + Math.abs(Math.round(v)).toLocaleString('en-IN');
+  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  const setHtml = (id, v) => { const el = document.getElementById(id); if (el) el.innerHTML = v; };
+  const setCol = (id, col) => { const el = document.getElementById(id); if (el) el.style.color = col; };
+
+  // ── 1. Trade Velocity & Year-end Projection ──
+  const sortedClosed = [...closed].filter(t => t.closeDate).sort((a,b) => parseDate(a.closeDate) - parseDate(b.closeDate));
+  const totalNotionalPl = open.reduce((s,t) => s + (t.notionalPl||0), 0);
+  const totalFinalPl = closed.reduce((s,t) => s + t.finalPl, 0);
+  const combinedRs = totalFinalPl + totalNotionalPl;
+  const totalTrades = closed.length + open.length;
+  const avgCombinedRsPerTrade = totalTrades > 0 ? combinedRs / totalTrades : 0;
+
+  // Velocity from last 30 days of entries (open + closed)
+  const thirtyDaysAgo = new Date(); thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
+  const recentOpen = open.filter(t => t.openDate && parseDate(t.openDate) >= thirtyDaysAgo).length;
+  const recentClosed = sortedClosed.filter(t => parseDate(t.closeDate) >= thirtyDaysAgo).length;
+  // Better: use entry dates across all trades
+  const allEntryDates = [
+    ...open.map(t => t.openDate ? parseDate(t.openDate) : null),
+    ...closed.map(t => t.openDate ? parseDate(t.openDate) : null)
+  ].filter(d => d && !isNaN(d) && d >= thirtyDaysAgo);
+  const recentEntries = allEntryDates.length;
+  const tradesPerMonth = recentEntries; // last 30 days ≈ 1 month
+
+  // Fallback: use overall rate if recent is 0
+  const firstDate = sortedClosed.length ? parseDate(sortedClosed[0].closeDate) : null;
+  const lastDate = sortedClosed.length ? parseDate(sortedClosed[sortedClosed.length-1].closeDate) : null;
+  const monthsTotal = firstDate && lastDate ? Math.max(1, (lastDate - firstDate) / (30.5 * 24 * 3600 * 1000)) : 1;
+  const overallRate = totalTrades / monthsTotal;
+  const effectiveRate = tradesPerMonth > 0 ? tradesPerMonth : Math.round(overallRate);
+  const projAnnual = effectiveRate * 12 * avgCombinedRsPerTrade;
+
+  set('proj-velocity-rate', effectiveRate);
+  set('proj-velocity-sub', 'entries in last 30 days');
+  set('proj-annual-pl', fmtRs(projAnnual));
+  setCol('proj-annual-pl', projAnnual >= 0 ? 'var(--green)' : 'var(--red)');
+  set('proj-annual-sub', `${effectiveRate} trades/mo × ₹${Math.round(Math.abs(avgCombinedRsPerTrade)).toLocaleString('en-IN')} avg edge = annual run rate`);
+
+  // ── 2. Partial Exit Locked-in ──
+  const eligible = open.filter(t => t.plPct >= PARTIAL_TRIGGER && t.partialTaken === 'N');
+  // Estimated gain: 50% of current notionalPl (since partial = 50% of position)
+  const lockedIn = eligible.reduce((s,t) => s + (t.notionalPl||0) * 0.5, 0);
+  set('proj-partial-rs', fmtRs(lockedIn));
+  set('proj-partial-count', eligible.length + ' positions');
+  set('proj-partial-detail', `≥${PARTIAL_TRIGGER}% gain, partial not yet taken · 50% of current MTM`);
+
+  // ── 3. Risk Tier Progression ──
+  const riskCapRs = _ic * 0.008;
+  const currentTier = Math.min(1000 + Math.floor(closed.length / 100) * 500, riskCapRs);
+  const nextTierAt = Math.ceil((closed.length + 1) / 100) * 100;
+  const tradesToNext = nextTierAt - closed.length;
+  const nextTier = Math.min(1000 + Math.floor(nextTierAt / 100) * 500, riskCapRs);
+  const atCap = currentTier >= riskCapRs;
+
+  set('proj-tier-current', '₹' + Math.round(currentTier).toLocaleString('en-IN'));
+  if (atCap) {
+    set('proj-tier-next', 'At cap');
+    set('proj-tier-sub', `Max = 0.8% of ₹${Math.round(_ic/100000)}L capital`);
+    setCol('proj-tier-next', 'var(--green)');
+  } else {
+    set('proj-tier-next', '₹' + Math.round(nextTier).toLocaleString('en-IN'));
+    set('proj-tier-sub', `${tradesToNext} more closed trades to unlock`);
+    setCol('proj-tier-next', 'var(--amber)');
+  }
+
+  // ── 4. Open Portfolio Scenarios ──
+  const bearPl = open.reduce((s,t) => {
+    const effStop = Math.max(t.stopLoss||0, t.sevenDayLow||0);
+    if (!effStop || !t.entryPrice) return s;
+    const stopPl = (effStop - t.entryPrice) * (t.qty||0);
+    // Approx: use initRiskRs as worst-case loss if qty unknown
+    return s + (t.qty > 0 ? stopPl : -(t.initRiskRs||0));
+  }, 0);
+  const basePl = totalNotionalPl; // current MTM
+  // Bull: avg closed winner % applied to open profitable positions
+  const closedWinners = closed.filter(t => t.finalPlPct > 0);
+  const avgWinPct = closedWinners.length > 0 ? closedWinners.reduce((s,t) => s+t.finalPlPct,0)/closedWinners.length : 10;
+  const openProfitable = open.filter(t => (t.notionalPl||0) > 0);
+  // Bull estimate: open profitable positions reach avg closed winner %
+  const bullAddl = openProfitable.reduce((s,t) => {
+    const target = t.entryPrice * (avgWinPct/100) * (t.qty||0);
+    const current = t.notionalPl || 0;
+    return s + Math.max(0, target - current);
+  }, 0);
+  const bullPl = basePl + bullAddl;
+
+  const scenarioRow = (icon, label, pl, note) => {
+    const col = pl >= 0 ? 'var(--green)' : 'var(--red)';
+    return `<div style="display:flex;justify-content:space-between;align-items:center;padding:7px 0;border-bottom:1px solid var(--border)">
+      <div>
+        <span style="font-size:13px;font-weight:600">${icon} ${label}</span>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:1px">${note}</div>
+      </div>
+      <div style="font-weight:700;color:${col};font-size:14px">${fmtRs(pl)}</div>
+    </div>`;
+  };
+
+  setHtml('proj-scenarios-rows',
+    scenarioRow('🐻', 'Bear', bearPl, 'All open positions stopped out at eff. stop') +
+    scenarioRow('📊', 'Base', basePl, 'All open positions close at current MTM') +
+    scenarioRow('🐂', 'Bull', bullPl, `Open winners run to avg closed winner (+${avgWinPct.toFixed(1)}%)`)
+  );
+
+  // ── 5. Realised Break-even ──
+  const realisedDeficit = Math.max(0, -totalFinalPl); // how much in the hole on closed trades
+  // Per trade edge in ₹: combined ₹/trade, or if negative use avg risk × R-expectancy
+  const openWinCount = open.filter(t=>(t.notionalPl||0)>0).length;
+  const combinedWins = closedWinners.length + openWinCount;
+  const combinedWRFrac = totalTrades > 0 ? combinedWins / totalTrades : 0;
+  const avgFinalWin = closedWinners.length > 0 ? closedWinners.reduce((s,t)=>s+t.finalPlPct,0)/closedWinners.length : 0;
+  const closedLosers = closed.filter(t=>t.finalPlPct<0);
+  const avgFinalLoss = closedLosers.length > 0 ? closedLosers.reduce((s,t)=>s+t.finalPlPct,0)/closedLosers.length : 0;
+  const rMultiple = avgFinalLoss !== 0 ? Math.abs(avgFinalWin/avgFinalLoss) : 0;
+  const rExpCombined = rMultiple > 0 ? (combinedWRFrac * rMultiple) - ((1-combinedWRFrac) * 1) : 0;
+  const edgePerTradeRs = rExpCombined > 0 ? rExpCombined * currentTier : avgCombinedRsPerTrade;
+
+  if (realisedDeficit <= 0) {
+    set('proj-be-trades', '✓ Already profitable');
+    setCol('proj-be-trades', 'var(--green)');
+    set('proj-be-sub', 'Closed trades are in profit');
+    set('proj-be-detail', `Realised P&L: ${fmtRs(totalFinalPl)} · Open MTM adds ${fmtRs(totalNotionalPl)}`);
+  } else if (edgePerTradeRs > 0) {
+    const tradesNeeded = Math.ceil(realisedDeficit / edgePerTradeRs);
+    const monthsNeeded = effectiveRate > 0 ? (tradesNeeded / effectiveRate).toFixed(1) : '?';
+    set('proj-be-trades', tradesNeeded + ' trades');
+    setCol('proj-be-trades', 'var(--amber)');
+    set('proj-be-sub', `to recover ₹${Math.round(realisedDeficit).toLocaleString('en-IN')} closed deficit`);
+    set('proj-be-detail', `At ${edgePerTradeRs>=0?'+':''}₹${Math.round(Math.abs(edgePerTradeRs)).toLocaleString('en-IN')}/trade edge · ~${monthsNeeded} months at current velocity · Note: open MTM already covers this`);
+  } else {
+    set('proj-be-trades', 'Improve edge first');
+    setCol('proj-be-trades', 'var(--red)');
+    set('proj-be-sub', 'R-expectancy too low to project');
+    set('proj-be-detail', 'Combined R-expectancy must be positive before projecting breakeven');
+  }
 }
 
 // ── INIT ─────────────────────────────────────────────
