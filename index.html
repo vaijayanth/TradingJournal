@@ -1241,6 +1241,23 @@ tbody tr:hover { filter: brightness(0.97); }
       </table>
     </div>
     <div class="ema-insight" id="ema-insight" style="margin-top:12px">—</div>
+    <!-- Open positions by setup — visible immediately when open trades are labelled -->
+    <div style="margin-top:16px;border-top:1px solid var(--border);padding-top:12px">
+      <div style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Open Positions by Setup (live MTM)</div>
+      <div style="overflow-x:auto">
+        <table style="width:100%;border-collapse:collapse;font-size:13px">
+          <thead><tr style="background:var(--surface2)">
+            <th style="padding:6px 10px;text-align:left;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)">Setup</th>
+            <th style="padding:6px 10px;text-align:right;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)">Open</th>
+            <th style="padding:6px 10px;text-align:right;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)">Profitable</th>
+            <th style="padding:6px 10px;text-align:right;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)">Total MTM ₹</th>
+          </tr></thead>
+          <tbody id="open-by-setup-body">
+            <tr><td colspan="4" style="padding:12px;text-align:center;color:var(--text-muted);font-size:12px">Loading…</td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
   </div>
 
   <!-- 2. Trade Management -->
@@ -4337,7 +4354,16 @@ function initAnalysisCharts(open, closed) {
   const tbody = document.getElementById('setup-breakdown-tbody');
   if (tbody) {
     if (setupKeys.length === 0 || (setupKeys.length === 1 && setupKeys[0] === 'Unlabelled')) {
-      tbody.innerHTML = '<tr><td colspan="10" style="padding:20px;text-align:center;color:var(--text-muted)">No setup type data — add labels in column S of your sheet</td></tr>';
+      // Diagnose why — help user understand what's happening
+      const openLabelled = open.filter(t => t.setupType && t.setupType.trim() !== '' && t.setupType !== 'Unlabelled').length;
+      const closedHasField = closed.some(t => t.setupType !== undefined);
+      let msg = 'No setup type data — add labels in column S of your sheet';
+      if (openLabelled > 0) {
+        msg = `<strong>${openLabelled} open position${openLabelled !== 1 ? 's' : ''} already labelled</strong> — setup breakdown will populate as those trades close. Closed trades don't have labels yet.`;
+      } else if (!closedHasField && closed.length > 0) {
+        msg = 'Apps Script may not be returning the setup type column. Open browser console and check <code>window._data.closed[0]</code> — if <code>setupType</code> is missing, redeploy the Apps Script with the setupTypeCol parameter.';
+      }
+      tbody.innerHTML = `<tr><td colspan="10" style="padding:20px;text-align:center;color:var(--text-muted);font-size:13px">${msg}</td></tr>`;
     } else {
       tbody.innerHTML = setupKeys.map(s => {
         const st = calcStats(setupMap[s]);
@@ -4366,6 +4392,35 @@ function initAnalysisCharts(open, closed) {
           <td style="padding:8px 10px;text-align:right;color:var(--green)">${st.aw > 0 ? '+'+st.aw.toFixed(1)+'%' : '—'}</td>
           <td style="padding:8px 10px;text-align:right;color:var(--red)">${st.al < 0 ? st.al.toFixed(1)+'%' : '—'}</td>
           <td style="padding:8px 10px;text-align:right;font-weight:600;color:${plColor}">${fmtRsA(st.totalPl)}</td>
+        </tr>`;
+      }).join('');
+    }
+  }
+
+  // Open positions by setup — shows labelled open trades even before any close
+  const openSetupMap = {};
+  open.forEach(t => {
+    const lbl = parseSetupType(t.setupType).label;
+    if (lbl === 'Unlabelled') return;
+    if (!openSetupMap[lbl]) openSetupMap[lbl] = [];
+    openSetupMap[lbl].push(t);
+  });
+  const openSetupEl = document.getElementById('open-by-setup-body');
+  if (openSetupEl) {
+    const openSetupKeys = Object.keys(openSetupMap).sort((a,b) => openSetupMap[b].length - openSetupMap[a].length);
+    if (openSetupKeys.length === 0) {
+      openSetupEl.innerHTML = '<tr><td colspan="4" style="padding:12px;text-align:center;color:var(--text-muted);font-size:12px">No labelled open positions yet</td></tr>';
+    } else {
+      openSetupEl.innerHTML = openSetupKeys.map(s => {
+        const positions = openSetupMap[s];
+        const totalMtm = positions.reduce((sum,t) => sum + (t.notionalPl||0), 0);
+        const winning = positions.filter(t => (t.notionalPl||0) > 0).length;
+        const mtmColor = totalMtm >= 0 ? 'var(--green)' : 'var(--red)';
+        return `<tr>
+          <td style="padding:8px 10px">${s}</td>
+          <td style="padding:8px 10px;text-align:right">${positions.length}</td>
+          <td style="padding:8px 10px;text-align:right">${winning}/${positions.length} profitable</td>
+          <td style="padding:8px 10px;text-align:right;font-weight:700;color:${mtmColor}">${totalMtm >= 0 ? '+' : ''}₹${Math.round(totalMtm).toLocaleString('en-IN')}</td>
         </tr>`;
       }).join('');
     }
