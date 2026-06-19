@@ -106,6 +106,10 @@ nav {
   margin-bottom: 12px; margin-top: 24px;
 }
 .section-title:first-child { margin-top: 0; }
+details > summary { list-style: none; }
+details > summary::-webkit-details-marker { display: none; }
+details > summary .toggle-hint::before { content: '▶ expand'; }
+details[open] > summary .toggle-hint::before { content: '▼ collapse'; }
 /* ── CARDS ── */
 .card {
   background: var(--surface); border: 1px solid var(--border);
@@ -1520,7 +1524,7 @@ tbody tr:hover { filter: brightness(0.97); }
 
   <!-- 6. Stock Leaderboard -->
   <details style="margin-top:20px;margin-bottom:14px">
-    <summary class="section-title" style="cursor:pointer;user-select:none;display:flex;align-items:center;gap:6px">Stock Performance Leaderboard</summary>
+    <summary class="section-title" style="cursor:pointer;user-select:none;display:flex;align-items:center;gap:6px">Stock Performance Leaderboard <span class="toggle-hint" style="font-size:10px;color:var(--text-muted);font-weight:400;letter-spacing:0;text-transform:none"></span></summary>
     <div class="card" style="margin-top:8px">
       <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px;margin-bottom:12px">
         <div>
@@ -1893,7 +1897,7 @@ tbody tr:hover { filter: brightness(0.97); }
     <!-- Active Spreads Panel -->
     <details style="margin-bottom:4px">
       <summary class="section-title" style="cursor:pointer;user-select:none;display:flex;align-items:center;gap:6px">
-        Active Spreads <span id="fno-active-count" style="font-size:10px;background:var(--accent-soft);color:var(--accent);padding:2px 8px;border-radius:10px;text-transform:none;letter-spacing:0">—</span>
+        Active Spreads <span id="fno-active-count" style="font-size:10px;background:var(--accent-soft);color:var(--accent);padding:2px 8px;border-radius:10px;text-transform:none;letter-spacing:0">—</span> <span class="toggle-hint" style="font-size:10px;color:var(--text-muted);font-weight:400;letter-spacing:0;text-transform:none"></span>
       </summary>
       <div id="fno-active-spreads">
         <div style="padding:16px;text-align:center;color:var(--text-muted);font-size:13px">Loading…</div>
@@ -1909,7 +1913,7 @@ tbody tr:hover { filter: brightness(0.97); }
     <!-- Top Candidates -->
     <details>
       <summary class="section-title" style="cursor:pointer;user-select:none;display:flex;align-items:center;gap:6px">
-        Top Candidates
+        Top Candidates <span class="toggle-hint" style="font-size:10px;color:var(--text-muted);font-weight:400;letter-spacing:0;text-transform:none"></span>
       </summary>
       <div id="fno-top-candidates">
         <div style="padding:16px;text-align:center;color:var(--text-muted);font-size:13px">Loading…</div>
