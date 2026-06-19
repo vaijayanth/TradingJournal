@@ -1427,22 +1427,23 @@ tbody tr:hover { filter: brightness(0.97); }
       <div style="font-size:12px;font-weight:600;margin-top:8px;line-height:1.6" id="cur-streak-msg">—</div>
     </div>
     <div class="card">
-      <div class="stat-label">Learning Curve — First 30 vs Last 30</div>
+      <div class="stat-label">Learning Curve — First 30 vs Last 30 Entries</div>
+      <div style="font-size:10px;color:var(--text-muted);margin-bottom:8px">By entry date (open + closed) · WR = combined incl. open MTM · Avg P&L% = closed trades only</div>
       <div style="display:flex;gap:20px;margin-top:8px">
         <div>
-          <div style="font-size:11px;color:var(--text-muted);margin-bottom:2px">First 30 trades</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-bottom:2px">First 30 entries</div>
           <div style="font-size:20px;font-weight:700" id="lc-early-wr">—</div>
-          <div class="stat-sub">Win Rate</div>
+          <div class="stat-sub">Combined WR</div>
           <div style="font-size:14px;font-weight:600;margin-top:4px" id="lc-early-avg">—</div>
-          <div class="stat-sub">Avg P&L%</div>
+          <div class="stat-sub">Avg closed P&L%</div>
         </div>
         <div style="color:var(--text-muted);font-size:22px;align-self:center">→</div>
         <div>
-          <div style="font-size:11px;color:var(--text-muted);margin-bottom:2px">Last 30 trades</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-bottom:2px">Last 30 entries</div>
           <div style="font-size:20px;font-weight:700" id="lc-recent-wr">—</div>
-          <div class="stat-sub">Win Rate</div>
+          <div class="stat-sub">Combined WR</div>
           <div style="font-size:14px;font-weight:600;margin-top:4px" id="lc-recent-avg">—</div>
-          <div class="stat-sub">Avg P&L%</div>
+          <div class="stat-sub">Avg closed P&L%</div>
         </div>
       </div>
       <div style="font-size:12px;font-weight:600;margin-top:10px;line-height:1.6" id="lc-verdict">—</div>
@@ -4677,29 +4678,42 @@ function initAnalysisCharts(open, closed) {
     }
   }
 
-  // Learning Curve — first 30 vs last 30
-  if (sortedByDate.length >= 10) {
-    const first30 = sortedByDate.slice(0, 30);
-    const lc30 = sortedByDate.slice(-30);
-    const lcCalc = arr => ({
-      wr: arr.filter(t => t.finalPlPct > 0).length / arr.length * 100,
-      avg: arr.reduce((s,t) => s + t.finalPlPct, 0) / arr.length,
-    });
-    const early = lcCalc(first30);
+  // Learning Curve — first 30 vs last 30 ENTRIES (not close date)
+  // Critical: must use entry cohorts, not close date. Recent close-date trades are
+  // dominated by stops (winners still open) — always looks worse, never meaningful.
+  // Instead: sort all trades (open+closed) by entry date, compare first 30 vs last 30
+  // using combined outcome (finalPl for closed, notionalPl for open).
+  const allByEntry = [...closed, ...open].filter(t => t.openDate).sort((a,b) => parseDate(a.openDate)-parseDate(b.openDate));
+  if (allByEntry.length >= 10) {
+    const first30 = allByEntry.slice(0, 30);
+    const lc30    = allByEntry.slice(-30);
+    const lcCalc = arr => {
+      const closedIn = arr.filter(t => t.finalPlPct !== undefined && t.finalPlPct !== null && t.closeDate);
+      const openIn   = arr.filter(t => !t.closeDate);
+      // Win = closed with positive P&L, or open with positive MTM
+      const wins = closedIn.filter(t => t.finalPlPct > 0).length + openIn.filter(t => (t.notionalPl||0) > 0).length;
+      const wr = arr.length > 0 ? wins / arr.length * 100 : 0;
+      // Avg P&L%: closed trades use finalPlPct; open trades — skip (unrealised % unreliable cross-compare)
+      const avg = closedIn.length > 0 ? closedIn.reduce((s,t) => s + t.finalPlPct, 0) / closedIn.length : 0;
+      const openCount = openIn.length;
+      return { wr, avg, openCount, total: arr.length };
+    };
+    const early  = lcCalc(first30);
     const recent = lcCalc(lc30);
-    const wrDiff = recent.wr - early.wr;
+    const wrDiff  = recent.wr  - early.wr;
     const avgDiff = recent.avg - early.avg;
-    set('lc-early-wr', early.wr.toFixed(0) + '%');
-    set('lc-recent-wr', recent.wr.toFixed(0) + '%');
-    set('lc-early-avg', (early.avg >= 0 ? '+' : '') + early.avg.toFixed(1) + '%');
+    set('lc-early-wr',   early.wr.toFixed(0)  + '%');
+    set('lc-recent-wr',  recent.wr.toFixed(0) + '%');
+    set('lc-early-avg',  (early.avg  >= 0 ? '+' : '') + early.avg.toFixed(1)  + '%');
     set('lc-recent-avg', (recent.avg >= 0 ? '+' : '') + recent.avg.toFixed(1) + '%');
     const recentWrEl = document.getElementById('lc-recent-wr');
     if (recentWrEl) recentWrEl.style.color = wrDiff > 5 ? 'var(--green)' : wrDiff < -5 ? 'var(--red)' : 'var(--amber)';
+    const openNote = recent.openCount > 0 ? ` <span style="opacity:0.6;font-size:11px">(${recent.openCount} still open — combined WR includes their current MTM status)</span>` : '';
     const verdictEl2 = document.getElementById('lc-verdict');
     if (verdictEl2) {
-      if (wrDiff > 5 && avgDiff > 0) verdictEl2.innerHTML = `<span style="color:var(--green)">✓ You are improving — WR +${wrDiff.toFixed(0)}pp and avg P&L up ${avgDiff.toFixed(1)}pp vs your first 30 trades.</span>`;
-      else if (wrDiff < -5 || avgDiff < -1) verdictEl2.innerHTML = `<span style="color:var(--red)">⚠ Performance declining vs early trades. Review recent setups — are you deviating from your process?</span>`;
-      else verdictEl2.innerHTML = `<span style="color:var(--amber)">→ Roughly stable. WR ${wrDiff >= 0 ? '+' : ''}${wrDiff.toFixed(0)}pp, avg P&L ${avgDiff >= 0 ? '+' : ''}${avgDiff.toFixed(1)}pp vs first 30.</span>`;
+      if (wrDiff > 5 && avgDiff > 0) verdictEl2.innerHTML = `<span style="color:var(--green)">✓ Improving — combined WR +${wrDiff.toFixed(0)}pp and avg closed P&L up ${avgDiff.toFixed(1)}pp vs your first 30 entries.</span>${openNote}`;
+      else if (wrDiff < -5 || avgDiff < -1) verdictEl2.innerHTML = `<span style="color:var(--red)">⚠ Recent entry cohort weaker so far. WR ${wrDiff.toFixed(0)}pp, avg closed P&L ${avgDiff.toFixed(1)}pp vs first 30.</span>${openNote}`;
+      else verdictEl2.innerHTML = `<span style="color:var(--amber)">→ Consistent. WR ${wrDiff >= 0 ? '+' : ''}${wrDiff.toFixed(0)}pp, avg closed P&L ${avgDiff >= 0 ? '+' : ''}${avgDiff.toFixed(1)}pp vs first 30 entries.</span>${openNote}`;
     }
   } else {
     set('lc-early-wr', 'Need 10+'); set('lc-recent-wr', 'trades'); set('lc-early-avg', ''); set('lc-recent-avg', '');
