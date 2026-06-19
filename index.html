@@ -965,6 +965,7 @@ tbody tr:hover { filter: brightness(0.97); }
       <div class="stat-label">R-Multiple (₹ win ÷ ₹ planned risk)</div>
       <div class="stat-value" style="font-size:30px; margin-top:4px" id="perf-rmultiple">—</div>
       <div class="stat-badge badge-green" style="margin-top:6px" id="perf-rmultiple-badge">—</div>
+      <div style="margin-top:8px;font-size:12px;color:var(--text-muted);line-height:1.5;font-style:italic">For every ₹1 you risk on a trade, you make ₹R back on your winners. 1.5R means your average win is 1.5× your planned stop loss. Higher = better asymmetry.</div>
       <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
         <div style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:6px">AVG WIN vs LOSS</div>
         <div style="display:flex;gap:12px">
@@ -979,6 +980,7 @@ tbody tr:hover { filter: brightness(0.97); }
       <div class="stat-label">R-Expectancy (per trade)</div>
       <div class="stat-value" style="font-size:30px; margin-top:4px" id="perf-r-expectancy">—</div>
       <div class="stat-badge badge-green" style="margin-top:6px" id="perf-r-expectancy-badge">—</div>
+      <div style="margin-top:8px;font-size:12px;color:var(--text-muted);line-height:1.5;font-style:italic">On average, each trade you place is expected to make +XR or lose −XR in risk units. Positive = your system has mathematical edge. Even at 30% win rate, +0.2R per trade compounds.</div>
       <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
         <div style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:4px">HOW TO READ</div>
         <div class="stat-sub" style="line-height:1.5">Combined WR × AvgWinR − (1−CombWR) × 1R<br>Uses combined WR (closed + open profitable)<br>because winners stay open for months</div>
@@ -1000,6 +1002,7 @@ tbody tr:hover { filter: brightness(0.97); }
         </div>
       </div>
       <div class="stat-badge badge-green" style="margin-top:8px" id="perf-hold-badge">—</div>
+      <div style="margin-top:8px;font-size:12px;color:var(--text-muted);line-height:1.5;font-style:italic">Are you letting winners run and cutting losers fast? Winners held much longer than losers = correct behaviour. If losers are held longer, you're hoping instead of following your stop.</div>
       <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
         <div style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:4px">MINERVINI RULE</div>
         <div class="stat-sub" style="line-height:1.5">Winners held longer than losers = discipline. Reverse = cutting winners, holding losers.</div>
@@ -1010,6 +1013,7 @@ tbody tr:hover { filter: brightness(0.97); }
       <div class="stat-label">MAR Ratio (CAGR ÷ Max DD)</div>
       <div class="stat-value" style="font-size:30px;margin-top:4px" id="perf-mar">—</div>
       <div class="stat-badge badge-green" style="margin-top:6px" id="perf-mar-badge">—</div>
+      <div style="margin-top:8px;font-size:12px;color:var(--text-muted);line-height:1.5;font-style:italic">How much annual return you're making per unit of pain (biggest portfolio drop). A ratio of 2 means you grew 20% a year and your worst drawdown was 10%. Higher = smoother ride.</div>
       <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
         <div style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:6px">COMPONENTS</div>
         <div style="display:flex;gap:12px">
@@ -1027,6 +1031,7 @@ tbody tr:hover { filter: brightness(0.97); }
       <div style="font-size:30px;font-weight:700;margin-top:4px" id="perf-profit-factor">—</div>
       <div class="stat-sub" id="perf-profit-factor-sub">Combined wins + open MTM ÷ closed losses</div>
       <div class="stat-badge" style="margin-top:6px" id="perf-profit-factor-badge">—</div>
+      <div style="margin-top:8px;font-size:12px;color:var(--text-muted);line-height:1.5;font-style:italic">For every ₹1 lost on stopped-out trades, how many ₹ did you make on winners (including running open trades)? 2.61 means ₹2.61 made for every ₹1 lost. Above 2 = strong system.</div>
       <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
         <div class="stat-label">Return Consistency (per trade)</div>
         <div style="font-size:20px;font-weight:700;margin-top:4px" id="perf-sharpe">—</div>
