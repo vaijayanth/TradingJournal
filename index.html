@@ -876,6 +876,15 @@ tbody tr:hover { filter: brightness(0.97); }
       <div class="stat-badge badge-blue" id="dash-conc-badge">—</div>
     </div>
 
+    <!-- Sector Concentration -->
+    <div class="card card-sm" id="dash-sector-card" style="display:none">
+      <div class="stat-label">Sector Concentration</div>
+      <div style="font-size:18px;font-weight:700;margin:4px 0" id="dash-sector-top">—</div>
+      <div class="stat-sub" id="dash-sector-sub">Largest sector in open portfolio</div>
+      <div id="dash-sector-bars" style="margin-top:10px;display:flex;flex-direction:column;gap:6px"></div>
+      <div class="stat-badge badge-blue" id="dash-sector-badge" style="margin-top:10px">—</div>
+    </div>
+
     <!-- Heat Gauge -->
     <div class="card card-sm">
       <div class="stat-label" style="margin-bottom:14px">Portfolio Heat</div>
@@ -1429,7 +1438,7 @@ tbody tr:hover { filter: brightness(0.97); }
           </tr>
         </thead>
         <tbody id="setup-breakdown-tbody">
-          <tr><td colspan="10" style="padding:20px;text-align:center;color:var(--text-muted)">Loading…</td></tr>
+          <tr><td colspan="12" style="padding:20px;text-align:center;color:var(--text-muted)">Loading…</td></tr>
         </tbody>
       </table>
     </div>
@@ -1675,6 +1684,27 @@ tbody tr:hover { filter: brightness(0.97); }
     </div>
   </div>
 
+  <!-- Sector Analysis -->
+  <div class="section-title" style="margin-top:20px">Sector Analysis</div>
+  <div class="grid-2" style="margin-bottom:14px">
+    <div class="card">
+      <div class="chart-title">Win Rate by Sector</div>
+      <div class="chart-sub">Closed trades · green ≥40% · amber ≥20% · red below · 30% reference line</div>
+      <div id="chart-sector-wr" style="height:240px;display:none"></div>
+      <div id="chart-sector-wr-ph" style="color:var(--text-muted);font-size:12px;padding:20px">Need sector data in column AN — check Apps Script returns <code>sector</code> field</div>
+    </div>
+    <div class="card">
+      <div class="chart-title">Avg P&L% by Sector</div>
+      <div class="chart-sub">Closed trades · shows which sectors produce best outcomes for your system</div>
+      <div id="chart-sector-pl" style="height:240px;display:none"></div>
+      <div id="chart-sector-pl-ph" style="color:var(--text-muted);font-size:12px;padding:20px">Need sector data in column AN</div>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:14px">
+    <div style="font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">Sector Performance Table</div>
+    <div id="sector-table-body" style="overflow-x:auto"><div style="color:var(--text-muted);font-size:12px">Loading…</div></div>
+  </div>
+
   <!-- 5. Pattern Analysis -->
   <div class="section-title">Pattern Analysis</div>
   <div class="grid-2" style="margin-bottom:14px">
@@ -1792,13 +1822,12 @@ tbody tr:hover { filter: brightness(0.97); }
         </div>
         <div class="stat-badge badge-amber" style="margin-top:10px">Add column T → qualityTagCol in Config</div>
       </div>
-      <div class="card card-sm" style="border:1px dashed var(--border)">
-        <div class="stat-label" style="color:var(--text-muted)">🏭 Sector</div>
+      <div class="card card-sm" style="border:1px solid var(--green)">
+        <div class="stat-label" style="color:var(--green)">🏭 Sector ✓ Live</div>
         <div style="font-size:13px;margin-top:8px;line-height:1.6;color:var(--text-secondary)">
-          IT / BFSI / Pharma / Auto / FMCG etc.<br><br>
-          Reveals hidden concentration — when market rotates, correlated positions all hit stop simultaneously.
+          Column AN wired. Sector breakdown appears in the Analysis tab and sector concentration on the Dashboard.
         </div>
-        <div class="stat-badge badge-amber" style="margin-top:10px">Add column N → sectorCol in Config</div>
+        <div class="stat-badge badge-green" style="margin-top:10px">✓ Active — col AN → sectorCol</div>
       </div>
       <div class="card card-sm" style="border:1px dashed var(--border)">
         <div class="stat-label" style="color:var(--text-muted)">📝 Exit Reason</div>
@@ -1861,6 +1890,7 @@ tbody tr:hover { filter: brightness(0.97); }
           <th title="% from effective stop = MAX(J, I)">% from Stop</th>
           <th>P&L%</th>
           <th title="Breakeven stop active — stop has been moved to entry price">BE Stop</th>
+          <th>Sector</th>
           <th>Partial</th>
           <th>21 EMA</th>
           <th>HA</th>
@@ -2183,7 +2213,7 @@ const DEFAULT_CONFIG = {
   partialPlCol: 'AB', finalExitPriceCol: 'AC', finalPlCol: 'AD',
   finalPlPctCol: 'AE', ageCol: 'AF',
   haColourCol: 'AG', haChangedCol: 'AH',
-  maeCol: 'AL', mfeCol: 'AM',
+  maeCol: 'AL', mfeCol: 'AM', sectorCol: 'AN',
   portfolioCell: 'AK26', initialCapCell: 'AK20',
   maxHeat: 5, partialTrigger: 10, beTrigger: 2, stopProximity: 2, heatGreen: 2.5, heatAmber: 4, maxAge: 60, maxPositions: 15, weeklyTarget: 0,
   beRuleChangeDate: '19-Jun-2026', beRuleOldTrigger: 5,
@@ -2247,7 +2277,7 @@ async function fetchData() {
     finalExitPriceCol: cfg.finalExitPriceCol, finalPlCol: cfg.finalPlCol,
     finalPlPctCol: cfg.finalPlPctCol, ageCol: cfg.ageCol,
     haColourCol: cfg.haColourCol, haChangedCol: cfg.haChangedCol,
-    maeCol: cfg.maeCol, mfeCol: cfg.mfeCol,
+    maeCol: cfg.maeCol, mfeCol: cfg.mfeCol, sectorCol: cfg.sectorCol,
     portfolioCell: cfg.portfolioCell, initialCapCell: cfg.initialCapCell,
   });
   try {
@@ -2767,6 +2797,54 @@ function renderDashboard(data, cfg) {
     }
   })();
 
+  // ── Sector Concentration ──
+  (function() {
+    const sectorCard = document.getElementById('dash-sector-card');
+    const topEl = document.getElementById('dash-sector-top');
+    const subEl = document.getElementById('dash-sector-sub');
+    const barsEl = document.getElementById('dash-sector-bars');
+    const badgeEl = document.getElementById('dash-sector-badge');
+    if (!sectorCard) return;
+    const withSector = open.filter(t => t.sector && t.sector.trim());
+    if (withSector.length === 0) { sectorCard.style.display = 'none'; return; }
+    sectorCard.style.display = '';
+    const sectorMap = {};
+    withSector.forEach(t => {
+      const s = t.sector.trim();
+      if (!sectorMap[s]) sectorMap[s] = { count: 0, mtm: 0 };
+      sectorMap[s].count++;
+      sectorMap[s].mtm += (t.notionalPl || 0);
+    });
+    const total = withSector.length;
+    const sorted = Object.entries(sectorMap).sort((a, b) => b[1].count - a[1].count);
+    const [topName, topVal] = sorted[0];
+    const topPct = Math.round(topVal.count / total * 100);
+    if (topEl) { topEl.textContent = topName; topEl.style.color = topPct > 50 ? 'var(--red)' : topPct > 35 ? 'var(--amber)' : 'var(--green)'; }
+    if (subEl) subEl.textContent = topPct + '% of open positions · ' + total + ' positions across ' + sorted.length + ' sector' + (sorted.length !== 1 ? 's' : '');
+    if (barsEl) {
+      barsEl.innerHTML = sorted.slice(0, 5).map(([s, v]) => {
+        const pct = Math.round(v.count / total * 100);
+        const barColor = pct > 50 ? 'var(--red)' : pct > 35 ? 'var(--amber)' : 'var(--accent)';
+        const mtmSign = v.mtm >= 0 ? '+₹' : '-₹';
+        const mtmFmt = mtmSign + Math.abs(Math.round(v.mtm)).toLocaleString('en-IN');
+        return `<div>
+          <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px">
+            <span style="font-weight:600">${s}</span>
+            <span style="color:var(--text-muted)">${v.count} pos · ${pct}% · MTM ${mtmFmt}</span>
+          </div>
+          <div style="height:5px;background:var(--surface2);border-radius:3px">
+            <div style="width:${pct}%;height:100%;background:${barColor};border-radius:3px;transition:width 0.4s"></div>
+          </div>
+        </div>`;
+      }).join('');
+    }
+    if (badgeEl) {
+      if (topPct > 50) { badgeEl.className = 'stat-badge badge-red'; badgeEl.textContent = '⚠ ' + topName + ' is >50% of portfolio — if sector corrects, multiple stops hit simultaneously'; }
+      else if (topPct > 35) { badgeEl.className = 'stat-badge badge-amber'; badgeEl.textContent = topName + ' at ' + topPct + '% — monitor sector news closely'; }
+      else { badgeEl.className = 'stat-badge badge-green'; badgeEl.textContent = '✓ Diversified across ' + sorted.length + ' sectors — largest: ' + topName + ' at ' + topPct + '%'; }
+    }
+  })();
+
   // Alerts
   const alertsWrap = document.getElementById('alerts-wrap');
   if (alertsWrap) {
@@ -2936,12 +3014,13 @@ function renderPositionsReal(open, cfg) {
           if (beNeeded) return '<span class="tag tag-ha-red" title="Move col J stop to entry price now">⚠ Move now</span>';
           return '<span style="color:var(--text-muted);font-size:11px">—</span>';
         })()}</td>
+        <td style="font-size:11px;color:var(--text-secondary)">${t.sector || '—'}</td>
         <td><span class="tag ${partialClass}">${t.partialTaken}</span></td>
         <td><span class="tag ${emaClass}">${emaStr || '—'}</span></td>
         <td><span class="tag ${haClass} ${haChangedClass}" style="${haWarnStyle}" title="${t.haWarn ? '⚠ Profit at risk — HA Red with healthy gain, consider protecting' : haChanged ? 'HA colour just changed — momentum shift!' : ''}">${t.haWarn ? '⚠ ' : ''}${haLabel}</span></td>
       </tr>
       <tr class="expand-row" id="expand-${i}">
-        <td colspan="11" style="padding:0">
+        <td colspan="12" style="padding:0">
           <div class="expand-content">
             <div class="expand-item"><div class="expand-label">Entry Date</div><div class="expand-value">${t.openDate || '—'}</div></div>
             <div class="expand-item"><div class="expand-label">Manual Stop (J)</div><div class="expand-value">₹${t.stopLoss.toLocaleString('en-IN')}</div></div>
@@ -3858,6 +3937,7 @@ function renderColMappings() {
     { label: 'HA Colour Changed (AH)', key: 'haChangedCol', optional: true },
     { label: 'MAE % — Max Adverse Excursion (AL)', key: 'maeCol', optional: true },
     { label: 'MFE % — Max Favorable Excursion (AM)', key: 'mfeCol', optional: true },
+    { label: 'Sector (AN)', key: 'sectorCol', optional: true },
   ];
   const container = document.getElementById('col-mappings');
   container.innerHTML = fields.map(f => `
@@ -3955,13 +4035,13 @@ function saveAllConfig() {
   ['flagCol','stockCol','openDateCol','closeDateCol','ema21Col','cmpCol','sevenDayLowCol','stopLossCol',
    'initRiskRsCol','initRiskPctCol','qtyCol','entryPriceCol','setupTypeCol','pctFromStopCol','plPctCol',
    'notionalPlCol','partialQtyCol','partialPriceCol','partialPlCol','finalExitPriceCol','finalPlCol','finalPlPctCol','ageCol',
-   'haColourCol','haChangedCol','maeCol','mfeCol'
+   'haColourCol','haChangedCol','maeCol','mfeCol','sectorCol'
   ].forEach(key => { const v = getVal('cfg-' + key, cfg[key]).toUpperCase().trim(); if (v) cfg[key] = v; });
   // Validate column letters — warn if any col mapping looks wrong (not A-ZZ pattern)
   const colKeys = ['flagCol','stockCol','openDateCol','closeDateCol','ema21Col','cmpCol','sevenDayLowCol','stopLossCol',
     'initRiskRsCol','initRiskPctCol','qtyCol','entryPriceCol','setupTypeCol','pctFromStopCol','plPctCol',
     'notionalPlCol','partialQtyCol','partialPriceCol','partialPlCol','finalExitPriceCol','finalPlCol','finalPlPctCol','ageCol',
-    'haColourCol','haChangedCol','maeCol','mfeCol'];
+    'haColourCol','haChangedCol','maeCol','mfeCol','sectorCol'];
   const badCols = colKeys.filter(k => cfg[k] && !/^[A-Z]{1,3}$/.test(cfg[k]));
   if (badCols.length > 0) {
     showToast('⚠ Invalid column(s): ' + badCols.map(k => k.replace('Col','') + '=' + cfg[k]).join(', '), 'red');
@@ -4858,7 +4938,7 @@ function initAnalysisCharts(open, closed) {
       } else if (!closedHasField && closed.length > 0) {
         msg = 'Apps Script may not be returning the setup type column. Open browser console and check <code>window._data.closed[0]</code> — if <code>setupType</code> is missing, redeploy the Apps Script with the setupTypeCol parameter.';
       }
-      tbody.innerHTML = `<tr><td colspan="10" style="padding:20px;text-align:center;color:var(--text-muted);font-size:13px">${msg}</td></tr>`;
+      tbody.innerHTML = `<tr><td colspan="12" style="padding:20px;text-align:center;color:var(--text-muted);font-size:13px">${msg}</td></tr>`;
     } else {
       tbody.innerHTML = setupKeys.map(s => {
         const st = calcStats(setupMap[s]);
@@ -5534,6 +5614,117 @@ function initAnalysisCharts(open, closed) {
       postDDBadge.className = drop > 10 ? 'stat-badge badge-amber' : 'stat-badge badge-green';
       postDDBadge.textContent = `Based on ${unique.length} trades across ${Math.floor(unique.length/5)} drawdown events`;
     }
+  })();
+
+  // ── Sector Analysis ──
+  (function() {
+    const closedWithSector = closed.filter(t => t.sector && t.sector.trim());
+    const openWithSector = open.filter(t => t.sector && t.sector.trim());
+    const sectorWrEl = document.getElementById('chart-sector-wr');
+    const sectorPlEl = document.getElementById('chart-sector-pl');
+    const sectorWrPh = document.getElementById('chart-sector-wr-ph');
+    const sectorPlPh = document.getElementById('chart-sector-pl-ph');
+    const sectorTableEl = document.getElementById('sector-table-body');
+    if (closedWithSector.length < 2) return;
+    if (sectorWrPh) sectorWrPh.style.display = 'none';
+    if (sectorPlPh) sectorPlPh.style.display = 'none';
+
+    // Build per-sector stats from closed trades
+    const sMap = {};
+    closedWithSector.forEach(t => {
+      const s = t.sector.trim();
+      if (!sMap[s]) sMap[s] = [];
+      sMap[s].push(t);
+    });
+    const openSMap = {};
+    openWithSector.forEach(t => { const s = t.sector.trim(); openSMap[s] = (openSMap[s] || 0) + 1; });
+
+    const sectors = Object.keys(sMap).sort((a, b) => sMap[b].length - sMap[a].length);
+    const calcSec = trades => {
+      const wins = trades.filter(t => t.finalPlPct > 0);
+      const losses = trades.filter(t => t.finalPlPct < 0);
+      return {
+        n: trades.length, wins: wins.length,
+        wr: trades.length > 0 ? wins.length / trades.length * 100 : 0,
+        avgPl: trades.length > 0 ? trades.reduce((s, t) => s + t.finalPlPct, 0) / trades.length : 0,
+        totalPl: trades.reduce((s, t) => s + (t.finalPl || 0), 0),
+        avgWin: wins.length > 0 ? wins.reduce((s, t) => s + t.finalPlPct, 0) / wins.length : 0,
+        avgLoss: losses.length > 0 ? losses.reduce((s, t) => s + t.finalPlPct, 0) / losses.length : 0,
+      };
+    };
+
+    // Sector table
+    if (sectorTableEl) {
+      sectorTableEl.innerHTML = `<table style="width:100%;border-collapse:collapse;font-size:12px">
+        <thead><tr style="color:var(--text-muted);text-align:left;border-bottom:1px solid var(--border)">
+          <th style="padding:6px 8px">Sector</th>
+          <th style="padding:6px 8px;text-align:right">Closed</th>
+          <th style="padding:6px 8px;text-align:right">Open</th>
+          <th style="padding:6px 8px;text-align:right">WR</th>
+          <th style="padding:6px 8px;text-align:right">Avg P&L%</th>
+          <th style="padding:6px 8px;text-align:right">Total P&L ₹</th>
+          <th style="padding:6px 8px;text-align:right">Avg Win%</th>
+          <th style="padding:6px 8px;text-align:right">Avg Loss%</th>
+        </tr></thead>
+        <tbody>${sectors.map(s => {
+          const st = calcSec(sMap[s]);
+          const openCount = openSMap[s] || 0;
+          const wrColor = st.wr >= 40 ? 'var(--green)' : st.wr >= 20 ? 'var(--amber)' : 'var(--red)';
+          const plColor = st.avgPl >= 0 ? 'var(--green)' : 'var(--red)';
+          const totColor = st.totalPl >= 0 ? 'var(--green)' : 'var(--red)';
+          return `<tr style="border-bottom:1px solid var(--border)">
+            <td style="padding:8px;font-weight:600">${s}</td>
+            <td style="padding:8px;text-align:right;color:var(--text-muted)">${st.n}</td>
+            <td style="padding:8px;text-align:right;color:var(--accent)">${openCount > 0 ? openCount : '—'}</td>
+            <td style="padding:8px;text-align:right;color:${wrColor};font-weight:600">${st.wr.toFixed(0)}%</td>
+            <td style="padding:8px;text-align:right;color:${plColor}">${(st.avgPl >= 0 ? '+' : '') + st.avgPl.toFixed(1)}%</td>
+            <td style="padding:8px;text-align:right;color:${totColor};font-weight:600">${st.totalPl >= 0 ? '+' : ''}₹${Math.abs(Math.round(st.totalPl)).toLocaleString('en-IN')}</td>
+            <td style="padding:8px;text-align:right;color:var(--green)">${st.avgWin > 0 ? '+' + st.avgWin.toFixed(1) + '%' : '—'}</td>
+            <td style="padding:8px;text-align:right;color:var(--red)">${st.avgLoss < 0 ? st.avgLoss.toFixed(1) + '%' : '—'}</td>
+          </tr>`;
+        }).join('')}</tbody>
+      </table>`;
+    }
+
+    // Win Rate by Sector chart
+    try {
+      if (sectorWrEl && sectors.length >= 1) {
+        sectorWrEl.style.display = '';
+        const wrData = sectors.map(s => parseFloat(calcSec(sMap[s]).wr.toFixed(1)));
+        const sWrChart = new ApexCharts(sectorWrEl, {
+          ...baseOpts(240), chart: { ...baseOpts(240).chart, type: 'bar' },
+          series: [{ name: 'Win Rate %', data: wrData }],
+          xaxis: { ...baseOpts().xaxis, categories: sectors, labels: { ...baseOpts().xaxis.labels, rotate: -20 } },
+          yaxis: { labels: { style:{colors:c.text,fontSize:'11px'}, formatter: v => v+'%' }, max: 100 },
+          colors: wrData.map(v => v >= 40 ? c.green : v >= 20 ? c.amber : c.red),
+          plotOptions: { bar: { columnWidth: '55%', distributed: true, borderRadius: 4 } },
+          legend: { show: false },
+          dataLabels: { enabled: true, formatter: v => v+'%', style:{fontSize:'11px'} },
+          annotations: { yaxis: [{ y: 30, borderColor: c.amber, strokeDashArray: 3, label:{text:'30%',style:{color:c.amber,fontSize:'10px'}} }] },
+        });
+        sWrChart.render(); analysisCharts.push(sWrChart);
+      }
+    } catch(e) { console.warn('chart-sector-wr failed', e); }
+
+    // Avg P&L% by Sector chart
+    try {
+      if (sectorPlEl && sectors.length >= 1) {
+        sectorPlEl.style.display = '';
+        const plData = sectors.map(s => parseFloat(calcSec(sMap[s]).avgPl.toFixed(2)));
+        const sPlChart = new ApexCharts(sectorPlEl, {
+          ...baseOpts(240), chart: { ...baseOpts(240).chart, type: 'bar' },
+          series: [{ name: 'Avg P&L %', data: plData }],
+          xaxis: { ...baseOpts().xaxis, categories: sectors, labels: { ...baseOpts().xaxis.labels, rotate: -20 } },
+          yaxis: { labels: { style:{colors:c.text,fontSize:'11px'}, formatter: v => (v>=0?'+':'')+v.toFixed(1)+'%' } },
+          colors: plData.map(v => v >= 0 ? c.green : c.red),
+          plotOptions: { bar: { columnWidth: '55%', distributed: true, borderRadius: 4 } },
+          legend: { show: false },
+          dataLabels: { enabled: true, formatter: v => (v>=0?'+':'')+v.toFixed(1)+'%', style:{fontSize:'11px'} },
+          annotations: { yaxis: [{ y: 0, borderColor: c.text, strokeDashArray: 2 }] },
+        });
+        sPlChart.render(); analysisCharts.push(sPlChart);
+      }
+    } catch(e) { console.warn('chart-sector-pl failed', e); }
   })();
 
   // Scatter — closed wins, closed losses, + open positions (amber)
