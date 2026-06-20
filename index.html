@@ -543,11 +543,21 @@ tbody tr:hover { filter: brightness(0.97); }
   .grid-4 { grid-template-columns: repeat(2, 1fr); gap: 10px; }
   .grid-3 { grid-template-columns: repeat(1, 1fr); }
   .grid-2 { grid-template-columns: repeat(1, 1fr); }
-  .nav-tabs { gap: 2px; overflow-x: auto; -webkit-overflow-scrolling: touch; flex-wrap: nowrap; }
-  .nav-tab { font-size: 11px; padding: 6px 8px; white-space: nowrap; flex-shrink: 0; }
+  /* Nav: compact logo, scrollable tabs */
+  nav { padding: 0 10px; gap: 4px; height: 52px; }
+  .nav-logo { margin-right: 8px; font-size: 13px; }
+  .nav-logo span { display: none; }
+  .nav-tabs { gap: 1px; overflow-x: auto; -webkit-overflow-scrolling: touch; flex-wrap: nowrap; scrollbar-width: none; }
+  .nav-tabs::-webkit-scrollbar { display: none; }
+  .nav-tab { font-size: 11px; padding: 5px 8px; white-space: nowrap; flex-shrink: 0; }
+  .nav-right { gap: 6px; }
   .refresh-info { display: none; }
+  #signal-run-info { display: none; }
+  /* Tables */
   table { font-size: 11px; }
-  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+  .table-wrap { overflow-x: auto; -webkit-overflow-scrolling: touch; max-width: 100vw; }
+  .trades-table { min-width: auto !important; }
+  /* Cards & stats */
   .compare-row { flex-direction: column; gap: 8px; }
   .compare-vs { display: none; }
   .stat-value { font-size: 20px; }
@@ -556,8 +566,34 @@ tbody tr:hover { filter: brightness(0.97); }
   #auth-overlay > div { width: calc(100vw - 40px) !important; padding: 28px 20px !important; }
   .section-title { font-size: 11px; }
   .chart-title { font-size: 12px; }
-  nav { padding: 0 12px; gap: 8px; }
-  .nav-logo span { display: none; }
+  /* Calendar: 2-column on mobile */
+  .cal-grid { grid-template-columns: repeat(2, 1fr); gap: 10px; }
+  .cal-day-header { font-size: 9px; }
+  /* EMA split: stack vertically */
+  .ema-split { grid-template-columns: 1fr; }
+  .ema-side.above { border-right: none; border-bottom: 1px solid var(--border); }
+  .ema-divider { padding: 10px 0; text-align: center; }
+  /* Expand row: 2-column grid */
+  .expand-content { grid-template-columns: repeat(2, 1fr); gap: 10px; padding: 12px; }
+  /* Strategy switcher */
+  .strategy-bar { padding: 5px 10px; gap: 6px; }
+  .strategy-bar-label { display: none; }
+  .sw-btn { padding: 4px 12px; font-size: 12px; }
+  /* System health inline flex cards — allow wrapping */
+  .sys-health-row { flex-wrap: wrap !important; }
+  .sys-health-item { min-width: 0 !important; flex: 1 1 45% !important; border-right: none !important; padding: 10px !important; }
+  /* F&O tags */
+  .fno-tag { font-size: 10px; }
+  /* Streak blocks */
+  .streak-block { width: 20px; height: 24px; font-size: 8px; }
+}
+/* Extra-small phones (320px) */
+@media (max-width: 390px) {
+  .nav-tab { font-size: 10px; padding: 5px 6px; }
+  .cal-grid { grid-template-columns: repeat(1, 1fr); }
+  .grid-4 { grid-template-columns: repeat(1, 1fr); }
+  .expand-content { grid-template-columns: 1fr; }
+  .stat-value { font-size: 18px; }
 }
 /* ── F&O MODULE ── */
 .strategy-bar { display:flex; align-items:center; gap:8px; padding:6px 20px; background:var(--surface); border-bottom:1px solid var(--border); }
@@ -587,7 +623,7 @@ tbody tr:hover { filter: brightness(0.97); }
 .fno-sort-th { cursor:pointer; user-select:none; }
 .fno-sort-th:hover { color:var(--accent); }
 .fno-sort-icon { font-size:10px; opacity:0.5; }
-@media(max-width:768px){ .strategy-bar { padding:6px 12px; } .sw-btn { padding:4px 12px; font-size:12px; } }
+@media (max-width: 768px) { .strategy-bar { padding: 6px 14px; } .sw-btn { padding: 4px 14px; font-size: 12px; } }
 </style>
 </head>
 <body>
@@ -683,28 +719,28 @@ tbody tr:hover { filter: brightness(0.97); }
   <div class="card card-sm" style="margin-top:14px;padding:12px 20px">
     <div style="display:flex;align-items:center;gap:0;flex-wrap:wrap">
       <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em;margin-right:20px;white-space:nowrap">System Health</div>
-      <div style="display:flex;flex:1;gap:0;flex-wrap:wrap">
-        <div style="flex:1;min-width:110px;padding:4px 16px;border-right:1px solid var(--border)">
+      <div class="sys-health-row" style="display:flex;flex:1;gap:0;flex-wrap:wrap">
+        <div class="sys-health-item" style="flex:1;min-width:110px;padding:4px 16px;border-right:1px solid var(--border)">
           <div style="font-size:11px;color:var(--text-muted);font-weight:600">Exit WR / Entry Hit</div>
           <div style="font-size:18px;font-weight:700;margin-top:2px" id="dash-sys-wr">—</div>
           <div style="font-size:10px;margin-top:2px" id="dash-sys-wr-recent">entries working: —</div>
         </div>
-        <div style="flex:1;min-width:100px;padding:4px 16px;border-right:1px solid var(--border)">
+        <div class="sys-health-item" style="flex:1;min-width:100px;padding:4px 16px;border-right:1px solid var(--border)">
           <div style="font-size:11px;color:var(--text-muted);font-weight:600">Avg Loss Size</div>
           <div style="font-size:18px;font-weight:700;margin-top:2px" id="dash-sys-avgloss">—</div>
           <div style="font-size:10px;margin-top:2px" id="dash-sys-avgloss-sub">vs 7% rule</div>
         </div>
-        <div style="flex:1;min-width:100px;padding:4px 16px;border-right:1px solid var(--border)">
+        <div class="sys-health-item" style="flex:1;min-width:100px;padding:4px 16px;border-right:1px solid var(--border)">
           <div style="font-size:11px;color:var(--text-muted);font-weight:600">Combined Profit Factor</div>
           <div style="font-size:18px;font-weight:700;margin-top:2px" id="dash-sys-pf">—</div>
           <div style="font-size:10px;margin-top:2px" id="dash-sys-pf-sub">wins+open MTM / losses</div>
         </div>
-        <div style="flex:1;min-width:100px;padding:4px 16px;border-right:1px solid var(--border)">
+        <div class="sys-health-item" style="flex:1;min-width:100px;padding:4px 16px;border-right:1px solid var(--border)">
           <div style="font-size:11px;color:var(--text-muted);font-weight:600">Hold Ratio</div>
           <div style="font-size:18px;font-weight:700;margin-top:2px" id="dash-sys-r">—</div>
           <div style="font-size:10px;margin-top:2px" id="dash-sys-hold-sub">winner days / loser days</div>
         </div>
-        <div style="flex:1;min-width:100px;padding:4px 16px">
+        <div class="sys-health-item" style="flex:1;min-width:100px;padding:4px 16px">
           <div style="font-size:11px;color:var(--text-muted);font-weight:600">Open Unrealised</div>
           <div style="font-size:18px;font-weight:700;margin-top:2px" id="dash-sys-exp">—</div>
           <div style="font-size:10px;margin-top:2px" id="dash-sys-exp-sub">% of capital</div>
