@@ -2071,7 +2071,8 @@ async function fetchData() {
     portfolioCell: cfg.portfolioCell, initialCapCell: cfg.initialCapCell,
   });
   try {
-    const res = await fetch(cfg.url + '?' + params.toString(), { redirect: 'follow' });
+    params.append('_t', Date.now());
+    const res = await fetch(cfg.url + '?' + params.toString(), { redirect: 'follow', cache: 'no-store' });
     const data = await res.json();
     if (!data.success) throw new Error(data.error || 'Unknown error');
     return data;
@@ -6041,8 +6042,9 @@ async function fetchFnoData() {
   const cfg = loadConfig();
   if (!cfg.url) return null;
   const params = new URLSearchParams({ mode: 'fno', sheet: 'NSEFO' });
+  params.append('_t', Date.now());
   try {
-    const res = await fetch(cfg.url + '?' + params.toString(), { redirect: 'follow' });
+    const res = await fetch(cfg.url + '?' + params.toString(), { redirect: 'follow', cache: 'no-store' });
     const data = await res.json();
     if (!data.success) throw new Error(data.error || 'Unknown');
     return data;
