@@ -796,6 +796,44 @@ tbody tr:hover { filter: brightness(0.97); }
 
   </div>
 
+  <!-- Weekly Target + Entry Cadence -->
+  <div class="grid-2" style="margin-top:14px">
+    <div class="card card-sm">
+      <div class="stat-label">Weekly P&amp;L Target</div>
+      <div style="display:flex;gap:16px;margin-top:8px;align-items:flex-end;flex-wrap:wrap">
+        <div>
+          <div style="font-size:22px;font-weight:700" id="dash-week-pl">—</div>
+          <div class="stat-sub">This week (Mon–now)</div>
+        </div>
+        <div style="color:var(--border);font-size:20px;padding-bottom:2px">|</div>
+        <div>
+          <div style="font-size:22px;font-weight:700;color:var(--text-muted)" id="dash-week-target">—</div>
+          <div class="stat-sub">Target</div>
+        </div>
+      </div>
+      <div style="margin-top:10px;height:6px;border-radius:3px;background:var(--surface2);overflow:hidden">
+        <div id="dash-week-bar" style="height:100%;border-radius:3px;transition:width 0.4s;background:var(--green)"></div>
+      </div>
+      <div class="stat-badge" id="dash-week-badge" style="margin-top:8px">Set target in Config</div>
+    </div>
+
+    <div class="card card-sm">
+      <div class="stat-label">Entry Cadence</div>
+      <div style="display:flex;gap:16px;margin-top:8px;align-items:flex-end;flex-wrap:wrap">
+        <div>
+          <div style="font-size:22px;font-weight:700" id="dash-cadence-week">—</div>
+          <div class="stat-sub">Entries this week</div>
+        </div>
+        <div style="color:var(--border);font-size:20px;padding-bottom:2px">|</div>
+        <div>
+          <div style="font-size:22px;font-weight:700" id="dash-cadence-month">—</div>
+          <div class="stat-sub">Last 30 days</div>
+        </div>
+      </div>
+      <div class="stat-badge" id="dash-cadence-badge" style="margin-top:16px">—</div>
+    </div>
+  </div>
+
   <div class="section-title" style="margin-top:20px">Risk & Heat</div>
   <div class="grid-4">
     <div class="card card-sm">
@@ -1361,6 +1399,11 @@ tbody tr:hover { filter: brightness(0.97); }
         </table>
       </div>
     </div>
+    <!-- Setup Type Health — retirement signals -->
+    <div id="setup-retirement-wrap" style="margin-top:16px;border-top:1px solid var(--border);padding-top:12px;display:none">
+      <div style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Setup Type Health Monitor</div>
+      <div id="setup-retirement-body" style="display:flex;flex-direction:column;gap:8px"></div>
+    </div>
   </div>
 
   <!-- 2. Trade Management -->
@@ -1457,7 +1500,16 @@ tbody tr:hover { filter: brightness(0.97); }
     </div>
   </div>
 
-  <!-- 3. Partial Exit Analysis -->
+  <!-- 3. Discipline Scorecard -->
+  <div class="section-title" style="margin-top:20px">Discipline Scorecard</div>
+  <div class="card" style="margin-bottom:14px" id="discipline-scorecard-card">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:16px" id="discipline-scorecard-body">
+      <div style="color:var(--text-muted);font-size:13px;padding:8px">Loading…</div>
+    </div>
+    <div id="discipline-scorecard-verdict" style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);font-size:13px;line-height:1.7;color:var(--text-secondary)"></div>
+  </div>
+
+  <!-- 4. Partial Exit Analysis -->
   <div class="section-title" style="margin-top:20px">Partial Exit Analysis</div>
   <div class="grid-3" style="margin-bottom:14px">
     <div class="card card-sm">
@@ -1728,6 +1780,7 @@ tbody tr:hover { filter: brightness(0.97); }
           <th title="MAX(manual stop J, 7-day low I)">Eff Stop ₹</th>
           <th title="% from effective stop = MAX(J, I)">% from Stop</th>
           <th>P&L%</th>
+          <th title="Breakeven stop active — stop has been moved to entry price">BE Stop</th>
           <th>Partial</th>
           <th>21 EMA</th>
           <th>HA</th>
@@ -1867,6 +1920,10 @@ tbody tr:hover { filter: brightness(0.97); }
       <div class="config-field">
         <label class="config-label">Max Trade Age — days before review</label>
         <input type="number" id="cfg-max-age" class="config-input config-input-sm" step="1" min="1">
+      </div>
+      <div class="config-field">
+        <label class="config-label">Weekly P&amp;L Target ₹ — for Dashboard progress bar (0 = hide)</label>
+        <input type="number" id="cfg-weekly-target" class="config-input config-input-sm" step="1000" min="0" placeholder="e.g. 10000">
       </div>
     </div>
   </div>
@@ -2048,7 +2105,7 @@ const DEFAULT_CONFIG = {
   haColourCol: 'AG', haChangedCol: 'AH',
   maeCol: 'AL', mfeCol: 'AM',
   portfolioCell: 'AK26', initialCapCell: 'AK20',
-  maxHeat: 5, partialTrigger: 10, beTrigger: 2, stopProximity: 2, heatGreen: 2.5, heatAmber: 4, maxAge: 60, maxPositions: 15,
+  maxHeat: 5, partialTrigger: 10, beTrigger: 2, stopProximity: 2, heatGreen: 2.5, heatAmber: 4, maxAge: 60, maxPositions: 15, weeklyTarget: 0,
   beRuleChangeDate: '19-Jun-2026', beRuleOldTrigger: 5,
 };
 
@@ -2427,6 +2484,78 @@ function renderDashboard(data, cfg) {
     }
   })();
 
+  // ── Weekly P&L Target + Entry Cadence ──
+  (function() {
+    const now = new Date();
+    const dayOfWeek = now.getDay(); // 0=Sun, 1=Mon...
+    const daysFromMon = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
+    const monStart = new Date(now); monStart.setDate(now.getDate() - daysFromMon); monStart.setHours(0,0,0,0);
+    const last30 = new Date(now); last30.setDate(now.getDate() - 30);
+
+    // This week's realised P&L (closed trades with closeDate this week)
+    const weekClosed = closed.filter(t => t.closeDate && parseDate(t.closeDate) >= monStart);
+    const weekRealisedPl = weekClosed.reduce((s, t) => s + (t.finalPl || 0), 0);
+    // Add open unrealised MTM for positions opened this week (partial — just the MTM contribution)
+    const weekOpenMtm = open.filter(t => t.openDate && parseDate(t.openDate) >= monStart)
+      .reduce((s, t) => s + (t.notionalPl || 0), 0);
+    const weekPl = weekRealisedPl + weekOpenMtm;
+
+    const weekPlEl = document.getElementById('dash-week-pl');
+    const weekBarEl = document.getElementById('dash-week-bar');
+    const weekTargetEl = document.getElementById('dash-week-target');
+    const weekBadgeEl = document.getElementById('dash-week-badge');
+
+    const weeklyTarget = cfg.weeklyTarget || 0;
+    if (weekPlEl) {
+      weekPlEl.textContent = (weekPl >= 0 ? '+' : '-') + '₹' + Math.abs(Math.round(weekPl)).toLocaleString('en-IN');
+      weekPlEl.style.color = weekPl >= 0 ? 'var(--green)' : 'var(--red)';
+    }
+    if (weekTargetEl) {
+      weekTargetEl.textContent = weeklyTarget > 0 ? '₹' + weeklyTarget.toLocaleString('en-IN') : 'Not set';
+    }
+    if (weekBarEl && weeklyTarget > 0) {
+      const pct = Math.min(100, Math.max(0, weekPl / weeklyTarget * 100));
+      weekBarEl.style.width = pct + '%';
+      weekBarEl.style.background = pct >= 100 ? 'var(--green)' : pct >= 60 ? 'var(--accent)' : 'var(--amber)';
+    }
+    if (weekBadgeEl) {
+      if (weeklyTarget <= 0) {
+        weekBadgeEl.className = 'stat-badge badge-blue';
+        weekBadgeEl.textContent = 'Set weekly target in Config to track progress';
+      } else {
+        const pct = weekPl / weeklyTarget * 100;
+        if (pct >= 100) { weekBadgeEl.className = 'stat-badge badge-green'; weekBadgeEl.textContent = '🎯 Target hit! Consider stopping new entries today.'; }
+        else if (pct >= 60) { weekBadgeEl.className = 'stat-badge badge-green'; weekBadgeEl.textContent = Math.round(pct) + '% of target · ₹' + Math.abs(Math.round(weeklyTarget - weekPl)).toLocaleString('en-IN') + ' remaining'; }
+        else if (weekPl < 0) { weekBadgeEl.className = 'stat-badge badge-red'; weekBadgeEl.textContent = 'Behind target by ₹' + Math.abs(Math.round(weekPl)).toLocaleString('en-IN') + ' — stick to system, do not overtrade'; }
+        else { weekBadgeEl.className = 'stat-badge badge-amber'; weekBadgeEl.textContent = Math.round(pct) + '% of ₹' + weeklyTarget.toLocaleString('en-IN') + ' target · ₹' + Math.round(weeklyTarget - weekPl).toLocaleString('en-IN') + ' to go'; }
+      }
+    }
+
+    // Entry Cadence
+    const entriesThisWeek = [...closed, ...open].filter(t => t.openDate && parseDate(t.openDate) >= monStart).length;
+    const entriesLast30 = [...closed, ...open].filter(t => t.openDate && parseDate(t.openDate) >= last30).length;
+    const cadWeekEl = document.getElementById('dash-cadence-week');
+    const cadMonthEl = document.getElementById('dash-cadence-month');
+    const cadBadge = document.getElementById('dash-cadence-badge');
+    if (cadWeekEl) cadWeekEl.textContent = entriesThisWeek;
+    if (cadMonthEl) cadMonthEl.textContent = entriesLast30;
+    if (cadBadge) {
+      if (entriesThisWeek >= 5) {
+        cadBadge.className = 'stat-badge badge-red';
+        cadBadge.textContent = '⚠ ' + entriesThisWeek + ' entries this week — high cadence, risk of overtrading. Optimal: 2–3/week.';
+      } else if (entriesThisWeek >= 3) {
+        cadBadge.className = 'stat-badge badge-amber';
+        cadBadge.textContent = entriesThisWeek + ' entries this week — at upper bound. Be selective on new entries.';
+      } else if (entriesThisWeek === 0) {
+        cadBadge.className = 'stat-badge badge-blue';
+        cadBadge.textContent = 'No new entries this week — waiting for right setup.';
+      } else {
+        cadBadge.className = 'stat-badge badge-green';
+        cadBadge.textContent = '✓ ' + entriesThisWeek + ' entr' + (entriesThisWeek === 1 ? 'y' : 'ies') + ' this week — healthy cadence';
+      }
+    }
+  })();
+
   // Open/Closed count card in Risk section
   const alertCount = open.filter(t => {
     const es = Math.max(t.stopLoss || 0, t.sevenDayLow || 0);
@@ -2720,12 +2849,19 @@ function renderPositionsReal(open, cfg) {
         <td title="Effective stop: MAX(manual ₹${t.stopLoss.toLocaleString('en-IN')}, 7d low ₹${t.sevenDayLow.toLocaleString('en-IN')}) = ₹${t.effStop.toLocaleString('en-IN')}">₹${t.effStop.toLocaleString('en-IN')}</td>
         <td class="${fromStopClass} fw-700">${t.effPct >= 0 ? '+' : ''}${t.effPct.toFixed(1)}%</td>
         <td class="${pnlClass}">${t.plPct >= 0 ? '+' : ''}${t.plPct.toFixed(1)}%</td>
+        <td>${(function(){
+          const beActive = t.stopLoss >= t.entryPrice && t.entryPrice > 0;
+          const beNeeded = t.plPct >= cfg.beTrigger && t.stopLoss < t.entryPrice;
+          if (beActive) return '<span class="tag tag-y" title="Stop moved to entry — trade is risk-free">🛡 Active</span>';
+          if (beNeeded) return '<span class="tag tag-ha-red" title="Move col J stop to entry price now">⚠ Move now</span>';
+          return '<span style="color:var(--text-muted);font-size:11px">—</span>';
+        })()}</td>
         <td><span class="tag ${partialClass}">${t.partialTaken}</span></td>
         <td><span class="tag ${emaClass}">${emaStr || '—'}</span></td>
         <td><span class="tag ${haClass} ${haChangedClass}" style="${haWarnStyle}" title="${t.haWarn ? '⚠ Profit at risk — HA Red with healthy gain, consider protecting' : haChanged ? 'HA colour just changed — momentum shift!' : ''}">${t.haWarn ? '⚠ ' : ''}${haLabel}</span></td>
       </tr>
       <tr class="expand-row" id="expand-${i}">
-        <td colspan="10" style="padding:0">
+        <td colspan="11" style="padding:0">
           <div class="expand-content">
             <div class="expand-item"><div class="expand-label">Entry Date</div><div class="expand-value">${t.openDate || '—'}</div></div>
             <div class="expand-item"><div class="expand-label">Manual Stop (J)</div><div class="expand-value">₹${t.stopLoss.toLocaleString('en-IN')}</div></div>
@@ -3617,6 +3753,7 @@ function populateConfigPage() {
   setVal('cfg-heat-amber', cfg.heatAmber);
   setVal('cfg-max-positions', cfg.maxPositions);
   setVal('cfg-max-age', cfg.maxAge);
+  setVal('cfg-weekly-target', cfg.weeklyTarget || 0);
   updateConnStatus(cfg.url ? 'configured' : 'not-configured');
 }
 
@@ -3681,6 +3818,7 @@ function saveAllConfig() {
   cfg.heatAmber = parseFloat(getVal('cfg-heat-amber', cfg.heatAmber)) || cfg.heatAmber;
   cfg.maxPositions = parseInt(getVal('cfg-max-positions', cfg.maxPositions)) || cfg.maxPositions;
   cfg.maxAge = parseInt(getVal('cfg-max-age', cfg.maxAge)) || cfg.maxAge;
+  cfg.weeklyTarget = parseInt(getVal('cfg-weekly-target', cfg.weeklyTarget || 0)) || 0;
   ['flagCol','stockCol','openDateCol','closeDateCol','ema21Col','cmpCol','sevenDayLowCol','stopLossCol',
    'initRiskRsCol','initRiskPctCol','qtyCol','entryPriceCol','setupTypeCol','pctFromStopCol','plPctCol',
    'notionalPlCol','partialQtyCol','partialPriceCol','partialPlCol','finalExitPriceCol','finalPlCol','finalPlPctCol','ageCol',
@@ -4563,6 +4701,137 @@ function initAnalysisCharts(open, closed) {
   } else if (insEl) {
     insEl.textContent = '→ Add setup type labels in column S to see which setups work best.';
   }
+
+  // ── Setup Type Retirement Monitor ──
+  const retireWrap = document.getElementById('setup-retirement-wrap');
+  const retireBody = document.getElementById('setup-retirement-body');
+  if (retireWrap && retireBody && setupKeys.length > 0) {
+    retireWrap.style.display = '';
+    // For each setup, compare last 20 trades WR vs overall WR
+    const retireItems = setupKeys.map(s => {
+      const all = setupMap[s];
+      const overall = calcStats(all);
+      const last20 = [...all].sort((a,b) => parseDate(b.closeDate)-parseDate(a.closeDate)).slice(0,20);
+      const prev20 = [...all].sort((a,b) => parseDate(b.closeDate)-parseDate(a.closeDate)).slice(20,40);
+      const recentSt = last20.length >= 5 ? calcStats(last20) : null;
+      const prevSt = prev20.length >= 5 ? calcStats(prev20) : null;
+      return { s, overall, recentSt, prevSt, n: all.length };
+    });
+    retireBody.innerHTML = retireItems.map(({ s, overall, recentSt, prevSt, n }) => {
+      if (!recentSt) {
+        return `<div style="padding:10px 14px;background:var(--surface2);border-radius:8px;font-size:13px">
+          <strong>${s}</strong> <span style="color:var(--text-muted)">n=${n} — need 5+ trades to analyse</span>
+        </div>`;
+      }
+      const drift = recentSt.wr - overall.wr;
+      const degrading = recentSt.wr < 18 || (prevSt && recentSt.wr < prevSt.wr - 10);
+      const hot = recentSt.wr >= 35;
+      let statusColor, statusIcon, statusText;
+      if (degrading) {
+        statusColor = 'var(--red)'; statusIcon = '⚠';
+        statusText = `WR degraded to ${recentSt.wr.toFixed(0)}% (last 20) vs ${overall.wr.toFixed(0)}% overall — consider pausing ${s} entries for 2 weeks`;
+      } else if (hot) {
+        statusColor = 'var(--green)'; statusIcon = '🔥';
+        statusText = `Hot streak — ${recentSt.wr.toFixed(0)}% WR last 20 trades vs ${overall.wr.toFixed(0)}% overall. Keep executing.`;
+      } else {
+        statusColor = 'var(--amber)'; statusIcon = '✓';
+        const driftStr = drift >= 0 ? `+${drift.toFixed(0)}%` : `${drift.toFixed(0)}%`;
+        statusText = `Stable — ${recentSt.wr.toFixed(0)}% WR last 20 (${driftStr} vs ${overall.wr.toFixed(0)}% overall)`;
+      }
+      return `<div style="padding:10px 14px;background:var(--surface2);border-radius:8px;border-left:3px solid ${statusColor};font-size:13px">
+        <span style="font-weight:700">${statusIcon} ${s}</span>
+        <span style="color:var(--text-muted);font-size:11px;margin-left:8px">n=${n}</span>
+        <div style="color:${statusColor};margin-top:4px;font-size:12px">${statusText}</div>
+        ${prevSt ? `<div style="color:var(--text-muted);font-size:11px;margin-top:2px">WR trend: prev 20 = ${prevSt.wr.toFixed(0)}% → last 20 = ${recentSt.wr.toFixed(0)}%</div>` : ''}
+      </div>`;
+    }).join('');
+  }
+
+  // ── Discipline Scorecard ──
+  (function() {
+    const dsBody = document.getElementById('discipline-scorecard-body');
+    const dsVerdict = document.getElementById('discipline-scorecard-verdict');
+    if (!dsBody || !closed.length) return;
+
+    // 1. Stop discipline — % of losses where actual loss was within 110% of planned risk
+    const lossTrades = closed.filter(t => (t.finalPl || 0) < 0 && (t.initRiskRs || 0) > 0);
+    const stopsHeld = lossTrades.filter(t => Math.abs(t.finalPl) <= t.initRiskRs * 1.1).length;
+    const stopPct = lossTrades.length > 0 ? stopsHeld / lossTrades.length * 100 : null;
+
+    // 2. Partial execution — % of eligible trades where partial was taken
+    const partialEligible = closed.filter(t => (t.finalPlPct || 0) >= (_cfg.partialTrigger || 10));
+    const partialTaken = closed.filter(t => t.partialTaken === 'Y').length;
+    const partialPct = partialEligible.length > 0 ? Math.min(100, partialTaken / partialEligible.length * 100) : null;
+
+    // 3. Avg hold days — winners vs losers
+    const closedWins = closed.filter(t => (t.finalPlPct||0) > 0 && t.age);
+    const closedLoss = closed.filter(t => (t.finalPlPct||0) < 0 && t.age);
+    const avgWinDays = closedWins.length > 0 ? closedWins.reduce((s,t)=>s+parseInt(t.age||0),0)/closedWins.length : null;
+    const avgLossDays = closedLoss.length > 0 ? closedLoss.reduce((s,t)=>s+parseInt(t.age||0),0)/closedLoss.length : null;
+
+    // 4. Oversized entries — using positions that exceeded risk tier
+    const _ic = window._data && window._data.initialCapital ? window._data.initialCapital : 5000000;
+    const riskCapRsD = _ic * 0.008;
+    const currentTierD = Math.min(1000 + Math.floor(closed.length / 100) * 500, riskCapRsD);
+    const oversized = closed.filter(t => (t.initRiskRs||0) > currentTierD * 1.2).length;
+    const oversizedPct = closed.length > 0 ? oversized / closed.length * 100 : null;
+
+    // 5. Stop slippage — avg (actual loss - planned risk) / planned risk
+    const slipTrades = lossTrades.filter(t => Math.abs(t.finalPl) > t.initRiskRs * 1.1);
+    const avgSlipRs = slipTrades.length > 0 ? slipTrades.reduce((s,t) => s + (Math.abs(t.finalPl) - t.initRiskRs),0) / slipTrades.length : 0;
+
+    const metric = (label, value, subtext, color, icon) => `
+      <div style="border:1px solid var(--border);border-radius:8px;padding:14px">
+        <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">${label}</div>
+        <div style="font-size:22px;font-weight:700;color:${color}">${icon} ${value}</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px">${subtext}</div>
+      </div>`;
+
+    let html = '';
+    const scoreItems = [];
+
+    if (stopPct !== null) {
+      const col = stopPct >= 80 ? 'var(--green)' : stopPct >= 60 ? 'var(--amber)' : 'var(--red)';
+      const ic = stopPct >= 80 ? '✓' : '⚠';
+      html += metric('Stop Discipline', stopPct.toFixed(0) + '%', `of ${lossTrades.length} losses taken within planned risk ₹ (±10%)`, col, ic);
+      scoreItems.push({ label: 'Stop discipline', ok: stopPct >= 80, msg: stopPct < 80 ? `Only ${stopPct.toFixed(0)}% of losses taken within planned ₹ risk — exits are running past the stop` : '' });
+    }
+    if (partialPct !== null) {
+      const col = partialPct >= 70 ? 'var(--green)' : partialPct >= 40 ? 'var(--amber)' : 'var(--red)';
+      const ic = partialPct >= 70 ? '✓' : '⚠';
+      html += metric('Partial Execution', partialPct.toFixed(0) + '%', `of ${partialEligible.length} winners that reached +${_cfg.partialTrigger||10}% trigger`, col, ic);
+      scoreItems.push({ label: 'Partial execution', ok: partialPct >= 70, msg: partialPct < 40 ? `Only ${partialPct.toFixed(0)}% of eligible winners had a partial exit — you may be leaving profit protection on the table` : '' });
+    }
+    if (avgWinDays !== null && avgLossDays !== null) {
+      const ratio = avgLossDays > 0 ? avgWinDays / avgLossDays : 0;
+      const col = ratio >= 2 ? 'var(--green)' : ratio >= 1.2 ? 'var(--amber)' : 'var(--red)';
+      const ic = ratio >= 2 ? '✓' : '⚠';
+      html += metric('Hold Asymmetry', ratio.toFixed(1) + 'x', `Winners held ${avgWinDays.toFixed(0)}d avg · Losers cut in ${avgLossDays.toFixed(0)}d avg`, col, ic);
+      scoreItems.push({ label: 'Hold asymmetry', ok: ratio >= 1.5, msg: ratio < 1.2 ? `Winners held ${avgWinDays.toFixed(0)}d, losers held ${avgLossDays.toFixed(0)}d — you may be cutting winners too early or holding losers too long` : '' });
+    }
+    if (oversizedPct !== null) {
+      const col = oversizedPct < 10 ? 'var(--green)' : oversizedPct < 20 ? 'var(--amber)' : 'var(--red)';
+      const ic = oversizedPct < 10 ? '✓' : '⚠';
+      html += metric('Position Sizing', oversizedPct.toFixed(0) + '%', `of ${closed.length} trades were oversized vs risk tier ₹${Math.round(currentTierD).toLocaleString('en-IN')}`, col, ic);
+      scoreItems.push({ label: 'Position sizing', ok: oversizedPct < 10, msg: oversizedPct >= 20 ? `${oversizedPct.toFixed(0)}% of your trades were oversized — risking more than your tier allows accelerates drawdowns` : '' });
+    }
+    if (slipTrades.length > 0) {
+      const col = avgSlipRs < 500 ? 'var(--green)' : avgSlipRs < 1500 ? 'var(--amber)' : 'var(--red)';
+      const ic = avgSlipRs < 500 ? '✓' : '⚠';
+      html += metric('Avg Stop Overrun', '₹' + Math.round(avgSlipRs).toLocaleString('en-IN'), `across ${slipTrades.length} trades that ran past planned risk`, col, ic);
+    }
+
+    dsBody.innerHTML = html || '<div style="color:var(--text-muted);padding:8px">Not enough closed trade data yet.</div>';
+
+    const issues = scoreItems.filter(s => !s.ok);
+    if (dsVerdict) {
+      if (issues.length === 0) {
+        dsVerdict.innerHTML = '<span style="color:var(--green);font-weight:600">✓ Excellent discipline across all metrics.</span> Keep executing your rules — the math is on your side.';
+      } else {
+        dsVerdict.innerHTML = '<strong>Focus areas:</strong> ' + issues.map(i => `<span style="color:var(--amber)">${i.label}</span> — ${i.msg}`).join(' · ');
+      }
+    }
+  })();
 
   // Win rate by setup bar chart
   const setupWrEl = document.getElementById('chart-setup-wr');
