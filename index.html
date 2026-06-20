@@ -4684,7 +4684,7 @@ function initPerfCharts(closed, initialCapital, open) {
         series: [{ name: 'R-Expectancy', data: cohorts.map(c => c.rExp) }],
         xaxis: { ...baseOpts().xaxis, categories: cohorts.map(c => c.label) },
         yaxis: { labels: { style:{colors:c.text,fontSize:'11px'}, formatter: v => v.toFixed(2)+'R' } },
-        colors: cohorts.map(c => c.rExp > 0 ? c.green : c.red),
+        colors: cohorts.map(ch => ch.rExp > 0 ? c.green : c.red),
         plotOptions: { bar: { columnWidth: '60%', distributed: true, borderRadius: 4 } },
         legend: { show: false },
         dataLabels: { enabled: true, formatter: v => v.toFixed(2)+'R', style:{fontSize:'10px'} },
