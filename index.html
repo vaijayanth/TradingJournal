@@ -3076,61 +3076,67 @@ function renderTodayActions(open, cfg) {
     // 1. EXIT TRIGGERED — stop/7DL breach
     if (effPct <= 0) {
       const rules = [];
-      if (t.cmp && t.sevenDayLow && t.cmp <= t.sevenDayLow) rules.push(`7-Day Low breached (CMP ${fmtRs(t.cmp)} ≤ 7DL ${fmtRs(t.sevenDayLow)})`);
-      if (t.cmp && t.stopLoss && t.cmp <= t.stopLoss) rules.push(`Manual stop hit (CMP ${fmtRs(t.cmp)} ≤ Stop ${fmtRs(t.stopLoss)})`);
-      const reason = rules.join(' + ') || `Price at/below effective stop ${fmtRs(effStop)}`;
-      actions.push({ priority: 0, group: 'exit', stock: t.stock, pnlLabel, pnlColor, numHtml, sector: t.sector || '',
+      if (t.cmp && t.sevenDayLow && t.cmp <= t.sevenDayLow) rules.push('7DL breached');
+      if (t.cmp && t.stopLoss && t.cmp <= t.stopLoss) rules.push('Manual stop hit');
+      actions.push({ priority: 0, group: 'exit', stock: t.stock, sector: t.sector || '',
+        pnlLabel, pnlColor, effPctLabel: effPct.toFixed(1) + '%', cmp: t.cmp, effStop, age: t.age || '',
         verb: 'EXIT NOW', verbBg: 'rgba(239,68,68,0.2)', verbColor: 'var(--red)',
-        instruction: `🔴 ${reason}. Sell at market — no exceptions. Mechanical stop, no discretion.`,
-        instructionBorder: 'var(--red)' });
+        directive: 'Sell at market — no exceptions',
+        detail: (rules.join(' + ') || 'Price at/below effective stop') + '. Mechanical exit — no discretion.' });
     }
 
     // 2. BELOW 21 EMA on a profitable position
     if ((t.ema21 || '').trim().toLowerCase() === 'below' && plPct > 0) {
-      actions.push({ priority: 1, group: 'exit', stock: t.stock, pnlLabel, pnlColor, numHtml, sector: t.sector || '',
+      actions.push({ priority: 1, group: 'exit', stock: t.stock, sector: t.sector || '',
+        pnlLabel, pnlColor, effPctLabel: effPct.toFixed(1) + '%', cmp: t.cmp, effStop, age: t.age || '',
         verb: 'REVIEW EXIT', verbBg: 'rgba(239,68,68,0.15)', verbColor: 'var(--red)',
-        instruction: `📉 Price crossed below 21 EMA while profitable (+${plPct.toFixed(1)}%). Per strategy, consider exiting or tightening stop to protect gains. 21 EMA breach on a winner = momentum gone.`,
-        instructionBorder: 'var(--red)' });
+        directive: 'Exit or tighten stop today',
+        detail: `Below 21 EMA at +${plPct.toFixed(1)}%. Momentum gone — protect gains.` });
     }
 
     // 3. TAKE PARTIAL — at trigger, not yet taken
     if (plPct >= cfg.partialTrigger && t.partialTaken === 'N') {
-      actions.push({ priority: 2, group: 'profit', stock: t.stock, pnlLabel, pnlColor, numHtml, sector: t.sector || '',
+      actions.push({ priority: 2, group: 'profit', stock: t.stock, sector: t.sector || '',
+        pnlLabel, pnlColor, effPctLabel: effPct.toFixed(1) + '%', cmp: t.cmp, effStop, age: t.age || '',
         verb: 'TAKE PARTIAL', verbBg: 'rgba(52,199,89,0.2)', verbColor: 'var(--green)',
-        instruction: `🟢 Position up +${plPct.toFixed(1)}%, above your +${cfg.partialTrigger}% partial trigger. Sell 50% of qty today. Trail remainder on 7-Day Low ${t.sevenDayLow ? fmtRs(t.sevenDayLow) : '—'}.`,
-        instructionBorder: 'var(--green)' });
+        directive: 'Sell 50% qty now',
+        detail: `+${plPct.toFixed(1)}% ≥ +${cfg.partialTrigger}% trigger. Trail rest on 7DL ${t.sevenDayLow ? fmtRs(t.sevenDayLow) : '—'}.` });
     }
 
     // 4. MOVE STOP TO BREAKEVEN
     if (plPct >= cfg.beTrigger && t.stopLoss < t.entryPrice) {
-      actions.push({ priority: 3, group: 'profit', stock: t.stock, pnlLabel, pnlColor, numHtml, sector: t.sector || '',
-        verb: 'MOVE STOP → BE', verbBg: 'rgba(99,102,241,0.2)', verbColor: 'var(--accent)',
-        instruction: `🛡 Up +${plPct.toFixed(1)}%, stop at ${fmtRs(t.stopLoss)} is still below entry. Move col J to ${fmtRs(t.entryPrice)} to make this trade risk-free. Do it now — costs nothing.`,
-        instructionBorder: 'var(--accent)' });
+      actions.push({ priority: 3, group: 'profit', stock: t.stock, sector: t.sector || '',
+        pnlLabel, pnlColor, effPctLabel: effPct.toFixed(1) + '%', cmp: t.cmp, effStop, age: t.age || '',
+        verb: 'MOVE STOP→BE', verbBg: 'rgba(99,102,241,0.2)', verbColor: 'var(--accent)',
+        directive: `Set col J = ${t.entryPrice ? fmtRs(t.entryPrice) : 'entry'}`,
+        detail: `+${plPct.toFixed(1)}%, stop still at ${fmtRs(t.stopLoss)} (below entry). Move to breakeven — risk-free trade.` });
     }
 
     // 5. PROFIT AT RISK — HA Red on a winner
     if (plPct >= cfg.beTrigger && (t.haColour || '').trim().toLowerCase() === 'red' && !(plPct >= cfg.partialTrigger && t.partialTaken === 'N') && !(plPct >= cfg.beTrigger && t.stopLoss < t.entryPrice)) {
-      actions.push({ priority: 4, group: 'monitor', stock: t.stock, pnlLabel, pnlColor, numHtml, sector: t.sector || '',
+      actions.push({ priority: 4, group: 'monitor', stock: t.stock, sector: t.sector || '',
+        pnlLabel, pnlColor, effPctLabel: effPct.toFixed(1) + '%', cmp: t.cmp, effStop, age: t.age || '',
         verb: 'PROTECT GAINS', verbBg: 'rgba(245,158,11,0.2)', verbColor: 'var(--amber)',
-        instruction: `⚠ Healthy gain (+${plPct.toFixed(1)}%) but HA candle is Red — momentum fading. Stop is ${fmtRs(effStop)}. If HA stays red tomorrow, prepare to exit remaining position.`,
-        instructionBorder: 'var(--amber)' });
+        directive: 'Watch — tighten if HA stays red',
+        detail: `+${plPct.toFixed(1)}% but HA Red. Momentum fading — prepare exit if red tomorrow.` });
     }
 
     // 6. HA MOMENTUM SHIFT today
     if (String(t.haChanged || '').toUpperCase() === 'Y') {
-      actions.push({ priority: 5, group: 'monitor', stock: t.stock, pnlLabel, pnlColor, numHtml, sector: t.sector || '',
+      actions.push({ priority: 5, group: 'monitor', stock: t.stock, sector: t.sector || '',
+        pnlLabel, pnlColor, effPctLabel: effPct.toFixed(1) + '%', cmp: t.cmp, effStop, age: t.age || '',
         verb: 'HA SHIFT TODAY', verbBg: 'rgba(245,158,11,0.15)', verbColor: 'var(--amber)',
-        instruction: `🔄 Heikin-Ashi candle colour changed to ${t.haColour || '?'} today. Monitor closely — if Red, tighten stop. If Green, momentum resuming.`,
-        instructionBorder: 'var(--amber)' });
+        directive: `HA now ${t.haColour || '?'} — monitor`,
+        detail: `Colour flipped to ${t.haColour || '?'} today. If Red: tighten stop. If Green: momentum resuming.` });
     }
 
     // 7. NEAR STOP — within stop proximity %
     if (effPct > 0 && effPct <= cfg.stopProximity) {
-      actions.push({ priority: 6, group: 'monitor', stock: t.stock, pnlLabel, pnlColor, numHtml, sector: t.sector || '',
+      actions.push({ priority: 6, group: 'monitor', stock: t.stock, sector: t.sector || '',
+        pnlLabel, pnlColor, effPctLabel: effPct.toFixed(1) + '%', cmp: t.cmp, effStop, age: t.age || '',
         verb: 'NEAR STOP', verbBg: 'rgba(245,158,11,0.12)', verbColor: 'var(--amber)',
-        instruction: `🟡 Only ${effPct.toFixed(1)}% above effective stop ${fmtRs(effStop)}. Watch intraday — could trigger. No action until stop is actually hit.`,
-        instructionBorder: 'var(--amber)' });
+        directive: 'Watch intraday — no action yet',
+        detail: `${effPct.toFixed(1)}% above effective stop ${fmtRs(effStop)}. Hold plan — exit only when stop actually hits.` });
     }
   });
 
@@ -3172,37 +3178,52 @@ function renderTodayActions(open, cfg) {
     return;
   }
 
-  // Render section groups
+  // Single compact table — one row per action, group header rows between sections
   const groups = [
-    { key: 'exit',    label: 'Exit Actions',    icon: '🔴', color: 'var(--red)',   bg: 'var(--red-soft)',   desc: 'Must act today — mechanical stop rules fired' },
-    { key: 'profit',  label: 'Profit Actions',  icon: '⚡', color: 'var(--accent)', bg: 'rgba(99,102,241,0.12)', desc: 'Protect or lock in gains' },
-    { key: 'monitor', label: 'Monitor Closely', icon: '👁', color: 'var(--amber)', bg: 'var(--amber-soft)', desc: 'No immediate action — stay aware' },
+    { key: 'exit',    label: '🔴 Exit Actions',    color: 'var(--red)',   bg: 'var(--red-soft)',        desc: 'Must act today' },
+    { key: 'profit',  label: '⚡ Profit Actions',  color: 'var(--accent)', bg: 'rgba(99,102,241,0.1)', desc: 'Lock in or protect gains' },
+    { key: 'monitor', label: '👁 Monitor Closely', color: 'var(--amber)', bg: 'var(--amber-soft)',      desc: 'No action yet — stay alert' },
   ];
 
-  body.innerHTML = groups.map(g => {
+  const rows = groups.flatMap(g => {
     const items = actions.filter(a => a.group === g.key);
-    if (items.length === 0) return '';
-    return `
-      <div class="action-section">
-        <div class="action-section-header" style="background:${g.bg};color:${g.color}">
-          <span style="font-size:16px">${g.icon}</span>
-          <span>${g.label}</span>
-          <span style="font-size:11px;font-weight:400;color:${g.color};opacity:0.8;text-transform:none;letter-spacing:0">${g.desc}</span>
-          <span class="as-count">${items.length}</span>
-        </div>
-        ${items.map(a => `
-          <div class="action-card">
-            <div class="action-card-top">
-              <span class="action-verb" style="background:${a.verbBg};color:${a.verbColor}">${a.verb}</span>
-              <span class="action-stock">${a.stock}</span>
-              ${a.sector ? `<span style="font-size:10px;color:var(--text-muted);background:var(--surface2);padding:2px 7px;border-radius:10px">${a.sector}</span>` : ''}
-              <span class="action-pnl" style="color:${a.pnlColor}">${a.pnlLabel}</span>
-            </div>
-            <div class="action-numbers">${a.numHtml}</div>
-            <div class="action-instruction" style="border-left-color:${a.instructionBorder}">${a.instruction}</div>
-          </div>`).join('')}
-      </div>`;
-  }).join('');
+    if (!items.length) return [];
+    const hdr = `<tr style="background:${g.bg}">
+      <td colspan="7" style="padding:7px 10px;font-size:11px;font-weight:700;color:${g.color};letter-spacing:.04em;text-transform:uppercase">
+        ${g.label} <span style="font-weight:400;text-transform:none;letter-spacing:0;opacity:.75">— ${g.desc}</span>
+        <span style="float:right;background:rgba(0,0,0,.15);border-radius:10px;padding:1px 8px">${items.length}</span>
+      </td></tr>`;
+    const dataRows = items.map(a => {
+      const cmpStr = a.cmp ? fmtRs(a.cmp) : '—';
+      const stopStr = a.effStop ? fmtRs(a.effStop) : '—';
+      const sectorBadge = a.sector ? `<span style="font-size:10px;color:var(--text-muted);background:var(--surface2);padding:1px 6px;border-radius:8px;margin-left:5px">${a.sector}</span>` : '';
+      return `<tr style="cursor:default" title="${a.detail.replace(/"/g,'&quot;')}">
+        <td style="white-space:nowrap"><span style="font-size:10px;font-weight:800;letter-spacing:.06em;padding:2px 7px;border-radius:4px;background:${a.verbBg};color:${a.verbColor}">${a.verb}</span></td>
+        <td style="font-weight:700;white-space:nowrap">${a.stock}${sectorBadge}</td>
+        <td style="font-weight:700;color:${a.pnlColor};text-align:right;white-space:nowrap">${a.pnlLabel}</td>
+        <td style="text-align:right;white-space:nowrap">${cmpStr}</td>
+        <td style="text-align:right;white-space:nowrap">${stopStr}</td>
+        <td style="text-align:right;white-space:nowrap;color:${parseFloat(a.effPctLabel) <= 1 ? 'var(--red)' : parseFloat(a.effPctLabel) <= 2 ? 'var(--amber)' : 'var(--text-secondary)'}">${a.effPctLabel}</td>
+        <td style="color:${a.verbColor};font-size:11px">${a.directive}</td>
+      </tr>`;
+    });
+    return [hdr, ...dataRows];
+  });
+
+  body.innerHTML = `<div style="overflow-x:auto">
+    <table class="trades-table" style="width:100%;min-width:560px">
+      <thead><tr>
+        <th>Action</th><th>Stock</th>
+        <th style="text-align:right">P&amp;L%</th>
+        <th style="text-align:right">CMP</th>
+        <th style="text-align:right">Eff Stop</th>
+        <th style="text-align:right">% from Stop</th>
+        <th>What to do</th>
+      </tr></thead>
+      <tbody>${rows.join('')}</tbody>
+    </table>
+  </div>
+  <div style="font-size:11px;color:var(--text-muted);margin-top:8px;padding:0 4px">Hover any row for full detail · ${open.length} open positions · ${actions.length} actions</div>`;
 }
 
 // ── POSITIONS (REAL DATA) ─────────────────────────────
