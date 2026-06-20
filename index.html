@@ -179,6 +179,57 @@ details[open] > summary .toggle-hint::before { content: '▼ collapse'; }
 }
 /* ── ALERTS ── */
 .alerts-wrap { display: flex; flex-direction: column; gap: 8px; }
+
+/* ── TODAY'S ACTIONS TAB ── */
+.action-section { margin-bottom: 20px; }
+.action-section-header {
+  display: flex; align-items: center; gap: 10px;
+  padding: 10px 16px; border-radius: 8px 8px 0 0;
+  font-size: 12px; font-weight: 700; letter-spacing: .04em; text-transform: uppercase;
+}
+.action-section-header .as-count {
+  margin-left: auto; font-size: 13px; font-weight: 800;
+  background: rgba(0,0,0,0.2); border-radius: 20px; padding: 1px 9px;
+}
+.action-card {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-top: none;
+  padding: 14px 16px;
+  display: flex; flex-direction: column; gap: 6px;
+  transition: background 0.15s;
+  cursor: default;
+}
+.action-card:last-child { border-radius: 0 0 8px 8px; }
+.action-card:only-child { border-radius: 0 0 8px 8px; }
+.action-card-top { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+.action-verb {
+  font-size: 10px; font-weight: 800; letter-spacing: .08em; text-transform: uppercase;
+  padding: 3px 8px; border-radius: 4px; flex-shrink: 0;
+}
+.action-stock { font-size: 16px; font-weight: 800; color: var(--text-primary); flex: 1; }
+.action-pnl { font-size: 14px; font-weight: 700; margin-left: auto; flex-shrink: 0; }
+.action-numbers { display: flex; gap: 16px; flex-wrap: wrap; font-size: 12px; color: var(--text-secondary); }
+.action-numbers span { white-space: nowrap; }
+.action-instruction {
+  font-size: 12px; color: var(--text-primary);
+  background: var(--surface2); border-radius: 6px;
+  padding: 8px 12px; border-left: 3px solid;
+  margin-top: 2px; line-height: 1.5;
+}
+.today-empty {
+  text-align: center; padding: 48px 20px;
+  color: var(--text-muted); font-size: 14px;
+}
+.today-summary-bar {
+  display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 20px;
+  padding: 12px 16px; background: var(--surface); border: 1px solid var(--border);
+  border-radius: 10px; align-items: center;
+}
+.today-summary-pill {
+  font-size: 12px; font-weight: 600; padding: 4px 12px;
+  border-radius: 20px; display: flex; align-items: center; gap: 5px;
+}
 .alert-banner {
   display: flex; align-items: center; gap: 12px;
   padding: 12px 16px; border-radius: var(--radius-sm);
@@ -586,6 +637,10 @@ tbody tr:hover { filter: brightness(0.97); }
   .fno-tag { font-size: 10px; }
   /* Streak blocks */
   .streak-block { width: 20px; height: 24px; font-size: 8px; }
+  /* Today's actions — stack numbers on mobile */
+  .action-numbers { gap: 8px; }
+  .action-stock { font-size: 14px; }
+  .today-summary-bar { gap: 6px; }
   /* Sector analysis table — hide Avg Win% and Avg Loss% cols on mobile to fit 390px */
   .sector-tbl-col-hide { display: none; }
   /* Positions table Sector col — shrink font slightly */
@@ -661,6 +716,7 @@ tbody tr:hover { filter: brightness(0.97); }
     <button class="nav-tab" onclick="showPage('performance', this)">Performance</button>
     <button class="nav-tab" onclick="showPage('analysis', this)">Analysis</button>
     <button class="nav-tab" onclick="showPage('positions', this)">Positions</button>
+    <button class="nav-tab" id="nav-today" onclick="showPage('today', this)">⚡ Today</button>
     <button class="nav-tab" onclick="showPage('config', this)">Config</button>
   </div>
   <div class="nav-right">
@@ -928,9 +984,33 @@ tbody tr:hover { filter: brightness(0.97); }
     </div>
   </div>
 
-  <div class="section-title" style="margin-top:20px">Behavioural Alerts</div>
-  <div class="alerts-wrap" id="alerts-wrap">
-    <div style="padding:16px;text-align:center;color:var(--text-muted);font-size:13px">Loading alerts…</div>
+  <!-- Today's Actions summary strip — links to Today tab -->
+  <div id="today-dash-strip" style="margin-top:20px;padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;flex-wrap:wrap;gap:10px">
+    <span style="font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em">Today's Actions</span>
+    <div id="today-dash-pills" style="display:flex;gap:8px;flex-wrap:wrap;flex:1"></div>
+    <button class="btn-secondary" style="font-size:11px;padding:5px 12px;flex-shrink:0" onclick="showPage('today',document.getElementById('nav-today'))">Open Action Board →</button>
+  </div>
+  <div class="alerts-wrap" id="alerts-wrap" style="display:none"></div>
+</div>
+
+<!-- ════ TODAY'S ACTIONS ════ -->
+<div id="page-today" class="page">
+  <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:20px">
+    <div>
+      <div style="font-size:16px;font-weight:800">⚡ Today's Action Board</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:2px" id="today-subtitle">Review before market open · take action · move on</div>
+    </div>
+    <button class="btn-secondary" style="font-size:12px" onclick="window._strategy==='fno'?refreshFnoData():refreshData()">↻ Refresh</button>
+  </div>
+
+  <!-- Summary bar -->
+  <div class="today-summary-bar" id="today-summary-bar">
+    <span style="font-size:12px;color:var(--text-muted)">Loading…</span>
+  </div>
+
+  <!-- Action sections rendered by JS -->
+  <div id="today-actions-body">
+    <div class="today-empty">↻ Loading positions…</div>
   </div>
 </div>
 
@@ -2314,6 +2394,7 @@ async function refreshData() {
   window._data = data;
   const cfg = loadConfig();
   renderDashboard(data, cfg);
+  renderTodayActions(data.open, cfg);
   renderPositionsReal(data.open, cfg);
   renderPerfStats(data.closed, data.open, data.portfolioValue, data.initialCapital);
   // Reset period filter to All Time on refresh — data is full set
@@ -2963,6 +3044,167 @@ function renderDashboard(data, cfg) {
   }
 }
 
+// ── TODAY'S ACTION BOARD ─────────────────────────────
+function renderTodayActions(open, cfg) {
+  const body = document.getElementById('today-actions-body');
+  const summaryBar = document.getElementById('today-summary-bar');
+  const subtitle = document.getElementById('today-subtitle');
+  const dashPills = document.getElementById('today-dash-pills');
+  if (!body) return;
+
+  const fmtRs = v => '₹' + Math.round(v).toLocaleString('en-IN');
+  const today = new Date();
+  const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
+  const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  if (subtitle) subtitle.textContent = `${dayNames[today.getDay()]} ${today.getDate()} ${monthNames[today.getMonth()]} · Review before market open · ${open.length} open positions`;
+
+  // Build action list with priority group for each trade
+  const actions = [];
+  open.forEach(t => {
+    const effStop = Math.max(t.stopLoss || 0, t.sevenDayLow || 0);
+    const effPct = (t.cmp && effStop) ? ((t.cmp - effStop) / t.cmp * 100) : (t.pctFromStop || 0);
+    const plPct = t.plPct || 0;
+    const pnlLabel = (plPct >= 0 ? '+' : '') + plPct.toFixed(1) + '%';
+    const pnlColor = plPct >= 0 ? 'var(--green)' : 'var(--red)';
+    const nums = [];
+    if (t.entryPrice) nums.push(`Entry: ${fmtRs(t.entryPrice)}`);
+    if (t.cmp) nums.push(`CMP: ${fmtRs(t.cmp)}`);
+    if (effStop) nums.push(`Eff Stop: ${fmtRs(effStop)}`);
+    if (t.age) nums.push(`Age: ${t.age}d`);
+    const numHtml = nums.map(n => `<span>${n}</span>`).join('');
+
+    // 1. EXIT TRIGGERED — stop/7DL breach
+    if (effPct <= 0) {
+      const rules = [];
+      if (t.cmp && t.sevenDayLow && t.cmp <= t.sevenDayLow) rules.push(`7-Day Low breached (CMP ${fmtRs(t.cmp)} ≤ 7DL ${fmtRs(t.sevenDayLow)})`);
+      if (t.cmp && t.stopLoss && t.cmp <= t.stopLoss) rules.push(`Manual stop hit (CMP ${fmtRs(t.cmp)} ≤ Stop ${fmtRs(t.stopLoss)})`);
+      const reason = rules.join(' + ') || `Price at/below effective stop ${fmtRs(effStop)}`;
+      actions.push({ priority: 0, group: 'exit', stock: t.stock, pnlLabel, pnlColor, numHtml, sector: t.sector || '',
+        verb: 'EXIT NOW', verbBg: 'rgba(239,68,68,0.2)', verbColor: 'var(--red)',
+        instruction: `🔴 ${reason}. Sell at market — no exceptions. Mechanical stop, no discretion.`,
+        instructionBorder: 'var(--red)' });
+    }
+
+    // 2. BELOW 21 EMA on a profitable position
+    if ((t.ema21 || '').trim().toLowerCase() === 'below' && plPct > 0) {
+      actions.push({ priority: 1, group: 'exit', stock: t.stock, pnlLabel, pnlColor, numHtml, sector: t.sector || '',
+        verb: 'REVIEW EXIT', verbBg: 'rgba(239,68,68,0.15)', verbColor: 'var(--red)',
+        instruction: `📉 Price crossed below 21 EMA while profitable (+${plPct.toFixed(1)}%). Per strategy, consider exiting or tightening stop to protect gains. 21 EMA breach on a winner = momentum gone.`,
+        instructionBorder: 'var(--red)' });
+    }
+
+    // 3. TAKE PARTIAL — at trigger, not yet taken
+    if (plPct >= cfg.partialTrigger && t.partialTaken === 'N') {
+      actions.push({ priority: 2, group: 'profit', stock: t.stock, pnlLabel, pnlColor, numHtml, sector: t.sector || '',
+        verb: 'TAKE PARTIAL', verbBg: 'rgba(52,199,89,0.2)', verbColor: 'var(--green)',
+        instruction: `🟢 Position up +${plPct.toFixed(1)}%, above your +${cfg.partialTrigger}% partial trigger. Sell 50% of qty today. Trail remainder on 7-Day Low ${t.sevenDayLow ? fmtRs(t.sevenDayLow) : '—'}.`,
+        instructionBorder: 'var(--green)' });
+    }
+
+    // 4. MOVE STOP TO BREAKEVEN
+    if (plPct >= cfg.beTrigger && t.stopLoss < t.entryPrice) {
+      actions.push({ priority: 3, group: 'profit', stock: t.stock, pnlLabel, pnlColor, numHtml, sector: t.sector || '',
+        verb: 'MOVE STOP → BE', verbBg: 'rgba(99,102,241,0.2)', verbColor: 'var(--accent)',
+        instruction: `🛡 Up +${plPct.toFixed(1)}%, stop at ${fmtRs(t.stopLoss)} is still below entry. Move col J to ${fmtRs(t.entryPrice)} to make this trade risk-free. Do it now — costs nothing.`,
+        instructionBorder: 'var(--accent)' });
+    }
+
+    // 5. PROFIT AT RISK — HA Red on a winner
+    if (plPct >= cfg.beTrigger && (t.haColour || '').trim().toLowerCase() === 'red' && !(plPct >= cfg.partialTrigger && t.partialTaken === 'N') && !(plPct >= cfg.beTrigger && t.stopLoss < t.entryPrice)) {
+      actions.push({ priority: 4, group: 'monitor', stock: t.stock, pnlLabel, pnlColor, numHtml, sector: t.sector || '',
+        verb: 'PROTECT GAINS', verbBg: 'rgba(245,158,11,0.2)', verbColor: 'var(--amber)',
+        instruction: `⚠ Healthy gain (+${plPct.toFixed(1)}%) but HA candle is Red — momentum fading. Stop is ${fmtRs(effStop)}. If HA stays red tomorrow, prepare to exit remaining position.`,
+        instructionBorder: 'var(--amber)' });
+    }
+
+    // 6. HA MOMENTUM SHIFT today
+    if (String(t.haChanged || '').toUpperCase() === 'Y') {
+      actions.push({ priority: 5, group: 'monitor', stock: t.stock, pnlLabel, pnlColor, numHtml, sector: t.sector || '',
+        verb: 'HA SHIFT TODAY', verbBg: 'rgba(245,158,11,0.15)', verbColor: 'var(--amber)',
+        instruction: `🔄 Heikin-Ashi candle colour changed to ${t.haColour || '?'} today. Monitor closely — if Red, tighten stop. If Green, momentum resuming.`,
+        instructionBorder: 'var(--amber)' });
+    }
+
+    // 7. NEAR STOP — within stop proximity %
+    if (effPct > 0 && effPct <= cfg.stopProximity) {
+      actions.push({ priority: 6, group: 'monitor', stock: t.stock, pnlLabel, pnlColor, numHtml, sector: t.sector || '',
+        verb: 'NEAR STOP', verbBg: 'rgba(245,158,11,0.12)', verbColor: 'var(--amber)',
+        instruction: `🟡 Only ${effPct.toFixed(1)}% above effective stop ${fmtRs(effStop)}. Watch intraday — could trigger. No action until stop is actually hit.`,
+        instructionBorder: 'var(--amber)' });
+    }
+  });
+
+  // Sort by priority then by pnlLabel (worst P&L first within same priority)
+  actions.sort((a, b) => a.priority - b.priority);
+
+  // Update dashboard summary pills
+  const exitCount = actions.filter(a => a.group === 'exit').length;
+  const profitCount = actions.filter(a => a.group === 'profit').length;
+  const monitorCount = actions.filter(a => a.group === 'monitor').length;
+  const pillsHtml = [
+    exitCount > 0 ? `<span class="today-summary-pill" style="background:var(--red-soft);color:var(--red)">🔴 ${exitCount} exit action${exitCount > 1 ? 's' : ''}</span>` : '',
+    profitCount > 0 ? `<span class="today-summary-pill" style="background:rgba(99,102,241,0.12);color:var(--accent)">⚡ ${profitCount} profit action${profitCount > 1 ? 's' : ''}</span>` : '',
+    monitorCount > 0 ? `<span class="today-summary-pill" style="background:var(--amber-soft);color:var(--amber)">👁 ${monitorCount} to monitor</span>` : '',
+    actions.length === 0 ? `<span class="today-summary-pill" style="background:var(--green-soft);color:var(--green)">✓ No actions needed</span>` : '',
+  ].join('');
+  if (dashPills) dashPills.innerHTML = pillsHtml;
+
+  // Summary bar in Today tab
+  if (summaryBar) {
+    if (actions.length === 0) {
+      summaryBar.innerHTML = '<span style="color:var(--green);font-weight:700;font-size:13px">✓ All clear — no actions required today.</span> <span style="color:var(--text-muted);font-size:12px">All ' + open.length + ' positions within parameters.</span>';
+    } else {
+      summaryBar.innerHTML = [
+        exitCount > 0 ? `<span class="today-summary-pill" style="background:var(--red-soft);color:var(--red);font-size:13px">🔴 ${exitCount} EXIT</span>` : '',
+        profitCount > 0 ? `<span class="today-summary-pill" style="background:rgba(99,102,241,0.12);color:var(--accent);font-size:13px">⚡ ${profitCount} PROFIT ACTION</span>` : '',
+        monitorCount > 0 ? `<span class="today-summary-pill" style="background:var(--amber-soft);color:var(--amber);font-size:13px">👁 ${monitorCount} MONITOR</span>` : '',
+        `<span style="margin-left:auto;font-size:11px;color:var(--text-muted)">${open.length} open positions · ${actions.length} total actions</span>`,
+      ].join('');
+    }
+  }
+
+  if (actions.length === 0) {
+    body.innerHTML = `<div class="today-empty">
+      <div style="font-size:32px;margin-bottom:12px">✅</div>
+      <div style="font-size:16px;font-weight:700;color:var(--green);margin-bottom:8px">All clear for today</div>
+      <div style="font-size:13px">All ${open.length} open positions are within parameters.<br>No stops triggered · No actions required · Hold your plan.</div>
+    </div>`;
+    return;
+  }
+
+  // Render section groups
+  const groups = [
+    { key: 'exit',    label: 'Exit Actions',    icon: '🔴', color: 'var(--red)',   bg: 'var(--red-soft)',   desc: 'Must act today — mechanical stop rules fired' },
+    { key: 'profit',  label: 'Profit Actions',  icon: '⚡', color: 'var(--accent)', bg: 'rgba(99,102,241,0.12)', desc: 'Protect or lock in gains' },
+    { key: 'monitor', label: 'Monitor Closely', icon: '👁', color: 'var(--amber)', bg: 'var(--amber-soft)', desc: 'No immediate action — stay aware' },
+  ];
+
+  body.innerHTML = groups.map(g => {
+    const items = actions.filter(a => a.group === g.key);
+    if (items.length === 0) return '';
+    return `
+      <div class="action-section">
+        <div class="action-section-header" style="background:${g.bg};color:${g.color}">
+          <span style="font-size:16px">${g.icon}</span>
+          <span>${g.label}</span>
+          <span style="font-size:11px;font-weight:400;color:${g.color};opacity:0.8;text-transform:none;letter-spacing:0">${g.desc}</span>
+          <span class="as-count">${items.length}</span>
+        </div>
+        ${items.map(a => `
+          <div class="action-card">
+            <div class="action-card-top">
+              <span class="action-verb" style="background:${a.verbBg};color:${a.verbColor}">${a.verb}</span>
+              <span class="action-stock">${a.stock}</span>
+              ${a.sector ? `<span style="font-size:10px;color:var(--text-muted);background:var(--surface2);padding:2px 7px;border-radius:10px">${a.sector}</span>` : ''}
+              <span class="action-pnl" style="color:${a.pnlColor}">${a.pnlLabel}</span>
+            </div>
+            <div class="action-numbers">${a.numHtml}</div>
+            <div class="action-instruction" style="border-left-color:${a.instructionBorder}">${a.instruction}</div>
+          </div>`).join('')}
+      </div>`;
+  }).join('');
+}
+
 // ── POSITIONS (REAL DATA) ─────────────────────────────
 function renderPositionsReal(open, cfg) {
   const tbody = document.getElementById('positions-tbody');
@@ -3570,6 +3812,10 @@ function showPage(id, btn) {
     const d = window._data;
     initAnalysisCharts(d ? d.open : [], d ? d.closed : []);
     window._analysisChartsInit = true;
+  }
+  if (id === 'today') {
+    const d = window._data;
+    if (d) renderTodayActions(d.open, loadConfig());
   }
 }
 
