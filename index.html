@@ -1075,8 +1075,8 @@ tbody tr:hover { filter: brightness(0.97); }
       <div id="insight-distribution" class="chart-insight"></div>
     </div>
     <div class="card">
-      <div class="chart-title">Win / Loss Streak</div>
-      <div class="chart-sub">Trade sequence · momentum strategy: losses close fast (visible here), winners run open (not shown) — don't over-read losing streaks</div>
+      <div class="chart-title">Entry Date Correctness Streak</div>
+      <div class="chart-sub">Each tile = one entry date · green if net P&L of all trades entered that day is positive (open MTM + closed P&L) · red if negative · measures whether your decision to enter was right</div>
       <div id="streak-container" style="padding-top:8px">
         <div class="streak-wrap" id="streak-blocks"></div>
         <div class="streak-legend" style="margin-top:10px">
@@ -2103,7 +2103,7 @@ async function refreshData() {
   if (_perfLabel) _perfLabel.textContent = `Showing: All Time · ${data.closed.length} closed trades`;
   renderClosedTradesReal(data.closed);
   renderCalendarReal(data.closed);
-  renderStreakReal(data.closed);
+  renderStreakReal(data.closed, data.open);
   if (window._perfChartsInit) { perfCharts.forEach(c => c.destroy()); perfCharts = []; initPerfCharts(data.closed, data.initialCapital, data.open); }
   if (window._analysisChartsInit) { analysisCharts.forEach(c => c.destroy()); analysisCharts = []; initAnalysisCharts(data.open, data.closed); }
   const now = new Date();
@@ -3311,20 +3311,61 @@ function filterByAlert(type) {
 }
 
 // ── STREAK (REAL) ────────────────────────────────────
-function renderStreakReal(closed) {
-  const sorted = [...closed].filter(t => t.closeDate).sort((a, b) => parseDate(a.closeDate) - parseDate(b.closeDate));
-  const seq = sorted.map(t => t.finalPlPct >= 0 ? 'W' : 'L');
+// Groups by ENTRY DATE. Net P&L per day = sum(finalPl for closed) + sum(notionalPl for open).
+// Green day = net positive (your entries that day are working). Red = net negative.
+// This measures entry correctness, not close-date sequence.
+function renderStreakReal(closed, open) {
+  const allTrades = [...(closed||[]), ...(open||[])].filter(t => t.openDate);
+
+  // Group by entry date string (normalise to yyyy-mm-dd key)
+  const dayMap = {};
+  allTrades.forEach(t => {
+    const d = parseDate(t.openDate);
+    if (isNaN(d)) return;
+    const key = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+    if (!dayMap[key]) dayMap[key] = { pl: 0, trades: 0, openCount: 0 };
+    const pl = t.closeDate ? (t.finalPl || 0) : (t.notionalPl || 0);
+    dayMap[key].pl += pl;
+    dayMap[key].trades++;
+    if (!t.closeDate) dayMap[key].openCount++;
+  });
+
+  const days = Object.keys(dayMap).sort();
+  const seq = days.map(k => dayMap[k].pl >= 0 ? 'W' : 'L');
+
   const container = document.getElementById('streak-blocks');
-  if (container) container.innerHTML = seq.map(s => `<div class="streak-block ${s.toLowerCase()}" title="${s === 'W' ? 'Win' : 'Loss'}">${s}</div>`).join('');
+  if (container) {
+    container.innerHTML = days.map((k, i) => {
+      const s = seq[i];
+      const d = dayMap[k];
+      const sign = d.pl >= 0 ? '+' : '';
+      const plFmt = sign + '₹' + Math.round(Math.abs(d.pl)).toLocaleString('en-IN');
+      const openNote = d.openCount > 0 ? ` (${d.openCount} open)` : '';
+      const label = k.slice(5).replace('-', '/'); // MM/DD
+      return `<div class="streak-block ${s.toLowerCase()}" title="${label} · ${d.trades} trade${d.trades!==1?'s':''} · Net ${plFmt}${openNote}">${s}</div>`;
+    }).join('');
+  }
+
+  // Streak stats
   let longestWin = 0, longestLoss = 0, tmp = seq.length > 0 ? 1 : 0;
-  for (let i = 1; i < seq.length; i++) { if (seq[i] === seq[i-1]) tmp++; else tmp = 1; if (seq[i] === 'W' && tmp > longestWin) longestWin = tmp; if (seq[i] === 'L' && tmp > longestLoss) longestLoss = tmp; }
-  if (seq.length > 0) { if (seq[0] === 'W' && 1 > longestWin) longestWin = 1; if (seq[0] === 'L' && 1 > longestLoss) longestLoss = 1; }
-  let curRun = 0, runType = seq.length > 0 ? seq[seq.length - 1] : '';
+  for (let i = 1; i < seq.length; i++) {
+    if (seq[i] === seq[i-1]) tmp++; else tmp = 1;
+    if (seq[i] === 'W' && tmp > longestWin) longestWin = tmp;
+    if (seq[i] === 'L' && tmp > longestLoss) longestLoss = tmp;
+  }
+  if (seq.length > 0) {
+    if (seq[0] === 'W') longestWin = Math.max(longestWin, 1);
+    if (seq[0] === 'L') longestLoss = Math.max(longestLoss, 1);
+  }
+  let curRun = 0, runType = seq.length > 0 ? seq[seq.length-1] : '';
   for (let i = seq.length - 1; i >= 0; i--) { if (seq[i] === runType) curRun++; else break; }
+
   const streakInfo = document.getElementById('streak-info');
   if (streakInfo && seq.length > 0) {
     const col = runType === 'W' ? 'var(--green)' : 'var(--red)';
-    streakInfo.innerHTML = `Current streak: <strong style="color:${col}">${curRun}${runType}</strong> &nbsp;|&nbsp; Longest win streak: <strong>${longestWin}W</strong> &nbsp;|&nbsp; Longest loss streak: <strong style="color:var(--red)">${longestLoss}L</strong>`;
+    const greenDays = seq.filter(s => s === 'W').length;
+    const pct = Math.round(greenDays / seq.length * 100);
+    streakInfo.innerHTML = `Current streak: <strong style="color:${col}">${curRun}${runType}</strong> &nbsp;|&nbsp; Entry success rate: <strong>${pct}%</strong> (${greenDays}/${seq.length} days) &nbsp;|&nbsp; Best: <strong>${longestWin}W</strong> &nbsp;|&nbsp; Worst: <strong style="color:var(--red)">${longestLoss}L</strong>`;
   }
 }
 
@@ -4157,23 +4198,30 @@ function initPerfCharts(closed, initialCapital, open) {
     ins('insight-distribution','green',`✓ Loss discipline solid — no runaway losses. ${rightTailPct.toFixed(0)}% of winners exceed +10%, avg win ${fmtPct(avgWin2)} vs avg loss −${avgLoss2.toFixed(1)}%.<br>→ <strong>Keep doing:</strong> This asymmetry is the edge. Protect it by never moving stops wider on losers.`);
   }
 
-  // 3. Streak — closed trades only; momentum strategy bias: losses close fast, winners stay open
-  let maxConsecLoss = 0, curLoss = 0, curConsecLoss = 0;
-  sorted.forEach(t => { if (t.finalPlPct < 0) { curLoss++; maxConsecLoss = Math.max(maxConsecLoss, curLoss); } else curLoss = 0; });
-  // Current streak
-  for (let i = sorted.length - 1; i >= 0; i--) { if (sorted[i].finalPlPct < 0) curConsecLoss++; else break; }
-  // Open positions in profit = notional wins not visible in streak chart
-  const openWinners = open.filter(t => (t.notionalPl || 0) > 0);
-  const openWinnersNote = openWinners.length > 0
-    ? ` Meanwhile <strong>${openWinners.length} open position${openWinners.length > 1 ? 's are' : ' is'} currently in profit</strong> (unrealised) — your live wins, not shown in the streak chart.`
-    : '';
-  const strategyNote = `<br><span style="opacity:0.7;font-size:11px">⚠ Closed-trade bias: losses close fast, winners stay open longer — this chart understates your real win rate.${openWinners.length > 0 ? ` ${openWinners.length} open winner${openWinners.length>1?'s':''} not counted.` : ''}</span>`;
+  // 3. Streak — by ENTRY DATE (open+closed combined net P&L per day)
+  const allForStreak = [...closed, ...open].filter(t => t.openDate);
+  const dayMapStreak = {};
+  allForStreak.forEach(t => {
+    const d = parseDate(t.openDate); if (isNaN(d)) return;
+    const key = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0') + '-' + String(d.getDate()).padStart(2,'0');
+    if (!dayMapStreak[key]) dayMapStreak[key] = 0;
+    dayMapStreak[key] += t.closeDate ? (t.finalPl||0) : (t.notionalPl||0);
+  });
+  const daySeq = Object.keys(dayMapStreak).sort().map(k => dayMapStreak[k] >= 0 ? 'W' : 'L');
+  let maxConsecLoss = 0, curLoss = 0, maxConsecWin = 0, curWin = 0, curConsecLoss = 0;
+  daySeq.forEach(s => {
+    if (s === 'L') { curLoss++; maxConsecLoss = Math.max(maxConsecLoss, curLoss); curWin = 0; }
+    else { curWin++; maxConsecWin = Math.max(maxConsecWin, curWin); curLoss = 0; }
+  });
+  for (let i = daySeq.length - 1; i >= 0; i--) { if (daySeq[i] === 'L') curConsecLoss++; else break; }
+  const greenDays = daySeq.filter(s => s === 'W').length;
+  const entrySuccessRate = daySeq.length > 0 ? Math.round(greenDays / daySeq.length * 100) : 0;
   if (maxConsecLoss >= 5) {
-    ins('insight-streak','amber',`⚡ <strong>${maxConsecLoss} consecutive closed losses</strong> at peak — normal in momentum where stops are taken fast. Current run: ${curConsecLoss} losses.${openWinnersNote}<br>→ <strong>Action:</strong> Check if loss cluster was one month (regime change) or spread out (random). After 3 consecutive losses, reduce next size by 50%.${strategyNote}`);
+    ins('insight-streak','amber',`⚡ <strong>${maxConsecLoss} consecutive red entry days</strong> at worst — days where net P&L of all entries was negative. Current red run: ${curConsecLoss} day${curConsecLoss!==1?'s':''}. Entry success rate: ${entrySuccessRate}% of days.<br>→ <strong>Action:</strong> If red days cluster in one month it's a regime issue (market choppy). If spread out, it's random noise. After 3+ red days in a row, pause and review setup quality before next entry.`);
   } else if (maxConsecLoss >= 3) {
-    ins('insight-streak','green',`✓ Max ${maxConsecLoss} consecutive closed losses — acceptable for a cut-fast strategy. Current run: ${curConsecLoss}.${openWinnersNote}<br>→ <strong>Keep doing:</strong> Loss clusters in momentum happen in choppy markets. Ensure no streak loss exceeded 1.5× planned risk.${strategyNote}`);
+    ins('insight-streak','green',`✓ Max ${maxConsecLoss} consecutive red entry days — good entry discipline. Entry success rate: ${entrySuccessRate}% (${greenDays}/${daySeq.length} entry days net positive).<br>→ <strong>Keep doing:</strong> Net positive entry days mean your picks are working on balance. Track if red-day clusters align with choppy market weeks.`);
   } else {
-    ins('insight-streak','green',`✓ Max ${maxConsecLoss} consecutive closed losses — excellent streak control.${openWinnersNote}<br>→ <strong>Keep doing:</strong> Only take A+ setups. A smaller trade list with better quality beats trading everything.${strategyNote}`);
+    ins('insight-streak','green',`✓ Max ${maxConsecLoss} consecutive red entry days — excellent entry quality. ${entrySuccessRate}% of your entry days are net positive.<br>→ <strong>Keep doing:</strong> High entry day success rate means you're picking the right days and right stocks. Maintain selectivity.`);
   }
 
   // 4. R-Multiple Distribution
