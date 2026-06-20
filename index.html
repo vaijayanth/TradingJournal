@@ -586,6 +586,10 @@ tbody tr:hover { filter: brightness(0.97); }
   .fno-tag { font-size: 10px; }
   /* Streak blocks */
   .streak-block { width: 20px; height: 24px; font-size: 8px; }
+  /* Sector analysis table — hide Avg Win% and Avg Loss% cols on mobile to fit 390px */
+  .sector-tbl-col-hide { display: none; }
+  /* Positions table Sector col — shrink font slightly */
+  #positions-table td:nth-child(9), #positions-table th:nth-child(9) { font-size: 10px; max-width: 60px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 }
 /* Extra-small phones (320px) */
 @media (max-width: 390px) {
@@ -2828,9 +2832,9 @@ function renderDashboard(data, cfg) {
         const mtmSign = v.mtm >= 0 ? '+₹' : '-₹';
         const mtmFmt = mtmSign + Math.abs(Math.round(v.mtm)).toLocaleString('en-IN');
         return `<div>
-          <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px">
-            <span style="font-weight:600">${s}</span>
-            <span style="color:var(--text-muted)">${v.count} pos · ${pct}% · MTM ${mtmFmt}</span>
+          <div style="display:flex;justify-content:space-between;font-size:11px;margin-bottom:3px;gap:6px;flex-wrap:wrap">
+            <span style="font-weight:600;flex-shrink:0">${s}</span>
+            <span style="color:var(--text-muted);text-align:right">${v.count} pos · ${pct}% · MTM ${mtmFmt}</span>
           </div>
           <div style="height:5px;background:var(--surface2);border-radius:3px">
             <div style="width:${pct}%;height:100%;background:${barColor};border-radius:3px;transition:width 0.4s"></div>
@@ -5663,8 +5667,8 @@ function initAnalysisCharts(open, closed) {
           <th style="padding:6px 8px;text-align:right">WR</th>
           <th style="padding:6px 8px;text-align:right">Avg P&L%</th>
           <th style="padding:6px 8px;text-align:right">Total P&L ₹</th>
-          <th style="padding:6px 8px;text-align:right">Avg Win%</th>
-          <th style="padding:6px 8px;text-align:right">Avg Loss%</th>
+          <th style="padding:6px 8px;text-align:right" class="sector-tbl-col-hide">Avg Win%</th>
+          <th style="padding:6px 8px;text-align:right" class="sector-tbl-col-hide">Avg Loss%</th>
         </tr></thead>
         <tbody>${sectors.map(s => {
           const st = calcSec(sMap[s]);
@@ -5679,8 +5683,8 @@ function initAnalysisCharts(open, closed) {
             <td style="padding:8px;text-align:right;color:${wrColor};font-weight:600">${st.wr.toFixed(0)}%</td>
             <td style="padding:8px;text-align:right;color:${plColor}">${(st.avgPl >= 0 ? '+' : '') + st.avgPl.toFixed(1)}%</td>
             <td style="padding:8px;text-align:right;color:${totColor};font-weight:600">${st.totalPl >= 0 ? '+' : ''}₹${Math.abs(Math.round(st.totalPl)).toLocaleString('en-IN')}</td>
-            <td style="padding:8px;text-align:right;color:var(--green)">${st.avgWin > 0 ? '+' + st.avgWin.toFixed(1) + '%' : '—'}</td>
-            <td style="padding:8px;text-align:right;color:var(--red)">${st.avgLoss < 0 ? st.avgLoss.toFixed(1) + '%' : '—'}</td>
+            <td style="padding:8px;text-align:right;color:var(--green)" class="sector-tbl-col-hide">${st.avgWin > 0 ? '+' + st.avgWin.toFixed(1) + '%' : '—'}</td>
+            <td style="padding:8px;text-align:right;color:var(--red)" class="sector-tbl-col-hide">${st.avgLoss < 0 ? st.avgLoss.toFixed(1) + '%' : '—'}</td>
           </tr>`;
         }).join('')}</tbody>
       </table>`;
