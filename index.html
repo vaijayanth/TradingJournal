@@ -1232,9 +1232,15 @@ tbody tr:hover { filter: brightness(0.97); }
       <div style="font-size:22px;font-weight:700;margin-top:6px" id="proj-velocity-rate">—</div>
       <div class="stat-sub" id="proj-velocity-sub">trades / month (recent)</div>
       <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
-        <div style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:4px">PROJECTED 12-MONTH P&L</div>
+        <div style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:4px">PROJECTED 12-MONTH P&L @ CURRENT RISK</div>
         <div style="font-size:18px;font-weight:700" id="proj-annual-pl">—</div>
         <div class="stat-sub" id="proj-annual-sub">at current edge per trade</div>
+      </div>
+      <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
+        <div style="font-size:11px;color:var(--amber);font-weight:600;margin-bottom:4px">⚡ IF TRADING AT FULL 0.8% RISK CAP</div>
+        <div style="font-size:18px;font-weight:700;color:var(--amber)" id="proj-full-risk-pl">—</div>
+        <div class="stat-sub" id="proj-full-risk-sub">same edge, scaled to max position size</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:4px" id="proj-full-risk-note">—</div>
       </div>
     </div>
     <div class="card card-sm" id="proj-partial-card">
@@ -5773,6 +5779,22 @@ function renderProjections(open, closed) {
   set('proj-annual-pl', fmtRs(projAnnual));
   setCol('proj-annual-pl', projAnnual >= 0 ? 'var(--green)' : 'var(--red)');
   set('proj-annual-sub', `${effectiveRate} trades/mo × ₹${Math.round(Math.abs(avgCombinedRsPerTrade)).toLocaleString('en-IN')} avg edge = annual run rate`);
+
+  // ── Full 0.8% risk projection ──
+  // Scale factor = riskCap / currentTier. Same R-expectancy, bigger position size.
+  const riskCapRsProj = _ic * 0.008;
+  const currentTierProj = Math.min(1000 + Math.floor(closed.length / 100) * 500, riskCapRsProj);
+  const scaleFactor = currentTierProj > 0 ? riskCapRsProj / currentTierProj : 1;
+  const fullRiskEdge = avgCombinedRsPerTrade * scaleFactor;
+  const projFullRisk = effectiveRate * 12 * fullRiskEdge;
+  // Max drawdown estimate: scale current realised max DD in ₹ by same factor
+  const currentRiskedTotal = closed.filter(t => (t.initRiskRs||0) > 0).reduce((s,t) => s + t.initRiskRs, 0);
+  const avgRiskPerTrade = closed.length > 0 ? currentRiskedTotal / closed.length : currentTierProj;
+  set('proj-full-risk-pl', fmtRs(projFullRisk));
+  setCol('proj-full-risk-pl', projFullRisk >= 0 ? 'var(--amber)' : 'var(--red)');
+  const scaleStr = scaleFactor > 1 ? `${scaleFactor.toFixed(1)}× current size` : 'already at cap';
+  set('proj-full-risk-sub', `${effectiveRate} trades/mo × ₹${Math.round(Math.abs(fullRiskEdge)).toLocaleString('en-IN')} edge (${scaleStr})`);
+  set('proj-full-risk-note', `Current risk: ₹${Math.round(currentTierProj).toLocaleString('en-IN')}/trade · Cap: ₹${Math.round(riskCapRsProj).toLocaleString('en-IN')}/trade · Max drawdown also scales ~${scaleFactor.toFixed(1)}×`);
 
   // ── 2. Partial Exit Locked-in ──
   const eligible = open.filter(t => t.plPct >= PARTIAL_TRIGGER && t.partialTaken === 'N');
