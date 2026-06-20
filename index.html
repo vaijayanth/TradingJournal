@@ -1250,6 +1250,58 @@ tbody tr:hover { filter: brightness(0.97); }
     <div id="insight-indexed-equity" class="chart-insight"></div>
   </div>
 
+  <!-- Edge Over Time + Rolling 3M WR -->
+  <div class="grid-2" style="margin-top:14px">
+    <div class="card">
+      <div class="chart-title">Edge Over Time (R-Expectancy by Cohort)</div>
+      <div class="chart-sub">Each bar = 25 trades · positive R-Expectancy = edge is real · should be stable or rising</div>
+      <div id="chart-edge-over-time" style="height:220px;"></div>
+      <div id="insight-edge-over-time" class="chart-insight"></div>
+    </div>
+    <div class="card">
+      <div class="chart-title">Rolling 3-Month Win Rate</div>
+      <div class="chart-sub">Win rate for each rolling 3-month window (entry date, combined open+closed) · target ≥20%</div>
+      <div id="chart-rolling-wr" style="height:220px;"></div>
+      <div id="insight-rolling-wr" class="chart-insight"></div>
+    </div>
+  </div>
+
+  <!-- Win Rate CI + P&L Skew -->
+  <div class="grid-2" style="margin-top:14px">
+    <div class="card card-sm">
+      <div class="stat-label">Win Rate — Statistical Confidence</div>
+      <div style="display:flex;gap:14px;margin-top:8px;align-items:flex-end;flex-wrap:wrap">
+        <div>
+          <div style="font-size:26px;font-weight:700" id="perf-wr-ci-pct">—</div>
+          <div class="stat-sub">Observed WR</div>
+        </div>
+        <div style="color:var(--border);font-size:18px;line-height:1;padding-bottom:4px">±</div>
+        <div>
+          <div style="font-size:26px;font-weight:700;color:var(--amber)" id="perf-wr-ci-margin">—</div>
+          <div class="stat-sub">Margin (95% CI)</div>
+        </div>
+      </div>
+      <div style="margin-top:10px;font-size:13px;line-height:1.6" id="perf-wr-ci-verdict">—</div>
+      <div style="margin-top:8px;font-size:11px;color:var(--text-muted);font-style:italic">Wilson score interval — tells you if your WR is statistically real or could be luck at small sample sizes. Rule of thumb: need 100+ trades for ±5% confidence.</div>
+    </div>
+    <div class="card card-sm">
+      <div class="stat-label">P&L Distribution Skew</div>
+      <div style="display:flex;gap:14px;margin-top:8px;align-items:flex-end;flex-wrap:wrap">
+        <div>
+          <div style="font-size:26px;font-weight:700" id="perf-skew-val">—</div>
+          <div class="stat-sub">Skewness score</div>
+        </div>
+        <div style="color:var(--border);font-size:18px;line-height:1;padding-bottom:4px">|</div>
+        <div>
+          <div style="font-size:26px;font-weight:700" id="perf-skew-tail">—</div>
+          <div class="stat-sub">Right tail (wins &gt;10%)</div>
+        </div>
+      </div>
+      <div style="margin-top:10px;font-size:13px;line-height:1.6" id="perf-skew-verdict">—</div>
+      <div style="margin-top:8px;font-size:11px;color:var(--text-muted);font-style:italic">Positive skew = long right tail of big winners. This is what a momentum system should look like. Negative skew = many big losses, few small wins = wrong shape.</div>
+    </div>
+  </div>
+
   <!-- Calendar Heatmap -->
   <div class="card" style="margin-top:14px">
     <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:8px">
@@ -1592,6 +1644,34 @@ tbody tr:hover { filter: brightness(0.97); }
     <div class="card">
       <div class="stat-label">Am I Getting Better?</div>
       <div id="lc-main" style="margin-top:10px">—</div>
+    </div>
+  </div>
+
+  <!-- Burnout Index + Post-Drawdown Cohort -->
+  <div class="grid-2" style="margin-bottom:14px">
+    <div class="card">
+      <div class="stat-label">Burnout Index</div>
+      <div style="font-size:26px;font-weight:700;margin-top:8px" id="burnout-verdict-label">—</div>
+      <div style="font-size:13px;margin-top:8px;line-height:1.6" id="burnout-detail">—</div>
+      <div class="stat-badge" style="margin-top:10px" id="burnout-badge">—</div>
+      <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:10px;display:grid;grid-template-columns:repeat(3,1fr);gap:8px" id="burnout-metrics"></div>
+    </div>
+    <div class="card">
+      <div class="stat-label">First 5 Trades After a Drawdown</div>
+      <div style="display:flex;gap:14px;margin-top:8px;align-items:flex-end;flex-wrap:wrap">
+        <div>
+          <div style="font-size:22px;font-weight:700" id="post-dd-wr">—</div>
+          <div class="stat-sub">WR after drawdown</div>
+        </div>
+        <div style="color:var(--text-muted);font-size:18px">vs</div>
+        <div>
+          <div style="font-size:22px;font-weight:700" id="post-dd-overall-wr">—</div>
+          <div class="stat-sub">Overall WR</div>
+        </div>
+      </div>
+      <div style="font-size:13px;margin-top:10px;line-height:1.6" id="post-dd-detail">—</div>
+      <div class="stat-badge" style="margin-top:8px" id="post-dd-badge">—</div>
+      <div style="margin-top:8px;font-size:11px;color:var(--text-muted);font-style:italic">A drawdown = any run of 3+ consecutive losses. Do you bounce back quickly, or trade worse after a rough patch?</div>
     </div>
   </div>
 
@@ -3311,6 +3391,59 @@ function renderPerfStats(closed, open, portfolioValue, initialCapital) {
       }
     }
   }
+
+  // ── Win Rate Confidence Interval (Wilson score) ──
+  (function() {
+    const n = closed.length;
+    if (n < 5) return;
+    const wins = closed.filter(t => t.finalPlPct > 0).length;
+    const p = wins / n;
+    const z = 1.96; // 95% CI
+    const denom = 1 + z*z/n;
+    const centre = (p + z*z/(2*n)) / denom;
+    const margin = (z * Math.sqrt(p*(1-p)/n + z*z/(4*n*n))) / denom;
+    const lo = Math.max(0, (centre - margin) * 100);
+    const hi = Math.min(100, (centre + margin) * 100);
+    const ciPctEl = document.getElementById('perf-wr-ci-pct');
+    const ciMarginEl = document.getElementById('perf-wr-ci-margin');
+    const ciVerdictEl = document.getElementById('perf-wr-ci-verdict');
+    if (ciPctEl) { ciPctEl.textContent = (p*100).toFixed(0) + '%'; ciPctEl.style.color = p >= 0.4 ? 'var(--green)' : p >= 0.2 ? 'var(--amber)' : 'var(--red)'; }
+    if (ciMarginEl) ciMarginEl.textContent = '±' + (margin*100).toFixed(0) + '%';
+    const tradesNeeded = Math.max(0, Math.round(100 - n));
+    if (ciVerdictEl) {
+      const range = `True WR likely between <strong>${lo.toFixed(0)}%–${hi.toFixed(0)}%</strong> (95% confidence, n=${n})`;
+      if (n < 30) ciVerdictEl.innerHTML = `⚠ Too few trades to trust this number. ${range}. Need ${tradesNeeded}+ more closed trades for statistical confidence.`;
+      else if (n < 100) ciVerdictEl.innerHTML = `${range}. Need ${tradesNeeded} more closed trades for high confidence. <span style="color:var(--text-muted)">Don't abandon strategy yet.</span>`;
+      else ciVerdictEl.innerHTML = `✓ Statistically meaningful. ${range}. Your edge is confirmed by sample size.`;
+      ciVerdictEl.style.color = n >= 100 ? 'var(--green)' : n >= 30 ? 'var(--amber)' : 'var(--red)';
+    }
+  })();
+
+  // ── P&L Distribution Skew ──
+  (function() {
+    if (closed.length < 5) return;
+    const vals = closed.map(t => t.finalPlPct);
+    const mean = vals.reduce((s,v) => s+v, 0) / vals.length;
+    const variance = vals.reduce((s,v) => s + Math.pow(v-mean, 2), 0) / vals.length;
+    const sd = Math.sqrt(variance);
+    const skew = sd > 0 ? vals.reduce((s,v) => s + Math.pow((v-mean)/sd, 3), 0) / vals.length : 0;
+    const rightTailCount = closed.filter(t => t.finalPlPct > 10).length;
+    const rightTailPct = (rightTailCount / closed.length * 100).toFixed(0);
+    const skewEl = document.getElementById('perf-skew-val');
+    const tailEl = document.getElementById('perf-skew-tail');
+    const verdictEl = document.getElementById('perf-skew-verdict');
+    if (skewEl) {
+      skewEl.textContent = (skew >= 0 ? '+' : '') + skew.toFixed(2);
+      skewEl.style.color = skew > 0.3 ? 'var(--green)' : skew > -0.3 ? 'var(--amber)' : 'var(--red)';
+    }
+    if (tailEl) tailEl.textContent = rightTailPct + '%';
+    if (verdictEl) {
+      if (skew > 0.5) verdictEl.innerHTML = `<span style="color:var(--green)">✓ Strong positive skew</span> — your distribution has a long right tail of big winners. This is exactly what a Minervini momentum system should look like. Keep cutting losses fast and running winners.`;
+      else if (skew > 0) verdictEl.innerHTML = `<span style="color:var(--amber)">~ Mild positive skew</span> — leaning right but not strongly. ${rightTailPct}% of trades are +10% winners. Ideally this grows as you hold winners longer.`;
+      else if (skew > -0.5) verdictEl.innerHTML = `<span style="color:var(--amber)">⚠ Near-neutral skew</span> — wins and losses are roughly symmetric. Momentum system should have positive skew. Check if you are cutting winners too early.`;
+      else verdictEl.innerHTML = `<span style="color:var(--red)">🚨 Negative skew</span> — you have more large losses than large wins. This is the wrong shape for a momentum system. Review stop discipline — are losers running past plan?`;
+    }
+  })();
 }
 
 // ── CLOSED TRADES TABLE ───────────────────────────────
@@ -4525,6 +4658,111 @@ function initPerfCharts(closed, initialCapital, open) {
       ins('insight-indexed-equity','amber',`⚡ Last 10 closed trades: ${l10pl>=0?'+':''}₹${Math.round(l10pl).toLocaleString('en-IN')} vs first 10: ${f10pl>=0?'+':''}₹${Math.round(f10pl).toLocaleString('en-IN')}. Recent closed results weaker — but winners may still be running open.${openNote}${biasNote}<br>→ <strong>Action:</strong> Review last 10 closed trades for setup quality. Only trade A+ — tight base, clear level, volume confirmation.`);
     }
   }
+
+  // ── Edge Over Time (R-Expectancy by 25-trade cohort) ──
+  try {
+    const edgeEl = document.getElementById('chart-edge-over-time');
+    const edgeInsEl = document.getElementById('insight-edge-over-time');
+    if (edgeEl && sorted.length >= 10) {
+      const COHORT = 25;
+      const cohorts = [];
+      for (let i = 0; i < sorted.length; i += COHORT) {
+        const batch = sorted.slice(i, i + COHORT);
+        const bWins = batch.filter(t => t.finalPlPct > 0);
+        const bLoss = batch.filter(t => t.finalPlPct < 0);
+        const rWins = batch.filter(t => (t.initRiskRs||0) > 0 && t.finalPlPct > 0);
+        const rLoss = batch.filter(t => (t.initRiskRs||0) > 0 && t.finalPlPct < 0);
+        const avgWinR = rWins.length > 0 ? rWins.reduce((s,t) => s + t.finalPl/t.initRiskRs, 0)/rWins.length : (bWins.length > 0 ? bWins.reduce((s,t) => s+t.finalPlPct,0)/bWins.length/100 * 10 : 0);
+        const avgLossR = rLoss.length > 0 ? Math.abs(rLoss.reduce((s,t) => s + t.finalPl/t.initRiskRs, 0)/rLoss.length) : (bLoss.length > 0 ? Math.abs(bLoss.reduce((s,t) => s+t.finalPlPct,0)/bLoss.length/100 * 10) : 1);
+        const wr = batch.length > 0 ? bWins.length/batch.length : 0;
+        const rExp = avgLossR > 0 ? (wr * avgWinR) - ((1-wr) * avgLossR) : 0;
+        cohorts.push({ label: `T${i+1}–${Math.min(i+COHORT, sorted.length)}`, rExp: parseFloat(rExp.toFixed(2)), n: batch.length });
+      }
+      const edgeChart = new ApexCharts(edgeEl, {
+        ...baseOpts(220),
+        chart: { ...baseOpts(220).chart, type: 'bar' },
+        series: [{ name: 'R-Expectancy', data: cohorts.map(c => c.rExp) }],
+        xaxis: { ...baseOpts().xaxis, categories: cohorts.map(c => c.label) },
+        yaxis: { labels: { style:{colors:c.text,fontSize:'11px'}, formatter: v => v.toFixed(2)+'R' } },
+        colors: cohorts.map(c => c.rExp > 0 ? c.green : c.red),
+        plotOptions: { bar: { columnWidth: '60%', distributed: true, borderRadius: 4 } },
+        legend: { show: false },
+        dataLabels: { enabled: true, formatter: v => v.toFixed(2)+'R', style:{fontSize:'10px'} },
+        annotations: { yaxis: [{ y: 0, borderColor: c.grid, strokeDashArray: 0, label: { text: 'Break-even', style:{color:c.text,fontSize:'10px'} } }] },
+      });
+      edgeChart.render(); perfCharts.push(edgeChart);
+      if (edgeInsEl) {
+        const last = cohorts[cohorts.length-1], first = cohorts[0];
+        const trend = cohorts.length >= 2 ? (last.rExp - first.rExp) : 0;
+        const posCount = cohorts.filter(c => c.rExp > 0).length;
+        if (posCount === cohorts.length) edgeInsEl.innerHTML = `<span class="chart-insight green">✓ All cohorts positive R-Expectancy — edge is consistent and real. Trend: ${trend >= 0 ? 'improving ▲' : 'stable ~'}</span>`;
+        else if (last.rExp > 0) edgeInsEl.innerHTML = `<span class="chart-insight amber">⚡ Most recent cohort is positive (${last.rExp.toFixed(2)}R). Earlier cohorts mixed. Edge present but not fully consistent yet.</span>`;
+        else edgeInsEl.innerHTML = `<span class="chart-insight red">⚠ Most recent cohort negative (${last.rExp.toFixed(2)}R). Review setup quality — are you entering marginal setups?</span>`;
+      }
+    }
+  } catch(e) { console.warn('chart-edge-over-time failed', e); }
+
+  // ── Rolling 3-Month Win Rate ──
+  try {
+    const rollingEl = document.getElementById('chart-rolling-wr');
+    const rollingInsEl = document.getElementById('insight-rolling-wr');
+    if (rollingEl && sorted.length >= 10) {
+      // Use ALL trades (open + closed) by entry date, combined outcome
+      const allByEntry = [...(closed||[]), ...(open||[])].filter(t => t.openDate)
+        .sort((a,b) => parseDate(a.openDate) - parseDate(b.openDate));
+      // Build rolling 3-month windows: for each month, look back 3 months
+      const monthKeys = [];
+      const monthWRs = [];
+      const monthSizes = [];
+      const now = new Date();
+      for (let m = 11; m >= 0; m--) {
+        const endDate = new Date(now.getFullYear(), now.getMonth() - m + 1, 0);
+        const startDate = new Date(now.getFullYear(), now.getMonth() - m - 2, 1);
+        const window3m = allByEntry.filter(t => {
+          const d = parseDate(t.openDate);
+          return d >= startDate && d <= endDate;
+        });
+        if (window3m.length < 3) continue;
+        const wins = window3m.filter(t => t.closeDate ? t.finalPlPct > 0 : (t.notionalPl||0) > 0).length;
+        const wr = wins / window3m.length * 100;
+        const label = endDate.toLocaleString('default', { month: 'short', year: '2-digit' });
+        monthKeys.push(label);
+        monthWRs.push(parseFloat(wr.toFixed(1)));
+        monthSizes.push(window3m.length);
+      }
+      if (monthKeys.length >= 2) {
+        const rollingChart = new ApexCharts(rollingEl, {
+          ...baseOpts(220),
+          chart: { ...baseOpts(220).chart, type: 'line' },
+          series: [{ name: 'Rolling 3M WR', data: monthWRs }],
+          xaxis: { ...baseOpts().xaxis, categories: monthKeys },
+          yaxis: { min: 0, max: 100, labels: { style:{colors:c.text,fontSize:'11px'}, formatter: v => v+'%' } },
+          stroke: { curve: 'smooth', width: 2 },
+          markers: { size: 4 },
+          colors: [c.accent],
+          dataLabels: { enabled: false },
+          annotations: {
+            yaxis: [
+              { y: 20, borderColor: c.amber, strokeDashArray: 3, label: { text: '20% floor', style:{color:c.amber,fontSize:'10px'} } },
+              { y: 40, borderColor: c.green, strokeDashArray: 3, label: { text: '40% target', style:{color:c.green,fontSize:'10px'} } },
+            ]
+          },
+        });
+        rollingChart.render(); perfCharts.push(rollingChart);
+        if (rollingInsEl) {
+          const last3 = monthWRs.slice(-3);
+          const last3Avg = last3.reduce((s,v)=>s+v,0)/last3.length;
+          const prev3 = monthWRs.slice(-6,-3);
+          const prev3Avg = prev3.length > 0 ? prev3.reduce((s,v)=>s+v,0)/prev3.length : last3Avg;
+          const trend = last3Avg - prev3Avg;
+          if (last3Avg < 20) rollingInsEl.innerHTML = `<span class="chart-insight red">🚨 Rolling WR below 20% for recent windows (avg ${last3Avg.toFixed(0)}%). Review setup selection — are you entering in choppy market conditions?</span>`;
+          else if (trend > 5) rollingInsEl.innerHTML = `<span class="chart-insight green">✓ Rolling WR improving — last 3 windows avg ${last3Avg.toFixed(0)}% vs prior ${prev3Avg.toFixed(0)}%. Setup quality rising.</span>`;
+          else if (trend < -8) rollingInsEl.innerHTML = `<span class="chart-insight amber">⚠ Rolling WR declining — last 3 windows avg ${last3Avg.toFixed(0)}% vs prior ${prev3Avg.toFixed(0)}%. Review market conditions and setup filters.</span>`;
+          else rollingInsEl.innerHTML = `<span class="chart-insight green">✓ Rolling WR stable at ${last3Avg.toFixed(0)}%. Consistent execution.</span>`;
+        }
+      }
+    }
+  } catch(e) { console.warn('chart-rolling-wr failed', e); }
 }
 
 // ── EQUITY CURVE GLOBALS (pill + DD toggle, safe before init) ──
@@ -4939,23 +5177,26 @@ function initAnalysisCharts(open, closed) {
     }
   }
 
-  // Strategy verdict
+  // Strategy verdict — plain "should you take partials?"
   const partialInsightEl = document.getElementById('partial-insight');
   if (partialInsightEl) {
-    if (py.n === 0) {
-      partialInsightEl.textContent = 'No closed trades with partial exit yet';
+    if (py.n === 0 && pn.n === 0) {
+      partialInsightEl.textContent = 'No data yet — need closed trades to compare.';
       partialInsightEl.style.color = 'var(--text-muted)';
-    } else if (pn.n === 0) {
-      partialInsightEl.textContent = `${py.n} trades closed with partial · remainder avg +${gainAfterPartial.toFixed(1)}% past trigger`;
-      partialInsightEl.style.color = gainAfterPartial > 0 ? 'var(--green)' : 'var(--text-secondary)';
+    } else if (pn.n < 3) {
+      const msg = py.n > 0 ? `${py.n} partials taken, avg +${py.avg.toFixed(1)}%. Need more "held full" closed trades for comparison.` : 'No partial exits taken yet.';
+      partialInsightEl.textContent = msg; partialInsightEl.style.color = 'var(--text-muted)';
     } else {
-      const diff = py.avg - pn.avg;
-      if (diff > 0) {
-        partialInsightEl.innerHTML = `✅ Partial helps: took partial → avg <strong>+${py.avg.toFixed(1)}%</strong> vs held through → <strong>+${pn.avg.toFixed(1)}%</strong>. Keep taking partials at +${PARTIAL_TRIGGER}%.`;
-        partialInsightEl.style.color = 'var(--green)';
+      const diff = pn.avg - py.avg; // positive = full hold wins more
+      const confNote = `(${py.n} partial vs ${pn.n} full, ${Math.min(py.n, pn.n) < 10 ? 'small sample — directional only' : 'reasonable sample'})`;
+      if (diff > 5) {
+        partialInsightEl.innerHTML = `<span style="color:var(--amber)">📊 Verdict: <strong>STOP TAKING PARTIALS</strong> — your winners run far.<br>Full hold avg: <strong>+${pn.avg.toFixed(1)}%</strong> · Partial avg: <strong>+${py.avg.toFixed(1)}%</strong> · You leave +${diff.toFixed(1)}% on the table per trade by exiting early. ${confNote}<br><span style="font-size:11px">Action: Raise partial trigger to +${Math.round(PARTIAL_TRIGGER * 1.5)}% or remove it. Let the 7-day-low trail do the work.</span></span>`;
+      } else if (diff > 1) {
+        partialInsightEl.innerHTML = `<span style="color:var(--amber)">📊 Full holds slightly better (+${diff.toFixed(1)}% edge). ${confNote}<br>Consider raising trigger from +${PARTIAL_TRIGGER}% to +${Math.round(PARTIAL_TRIGGER * 1.3)}% to let more winners develop.</span>`;
+      } else if (diff < -3) {
+        partialInsightEl.innerHTML = `<span style="color:var(--green)">✅ Verdict: <strong>KEEP TAKING PARTIALS</strong> — they protect your gains.<br>Partial avg: <strong>+${py.avg.toFixed(1)}%</strong> · Full hold avg: <strong>+${pn.avg.toFixed(1)}%</strong> · Partials add +${Math.abs(diff).toFixed(1)}% to blended outcome. ${confNote}</span>`;
       } else {
-        partialInsightEl.innerHTML = `⚠ Held through → avg <strong>+${pn.avg.toFixed(1)}%</strong> vs took partial → <strong>+${py.avg.toFixed(1)}%</strong> — your runners run far. Consider raising partial trigger in Config.`;
-        partialInsightEl.style.color = 'var(--amber)';
+        partialInsightEl.innerHTML = `<span style="color:var(--text-secondary)">📊 Roughly equal — partial vs full within ${Math.abs(diff).toFixed(1)}% of each other. ${confNote}<br>Personal preference: partials reduce psychological pressure; full holds maximise upside if you can hold.</span>`;
       }
     }
   }
@@ -5199,6 +5440,101 @@ function initAnalysisCharts(open, closed) {
         ${openNote}`;
     }
   }
+
+  // ── Burnout Index ──
+  (function() {
+    const burnoutLabel = document.getElementById('burnout-verdict-label');
+    const burnoutDetail = document.getElementById('burnout-detail');
+    const burnoutBadge = document.getElementById('burnout-badge');
+    const burnoutMetrics = document.getElementById('burnout-metrics');
+    if (!burnoutLabel || allByEntry.length < 20) return;
+
+    const now = new Date();
+    const m1 = new Date(now); m1.setDate(now.getDate() - 30);
+    const m3 = new Date(now); m3.setDate(now.getDate() - 90);
+    const m6 = new Date(now); m6.setDate(now.getDate() - 180);
+
+    const recent30 = allByEntry.filter(t => parseDate(t.openDate) >= m1);
+    const prev30   = allByEntry.filter(t => parseDate(t.openDate) >= m3 && parseDate(t.openDate) < m1);
+    const baseline = allByEntry.filter(t => parseDate(t.openDate) >= m6 && parseDate(t.openDate) < m3);
+
+    const calcGroup = arr => {
+      const wins = arr.filter(t => t.closeDate ? t.finalPlPct > 0 : (t.notionalPl||0) > 0).length;
+      const closedArr = arr.filter(t => t.closeDate && t.age);
+      const avgHold = closedArr.length > 0 ? closedArr.reduce((s,t) => s+parseInt(t.age||0),0)/closedArr.length : 0;
+      return { n: arr.length, wr: arr.length > 0 ? wins/arr.length*100 : 0, avgHold };
+    };
+    const r30 = calcGroup(recent30);
+    const p30 = calcGroup(prev30);
+    const base = calcGroup(baseline);
+
+    const signals = [];
+    let score = 0;
+    if (r30.n > p30.n * 1.5 && p30.n > 0) { signals.push(`📈 Entry rate up: ${r30.n} this month vs ${p30.n} prev — overtrading risk`); score += 2; }
+    if (r30.wr < p30.wr - 10 && p30.n >= 5) { signals.push(`📉 WR dropped: ${r30.wr.toFixed(0)}% this month vs ${p30.wr.toFixed(0)}% prev`); score += 2; }
+    if (r30.avgHold > 0 && p30.avgHold > 0 && r30.avgHold < p30.avgHold * 0.7) { signals.push(`⏱ Holding shorter: ${r30.avgHold.toFixed(0)}d vs ${p30.avgHold.toFixed(0)}d — cutting winners early?`); score += 1; }
+
+    let verdict, verdictColor, badgeClass, badgeText;
+    if (score >= 4) { verdict = 'Burned Out'; verdictColor = 'var(--red)'; badgeClass = 'stat-badge badge-red'; badgeText = '⚠ Reduce size and entries for 2 weeks. Follow rules mechanically, no new setups.'; }
+    else if (score >= 2) { verdict = 'Fatigued'; verdictColor = 'var(--amber)'; badgeClass = 'stat-badge badge-amber'; badgeText = 'Signs of drift — stay selective. Only A+ setups this week.'; }
+    else { verdict = 'Steady'; verdictColor = 'var(--green)'; badgeClass = 'stat-badge badge-green'; badgeText = '✓ Trading fresh. No signs of fatigue or overtrading.'; }
+
+    burnoutLabel.textContent = verdict; burnoutLabel.style.color = verdictColor;
+    burnoutDetail.innerHTML = signals.length > 0 ? signals.join('<br>') : 'All three burnout signals are clear.';
+    burnoutBadge.className = badgeClass; burnoutBadge.textContent = badgeText;
+    if (burnoutMetrics) {
+      const m = (label, val, sub) => `<div style="text-align:center"><div style="font-size:15px;font-weight:700">${val}</div><div style="font-size:10px;color:var(--text-muted);margin-top:2px">${label}</div><div style="font-size:10px;color:var(--text-muted)">${sub}</div></div>`;
+      burnoutMetrics.innerHTML = m('Trades/month', r30.n, `prev: ${p30.n}`) + m('Win Rate', r30.wr.toFixed(0)+'%', `prev: ${p30.wr.toFixed(0)}%`) + m('Avg Hold', r30.avgHold.toFixed(0)+'d', `prev: ${p30.avgHold.toFixed(0)}d`);
+    }
+  })();
+
+  // ── Post-Drawdown Cohort ──
+  (function() {
+    const postDDWr = document.getElementById('post-dd-wr');
+    const postDDOverall = document.getElementById('post-dd-overall-wr');
+    const postDDDetail = document.getElementById('post-dd-detail');
+    const postDDBadge = document.getElementById('post-dd-badge');
+    if (!postDDWr || allByEntry.length < 15) return;
+
+    // Find all 3+ consecutive loss streaks in entry order
+    const allTrades2 = allByEntry.map(t => ({
+      ...t,
+      _outcome: t.closeDate ? (t.finalPlPct >= 0 ? 'W' : 'L') : ((t.notionalPl||0) >= 0 ? 'W' : 'L'),
+    }));
+    const postDDTrades = [];
+    let run = 0;
+    allTrades2.forEach((t, i) => {
+      if (t._outcome === 'L') run++;
+      else run = 0;
+      if (run >= 3) {
+        // Collect next 5 trades after this streak
+        for (let j = 1; j <= 5; j++) {
+          if (i + j < allTrades2.length) postDDTrades.push(allTrades2[i + j]);
+        }
+      }
+    });
+    const unique = [...new Map(postDDTrades.map(t => [t.openDate + t.stock, t])).values()];
+    const overallWR = allTrades2.length > 0 ? allTrades2.filter(t => t._outcome === 'W').length / allTrades2.length * 100 : 0;
+    const postDDWR = unique.length > 0 ? unique.filter(t => t._outcome === 'W').length / unique.length * 100 : null;
+
+    if (postDDWR === null) {
+      if (postDDWr) postDDWr.textContent = '—';
+      if (postDDDetail) postDDDetail.textContent = 'Not enough drawdown events yet.';
+      return;
+    }
+    const drop = overallWR - postDDWR;
+    if (postDDWr) { postDDWr.textContent = postDDWR.toFixed(0) + '%'; postDDWr.style.color = drop > 10 ? 'var(--red)' : drop > 5 ? 'var(--amber)' : 'var(--green)'; }
+    if (postDDOverall) postDDOverall.textContent = overallWR.toFixed(0) + '%';
+    if (postDDDetail) {
+      if (drop > 15) postDDDetail.innerHTML = `<span style="color:var(--red)">⚠ WR drops ${drop.toFixed(0)}pp after drawdowns (n=${unique.length} trades sampled). Psychological damage is real — you trade significantly worse after a rough patch.</span><br><div style="margin-top:6px;font-size:12px;color:var(--text-muted)"><strong>Action:</strong> After 3+ losses, reduce size by 50% for the next 5 entries. This protects capital during your weakest phase.</div>`;
+      else if (drop > 7) postDDDetail.innerHTML = `<span style="color:var(--amber)">⚠ Mild WR dip of ${drop.toFixed(0)}pp post-drawdown. Stay selective — only high-conviction setups after a losing streak.</span>`;
+      else postDDDetail.innerHTML = `<span style="color:var(--green)">✓ WR holds steady after drawdowns (${drop.toFixed(0)}pp change). Strong psychological resilience — you bounce back well.</span>`;
+    }
+    if (postDDBadge) {
+      postDDBadge.className = drop > 10 ? 'stat-badge badge-amber' : 'stat-badge badge-green';
+      postDDBadge.textContent = `Based on ${unique.length} trades across ${Math.floor(unique.length/5)} drawdown events`;
+    }
+  })();
 
   // Scatter — closed wins, closed losses, + open positions (amber)
   const sorted = [...closed].filter(t => t.closeDate).sort((a,b) => parseDate(a.closeDate)-parseDate(b.closeDate));
