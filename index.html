@@ -868,22 +868,30 @@ tbody tr:hover { filter: brightness(0.97); }
   <!-- Weekly Target + Entry Cadence -->
   <div class="grid-2" style="margin-top:14px">
     <div class="card card-sm">
-      <div class="stat-label">Weekly P&amp;L Target</div>
+      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:4px">
+        <div class="stat-label">This Week</div>
+        <div style="font-size:11px;color:var(--text-muted)" id="dash-week-range">Mon — today</div>
+      </div>
       <div style="display:flex;gap:16px;margin-top:8px;align-items:flex-end;flex-wrap:wrap">
         <div>
-          <div style="font-size:22px;font-weight:700" id="dash-week-pl">—</div>
-          <div class="stat-sub">This week (Mon–now)</div>
+          <div style="font-size:22px;font-weight:700;color:var(--accent)" id="dash-week-entries">—</div>
+          <div class="stat-sub">Entries</div>
         </div>
         <div style="color:var(--border);font-size:20px;padding-bottom:2px">|</div>
         <div>
-          <div style="font-size:22px;font-weight:700;color:var(--text-muted)" id="dash-week-target">—</div>
-          <div class="stat-sub">Target</div>
+          <div style="font-size:22px;font-weight:700" id="dash-week-exits">—</div>
+          <div class="stat-sub">Exits</div>
+        </div>
+        <div style="color:var(--border);font-size:20px;padding-bottom:2px">|</div>
+        <div>
+          <div style="font-size:22px;font-weight:700" id="dash-week-pl">—</div>
+          <div class="stat-sub">Realised P&amp;L</div>
         </div>
       </div>
       <div style="margin-top:10px;height:6px;border-radius:3px;background:var(--surface2);overflow:hidden">
         <div id="dash-week-bar" style="height:100%;border-radius:3px;transition:width 0.4s;background:var(--green)"></div>
       </div>
-      <div class="stat-badge" id="dash-week-badge" style="margin-top:8px">Set target in Config</div>
+      <div class="stat-badge" id="dash-week-badge" style="margin-top:8px">—</div>
     </div>
 
     <div class="card card-sm">
@@ -2727,50 +2735,61 @@ function renderDashboard(data, cfg) {
     }
   })();
 
-  // ── Weekly P&L Target + Entry Cadence ──
+  // ── This Week Activity ──
   (function() {
     const now = new Date();
-    const dayOfWeek = now.getDay(); // 0=Sun, 1=Mon...
+    const dayOfWeek = now.getDay();
     const daysFromMon = dayOfWeek === 0 ? 6 : dayOfWeek - 1;
     const monStart = new Date(now); monStart.setDate(now.getDate() - daysFromMon); monStart.setHours(0,0,0,0);
     const last30 = new Date(now); last30.setDate(now.getDate() - 30);
 
-    // This week's realised P&L (closed trades with closeDate this week)
+    const monNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    const rangeEl = document.getElementById('dash-week-range');
+    if (rangeEl) rangeEl.textContent = `Mon ${monStart.getDate()} ${monNames[monStart.getMonth()]} — today`;
+
+    // Entries: any trade (open or closed) opened this week
+    const weekEntries = [...open, ...closed].filter(t => t.openDate && parseDate(t.openDate) >= monStart);
+    // Exits: closed trades with closeDate this week
     const weekClosed = closed.filter(t => t.closeDate && parseDate(t.closeDate) >= monStart);
+    const weekWins   = weekClosed.filter(t => (t.finalPl || 0) > 0);
+    const weekLosses = weekClosed.filter(t => (t.finalPl || 0) < 0);
     const weekRealisedPl = weekClosed.reduce((s, t) => s + (t.finalPl || 0), 0);
-    // Add open unrealised MTM for positions opened this week (partial — just the MTM contribution)
-    const weekOpenMtm = open.filter(t => t.openDate && parseDate(t.openDate) >= monStart)
-      .reduce((s, t) => s + (t.notionalPl || 0), 0);
-    const weekPl = weekRealisedPl + weekOpenMtm;
+    const weekWinRate = weekClosed.length ? weekWins.length / weekClosed.length * 100 : 0;
+    const avgWin  = weekWins.length   ? weekWins.reduce((s,t) => s + (t.finalPl||0), 0) / weekWins.length   : 0;
+    const avgLoss = weekLosses.length ? weekLosses.reduce((s,t) => s + Math.abs(t.finalPl||0), 0) / weekLosses.length : 0;
 
-    const weekPlEl = document.getElementById('dash-week-pl');
+    const fmtPl = v => (v >= 0 ? '+' : '-') + '₹' + Math.abs(Math.round(v)).toLocaleString('en-IN');
+    const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+    const col = (id, c) => { const el = document.getElementById(id); if (el) el.style.color = c; };
+
+    set('dash-week-entries', weekEntries.length);
+    set('dash-week-exits', weekClosed.length);
+    set('dash-week-pl', weekClosed.length ? fmtPl(weekRealisedPl) : '—');
+    col('dash-week-pl', weekRealisedPl >= 0 ? 'var(--green)' : 'var(--red)');
+
+    // Bar = exit win rate this week (green fill)
     const weekBarEl = document.getElementById('dash-week-bar');
-    const weekTargetEl = document.getElementById('dash-week-target');
-    const weekBadgeEl = document.getElementById('dash-week-badge');
+    if (weekBarEl) {
+      weekBarEl.style.width = weekClosed.length ? weekWinRate.toFixed(0) + '%' : '0%';
+      weekBarEl.style.background = weekWinRate >= 40 ? 'var(--green)' : weekWinRate >= 25 ? 'var(--amber)' : 'var(--red)';
+      weekBarEl.title = 'Exit win rate this week';
+    }
 
-    const weeklyTarget = cfg.weeklyTarget || 0;
-    if (weekPlEl) {
-      weekPlEl.textContent = (weekPl >= 0 ? '+' : '-') + '₹' + Math.abs(Math.round(weekPl)).toLocaleString('en-IN');
-      weekPlEl.style.color = weekPl >= 0 ? 'var(--green)' : 'var(--red)';
-    }
-    if (weekTargetEl) {
-      weekTargetEl.textContent = weeklyTarget > 0 ? '₹' + weeklyTarget.toLocaleString('en-IN') : 'Not set';
-    }
-    if (weekBarEl && weeklyTarget > 0) {
-      const pct = Math.min(100, Math.max(0, weekPl / weeklyTarget * 100));
-      weekBarEl.style.width = pct + '%';
-      weekBarEl.style.background = pct >= 100 ? 'var(--green)' : pct >= 60 ? 'var(--accent)' : 'var(--amber)';
-    }
+    const weekBadgeEl = document.getElementById('dash-week-badge');
     if (weekBadgeEl) {
-      if (weeklyTarget <= 0) {
+      if (weekClosed.length === 0 && weekEntries.length === 0) {
         weekBadgeEl.className = 'stat-badge badge-blue';
-        weekBadgeEl.textContent = 'Set weekly target in Config to track progress';
+        weekBadgeEl.textContent = 'No activity yet this week — market open?';
+      } else if (weekClosed.length === 0) {
+        weekBadgeEl.className = 'stat-badge badge-blue';
+        weekBadgeEl.textContent = `${weekEntries.length} entr${weekEntries.length===1?'y':'ies'} this week · no exits yet · winners running`;
       } else {
-        const pct = weekPl / weeklyTarget * 100;
-        if (pct >= 100) { weekBadgeEl.className = 'stat-badge badge-green'; weekBadgeEl.textContent = '🎯 Target hit! Consider stopping new entries today.'; }
-        else if (pct >= 60) { weekBadgeEl.className = 'stat-badge badge-green'; weekBadgeEl.textContent = Math.round(pct) + '% of target · ₹' + Math.abs(Math.round(weeklyTarget - weekPl)).toLocaleString('en-IN') + ' remaining'; }
-        else if (weekPl < 0) { weekBadgeEl.className = 'stat-badge badge-red'; weekBadgeEl.textContent = 'Behind target by ₹' + Math.abs(Math.round(weekPl)).toLocaleString('en-IN') + ' — stick to system, do not overtrade'; }
-        else { weekBadgeEl.className = 'stat-badge badge-amber'; weekBadgeEl.textContent = Math.round(pct) + '% of ₹' + weeklyTarget.toLocaleString('en-IN') + ' target · ₹' + Math.round(weeklyTarget - weekPl).toLocaleString('en-IN') + ' to go'; }
+        const parts = [];
+        if (weekWins.length)   parts.push(`${weekWins.length} win${weekWins.length>1?'s':''} avg ${fmtPl(avgWin)}`);
+        if (weekLosses.length) parts.push(`${weekLosses.length} stop${weekLosses.length>1?'s':''} avg ${fmtPl(avgLoss)} — ${avgLoss < 10000 ? 'cutting fast ✓' : 'review size'}`);
+        const wr = Math.round(weekWinRate);
+        weekBadgeEl.className = 'stat-badge ' + (weekRealisedPl >= 0 ? 'badge-green' : weekLosses.length > 0 && weekWins.length === 0 ? 'badge-amber' : 'badge-blue');
+        weekBadgeEl.textContent = wr + '% exit WR · ' + parts.join(' · ');
       }
     }
 
