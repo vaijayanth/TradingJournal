@@ -5,8 +5,10 @@
 <script>try{if(location.search.includes('reset=1')){localStorage.removeItem('tj_auth_hash');sessionStorage.removeItem('tj_authed');history.replaceState(null,'',location.pathname);}var t=localStorage.getItem('tj_theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Trading Journal</title>
-<script src="https://cdn.jsdelivr.net/npm/apexcharts@3.44.0/dist/apexcharts.min.js"></script>
-<script src="https://unpkg.com/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
+<link rel="preconnect" href="https://cdn.jsdelivr.net">
+<link rel="preconnect" href="https://unpkg.com">
+<script defer src="https://cdn.jsdelivr.net/npm/apexcharts@3.44.0/dist/apexcharts.min.js"></script>
+<script defer src="https://unpkg.com/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
 <style>
 :root {
   --bg: #F1F5F9;
@@ -3356,7 +3358,7 @@ function renderTodayActions(open, cfg) {
 // ── POSITIONS (REAL DATA) ─────────────────────────────
 function renderPositionsReal(open, cfg) {
   const tbody = document.getElementById('positions-tbody');
-  tbody.innerHTML = '';
+  const _rows = [];
   const trades = open.map(t => {
     const effStop = Math.max(t.stopLoss || 0, t.sevenDayLow || 0);
     const effPct = (t.cmp && effStop) ? ((t.cmp - effStop) / t.cmp * 100) : t.pctFromStop;
@@ -3392,7 +3394,7 @@ function renderPositionsReal(open, cfg) {
     const haChangedClass = haChanged ? 'tag-ha-changed' : '';
     const haLabel = haColour ? (haChanged ? '🔄 ' + haColour : haColour) : '—';
     const haWarnStyle = t.haWarn ? 'box-shadow:0 0 0 2px var(--red);' : '';
-    tbody.innerHTML += `
+    _rows.push(`
       <tr class="${rowClass}" onclick="toggleExpand(${i})">
         <td><span class="stock-name">${t.stock}</span>${t.dataError ? ' <span style="font-size:10px;color:var(--red)">⚠</span>' : ''}${t.signalCount >= 2 ? ` <span title="${t.signalCount} signals firing — priority action needed" style="font-size:10px;background:var(--red);color:#fff;border-radius:8px;padding:1px 5px;margin-left:3px;font-weight:700">${t.signalCount}⚡</span>` : ''}</td>
         <td>${t.age}d</td>
@@ -3476,8 +3478,9 @@ function renderPositionsReal(open, cfg) {
             })()}
           </div>
         </td>
-      </tr>`;
+      </tr>`);
   });
+  tbody.innerHTML = _rows.join('');
 
   const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
   set('pos-count-text', `${open.length} active trades · Exit → Partial Due → Near Stop → rest · Read-only`);
@@ -4497,6 +4500,18 @@ function baseOpts(height = 220) {
 }
 
 // ── PERFORMANCE CHARTS ────────────────────────────────
+// Async chart render queue — yields between each chart so UI stays responsive
+const _chartQ = (() => {
+  let _q = [], _running = false;
+  function _drain() {
+    if (!_q.length) { _running = false; return; }
+    _running = true;
+    const fn = _q.shift();
+    setTimeout(() => { try { fn(); } catch(e) { console.warn('chart err', e); } _drain(); }, 0);
+  }
+  return fn => { _q.push(fn); if (!_running) _drain(); };
+})();
+
 let perfCharts = [];
 function destroyAndReinitPerf() {
   perfCharts.forEach(c => { try{c.destroy();}catch(e){} }); perfCharts = [];
@@ -5556,7 +5571,7 @@ function initAnalysisCharts(open, closed) {
     if (setupWrPh) setupWrPh.style.display = 'none';
     setupWrEl.style.display = '';
     const wrStats = setupKeys.map(s => calcStats(setupMap[s]));
-    try { const setupWrChart = new ApexCharts(setupWrEl, {
+    _chartQ(() => { try { const setupWrChart = new ApexCharts(setupWrEl, {
       ...baseOpts(240), chart: { ...baseOpts(240).chart, type: 'bar' },
       series: [{ name: 'Win Rate %', data: wrStats.map(s => parseFloat(s.wr.toFixed(1))) }],
       xaxis: { ...baseOpts().xaxis, categories: setupKeys, labels: { ...baseOpts().xaxis.labels, rotate: -20, hideOverlappingLabels: true } },
@@ -5565,7 +5580,7 @@ function initAnalysisCharts(open, closed) {
       plotOptions: { bar: { columnWidth: '55%', distributed: true, borderRadius: 4 } },
       legend: { show: false }, dataLabels: { enabled: true, formatter: v => v+'%', style: { fontSize:'11px' } },
       annotations: { yaxis: [{ y: 30, borderColor: c.amber, strokeDashArray: 3, label: { text: '~30% target', style:{color:c.amber,fontSize:'10px'} } }] },
-    }); setupWrChart.render(); analysisCharts.push(setupWrChart); } catch(e) { console.warn('chart-setup-wr failed', e); }
+    }); setupWrChart.render(); analysisCharts.push(setupWrChart); } catch(e) { console.warn('chart-setup-wr failed', e); } });
     setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
   } else if (setupWrPh) {
     if (setupWrEl) setupWrEl.style.display = 'none';
@@ -5580,7 +5595,7 @@ function initAnalysisCharts(open, closed) {
     setupAvgEl.style.display = '';
     const avgStats = setupKeys.map(s => calcStats(setupMap[s]));
     const avgData = avgStats.map(s => parseFloat(s.avg.toFixed(2)));
-    try { const setupAvgChart = new ApexCharts(setupAvgEl, {
+    _chartQ(() => { try { const setupAvgChart = new ApexCharts(setupAvgEl, {
       ...baseOpts(240), chart: { ...baseOpts(240).chart, type: 'bar' },
       series: [{ name: 'Avg P&L %', data: avgData }],
       xaxis: { ...baseOpts().xaxis, categories: setupKeys, labels: { ...baseOpts().xaxis.labels, rotate: -20, hideOverlappingLabels: true } },
@@ -5594,7 +5609,7 @@ function initAnalysisCharts(open, closed) {
         const st = setupMap[s]; const n = st ? st.length : 0;
         return (v>=0?'+':'')+v.toFixed(2)+'% avg across '+n+' trade'+(n!==1?'s':'');
       }}},
-    }); setupAvgChart.render(); analysisCharts.push(setupAvgChart); } catch(e) { console.warn('chart-setup-avgpl failed', e); }
+    }); setupAvgChart.render(); analysisCharts.push(setupAvgChart); } catch(e) { console.warn('chart-setup-avgpl failed', e); } });
   } else if (setupAvgPh) {
     if (setupAvgEl) setupAvgEl.style.display = 'none';
     setupAvgPh.style.display = '';
@@ -6121,7 +6136,7 @@ function initAnalysisCharts(open, closed) {
     }
 
     // Win Rate by Sector chart
-    try {
+    _chartQ(() => { try {
       if (sectorWrEl && sectors.length >= 1) {
         sectorWrEl.style.display = '';
         const wrData = sectors.map(s => parseFloat(calcSec(sMap[s]).wr.toFixed(1)));
@@ -6138,10 +6153,10 @@ function initAnalysisCharts(open, closed) {
         });
         sWrChart.render(); analysisCharts.push(sWrChart);
       }
-    } catch(e) { console.warn('chart-sector-wr failed', e); }
+    } catch(e) { console.warn('chart-sector-wr failed', e); } });
 
     // Avg P&L% by Sector chart
-    try {
+    _chartQ(() => { try {
       if (sectorPlEl && sectors.length >= 1) {
         sectorPlEl.style.display = '';
         const plData = sectors.map(s => parseFloat(calcSec(sMap[s]).avgPl.toFixed(2)));
@@ -6158,13 +6173,13 @@ function initAnalysisCharts(open, closed) {
         });
         sPlChart.render(); analysisCharts.push(sPlChart);
       }
-    } catch(e) { console.warn('chart-sector-pl failed', e); }
+    } catch(e) { console.warn('chart-sector-pl failed', e); } });
   })();
 
   // Scatter — closed wins, closed losses, + open positions (amber)
   const sorted = [...closed].filter(t => t.closeDate).sort((a,b) => parseDate(a.closeDate)-parseDate(b.closeDate));
   const openScatter = open.filter(t => t.age > 0 && t.plPct != null);
-  try { const sc = new ApexCharts(document.getElementById('chart-scatter'), {
+  _chartQ(() => { try { const sc = new ApexCharts(document.getElementById('chart-scatter'), {
     ...baseOpts(240), chart: { ...baseOpts(240).chart, type: 'scatter', zoom: { enabled: false } },
     series: [
       { name:'Closed Win', data: sorted.filter(t=>t.finalPlPct>=0&&t.age>0).map(t=>[t.age, parseFloat(t.finalPlPct.toFixed(1))]) },
@@ -6177,7 +6192,7 @@ function initAnalysisCharts(open, closed) {
     annotations: { yaxis: [{ y: 0, borderColor: c.text, strokeDashArray: 3 }] },
     tooltip: { ...baseOpts().tooltip, x: { formatter: v => v+' days' }, y: { formatter: v => v+'%' } },
     legend: { show: true, position: 'top', fontSize: '11px', labels: { colors: c.text } },
-  }); sc.render(); analysisCharts.push(sc); } catch(e) { console.warn('chart-scatter failed', e); }
+  }); sc.render(); analysisCharts.push(sc); } catch(e) { console.warn('chart-scatter failed', e); } });
 
   // Scatter insight line
   const scatterInsEl = document.getElementById('scatter-insight');
@@ -6219,7 +6234,7 @@ function initAnalysisCharts(open, closed) {
   const _vwk = Math.ceil(((_vnow-_vjan1)/86400000+_vjan1.getDay()+1)/7);
   const _curWkKey = _vnow.getFullYear()+'-W'+String(_vwk).padStart(2,'0');
   const wkKeys = Object.keys(wkMap).sort(), velData = wkKeys.map(k => wkMap[k]);
-  try { const vel = new ApexCharts(document.getElementById('chart-velocity'), {
+  _chartQ(() => { try { const vel = new ApexCharts(document.getElementById('chart-velocity'), {
     ...baseOpts(240), chart: { ...baseOpts(240).chart, type: 'bar' },
     series: [{ name:'New Positions', data: velData }],
     xaxis: { ...baseOpts().xaxis, categories: wkKeys.map(k => {
@@ -6233,7 +6248,7 @@ function initAnalysisCharts(open, closed) {
     plotOptions: { bar: { columnWidth:'60%', distributed:true, borderRadius:3 } },
     legend: { show:false }, dataLabels: { enabled:false },
     annotations: { yaxis: [{ y:3, label:{text:'Overtrading threshold',style:{color:c.amber,fontSize:'11px',background:'transparent'}}, borderColor:c.amber, strokeDashArray:4 }] },
-  }); vel.render(); analysisCharts.push(vel); } catch(e) { console.warn('chart-velocity failed', e); }
+  }); vel.render(); analysisCharts.push(vel); } catch(e) { console.warn('chart-velocity failed', e); } });
   const velInsEl = document.getElementById('velocity-insight');
   if (velInsEl && wkKeys.length > 0) {
     const avgVel = (velData.reduce((s,v)=>s+v,0)/velData.length).toFixed(1);
@@ -6294,7 +6309,7 @@ function initAnalysisCharts(open, closed) {
   if (mKeysA.length > 0) {
     const MNAMES_A = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
     const mCatsA = mKeysA.map(k => { const [y,m]=k.split('-'); return MNAMES_A[parseInt(m)-1]+' '+y.slice(2); });
-    try { const mpa = new ApexCharts(document.getElementById('chart-analysis-monthly'), {
+    _chartQ(() => { try { const mpa = new ApexCharts(document.getElementById('chart-analysis-monthly'), {
       ...baseOpts(240), chart: { ...baseOpts(240).chart, type: 'bar', stacked: true },
       series: [{ name:'Realised ₹', data: mDataA }, { name:'Unrealised (open) ₹', data: mUnrealA }],
       xaxis: { ...baseOpts().xaxis, categories: mCatsA },
@@ -6306,7 +6321,7 @@ function initAnalysisCharts(open, closed) {
       dataLabels: { enabled:false },
       annotations: { yaxis: [{ y:0, borderColor:c.text, strokeDashArray:2 }] },
       tooltip: { y: { formatter: v => v == null ? '—' : (v>=0?'+':'')+v.toLocaleString('en-IN') } },
-    }); mpa.render(); analysisCharts.push(mpa); } catch(e) { console.warn('chart-analysis-monthly failed', e); }
+    }); mpa.render(); analysisCharts.push(mpa); } catch(e) { console.warn('chart-analysis-monthly failed', e); } });
   }
 
   // ── MAE / MFE Analysis (simplified) ──
@@ -6355,7 +6370,7 @@ function initAnalysisCharts(open, closed) {
         ? `If a new trade hasn't shown a 3× favourable-to-adverse move within its first few days, treat it as lower-confidence — don't add to it or increase size. If it has, you can hold with more conviction. Never use this to skip or delay your actual 7-day-low / 21-EMA stop.`
         : `Not enough of a gap yet to act on — keep sizing trades the same way regardless of early ratio, and re-check this once you have more closed trades.`}`);
 
-    try { const mfeFinalChart = new ApexCharts(document.getElementById('chart-mfe-vs-final'), {
+    _chartQ(() => { try { const mfeFinalChart = new ApexCharts(document.getElementById('chart-mfe-vs-final'), {
       ...baseOpts(220), chart: { ...baseOpts(220).chart, type: 'bar' },
       series: [
         { name: 'Best Point Reached', data: [avgMfeWin, avg(maeLosers, t => t.mfe)] },
@@ -6367,7 +6382,7 @@ function initAnalysisCharts(open, closed) {
       plotOptions: { bar: { columnWidth: '50%', borderRadius: 3 } },
       legend: { show: true, labels: { colors: c.text }, fontSize: '11px' },
       dataLabels: { enabled: true, formatter: v => v.toFixed(1) + '%', style: { fontSize: '10px' } },
-    }); mfeFinalChart.render(); analysisCharts.push(mfeFinalChart); } catch(e) { console.warn('chart-mfe-vs-final failed', e); }
+    }); mfeFinalChart.render(); analysisCharts.push(mfeFinalChart); } catch(e) { console.warn('chart-mfe-vs-final failed', e); } });
 
     const avgMfeLoss = avg(maeLosers, t => t.mfe);
     const wasGreenThreshold = 1;
@@ -6669,7 +6684,7 @@ function initAnalysisCharts(open, closed) {
   const rsColors = [c.red, c.amber, c.green, c.amber, c.red, c.red];
   const riskDistEl = document.getElementById('chart-tm-risk-dist');
   if (riskDistEl && withRiskRsOnly.length > 0) {
-    try { const rdChart = new ApexCharts(riskDistEl, {
+    _chartQ(() => { try { const rdChart = new ApexCharts(riskDistEl, {
       ...baseOpts(220), chart: { ...baseOpts(220).chart, type: 'bar' },
       series: [{ name: 'Trades', data: rsData }],
       xaxis: { ...baseOpts().xaxis, categories: rsKeys },
@@ -6683,7 +6698,7 @@ function initAnalysisCharts(open, closed) {
         const pct = withRiskRsOnly.length > 0 ? (v / withRiskRsOnly.length * 100).toFixed(0) : 0;
         return v + ' trade' + (v!==1?'s':'') + ' (' + pct + '%)';
       }}},
-    }); rdChart.render(); analysisCharts.push(rdChart); } catch(e) { console.warn('chart-tm-risk-dist failed', e); }
+    }); rdChart.render(); analysisCharts.push(rdChart); } catch(e) { console.warn('chart-tm-risk-dist failed', e); } });
     // Dynamic insight
     const rsInsEl = document.createElement('div');
     rsInsEl.style.cssText = 'margin-top:8px;font-size:12px;color:var(--text-muted);line-height:1.8';
@@ -6715,7 +6730,7 @@ function initAnalysisCharts(open, closed) {
   const avgLossHold = tmLosers.filter(t=>t.age>0).reduce((s,t)=>s+(parseInt(t.age)||0),0) / (tmLosers.filter(t=>t.age>0).length||1);
   const wrByRiskEl = document.getElementById('chart-tm-wr-by-risk');
   if (wrByRiskEl && tmClosed.length > 0) {
-    try { const holdChart = new ApexCharts(wrByRiskEl, {
+    _chartQ(() => { try { const holdChart = new ApexCharts(wrByRiskEl, {
       ...baseOpts(220), chart: { ...baseOpts(220).chart, type: 'bar' },
       series: [
         { name: 'Winners', data: holdBkts.map(k => holdWinCounts[k]) },
@@ -6728,7 +6743,7 @@ function initAnalysisCharts(open, closed) {
       legend: { show:true, position:'top', fontSize:'11px', labels:{colors:c.text} },
       dataLabels: { enabled:false },
       tooltip: { ...baseOpts().tooltip },
-    }); holdChart.render(); analysisCharts.push(holdChart); } catch(e) { console.warn('chart-tm-wr-by-risk failed', e); }
+    }); holdChart.render(); analysisCharts.push(holdChart); } catch(e) { console.warn('chart-tm-wr-by-risk failed', e); } });
 
     // Dynamic insight
     const holdInsEl = document.createElement('div');
@@ -6765,7 +6780,7 @@ function initAnalysisCharts(open, closed) {
   const winData = winKeys.map(k => winBuckets[k]);
   const winDistEl = document.getElementById('chart-tm-winner-dist');
   if (winDistEl && tmWinners.length > 0) {
-    try { const wdChart = new ApexCharts(winDistEl, {
+    _chartQ(() => { try { const wdChart = new ApexCharts(winDistEl, {
       ...baseOpts(220), chart: { ...baseOpts(220).chart, type: 'bar' },
       series: [{ name: 'Winners', data: winData }],
       xaxis: { ...baseOpts().xaxis, categories: winKeys },
@@ -6787,7 +6802,7 @@ function initAnalysisCharts(open, closed) {
         const pct = tmWinners.length > 0 ? (v / tmWinners.length * 100).toFixed(0) : 0;
         return v + ' trade' + (v!==1?'s':'') + ' (' + pct + '% of closed winners)';
       }}},
-    }); wdChart.render(); analysisCharts.push(wdChart); } catch(e) { console.warn('chart-tm-winner-dist failed', e); }
+    }); wdChart.render(); analysisCharts.push(wdChart); } catch(e) { console.warn('chart-tm-winner-dist failed', e); } });
 
     // Dynamic insight
     const winInsEl = document.createElement('div');
@@ -6825,7 +6840,7 @@ function initAnalysisCharts(open, closed) {
   const lossData = lossKeys.map(k => lossBuckets[k]);
   const lossDistEl = document.getElementById('chart-tm-loss-dist');
   if (lossDistEl && tmLosers.length > 0) {
-    try { const ldChart = new ApexCharts(lossDistEl, {
+    _chartQ(() => { try { const ldChart = new ApexCharts(lossDistEl, {
       ...baseOpts(220), chart: { ...baseOpts(220).chart, type: 'bar' },
       series: [{ name: 'Losses', data: lossData }],
       xaxis: { ...baseOpts().xaxis, categories: lossKeys },
@@ -6848,7 +6863,7 @@ function initAnalysisCharts(open, closed) {
         const pct = tmLosers.length > 0 ? (v / tmLosers.length * 100).toFixed(0) : 0;
         return v + ' trade' + (v!==1?'s':'') + ' (' + pct + '% of losses)';
       }}},
-    }); ldChart.render(); analysisCharts.push(ldChart); } catch(e) { console.warn('chart-tm-loss-dist failed', e); }
+    }); ldChart.render(); analysisCharts.push(ldChart); } catch(e) { console.warn('chart-tm-loss-dist failed', e); } });
 
     // Loss dist insight text
     const lossInsEl = document.getElementById('loss-dist-insight');
