@@ -2813,13 +2813,12 @@ function renderDashboard(data, cfg) {
     }
     depEl.textContent = fmt(deployed);
     depEl.style.color = 'var(--text-primary)';
-    if (depSubEl) depSubEl.textContent = deployedPct.toFixed(1) + '% of capital · Cash: ' + fmt(cash);
+    if (depSubEl) depSubEl.textContent = deployedPct.toFixed(1) + '% of capital · In liquid fund: ' + fmt(cash);
     if (depBar) depBar.style.width = Math.min(100, deployedPct).toFixed(1) + '%';
     if (depBadge) {
-      const rodStr = (returnOnDeployed >= 0 ? '+' : '') + returnOnDeployed.toFixed(1) + '% return on deployed capital';
-      if (deployedPct > 80) { depBadge.className = 'stat-badge badge-amber'; depBadge.textContent = '⚠ ' + deployedPct.toFixed(0) + '% deployed — limited dry powder · ' + rodStr; }
-      else if (deployedPct > 50) { depBadge.className = 'stat-badge badge-blue'; depBadge.textContent = deployedPct.toFixed(0) + '% deployed · ' + rodStr; }
-      else { depBadge.className = 'stat-badge badge-green'; depBadge.textContent = deployedPct.toFixed(0) + '% deployed · ' + fmt(cash) + ' available · ' + rodStr; }
+      const rodStr = (returnOnDeployed >= 0 ? '+' : '') + returnOnDeployed.toFixed(1) + '% return on deployed';
+      depBadge.className = 'stat-badge badge-blue';
+      depBadge.textContent = rodStr + ' · Liquid: ' + fmt(cash) + ' @ ~6% p.a.';
     }
   })();
 
