@@ -1749,6 +1749,45 @@ tbody tr:hover { filter: brightness(0.97); }
     </div>
   </div>
 
+        <!-- Win Rate by Hold Duration -->
+        <div class="grid-2" style="margin-top:14px">
+          <div class="card card-sm">
+            <div class="stat-label">Win Rate: First 10 Days vs After</div>
+            <div style="display:flex;gap:20px;margin-top:8px;align-items:flex-end;flex-wrap:wrap">
+              <div>
+                <div style="font-size:22px;font-weight:700" id="dash-wr-early">—</div>
+                <div class="stat-sub">Days 1–10 WR</div>
+              </div>
+              <div style="color:var(--border);font-size:20px;padding-bottom:2px">|</div>
+              <div>
+                <div style="font-size:22px;font-weight:700" id="dash-wr-late">—</div>
+                <div class="stat-sub">After day 10 WR</div>
+              </div>
+              <div style="color:var(--border);font-size:20px;padding-bottom:2px">|</div>
+              <div>
+                <div style="font-size:22px;font-weight:700;color:var(--text-muted)" id="dash-wr-age-n">—</div>
+                <div class="stat-sub">Trades</div>
+              </div>
+            </div>
+            <div class="stat-badge" id="dash-wr-age-badge" style="margin-top:10px">—</div>
+          </div>
+          <div class="card card-sm">
+            <div class="stat-label">Avg P&amp;L by Hold Duration</div>
+            <div style="display:flex;gap:20px;margin-top:8px;align-items:flex-end;flex-wrap:wrap">
+              <div>
+                <div style="font-size:22px;font-weight:700" id="dash-pl-early">—</div>
+                <div class="stat-sub">Days 1–10 avg P&amp;L%</div>
+              </div>
+              <div style="color:var(--border);font-size:20px;padding-bottom:2px">|</div>
+              <div>
+                <div style="font-size:22px;font-weight:700" id="dash-pl-late">—</div>
+                <div class="stat-sub">After day 10 avg P&amp;L%</div>
+              </div>
+            </div>
+            <div class="stat-badge" id="dash-pl-age-badge" style="margin-top:10px">—</div>
+          </div>
+        </div>
+
   <!-- Burnout Index + Post-Drawdown Cohort -->
   <div class="grid-2" style="margin-bottom:14px">
     <div class="card">
@@ -2794,6 +2833,26 @@ function renderDashboard(data, cfg) {
     else                           { retBadge.className = 'stat-badge badge-red';    retBadge.textContent = '▼ ' + fmt(Math.abs(retRs)) + ' below base — review open positions'; }
   }
 
+  // Blended return vs pure liquid baseline
+  (function() {
+    const el = document.getElementById('dash-return-breakdown');
+    if (!el || initialCapital <= 0) return;
+    // Find earliest trade date across all trades for elapsed days
+    const allTrades = [...open, ...closed];
+    const dates = allTrades.map(t => parseDate(t.openDate)).filter(d => d && d.getFullYear() > 2000);
+    if (!dates.length) return;
+    const earliest = new Date(Math.min(...dates.map(d => d.getTime())));
+    const today = new Date();
+    const daysElapsed = Math.max(1, Math.round((today - earliest) / 86400000));
+    const liquidReturn = initialCapital * 0.06 * (daysElapsed / 365);
+    const liquidPct = (liquidReturn / initialCapital * 100).toFixed(1);
+    const alphaPl = totalCombinedPl - liquidReturn;
+    const alphaPct = (alphaPl / initialCapital * 100).toFixed(1);
+    const alphaSign = alphaPl >= 0 ? '+' : '';
+    el.textContent = `vs liquid fund @ 6% p.a. over ${daysElapsed}d = +${liquidPct}% · Alpha: ${alphaSign}${alphaPct}%`;
+    el.style.color = alphaPl >= 0 ? 'var(--green)' : 'var(--red)';
+  })();
+
   // Capital Deployed card — sum(entryPrice × qty) for all open positions
   (function() {
     const deployed = open.reduce((s, t) => s + ((t.entryPrice || 0) * (t.qty || 0)), 0);
@@ -2817,8 +2876,10 @@ function renderDashboard(data, cfg) {
     if (depBar) depBar.style.width = Math.min(100, deployedPct).toFixed(1) + '%';
     if (depBadge) {
       const rodStr = (returnOnDeployed >= 0 ? '+' : '') + returnOnDeployed.toFixed(1) + '% return on deployed';
+      const blendedPct = initialCapital > 0 ? (totalCombinedPl / initialCapital * 100) : 0;
+      const blendedSign = blendedPct >= 0 ? '+' : '';
       depBadge.className = 'stat-badge badge-blue';
-      depBadge.textContent = rodStr + ' · Liquid: ' + fmt(cash) + ' @ ~6% p.a.';
+      depBadge.textContent = rodStr + ' · Blended: ' + blendedSign + blendedPct.toFixed(1) + '% on total capital';
     }
   })();
 
@@ -3165,6 +3226,16 @@ function renderTodayActions(open, cfg) {
         verb: 'HA SHIFT TODAY', verbBg: 'rgba(96,165,250,0.15)', verbColor: '#60a5fa',
         directive: `HA now ${t.haColour || '?'} — monitor`,
         detail: `Colour flipped to ${t.haColour || '?'} today. If Red: tighten stop. If Green: momentum resuming.` });
+    }
+
+    // 6b. OVERDUE PARTIAL — held past maxAge with no partial taken
+    const maxAge = cfg.maxAge || 60;
+    if (t.age && parseInt(t.age) > maxAge && String(t.partialTaken || '').toUpperCase() !== 'Y') {
+      actions.push({ priority: 5, group: 'monitor', stock: t.stock, sector: t.sector || '',
+        pnlLabel, pnlColor, effPctLabel: effPct.toFixed(1) + '%', cmp: t.cmp, effStop, age: t.age || '',
+        verb: 'REVIEW PARTIAL', verbBg: 'rgba(96,165,250,0.15)', verbColor: '#60a5fa',
+        directive: `Held ${t.age}d — revisit exit plan`,
+        detail: `${t.age} days open, no partial taken. Above your ${maxAge}-day max. Review: still trending? If yes hold, if not exit.` });
     }
 
     // 7. NEAR STOP — within stop proximity %
@@ -5684,6 +5755,42 @@ function initAnalysisCharts(open, closed) {
       }
     }
   }
+
+  // ── Win Rate: First 10 Days vs After ──
+  (function() {
+    const early = closed.filter(t => (parseInt(t.age) || 0) <= 10);
+    const late  = closed.filter(t => (parseInt(t.age) || 0) > 10);
+    const wr = arr => arr.length ? (arr.filter(t => t.finalPl > 0).length / arr.length * 100) : null;
+    const avgPl = arr => arr.length ? (arr.reduce((s, t) => s + (t.finalPlPct || 0), 0) / arr.length) : null;
+    const earlyWR = wr(early); const lateWR = wr(late);
+    const earlyPl = avgPl(early); const latePl = avgPl(late);
+    const fmt1 = v => v === null ? '—' : v.toFixed(1) + '%';
+    const fmtPl = v => v === null ? '—' : (v >= 0 ? '+' : '') + v.toFixed(1) + '%';
+    const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+    const col = (id, c) => { const el = document.getElementById(id); if (el) el.style.color = c; };
+    set('dash-wr-early', fmt1(earlyWR));
+    set('dash-wr-late',  fmt1(lateWR));
+    set('dash-wr-age-n', closed.length + ' closed');
+    set('dash-pl-early', fmtPl(earlyPl));
+    set('dash-pl-late',  fmtPl(latePl));
+    if (earlyWR !== null) col('dash-wr-early', earlyWR >= 40 ? 'var(--green)' : earlyWR >= 25 ? 'var(--amber)' : 'var(--red)');
+    if (lateWR  !== null) col('dash-wr-late',  lateWR  >= 40 ? 'var(--green)' : lateWR  >= 25 ? 'var(--amber)' : 'var(--red)');
+    if (earlyPl !== null) col('dash-pl-early', earlyPl >= 0 ? 'var(--green)' : 'var(--red)');
+    if (latePl  !== null) col('dash-pl-late',  latePl  >= 0 ? 'var(--green)' : 'var(--red)');
+    const badge = document.getElementById('dash-wr-age-badge');
+    const plBadge = document.getElementById('dash-pl-age-badge');
+    if (badge && early.length && late.length) {
+      if (lateWR > earlyWR + 10) { badge.className = 'stat-badge badge-green'; badge.textContent = '✓ Winners need time — WR improves significantly after day 10. Hold your trades.'; }
+      else if (earlyWR > lateWR + 10) { badge.className = 'stat-badge badge-amber'; badge.textContent = '⚠ Early exits outperform — breakouts that haven\'t worked by day 10 rarely do. Consider tighter age stops.'; }
+      else { badge.className = 'stat-badge badge-blue'; badge.textContent = 'Hold duration has minimal impact on WR — stops are doing the work.'; }
+    } else if (badge) { badge.className = 'stat-badge badge-blue'; badge.textContent = 'Need more closed trades for reliable split.'; }
+    if (plBadge && early.length && late.length) {
+      const diff = (latePl || 0) - (earlyPl || 0);
+      if (diff > 2) { plBadge.className = 'stat-badge badge-green'; plBadge.textContent = `Longer holds add ${diff.toFixed(1)}% avg P&L — patience pays in this system.`; }
+      else if (diff < -2) { plBadge.className = 'stat-badge badge-amber'; plBadge.textContent = `Shorter holds show better avg P&L — overstaying may be giving back gains.`; }
+      else { plBadge.className = 'stat-badge badge-blue'; plBadge.textContent = 'Similar avg P&L across hold durations.'; }
+    }
+  })();
 
   // Current Streak — last 20 entries (open + closed) by entry date
   // Open trade outcome = profitable if notionalPl > 0, else loss-so-far
