@@ -773,6 +773,15 @@ tbody tr:hover { filter: brightness(0.97); }
       <div style="font-size:11px;color:var(--text-muted);margin-top:4px" id="dash-return-breakdown">—</div>
       <div class="stat-badge badge-green" id="dash-return-badge" style="margin-top:6px">▲ Compounding</div>
     </div>
+    <div class="card card-sm">
+      <div class="stat-label">Capital Deployed</div>
+      <div class="stat-value" id="dash-deployed">—</div>
+      <div class="stat-sub" id="dash-deployed-sub">Entry price × qty across open positions</div>
+      <div style="margin-top:8px;height:5px;border-radius:3px;background:var(--surface2);overflow:hidden">
+        <div id="dash-deployed-bar" style="height:100%;border-radius:3px;background:var(--accent);transition:width 0.4s;width:0%"></div>
+      </div>
+      <div class="stat-badge" id="dash-deployed-badge" style="margin-top:8px">—</div>
+    </div>
   </div>
 
   <!-- System Health strip -->
@@ -2784,6 +2793,35 @@ function renderDashboard(data, cfg) {
     else if (totalReturn >= -2)    { retBadge.className = 'stat-badge badge-amber';  retBadge.textContent = 'Flat — open winners will show here as they run'; }
     else                           { retBadge.className = 'stat-badge badge-red';    retBadge.textContent = '▼ ' + fmt(Math.abs(retRs)) + ' below base — review open positions'; }
   }
+
+  // Capital Deployed card — sum(entryPrice × qty) for all open positions
+  (function() {
+    const deployed = open.reduce((s, t) => s + ((t.entryPrice || 0) * (t.qty || 0)), 0);
+    const cash = initialCapital > 0 ? Math.max(0, initialCapital - deployed) : 0;
+    const deployedPct = initialCapital > 0 ? (deployed / initialCapital * 100) : 0;
+    const returnOnDeployed = deployed > 0 ? (totalUnrealisedPl / deployed * 100) : 0;
+    const depEl = document.getElementById('dash-deployed');
+    const depSubEl = document.getElementById('dash-deployed-sub');
+    const depBar = document.getElementById('dash-deployed-bar');
+    const depBadge = document.getElementById('dash-deployed-badge');
+    if (!depEl) return;
+    if (deployed === 0) {
+      depEl.textContent = '—';
+      if (depSubEl) depSubEl.textContent = 'No qty data — map col Q in Config';
+      if (depBadge) { depBadge.className = 'stat-badge badge-blue'; depBadge.textContent = 'Map Qty col (Q) in Config'; }
+      return;
+    }
+    depEl.textContent = fmt(deployed);
+    depEl.style.color = 'var(--text-primary)';
+    if (depSubEl) depSubEl.textContent = deployedPct.toFixed(1) + '% of capital · Cash: ' + fmt(cash);
+    if (depBar) depBar.style.width = Math.min(100, deployedPct).toFixed(1) + '%';
+    if (depBadge) {
+      const rodStr = (returnOnDeployed >= 0 ? '+' : '') + returnOnDeployed.toFixed(1) + '% return on deployed capital';
+      if (deployedPct > 80) { depBadge.className = 'stat-badge badge-amber'; depBadge.textContent = '⚠ ' + deployedPct.toFixed(0) + '% deployed — limited dry powder · ' + rodStr; }
+      else if (deployedPct > 50) { depBadge.className = 'stat-badge badge-blue'; depBadge.textContent = deployedPct.toFixed(0) + '% deployed · ' + rodStr; }
+      else { depBadge.className = 'stat-badge badge-green'; depBadge.textContent = deployedPct.toFixed(0) + '% deployed · ' + fmt(cash) + ' available · ' + rodStr; }
+    }
+  })();
 
   // Risk tier card — ₹1000 start, +₹500 per 100 closed trades, cap 0.8% of portfolio
   const riskCapRs = initialCapital > 0 ? Math.round(initialCapital * 0.008) : 40000;
