@@ -920,16 +920,17 @@ tbody tr:hover { filter: brightness(0.97); }
       <div style="display:flex;gap:16px;margin-top:6px;align-items:flex-end;flex-wrap:wrap">
         <div>
           <div style="font-size:11px;color:var(--text-muted);margin-bottom:2px">Initial</div>
-          <div class="stat-value" id="dash-init-risk" style="font-size:20px">—</div>
+          <div class="stat-value" id="dash-init-risk" style="font-size:20px;color:var(--text-secondary)">—</div>
         </div>
         <div style="color:var(--border);font-size:20px;padding-bottom:4px">→</div>
         <div>
           <div style="font-size:11px;color:var(--text-muted);margin-bottom:2px">Current</div>
           <div class="stat-value" id="dash-curr-risk" style="font-size:20px">—</div>
         </div>
+        <div id="dash-risk-trend-pill" style="display:none;align-self:center;padding-bottom:4px;font-size:13px;font-weight:800;border-radius:6px;padding:3px 8px">—</div>
       </div>
       <div class="stat-sub" id="dash-curr-risk-sub">— positions risk-free</div>
-      <div class="stat-badge badge-green" id="dash-init-risk-badge">—</div>
+      <div class="stat-badge" id="dash-init-risk-badge">—</div>
     </div>
     <div class="card card-sm">
       <div class="stat-label">Open / Closed</div>
@@ -2942,14 +2943,42 @@ function renderDashboard(data, cfg) {
   set('dash-init-risk', fmt(totalInitRisk));
   set('dash-curr-risk', fmt(totalCurrRisk));
   set('dash-curr-risk-sub', `${protectedCount} of ${open.length} positions risk-free`);
+
+  // Trend pill: % reduction in risk vs initial
+  const riskReductionPct = totalInitRisk > 0 ? (riskSaved / totalInitRisk * 100) : 0;
+  const trendPill = document.getElementById('dash-risk-trend-pill');
+  const currRiskEl = document.getElementById('dash-curr-risk');
+  if (trendPill) {
+    trendPill.style.display = 'block';
+    if (riskReductionPct >= 50) {
+      trendPill.style.background = 'rgba(52,199,89,0.18)';
+      trendPill.style.color = 'var(--green)';
+      trendPill.textContent = '↓ ' + riskReductionPct.toFixed(0) + '% safer';
+      if (currRiskEl) currRiskEl.style.color = 'var(--green)';
+    } else if (riskReductionPct > 0) {
+      trendPill.style.background = 'rgba(52,199,89,0.12)';
+      trendPill.style.color = 'var(--green)';
+      trendPill.textContent = '↓ ' + riskReductionPct.toFixed(0) + '%';
+      if (currRiskEl) currRiskEl.style.color = 'var(--green)';
+    } else {
+      trendPill.style.background = 'rgba(245,158,11,0.15)';
+      trendPill.style.color = 'var(--amber)';
+      trendPill.textContent = '= no change';
+      if (currRiskEl) currRiskEl.style.color = 'var(--amber)';
+    }
+  }
+
   const riskBadge = document.getElementById('dash-init-risk-badge');
   if (riskBadge) {
-    if (riskSaved > 0) {
+    if (riskReductionPct >= 75) {
       riskBadge.className = 'stat-badge badge-green';
-      riskBadge.textContent = `Saved ₹${Math.round(riskSaved).toLocaleString('en-IN')} · ${riskFreePct.toFixed(0)}% positions protected`;
+      riskBadge.textContent = `✓ ${riskReductionPct.toFixed(0)}% risk eliminated — mostly risk-free book`;
+    } else if (riskSaved > 0) {
+      riskBadge.className = 'stat-badge badge-green';
+      riskBadge.textContent = `↓ Saved ₹${Math.round(riskSaved).toLocaleString('en-IN')} · ${protectedCount} position${protectedCount !== 1 ? 's' : ''} risk-free`;
     } else {
       riskBadge.className = 'stat-badge badge-amber';
-      riskBadge.textContent = totalHeat.toFixed(2) + '% of capital at risk';
+      riskBadge.textContent = `No stops at BE yet · ${totalHeat.toFixed(2)}% of capital at risk`;
     }
   }
 
