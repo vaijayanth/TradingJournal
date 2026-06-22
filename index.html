@@ -3307,52 +3307,67 @@ function renderTodayActions(open, cfg) {
     return;
   }
 
-  // Single compact table — one row per action, group header rows between sections
-  const groups = [
-    { key: 'exit',    label: '🔴 Exit Actions',    color: 'var(--red)',   bg: 'var(--red-soft)',        desc: 'Must act today' },
-    { key: 'profit',  label: '⚡ Profit Actions',  color: 'var(--accent)', bg: 'rgba(99,102,241,0.1)', desc: 'Lock in or protect gains' },
-    { key: 'monitor', label: '👁 Monitor Closely', color: '#60a5fa', bg: 'rgba(96,165,250,0.1)', desc: 'No action yet — stay alert' },
+  // Collapsible sections per verb type — collapsed by default, exit sections open
+  // Group verbs into sections
+  const verbSections = [
+    { verb: 'EXIT NOW',      label: '🔴 Exit Now',            color: 'var(--red)',    bg: 'var(--red-soft)',         desc: 'Sell at market — no exceptions', defaultOpen: true },
+    { verb: 'REVIEW EXIT',   label: '🔴 Review Exit',         color: 'var(--red)',    bg: 'rgba(239,68,68,0.1)',     desc: 'Exit or tighten stop today',     defaultOpen: true },
+    { verb: 'TAKE PARTIAL',  label: '⚡ Take Partial Profit', color: 'var(--green)',  bg: 'rgba(52,199,89,0.12)',    desc: 'Sell 50% qty now',               defaultOpen: true },
+    { verb: 'MOVE STOP→BE',  label: '🛡 Move Stop to BE',     color: 'var(--accent)', bg: 'rgba(99,102,241,0.1)',   desc: 'Update col J to entry price',    defaultOpen: false },
+    { verb: 'PROTECT GAINS', label: '⚠ Protect Gains',       color: '#60a5fa',       bg: 'rgba(96,165,250,0.1)',   desc: 'HA Red on winner — watch',       defaultOpen: false },
+    { verb: 'HA SHIFT TODAY',label: '🔄 HA Shift Today',      color: '#60a5fa',       bg: 'rgba(96,165,250,0.1)',   desc: 'Colour changed — monitor',       defaultOpen: false },
+    { verb: 'REVIEW PARTIAL',label: '📋 Review Partial',      color: '#60a5fa',       bg: 'rgba(96,165,250,0.1)',   desc: 'Long hold — revisit exit plan',  defaultOpen: false },
+    { verb: 'NEAR STOP',     label: '🟡 Near Stop',           color: '#60a5fa',       bg: 'rgba(96,165,250,0.08)',  desc: 'Watch intraday — no action yet', defaultOpen: false },
   ];
 
-  const rows = groups.flatMap(g => {
-    const items = actions.filter(a => a.group === g.key);
-    if (!items.length) return [];
-    const hdr = `<tr style="background:${g.bg}">
-      <td colspan="7" style="padding:7px 10px;font-size:11px;font-weight:700;color:${g.color};letter-spacing:.04em;text-transform:uppercase">
-        ${g.label} <span style="font-weight:400;text-transform:none;letter-spacing:0;opacity:.75">— ${g.desc}</span>
-        <span style="float:right;background:rgba(0,0,0,.15);border-radius:10px;padding:1px 8px">${items.length}</span>
-      </td></tr>`;
-    const dataRows = items.map(a => {
+  let sectionsHtml = '';
+  let sectionId = 0;
+  verbSections.forEach(vs => {
+    const items = actions.filter(a => a.verb === vs.verb);
+    if (!items.length) return;
+    const sid = 'tas-' + (sectionId++);
+    const isOpen = vs.defaultOpen;
+    const tableRows = items.map(a => {
       const cmpStr = a.cmp ? fmtRs(a.cmp) : '—';
       const stopStr = a.effStop ? fmtRs(a.effStop) : '—';
       const sectorBadge = a.sector ? `<span style="font-size:10px;color:var(--text-muted);background:var(--surface2);padding:1px 6px;border-radius:8px;margin-left:5px">${a.sector}</span>` : '';
       return `<tr style="cursor:default" title="${a.detail.replace(/"/g,'&quot;')}">
-        <td style="white-space:nowrap"><span style="font-size:10px;font-weight:800;letter-spacing:.06em;padding:2px 7px;border-radius:4px;background:${a.verbBg};color:${a.verbColor}">${a.verb}</span></td>
         <td style="font-weight:700;white-space:nowrap">${a.stock}${sectorBadge}</td>
         <td style="font-weight:700;color:${a.pnlColor};text-align:right;white-space:nowrap">${a.pnlLabel}</td>
         <td style="text-align:right;white-space:nowrap">${cmpStr}</td>
         <td style="text-align:right;white-space:nowrap">${stopStr}</td>
         <td style="text-align:right;white-space:nowrap;color:${parseFloat(a.effPctLabel) <= 1 ? 'var(--red)' : parseFloat(a.effPctLabel) <= 2 ? 'var(--amber)' : 'var(--text-secondary)'}">${a.effPctLabel}</td>
-        <td style="color:${a.verbColor};font-size:11px;font-weight:500">${a.directive}</td>
+        <td style="color:${vs.color};font-size:11px;font-weight:500">${a.directive}</td>
       </tr>`;
-    });
-    return [hdr, ...dataRows];
+    }).join('');
+
+    sectionsHtml += `
+    <div style="border:1px solid var(--border);border-radius:8px;overflow:hidden;margin-bottom:8px">
+      <div onclick="(function(el){var b=document.getElementById('${sid}');var open=b.style.display==='none';b.style.display=open?'block':'none';el.querySelector('.tas-chevron').textContent=open?'▾':'▸';})(this)"
+           style="display:flex;align-items:center;gap:10px;padding:9px 12px;cursor:pointer;background:${vs.bg};user-select:none">
+        <span class="tas-chevron" style="font-size:11px;color:${vs.color};width:10px">${isOpen ? '▾' : '▸'}</span>
+        <span style="font-size:12px;font-weight:700;color:${vs.color};flex:1">${vs.label}</span>
+        <span style="font-size:11px;background:${vs.color};color:#fff;border-radius:10px;padding:1px 9px;font-weight:700">${items.length}</span>
+        <span style="font-size:11px;color:var(--text-muted)">${vs.desc}</span>
+      </div>
+      <div id="${sid}" style="display:${isOpen ? 'block' : 'none'};overflow-x:auto">
+        <table class="trades-table" style="width:100%;min-width:520px;border-radius:0;border:none">
+          <thead><tr>
+            <th>Stock</th>
+            <th style="text-align:right">P&amp;L%</th>
+            <th style="text-align:right">CMP</th>
+            <th style="text-align:right">Eff Stop</th>
+            <th style="text-align:right">% from Stop</th>
+            <th>What to do</th>
+          </tr></thead>
+          <tbody>${tableRows}</tbody>
+        </table>
+      </div>
+    </div>`;
   });
 
-  body.innerHTML = `<div style="overflow-x:auto">
-    <table class="trades-table" style="width:100%;min-width:560px">
-      <thead><tr>
-        <th>Action</th><th>Stock</th>
-        <th style="text-align:right">P&amp;L%</th>
-        <th style="text-align:right">CMP</th>
-        <th style="text-align:right">Eff Stop</th>
-        <th style="text-align:right">% from Stop</th>
-        <th>What to do</th>
-      </tr></thead>
-      <tbody>${rows.join('')}</tbody>
-    </table>
-  </div>
-  <div style="font-size:11px;color:var(--text-muted);margin-top:8px;padding:0 4px">Hover any row for full detail · ${open.length} open positions · ${actions.length} actions</div>`;
+  body.innerHTML = sectionsHtml +
+    `<div style="font-size:11px;color:var(--text-muted);margin-top:4px;padding:0 2px">Hover any row for full detail · ${open.length} open positions · ${actions.length} actions</div>`;
 }
 
 // ── POSITIONS (REAL DATA) ─────────────────────────────
