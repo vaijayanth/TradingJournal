@@ -659,7 +659,15 @@ tbody tr:hover { filter: brightness(0.97); }
 @media (max-width: 600px) {
   .today-directive-desktop { display: none !important; }
   .today-directive-mobile { display: block !important; }
+  .nav-label-full { display: none; }
+  .nav-label-short { display: inline; }
 }
+@media (min-width: 601px) {
+  .nav-label-full { display: inline; }
+  .nav-label-short { display: none; }
+}
+.analysis-jump-btn { display:inline-block;padding:3px 11px;border-radius:14px;background:var(--surface2);border:1px solid var(--border);font-size:11px;font-weight:600;color:var(--text-secondary);text-decoration:none;cursor:pointer;transition:background 0.15s; }
+.analysis-jump-btn:hover { background:var(--accent);color:#fff;border-color:var(--accent); }
 /* ── F&O MODULE ── */
 .strategy-bar { display:flex; align-items:center; gap:8px; padding:6px 20px; background:var(--surface); border-bottom:1px solid var(--border); }
 .strategy-bar-label { font-size:11px; color:var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:0.5px; margin-right:4px; }
@@ -718,11 +726,11 @@ tbody tr:hover { filter: brightness(0.97); }
 <nav>
   <div class="nav-logo">📈 <span>Trading</span>Journal</div>
   <div class="nav-tabs">
-    <button class="nav-tab active" onclick="showPage('dashboard', this)">Dashboard</button>
-    <button class="nav-tab" onclick="showPage('performance', this)">Performance</button>
-    <button class="nav-tab" onclick="showPage('analysis', this)">Analysis</button>
-    <button class="nav-tab" onclick="showPage('positions', this)">Positions</button>
-    <button class="nav-tab" id="nav-today" onclick="showPage('today', this)">⚡ Today</button>
+    <button class="nav-tab" onclick="showPage('dashboard', this)"><span class="nav-label-full">Dashboard</span><span class="nav-label-short">Dash</span></button>
+    <button class="nav-tab" onclick="showPage('performance', this)"><span class="nav-label-full">Performance</span><span class="nav-label-short">Perf</span></button>
+    <button class="nav-tab" onclick="showPage('analysis', this)"><span class="nav-label-full">Analysis</span><span class="nav-label-short">Analysis</span></button>
+    <button class="nav-tab" onclick="showPage('positions', this)"><span class="nav-label-full">Positions</span><span class="nav-label-short">Pos</span></button>
+    <button class="nav-tab active" id="nav-today" onclick="showPage('today', this)">⚡ Today</button>
     <button class="nav-tab" onclick="showPage('config', this)">Config</button>
   </div>
   <div class="nav-right">
@@ -739,7 +747,7 @@ tbody tr:hover { filter: brightness(0.97); }
 <div id="swing-pages">
 
 <!-- ════ DASHBOARD ════ -->
-<div id="page-dashboard" class="page active">
+<div id="page-dashboard" class="page">
 
   <!-- Urgent action banner — shown only when exits or partials pending -->
   <div id="dash-urgent-banner" style="display:none;margin-bottom:14px;padding:12px 16px;border-radius:10px;display:none;align-items:center;gap:12px;flex-wrap:wrap">
@@ -1035,7 +1043,7 @@ tbody tr:hover { filter: brightness(0.97); }
 </div>
 
 <!-- ════ TODAY'S ACTIONS ════ -->
-<div id="page-today" class="page">
+<div id="page-today" class="page active">
   <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:20px">
     <div>
       <div style="font-size:16px;font-weight:800">⚡ Today's Action Board</div>
@@ -1478,6 +1486,17 @@ tbody tr:hover { filter: brightness(0.97); }
 <!-- ════ ANALYSIS ════ -->
 <div id="page-analysis" class="page">
 
+  <!-- Jump nav -->
+  <div style="display:flex;gap:6px;flex-wrap:wrap;margin-bottom:14px">
+    <span style="font-size:11px;color:var(--text-muted);font-weight:600;align-self:center;margin-right:4px">Jump to:</span>
+    <a href="#asec-setup"    onclick="document.getElementById('asec-setup').scrollIntoView({behavior:'smooth'});return false;" class="analysis-jump-btn">Setup Types</a>
+    <a href="#asec-trade"    onclick="document.getElementById('asec-trade').scrollIntoView({behavior:'smooth'});return false;" class="analysis-jump-btn">Trade Mgmt</a>
+    <a href="#asec-partial"  onclick="document.getElementById('asec-partial').scrollIntoView({behavior:'smooth'});return false;" class="analysis-jump-btn">Partial Exits</a>
+    <a href="#asec-behaviour"onclick="document.getElementById('asec-behaviour').scrollIntoView({behavior:'smooth'});return false;" class="analysis-jump-btn">Behaviour</a>
+    <a href="#asec-pattern"  onclick="document.getElementById('asec-pattern').scrollIntoView({behavior:'smooth'});return false;" class="analysis-jump-btn">Patterns</a>
+    <a href="#asec-maemfe"   onclick="document.getElementById('asec-maemfe').scrollIntoView({behavior:'smooth'});return false;" class="analysis-jump-btn">MAE/MFE</a>
+  </div>
+
   <!-- Closed-trade bias note -->
   <div style="margin-bottom:16px;padding:10px 14px;background:rgba(255,159,10,0.08);border-left:3px solid var(--amber);border-radius:6px;font-size:12.5px;color:var(--text-secondary);line-height:1.6">
     ⚡ <strong>Momentum system note:</strong> Closed trades skew negative (stops taken fast). Open positions hold the unrealised gains. All insights below are closed-only patterns — cross-reference with the Positions tab for the full picture.
@@ -1542,7 +1561,7 @@ tbody tr:hover { filter: brightness(0.97); }
   </div>
 
   <!-- 2. Setup Type Breakdown -->
-  <div class="section-title">Setup Type vs Outcome</div>
+  <div class="section-title" id="asec-setup">Setup Type vs Outcome</div>
   <div class="card" style="margin-bottom:14px">
     <div class="chart-title">Performance by Trade Setup (Entry Label)</div>
     <div class="chart-sub">Captured at entry — shows which setups actually work in your system</div>
@@ -1593,7 +1612,7 @@ tbody tr:hover { filter: brightness(0.97); }
   </div>
 
   <!-- 2. Trade Management -->
-  <div class="section-title" style="margin-top:24px">Trade Management</div>
+  <div class="section-title" id="asec-trade" style="margin-top:24px">Trade Management</div>
   <div class="grid-4" style="margin-bottom:14px">
     <div class="card card-sm">
       <div class="stat-label">Avg Init Risk</div>
@@ -1696,7 +1715,7 @@ tbody tr:hover { filter: brightness(0.97); }
   </div>
 
   <!-- 4. Partial Exit Analysis -->
-  <div class="section-title" style="margin-top:20px">Partial Exit Analysis</div>
+  <div class="section-title" id="asec-partial" style="margin-top:20px">Partial Exit Analysis</div>
   <div class="grid-3" style="margin-bottom:14px">
     <div class="card card-sm">
       <div class="stat-label">Took 50% Partial at +<span id="partial-trigger-label-a">10</span>%</div>
@@ -1726,7 +1745,7 @@ tbody tr:hover { filter: brightness(0.97); }
   </div>
 
   <!-- 4. Behavioural Patterns -->
-  <div class="section-title" style="margin-top:20px">Behavioural Patterns</div>
+  <div class="section-title" id="asec-behaviour" style="margin-top:20px">Behavioural Patterns</div>
   <div class="grid-2" style="margin-bottom:14px">
     <div class="card">
       <div class="stat-label">After 3+ Consecutive Losses</div>
@@ -1870,7 +1889,7 @@ tbody tr:hover { filter: brightness(0.97); }
   </div>
 
   <!-- 5. Pattern Analysis -->
-  <div class="section-title">Pattern Analysis</div>
+  <div class="section-title" id="asec-pattern">Pattern Analysis</div>
   <div class="grid-2" style="margin-bottom:14px">
     <div class="card">
       <div class="chart-title">Cut Fast, Run Long?</div>
@@ -1909,7 +1928,7 @@ tbody tr:hover { filter: brightness(0.97); }
   </div>
 
   <!-- 5c. MAE / MFE Analysis -->
-  <div class="section-title" style="margin-top:20px">How Your Trades Behave Before They Resolve</div>
+  <div class="section-title" id="asec-maemfe" style="margin-top:20px">How Your Trades Behave Before They Resolve</div>
   <div class="grid-3" style="margin-bottom:14px">
     <div class="card card-sm">
       <div class="stat-label">Pain Before It Works</div>
@@ -2642,11 +2661,11 @@ function renderDashboard(data, cfg) {
   if (avgLossAge > 0 && avgWinAge > 0) {
     set('dash-sys-r', holdRatio.toFixed(1) + '×');
     const openProfitableCount = open.filter(t => (t.notionalPl || 0) > 0).length;
+    const mostlyOpen = openProfitableCount > closedWinnerAge.length; // more winners running than closed
     let holdVerd, holdColor;
     if (holdRatio >= 3) {
       holdVerd = '✓ running winners long'; holdColor = 'var(--green)';
-    } else if (openProfitableCount >= 5) {
-      // Many winners still open and running — ratio will grow as they mature
+    } else if (mostlyOpen) {
       holdVerd = '⏳ ' + openProfitableCount + ' winners still running — ratio will grow'; holdColor = 'var(--amber)';
     } else if (holdRatio >= 2) {
       holdVerd = '⚠ could hold winners longer'; holdColor = 'var(--amber)';
