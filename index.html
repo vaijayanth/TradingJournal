@@ -656,6 +656,10 @@ tbody tr:hover { filter: brightness(0.97); }
   .expand-content { grid-template-columns: 1fr; }
   .stat-value { font-size: 18px; }
 }
+@media (max-width: 600px) {
+  .today-directive-desktop { display: none !important; }
+  .today-directive-mobile { display: block !important; }
+}
 /* ── F&O MODULE ── */
 .strategy-bar { display:flex; align-items:center; gap:8px; padding:6px 20px; background:var(--surface); border-bottom:1px solid var(--border); }
 .strategy-bar-label { font-size:11px; color:var(--text-muted); font-weight:600; text-transform:uppercase; letter-spacing:0.5px; margin-right:4px; }
@@ -736,6 +740,13 @@ tbody tr:hover { filter: brightness(0.97); }
 
 <!-- ════ DASHBOARD ════ -->
 <div id="page-dashboard" class="page active">
+
+  <!-- Urgent action banner — shown only when exits or partials pending -->
+  <div id="dash-urgent-banner" style="display:none;margin-bottom:14px;padding:12px 16px;border-radius:10px;display:none;align-items:center;gap:12px;flex-wrap:wrap">
+    <span id="dash-urgent-icon" style="font-size:18px"></span>
+    <span id="dash-urgent-text" style="font-size:13px;font-weight:700;flex:1"></span>
+    <button onclick="showPage('today',document.getElementById('nav-today'))" style="background:#fff;border:none;border-radius:6px;padding:5px 14px;font-size:12px;font-weight:700;cursor:pointer;color:#111">Go to Action Board →</button>
+  </div>
 
   <div class="section-title">Portfolio Status</div>
   <div class="grid-4">
@@ -2983,7 +2994,7 @@ function renderDashboard(data, cfg) {
   }
 
   // Heat gauge
-  const heatWidth = Math.min(100, (totalHeat / cfg.maxHeat) * 100);
+  const heatWidth = Math.min(100, (totalHeat / (cfg.maxHeat || 5)) * 100);
   const heatFill = document.getElementById('heat-actual-fill');
   if (heatFill) heatFill.style.width = heatWidth + '%';
   set('heat-actual-value', totalHeat.toFixed(2) + '%');
@@ -3340,6 +3351,30 @@ function renderTodayActions(open, cfg) {
   ].join('');
   if (dashPills) dashPills.innerHTML = pillsHtml;
 
+  // Urgent banner on Dashboard
+  const banner = document.getElementById('dash-urgent-banner');
+  if (banner) {
+    if (exitCount > 0) {
+      const exitStocks = actions.filter(a => a.group === 'exit').map(a => a.stock).join(', ');
+      banner.style.display = 'flex';
+      banner.style.background = 'rgba(239,68,68,0.15)';
+      banner.style.border = '1.5px solid rgba(239,68,68,0.4)';
+      document.getElementById('dash-urgent-icon').textContent = '🔴';
+      document.getElementById('dash-urgent-text').textContent = `Exit triggered: ${exitStocks} — sell at market before open`;
+      document.getElementById('dash-urgent-text').style.color = 'var(--red)';
+    } else if (profitCount > 0) {
+      const profitStocks = actions.filter(a => a.group === 'profit').map(a => a.stock).filter((s,i,a)=>a.indexOf(s)===i).join(', ');
+      banner.style.display = 'flex';
+      banner.style.background = 'rgba(99,102,241,0.1)';
+      banner.style.border = '1.5px solid rgba(99,102,241,0.3)';
+      document.getElementById('dash-urgent-icon').textContent = '⚡';
+      document.getElementById('dash-urgent-text').textContent = `${profitCount} profit action${profitCount > 1 ? 's' : ''} pending: ${profitStocks}`;
+      document.getElementById('dash-urgent-text').style.color = 'var(--accent)';
+    } else {
+      banner.style.display = 'none';
+    }
+  }
+
   // Summary bar in Today tab
   if (summaryBar) {
     if (actions.length === 0) {
@@ -3369,7 +3404,7 @@ function renderTodayActions(open, cfg) {
     { verb: 'EXIT NOW',      label: '🔴 Exit Now',            color: 'var(--red)',    bg: 'var(--red-soft)',         desc: 'Sell at market — no exceptions', defaultOpen: true },
     { verb: 'REVIEW EXIT',   label: '🔴 Review Exit',         color: 'var(--red)',    bg: 'rgba(239,68,68,0.1)',     desc: 'Exit or tighten stop today',     defaultOpen: true },
     { verb: 'TAKE PARTIAL',  label: '⚡ Take Partial Profit', color: 'var(--green)',  bg: 'rgba(52,199,89,0.12)',    desc: 'Sell 50% qty now',               defaultOpen: true },
-    { verb: 'MOVE STOP→BE',  label: '🛡 Move Stop to BE',     color: 'var(--accent)', bg: 'rgba(99,102,241,0.1)',   desc: 'Update col J to entry price',    defaultOpen: false },
+    { verb: 'MOVE STOP→BE',  label: '🛡 Move Stop to BE',     color: 'var(--accent)', bg: 'rgba(99,102,241,0.1)',   desc: 'Update col J to entry price',    defaultOpen: true },
     { verb: 'PROTECT GAINS', label: '⚠ Protect Gains',       color: '#60a5fa',       bg: 'rgba(96,165,250,0.1)',   desc: 'HA Red on winner — watch',       defaultOpen: false },
     { verb: 'HA SHIFT TODAY',label: '🔄 HA Shift Today',      color: '#60a5fa',       bg: 'rgba(96,165,250,0.1)',   desc: 'Colour changed — monitor',       defaultOpen: false },
     { verb: 'REVIEW PARTIAL',label: '📋 Review Partial',      color: '#60a5fa',       bg: 'rgba(96,165,250,0.1)',   desc: 'Long hold — revisit exit plan',  defaultOpen: false },
@@ -3388,12 +3423,12 @@ function renderTodayActions(open, cfg) {
       const stopStr = a.effStop ? fmtRs(a.effStop) : '—';
       const sectorBadge = a.sector ? `<span style="font-size:10px;color:var(--text-muted);background:var(--surface2);padding:1px 6px;border-radius:8px;margin-left:5px">${a.sector}</span>` : '';
       return `<tr style="cursor:default" title="${a.detail.replace(/"/g,'&quot;')}">
-        <td style="font-weight:700;white-space:nowrap">${a.stock}${sectorBadge}</td>
+        <td style="font-weight:700;min-width:90px">${a.stock}${sectorBadge}<div style="font-size:10px;font-weight:500;color:${vs.color};margin-top:2px;display:none" class="today-directive-mobile">${a.directive}</div></td>
         <td style="font-weight:700;color:${a.pnlColor};text-align:right;white-space:nowrap">${a.pnlLabel}</td>
         <td style="text-align:right;white-space:nowrap">${cmpStr}</td>
         <td style="text-align:right;white-space:nowrap">${stopStr}</td>
         <td style="text-align:right;white-space:nowrap;color:${parseFloat(a.effPctLabel) <= 1 ? 'var(--red)' : parseFloat(a.effPctLabel) <= 2 ? 'var(--amber)' : 'var(--text-secondary)'}">${a.effPctLabel}</td>
-        <td style="color:${vs.color};font-size:11px;font-weight:500">${a.directive}</td>
+        <td class="today-directive-desktop" style="color:${vs.color};font-size:11px;font-weight:500">${a.directive}</td>
       </tr>`;
     }).join('');
 
@@ -3432,7 +3467,7 @@ function renderPositionsReal(open, cfg) {
   const _rows = [];
   const trades = open.map(t => {
     const effStop = Math.max(t.stopLoss || 0, t.sevenDayLow || 0);
-    const effPct = (t.cmp && effStop) ? ((t.cmp - effStop) / t.cmp * 100) : t.pctFromStop;
+    const effPct = (t.cmp && effStop) ? ((t.cmp - effStop) / t.cmp * 100) : (t.pctFromStop || 0);
     let alertType = 'none';
     if (effPct <= 0) alertType = 'red';
     else if (effPct <= cfg.stopProximity) alertType = 'amber';
