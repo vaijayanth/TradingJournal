@@ -772,7 +772,7 @@ tbody tr:hover { filter: brightness(0.97); }
       <div class="stat-badge" id="dash-realised-badge">—</div>
     </div>
     <div class="card card-sm">
-      <div class="stat-label">Yesterday's Exits</div>
+      <div class="stat-label">Last Trading Day</div>
       <div style="font-size:26px;font-weight:700;margin-top:4px" id="dash-today-pl">—</div>
       <div class="stat-sub" id="dash-today-sub">—</div>
       <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:10px;display:flex;gap:16px">
@@ -2572,10 +2572,12 @@ function renderDashboard(data, cfg) {
   const realBadge2 = document.getElementById('dash-realised-badge');
   if (realBadge2) { realBadge2.className = 'stat-badge ' + (totalCombinedPl >= 0 ? 'badge-green' : 'badge-red'); realBadge2.textContent = (totalCombinedPl >= 0 ? '▲ Profit' : '▼ Loss'); }
 
-  // Card 3: Yesterday's Exits (EOD trader — orders placed after close, reflected next day)
+  // Card 3: Yesterday's Exits — always last trading day (skip weekends)
   const today = new Date();
-  const yesterday = new Date(); yesterday.setDate(yesterday.getDate() - 1);
-  const yesterdayStr = yesterday.toDateString();
+  const lastTradeDay = new Date();
+  lastTradeDay.setDate(lastTradeDay.getDate() - 1);
+  while (lastTradeDay.getDay() === 0 || lastTradeDay.getDay() === 6) lastTradeDay.setDate(lastTradeDay.getDate() - 1);
+  const yesterdayStr = lastTradeDay.toDateString();
   const yExits = closed.filter(t => t.closeDate && parseDate(t.closeDate).toDateString() === yesterdayStr);
   const todayPl = yExits.reduce((s,t) => s + t.finalPl, 0);
   const todayTrades = yExits.length;
@@ -2584,10 +2586,12 @@ function renderDashboard(data, cfg) {
     set('dash-today-pl', (todayPl >= 0 ? '+' : '') + '₹' + Math.abs(Math.round(todayPl)).toLocaleString('en-IN'));
     const todayEl = document.getElementById('dash-today-pl');
     if (todayEl) todayEl.style.color = todayPl >= 0 ? 'var(--green)' : 'var(--red)';
-    set('dash-today-sub', todayTrades + ' exit' + (todayTrades > 1 ? 's' : '') + ' yesterday');
+    const dayLabel = lastTradeDay.toLocaleDateString('en-IN', {weekday:'short', day:'numeric', month:'short'});
+    set('dash-today-sub', todayTrades + ' exit' + (todayTrades > 1 ? 's' : '') + ' · ' + dayLabel);
   } else {
     set('dash-today-pl', '—');
-    set('dash-today-sub', 'No exits yesterday');
+    const dayLabel = lastTradeDay.toLocaleDateString('en-IN', {weekday:'short', day:'numeric', month:'short'});
+    set('dash-today-sub', 'No exits · ' + dayLabel);
   }
   set('dash-open', open.length);
   set('dash-closed', closed.length);
