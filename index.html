@@ -7291,15 +7291,11 @@ function initAnalysisCharts(open, closed) {
 
   // ── Edge Diagnostics ──────────────────────────────────
   try {
-    const edgeClosed = closed.filter(t => t.finalPlPct !== undefined && t.initRiskPct && t.initRiskPct > 0);
+    // Use ₹ amounts (finalPl / initRiskRs) for R — same as existing perf tab
+    // initRiskPct is % of capital; finalPlPct is % of position — different denominators, never divide them
+    const edgeClosed = closed.filter(t => t.finalPl !== undefined && t.initRiskRs && t.initRiskRs > 0);
 
-    // Helper: compute R-multiple for a trade
-    const rMultiple = t => {
-      const lossR = t.initRiskPct > 0 ? t.finalPlPct / t.initRiskPct : null;
-      return lossR;
-    };
-
-    const rTrades = edgeClosed.map(t => ({ ...t, r: rMultiple(t) })).filter(t => t.r !== null);
+    const rTrades = edgeClosed.map(t => ({ ...t, r: parseFloat((t.finalPl / t.initRiskRs).toFixed(2)) }));
 
     // ── 1. R-Multiple Distribution ──
     if (rTrades.length >= 3) {
@@ -7407,7 +7403,7 @@ function initAnalysisCharts(open, closed) {
     if (edgeClosed.length >= 5) {
       const holdBuckets = { '0–5d': [], '6–15d': [], '16–30d': [], '31–60d': [], '60d+': [] };
       edgeClosed.forEach(t => {
-        const age = t.ageDays || 0;
+        const age = parseInt(t.age) || 0;
         const bucket = age <= 5 ? '0–5d' : age <= 15 ? '6–15d' : age <= 30 ? '16–30d' : age <= 60 ? '31–60d' : '60d+';
         holdBuckets[bucket].push(t);
       });
@@ -7446,7 +7442,7 @@ function initAnalysisCharts(open, closed) {
     if (rrTrades.length >= 3) {
       const wins = rrTrades.filter(t => t.finalPl >= 0);
       const losses = rrTrades.filter(t => t.finalPl < 0);
-      const makePoint = t => ({ x: parseFloat(t.initRiskRs.toFixed(0)), y: parseFloat(t.finalPl.toFixed(0)), z: t.ageDays || 5 });
+      const makePoint = t => ({ x: parseFloat(t.initRiskRs.toFixed(0)), y: parseFloat(t.finalPl.toFixed(0)), z: parseInt(t.age) || 5 });
       _chartQ(() => { try { const rrChart = new ApexCharts(document.getElementById('chart-risk-reward'), {
         ...baseOpts(220), chart: { ...baseOpts(220).chart, type: 'scatter' },
         series: [
