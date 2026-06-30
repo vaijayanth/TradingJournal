@@ -4969,9 +4969,31 @@ function initPerfCharts(closed, initialCapital, open) {
       return (i % step === 0 || i === labels.length - 1) ? l : '';
     });
 
-    const realisedColor2 = runEq >= cap ? c2.green : c2.red;
     const amberColor = '#F6AD55';
     const ddOn = window._eqDDOn;
+
+    // Compute zero-crosspoint for gradient so fill is green above 0 and red below 0
+    const validRet = retData.filter(v => v != null);
+    const retMin = validRet.length ? Math.min(...validRet) : 0;
+    const retMax = validRet.length ? Math.max(...validRet) : 1;
+    const retRange = (retMax - retMin) || 1;
+    // zeroFrac: how far down from the TOP of the chart area is the zero line (0–100)
+    const zeroFrac = retMax > 0 ? Math.min(100, Math.max(0, Math.round((retMax / retRange) * 100))) : 0;
+    const allPositive = retMin >= 0;
+    const allNegative = retMax <= 0;
+    // Line stroke color: green if overall positive, red if negative, gradient effect via fill
+    const realisedColor2 = allNegative ? c2.red : c2.green;
+    // Build colorStops that flip from green to red at y=0
+    const eqColorStops = allPositive
+      ? [[{ offset: 0, color: c2.green, opacity: 0.45 }, { offset: 100, color: c2.green, opacity: 0.02 }]]
+      : allNegative
+        ? [[{ offset: 0, color: c2.red, opacity: 0.02 }, { offset: 100, color: c2.red, opacity: 0.45 }]]
+        : [[
+            { offset: 0,           color: c2.green, opacity: 0.45 },
+            { offset: zeroFrac,    color: c2.green, opacity: 0.05 },
+            { offset: zeroFrac,    color: c2.red,   opacity: 0.05 },
+            { offset: 100,         color: c2.red,   opacity: 0.4  },
+          ]];
 
     // Destroy previous eq chart if exists
     if (window._eqChartInst) { try { window._eqChartInst.destroy(); } catch(e){} }
@@ -4990,7 +5012,7 @@ function initPerfCharts(closed, initialCapital, open) {
       xaxis: { ...baseOpts().xaxis, categories: sparseLabels, labels: { ...baseOpts().xaxis.labels, rotate: 0, hideOverlappingLabels: true } },
       yaxis: { labels: { style:{colors:c2.text,fontSize:'11px'}, formatter: v => v != null ? (isAbsMode ? '₹'+Math.round(v).toLocaleString('en-IN') : (v>=0?'+':'')+v.toFixed(1)+'%') : '' } },
       colors: hasTodaySeries ? [realisedColor2, amberColor] : [realisedColor2],
-      fill: { type: 'gradient', gradient: { shadeIntensity:1, opacityFrom: 0.3, opacityTo: 0.02 } },
+      fill: { type: 'gradient', gradient: { type: 'vertical', colorStops: hasTodaySeries ? [...eqColorStops, [{ offset:0, color: amberColor, opacity:0.3 },{ offset:100, color: amberColor, opacity:0.02 }]] : eqColorStops } },
       stroke: { curve: 'smooth', width: hasTodaySeries ? [2.5, 2.5] : [2.5], dashArray: hasTodaySeries ? [0, 6] : [0] },
       dataLabels: { enabled: false }, markers: { size: 0, hover: { size: 5 } },
       annotations: { yaxis: [{ y: isAbsMode ? cap : 0, borderColor: c2.text, strokeDashArray: 2, label:{text:'Break-even',style:{color:c2.text,fontSize:'10px',background:'transparent'}} }] },
@@ -5011,7 +5033,7 @@ function initPerfCharts(closed, initialCapital, open) {
         const prefix = isToday ? 'Combined today: ' : 'Capital: ';
         return `<div style="padding:8px 12px;font-size:12px;font-weight:600;color:${col};background:var(--surface);border:1px solid var(--border);border-radius:8px">${label}<br><span style="font-size:11px;color:var(--text-muted)">${prefix}${cumLine}</span></div>`;
       }},
-      legend: { show: hasTodaySeries, labels:{colors:c2.text}, markers:{fillColors:[realisedColor2, amberColor]} },
+      legend: { show: hasTodaySeries, labels:{colors:c2.text}, markers:{fillColors:[allNegative ? c2.red : c2.green, amberColor]} },
     });
     window._eqChartInst.render();
 
