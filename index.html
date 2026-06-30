@@ -6490,7 +6490,7 @@ function initAnalysisCharts(open, closed) {
       { name:'Closed Loss', data: sorted.filter(t=>t.finalPlPct<0&&t.age>0).map(t=>[t.age, parseFloat(t.finalPlPct.toFixed(1))]) },
       { name:'Open (live)', data: openScatter.map(t=>[parseInt(t.age)||0, parseFloat((t.plPct||0).toFixed(1))]) },
     ],
-    xaxis: { ...baseOpts().xaxis, title: { text:'Hold Days', style:{color:c.text} }, min: 0 },
+    xaxis: { ...baseOpts().xaxis, type: 'numeric', title: { text:'Hold Days', style:{color:c.text} }, min: 0, tickAmount: 10, labels: { style: { colors: c.text, fontSize: '11px' }, formatter: v => Math.round(v) + 'd' } },
     yaxis: { labels: { style:{colors:c.text,fontSize:'11px'}, formatter: v => v+'%' }, title: { text:'P&L%', style:{color:c.text} } },
     colors: [c.green, c.red, c.amber], markers: { size: [6, 6, 7] },
     annotations: { yaxis: [{ y: 0, borderColor: c.text, strokeDashArray: 3 }] },
