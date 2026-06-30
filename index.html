@@ -370,8 +370,19 @@ details[open] > summary .toggle-hint::before { content: '▼ collapse'; }
 }
 .cal-cell {
   aspect-ratio: 1; border-radius: 3px; cursor: default;
-  position: relative;
+  position: relative; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; overflow: hidden;
 }
+.cal-cell-day {
+  font-size: 7px; font-weight: 600; color: rgba(0,0,0,0.4);
+  line-height: 1; position: absolute; top: 2px; left: 3px;
+}
+[data-theme="dark"] .cal-cell-day { color: rgba(255,255,255,0.35); }
+.cal-cell-pl {
+  font-size: 6.5px; font-weight: 800; color: rgba(0,0,0,0.65);
+  line-height: 1; text-align: center; padding: 0 1px; word-break: break-all;
+}
+[data-theme="dark"] .cal-cell-pl { color: rgba(255,255,255,0.85); }
 .cal-cell.empty { background: transparent; }
 .cal-cell.no-trade { background: var(--surface2); }
 .cal-cell.profit-1 { background: #BBF7D0; }
@@ -4376,9 +4387,10 @@ function renderCalendarReal(closed, forceYear) {
           partial: t.partialTaken === 'Y' ? 'Y' : 'N'
         }));
         const tip = JSON.stringify({ pnl: plFmt, trades: tradesInfo }).replace(/"/g, '&quot;');
-        html += `<div class="cal-cell ${cls}" data-trade="${tip}" data-date="${m} ${day}" onmouseenter="showCalTooltip(event,this)" onmouseleave="hideCalTooltip()"></div>`;
+        const plCompact = (entry.pl >= 0 ? '+' : '-') + (Math.abs(entry.pl) >= 100000 ? (Math.abs(entry.pl)/1000).toFixed(0)+'k' : Math.abs(entry.pl) >= 1000 ? (Math.abs(entry.pl)/1000).toFixed(1)+'k' : Math.round(Math.abs(entry.pl)));
+        html += `<div class="cal-cell ${cls}" data-trade="${tip}" data-date="${m} ${day}" onmouseenter="showCalTooltip(event,this)" onmouseleave="hideCalTooltip()"><span class="cal-cell-day">${day}</span><span class="cal-cell-pl">${plCompact}</span></div>`;
       } else {
-        html += `<div class="cal-cell no-trade"></div>`;
+        html += `<div class="cal-cell no-trade"><span class="cal-cell-day" style="color:var(--text-muted);opacity:0.4">${day}</span></div>`;
       }
     }
     html += `</div></div>`;
