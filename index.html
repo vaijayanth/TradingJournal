@@ -1974,6 +1974,64 @@ tbody tr:hover { filter: brightness(0.97); }
     <div style="font-size:12px;margin-top:10px;color:var(--text-secondary);line-height:1.6" id="mfe-final-plain">—</div>
   </div>
 
+  <!-- 7. Edge Diagnostics -->
+  <div class="section-title" id="asec-edge" style="margin-top:20px">Edge Diagnostics</div>
+
+  <!-- 7a. R-Multiple Distribution -->
+  <div class="card" style="margin-bottom:14px">
+    <div class="chart-title">R-Multiple Distribution</div>
+    <div class="chart-sub">Each bar = trades landing in that R bucket · Right-skewed (long green tail) = healthy Minervini edge</div>
+    <div id="chart-r-dist" style="height:220px"></div>
+    <div id="r-dist-insight" style="margin-top:8px;font-size:12px;color:var(--text-muted);line-height:1.8"></div>
+  </div>
+
+  <!-- 7b. Rolling Profit Factor + Cumulative R -->
+  <div class="grid-2" style="margin-bottom:14px">
+    <div class="card">
+      <div class="chart-title">Rolling Profit Factor (Last 20 Trades)</div>
+      <div class="chart-sub">Line below 1.0 = losing money on recent trades · amber line = PF = 1 (breakeven)</div>
+      <div id="chart-rolling-pf" style="height:220px"></div>
+      <div id="rolling-pf-insight" style="margin-top:8px;font-size:12px;color:var(--text-muted);line-height:1.8"></div>
+    </div>
+    <div class="card">
+      <div class="chart-title">Cumulative R (by Trade #)</div>
+      <div class="chart-sub">Running total of R-multiples · should trend up over time</div>
+      <div id="chart-cumulative-r" style="height:220px"></div>
+      <div id="cumulative-r-insight" style="margin-top:8px;font-size:12px;color:var(--text-muted);line-height:1.8"></div>
+    </div>
+  </div>
+
+  <!-- 7c. Win Rate by Hold Duration + Risk-Reward Scatter -->
+  <div class="grid-2" style="margin-bottom:14px">
+    <div class="card">
+      <div class="chart-title">Win Rate by Hold Duration</div>
+      <div class="chart-sub">Does holding longer actually improve outcomes for this system?</div>
+      <div id="chart-wr-hold" style="height:220px"></div>
+      <div id="wr-hold-insight" style="margin-top:8px;font-size:12px;color:var(--text-muted);line-height:1.8"></div>
+    </div>
+    <div class="card">
+      <div class="chart-title">Risk-Reward Scatter</div>
+      <div class="chart-sub">Initial risk ₹ (x) vs actual P&L ₹ (y) · red = loss · green = win · size = hold days</div>
+      <div id="chart-risk-reward" style="height:220px"></div>
+    </div>
+  </div>
+
+  <!-- 7d. Trade Frequency Heatmap + Drawdown Recovery -->
+  <div class="grid-2" style="margin-bottom:14px">
+    <div class="card">
+      <div class="chart-title">Trade Frequency by Month</div>
+      <div class="chart-sub">High months with poor P&L = overtrading signal</div>
+      <div id="chart-freq-monthly" style="height:220px"></div>
+      <div id="freq-monthly-insight" style="margin-top:8px;font-size:12px;color:var(--text-muted);line-height:1.8"></div>
+    </div>
+    <div class="card">
+      <div class="chart-title">Drawdown Recovery (Trades to New High)</div>
+      <div class="chart-sub">Each bar = a drawdown episode · height = # trades needed to recover to new equity high</div>
+      <div id="chart-dd-recovery" style="height:220px"></div>
+      <div id="dd-recovery-insight" style="margin-top:8px;font-size:12px;color:var(--text-muted);line-height:1.8"></div>
+    </div>
+  </div>
+
   <!-- 6. Stock Leaderboard -->
   <details style="margin-top:20px;margin-bottom:14px">
     <summary class="section-title" style="cursor:pointer;user-select:none;display:flex;align-items:center;gap:6px">Stock Performance Leaderboard <span class="toggle-hint" style="font-size:10px;color:var(--text-muted);font-weight:400;letter-spacing:0;text-transform:none"></span></summary>
@@ -7230,6 +7288,275 @@ function initAnalysisCharts(open, closed) {
   window._stockLeaderData = buildStockLeaderData(open, closed);
   window._stockLeaderSort = 'pl';
   renderStockLeader('pl');
+
+  // ── Edge Diagnostics ──────────────────────────────────
+  try {
+    const edgeClosed = closed.filter(t => t.finalPlPct !== undefined && t.initRiskPct && t.initRiskPct > 0);
+
+    // Helper: compute R-multiple for a trade
+    const rMultiple = t => {
+      const lossR = t.initRiskPct > 0 ? t.finalPlPct / t.initRiskPct : null;
+      return lossR;
+    };
+
+    const rTrades = edgeClosed.map(t => ({ ...t, r: rMultiple(t) })).filter(t => t.r !== null);
+
+    // ── 1. R-Multiple Distribution ──
+    if (rTrades.length >= 3) {
+      const buckets = { '≤-2R': 0, '-2 to -1R': 0, '-1 to 0R': 0, '0 to +1R': 0, '+1 to +2R': 0, '+2 to +3R': 0, '+3 to +5R': 0, '>+5R': 0 };
+      rTrades.forEach(t => {
+        if (t.r <= -2)       buckets['≤-2R']++;
+        else if (t.r < -1)   buckets['-2 to -1R']++;
+        else if (t.r < 0)    buckets['-1 to 0R']++;
+        else if (t.r < 1)    buckets['0 to +1R']++;
+        else if (t.r < 2)    buckets['+1 to +2R']++;
+        else if (t.r < 3)    buckets['+2 to +3R']++;
+        else if (t.r < 5)    buckets['+3 to +5R']++;
+        else                 buckets['>+5R']++;
+      });
+      const rKeys = Object.keys(buckets);
+      const rVals = rKeys.map(k => buckets[k]);
+      const rColors = rKeys.map(k => k.startsWith('≤') || k.startsWith('-') ? c.red : k === '0 to +1R' ? c.amber : c.green);
+      const avgR = rTrades.reduce((s, t) => s + t.r, 0) / rTrades.length;
+      _chartQ(() => { try { const rDist = new ApexCharts(document.getElementById('chart-r-dist'), {
+        ...baseOpts(220), chart: { ...baseOpts(220).chart, type: 'bar' },
+        series: [{ name: 'Trades', data: rVals }],
+        xaxis: { ...baseOpts().xaxis, categories: rKeys },
+        yaxis: { labels: { style: { colors: c.text, fontSize: '11px' } }, title: { text: '# trades', style: { color: c.text, fontSize: '10px' } } },
+        colors: rColors,
+        plotOptions: { bar: { columnWidth: '70%', distributed: true, borderRadius: 3 } },
+        legend: { show: false },
+        dataLabels: { enabled: true, formatter: v => v > 0 ? v : '', style: { fontSize: '11px', colors: ['#fff'] } },
+        annotations: { xaxis: [{ x: avgR < -1 ? '≤-2R' : avgR < 0 ? '-1 to 0R' : avgR < 1 ? '0 to +1R' : '+1 to +2R', borderColor: c.amber, strokeDashArray: 4, label: { text: 'Avg ' + avgR.toFixed(2) + 'R', style: { color: c.amber, fontSize: '10px', background: 'transparent' }, orientation: 'horizontal', position: 'top' } }] },
+      }); rDist.render(); analysisCharts.push(rDist); } catch(e) { console.warn('chart-r-dist failed', e); } });
+
+      const bigWinners = rTrades.filter(t => t.r >= 3).length;
+      const outsizedLoss = rTrades.filter(t => t.r <= -2).length;
+      const rDistEl = document.getElementById('r-dist-insight');
+      if (rDistEl) rDistEl.innerHTML = `Avg R: <strong style="color:${avgR >= 0 ? 'var(--green)' : 'var(--red)'}">` + (avgR >= 0 ? '+' : '') + avgR.toFixed(2) + 'R</strong> · ' +
+        `Big winners (≥+3R): <strong style="color:var(--green)">${bigWinners}</strong> · ` +
+        `Outsized losses (≤-2R): <strong style="color:${outsizedLoss > 0 ? 'var(--red)' : 'var(--green)'}">${outsizedLoss}</strong>` +
+        (outsizedLoss > 0 ? ' — review these for discipline issues (stop moved, missed exit)' : ' — losses staying controlled');
+    }
+
+    // ── 2. Rolling Profit Factor (last 20 trades) ──
+    if (edgeClosed.length >= 5) {
+      const sortedPF = [...edgeClosed].sort((a, b) => parseDate(a.closeDate) - parseDate(b.closeDate));
+      const window20 = 20;
+      const pfPoints = [];
+      for (let i = window20 - 1; i < sortedPF.length; i++) {
+        const slice = sortedPF.slice(i - window20 + 1, i + 1);
+        const grossWin = slice.filter(t => t.finalPl > 0).reduce((s, t) => s + t.finalPl, 0);
+        const grossLoss = Math.abs(slice.filter(t => t.finalPl < 0).reduce((s, t) => s + t.finalPl, 0));
+        pfPoints.push({ x: i + 1, y: grossLoss > 0 ? parseFloat((grossWin / grossLoss).toFixed(2)) : null });
+      }
+      const pfLatest = pfPoints.length ? pfPoints[pfPoints.length - 1].y : null;
+      const pfColor = pfLatest !== null ? (pfLatest >= 1.5 ? c.green : pfLatest >= 1 ? c.amber : c.red) : c.text;
+      _chartQ(() => { try { const pfChart = new ApexCharts(document.getElementById('chart-rolling-pf'), {
+        ...baseOpts(220), chart: { ...baseOpts(220).chart, type: 'line' },
+        series: [{ name: 'PF (20)', data: pfPoints }],
+        xaxis: { ...baseOpts().xaxis, type: 'numeric', title: { text: 'Trade #', style: { color: c.text } }, tickAmount: 8, labels: { style: { colors: c.text, fontSize: '11px' }, formatter: v => '#' + Math.round(v) } },
+        yaxis: { labels: { style: { colors: c.text, fontSize: '11px' }, formatter: v => v.toFixed(1) }, min: 0 },
+        colors: [pfColor],
+        stroke: { curve: 'smooth', width: 2.5 },
+        annotations: { yaxis: [{ y: 1, borderColor: c.amber, strokeDashArray: 5, label: { text: 'Breakeven PF=1', style: { color: c.amber, fontSize: '10px', background: 'transparent' } } }] },
+        markers: { size: 0 },
+      }); pfChart.render(); analysisCharts.push(pfChart); } catch(e) { console.warn('chart-rolling-pf failed', e); } });
+
+      const pfEl = document.getElementById('rolling-pf-insight');
+      if (pfEl && pfLatest !== null) pfEl.innerHTML = `Current rolling PF (last 20): <strong style="color:${pfColor}">${pfLatest.toFixed(2)}</strong>` +
+        (pfLatest < 1 ? ' — edge is currently negative on recent trades · reduce size or pause until PF recovers above 1.0' :
+         pfLatest < 1.5 ? ' — edge is marginal · maintain discipline, wait for trend to firm up' :
+         ' — edge is working · continue');
+    }
+
+    // ── 3. Cumulative R ──
+    if (rTrades.length >= 3) {
+      const sortedR = [...rTrades].sort((a, b) => parseDate(a.closeDate) - parseDate(b.closeDate));
+      let cumR = 0;
+      const cumRPoints = sortedR.map((t, i) => { cumR += t.r; return { x: i + 1, y: parseFloat(cumR.toFixed(2)) }; });
+      const cumRFinal = cumR;
+      const cumRMin = Math.min(...cumRPoints.map(p => p.y));
+      const cumRMax = Math.max(...cumRPoints.map(p => p.y));
+      const cumRRange = (cumRMax - cumRMin) || 1;
+      const zeroFrac = cumRMax > 0 ? Math.min(100, Math.max(0, Math.round((cumRMax / cumRRange) * 100))) : 0;
+      const cumAllPos = cumRMin >= 0, cumAllNeg = cumRMax <= 0;
+      const cumColorStops = cumAllPos
+        ? [[{ offset: 0, color: c.green, opacity: 0.45 }, { offset: 100, color: c.green, opacity: 0.02 }]]
+        : cumAllNeg
+          ? [[{ offset: 0, color: c.red, opacity: 0.02 }, { offset: 100, color: c.red, opacity: 0.45 }]]
+          : [[{ offset: 0, color: c.green, opacity: 0.45 }, { offset: zeroFrac, color: c.green, opacity: 0.05 }, { offset: zeroFrac, color: c.red, opacity: 0.05 }, { offset: 100, color: c.red, opacity: 0.4 }]];
+      const cumLineColor = cumRFinal >= 0 ? c.green : c.red;
+      _chartQ(() => { try { const cumRChart = new ApexCharts(document.getElementById('chart-cumulative-r'), {
+        ...baseOpts(220), chart: { ...baseOpts(220).chart, type: 'area' },
+        series: [{ name: 'Cumulative R', data: cumRPoints }],
+        xaxis: { ...baseOpts().xaxis, type: 'numeric', title: { text: 'Trade #', style: { color: c.text } }, tickAmount: 8, labels: { style: { colors: c.text, fontSize: '11px' }, formatter: v => '#' + Math.round(v) } },
+        yaxis: { labels: { style: { colors: c.text, fontSize: '11px' }, formatter: v => v.toFixed(1) + 'R' } },
+        colors: [cumLineColor],
+        stroke: { curve: 'smooth', width: 2 },
+        fill: { type: 'gradient', gradient: { type: 'vertical', colorStops: cumColorStops } },
+        annotations: { yaxis: [{ y: 0, borderColor: c.amber, strokeDashArray: 3 }] },
+        markers: { size: 0 },
+      }); cumRChart.render(); analysisCharts.push(cumRChart); } catch(e) { console.warn('chart-cumulative-r failed', e); } });
+
+      const cumEl = document.getElementById('cumulative-r-insight');
+      if (cumEl) cumEl.innerHTML = `Total R earned: <strong style="color:${cumRFinal >= 0 ? 'var(--green)' : 'var(--red)'}">${cumRFinal >= 0 ? '+' : ''}${cumRFinal.toFixed(1)}R</strong> across ${rTrades.length} trades · avg: ${(cumRFinal / rTrades.length).toFixed(2)}R/trade`;
+    }
+
+    // ── 4. Win Rate by Hold Duration ──
+    if (edgeClosed.length >= 5) {
+      const holdBuckets = { '0–5d': [], '6–15d': [], '16–30d': [], '31–60d': [], '60d+': [] };
+      edgeClosed.forEach(t => {
+        const age = t.ageDays || 0;
+        const bucket = age <= 5 ? '0–5d' : age <= 15 ? '6–15d' : age <= 30 ? '16–30d' : age <= 60 ? '31–60d' : '60d+';
+        holdBuckets[bucket].push(t);
+      });
+      const holdKeys = Object.keys(holdBuckets).filter(k => holdBuckets[k].length > 0);
+      const holdWRs = holdKeys.map(k => {
+        const trades = holdBuckets[k];
+        const wr = trades.length > 0 ? parseFloat((trades.filter(t => t.finalPlPct > 0).length / trades.length * 100).toFixed(1)) : 0;
+        return wr;
+      });
+      const holdCounts = holdKeys.map(k => holdBuckets[k].length);
+      const holdColors = holdWRs.map(wr => wr >= 40 ? c.green : wr >= 20 ? c.amber : c.red);
+      _chartQ(() => { try { const wrHold = new ApexCharts(document.getElementById('chart-wr-hold'), {
+        ...baseOpts(220), chart: { ...baseOpts(220).chart, type: 'bar' },
+        series: [{ name: 'Win Rate %', data: holdWRs }],
+        xaxis: { ...baseOpts().xaxis, categories: holdKeys },
+        yaxis: { labels: { style: { colors: c.text, fontSize: '11px' }, formatter: v => v + '%' }, max: 100, min: 0 },
+        colors: holdColors,
+        plotOptions: { bar: { columnWidth: '60%', distributed: true, borderRadius: 4 } },
+        legend: { show: false },
+        dataLabels: { enabled: true, formatter: v => v.toFixed(0) + '%', style: { fontSize: '11px', colors: ['#fff'] } },
+        annotations: { yaxis: [{ y: 30, borderColor: c.amber, strokeDashArray: 4, label: { text: '30% ref', style: { color: c.amber, fontSize: '10px', background: 'transparent' } } }] },
+        tooltip: { ...baseOpts().tooltip, y: { formatter: (v, { dataPointIndex }) => v + '% (' + holdCounts[dataPointIndex] + ' trades)' } },
+      }); wrHold.render(); analysisCharts.push(wrHold); } catch(e) { console.warn('chart-wr-hold failed', e); } });
+
+      const wrHoldEl = document.getElementById('wr-hold-insight');
+      if (wrHoldEl) {
+        const bestBucket = holdKeys.reduce((best, k, i) => holdWRs[i] > (holdWRs[holdKeys.indexOf(best)] || 0) ? k : best, holdKeys[0]);
+        wrHoldEl.innerHTML = `Best win rate in the <strong>${bestBucket}</strong> hold range · ` +
+          (holdBuckets['0–5d'].length >= 3 ? `Short holds (0–5d) WR: <strong style="color:${holdWRs[0] >= 30 ? 'var(--green)' : 'var(--red)'}">${holdWRs[0]}%</strong> · ` : '') +
+          `Open positions (still running) excluded — this is closed trades only`;
+      }
+    }
+
+    // ── 5. Risk-Reward Scatter ──
+    const rrTrades = edgeClosed.filter(t => t.initRiskRs && t.initRiskRs > 0 && t.finalPl !== undefined);
+    if (rrTrades.length >= 3) {
+      const wins = rrTrades.filter(t => t.finalPl >= 0);
+      const losses = rrTrades.filter(t => t.finalPl < 0);
+      const makePoint = t => ({ x: parseFloat(t.initRiskRs.toFixed(0)), y: parseFloat(t.finalPl.toFixed(0)), z: t.ageDays || 5 });
+      _chartQ(() => { try { const rrChart = new ApexCharts(document.getElementById('chart-risk-reward'), {
+        ...baseOpts(220), chart: { ...baseOpts(220).chart, type: 'scatter' },
+        series: [
+          { name: 'Winners', data: wins.map(makePoint) },
+          { name: 'Losers', data: losses.map(makePoint) },
+        ],
+        xaxis: { ...baseOpts().xaxis, type: 'numeric', title: { text: 'Init Risk ₹', style: { color: c.text } }, tickAmount: 6, labels: { style: { colors: c.text, fontSize: '11px' }, formatter: v => '₹' + Math.round(v) } },
+        yaxis: { labels: { style: { colors: c.text, fontSize: '11px' }, formatter: v => (v >= 0 ? '+' : '') + '₹' + Math.round(Math.abs(v)) } },
+        colors: [c.green, c.red],
+        annotations: { yaxis: [{ y: 0, borderColor: c.amber, strokeDashArray: 3 }] },
+        markers: { size: 5, strokeWidth: 0 },
+        legend: { show: true, labels: { colors: c.text }, fontSize: '11px' },
+        tooltip: { ...baseOpts().tooltip, custom: ({ series, seriesIndex, dataPointIndex, w }) => {
+          const pt = w.config.series[seriesIndex].data[dataPointIndex];
+          const label = seriesIndex === 0 ? 'Win' : 'Loss';
+          return `<div style="padding:6px 10px;font-size:12px;background:var(--card-bg);border:1px solid var(--border);border-radius:6px;color:var(--text-primary)">${label}<br>Risk: ₹${pt.x}<br>P&L: ${pt.y >= 0 ? '+' : ''}₹${pt.y}<br>Held: ${pt.z}d</div>`;
+        }},
+      }); rrChart.render(); analysisCharts.push(rrChart); } catch(e) { console.warn('chart-risk-reward failed', e); } });
+    }
+
+    // ── 6. Trade Frequency by Month + P&L ──
+    if (edgeClosed.length >= 3) {
+      const monthMap = {};
+      edgeClosed.forEach(t => {
+        if (!t.closeDate) return;
+        const d = parseDate(t.closeDate);
+        if (!d || d.getTime() === 0) return;
+        const key = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+        if (!monthMap[key]) monthMap[key] = { count: 0, pl: 0 };
+        monthMap[key].count++;
+        monthMap[key].pl += t.finalPl || 0;
+      });
+      const monthKeys = Object.keys(monthMap).sort();
+      const monthLabels = monthKeys.map(k => { const [y, m] = k.split('-'); return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][parseInt(m)-1] + ' ' + y.slice(2); });
+      const monthCounts = monthKeys.map(k => monthMap[k].count);
+      const monthPLs = monthKeys.map(k => parseFloat((monthMap[k].pl / 1000).toFixed(1)));
+      const avgCount = monthCounts.reduce((s, v) => s + v, 0) / (monthCounts.length || 1);
+      const freqColors = monthCounts.map((c2, i) => c2 >= avgCount * 1.5 && monthPLs[i] < 0 ? c.red : c2 >= avgCount * 1.5 ? c.amber : c.green);
+      _chartQ(() => { try { const freqChart = new ApexCharts(document.getElementById('chart-freq-monthly'), {
+        ...baseOpts(220), chart: { ...baseOpts(220).chart, type: 'bar' },
+        series: [
+          { name: '# Trades', type: 'bar', data: monthCounts },
+          { name: 'P&L ₹k', type: 'line', data: monthPLs },
+        ],
+        xaxis: { ...baseOpts().xaxis, categories: monthLabels, labels: { style: { colors: c.text, fontSize: '10px' }, rotate: -30 } },
+        yaxis: [
+          { labels: { style: { colors: c.text, fontSize: '11px' } }, title: { text: '# trades', style: { color: c.text, fontSize: '10px' } } },
+          { opposite: true, labels: { style: { colors: c.text, fontSize: '11px' }, formatter: v => (v >= 0 ? '+' : '') + v + 'k' }, title: { text: 'P&L ₹k', style: { color: c.text, fontSize: '10px' } } },
+        ],
+        colors: [c.amber, c.green],
+        plotOptions: { bar: { columnWidth: '65%', borderRadius: 3 } },
+        stroke: { width: [0, 2.5] },
+        markers: { size: [0, 3] },
+        legend: { show: true, labels: { colors: c.text }, fontSize: '11px' },
+        annotations: { yaxis: [{ y: avgCount, yAxisIndex: 0, borderColor: c.red, strokeDashArray: 4, label: { text: 'Avg', style: { color: c.red, fontSize: '10px', background: 'transparent' } } }] },
+      }); freqChart.render(); analysisCharts.push(freqChart); } catch(e) { console.warn('chart-freq-monthly failed', e); } });
+
+      const freqEl = document.getElementById('freq-monthly-insight');
+      if (freqEl) {
+        const highVolBadMonths = monthKeys.filter((k, i) => monthCounts[i] >= avgCount * 1.5 && monthPLs[i] < 0);
+        freqEl.innerHTML = `Avg trades/month: <strong>${avgCount.toFixed(1)}</strong>` +
+          (highVolBadMonths.length ? ` · <span style="color:var(--red)">${highVolBadMonths.length} month${highVolBadMonths.length > 1 ? 's' : ''} with above-avg entries and negative P&L — possible overtrading signal</span>` : ' · <span style="color:var(--green)">No overtrading signal detected</span>');
+      }
+    }
+
+    // ── 7. Drawdown Recovery ──
+    if (edgeClosed.length >= 5) {
+      const sortedDD = [...edgeClosed].sort((a, b) => parseDate(a.closeDate) - parseDate(b.closeDate));
+      let peak = 0, cumPL = 0, inDD = false, ddStart = 0, ddEpisodes = [];
+      sortedDD.forEach((t, i) => {
+        cumPL += t.finalPl || 0;
+        if (cumPL > peak) {
+          if (inDD) {
+            ddEpisodes.push({ depth: peak - (cumPL - (t.finalPl || 0)), recoveryTrades: i - ddStart + 1 });
+          }
+          peak = cumPL;
+          inDD = false;
+        } else if (cumPL < peak && !inDD) {
+          inDD = true;
+          ddStart = i;
+        }
+      });
+      if (inDD) ddEpisodes.push({ depth: peak - cumPL, recoveryTrades: null }); // still in DD
+      const completedDD = ddEpisodes.filter(e => e.recoveryTrades !== null);
+      if (completedDD.length >= 1) {
+        const ddLabels = completedDD.map((_, i) => 'DD #' + (i + 1));
+        const ddRecovery = completedDD.map(e => e.recoveryTrades);
+        const ddColors = ddRecovery.map(n => n <= 5 ? c.green : n <= 15 ? c.amber : c.red);
+        const avgRecovery = ddRecovery.reduce((s, v) => s + v, 0) / ddRecovery.length;
+        _chartQ(() => { try { const ddChart = new ApexCharts(document.getElementById('chart-dd-recovery'), {
+          ...baseOpts(220), chart: { ...baseOpts(220).chart, type: 'bar' },
+          series: [{ name: 'Trades to Recover', data: ddRecovery }],
+          xaxis: { ...baseOpts().xaxis, categories: ddLabels },
+          yaxis: { labels: { style: { colors: c.text, fontSize: '11px' } }, title: { text: '# trades', style: { color: c.text, fontSize: '10px' } } },
+          colors: ddColors,
+          plotOptions: { bar: { columnWidth: '55%', distributed: true, borderRadius: 4 } },
+          legend: { show: false },
+          dataLabels: { enabled: true, formatter: v => v + 't', style: { fontSize: '11px', colors: ['#fff'] } },
+          annotations: { yaxis: [{ y: avgRecovery, borderColor: c.amber, strokeDashArray: 4, label: { text: 'Avg ' + avgRecovery.toFixed(0) + 't', style: { color: c.amber, fontSize: '10px', background: 'transparent' } } }] },
+        }); ddChart.render(); analysisCharts.push(ddChart); } catch(e) { console.warn('chart-dd-recovery failed', e); } });
+
+        const ddEl = document.getElementById('dd-recovery-insight');
+        if (ddEl) ddEl.innerHTML = `${completedDD.length} completed drawdown episode${completedDD.length > 1 ? 's' : ''} · avg recovery: <strong>${avgRecovery.toFixed(0)} trades</strong>` +
+          (inDD ? ' · <span style="color:var(--amber)">Currently in a drawdown — not yet counted above</span>' : '');
+      } else {
+        const el = document.getElementById('dd-recovery-insight');
+        if (el) el.textContent = inDD ? 'Currently in first drawdown episode — not yet recovered to previous high.' : 'No significant drawdown episodes yet.';
+      }
+    }
+  } catch(e) { console.warn('Edge diagnostics failed', e); }
 
   // ── Projections & Outlook ──
   try { renderProjections(open, closed); } catch(e) { console.warn('renderProjections failed', e); }
