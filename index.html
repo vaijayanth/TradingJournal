@@ -362,7 +362,7 @@ details[open] > summary .toggle-hint::before { content: '▼ collapse'; }
   text-align: center; margin-bottom: 6px; text-transform: uppercase; letter-spacing: 0.06em;
 }
 .cal-days-grid {
-  display: grid; grid-template-columns: repeat(7, 1fr); gap: 2px;
+  display: grid; grid-template-columns: repeat(7, 1fr); gap: 3px;
 }
 .cal-day-header {
   font-size: 8px; color: var(--text-muted); text-align: center;
@@ -374,15 +374,16 @@ details[open] > summary .toggle-hint::before { content: '▼ collapse'; }
   align-items: center; justify-content: center; overflow: hidden;
 }
 .cal-cell-day {
-  font-size: 7px; font-weight: 600; color: rgba(0,0,0,0.4);
+  font-size: 8px; font-weight: 600; color: rgba(0,0,0,0.35);
   line-height: 1; position: absolute; top: 2px; left: 3px;
 }
-[data-theme="dark"] .cal-cell-day { color: rgba(255,255,255,0.35); }
+[data-theme="dark"] .cal-cell-day { color: rgba(255,255,255,0.3); }
 .cal-cell-pl {
-  font-size: 6.5px; font-weight: 800; color: rgba(0,0,0,0.65);
+  font-size: 9px; font-weight: 800; color: rgba(0,0,0,0.8);
   line-height: 1; text-align: center; padding: 0 1px; word-break: break-all;
+  margin-top: 4px;
 }
-[data-theme="dark"] .cal-cell-pl { color: rgba(255,255,255,0.85); }
+[data-theme="dark"] .cal-cell-pl { color: rgba(255,255,255,0.95); }
 .cal-cell.empty { background: transparent; }
 .cal-cell.no-trade { background: var(--surface2); }
 .cal-cell.profit-1 { background: #BBF7D0; }
