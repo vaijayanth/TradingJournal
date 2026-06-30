@@ -5235,7 +5235,23 @@ function initPerfCharts(closed, initialCapital, open) {
     const hasCombined = totalOpenMTM2 !== 0;
 
     const xCats = sorted.map((_,i) => i+1);
-    const realisedColor = eq2inner >= (initialCapital||0) ? c.green : c.red;
+    // Compute zero-crosspoint for red/green gradient (same logic as equity curve)
+    const idxMin = realisedPoints.length ? Math.min(...realisedPoints) : 0;
+    const idxMax = realisedPoints.length ? Math.max(...realisedPoints) : 1;
+    const idxRange = (idxMax - idxMin) || 1;
+    const idxZeroFrac = idxMax > 0 ? Math.min(100, Math.max(0, Math.round((idxMax / idxRange) * 100))) : 0;
+    const idxAllPos = idxMin >= 0, idxAllNeg = idxMax <= 0;
+    const realisedColor = idxAllNeg ? c.red : c.green;
+    const idxColorStops = idxAllPos
+      ? [[{ offset:0, color:c.green, opacity:0.45 },{ offset:100, color:c.green, opacity:0.02 }]]
+      : idxAllNeg
+        ? [[{ offset:0, color:c.red, opacity:0.02 },{ offset:100, color:c.red, opacity:0.45 }]]
+        : [[
+            { offset:0,            color:c.green, opacity:0.45 },
+            { offset:idxZeroFrac,  color:c.green, opacity:0.05 },
+            { offset:idxZeroFrac,  color:c.red,   opacity:0.05 },
+            { offset:100,          color:c.red,   opacity:0.4  },
+          ]];
 
     const idxChart = new ApexCharts(indexedEl, {
       ...baseOpts(260),
@@ -5250,7 +5266,7 @@ function initPerfCharts(closed, initialCapital, open) {
       },
       yaxis: { labels: { style: { colors: c.text, fontSize:'11px' }, formatter: v => v != null ? (v>=0?'+':'')+v.toFixed(1)+'%' : '' } },
       colors: [realisedColor],
-      fill: { type: 'gradient', gradient: { shadeIntensity:1, opacityFrom:0.35, opacityTo:0.02 } },
+      fill: { type: 'gradient', gradient: { type: 'vertical', colorStops: idxColorStops } },
       stroke: { curve: 'smooth', width: 2.5 },
       dataLabels: { enabled: false },
       markers: { size: 0 },
