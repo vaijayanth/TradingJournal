@@ -742,6 +742,7 @@ tbody tr:hover { filter: brightness(0.97); }
     <button class="nav-tab" onclick="showPage('analysis', this)"><span class="nav-label-full">Analysis</span><span class="nav-label-short">Analysis</span></button>
     <button class="nav-tab" onclick="showPage('positions', this)"><span class="nav-label-full">Positions</span><span class="nav-label-short">Pos</span></button>
     <button class="nav-tab active" id="nav-today" onclick="showPage('today', this)">⚡ Today</button>
+    <button class="nav-tab" onclick="showPage('strategy', this)"><span class="nav-label-full">Strategy</span><span class="nav-label-short">Strat</span></button>
     <button class="nav-tab" onclick="showPage('config', this)">Config</button>
   </div>
   <div class="nav-right">
@@ -2248,6 +2249,164 @@ tbody tr:hover { filter: brightness(0.97); }
         <input type="text" id="cfg-initial-cap-cell" class="config-input config-input-sm">
       </div>
     </div>
+  </div>
+</div>
+
+<!-- ════ STRATEGY PAGE ════ -->
+<div id="page-strategy" class="page">
+  <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
+    <div>
+      <h2 style="margin:0;font-size:18px;font-weight:800">📖 My Trading Strategy</h2>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:3px">Minervini / Bonde / Zanger momentum breakout system · Updated as rules evolve</div>
+    </div>
+    <button onclick="openStrategyEditor()" style="padding:7px 16px;border-radius:8px;border:1.5px solid var(--accent);background:var(--accent);color:#fff;font-size:12px;font-weight:700;cursor:pointer">+ Log a Rule Change</button>
+  </div>
+
+  <!-- Current Rules -->
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px;margin-top:18px" id="strategy-rules-grid">
+
+    <div class="card">
+      <div class="stat-label" style="display:flex;align-items:center;gap:6px;margin-bottom:12px">
+        <span style="font-size:18px">🎯</span> <span style="font-size:13px;font-weight:700;color:var(--text-primary)">ENTRY</span>
+      </div>
+      <div id="strat-entry" style="font-size:13px;line-height:1.85;color:var(--text-secondary)"></div>
+    </div>
+
+    <div class="card">
+      <div class="stat-label" style="display:flex;align-items:center;gap:6px;margin-bottom:12px">
+        <span style="font-size:18px">🛑</span> <span style="font-size:13px;font-weight:700;color:var(--text-primary)">STOP LOSS</span>
+      </div>
+      <div id="strat-stop" style="font-size:13px;line-height:1.85;color:var(--text-secondary)"></div>
+    </div>
+
+    <div class="card">
+      <div class="stat-label" style="display:flex;align-items:center;gap:6px;margin-bottom:12px">
+        <span style="font-size:18px">💰</span> <span style="font-size:13px;font-weight:700;color:var(--text-primary)">PROFIT TAKING</span>
+      </div>
+      <div id="strat-profit" style="font-size:13px;line-height:1.85;color:var(--text-secondary)"></div>
+    </div>
+
+    <div class="card">
+      <div class="stat-label" style="display:flex;align-items:center;gap:6px;margin-bottom:12px">
+        <span style="font-size:18px">⚖️</span> <span style="font-size:13px;font-weight:700;color:var(--text-primary)">POSITION SIZING</span>
+      </div>
+      <div id="strat-sizing" style="font-size:13px;line-height:1.85;color:var(--text-secondary)"></div>
+    </div>
+
+    <div class="card">
+      <div class="stat-label" style="display:flex;align-items:center;gap:6px;margin-bottom:12px">
+        <span style="font-size:18px">🚫</span> <span style="font-size:13px;font-weight:700;color:var(--text-primary)">EXIT RULES</span>
+      </div>
+      <div id="strat-exit" style="font-size:13px;line-height:1.85;color:var(--text-secondary)"></div>
+    </div>
+
+    <div class="card">
+      <div class="stat-label" style="display:flex;align-items:center;gap:6px;margin-bottom:12px">
+        <span style="font-size:18px">🧠</span> <span style="font-size:13px;font-weight:700;color:var(--text-primary)">MINDSET RULES</span>
+      </div>
+      <div id="strat-mindset" style="font-size:13px;line-height:1.85;color:var(--text-secondary)"></div>
+    </div>
+
+  </div>
+
+  <!-- Edit Current Rules (collapsed by default) -->
+  <div style="margin-top:20px;border:1px solid var(--border);border-radius:10px;overflow:hidden">
+    <div onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'block':'none';this.querySelector('.strat-chev').textContent=this.nextElementSibling.style.display==='block'?'▾':'▸'"
+         style="display:flex;align-items:center;gap:8px;padding:10px 16px;cursor:pointer;background:var(--surface2)">
+      <span class="strat-chev" style="font-size:11px;color:var(--text-muted)">▸</span>
+      <span style="font-size:12px;font-weight:700;color:var(--text-secondary)">Edit Current Rules</span>
+      <span style="font-size:11px;color:var(--text-muted);margin-left:auto">click to expand</span>
+    </div>
+    <div style="display:none;padding:16px;display:none" id="strat-edit-panel">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px">
+        <div>
+          <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:4px">🎯 Entry</label>
+          <textarea id="strat-edit-entry" rows="5" style="width:100%;box-sizing:border-box;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:8px;font-size:12px;color:var(--text-primary);resize:vertical;line-height:1.6"></textarea>
+        </div>
+        <div>
+          <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:4px">🛑 Stop Loss</label>
+          <textarea id="strat-edit-stop" rows="5" style="width:100%;box-sizing:border-box;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:8px;font-size:12px;color:var(--text-primary);resize:vertical;line-height:1.6"></textarea>
+        </div>
+        <div>
+          <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:4px">💰 Profit Taking</label>
+          <textarea id="strat-edit-profit" rows="5" style="width:100%;box-sizing:border-box;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:8px;font-size:12px;color:var(--text-primary);resize:vertical;line-height:1.6"></textarea>
+        </div>
+        <div>
+          <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:4px">⚖️ Position Sizing</label>
+          <textarea id="strat-edit-sizing" rows="5" style="width:100%;box-sizing:border-box;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:8px;font-size:12px;color:var(--text-primary);resize:vertical;line-height:1.6"></textarea>
+        </div>
+        <div>
+          <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:4px">🚫 Exit Rules</label>
+          <textarea id="strat-edit-exit" rows="5" style="width:100%;box-sizing:border-box;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:8px;font-size:12px;color:var(--text-primary);resize:vertical;line-height:1.6"></textarea>
+        </div>
+        <div>
+          <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:4px">🧠 Mindset Rules</label>
+          <textarea id="strat-edit-mindset" rows="5" style="width:100%;box-sizing:border-box;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:8px;font-size:12px;color:var(--text-primary);resize:vertical;line-height:1.6"></textarea>
+        </div>
+      </div>
+      <button onclick="saveStrategyRules()" style="margin-top:12px;padding:8px 20px;border-radius:8px;background:var(--accent);border:none;color:#fff;font-size:13px;font-weight:700;cursor:pointer">Save Rules</button>
+    </div>
+  </div>
+
+  <!-- Changelog / Evolution -->
+  <div style="margin-top:20px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <h3 style="margin:0;font-size:14px;font-weight:800;color:var(--text-primary)">📅 Strategy Evolution Log</h3>
+      <span style="font-size:11px;color:var(--text-muted)" id="strat-log-count"></span>
+    </div>
+    <div id="strat-changelog" style="display:flex;flex-direction:column;gap:10px"></div>
+    <div id="strat-changelog-empty" style="display:none;text-align:center;padding:32px;color:var(--text-muted);font-size:13px">
+      No rule changes logged yet.<br>Click <strong>+ Log a Rule Change</strong> to start your chronicle.
+    </div>
+  </div>
+</div>
+
+<!-- Strategy Editor Modal -->
+<div id="strat-modal" style="display:none;position:fixed;inset:0;z-index:20000;background:rgba(0,0,0,0.5);backdrop-filter:blur(4px);align-items:center;justify-content:center">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;width:min(560px,94vw);max-height:88vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,0.3)">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px">
+      <h3 style="margin:0;font-size:16px;font-weight:800" id="strat-modal-title">Log a Rule Change</h3>
+      <button onclick="closeStrategyEditor()" style="background:none;border:none;font-size:20px;cursor:pointer;color:var(--text-muted);padding:0 4px">×</button>
+    </div>
+    <div style="display:flex;flex-direction:column;gap:14px">
+      <div>
+        <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:5px">Date</label>
+        <input type="date" id="strat-log-date" style="width:100%;box-sizing:border-box;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:13px;color:var(--text-primary)">
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:5px">Category</label>
+        <select id="strat-log-cat" style="width:100%;box-sizing:border-box;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:13px;color:var(--text-primary)">
+          <option value="Entry">🎯 Entry</option>
+          <option value="Stop Loss">🛑 Stop Loss</option>
+          <option value="Profit Taking">💰 Profit Taking</option>
+          <option value="Position Sizing">⚖️ Position Sizing</option>
+          <option value="Exit Rules">🚫 Exit Rules</option>
+          <option value="Mindset">🧠 Mindset</option>
+          <option value="General">📝 General</option>
+        </select>
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:5px">What changed</label>
+        <input type="text" id="strat-log-title" placeholder="e.g. Changed BE trigger from 5% to 2%" style="width:100%;box-sizing:border-box;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:13px;color:var(--text-primary)">
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:5px">Why — what triggered this change</label>
+        <textarea id="strat-log-why" rows="3" placeholder="e.g. Noticed too many trades going to BE+5% then reversing. Moving to 2% protects more capital." style="width:100%;box-sizing:border-box;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:13px;color:var(--text-primary);resize:vertical;line-height:1.6"></textarea>
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:5px">Old rule (optional)</label>
+        <input type="text" id="strat-log-old" placeholder="e.g. Move stop to BE at +5%" style="width:100%;box-sizing:border-box;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:13px;color:var(--text-primary)">
+      </div>
+      <div>
+        <label style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.05em;display:block;margin-bottom:5px">New rule</label>
+        <input type="text" id="strat-log-new" placeholder="e.g. Move stop to BE at +2%" style="width:100%;box-sizing:border-box;background:var(--surface2);border:1px solid var(--border);border-radius:6px;padding:8px 10px;font-size:13px;color:var(--text-primary)">
+      </div>
+    </div>
+    <div style="display:flex;gap:10px;margin-top:18px">
+      <button onclick="saveStrategyLog()" style="flex:1;padding:10px;border-radius:8px;background:var(--accent);border:none;color:#fff;font-size:13px;font-weight:700;cursor:pointer">Save Entry</button>
+      <button onclick="closeStrategyEditor()" style="padding:10px 18px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);color:var(--text-primary);font-size:13px;cursor:pointer">Cancel</button>
+    </div>
+    <div id="strat-modal-edit-id" style="display:none"></div>
   </div>
 </div>
 
@@ -4107,6 +4266,9 @@ function showPage(id, btn) {
   if (id === 'today') {
     const d = window._data;
     if (d) renderTodayActions(d.open, loadConfig());
+  }
+  if (id === 'strategy') {
+    renderStrategyPage();
   }
 }
 
@@ -7376,6 +7538,217 @@ function initAuth() {
   setTimeout(() => document.getElementById('auth-password').focus(), 100);
 }
 
+// ── STRATEGY PAGE ─────────────────────────────────────────────────────────
+
+const STRAT_RULES_KEY = 'tj_strategy_rules_v1';
+const STRAT_LOG_KEY   = 'tj_strategy_log_v1';
+
+const STRAT_DEFAULT_RULES = {
+  entry: `• 52-week high breakout on volume surge (≥1.5× avg)\n• VCP (Volatility Contraction Pattern) — tightening price range on declining volume\n• Stock must be in Stage 2 uptrend (above 50 & 200 EMA)\n• Prefer setups with base depth < 30% and 3+ weeks of consolidation\n• Enter on breakout day or next day open — no chasing after 2%`,
+  stop: `• 3 triggers active simultaneously — exit on the FIRST one hit:\n  1. 7-Day Low (col I) — base trailing stop, always active\n  2. Manual stop (col J) — moved to entry price (BE) once +${(()=>{try{return JSON.parse(localStorage.getItem('tj_config_v1')||'{}').beTrigger||2}catch(e){return 2}})()}% profit\n  3. 21 EMA breach (col F = "Below") — exit signal for profitable trades\n• Effective stop = MAX(col J, col I) — whichever is tighter\n• Take loss immediately at stop — no hoping, no averaging down`,
+  profit: `• 50% partial exit when +10% profit (configurable in Config)\n• Remainder trailed via 7-day low until stop is hit naturally\n• DO NOT set price targets — let the stop do the exiting\n• If HA turns Red with profit ≥ 5%: monitor closely, protect gains`,
+  sizing: `• Start: ₹1,000 risk per trade\n• Increase: +₹500 every 100 closed trades\n• Hard cap: 0.8% of portfolio (at ₹50L = ₹40,000 max risk)\n• Never risk more than cap regardless of conviction\n• Sizing = Risk ₹ ÷ (Entry − Stop) = share qty`,
+  exit: `• Stop hit → exit at market, same day, no exceptions\n• 21 EMA breach on a profitable trade → exit at next open\n• HA turns Red + profit ≥ 5% → tighten stop to 7-day low, watch\n• Age > 60 days with no progress → review, consider exiting\n• Do NOT exit because a stock "feels extended" — let the stop work`,
+  mindset: `• Losses are NORMAL — the system wins via large winners, not high WR\n• A 30-40% win rate with large winners is healthy for this system\n• Never average down — add only to winning positions (future rule)\n• After 3 consecutive losses: review but do NOT change the system\n• The stop is your contract with yourself — honour it every time`
+};
+
+function loadStrategyRules() {
+  try { return JSON.parse(localStorage.getItem(STRAT_RULES_KEY)) || STRAT_DEFAULT_RULES; }
+  catch(e) { return STRAT_DEFAULT_RULES; }
+}
+function saveStrategyRulesData(rules) {
+  localStorage.setItem(STRAT_RULES_KEY, JSON.stringify(rules));
+}
+function loadStrategyLog() {
+  try { return JSON.parse(localStorage.getItem(STRAT_LOG_KEY)) || []; }
+  catch(e) { return []; }
+}
+function saveStrategyLogData(log) {
+  localStorage.setItem(STRAT_LOG_KEY, JSON.stringify(log));
+}
+
+const STRAT_CAT_EMOJI = { 'Entry':'🎯','Stop Loss':'🛑','Profit Taking':'💰','Position Sizing':'⚖️','Exit Rules':'🚫','Mindset':'🧠','General':'📝' };
+const STRAT_CAT_COLOR = { 'Entry':'var(--accent)','Stop Loss':'var(--red)','Profit Taking':'var(--green)','Position Sizing':'#60a5fa','Exit Rules':'var(--amber)','Mindset':'#a78bfa','General':'var(--text-secondary)' };
+
+function renderStrategyPage() {
+  const rules = loadStrategyRules();
+  const renderBullets = (text) => text.split('\n').map(line => {
+    const trimmed = line.trim();
+    if (!trimmed) return '';
+    const isIndent = line.startsWith('  ');
+    return `<div style="display:flex;gap:6px;${isIndent?'padding-left:14px;':''}margin-bottom:3px">
+      <span style="color:var(--text-muted);flex-shrink:0;font-size:11px;margin-top:2px">${isIndent?'·':'•'}</span>
+      <span>${trimmed.replace(/^[•·]\s*/,'')}</span>
+    </div>`;
+  }).join('');
+
+  const fields = [
+    ['strat-entry', rules.entry],
+    ['strat-stop', rules.stop],
+    ['strat-profit', rules.profit],
+    ['strat-sizing', rules.sizing],
+    ['strat-exit', rules.exit],
+    ['strat-mindset', rules.mindset],
+  ];
+  fields.forEach(([id, text]) => {
+    const el = document.getElementById(id);
+    if (el) el.innerHTML = renderBullets(text || '');
+  });
+
+  // Populate edit textareas
+  const edits = [
+    ['strat-edit-entry', rules.entry],
+    ['strat-edit-stop', rules.stop],
+    ['strat-edit-profit', rules.profit],
+    ['strat-edit-sizing', rules.sizing],
+    ['strat-edit-exit', rules.exit],
+    ['strat-edit-mindset', rules.mindset],
+  ];
+  edits.forEach(([id, text]) => { const el = document.getElementById(id); if (el) el.value = text || ''; });
+
+  renderStrategyChangelog();
+}
+
+function saveStrategyRules() {
+  const rules = {
+    entry: document.getElementById('strat-edit-entry').value,
+    stop: document.getElementById('strat-edit-stop').value,
+    profit: document.getElementById('strat-edit-profit').value,
+    sizing: document.getElementById('strat-edit-sizing').value,
+    exit: document.getElementById('strat-edit-exit').value,
+    mindset: document.getElementById('strat-edit-mindset').value,
+  };
+  saveStrategyRulesData(rules);
+  renderStrategyPage();
+  // Collapse edit panel
+  const panel = document.getElementById('strat-edit-panel');
+  if (panel) panel.style.display = 'none';
+  showToast('Strategy rules saved');
+}
+
+function renderStrategyChangelog() {
+  const log = loadStrategyLog().sort((a,b) => new Date(b.date) - new Date(a.date));
+  const container = document.getElementById('strat-changelog');
+  const empty = document.getElementById('strat-changelog-empty');
+  const countEl = document.getElementById('strat-log-count');
+  if (!container) return;
+  if (countEl) countEl.textContent = log.length + ' entr' + (log.length === 1 ? 'y' : 'ies');
+  if (!log.length) {
+    container.innerHTML = '';
+    if (empty) empty.style.display = 'block';
+    return;
+  }
+  if (empty) empty.style.display = 'none';
+  container.innerHTML = log.map((entry, i) => {
+    const color = STRAT_CAT_COLOR[entry.category] || 'var(--text-secondary)';
+    const emoji = STRAT_CAT_EMOJI[entry.category] || '📝';
+    const dateStr = entry.date ? new Date(entry.date + 'T00:00:00').toLocaleDateString('en-IN', { day:'numeric', month:'short', year:'numeric' }) : '';
+    return `<div style="border:1px solid var(--border);border-radius:10px;overflow:hidden;background:var(--surface)">
+      <div style="display:flex;align-items:flex-start;gap:12px;padding:14px 16px">
+        <div style="width:40px;height:40px;border-radius:10px;background:${color}22;display:flex;align-items:center;justify-content:center;font-size:20px;flex-shrink:0">${emoji}</div>
+        <div style="flex:1;min-width:0">
+          <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:4px">
+            <span style="font-size:11px;font-weight:700;color:${color};background:${color}18;padding:2px 8px;border-radius:8px">${entry.category}</span>
+            <span style="font-size:11px;color:var(--text-muted)">${dateStr}</span>
+          </div>
+          <div style="font-size:14px;font-weight:700;color:var(--text-primary);margin-bottom:6px">${entry.title || ''}</div>
+          ${entry.why ? `<div style="font-size:12px;color:var(--text-secondary);line-height:1.6;margin-bottom:8px">${entry.why}</div>` : ''}
+          ${(entry.oldRule || entry.newRule) ? `<div style="display:flex;gap:8px;flex-wrap:wrap">
+            ${entry.oldRule ? `<div style="flex:1;min-width:180px;background:var(--red-soft,rgba(239,68,68,0.08));border:1px solid rgba(239,68,68,0.2);border-radius:6px;padding:8px 10px">
+              <div style="font-size:10px;font-weight:700;color:var(--red);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px">Before</div>
+              <div style="font-size:12px;color:var(--text-secondary)">${entry.oldRule}</div>
+            </div>` : ''}
+            ${entry.newRule ? `<div style="flex:1;min-width:180px;background:rgba(52,199,89,0.08);border:1px solid rgba(52,199,89,0.2);border-radius:6px;padding:8px 10px">
+              <div style="font-size:10px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:0.05em;margin-bottom:3px">After</div>
+              <div style="font-size:12px;color:var(--text-secondary)">${entry.newRule}</div>
+            </div>` : ''}
+          </div>` : ''}
+        </div>
+        <div style="display:flex;gap:6px;flex-shrink:0">
+          <button onclick="editStrategyLog(${i})" title="Edit" style="background:none;border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;color:var(--text-muted)">✏️</button>
+          <button onclick="deleteStrategyLog(${i})" title="Delete" style="background:none;border:1px solid var(--border);border-radius:6px;padding:4px 8px;font-size:11px;cursor:pointer;color:var(--text-muted)">🗑</button>
+        </div>
+      </div>
+    </div>`;
+  }).join('');
+}
+
+function openStrategyEditor(editIndex) {
+  const modal = document.getElementById('strat-modal');
+  const titleEl = document.getElementById('strat-modal-title');
+  const editIdEl = document.getElementById('strat-modal-edit-id');
+  if (!modal) return;
+  // Set today's date
+  const today = new Date();
+  const yyyy = today.getFullYear(), mm = String(today.getMonth()+1).padStart(2,'0'), dd = String(today.getDate()).padStart(2,'0');
+  document.getElementById('strat-log-date').value = `${yyyy}-${mm}-${dd}`;
+  if (editIndex !== undefined) {
+    const log = loadStrategyLog();
+    const entry = log[editIndex];
+    if (entry) {
+      document.getElementById('strat-log-date').value = entry.date || '';
+      document.getElementById('strat-log-cat').value = entry.category || 'General';
+      document.getElementById('strat-log-title').value = entry.title || '';
+      document.getElementById('strat-log-why').value = entry.why || '';
+      document.getElementById('strat-log-old').value = entry.oldRule || '';
+      document.getElementById('strat-log-new').value = entry.newRule || '';
+      if (titleEl) titleEl.textContent = 'Edit Rule Change';
+      if (editIdEl) editIdEl.textContent = editIndex;
+    }
+  } else {
+    document.getElementById('strat-log-cat').value = 'General';
+    document.getElementById('strat-log-title').value = '';
+    document.getElementById('strat-log-why').value = '';
+    document.getElementById('strat-log-old').value = '';
+    document.getElementById('strat-log-new').value = '';
+    if (titleEl) titleEl.textContent = 'Log a Rule Change';
+    if (editIdEl) editIdEl.textContent = '';
+  }
+  modal.style.display = 'flex';
+}
+
+function closeStrategyEditor() {
+  const modal = document.getElementById('strat-modal');
+  if (modal) modal.style.display = 'none';
+}
+
+function saveStrategyLog() {
+  const date = document.getElementById('strat-log-date').value;
+  const category = document.getElementById('strat-log-cat').value;
+  const title = document.getElementById('strat-log-title').value.trim();
+  const why = document.getElementById('strat-log-why').value.trim();
+  const oldRule = document.getElementById('strat-log-old').value.trim();
+  const newRule = document.getElementById('strat-log-new').value.trim();
+  if (!title) { alert('Please enter what changed.'); return; }
+  const log = loadStrategyLog();
+  const editIdEl = document.getElementById('strat-modal-edit-id');
+  const editIndex = editIdEl && editIdEl.textContent !== '' ? parseInt(editIdEl.textContent) : -1;
+  const entry = { date, category, title, why, oldRule, newRule };
+  if (editIndex >= 0 && editIndex < log.length) {
+    log[editIndex] = entry;
+  } else {
+    log.unshift(entry);
+  }
+  saveStrategyLogData(log);
+  closeStrategyEditor();
+  renderStrategyChangelog();
+  showToast('Rule change logged');
+}
+
+function editStrategyLog(index) {
+  openStrategyEditor(index);
+}
+
+function deleteStrategyLog(index) {
+  if (!confirm('Delete this log entry?')) return;
+  const log = loadStrategyLog();
+  log.splice(index, 1);
+  saveStrategyLogData(log);
+  renderStrategyChangelog();
+}
+
+// ── END STRATEGY PAGE ──────────────────────────────────────────────────────
+
 window.onerror = function(msg, src, line, col, err) {
   // ApexCharts CDN failures are handled gracefully with try/catch — don't show banner
   if (typeof msg === 'string' && msg.includes('ApexCharts')) return;
@@ -7408,6 +7781,14 @@ document.addEventListener('DOMContentLoaded', () => {
     if (ri) ri.textContent = 'No data — configure in Config tab';
   }
   window._strategy = 'swing'; // default strategy on load
+  // Seed strategy log with known historical rule changes if first visit
+  if (!localStorage.getItem(STRAT_LOG_KEY)) {
+    const seedLog = [
+      { date: '2026-06-19', category: 'Stop Loss', title: 'Changed BE trigger from 5% to 2%', why: 'Noticed too many trades hitting +5% then reversing back through entry. Moving stop to BE at +2% protects more capital while still giving trades room to work.', oldRule: 'Move stop (col J) to entry price when profit ≥ 5%', newRule: 'Move stop (col J) to entry price when profit ≥ 2%' },
+      { date: '2026-06-01', category: 'Position Sizing', title: 'Added portfolio heat cap of 0.8%', why: 'Needed a hard cap on total risk regardless of how many positions are open. 0.8% of portfolio prevents over-leveraging in a high-confidence tape.', oldRule: 'Fixed ₹1,000 risk per trade, no portfolio-level cap', newRule: 'Risk per trade capped at MIN(tiered ₹ amount, 0.8% of portfolio)' },
+    ];
+    saveStrategyLogData(seedLog);
+  }
 });
 
 // ════════════════════════════════════════════════════════════════════════════
