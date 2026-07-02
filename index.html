@@ -1239,19 +1239,33 @@ tbody tr:hover { filter: brightness(0.97); }
     </div>
     <!-- MAR Ratio -->
     <div class="card card-sm">
-      <div class="stat-label">MAR Ratio (CAGR ÷ Max DD)</div>
+      <div class="stat-label">MAR Ratio (CAGR ÷ Max DD) <span style="font-weight:400;font-size:10px;letter-spacing:0;text-transform:none">— always shows all-time</span></div>
       <div class="stat-value" style="font-size:30px;margin-top:4px" id="perf-mar">—</div>
       <div class="stat-badge badge-green" style="margin-top:6px" id="perf-mar-badge">—</div>
-      <div style="margin-top:8px;font-size:12px;color:var(--text-muted);line-height:1.5;font-style:italic">How much annual return you're making per unit of pain (biggest portfolio drop). A ratio of 2 means you grew 20% a year and your worst drawdown was 10%. Higher = smoother ride.</div>
+      <div style="margin-top:8px;font-size:12px;color:var(--text-muted);line-height:1.6">
+        <strong>Plain English:</strong> For every 1% your portfolio dropped at its worst, how many % did you earn per year?<br>
+        MAR = 3 means: worst drop was 5% → you earned 15%/yr. MAR = 1 = just breaking even on a risk-adjusted basis.<br>
+        <span style="color:var(--green)">Above 3 = professional grade. Above 5 = world-class.</span>
+      </div>
       <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
-        <div style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:6px">COMPONENTS</div>
-        <div style="display:flex;gap:12px">
-          <div><div style="font-size:14px;font-weight:700" id="perf-mar-cagr">—</div><div class="stat-sub">CAGR</div></div>
-          <div style="color:var(--border)">|</div>
-          <div><div style="font-size:14px;font-weight:700;color:var(--red)" id="perf-mar-dd">—</div><div class="stat-sub">Max DD</div></div>
+        <div style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:6px">COMPONENTS (all-time)</div>
+        <div style="display:flex;gap:12px;align-items:flex-start">
+          <div>
+            <div style="font-size:14px;font-weight:700" id="perf-mar-cagr">—</div>
+            <div class="stat-sub">CAGR (annual return)</div>
+            <div style="font-size:10px;color:var(--text-muted);margin-top:2px">realised + open MTM</div>
+          </div>
+          <div style="color:var(--border);padding-top:4px">÷</div>
+          <div>
+            <div style="font-size:14px;font-weight:700;color:var(--red)" id="perf-mar-dd">—</div>
+            <div class="stat-sub">Max Drawdown</div>
+            <div style="font-size:10px;color:var(--text-muted);margin-top:2px">realised path only</div>
+          </div>
         </div>
-        <div style="margin-top:6px;font-size:11px;color:var(--text-muted)">Target: &gt;3.0 · World-class: &gt;5.0</div>
-        <div style="margin-top:6px;font-size:10px;color:var(--text-muted);font-style:italic">CAGR uses combined equity (realised + open MTM) · Max DD uses realised-only path (open winners excluded from peak)</div>
+        <div style="margin-top:8px;font-size:11px;color:var(--text-muted)">Why is all-time CAGR low? — Open winners are still running. Once they close, CAGR jumps. The MAR is conservative until winners are realised.</div>
+      </div>
+      <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px" id="perf-mar-trend">
+        <div style="font-size:11px;color:var(--text-muted)">Loading trend…</div>
       </div>
     </div>
     <!-- Profit Factor + Sharpe -->
@@ -4051,21 +4065,34 @@ function renderPerfStats(closed, open, portfolioValue, initialCapital) {
   }
 
   // ── MAR Ratio (CAGR ÷ Max Drawdown) ──
-  const closedWithDate = closed.filter(t => t.closeDate);
-  let marCagr = 0, marMaxDD = 0;
-  if (closedWithDate.length >= 2 && initialCapital > 0) {
-    const dates = closedWithDate.map(t => parseDate(t.closeDate)).filter(d => !isNaN(d));
+  // Helper: compute MAR for any slice of closed trades
+  const calcMAR = (sliceClosed, ic, openMTM) => {
+    const wd = sliceClosed.filter(t => t.closeDate);
+    if (wd.length < 2 || ic <= 0) return { mar: 0, cagr: 0, maxDD: 0, yearsFrac: 0 };
+    const dates = wd.map(t => parseDate(t.closeDate)).filter(d => !isNaN(d));
     const firstDate = new Date(Math.min(...dates));
-    const lastDate = new Date(Math.max(...dates));
+    const lastDate  = new Date(Math.max(...dates));
     const yearsFrac = (lastDate - firstDate) / (365.25 * 24 * 3600 * 1000);
-    const sortedForDD = [...closedWithDate].sort((a,b) => parseDate(a.closeDate) - parseDate(b.closeDate));
-    let eq = initialCapital, peak = eq;
-    sortedForDD.forEach(t => { eq += t.finalPl; if (eq > peak) peak = eq; const dd = (eq - peak) / peak * 100; if (dd < marMaxDD) marMaxDD = dd; });
-    // Use combined equity (realised + open MTM) so CAGR reflects true portfolio growth
-    const finalEqMAR = initialCapital + totalFinalPl + totalNotionalPl;
-    if (yearsFrac > 0 && finalEqMAR > 0) marCagr = (Math.pow(finalEqMAR / initialCapital, 1 / yearsFrac) - 1) * 100;
-  }
-  const mar = marMaxDD < 0 ? marCagr / Math.abs(marMaxDD) : 0;
+    const sorted = [...wd].sort((a,b) => parseDate(a.closeDate) - parseDate(b.closeDate));
+    let eq = ic, peak = eq, maxDD = 0;
+    sorted.forEach(t => { eq += t.finalPl; if (eq > peak) peak = eq; const dd = (eq - peak) / peak * 100; if (dd < maxDD) maxDD = dd; });
+    const finalEq = ic + sorted.reduce((s,t) => s + t.finalPl, 0) + Math.max(0, openMTM || 0);
+    const cagr = yearsFrac > 0.08 && finalEq > 0 ? (Math.pow(finalEq / ic, 1 / yearsFrac) - 1) * 100 : 0;
+    const mar  = maxDD < 0 ? cagr / Math.abs(maxDD) : 0;
+    return { mar, cagr, maxDD, yearsFrac };
+  };
+
+  // All-time uses all closed data (not period-filtered) + open MTM for honest CAGR
+  const allClosed = (window._data && window._data.closed) ? window._data.closed : closed;
+  const allTimeMAR = calcMAR(allClosed, initialCapital, totalNotionalPl);
+  // Period-specific (current view): DO NOT use open MTM — short-period CAGR is already inflated
+  const periodMAR  = calcMAR(closed, initialCapital, closed === allClosed ? totalNotionalPl : 0);
+
+  // Show the ALL-TIME MAR as the headline (honest, comparable across systems)
+  const mar = allTimeMAR.mar;
+  const marCagr = allTimeMAR.cagr;
+  const marMaxDD = allTimeMAR.maxDD;
+
   set('perf-mar', mar > 0 ? mar.toFixed(2) : '—');
   set('perf-mar-cagr', marCagr !== 0 ? (marCagr >= 0 ? '+' : '') + marCagr.toFixed(1) + '%' : '—');
   set('perf-mar-dd', marMaxDD !== 0 ? marMaxDD.toFixed(1) + '%' : '—');
@@ -4075,6 +4102,50 @@ function renderPerfStats(closed, open, portfolioValue, initialCapital) {
   if (marBadge && mar > 0) {
     marBadge.className = 'stat-badge ' + (mar >= 5 ? 'badge-green' : mar >= 3 ? 'badge-amber' : 'badge-red');
     marBadge.textContent = mar >= 5 ? '✓ World-class (>5)' : mar >= 3 ? '✓ Professional grade (>3)' : '⚠ Below 3 — improve return or cut drawdown';
+  }
+
+  // Trend context: show all-time + whether the current period is better/worse
+  const marTrendEl = document.getElementById('perf-mar-trend');
+  if (marTrendEl) {
+    const isAllTime = (closed.length === allClosed.length);
+    if (isAllTime) {
+      // Compute 90d and 30d MAR for comparison
+      const now = new Date();
+      const cut90 = new Date(now); cut90.setDate(now.getDate() - 90);
+      const cut30 = new Date(now); cut30.setDate(now.getDate() - 30);
+      const c90 = allClosed.filter(t => t.closeDate && parseDate(t.closeDate) >= cut90);
+      const c30 = allClosed.filter(t => t.closeDate && parseDate(t.closeDate) >= cut30);
+      const m90 = c90.length >= 2 ? calcMAR(c90, initialCapital, 0) : null;
+      const m30 = c30.length >= 2 ? calcMAR(c30, initialCapital, 0) : null;
+      const fmtMAR = v => v > 0 ? v.toFixed(1) : '—';
+      const arrowColor = (a, b) => !a || !b ? 'var(--text-muted)' : a > b ? 'var(--green)' : a < b ? 'var(--red)' : 'var(--text-muted)';
+      const arrow = (a, b) => !a || !b ? '' : a > b ? ' ↑' : a < b ? ' ↓' : ' →';
+      marTrendEl.innerHTML =
+        `<div style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:6px;text-transform:uppercase;letter-spacing:.05em">Trend (all-time → recent)</div>` +
+        `<div style="display:flex;gap:8px;align-items:flex-end;flex-wrap:wrap">` +
+        `<div style="text-align:center"><div style="font-size:16px;font-weight:700;color:${mar>=5?'var(--green)':mar>=3?'var(--amber)':'var(--red)'}">${fmtMAR(mar)}</div><div style="font-size:10px;color:var(--text-muted)">All time</div></div>` +
+        (m90 ? `<div style="color:var(--text-muted);padding-bottom:2px">→</div><div style="text-align:center"><div style="font-size:16px;font-weight:700;color:${arrowColor(m90.mar,mar)}">${fmtMAR(m90.mar)}${arrow(m90.mar,mar)}</div><div style="font-size:10px;color:var(--text-muted)">90 days</div></div>` : '') +
+        (m30 ? `<div style="color:var(--text-muted);padding-bottom:2px">→</div><div style="text-align:center"><div style="font-size:16px;font-weight:700;color:${arrowColor(m30.mar,m90?m90.mar:mar)}">${fmtMAR(m30.mar)}${arrow(m30.mar,m90?m90.mar:mar)}</div><div style="font-size:10px;color:var(--text-muted)">30 days</div></div>` : '') +
+        `</div>`;
+      // Plain-English trend interpretation
+      const shortPeriodWarning = `<div style="font-size:11px;color:var(--amber);margin-top:6px">⚠ 30d/90d MAR is inflated — short periods annualize small gains into big CAGR numbers. Only compare <strong>all-time</strong> across systems.</div>`;
+      const trendMsg = m30 && m30.mar > mar * 1.5
+        ? `<div style="font-size:11px;color:var(--green);margin-top:6px">✓ <strong>Your recent performance is accelerating</strong> — last 30 days show higher risk-adjusted return than your all-time average. Your open winners are working.</div>`
+        : m30 && m30.mar < mar * 0.5
+        ? `<div style="font-size:11px;color:var(--amber);margin-top:6px">⚠ Recent MAR is lagging — last 30 days generating less return per unit of pain. Watch for deteriorating edge.</div>`
+        : `<div style="font-size:11px;color:var(--text-muted);margin-top:6px">Recent trend consistent with all-time baseline.</div>`;
+      marTrendEl.innerHTML += shortPeriodWarning + trendMsg;
+    } else {
+      // Viewing a short period — show context vs all-time
+      const shortYears = periodMAR.yearsFrac;
+      const daysStr = shortYears > 0 ? Math.round(shortYears * 365) + 'd' : '';
+      marTrendEl.innerHTML =
+        `<div style="font-size:11px;color:var(--amber);margin-top:6px">` +
+        `⚠ <strong>Short period (${daysStr}) — MAR inflated.</strong> A small gain over ${daysStr} annualizes to a huge CAGR. ` +
+        `<strong>All-time MAR = ${fmtMAR(allTimeMAR.mar)}</strong> is the honest benchmark. ` +
+        `Use this view to see which months generated returns, not to compare with other systems.</div>`;
+      function fmtMAR(v) { return v > 0 ? v.toFixed(1) : '—'; }
+    }
   }
 
   // ── Profit Factor (Combined) ──
