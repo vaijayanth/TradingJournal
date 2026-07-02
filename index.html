@@ -1505,6 +1505,7 @@ tbody tr:hover { filter: brightness(0.97); }
     <a href="#asec-setup"    onclick="document.getElementById('asec-setup').scrollIntoView({behavior:'smooth'});return false;" class="analysis-jump-btn">Setup Types</a>
     <a href="#asec-trade"    onclick="document.getElementById('asec-trade').scrollIntoView({behavior:'smooth'});return false;" class="analysis-jump-btn">Trade Mgmt</a>
     <a href="#asec-partial"  onclick="document.getElementById('asec-partial').scrollIntoView({behavior:'smooth'});return false;" class="analysis-jump-btn">Partial Exits</a>
+    <a href="#asec-be-impact" onclick="document.getElementById('asec-be-impact').scrollIntoView({behavior:'smooth'});return false;" class="analysis-jump-btn">BE Trigger</a>
     <a href="#asec-behaviour"onclick="document.getElementById('asec-behaviour').scrollIntoView({behavior:'smooth'});return false;" class="analysis-jump-btn">Behaviour</a>
     <a href="#asec-pattern"  onclick="document.getElementById('asec-pattern').scrollIntoView({behavior:'smooth'});return false;" class="analysis-jump-btn">Patterns</a>
     <a href="#asec-maemfe"   onclick="document.getElementById('asec-maemfe').scrollIntoView({behavior:'smooth'});return false;" class="analysis-jump-btn">MAE/MFE</a>
@@ -1755,6 +1756,42 @@ tbody tr:hover { filter: brightness(0.97); }
         <div style="font-size:13px;font-weight:700;margin-top:4px;line-height:1.5" id="partial-insight">—</div>
       </div>
     </div>
+  </div>
+
+  <!-- 4b. Breakeven Trigger Impact -->
+  <div class="section-title" id="asec-be-impact" style="margin-top:20px">Breakeven Trigger Impact — 2% vs 5%</div>
+  <div style="font-size:12px;color:var(--text-muted);margin-bottom:10px">Using MFE (peak profit reached) data to measure how often trades get stopped at breakeven vs going on to bigger gains. Needs cols AL/AM.</div>
+  <div class="grid-3" style="margin-bottom:14px">
+    <div class="card card-sm">
+      <div class="stat-label">Trades That Hit +<span id="be-trig-label">2</span>% Then Came Back to ~0</div>
+      <div style="font-size:28px;font-weight:700;margin-top:10px" id="be-stopped-count">—</div>
+      <div class="stat-sub" id="be-stopped-sub">likely stopped at breakeven</div>
+      <div style="font-size:14px;font-weight:700;margin-top:8px" id="be-stopped-mfe">—</div>
+      <div class="stat-sub">avg peak (MFE) before coming back</div>
+    </div>
+    <div class="card card-sm">
+      <div class="stat-label">2% Rule Saved These Trades</div>
+      <div style="font-size:28px;font-weight:700;margin-top:10px;color:var(--green)" id="be-saved-count">—</div>
+      <div class="stat-sub">hit +2–5% then closed negative — would be losses under 5% rule but saved at 0% by 2% rule</div>
+      <div style="font-size:14px;font-weight:700;margin-top:8px;color:var(--red)" id="be-cost-count">—</div>
+      <div class="stat-sub" id="be-cost-sub">hit +2% then closed ~0% with MFE &gt; 10% — potential runners cut at BE</div>
+    </div>
+    <div class="card card-sm">
+      <div class="stat-label">Of All Trades Reaching +<span id="be-trig-label2">2</span>%, Final Outcome</div>
+      <div style="font-size:12px;margin-top:10px;line-height:2" id="be-outcome-breakdown">—</div>
+    </div>
+  </div>
+  <div class="card" style="margin-bottom:14px">
+    <div class="chart-title">What Happens After a Trade Touches +<span id="be-chart-label">2</span>%?</div>
+    <div class="chart-sub">Final P&L% distribution for all closed trades where MFE ≥ trigger · bars left of 0 = stopped at loss · bar at ~0 = BE stop · bars right = winners</div>
+    <div id="chart-be-outcome" style="height:240px"></div>
+    <div style="font-size:12px;margin-top:8px;color:var(--text-muted);line-height:1.8" id="be-outcome-insight">—</div>
+  </div>
+  <div class="card" style="margin-bottom:14px">
+    <div class="chart-title">2% vs 5% Trigger — Head to Head</div>
+    <div class="chart-sub">For trades where MFE was between 2% and 5%: would the 5% rule have helped or hurt vs the 2% rule?</div>
+    <div id="chart-be-compare" style="height:220px"></div>
+    <div style="font-size:12px;margin-top:8px;color:var(--text-muted);line-height:1.8" id="be-compare-insight">—</div>
   </div>
 
   <!-- 4. Behavioural Patterns -->
@@ -6099,6 +6136,128 @@ function initAnalysisCharts(open, closed) {
       }
     }
   }
+
+  // ── Breakeven Trigger Impact Analysis ──
+  try {
+    const BET = BE_TRIGGER; // current trigger (from Config)
+    const maeMfeClosed = closed.filter(t => t.mfe != null && t.mae != null && t.finalPlPct !== undefined);
+
+    // Labels
+    ['be-trig-label','be-trig-label2','be-chart-label'].forEach(id => set(id, BET));
+
+    if (maeMfeClosed.length >= 5) {
+      // Identify BE-stop candidates: MFE >= trigger AND finalPlPct near 0 (stopped at entry)
+      // "near 0" = between -1.5% and +2% — tight range around breakeven
+      const beZoneLow = -1.5, beZoneHigh = 2.0;
+      const hitTrigger = maeMfeClosed.filter(t => t.mfe >= BET); // all trades that reached the trigger
+      const beStopped = hitTrigger.filter(t => t.finalPlPct >= beZoneLow && t.finalPlPct <= beZoneHigh);
+      const avgMfeBeStopped = beStopped.length > 0 ? beStopped.reduce((s,t) => s + t.mfe, 0) / beStopped.length : 0;
+
+      // Trades saved by 2% rule: MFE between 2% and 5%, final P&L < 0 (would be losses under 5% rule but saved at BE by 2% rule)
+      const savedBy2 = hitTrigger.filter(t => t.mfe >= BET && t.mfe < 5 && t.finalPlPct < 0);
+      // Potential runners cut: MFE > 10%, finalPlPct near 0 (BE stop fired, but trade had a lot more to give)
+      const potentialRunnersCut = beStopped.filter(t => t.mfe >= 10);
+
+      set('be-stopped-count', beStopped.length);
+      set('be-stopped-sub', `of ${hitTrigger.length} trades that reached +${BET}%`);
+      set('be-stopped-mfe', beStopped.length > 0 ? '+' + avgMfeBeStopped.toFixed(1) + '% avg peak' : '—');
+      set('be-saved-count', savedBy2.length);
+      set('be-cost-count', potentialRunnersCut.length);
+      set('be-cost-sub', potentialRunnersCut.length > 0
+        ? `hit +${BET}% → closed ~0%, but MFE was >10% — potential runners stopped at BE`
+        : `no obvious runners cut at BE (MFE ≤ 10% for near-zero closers)`);
+
+      // Outcome breakdown: of all trades that hit the trigger, where did they end?
+      const outcomes = [
+        { label: 'Loss (< -2%)',     count: hitTrigger.filter(t => t.finalPlPct < -2).length },
+        { label: 'Near 0% (BE stop)', count: beStopped.length },
+        { label: '+2 to +5%',        count: hitTrigger.filter(t => t.finalPlPct > beZoneHigh && t.finalPlPct <= 5).length },
+        { label: '+5 to +10%',       count: hitTrigger.filter(t => t.finalPlPct > 5 && t.finalPlPct <= 10).length },
+        { label: '+10 to +20%',      count: hitTrigger.filter(t => t.finalPlPct > 10 && t.finalPlPct <= 20).length },
+        { label: '+20%+',            count: hitTrigger.filter(t => t.finalPlPct > 20).length },
+      ].filter(o => o.count > 0);
+      const n = hitTrigger.length || 1;
+      const beStoppedPct = (beStopped.length / n * 100).toFixed(0);
+      const bigWinnerPct = (hitTrigger.filter(t => t.finalPlPct > 10).length / n * 100).toFixed(0);
+
+      const outEl = document.getElementById('be-outcome-breakdown');
+      if (outEl) outEl.innerHTML = outcomes.map(o => {
+        const pct = (o.count / n * 100).toFixed(0);
+        const bar = '█'.repeat(Math.max(1, Math.round(o.count / n * 12)));
+        const col = o.label.startsWith('Loss') ? 'var(--red)' : o.label.includes('BE') ? 'var(--amber)' : 'var(--green)';
+        return `<span style="display:flex;align-items:center;gap:6px;font-size:11px;margin-bottom:2px"><span style="min-width:110px;color:var(--text-muted)">${o.label}</span><span style="color:${col};font-family:monospace">${bar}</span><span style="color:${col};font-weight:600">${o.count} (${pct}%)</span></span>`;
+      }).join('');
+
+      // Chart: final P&L distribution for hitTrigger trades
+      const buckets = ['-10+', '-5–-10', '-2–-5', '-1–-2', '~0 BE', '+1–+2', '+2–+5', '+5–+10', '+10–+20', '+20+'];
+      const bucketFn = v => v <= -10 ? '-10+' : v <= -5 ? '-5–-10' : v <= -2 ? '-2–-5' : v <= -1 ? '-1–-2' : v <= 2 ? '~0 BE' : v <= 5 ? '+2–+5' : v <= 10 ? '+5–+10' : v <= 20 ? '+10–+20' : '+20+';
+      const bktCounts = Object.fromEntries(buckets.map(k => [k, 0]));
+      hitTrigger.forEach(t => { const b = bucketFn(t.finalPlPct); if (bktCounts[b] !== undefined) bktCounts[b]++; });
+      const bktKeys = buckets.filter(k => bktCounts[k] > 0);
+      const bktVals = bktKeys.map(k => bktCounts[k]);
+      const bktColors = bktKeys.map(k => k.startsWith('-') ? c.red : k === '~0 BE' ? c.amber : c.green);
+      _chartQ(() => { try { const beChart = new ApexCharts(document.getElementById('chart-be-outcome'), {
+        ...baseOpts(240), chart: { ...baseOpts(240).chart, type: 'bar' },
+        series: [{ name: 'Trades', data: bktVals }],
+        xaxis: { ...baseOpts().xaxis, categories: bktKeys },
+        yaxis: { labels: { style: { colors: c.text, fontSize: '11px' } }, title: { text: '# trades', style: { color: c.text, fontSize: '10px' } } },
+        colors: bktColors,
+        plotOptions: { bar: { columnWidth: '70%', distributed: true, borderRadius: 3 } },
+        legend: { show: false },
+        dataLabels: { enabled: true, formatter: v => v > 0 ? v : '', style: { fontSize: '11px', colors: ['#fff'] } },
+        annotations: { xaxis: [{ x: '~0 BE', fillColor: 'rgba(255,179,0,0.08)', label: { text: 'BE stop zone', style: { color: c.amber, fontSize: '10px', background: 'transparent' } } }] },
+      }); beChart.render(); analysisCharts.push(beChart); } catch(e) { console.warn('chart-be-outcome failed', e); } });
+
+      const beInsEl = document.getElementById('be-outcome-insight');
+      if (beInsEl) beInsEl.innerHTML =
+        `Of ${hitTrigger.length} trades that ever reached +${BET}%: ` +
+        `<strong style="color:var(--amber)">${beStoppedPct}% closed at ~0% (BE stop)</strong> · ` +
+        `<strong style="color:var(--green)">${bigWinnerPct}% became big winners (>10%)</strong> · ` +
+        (potentialRunnersCut.length > 0
+          ? `<span style="color:var(--red)">⚠ ${potentialRunnersCut.length} trade${potentialRunnersCut.length>1?'s':''} peaked above +10% (MFE) but closed at ~0% — these are runners stopped at breakeven. Review if these would have held longer under a wider stop.</span>`
+          : `<span style="color:var(--green)">✓ No high-MFE trades (>10%) appear to have been cut at breakeven — the 2% trigger is not visibly costing you big winners.</span>`);
+
+      // 2% vs 5% head-to-head for trades where MFE was in the 2–5% zone
+      const inZone = maeMfeClosed.filter(t => t.mfe >= 2 && t.mfe < 5);
+      if (inZone.length >= 3) {
+        const outcomesCompare = [
+          { rule: '2% rule', label: 'Saved at 0% (BE)', count: inZone.filter(t => t.finalPlPct >= beZoneLow && t.finalPlPct <= beZoneHigh).length, color: c.green, note: 'stop moved to BE at +2%, protected' },
+          { rule: '5% rule', label: 'Took a loss', count: inZone.filter(t => t.finalPlPct < beZoneLow).length, color: c.red, note: 'stop never moved to BE, original stop hit' },
+          { rule: 'Both', label: 'Closed as winner', count: inZone.filter(t => t.finalPlPct > beZoneHigh).length, color: c.amber, note: 'ended profitable regardless of rule' },
+        ];
+        _chartQ(() => { try { const cmpChart = new ApexCharts(document.getElementById('chart-be-compare'), {
+          ...baseOpts(220), chart: { ...baseOpts(220).chart, type: 'bar' },
+          series: [{ name: 'Trades', data: outcomesCompare.map(o => o.count) }],
+          xaxis: { ...baseOpts().xaxis, categories: outcomesCompare.map(o => o.label) },
+          yaxis: { labels: { style: { colors: c.text, fontSize: '11px' } }, title: { text: '# trades (MFE 2–5% zone)', style: { color: c.text, fontSize: '10px' } } },
+          colors: outcomesCompare.map(o => o.color),
+          plotOptions: { bar: { columnWidth: '55%', distributed: true, borderRadius: 4 } },
+          legend: { show: false },
+          dataLabels: { enabled: true, formatter: v => v > 0 ? v : '', style: { fontSize: '12px', colors: ['#fff'] } },
+        }); cmpChart.render(); analysisCharts.push(cmpChart); } catch(e) { console.warn('chart-be-compare failed', e); } });
+
+        const saved2 = outcomesCompare[0].count, tookLoss = outcomesCompare[1].count, winners = outcomesCompare[2].count;
+        const cmpEl = document.getElementById('be-compare-insight');
+        if (cmpEl) cmpEl.innerHTML =
+          `Trades where MFE was between 2% and 5% (n=${inZone.length}): ` +
+          `<strong style="color:var(--green)">${saved2} saved at ~0% by the 2% rule</strong> (these would be small losses under the 5% rule) · ` +
+          `<strong style="color:var(--red)">${tookLoss} took a loss anyway</strong> (BE stop not in place fast enough) · ` +
+          `<strong style="color:var(--amber)">${winners} closed as winners regardless</strong>.<br>` +
+          (saved2 > tookLoss
+            ? `✅ <strong>The 2% rule is helping in this zone</strong> — it saves more trades than it fails to catch.`
+            : saved2 < tookLoss
+              ? `⚠ <strong>More losses than BE saves in this zone</strong> — check if these losses had gaps or slippage past the BE level.`
+              : `📊 Roughly even in the 2–5% MFE zone.`);
+      } else {
+        const cmpEl = document.getElementById('be-compare-insight');
+        if (cmpEl) cmpEl.textContent = `Need more trades with MFE between 2–5% and MAE/MFE data to run the 2% vs 5% comparison (currently ${inZone.length}).`;
+      }
+    } else {
+      set('be-stopped-count', '—');
+      const noDataEl = document.getElementById('be-outcome-insight');
+      if (noDataEl) noDataEl.textContent = `Need MAE/MFE data (cols AL/AM) and at least 5 closed trades. Map maeCol/mfeCol in Config.`;
+    }
+  } catch(e) { console.warn('BE trigger impact failed', e); }
 
   // Consecutive loss behaviour — entry-date order (open + closed combined)
   // Using close-date-only always shows a "loss streak" because winners stay open for weeks.
