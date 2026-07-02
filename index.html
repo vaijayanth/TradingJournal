@@ -3427,19 +3427,36 @@ function renderDashboard(data, cfg) {
     open.forEach(t => {
       const effStop = Math.max(t.stopLoss || 0, t.sevenDayLow || 0);
       const effPct = (t.cmp && effStop) ? ((t.cmp - effStop) / t.cmp * 100) : t.pctFromStop;
+      const isProfitPhase = (t.plPct || 0) >= cfg.beTrigger; // profit ≥ BE trigger → 21 EMA is primary exit, 7DL is warning only
+
       if (effPct <= 0) {
-        // Identify which specific exit rule(s) fired
         const rules = [];
-        if (t.cmp && t.sevenDayLow && t.cmp <= t.sevenDayLow) rules.push(`7-Day Low breached (CMP ₹${t.cmp.toLocaleString('en-IN')} ≤ 7DL ₹${t.sevenDayLow.toLocaleString('en-IN')})`);
-        if (t.cmp && t.stopLoss && t.cmp <= t.stopLoss) rules.push(`Manual stop hit (CMP ₹${t.cmp.toLocaleString('en-IN')} ≤ Stop ₹${t.stopLoss.toLocaleString('en-IN')})`);
+        const sevenDLBreached = t.cmp && t.sevenDayLow && t.cmp <= t.sevenDayLow;
+        const manualStopHit = t.cmp && t.stopLoss && t.cmp <= t.stopLoss;
+        if (sevenDLBreached) rules.push(`7-Day Low breached (CMP ₹${t.cmp.toLocaleString('en-IN')} ≤ 7DL ₹${t.sevenDayLow.toLocaleString('en-IN')})`);
+        if (manualStopHit) rules.push(`Manual stop hit (CMP ₹${t.cmp.toLocaleString('en-IN')} ≤ Stop ₹${t.stopLoss.toLocaleString('en-IN')})`);
         const ruleStr = rules.length > 0 ? rules.join(' · ') : `Price at/below effective stop ₹${Math.max(t.stopLoss||0, t.sevenDayLow||0).toLocaleString('en-IN')}`;
-        const shortRule = rules.length > 0 ? rules.map(r => r.split('(')[0].trim()).join(' + ') : 'Stop breached';
-        alerts.push({ type:'red', icon:'🔴', title:`${t.stock} — ${shortRule}`, desc:`${ruleStr}. Effective stop = MAX(J, 7DL) = ₹${Math.max(t.stopLoss||0, t.sevenDayLow||0).toLocaleString('en-IN')}. Mechanical exit required — no exceptions.` });
+
+        if (isProfitPhase && sevenDLBreached && !manualStopHit) {
+          // Profit phase: 7DL breach alone is a WARNING — may be normal consolidation; 21 EMA is primary exit
+          alerts.push({ type:'amber', icon:'🟡', title:`${t.stock} — 7DL Breached (Normal Consolidation?) +${(t.plPct||0).toFixed(1)}%`, desc:`7-Day Low breached but position is +${(t.plPct||0).toFixed(1)}% (above BE trigger). At this profit stage your primary exit is 21 EMA breach — not the 7-day low. This may be a normal breakout consolidation. Watch 21 EMA closely.` });
+        } else {
+          // Pre-profit phase OR manual stop hit: hard exit
+          const shortRule = rules.length > 0 ? rules.map(r => r.split('(')[0].trim()).join(' + ') : 'Stop breached';
+          alerts.push({ type:'red', icon:'🔴', title:`${t.stock} — ${shortRule}`, desc:`${ruleStr}. Effective stop = MAX(J, 7DL) = ₹${Math.max(t.stopLoss||0, t.sevenDayLow||0).toLocaleString('en-IN')}. Mechanical exit required — no exceptions.` });
+        }
       }
-      else if (effPct <= cfg.stopProximity) alerts.push({ type:'amber', icon:'🟡', title:`${t.stock} — Within ${effPct.toFixed(1)}% of Stop`, desc:`Only ${effPct.toFixed(1)}% above effective stop (MAX of ₹${t.stopLoss.toLocaleString('en-IN')}, ₹${t.sevenDayLow.toLocaleString('en-IN')}). Review before market open.` });
+      else if (effPct <= cfg.stopProximity) {
+        if (isProfitPhase) {
+          alerts.push({ type:'amber', icon:'🟡', title:`${t.stock} — Near 7DL (${effPct.toFixed(1)}% away) — Watch 21 EMA`, desc:`Approaching 7-Day Low but position is +${(t.plPct||0).toFixed(1)}% — in profit phase. 21 EMA is your primary exit signal at this stage. If 21 EMA breached, exit. If price bounces above 7DL, normal consolidation.` });
+        } else {
+          alerts.push({ type:'amber', icon:'🟡', title:`${t.stock} — Within ${effPct.toFixed(1)}% of Stop`, desc:`Only ${effPct.toFixed(1)}% above effective stop (MAX of ₹${t.stopLoss.toLocaleString('en-IN')}, ₹${t.sevenDayLow.toLocaleString('en-IN')}). Review before market open.` });
+        }
+      }
       if ((t.ema21 || '').trim().toLowerCase() === 'below' && (t.plPct > 0 || (t.notionalPl||0) > 0)) {
         const emaPlLabel = t.plPct > 0 ? `+${t.plPct.toFixed(1)}%` : `+₹${Math.round(t.notionalPl).toLocaleString('en-IN')}`;
-        alerts.push({ type:'red', icon:'📉', title:`${t.stock} — Below 21 EMA (${emaPlLabel})`, desc:`Price has crossed below 21 EMA. Position is profitable — consider tightening stop to protect gains.` });
+        const exitMsg = isProfitPhase ? 'PRIMARY EXIT SIGNAL — in profit phase, 21 EMA breach is your exit trigger. Exit at market.' : 'Position is profitable — consider tightening stop to protect gains.';
+        alerts.push({ type:'red', icon:'📉', title:`${t.stock} — Below 21 EMA (${emaPlLabel})`, desc:`Price has crossed below 21 EMA. ${exitMsg}` });
       }
       if (t.plPct >= cfg.beTrigger && t.stopLoss < t.entryPrice) {
         alerts.push({ type:'amber', icon:'🛡', title:`${t.stock} — Move Stop to Breakeven (+${t.plPct.toFixed(1)}%)`, desc:`Position up ${t.plPct.toFixed(1)}%. Per your strategy, move col J stop to entry price ₹${t.entryPrice.toLocaleString('en-IN')} to make this trade risk-free.` });
@@ -8140,7 +8157,7 @@ const STRAT_LOG_KEY   = 'tj_strategy_log_v1';
 
 const STRAT_DEFAULT_RULES = {
   entry: `• 52-week high breakout on volume surge (≥1.5× avg)\n• VCP (Volatility Contraction Pattern) — tightening price range on declining volume\n• Stock must be in Stage 2 uptrend (above 50 & 200 EMA)\n• Prefer setups with base depth < 30% and 3+ weeks of consolidation\n• Enter on breakout day or next day open — no chasing after 2%`,
-  stop: `• 3 triggers active simultaneously — exit on the FIRST one hit:\n  1. 7-Day Low (col I) — base trailing stop, always active\n  2. Manual stop (col J) — moved to entry price (BE) once +${(()=>{try{return JSON.parse(localStorage.getItem('tj_config_v1')||'{}').beTrigger||7}catch(e){return 7}})()}% profit\n  3. 21 EMA breach (col F = "Below") — exit signal for profitable trades\n• Effective stop = MAX(col J, col I) — whichever is tighter\n• Take loss immediately at stop — no hoping, no averaging down`,
+  stop: `• TWO-PHASE trailing stop system:\n\n  PHASE 1 — Profit < +${(()=>{try{return JSON.parse(localStorage.getItem('tj_config_v1')||'{}').beTrigger||7}catch(e){return 7}})()}% (early stage):\n  • 7-Day Low (col I) is your primary stop — catches failed breakouts fast\n  • Manual stop (col J) acts as a floor — Effective stop = MAX(col J, I)\n  • 21 EMA breach = warning to watch closely, not mandatory exit yet\n  • Exit immediately if effective stop is hit — no hoping\n\n  PHASE 2 — Profit ≥ +${(()=>{try{return JSON.parse(localStorage.getItem('tj_config_v1')||'{}').beTrigger||7}catch(e){return 7}})()}% (runner stage):\n  • Move col J manual stop to entry price → trade is now risk-free\n  • 21 EMA breach is your PRIMARY EXIT — exit at next open\n  • 7-Day Low dips are NORMAL breakout consolidation at this stage — do NOT exit on 7DL alone\n  • HA turns Red + profit ≥ 5%: monitor, tighten attention — 21 EMA breach confirms exit\n\n• Rationale: Breakouts consolidate above the 7-day low before the next leg. Exiting on 7DL at +7%+ shakes you out of the best trades. The 21 EMA is wider and respects this consolidation.`,
   profit: `• 50% partial exit when +10% profit (configurable in Config)\n• Remainder trailed via 7-day low until stop is hit naturally\n• DO NOT set price targets — let the stop do the exiting\n• If HA turns Red with profit ≥ 5%: monitor closely, protect gains`,
   sizing: `• Start: ₹1,000 risk per trade\n• Increase: +₹500 every 100 closed trades\n• Hard cap: 0.8% of portfolio (at ₹50L = ₹40,000 max risk)\n• Never risk more than cap regardless of conviction\n• Sizing = Risk ₹ ÷ (Entry − Stop) = share qty`,
   exit: `• Stop hit → exit at market, same day, no exceptions\n• 21 EMA breach on a profitable trade → exit at next open\n• HA turns Red + profit ≥ 5% → tighten stop to 7-day low, watch\n• Age > 60 days with no progress → review, consider exiting\n• Do NOT exit because a stock "feels extended" — let the stop work`,
