@@ -2882,12 +2882,12 @@ function renderDashboard(data, cfg) {
 
   // 4. Hold Ratio: avg winner hold (closed winners + open profitable) vs avg loser hold (closed losers only)
   // Target: winners held 3×+ longer — that's the cut-fast/run-long edge
-  const closedWinnerAge = dWins.filter(t => t.age > 0).map(t => t.age);
-  const openAge         = open.filter(t => t.age > 0 && (t.notionalPl || 0) > 0).map(t => t.age); // only currently profitable open trades
+  const closedWinnerAge = dWins.filter(t => parseInt(t.age||0) > 0).map(t => parseInt(t.age));
+  const openAge         = open.filter(t => parseInt(t.age||0) > 0 && (t.notionalPl || 0) > 0).map(t => parseInt(t.age)); // only currently profitable open trades
   const allWinnerAge    = closedWinnerAge.concat(openAge);
   const avgWinAge  = allWinnerAge.length > 0 ? allWinnerAge.reduce((s,v) => s+v, 0) / allWinnerAge.length : 0;
-  const avgLossAge = dLosses.filter(t => t.age > 0).length > 0
-    ? dLosses.filter(t => t.age > 0).reduce((s,t) => s+t.age, 0) / dLosses.filter(t => t.age > 0).length : 0;
+  const avgLossAge = dLosses.filter(t => parseInt(t.age||0) > 0).length > 0
+    ? dLosses.filter(t => parseInt(t.age||0) > 0).reduce((s,t) => s+parseInt(t.age), 0) / dLosses.filter(t => parseInt(t.age||0) > 0).length : 0;
   const holdRatio  = avgLossAge > 0 ? avgWinAge / avgLossAge : 0;
   const dREl      = document.getElementById('dash-sys-r');
   const holdSubEl = document.getElementById('dash-sys-hold-sub');
@@ -5707,9 +5707,15 @@ function initAnalysisCharts(open, closed) {
     const aw = wins.length > 0 ? wins.reduce((s,t) => s+t.finalPlPct, 0)/wins.length : 0;
     const al = losses.length > 0 ? Math.abs(losses.reduce((s,t) => s+t.finalPlPct, 0)/losses.length) : 0;
     const totalPl = trades.reduce((s,t) => s+t.finalPl, 0);
-    const r = al > 0 ? aw/al : 0;
+    // True R = P&L ÷ initial risk (both ₹) — falls back to % ratio if initRiskRs missing
+    const winsR = wins.filter(t => t.initRiskRs > 0);
+    const lossR = losses.filter(t => t.initRiskRs > 0);
+    const useRs = winsR.length > 0 && lossR.length > 0;
+    const avgWinR  = useRs ? winsR.reduce((s,t) => s + t.finalPl/t.initRiskRs, 0)/winsR.length : aw;
+    const avgLossR = useRs ? Math.abs(lossR.reduce((s,t) => s + t.finalPl/t.initRiskRs, 0)/lossR.length) : al;
+    const r = avgLossR > 0 ? avgWinR / avgLossR : 0;
     const wrFrac = trades.length > 0 ? wins.length / trades.length : 0;
-    const rExp = al > 0 ? (wrFrac * r) - ((1 - wrFrac) * 1) : 0;
+    const rExp = avgLossR > 0 ? (wrFrac * r) - ((1 - wrFrac) * 1) : 0;
     return { wr, avg, r, rExp, aw, al: -Math.abs(al), n: trades.length, totalPl };
   };
 
@@ -5891,7 +5897,7 @@ function initAnalysisCharts(open, closed) {
 
     // 2. Partial execution — % of eligible trades where partial was taken
     const partialEligible = closed.filter(t => (t.finalPlPct || 0) >= (_cfg.partialTrigger || 10));
-    const partialTaken = closed.filter(t => t.partialTaken === 'Y').length;
+    const partialTaken = partialEligible.filter(t => t.partialTaken === 'Y').length;
     const partialPct = partialEligible.length > 0 ? Math.min(100, partialTaken / partialEligible.length * 100) : null;
 
     // 3. Avg hold days — winners vs losers (only trades with age > 0)
@@ -6578,12 +6584,12 @@ function initAnalysisCharts(open, closed) {
 
   // Scatter — closed wins, closed losses, + open positions (amber)
   const sorted = [...closed].filter(t => t.closeDate).sort((a,b) => parseDate(a.closeDate)-parseDate(b.closeDate));
-  const openScatter = open.filter(t => t.age > 0 && t.plPct != null);
+  const openScatter = open.filter(t => parseInt(t.age||0) > 0 && t.plPct != null);
   _chartQ(() => { try { const sc = new ApexCharts(document.getElementById('chart-scatter'), {
     ...baseOpts(240), chart: { ...baseOpts(240).chart, type: 'scatter', zoom: { enabled: false } },
     series: [
-      { name:'Closed Win', data: sorted.filter(t=>t.finalPlPct>=0&&t.age>0).map(t=>[t.age, parseFloat(t.finalPlPct.toFixed(1))]) },
-      { name:'Closed Loss', data: sorted.filter(t=>t.finalPlPct<0&&t.age>0).map(t=>[t.age, parseFloat(t.finalPlPct.toFixed(1))]) },
+      { name:'Closed Win', data: sorted.filter(t=>t.finalPlPct>=0&&parseInt(t.age||0)>0).map(t=>[parseInt(t.age), parseFloat(t.finalPlPct.toFixed(1))]) },
+      { name:'Closed Loss', data: sorted.filter(t=>t.finalPlPct<0&&parseInt(t.age||0)>0).map(t=>[parseInt(t.age), parseFloat(t.finalPlPct.toFixed(1))]) },
       { name:'Open (live)', data: openScatter.map(t=>[parseInt(t.age)||0, parseFloat((t.plPct||0).toFixed(1))]) },
     ],
     xaxis: { ...baseOpts().xaxis, type: 'numeric', title: { text:'Hold Days', style:{color:c.text} }, min: 0, tickAmount: 10, labels: { style: { colors: c.text, fontSize: '11px' }, formatter: v => Math.round(v) + 'd' } },
@@ -6597,8 +6603,8 @@ function initAnalysisCharts(open, closed) {
   // Scatter insight line
   const scatterInsEl = document.getElementById('scatter-insight');
   if (scatterInsEl && closed.length > 0) {
-    const cWinners = closed.filter(t => t.finalPlPct > 0 && t.age > 0);
-    const cLosers  = closed.filter(t => t.finalPlPct < 0 && t.age > 0);
+    const cWinners = closed.filter(t => t.finalPlPct > 0 && parseInt(t.age||0) > 0);
+    const cLosers  = closed.filter(t => t.finalPlPct < 0 && parseInt(t.age||0) > 0);
     const avgWinAge  = cWinners.filter(t=>parseInt(t.age||0)>0).length ? cWinners.filter(t=>parseInt(t.age||0)>0).reduce((s,t)=>s+parseInt(t.age),0)/cWinners.filter(t=>parseInt(t.age||0)>0).length : 0;
     const avgLossAge = cLosers.filter(t=>parseInt(t.age||0)>0).length  ? cLosers.filter(t=>parseInt(t.age||0)>0).reduce((s,t)=>s+parseInt(t.age),0)/cLosers.filter(t=>parseInt(t.age||0)>0).length  : 0;
     const openWins = open.filter(t => (t.plPct||0) > 0);
@@ -6814,10 +6820,7 @@ function initAnalysisCharts(open, closed) {
   const avgActualLossRs = tmLosers.length > 0 ? tmLosers.reduce((s,t) => s + Math.abs(t.finalPl||0), 0) / tmLosers.length : 0;
   const slippageRs = avgActualLossRs - avgInitRiskRs;
   // Keep % for the breakeven analysis section
-  const withRiskPct = tmClosed.filter(t => t.initRiskPct && Math.abs(t.initRiskPct) > 0); // used for avgInitRisk % and loss dist annotation
-  const avgInitRisk = withRiskPct.length > 0 ? withRiskPct.reduce((s,t) => s + Math.abs(t.initRiskPct), 0) / withRiskPct.length : 0;
   const avgActualLoss = tmLosers.length > 0 ? tmLosers.reduce((s,t) => s + Math.abs(t.finalPlPct), 0) / tmLosers.length : 0;
-  const slippage = avgActualLoss - avgInitRisk;
 
   const sortedWinPct = [...tmWinners].map(t => t.finalPlPct).sort((a,b) => a - b);
   const medianWin = sortedWinPct.length > 0 ? sortedWinPct[Math.floor(sortedWinPct.length / 2)] : 0;
@@ -7122,7 +7125,7 @@ function initAnalysisCharts(open, closed) {
   const holdBktFn = age => age <= 7 ? '1–7d' : age <= 14 ? '8–14d' : age <= 30 ? '15–30d' : age <= 60 ? '31–60d' : '60d+';
   const holdWinCounts = Object.fromEntries(holdBkts.map(k=>[k,0]));
   const holdLossCounts = Object.fromEntries(holdBkts.map(k=>[k,0]));
-  tmClosed.filter(t => t.age > 0).forEach(t => {
+  tmClosed.filter(t => parseInt(t.age||0) > 0).forEach(t => {
     const b = holdBktFn(parseInt(t.age)||0);
     if (t.finalPlPct > 0) holdWinCounts[b]++; else holdLossCounts[b]++;
   });
