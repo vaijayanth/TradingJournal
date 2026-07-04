@@ -768,6 +768,7 @@ tbody tr:hover { filter: brightness(0.97); }
     <span id="dash-urgent-text" style="font-size:13px;font-weight:700;flex:1"></span>
     <button onclick="showPage('today',document.getElementById('nav-today'))" style="background:#fff;border:none;border-radius:6px;padding:5px 14px;font-size:12px;font-weight:700;cursor:pointer;color:#111">Go to Action Board →</button>
   </div>
+  <div id="dash-no-winner-alert" style="display:none;align-items:center;gap:10px;margin-bottom:10px;padding:10px 14px;border-radius:8px;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3)"></div>
 
   <div class="section-title">Portfolio Status</div>
   <div class="grid-4">
@@ -1063,6 +1064,17 @@ tbody tr:hover { filter: brightness(0.97); }
       <div style="font-size:12px;color:var(--text-muted);margin-top:2px" id="today-subtitle">Review before market open · take action · move on</div>
     </div>
     <button class="btn-secondary" style="font-size:12px" onclick="window._strategy==='fno'?refreshFnoData():refreshData()">↻ Refresh</button>
+  </div>
+
+  <!-- Market Direction Toggle -->
+  <div id="mkt-direction-bar" style="display:flex;align-items:center;gap:10px;margin-bottom:14px;padding:10px 14px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);flex-wrap:wrap">
+    <span style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:0.5px;flex-shrink:0">Market Direction</span>
+    <div style="display:flex;gap:6px;flex:1;flex-wrap:wrap">
+      <button onclick="setMktDirection('uptrend')"   id="mkt-btn-uptrend"   style="font-size:12px;padding:5px 14px;border-radius:16px;border:1.5px solid transparent;cursor:pointer;font-weight:600;transition:all .2s">📈 Confirmed Uptrend</button>
+      <button onclick="setMktDirection('pressure')"  id="mkt-btn-pressure"  style="font-size:12px;padding:5px 14px;border-radius:16px;border:1.5px solid transparent;cursor:pointer;font-weight:600;transition:all .2s">⚠ Under Pressure</button>
+      <button onclick="setMktDirection('correction')" id="mkt-btn-correction" style="font-size:12px;padding:5px 14px;border-radius:16px;border:1.5px solid transparent;cursor:pointer;font-weight:600;transition:all .2s">📉 In Correction</button>
+    </div>
+    <span id="mkt-direction-advice" style="font-size:11px;color:var(--text-muted);font-style:italic"></span>
   </div>
 
   <!-- Summary bar -->
@@ -1540,6 +1552,7 @@ tbody tr:hover { filter: brightness(0.97); }
     <a href="#asec-behaviour"onclick="document.getElementById('asec-behaviour').scrollIntoView({behavior:'smooth'});return false;" class="analysis-jump-btn">Behaviour</a>
     <a href="#asec-pattern"  onclick="document.getElementById('asec-pattern').scrollIntoView({behavior:'smooth'});return false;" class="analysis-jump-btn">Patterns</a>
     <a href="#asec-maemfe"   onclick="document.getElementById('asec-maemfe').scrollIntoView({behavior:'smooth'});return false;" class="analysis-jump-btn">MAE/MFE</a>
+    <a href="#asec-edge"     onclick="document.getElementById('asec-edge').scrollIntoView({behavior:'smooth'});return false;" class="analysis-jump-btn">Edge Diagnostics</a>
   </div>
 
   <!-- Closed-trade bias note -->
@@ -1747,6 +1760,24 @@ tbody tr:hover { filter: brightness(0.97); }
           <strong>Action:</strong> If &gt;10% of losses are in the 5%+ buckets, that's your biggest lever to pull. Compare avg actual loss ₹ vs avg init risk ₹ in the KPI cards above.
         </div>
       </details>
+    </div>
+    <!-- Entry Precision proxy -->
+    <div class="card card-sm" style="grid-column:span 2">
+      <div class="stat-label">Entry Precision — Risk% as Stop Proximity Proxy</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-bottom:10px">O'Neil rule: enter within 5% of pivot. Init Risk% ≤ 5% = tight entry near pivot. Comparing WR and avg P&L by risk tier.</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="entry-precision-grid">
+        <div style="padding:10px;background:var(--surface2);border-radius:8px">
+          <div style="font-size:11px;color:var(--text-muted)">Tight entry (Risk% ≤ 5%)</div>
+          <div style="font-size:22px;font-weight:700;margin-top:4px" id="ep-tight-wr">—</div>
+          <div style="font-size:11px;color:var(--text-muted)" id="ep-tight-sub">—</div>
+        </div>
+        <div style="padding:10px;background:var(--surface2);border-radius:8px">
+          <div style="font-size:11px;color:var(--text-muted)">Extended entry (Risk% > 5%)</div>
+          <div style="font-size:22px;font-weight:700;margin-top:4px" id="ep-wide-wr">—</div>
+          <div style="font-size:11px;color:var(--text-muted)" id="ep-wide-sub">—</div>
+        </div>
+      </div>
+      <div style="font-size:11px;margin-top:8px;color:var(--text-secondary)" id="ep-insight">—</div>
     </div>
   </div>
 
@@ -2207,6 +2238,7 @@ tbody tr:hover { filter: brightness(0.97); }
           <th>Stock</th>
           <th>Age</th>
           <th>Entry ₹</th>
+          <th title="Initial risk in ₹ if stop is hit at entry">Risk ₹</th>
           <th>CMP ₹</th>
           <th title="MAX(manual stop J, 7-day low I)">Eff Stop ₹</th>
           <th title="% from effective stop = MAX(J, I)">% from Stop</th>
@@ -2695,6 +2727,33 @@ const DEFAULT_CONFIG = {
   beRuleChangeDate: '19-Jun-2026', beRuleOldTrigger: 5,
 };
 
+const MKT_DIR_KEY = 'tj_mkt_direction';
+function setMktDirection(state) {
+  localStorage.setItem(MKT_DIR_KEY, state);
+  renderMktDirection();
+}
+function renderMktDirection() {
+  const state = localStorage.getItem(MKT_DIR_KEY) || '';
+  const advice = { uptrend: 'Full position sizing · look for breakouts and pullback entries · trail stops', pressure: 'Reduce size 50% · no new breakout entries · tighten stops on open positions', correction: 'No new entries · protect open profits · raise stops to breakeven on all positions' };
+  const colors = { uptrend: 'var(--green)', pressure: 'var(--amber)', correction: 'var(--red)' };
+  const bgs    = { uptrend: 'rgba(34,197,94,0.12)', pressure: 'rgba(245,158,11,0.12)', correction: 'rgba(239,68,68,0.12)' };
+  ['uptrend','pressure','correction'].forEach(s => {
+    const btn = document.getElementById('mkt-btn-' + s);
+    if (!btn) return;
+    const active = state === s;
+    btn.style.background = active ? bgs[s] : 'var(--surface)';
+    btn.style.borderColor = active ? colors[s] : 'var(--border)';
+    btn.style.color = active ? colors[s] : 'var(--text-secondary)';
+  });
+  const adv = document.getElementById('mkt-direction-advice');
+  if (adv) adv.textContent = advice[state] || 'Set market direction each morning before trading';
+  const bar = document.getElementById('mkt-direction-bar');
+  if (bar && state) {
+    bar.style.borderColor = colors[state] + '60';
+    bar.style.background = bgs[state];
+  }
+}
+
 function loadConfig() {
   try {
     const saved = JSON.parse(localStorage.getItem(CONFIG_KEY) || '{}');
@@ -3068,6 +3127,16 @@ function renderDashboard(data, cfg) {
       if (avgLoss > 7) issues.push(`avg loss ${avgLoss.toFixed(1)}% > 7% rule`);
       if (avgSlippage > 1.5) issues.push(`exits avg ${avgSlippage.toFixed(1)}% below stop price`);
       if (daysSinceWin !== null && daysSinceWin > 30) issues.push(`no winner banked in ${daysSinceWin} days`);
+      // No-winner alert pill on dashboard
+      const noWinAlertEl = document.getElementById('dash-no-winner-alert');
+      if (noWinAlertEl) {
+        if (daysSinceWin !== null && daysSinceWin > 30) {
+          noWinAlertEl.style.display = 'flex';
+          noWinAlertEl.innerHTML = `<span style="font-size:15px">⏰</span><span style="font-size:12px;font-weight:700;color:var(--amber)">No closed winner in <strong>${daysSinceWin} days</strong> — is your system still producing? Review open positions and market conditions.</span>`;
+        } else {
+          noWinAlertEl.style.display = 'none';
+        }
+      }
       if (issues.length === 0) {
         discBadge.className = 'stat-badge badge-green';
         discBadge.textContent = '✓ Cutting losses cleanly — discipline on track';
@@ -3579,6 +3648,7 @@ function renderTodayActions(open, cfg) {
   const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
   const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   if (subtitle) subtitle.textContent = `${dayNames[today.getDay()]} ${today.getDate()} ${monthNames[today.getMonth()]} · Review before market open · ${open.length} open positions`;
+  renderMktDirection();
 
   // ── Portfolio Breadth Panel ──────────────────────────────────────────────────
   const breadthPanel = document.getElementById('today-breadth-panel');
@@ -4002,6 +4072,7 @@ function renderPositionsReal(open, cfg) {
         <td><span class="stock-name">${t.stock}</span>${t.dataError ? ' <span style="font-size:10px;color:var(--red)">⚠</span>' : ''}${t.signalCount >= 2 ? ` <span title="${t.signalCount} signals firing — priority action needed" style="font-size:10px;background:var(--red);color:#fff;border-radius:8px;padding:1px 5px;margin-left:3px;font-weight:700">${t.signalCount}⚡</span>` : ''}</td>
         <td>${t.age}d</td>
         <td>₹${t.entryPrice.toLocaleString('en-IN')}</td>
+        <td style="font-size:11px;color:var(--text-muted)">${t.initRiskRs ? '₹'+Math.round(t.initRiskRs).toLocaleString('en-IN') : '—'}</td>
         <td class="${pnlClass}" style="font-weight:700">₹${t.cmp.toLocaleString('en-IN')}</td>
         <td title="Effective stop: MAX(manual ₹${t.stopLoss.toLocaleString('en-IN')}, 7d low ₹${t.sevenDayLow.toLocaleString('en-IN')}) = ₹${t.effStop.toLocaleString('en-IN')}">₹${t.effStop.toLocaleString('en-IN')}</td>
         <td class="${fromStopClass} fw-700">${t.effPct >= 0 ? '+' : ''}${t.effPct.toFixed(1)}%</td>
@@ -4019,7 +4090,7 @@ function renderPositionsReal(open, cfg) {
         <td><span class="tag ${haClass} ${haChangedClass}" style="${haWarnStyle}" title="${t.haWarn ? '⚠ Profit at risk — HA Red with healthy gain, consider protecting' : haChanged ? 'HA colour just changed — momentum shift!' : ''}">${t.haWarn ? '⚠ ' : ''}${haLabel}</span></td>
       </tr>
       <tr class="expand-row" id="expand-${i}">
-        <td colspan="12" style="padding:0">
+        <td colspan="13" style="padding:0">
           <div class="expand-content">
             <div class="expand-item"><div class="expand-label">Entry Date</div><div class="expand-value">${t.openDate || '—'}</div></div>
             <div class="expand-item"><div class="expand-label">Manual Stop (J)</div><div class="expand-value">₹${t.stopLoss.toLocaleString('en-IN')}</div></div>
@@ -6174,6 +6245,39 @@ function initAnalysisCharts(open, closed) {
       </div>`;
     }).join('');
   }
+
+  // ── Entry Precision proxy (initRiskPct as stop-proximity metric) ──
+  try {
+    const withRisk = closed.filter(t => t.initRiskPct > 0);
+    const tight = withRisk.filter(t => t.initRiskPct <= 5);
+    const wide  = withRisk.filter(t => t.initRiskPct > 5);
+    const epStats = trades => {
+      const wins = trades.filter(t => t.finalPlPct > 0);
+      const wr = trades.length ? wins.length / trades.length * 100 : 0;
+      const avg = trades.length ? trades.reduce((s,t) => s + t.finalPlPct, 0) / trades.length : 0;
+      return { wr, avg, n: trades.length };
+    };
+    const ts = epStats(tight), ws = epStats(wide);
+    const wrCol = wr => wr >= 40 ? 'var(--green)' : wr >= 20 ? 'var(--amber)' : 'var(--red)';
+    set('ep-tight-wr', tight.length ? ts.wr.toFixed(0) + '%  WR' : '—');
+    set('ep-tight-sub', tight.length ? `n=${tight.length} · avg ${(ts.avg>=0?'+':'')+ts.avg.toFixed(1)}%` : 'No trades with Risk% ≤ 5%');
+    set('ep-wide-wr',  wide.length  ? ws.wr.toFixed(0) + '% WR' : '—');
+    set('ep-wide-sub', wide.length  ? `n=${wide.length} · avg ${(ws.avg>=0?'+':'')+ws.avg.toFixed(1)}%` : 'No trades with Risk% > 5%');
+    const epEl = document.getElementById('ep-tight-wr');
+    if (epEl) epEl.style.color = wrCol(ts.wr);
+    const epEl2 = document.getElementById('ep-wide-wr');
+    if (epEl2) epEl2.style.color = wrCol(ws.wr);
+    const insEl2 = document.getElementById('ep-insight');
+    if (insEl2 && tight.length >= 3 && wide.length >= 3) {
+      const better = ts.wr >= ws.wr ? 'tight' : 'wide';
+      const diff = Math.abs(ts.wr - ws.wr).toFixed(0);
+      insEl2.innerHTML = better === 'tight'
+        ? `✅ <strong>Tight entries (≤5% risk) outperform</strong> by ${diff}pp WR — O'Neil entry discipline is paying off. Keep entries close to pivot.`
+        : `⚠ <strong>Extended entries (>5% risk) have higher WR</strong> by ${diff}pp — may reflect chasing breakouts that have already moved. Monitor if avg P&L compensates.`;
+    } else if (insEl2) {
+      insEl2.textContent = tight.length < 3 || wide.length < 3 ? 'Need 3+ trades in each tier to compare. Keep labelling initRiskPct.' : '';
+    }
+  } catch(e) { console.warn('Entry precision failed', e); }
 
   // ── Discipline Scorecard ──
   (function() {
