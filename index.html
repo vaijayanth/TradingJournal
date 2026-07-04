@@ -8687,7 +8687,7 @@ function renderFnoDashboard(watchlist) {
   // ── NIFTYBEES Market Direction ──
   // Always read from full watchlist (not broker-filtered) so it always shows
   const allList = window._fnoData ? window._fnoData.watchlist : watchlist;
-  const niftybees = allList.find(s => s.stock.toUpperCase().includes('NIFTYBEES'));
+  const niftybees = allList.find(s => s.stock && /NIFTY.*BEES|NIFTYBEES/i.test(s.stock));
   const trendEl    = document.getElementById('fno-market-trend');
   const trendLabel = document.getElementById('fno-trend-label');
   const trendSub   = document.getElementById('fno-trend-sub');
@@ -8733,42 +8733,123 @@ function renderFnoDashboard(watchlist) {
 function fnoRenderBreadth(watchlist) {
   const el = document.getElementById('fno-breadth');
   if (!el) return;
-  const total = watchlist.length;
-  if (total === 0) { el.innerHTML = '<div style="padding:12px;color:var(--text-muted);font-size:13px">No data</div>'; return; }
 
-  const above200 = watchlist.filter(s => s.ema200).length;
-  const above50  = watchlist.filter(s => s.ema50).length;
-  const above20  = watchlist.filter(s => s.ema20).length;
-  const pct = n => Math.round(n / total * 100);
+  // Always use full unfiltered watchlist for index ETF cards
+  const allList = window._fnoData ? window._fnoData.watchlist : watchlist;
+
+  // ── Index ETF definitions (flexible name matching) ──
+  const INDEX_ETFS = [
+    { label: 'Nifty 50',   regex: /NIFTY.*BEES|NIFTYBEES/i,   tier: 'Large Cap' },
+    { label: 'Midcap',     regex: /MIDCAP.*BEES|MIDCAPBEES/i,  tier: 'Mid Cap'   },
+    { label: 'Smallcap',   regex: /SMALL.*BEES|SMALLCAP.*ETF|SMALL.*ETF/i, tier: 'Small Cap' },
+  ];
+
+  const normaliseHA = v => typeof v === 'string' ? v : (v === true ? 'Green' : v === false ? 'Red' : '');
+
+  const etfScore = etf => {
+    const ha = normaliseHA(etf.haColour).toLowerCase() === 'green';
+    return [etf.ema200, etf.ema50, etf.ema20, ha].filter(Boolean).length; // 0–4
+  };
+
+  const etfCard = (etf, label, tier) => {
+    if (!etf) return `
+      <div style="flex:1;min-width:150px;padding:10px 12px;border-radius:8px;background:var(--surface2);border:1px solid var(--border);opacity:0.5">
+        <div style="font-size:11px;font-weight:700;color:var(--text-muted)">${label} <span style="font-weight:400">(${tier})</span></div>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:4px">Not in NSEFO sheet</div>
+      </div>`;
+    const score = etfScore(etf);
+    const ha = normaliseHA(etf.haColour);
+    const haGrn = ha.toLowerCase() === 'green';
+    const haChg = etf.haChanged;
+    const regime = score >= 3 ? { label:'Bull', color:'var(--green)', bg:'rgba(34,197,94,0.1)', border:'rgba(34,197,94,0.3)' }
+                 : score === 2 ? { label:'Neutral', color:'var(--amber)', bg:'rgba(245,158,11,0.08)', border:'rgba(245,158,11,0.3)' }
+                 : { label:'Bear', color:'var(--red)', bg:'rgba(239,68,68,0.08)', border:'rgba(239,68,68,0.3)' };
+    const dot = v => `<span style="display:inline-block;width:6px;height:6px;border-radius:50%;margin-right:2px;flex-shrink:0;background:${v ? 'var(--green)' : 'rgba(239,68,68,0.6)'}"></span>`;
+    const row = (lbl, val) => `<div style="display:flex;align-items:center;gap:3px;font-size:10px;color:var(--text-secondary)">${dot(val)}${lbl}: <strong style="color:${val?'var(--green)':'var(--red)'}">${val?'✓':'✗'}</strong></div>`;
+    return `
+      <div style="flex:1;min-width:150px;padding:10px 12px;border-radius:8px;background:${regime.bg};border:1px solid ${regime.border}">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:7px">
+          <div>
+            <div style="font-size:12px;font-weight:700;color:var(--text-primary)">${label}</div>
+            <div style="font-size:10px;color:var(--text-muted)">${tier} · ${etf.stock}</div>
+          </div>
+          <span style="font-size:10px;font-weight:700;color:${regime.color};padding:2px 8px;border-radius:10px;background:${regime.color}18">${regime.label}</span>
+        </div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:2px 6px">
+          ${row('200 EMA', etf.ema200)}
+          ${row('50 EMA', etf.ema50)}
+          ${row('21 EMA', etf.ema20)}
+          <div style="display:flex;align-items:center;gap:3px;font-size:10px;color:var(--text-secondary)">${dot(haGrn)}HA: <strong style="color:${ha?(haGrn?'var(--green)':'var(--red)'):'var(--text-muted)'}">${ha||'—'}</strong>${haChg ? ' <span style="color:var(--amber)">🔄</span>':''}</div>
+        </div>
+        <div style="margin-top:6px;height:4px;border-radius:2px;background:var(--surface2)">
+          <div style="width:${score/4*100}%;height:100%;border-radius:2px;background:${regime.color};transition:width .4s"></div>
+        </div>
+      </div>`;
+  };
+
+  // Map ETFs from the full watchlist
+  const foundEtfs = INDEX_ETFS.map(def => ({
+    ...def,
+    etf: allList.find(s => s.stock && def.regex.test(s.stock))
+  }));
+
+  // Overall market score (avg of found ETFs)
+  const foundOnly = foundEtfs.filter(e => e.etf);
+  const avgScore = foundOnly.length > 0 ? foundOnly.reduce((s, e) => s + etfScore(e.etf), 0) / foundOnly.length : null;
+  const overallRegime = avgScore === null ? null
+    : avgScore >= 3 ? { icon:'🟢', text:'Broad market bullish — put spreads favoured across all caps', color:'var(--green)', bg:'var(--green-soft)' }
+    : avgScore >= 2 ? { icon:'⚪', text:'Mixed breadth across cap segments — be selective by tier', color:'var(--amber)', bg:'rgba(245,158,11,0.08)' }
+    : { icon:'🔴', text:'Broad market under pressure — call spreads favoured, reduce new put spreads', color:'var(--red)', bg:'var(--red-soft)' };
+
+  // Divergence signal: large cap vs small cap (trend confirmation vs warning)
+  const niftyScore   = foundEtfs[0].etf ? etfScore(foundEtfs[0].etf) : null;
+  const midcapScore  = foundEtfs[1].etf ? etfScore(foundEtfs[1].etf) : null;
+  const smallScore   = foundEtfs[2].etf ? etfScore(foundEtfs[2].etf) : null;
+  let divergenceNote = '';
+  if (niftyScore !== null && smallScore !== null) {
+    if (niftyScore >= 3 && smallScore <= 1) divergenceNote = `⚠ <strong>Large-small divergence</strong>: Nifty bullish but Smallcap bearish — rally is narrow, risk-off in small caps.`;
+    else if (niftyScore <= 1 && smallScore >= 3) divergenceNote = `⚠ <strong>Reverse divergence</strong>: Smallcap leading but Nifty weak — speculative, typically unsustainable.`;
+    else if (niftyScore >= 3 && smallScore >= 3) divergenceNote = `✅ <strong>Broad participation</strong>: both large and small caps bullish — strong market environment.`;
+  }
+
+  // Stock-level breadth (exclude the index ETF rows from the stock count)
+  const etfRegexes = INDEX_ETFS.map(d => d.regex);
+  const stocks = watchlist.filter(s => !etfRegexes.some(r => r.test(s.stock || '')));
+  const total = stocks.length;
+  const above200 = stocks.filter(s => s.ema200).length;
+  const above50  = stocks.filter(s => s.ema50).length;
+  const above20  = stocks.filter(s => s.ema20).length;
+  const pct = n => total > 0 ? Math.round(n / total * 100) : 0;
   const p200 = pct(above200), p50 = pct(above50), p20 = pct(above20);
   const barColor = p => p >= 60 ? 'var(--green)' : p >= 40 ? 'var(--amber)' : 'var(--red)';
   const lbl = p => p >= 60 ? 'Bullish' : p >= 40 ? 'Mixed' : 'Bearish';
 
-  const bias = p200 >= 60
-    ? { icon:'🟢', text:`Broadly bullish (${p200}% above 200 EMA) — put spreads favored`, color:'var(--green)', bg:'var(--green-soft)' }
-    : p200 <= 40
-      ? { icon:'🔴', text:`Broadly bearish (${p200}% above 200 EMA) — call spreads favored`, color:'var(--red)', bg:'var(--red-soft)' }
-      : { icon:'⚪', text:`Mixed market (${p200}% above 200 EMA) — be selective`, color:'var(--amber)', bg:'var(--amber-soft)' };
-
   const breadthRow = (label, p, n) => `
-    <div style="display:flex;align-items:center;gap:10px;margin-bottom:10px">
+    <div style="display:flex;align-items:center;gap:10px;margin-bottom:8px">
       <div style="width:56px;font-size:12px;color:var(--text-secondary);flex-shrink:0;font-weight:600">${label}</div>
-      <div style="flex:1;height:8px;border-radius:4px;background:var(--border);overflow:hidden">
+      <div style="flex:1;height:7px;border-radius:4px;background:var(--border);overflow:hidden">
         <div style="width:${p}%;height:100%;background:${barColor(p)};border-radius:4px;transition:width .4s"></div>
       </div>
-      <div style="width:38px;text-align:right;font-size:13px;font-weight:700;color:${barColor(p)}">${p}%</div>
-      <div style="width:100px;font-size:10px;color:var(--text-muted)">${n}/${total} · ${lbl(p)}</div>
+      <div style="width:38px;text-align:right;font-size:12px;font-weight:700;color:${barColor(p)}">${p}%</div>
+      <div style="width:90px;font-size:10px;color:var(--text-muted)">${n}/${total} · ${lbl(p)}</div>
     </div>`;
 
   el.innerHTML = `
-    <div class="card card-sm" style="margin-bottom:16px">
-      <div style="display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;background:${bias.bg};margin-bottom:16px;font-size:13px;font-weight:600;color:${bias.color}">
-        ${bias.icon} ${bias.text}
-      </div>
+    ${overallRegime ? `<div style="display:flex;align-items:center;gap:8px;padding:8px 12px;border-radius:8px;background:${overallRegime.bg};margin-bottom:12px;font-size:12px;font-weight:600;color:${overallRegime.color}">${overallRegime.icon} ${overallRegime.text}</div>` : ''}
+
+    <div style="font-size:11px;font-weight:700;color:var(--text-muted);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:8px">Index ETF Regime</div>
+    <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:${divergenceNote ? '10px' : '16px'}">
+      ${foundEtfs.map(e => etfCard(e.etf, e.label, e.tier)).join('')}
+    </div>
+    ${divergenceNote ? `<div style="font-size:11px;color:var(--text-secondary);margin-bottom:14px;padding:7px 10px;border-radius:6px;background:var(--surface2)">${divergenceNote}</div>` : ''}
+
+    ${total > 0 ? `
+    <div style="font-size:11px;font-weight:700;color:var(--text-muted);letter-spacing:0.5px;text-transform:uppercase;margin-bottom:8px">Watchlist Stock Breadth (${total} stocks)</div>
+    <div class="card card-sm">
       ${breadthRow('200 EMA', p200, above200)}
       ${breadthRow('50 EMA', p50, above50)}
-      ${breadthRow('20 EMA', p20, above20)}
-    </div>`;
+      ${breadthRow('21 EMA', p20, above20)}
+    </div>` : ''}`;
 }
 
 function fnoRenderActiveSpreads(watchlist) {
