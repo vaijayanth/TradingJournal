@@ -212,6 +212,77 @@ const effPct = (t.cmp && effStop) ? ((t.cmp - effStop) / t.cmp * 100) : t.pctFro
 - Setup type: `parseSetupType(code)` helper parses compound codes (BKT/VCP/VCL_SL_LT10 etc.) into friendly labels. Used in positions table, closed trades table, and Analysis setup breakdown.
 - Position count limit alert REMOVED — system scales by 0.8% portfolio risk cap (not a fixed 15-position limit). Do NOT add a position count alert.
 
+## Changes — 2026-07-04 Session (Two-Phase Trailing Stop System)
+
+### Strategic Decision: Conditional Trailing Stop
+User confirmed: breakout consolidation above 7-day low is normal after large moves. Exiting on 7DL breach in phase 2 shakes out runners prematurely. New rule:
+- **Phase 1 (profit < +7%)**: 7-day low is primary stop — exits failed breakouts fast
+- **Phase 2 (profit ≥ +7%)**: Move col J to entry price (BE floor), trail via 21 EMA ONLY. 7-day low dips are normal consolidation — DO NOT exit on 7DL alone.
+
+### BE Trigger Changed: 2% → 7%
+`DEFAULT_CONFIG.beTrigger = 7` — raised from 2% to allow room for breakout consolidation.
+
+### Dashboard Alert Logic (line ~3427) — `isProfitPhase`
+```javascript
+const isProfitPhase = (t.plPct || 0) >= cfg.beTrigger;
+```
+- **7DL breach in profit phase** → 🟡 amber warning only: "may be normal consolidation — watch 21 EMA"
+- **21 EMA breach in profit phase** → 🔴 red, labelled "PRIMARY EXIT SIGNAL — exit at market"
+- **Manual stop hit** → always 🔴 red regardless of profit phase
+- **Pre-profit phase** → all exit signals remain 🔴 red as before
+
+### Strategy Tab — `STRAT_DEFAULT_RULES.stop` (line ~8160)
+Updated to document two-phase system clearly. Phase 1 / Phase 2 sections with rationale: "breakouts consolidate above the 7-day low before the next leg."
+
+### Edge Diagnostics (Analysis tab) — Key Bug Fixes
+- **R-Multiple**: was using `finalPlPct / initRiskPct` (different denominators). Fixed to `finalPl / initRiskRs` (₹ ÷ ₹ = true R).
+- **Hold Duration**: filter was `&& t.age` (passes negative/0, truthy). Fixed to `parseInt(t.age||0) > 0` everywhere.
+- **Partial Execution %**: was counting all closed 'Y' trades, not just eligible ones. Fixed to scope to `partialEligible.filter(...)`.
+- **`t.ageDays`**: field doesn't exist — it's `t.age`. Fixed across all Edge Diagnostic code.
+- **Dead `slippage` variable**: removed (was subtracting `initRiskPct` from `finalPlPct` — meaningless cross-denominator).
+
+### MAR Ratio Card (Performance tab, line ~4053)
+- Always shows all-time MAR as headline (short periods give inflated/misleading CAGR)
+- `calcMAR(sliceClosed, ic, openMTM)` helper — computes CAGR + max drawdown from closed dates
+- Trend bar compares all-time vs 90d vs 30d — shows direction without implying short-period is comparable
+- Plain-English explanation + "short-period inflation warning" for < 6-month windows
+
+### Edge Diagnostics — 7 New Charts Added (Analysis tab)
+All in `initAnalysisCharts`, section `asec-edge`. Uses `_chartQ` async queue. Charts:
+1. **R-Multiple Distribution** — histogram of `finalPl/initRiskRs`, reference lines at 0R and 2R
+2. **Rolling Profit Factor** (last 20 trades) — line chart, reference at PF=1.0
+3. **Cumulative R by Trade #** — running sum of R across all closed trades
+4. **Win Rate by Hold Duration** — bucketed (1–5d, 6–10d, 11–20d, 21–40d, 40d+), WR per bucket
+5. **Risk-Reward Scatter** — `initRiskPct` vs `finalPlPct`, coloured by win/loss
+6. **Trade Frequency by Month** — bar chart of entry count per month
+7. **Drawdown Recovery** — days to recover from each drawdown trough (closed equity curve)
+
+### Stop Trigger Calibration (Analysis tab, replaces "2% vs 5% comparison")
+Section id: `asec-be-impact`. Renamed and rebuilt forward-looking:
+- **Card 1**: trades reaching +`beTrigger`% that became big winners (>+15%)
+- **Card 2**: trades that reversed to ~0% (BE stop caught them)
+- **Card 3**: full outcome breakdown bar
+- **Chart 1**: final P&L distribution for all trades that hit the trigger
+- **Chart 2**: MFE (peak) distribution — shows runway for 21 EMA trail
+- All labels dynamically read from `cfg.beTrigger` — adapts if user changes Config
+- Removed "Old BE Trigger" Config field (no longer needed)
+
+### `calcStats` Helper (Analysis tab, line ~5703)
+True R-multiple computation — canonical version for all setup-breakdown calculations:
+```javascript
+const winsR = wins.filter(t => t.initRiskRs > 0);
+const lossR = losses.filter(t => t.initRiskRs > 0);
+const useRs = winsR.length > 0 && lossR.length > 0;
+const avgWinR  = useRs ? winsR.reduce((s,t) => s + t.finalPl/t.initRiskRs, 0)/winsR.length : aw;
+const avgLossR = useRs ? Math.abs(lossR.reduce((s,t) => s + t.finalPl/t.initRiskRs, 0)/lossR.length) : al;
+```
+
+### Pending — Next Logical Enhancements
+7. **Position Concentration Risk card (Dashboard)** — top-3 positions as % of portfolio notional. No new sheet columns needed, can implement immediately.
+1. **Market Timing / Tape Health** — NIFTY trend status on Dashboard (needs data feed decision).
+3. **Alpha vs NIFTY** — monthly return overlay on equity curve (needs NIFTY monthly data).
+- **Equity curve red/green gradient** — indexed colorStops based on cumulative P&L direction. Partially explored; can complete.
+
 ## Performance Tab — Calibrated Metric Rules (CRITICAL)
 
 These metrics were audited 2026-06-19 and corrected for trailing-stop system behaviour. Do NOT revert these calibrations:
