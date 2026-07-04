@@ -3600,10 +3600,10 @@ function renderTodayActions(open, cfg) {
     const wl = window._breadthData || (window._fnoData && window._fnoData.watchlist) || [];
     // Flexible matching: NIFTYBEES or NIFTY50BEES or NIFTYBEES1 etc; MIDCAPBEES or MIDCAP150BEES etc
     const nifty  = wl.find(s => s.stock && /NIFTY.*BEES|NIFTYBEES/i.test(s.stock));
-    const midcap = wl.find(s => s.stock && /MIDCAP.*BEES|MIDCAPBEES/i.test(s.stock));
+    const midcap = wl.find(s => s.stock && /MIDCAP/i.test(s.stock));
     if ((nifty || midcap) && regimeEl) {
       const etfCard = (etf, label) => {
-        if (!etf) return `<div style="flex:1;min-width:170px;padding:9px 12px;border-radius:8px;background:var(--surface2);border:1px solid var(--border)"><div style="font-size:12px;font-weight:700;color:var(--text-muted)">${label}</div><div style="font-size:11px;color:var(--text-muted);margin-top:4px">Not found in NSEFO sheet.<br>Add a row with stock name containing "${label}".</div></div>`;
+        if (!etf) return `<div style="flex:1;min-width:170px;padding:9px 12px;border-radius:8px;background:var(--surface2);border:1px solid var(--border)"><div style="font-size:12px;font-weight:700;color:var(--text-muted)">${label}</div><div style="font-size:11px;color:var(--text-muted);margin-top:4px">Not found in NSEFO sheet.</div></div>`;
         const above200 = etf.ema200, above50 = etf.ema50, above20 = etf.ema20;
         // haColour may be bool true/false (sheet stores "Green"/"Red" but Apps Script may return boolean) — normalise
         const haColourRaw = etf.haColour;
@@ -8740,8 +8740,8 @@ function fnoRenderBreadth(watchlist) {
   // ── Index ETF definitions (flexible name matching) ──
   const INDEX_ETFS = [
     { label: 'Nifty 50',   regex: /NIFTY.*BEES|NIFTYBEES/i,   tier: 'Large Cap' },
-    { label: 'Midcap',     regex: /MIDCAP.*BEES|MIDCAPBEES/i,  tier: 'Mid Cap'   },
-    { label: 'Smallcap',   regex: /SMALL.*BEES|SMALLCAP.*ETF|SMALL.*ETF/i, tier: 'Small Cap' },
+    { label: 'Midcap',     regex: /MIDCAP/i,   tier: 'Mid Cap'   },
+    { label: 'Smallcap',   regex: /SMALLCAP/i, tier: 'Small Cap' },
   ];
 
   const normaliseHA = v => typeof v === 'string' ? v : (v === true ? 'Green' : v === false ? 'Red' : '');
