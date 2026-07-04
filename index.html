@@ -2785,6 +2785,16 @@ async function refreshData() {
   if (!data) { if (btn) { btn.textContent = '↻'; btn.disabled = false; } return; }
   window._data = data;
   const cfg = loadConfig();
+  // Silently fetch F&O data for NIFTYBEES/MIDCAPBEES market regime signals (no spinner, no toast on failure)
+  if (cfg.url && !window._breadthData) {
+    fetchFnoData().then(d => {
+      if (d && d.watchlist) {
+        window._breadthData = d.watchlist;
+        // Re-render Today breadth panel now that market regime data is available
+        if (window._data) renderTodayActions(window._data.open, loadConfig());
+      }
+    }).catch(() => {});
+  }
   renderDashboard(data, cfg);
   renderTodayActions(data.open, cfg);
   renderPositionsReal(data.open, cfg);
@@ -3584,6 +3594,74 @@ function renderTodayActions(open, cfg) {
   const breadthSignal = document.getElementById('today-breadth-signal');
   if (open.length > 0 && breadthPanel) {
     const n = open.length;
+
+    // ── Market Regime from NIFTYBEES / MIDCAPBEES ──
+    const regimeEl = document.getElementById('today-breadth-body');
+    const wl = window._breadthData || (window._fnoData && window._fnoData.watchlist) || [];
+    const nifty  = wl.find(s => s.stock && s.stock.toUpperCase().includes('NIFTYBEES'));
+    const midcap = wl.find(s => s.stock && s.stock.toUpperCase().includes('MIDCAPBEES'));
+    if ((nifty || midcap) && regimeEl) {
+      const etfCard = (etf, label) => {
+        if (!etf) return '';
+        const above200 = etf.ema200, above50 = etf.ema50, above20 = etf.ema20;
+        const haGrn = (etf.haColour||'').toLowerCase() === 'green';
+        const haChg = etf.haChanged;
+        const bullCount = [above200, above50, above20, haGrn].filter(Boolean).length;
+        const regime  = bullCount >= 3 ? { label:'Bull', color:'var(--green)', bg:'rgba(34,197,94,0.08)' }
+                      : bullCount === 2 ? { label:'Neutral', color:'var(--amber)', bg:'rgba(245,158,11,0.08)' }
+                      : { label:'Bear', color:'var(--red)', bg:'rgba(239,68,68,0.08)' };
+        const dot = v => `<span style="display:inline-block;width:7px;height:7px;border-radius:50%;background:${v?'var(--green)':'rgba(239,68,68,0.5)'};margin-right:3px"></span>`;
+        return `<div style="flex:1;min-width:170px;padding:9px 12px;border-radius:8px;background:${regime.bg};border:1px solid ${regime.color}40">
+          <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
+            <span style="font-size:12px;font-weight:700;color:var(--text-primary)">${label}</span>
+            <span style="font-size:11px;font-weight:700;color:${regime.color};padding:1px 8px;border-radius:10px;background:${regime.color}18">${regime.label}</span>
+          </div>
+          <div style="font-size:11px;line-height:2;color:var(--text-secondary)">
+            ${dot(above200)}200 EMA: <strong style="color:${above200?'var(--green)':'var(--red)'}">${above200?'Above':'Below'}</strong> &nbsp;
+            ${dot(above50)}50 EMA: <strong style="color:${above50?'var(--green)':'var(--red)'}">${above50?'Above':'Below'}</strong> &nbsp;
+            ${dot(above20)}21 EMA: <strong style="color:${above20?'var(--green)':'var(--red)'}">${above20?'Above':'Below'}</strong><br>
+            ${dot(haGrn)}HA: <strong style="color:${haGrn?'var(--green)':'var(--red)'}">${etf.haColour||'—'}</strong>
+            ${haChg ? ' <span style="color:var(--amber);font-size:10px">🔄 changed today</span>' : ''}
+          </div>
+        </div>`;
+      };
+
+      // Market regime implication for swing trades
+      const niftyBull = nifty && [nifty.ema200, nifty.ema50, nifty.ema20].filter(Boolean).length >= 2;
+      const midBull   = midcap && [midcap.ema200, midcap.ema50, midcap.ema20].filter(Boolean).length >= 2;
+      const marketOk  = niftyBull && (midcap ? midBull : true);
+      const regimeImplication = marketOk
+        ? `<div style="font-size:11px;color:var(--green);margin-top:8px">✅ <strong>Market tailwind</strong> — broad market supports holding open positions. Trail stops, let winners run.</div>`
+        : (!niftyBull && midcap && !midBull)
+          ? `<div style="font-size:11px;color:var(--red);margin-top:8px">⚠ <strong>Both Nifty & Midcap weak</strong> — tighten stops, reduce new entries, protect open profits aggressively.</div>`
+          : `<div style="font-size:11px;color:var(--amber);margin-top:8px">⚡ <strong>Mixed market signal</strong> — be selective. Prefer strong individual setups; avoid adding new positions in weak sectors.</div>`;
+
+      const regimeSec = document.createElement('div');
+      regimeSec.id = 'today-regime-section';
+      regimeSec.style.cssText = 'margin-bottom:14px';
+      regimeSec.innerHTML = `
+        <div style="font-size:11px;font-weight:700;color:var(--text-muted);letter-spacing:0.5px;margin-bottom:6px;text-transform:uppercase">Market Regime (from NSEFO sheet)</div>
+        <div style="display:flex;gap:10px;flex-wrap:wrap">
+          ${etfCard(nifty,'NIFTYBEES')}
+          ${etfCard(midcap,'MIDCAPBEES')}
+        </div>
+        ${regimeImplication}
+        <div style="height:1px;background:var(--border);margin:12px 0"></div>`;
+      // Insert regime section before the meters div
+      const metersDiv = document.getElementById('today-breadth-meters');
+      if (metersDiv && !document.getElementById('today-regime-section')) {
+        regimeEl.insertBefore(regimeSec, metersDiv);
+      } else if (document.getElementById('today-regime-section')) {
+        document.getElementById('today-regime-section').replaceWith(regimeSec);
+      }
+
+      // Update breadth signal to include market regime
+      if (breadthSignal) {
+        const mktLabel = marketOk ? '📈 Market OK' : (!niftyBull) ? '📉 Mkt Weak' : '↔ Mixed';
+        const mktColor = marketOk ? 'var(--green)' : (!niftyBull) ? 'var(--red)' : 'var(--amber)';
+        breadthSignal.innerHTML = `<span style="color:${mktColor};margin-right:8px">${mktLabel}</span>`;
+      }
+    }
 
     // Compute each breadth dimension
     const aboveEma      = open.filter(t => (t.ema21||'').trim().toLowerCase() === 'above').length;
