@@ -3595,13 +3595,13 @@ function renderTodayActions(open, cfg) {
   if (open.length > 0 && breadthPanel) {
     const n = open.length;
 
-    // ── Market Regime from NIFTYBEES / MIDCAPBEES ──
+    // ── Market Regime from NIFTYBEES / MIDCAPETF / SMALLCAP ──
     const regimeEl = document.getElementById('today-breadth-body');
     const wl = window._breadthData || (window._fnoData && window._fnoData.watchlist) || [];
-    // Flexible matching: NIFTYBEES or NIFTY50BEES or NIFTYBEES1 etc; MIDCAPBEES or MIDCAP150BEES etc
-    const nifty  = wl.find(s => s.stock && /NIFTY.*BEES|NIFTYBEES/i.test(s.stock));
-    const midcap = wl.find(s => s.stock && /MIDCAP/i.test(s.stock));
-    if ((nifty || midcap) && regimeEl) {
+    const nifty   = wl.find(s => s.stock && /NIFTY.*BEES|NIFTYBEES/i.test(s.stock));
+    const midcap  = wl.find(s => s.stock && /MIDCAP/i.test(s.stock));
+    const smallcap = wl.find(s => s.stock && /SMALLCAP/i.test(s.stock));
+    if ((nifty || midcap || smallcap) && regimeEl) {
       const etfCard = (etf, label) => {
         if (!etf) return `<div style="flex:1;min-width:170px;padding:9px 12px;border-radius:8px;background:var(--surface2);border:1px solid var(--border)"><div style="font-size:12px;font-weight:700;color:var(--text-muted)">${label}</div><div style="font-size:11px;color:var(--text-muted);margin-top:4px">Not found in NSEFO sheet.</div></div>`;
         const above200 = etf.ema200, above50 = etf.ema50, above20 = etf.ema20;
@@ -3633,9 +3633,12 @@ function renderTodayActions(open, cfg) {
 
       // Market regime implication for swing trades
       // "Bull" = 3+ of [200,50,21 EMA, HA] above. "Neutral" = 2. "Bear" = <2.
-      const niftyScore  = nifty  ? [nifty.ema200,  nifty.ema50,  nifty.ema20,  (nifty.haColour||'').toLowerCase()==='green'].filter(Boolean).length  : 0;
-      const midcapScore = midcap ? [midcap.ema200, midcap.ema50, midcap.ema20, (midcap.haColour||'').toLowerCase()==='green'].filter(Boolean).length : null;
-      const combinedScore = midcapScore !== null ? (niftyScore + midcapScore) / 2 : niftyScore;
+      const score = etf => etf ? [etf.ema200, etf.ema50, etf.ema20, (etf.haColour||'').toLowerCase()==='green'].filter(Boolean).length : null;
+      const niftyScore   = score(nifty)   ?? 0;
+      const midcapScore  = score(midcap);
+      const smallScore   = score(smallcap);
+      const scored = [niftyScore, midcapScore, smallScore].filter(v => v !== null);
+      const combinedScore = scored.reduce((s,v) => s+v, 0) / scored.length;
       const regimeImplication = combinedScore >= 3
         ? `<div style="font-size:11px;color:var(--green);margin-top:8px">✅ <strong>Market tailwind (Bull)</strong> — broad market supports holding open positions. Trail stops, let winners run.</div>`
         : combinedScore >= 2
@@ -3650,8 +3653,9 @@ function renderTodayActions(open, cfg) {
       regimeSec.innerHTML = `
         <div style="font-size:11px;font-weight:700;color:var(--text-muted);letter-spacing:0.5px;margin-bottom:6px;text-transform:uppercase">Market Regime (from NSEFO sheet)</div>
         <div style="display:flex;gap:10px;flex-wrap:wrap">
-          ${etfCard(nifty,'NIFTYBEES')}
-          ${etfCard(midcap,'MIDCAPBEES')}
+          ${etfCard(nifty,'Nifty 50')}
+          ${etfCard(midcap,'Midcap')}
+          ${etfCard(smallcap,'Smallcap')}
         </div>
         ${regimeImplication}
         <div style="height:1px;background:var(--border);margin:12px 0"></div>`;
