@@ -2711,18 +2711,11 @@ function loadConfig() {
 function saveConfig(cfg) { localStorage.setItem(CONFIG_KEY, JSON.stringify(cfg)); }
 
 // ── SETUP TYPE PARSER ────────────────────────────────
-// Col S format: {PATTERN}_SL_{TIER}  e.g. BKT_SL_LT10, VCP_SL_LT8
-const SETUP_PATTERN_LABELS = { BKT: 'Breakout', VCP: 'VCP', VCL: 'VCL' };
-const SETUP_TIER_LABELS    = { LT10: '<10% SL', GT10: '>10% SL', LT8: '<8% SL', GT8: '>8% SL' };
+// Col S format: simple label — "Breakout" or "Pullback"
 function parseSetupType(code) {
-  if (!code || code.trim() === '' || code === 'Unlabelled') return { pattern: '', tier: '', label: 'Unlabelled', patternLabel: 'Unlabelled' };
-  const parts = code.trim().split('_');
-  const pattern = parts[0] || code;
-  const tier    = parts[2] || '';
-  const patternLabel = SETUP_PATTERN_LABELS[pattern] || pattern;
-  const tierLabel    = SETUP_TIER_LABELS[tier] || tier;
-  const label = tierLabel ? `${patternLabel} · ${tierLabel}` : patternLabel;
-  return { pattern, tier, label, patternLabel };
+  if (!code || code.trim() === '') return { label: 'Unlabelled', pattern: '' };
+  const label = code.trim();
+  return { label, pattern: label };
 }
 
 // ── DATE PARSING ─────────────────────────────────────
@@ -6028,19 +6021,12 @@ function initAnalysisCharts(open, closed) {
     return { wr, avg, r, rExp, aw, al: -Math.abs(al), n: trades.length, totalPl };
   };
 
-  // Group by full setup code; also build pattern-level rollup
-  const setupMap = {};       // key = friendly label (e.g. "Breakout · <10% SL")
-  const setupCodeMap = {};   // key = raw code, for lookup
-  const patternMap = {};     // key = pattern (BKT/VCP/VCL) for rollup
+  // Group by setup label — "Breakout" or "Pullback"
+  const setupMap = {};
   closed.forEach(t => {
-    const parsed = parseSetupType(t.setupType);
-    const key = parsed.label;
+    const key = parseSetupType(t.setupType).label;
     if (!setupMap[key]) setupMap[key] = [];
     setupMap[key].push(t);
-    if (parsed.pattern) {
-      if (!patternMap[parsed.pattern]) patternMap[parsed.pattern] = [];
-      patternMap[parsed.pattern].push(t);
-    }
   });
   const setupKeys = Object.keys(setupMap).filter(s => s !== 'Unlabelled').sort((a,b) => setupMap[b].length - setupMap[a].length);
   const fmtRsA = v => (v < 0 ? '-' : '+') + '₹' + Math.abs(Math.round(v)).toLocaleString('en-IN');
@@ -6129,23 +6115,19 @@ function initAnalysisCharts(open, closed) {
     }
   }
 
-  // Insight: best setup by avg P&L + pattern-level rollup
+  // Insight: Breakout vs Pullback comparison
   const insEl = document.getElementById('ema-insight');
-  if (insEl && setupKeys.length > 1) {
+  if (insEl && setupKeys.length >= 2) {
     const stats = setupKeys.map(s => ({ s, ...calcStats(setupMap[s]) }));
     const best  = stats.reduce((a, b) => b.avg > a.avg ? b : a);
     const worst = stats.reduce((a, b) => b.avg < a.avg ? b : a);
-    // Pattern-level rollup: BKT vs VCP vs VCL
-    const patternKeys = Object.keys(patternMap);
-    const patternSummary = patternKeys.length > 1
-      ? ' · Pattern: ' + patternKeys.map(p => {
-          const ps = calcStats(patternMap[p]);
-          return `<strong>${SETUP_PATTERN_LABELS[p]||p}</strong> ${ps.wr.toFixed(0)}%WR / ${(ps.avg>=0?'+':'')+ps.avg.toFixed(1)}% avg (n=${ps.n})`;
-        }).join(' vs ')
-      : '';
-    insEl.innerHTML = `→ Best: <strong>${best.s}</strong> (avg ${(best.avg>=0?'+':'')+best.avg.toFixed(1)}%, ${best.wr.toFixed(0)}%WR, n=${best.n}) · Weakest: <strong>${worst.s}</strong> (avg ${worst.avg.toFixed(1)}%, n=${worst.n})${patternSummary}`;
+    const vs = stats.map(s => `<strong>${s.s}</strong> ${s.wr.toFixed(0)}%WR / ${(s.avg>=0?'+':'')+s.avg.toFixed(1)}% avg / ${s.r.toFixed(1)}R (n=${s.n})`).join(' vs ');
+    insEl.innerHTML = `${vs} → <strong style="color:var(--green)">${best.s} is better</strong> by avg P&L. Focus energy there.`;
+  } else if (insEl && setupKeys.length === 1) {
+    const s = calcStats(setupMap[setupKeys[0]]);
+    insEl.innerHTML = `→ Only <strong>${setupKeys[0]}</strong> entries so far (n=${s.n}). Add Pullback entries to enable comparison.`;
   } else if (insEl) {
-    insEl.textContent = '→ Add setup type labels in column S to see which setups work best.';
+    insEl.textContent = '→ Label trades in column S as "Breakout" or "Pullback" to see which setup works best.';
   }
 
   // ── Setup Type Retirement Monitor ──
