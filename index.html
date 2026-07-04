@@ -1070,6 +1070,23 @@ tbody tr:hover { filter: brightness(0.97); }
     <span style="font-size:12px;color:var(--text-muted)">Loading…</span>
   </div>
 
+  <!-- Portfolio Breadth Panel -->
+  <div id="today-breadth-panel" style="display:none;margin-bottom:16px;border:1px solid var(--border);border-radius:10px;overflow:hidden">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:9px 14px;background:var(--surface2);cursor:pointer" onclick="(function(el){var b=document.getElementById('today-breadth-body');var open=b.style.display==='none';b.style.display=open?'block':'none';el.querySelector('.tbr-chv').textContent=open?'▾':'▸';})(this)">
+      <span style="font-size:12px;font-weight:700;color:var(--text-primary)">📊 Portfolio Breadth</span>
+      <span style="display:flex;align-items:center;gap:10px">
+        <span id="today-breadth-signal" style="font-size:11px;font-weight:700"></span>
+        <span class="tbr-chv" style="font-size:11px;color:var(--text-muted)">▾</span>
+      </span>
+    </div>
+    <div id="today-breadth-body" style="padding:12px 14px">
+      <!-- Meter bars -->
+      <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:10px 20px" id="today-breadth-meters"></div>
+      <!-- Breadth insight -->
+      <div id="today-breadth-insight" style="margin-top:10px;font-size:12px;line-height:1.8;color:var(--text-secondary)"></div>
+    </div>
+  </div>
+
   <!-- Action sections rendered by JS -->
   <div id="today-actions-body">
     <div class="today-empty">↻ Loading positions…</div>
@@ -3559,6 +3576,87 @@ function renderTodayActions(open, cfg) {
   const dayNames = ['Sunday','Monday','Tuesday','Wednesday','Thursday','Friday','Saturday'];
   const monthNames = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
   if (subtitle) subtitle.textContent = `${dayNames[today.getDay()]} ${today.getDate()} ${monthNames[today.getMonth()]} · Review before market open · ${open.length} open positions`;
+
+  // ── Portfolio Breadth Panel ──────────────────────────────────────────────────
+  const breadthPanel = document.getElementById('today-breadth-panel');
+  const breadthMeters = document.getElementById('today-breadth-meters');
+  const breadthInsight = document.getElementById('today-breadth-insight');
+  const breadthSignal = document.getElementById('today-breadth-signal');
+  if (open.length > 0 && breadthPanel) {
+    const n = open.length;
+
+    // Compute each breadth dimension
+    const aboveEma      = open.filter(t => (t.ema21||'').trim().toLowerCase() === 'above').length;
+    const haGreen       = open.filter(t => (t.haColour||'').trim().toLowerCase() === 'green').length;
+    const profitable    = open.filter(t => (t.plPct||0) > 0).length;
+    const riskFree      = open.filter(t => t.stopLoss >= t.entryPrice && t.entryPrice > 0).length;
+    const nearStop      = open.filter(t => {
+      const effStop = Math.max(t.stopLoss||0, t.sevenDayLow||0);
+      const effPct = (t.cmp && effStop) ? ((t.cmp - effStop)/t.cmp*100) : (t.pctFromStop||0);
+      return effPct <= cfg.stopProximity && effPct > 0;
+    }).length;
+    const exitTriggered = open.filter(t => {
+      const effStop = Math.max(t.stopLoss||0, t.sevenDayLow||0);
+      const effPct = (t.cmp && effStop) ? ((t.cmp - effStop)/t.cmp*100) : (t.pctFromStop||0);
+      return effPct <= 0;
+    }).length;
+    const haShiftToday  = open.filter(t => String(t.haChanged||'').toUpperCase() === 'Y').length;
+    const phase2        = open.filter(t => (t.plPct||0) >= cfg.beTrigger).length; // in profit phase, 21 EMA is primary
+
+    // Overall breadth score: 0–100 weighted across key dimensions
+    // Weights: above EMA 25, HA green 20, profitable 25, risk-free 20, exit triggered -30 (penalty), near stop -10
+    const scorePct = Math.max(0, Math.min(100,
+      Math.round(
+        (aboveEma/n*25) + (haGreen/n*20) + (profitable/n*25) + (riskFree/n*20)
+        - (exitTriggered/n*30) - (nearStop/n*10)
+      )
+    ));
+    const scoreColor = scorePct >= 60 ? 'var(--green)' : scorePct >= 35 ? 'var(--amber)' : 'var(--red)';
+    const scoreLabel = scorePct >= 60 ? 'HEALTHY' : scorePct >= 35 ? 'MIXED' : 'UNDER PRESSURE';
+
+    // Render meter function: label, count, total, color
+    const meter = (label, count, total, activeColor, tooltip) => {
+      const pct = total > 0 ? Math.round(count/total*100) : 0;
+      const barColor = count === 0 ? 'var(--surface2)' : activeColor;
+      return `<div title="${tooltip||''}">
+        <div style="display:flex;justify-content:space-between;margin-bottom:3px">
+          <span style="font-size:11px;color:var(--text-muted)">${label}</span>
+          <span style="font-size:11px;font-weight:700;color:${activeColor}">${count}/${total} <span style="font-weight:400;color:var(--text-muted)">(${pct}%)</span></span>
+        </div>
+        <div style="height:6px;border-radius:3px;background:var(--surface2);overflow:hidden">
+          <div style="height:100%;width:${pct}%;background:${barColor};border-radius:3px;transition:width 0.4s"></div>
+        </div>
+      </div>`;
+    };
+
+    breadthMeters.innerHTML = [
+      meter('Above 21 EMA', aboveEma, n, 'var(--green)', 'Stocks trading above their 21-day EMA — momentum intact'),
+      meter('HA Green', haGreen, n, 'var(--green)', 'Heikin-Ashi candle is green — uptrend confirmed'),
+      meter('Profitable (MTM)', profitable, n, 'var(--green)', 'Open positions with positive mark-to-market P&L'),
+      meter('Risk-Free (BE active)', riskFree, n, '#22d3ee', 'Stop moved to entry — can\'t lose money on these trades'),
+      phase2 > 0 ? meter('In Phase 2 (≥+'+cfg.beTrigger+'%)', phase2, n, '#a78bfa', 'Profit ≥ '+cfg.beTrigger+'% — 21 EMA is primary exit, 7DL dips are normal') : '',
+      nearStop > 0 ? meter('Near Stop (watch)', nearStop, n, 'var(--amber)', 'Within '+cfg.stopProximity+'% of effective stop — no action but monitor') : '',
+      exitTriggered > 0 ? meter('Exit Triggered ⚠', exitTriggered, n, 'var(--red)', 'Price at or below effective stop — exit at market') : '',
+      haShiftToday > 0 ? meter('HA Shift Today', haShiftToday, n, 'var(--amber)', 'HA candle colour changed today — momentum shift in progress') : '',
+    ].filter(Boolean).join('');
+
+    // Insight text
+    const bullish = [aboveEma, haGreen, profitable].map(v => v/n).filter(r => r >= 0.6).length;
+    const warning = exitTriggered > 0 || (nearStop >= 2);
+    let insight = '';
+    if (exitTriggered > 0)      insight += `⚠ <strong>${exitTriggered} position${exitTriggered>1?'s':''} at/below stop</strong> — exit before open today. `;
+    if (riskFree === n && n > 0) insight += `✅ <strong>All ${n} positions are risk-free</strong> (stops at entry). `;
+    else if (riskFree > n/2)    insight += `🛡 <strong>${riskFree} of ${n} positions risk-free</strong> — good capital protection. `;
+    if (bullish === 3)          insight += `📈 <strong>Book breadth is strong</strong> — majority above EMA, HA green, and profitable. Hold your runners. `;
+    else if (aboveEma/n < 0.4)  insight += `⚡ <strong>Fewer than half above 21 EMA</strong> — market may be rotating. Review weakest positions. `;
+    if (haShiftToday > 0)       insight += `🔄 <strong>${haShiftToday} HA shift${haShiftToday>1?'s':''} today</strong> — ${haShiftToday>1?'multiple':'a'} momentum change${haShiftToday>1?'s':''} in play, check direction. `;
+    if (phase2 > 0)             insight += `🚀 <strong>${phase2} runner${phase2>1?'s':''} in phase 2</strong> — trail via 21 EMA, ignore 7DL dips. `;
+    if (!insight)               insight = `📊 ${n} open positions · Breadth score <strong style="color:${scoreColor}">${scorePct}</strong>/100 · No urgent signals.`;
+    breadthInsight.innerHTML = insight;
+
+    if (breadthSignal) breadthSignal.innerHTML = `<span style="color:${scoreColor}">${scoreLabel}</span> <span style="color:var(--text-muted);font-weight:400">${scorePct}/100</span>`;
+    breadthPanel.style.display = 'block';
+  }
 
   // Build action list with priority group for each trade
   const actions = [];
