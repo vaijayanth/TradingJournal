@@ -770,266 +770,133 @@ tbody tr:hover { filter: brightness(0.97); }
   </div>
   <div id="dash-no-winner-alert" style="display:none;align-items:center;gap:10px;margin-bottom:10px;padding:10px 14px;border-radius:8px;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3)"></div>
 
-  <div class="section-title">Portfolio Status</div>
-  <div class="grid-4">
+  <!-- ① HEADLINE ROW -->
+  <div class="grid-3">
+    <!-- Portfolio Value + Return -->
     <div class="card card-sm">
       <div class="stat-label">Portfolio Value</div>
       <div class="stat-value" id="dash-pv">—</div>
-      <div class="stat-sub" id="dash-pv-sub">Loading…</div>
-      <div class="stat-badge badge-green" id="dash-pv-badge">—</div>
+      <div style="display:flex;align-items:baseline;gap:8px;margin-top:6px;flex-wrap:wrap">
+        <div style="font-size:22px;font-weight:700" id="dash-return">—</div>
+        <div style="font-size:11px;color:var(--text-muted)" id="dash-return-sub">combined return</div>
+      </div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:4px" id="dash-realised-breakdown">—</div>
+      <div class="stat-badge badge-green" id="dash-pv-badge" style="margin-top:8px">—</div>
     </div>
+
+    <!-- Open Positions Health -->
     <div class="card card-sm">
-      <div class="stat-label">Combined P&amp;L ₹</div>
-      <div class="stat-value" id="dash-realised-pl">—</div>
-      <div class="stat-sub" id="dash-realised-sub">Realised + Unrealised MTM</div>
-      <div style="font-size:12px;margin-top:4px;color:var(--text-muted)" id="dash-realised-breakdown">—</div>
-      <div class="stat-badge" id="dash-realised-badge">—</div>
-    </div>
-    <div class="card card-sm">
-      <div class="stat-label">Last Trading Day</div>
-      <div style="font-size:26px;font-weight:700;margin-top:4px" id="dash-today-pl">—</div>
-      <div class="stat-sub" id="dash-today-sub">—</div>
-      <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:10px;display:flex;gap:16px">
+      <div class="stat-label">Open Positions</div>
+      <div style="display:flex;gap:14px;margin-top:8px;align-items:flex-end;flex-wrap:wrap">
         <div>
-          <div style="font-size:16px;font-weight:700" id="dash-open">—</div>
-          <div class="stat-sub">Open</div>
+          <div style="font-size:30px;font-weight:700" id="dash-open">—</div>
+          <div class="stat-sub">positions</div>
         </div>
-        <div style="color:var(--border)">|</div>
-        <div>
-          <div style="font-size:16px;font-weight:700" id="dash-closed">—</div>
-          <div class="stat-sub">Closed</div>
-        </div>
-      </div>
-    </div>
-    <div class="card card-sm">
-      <div class="stat-label">Return on Portfolio</div>
-      <div class="stat-value green" id="dash-return">—</div>
-      <div class="stat-sub" id="dash-return-sub">Combined (realised + open MTM)</div>
-      <div style="font-size:11px;color:var(--text-muted);margin-top:4px" id="dash-return-breakdown">—</div>
-      <div class="stat-badge badge-green" id="dash-return-badge" style="margin-top:6px">▲ Compounding</div>
-    </div>
-    <div class="card card-sm">
-      <div class="stat-label">Capital Deployed</div>
-      <div class="stat-value" id="dash-deployed">—</div>
-      <div class="stat-sub" id="dash-deployed-sub">Entry price × qty across open positions</div>
-      <div style="margin-top:8px;height:5px;border-radius:3px;background:var(--surface2);overflow:hidden">
-        <div id="dash-deployed-bar" style="height:100%;border-radius:3px;background:var(--accent);transition:width 0.4s;width:0%"></div>
-      </div>
-      <div class="stat-badge" id="dash-deployed-badge" style="margin-top:8px">—</div>
-    </div>
-  </div>
-
-  <!-- System Health strip -->
-  <div class="card card-sm" style="margin-top:14px;padding:12px 20px">
-    <div style="display:flex;align-items:center;gap:0;flex-wrap:wrap">
-      <div style="font-size:11px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em;margin-right:20px;white-space:nowrap">System Health</div>
-      <div class="sys-health-row" style="display:flex;flex:1;gap:0;flex-wrap:wrap">
-        <div class="sys-health-item" style="flex:1;min-width:110px;padding:4px 16px;border-right:1px solid var(--border)">
-          <div style="font-size:11px;color:var(--text-muted);font-weight:600">Exit WR / Entry Hit</div>
-          <div style="font-size:18px;font-weight:700;margin-top:2px" id="dash-sys-wr">—</div>
-          <div style="font-size:10px;margin-top:2px" id="dash-sys-wr-recent">entries working: —</div>
-        </div>
-        <div class="sys-health-item" style="flex:1;min-width:100px;padding:4px 16px;border-right:1px solid var(--border)">
-          <div style="font-size:11px;color:var(--text-muted);font-weight:600">Avg Loss Size</div>
-          <div style="font-size:18px;font-weight:700;margin-top:2px" id="dash-sys-avgloss">—</div>
-          <div style="font-size:10px;margin-top:2px" id="dash-sys-avgloss-sub">vs 7% rule</div>
-        </div>
-        <div class="sys-health-item" style="flex:1;min-width:100px;padding:4px 16px;border-right:1px solid var(--border)">
-          <div style="font-size:11px;color:var(--text-muted);font-weight:600">Combined Profit Factor</div>
-          <div style="font-size:18px;font-weight:700;margin-top:2px" id="dash-sys-pf">—</div>
-          <div style="font-size:10px;margin-top:2px" id="dash-sys-pf-sub">wins+open MTM / losses</div>
-        </div>
-        <div class="sys-health-item" style="flex:1;min-width:100px;padding:4px 16px;border-right:1px solid var(--border)">
-          <div style="font-size:11px;color:var(--text-muted);font-weight:600">Hold Ratio</div>
-          <div style="font-size:18px;font-weight:700;margin-top:2px" id="dash-sys-r">—</div>
-          <div style="font-size:10px;margin-top:2px" id="dash-sys-hold-sub">winner days / loser days</div>
-        </div>
-        <div class="sys-health-item" style="flex:1;min-width:100px;padding:4px 16px">
-          <div style="font-size:11px;color:var(--text-muted);font-weight:600">Open Unrealised</div>
-          <div style="font-size:18px;font-weight:700;margin-top:2px" id="dash-sys-exp">—</div>
-          <div style="font-size:10px;margin-top:2px" id="dash-sys-exp-sub">% of capital</div>
-        </div>
-      </div>
-    </div>
-  </div>
-
-  <!-- Open Portfolio Health + Loss Discipline -->
-  <div class="grid-2" style="margin-top:14px">
-
-    <!-- Open Portfolio Health -->
-    <div class="card card-sm" id="open-health-card">
-      <div class="stat-label">Open Portfolio Health</div>
-      <div style="display:flex;gap:12px;margin-top:8px;align-items:flex-end;flex-wrap:wrap">
+        <div style="color:var(--border);padding-bottom:6px">|</div>
         <div>
           <div style="font-size:22px;font-weight:700;color:var(--green)" id="dash-open-profitable">—</div>
-          <div class="stat-sub">Profitable / Risk Free</div>
+          <div class="stat-sub">profitable / risk-free</div>
         </div>
-        <div style="color:var(--border);font-size:20px;padding-bottom:2px">|</div>
+        <div style="color:var(--border);padding-bottom:6px">|</div>
         <div>
           <div style="font-size:22px;font-weight:700;color:var(--red)" id="dash-open-losing">—</div>
-          <div class="stat-sub">In Loss</div>
+          <div class="stat-sub">in loss</div>
         </div>
       </div>
-      <div style="margin-top:10px;height:6px;border-radius:3px;background:var(--surface2);overflow:hidden">
+      <div style="margin-top:10px;height:5px;border-radius:3px;background:var(--surface2);overflow:hidden">
         <div id="dash-health-bar" style="height:100%;border-radius:3px;transition:width 0.4s"></div>
       </div>
       <div class="stat-badge" id="dash-health-badge" style="margin-top:8px">—</div>
     </div>
 
-    <!-- Loss Discipline -->
-    <div class="card card-sm" id="loss-discipline-card">
-      <div class="stat-label">Loss Discipline</div>
-      <div style="display:flex;gap:16px;margin-top:8px;align-items:flex-end">
+    <!-- Trades + Days since win + Open MTM -->
+    <div class="card card-sm">
+      <div class="stat-label">Closed Trades</div>
+      <div style="display:flex;gap:14px;margin-top:8px;align-items:flex-end;flex-wrap:wrap">
         <div>
-          <div style="font-size:22px;font-weight:700" id="dash-avgloss-val">—</div>
-          <div class="stat-sub">Avg loss size</div>
+          <div style="font-size:30px;font-weight:700" id="dash-closed">—</div>
+          <div class="stat-sub">closed</div>
         </div>
-        <div style="color:var(--border);font-size:20px;padding-bottom:2px">|</div>
+        <div style="color:var(--border);padding-bottom:6px">|</div>
         <div>
-          <div style="font-size:22px;font-weight:700" id="dash-slippage-val">—</div>
-          <div class="stat-sub">Avg stop slip</div>
+          <div style="font-size:22px;font-weight:700" id="dash-days-winner">—</div>
+          <div class="stat-sub">days since win</div>
         </div>
-        <div style="color:var(--border);font-size:20px;padding-bottom:2px">|</div>
+        <div style="color:var(--border);padding-bottom:6px">|</div>
         <div>
-          <div style="font-size:22px;font-weight:700;color:var(--text-muted)" id="dash-days-winner">—</div>
-          <div class="stat-sub">Days since win</div>
+          <div style="font-size:22px;font-weight:700" id="dash-sys-exp">—</div>
+          <div class="stat-sub" id="dash-sys-exp-sub">open MTM</div>
         </div>
       </div>
       <div class="stat-badge" id="dash-discipline-badge" style="margin-top:16px">—</div>
     </div>
-
   </div>
 
-  <!-- Weekly Target + Entry Cadence -->
-  <div class="grid-2" style="margin-top:14px">
-    <div class="card card-sm">
-      <div style="display:flex;justify-content:space-between;align-items:baseline;flex-wrap:wrap;gap:4px">
-        <div class="stat-label">This Week</div>
-        <div style="font-size:11px;color:var(--text-muted)" id="dash-week-range">Mon — today</div>
-      </div>
-      <div style="display:flex;gap:16px;margin-top:8px;align-items:flex-end;flex-wrap:wrap">
-        <div>
-          <div style="font-size:22px;font-weight:700;color:var(--accent)" id="dash-week-entries">—</div>
-          <div class="stat-sub">Entries</div>
+  <!-- ② SYSTEM QUALITY STRIP -->
+  <div class="card card-sm" style="margin-top:14px;padding:10px 16px">
+    <div style="display:flex;align-items:stretch;gap:0;flex-wrap:wrap">
+      <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em;margin-right:16px;white-space:nowrap;display:flex;align-items:center">System</div>
+      <div style="display:flex;flex:1;flex-wrap:wrap">
+        <div style="flex:1;min-width:80px;padding:6px 14px;border-right:1px solid var(--border)">
+          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Win Trades</div>
+          <div style="font-size:22px;font-weight:700;color:var(--green);margin-top:3px" id="dash-win-count">—</div>
         </div>
-        <div style="color:var(--border);font-size:20px;padding-bottom:2px">|</div>
-        <div>
-          <div style="font-size:22px;font-weight:700" id="dash-week-exits">—</div>
-          <div class="stat-sub">Exits</div>
+        <div style="flex:1;min-width:80px;padding:6px 14px;border-right:1px solid var(--border)">
+          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Loss Trades</div>
+          <div style="font-size:22px;font-weight:700;color:var(--red);margin-top:3px" id="dash-loss-count">—</div>
         </div>
-        <div style="color:var(--border);font-size:20px;padding-bottom:2px">|</div>
-        <div>
-          <div style="font-size:22px;font-weight:700" id="dash-week-pl">—</div>
-          <div class="stat-sub">Realised P&amp;L</div>
+        <div style="flex:1;min-width:80px;padding:6px 14px;border-right:1px solid var(--border)">
+          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Win Rate</div>
+          <div style="font-size:22px;font-weight:700;margin-top:3px" id="dash-sys-wr">—</div>
+          <div style="font-size:9px;margin-top:1px;color:var(--text-muted)" id="dash-sys-wr-recent"></div>
         </div>
-      </div>
-      <div style="margin-top:10px;height:6px;border-radius:3px;background:var(--surface2);overflow:hidden">
-        <div id="dash-week-bar" style="height:100%;border-radius:3px;transition:width 0.4s;background:var(--green)"></div>
-      </div>
-      <div class="stat-badge" id="dash-week-badge" style="margin-top:8px">—</div>
-    </div>
-
-    <div class="card card-sm">
-      <div class="stat-label">Entry Cadence</div>
-      <div style="display:flex;gap:16px;margin-top:8px;align-items:flex-end;flex-wrap:wrap">
-        <div>
-          <div style="font-size:22px;font-weight:700" id="dash-cadence-week">—</div>
-          <div class="stat-sub">Entries this week</div>
+        <div style="flex:1;min-width:80px;padding:6px 14px;border-right:1px solid var(--border)">
+          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Avg Win %</div>
+          <div style="font-size:22px;font-weight:700;color:var(--green);margin-top:3px" id="dash-avg-win">—</div>
         </div>
-        <div style="color:var(--border);font-size:20px;padding-bottom:2px">|</div>
-        <div>
-          <div style="font-size:22px;font-weight:700" id="dash-cadence-month">—</div>
-          <div class="stat-sub">Last 30 days</div>
+        <div style="flex:1;min-width:80px;padding:6px 14px;border-right:1px solid var(--border)">
+          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Avg Loss %</div>
+          <div style="font-size:22px;font-weight:700;margin-top:3px" id="dash-sys-avgloss">—</div>
+          <div style="font-size:9px;margin-top:1px" id="dash-sys-avgloss-sub"></div>
+        </div>
+        <div style="flex:1;min-width:80px;padding:6px 14px;border-right:1px solid var(--border)">
+          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">R:R</div>
+          <div style="font-size:22px;font-weight:700;margin-top:3px" id="dash-sys-r">—</div>
+          <div style="font-size:9px;margin-top:1px;color:var(--text-muted)" id="dash-sys-hold-sub"></div>
+        </div>
+        <div style="flex:1;min-width:80px;padding:6px 14px">
+          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Profit Factor</div>
+          <div style="font-size:22px;font-weight:700;margin-top:3px" id="dash-sys-pf">—</div>
+          <div style="font-size:9px;margin-top:1px;color:var(--text-muted)" id="dash-sys-pf-sub"></div>
         </div>
       </div>
-      <div class="stat-badge" id="dash-cadence-badge" style="margin-top:16px">—</div>
     </div>
   </div>
 
-  <div class="section-title" style="margin-top:20px">Risk & Heat</div>
-  <div class="grid-4">
-    <div class="card card-sm">
-      <div class="stat-label">Risk on Open Positions</div>
-      <div style="display:flex;gap:16px;margin-top:6px;align-items:flex-end;flex-wrap:wrap">
-        <div>
-          <div style="font-size:11px;color:var(--text-muted);margin-bottom:2px">Initial</div>
-          <div class="stat-value" id="dash-init-risk" style="font-size:20px;color:var(--text-secondary)">—</div>
-        </div>
-        <div style="color:var(--border);font-size:20px;padding-bottom:4px">→</div>
-        <div>
-          <div style="font-size:11px;color:var(--text-muted);margin-bottom:2px">Current</div>
-          <div class="stat-value" id="dash-curr-risk" style="font-size:20px">—</div>
-        </div>
-        <div id="dash-risk-trend-pill" style="display:none;align-self:center;padding-bottom:4px;font-size:13px;font-weight:800;border-radius:6px;padding:3px 8px">—</div>
-      </div>
-      <div class="stat-sub" id="dash-curr-risk-sub">— positions risk-free</div>
-      <div class="stat-badge" id="dash-init-risk-badge">—</div>
-    </div>
-    <div class="card card-sm">
-      <div class="stat-label">Open / Closed</div>
-      <div style="display:flex;gap:20px;margin-top:8px;align-items:flex-end">
-        <div>
-          <div class="stat-value" id="dash-open-count">—</div>
-          <div class="stat-sub">Open</div>
-        </div>
-        <div style="color:var(--border);font-size:24px;line-height:1;padding-bottom:4px">|</div>
-        <div>
-          <div class="stat-value" id="dash-closed-count">—</div>
-          <div class="stat-sub">Closed</div>
-        </div>
-      </div>
-      <div style="margin-top:8px">
-        <div class="stat-badge badge-blue" id="dash-open-badge">—</div>
-        <div class="stat-badge badge-blue" style="margin-left:4px" id="dash-closed-badge">—</div>
-      </div>
-    </div>
-
-    <div class="card card-sm">
-      <div class="stat-label">Risk Per Trade</div>
-      <div class="stat-value" id="dash-risk-tier">—</div>
-      <div class="stat-sub" id="dash-risk-tier-sub">Based on closed trade count</div>
-      <div class="stat-badge badge-blue" id="dash-risk-tier-badge">—</div>
-    </div>
-
-    <!-- Position Concentration -->
-    <div class="card card-sm">
-      <div class="stat-label">Position Concentration</div>
-      <div class="stat-value" id="dash-conc-pct">—</div>
-      <div class="stat-sub" id="dash-conc-sub">Top 3 positions as % of portfolio</div>
-      <div class="stat-badge badge-blue" id="dash-conc-badge">—</div>
-    </div>
-
-    <!-- Sector Concentration -->
-    <div class="card card-sm" id="dash-sector-card" style="display:none">
-      <div class="stat-label">Sector Concentration</div>
-      <div style="font-size:18px;font-weight:700;margin:4px 0" id="dash-sector-top">—</div>
-      <div class="stat-sub" id="dash-sector-sub">Largest sector in open portfolio</div>
-      <div id="dash-sector-bars" style="margin-top:10px;display:flex;flex-direction:column;gap:6px"></div>
-      <div class="stat-badge badge-blue" id="dash-sector-badge" style="margin-top:10px">—</div>
-    </div>
-
-    <!-- Heat Gauge -->
-    <div class="card card-sm">
-      <div class="stat-label" style="margin-bottom:14px">Portfolio Heat</div>
-
-      <div class="heat-row">
-        <div class="heat-label-row">
-          <span class="heat-label">Portfolio Heat</span>
-          <span class="heat-value" id="heat-actual-value">—</span>
-        </div>
-        <div class="heat-track">
-          <div class="heat-fill" id="heat-actual-fill" style="width:0%; background: linear-gradient(90deg, #10B981 0%, #F59E0B 70%, #EF4444 100%);"></div>
-        </div>
-      </div>
-
-      <div class="heat-markers" id="heat-markers">
-        <span>0%</span><span id="heat-green-marker">2.5% 🟢</span><span id="heat-amber-marker">4% 🟡</span><span id="heat-max-marker">5% 🔴 ceiling</span>
-      </div>
-
-      <div style="margin-top:10px">
-        <div class="stat-badge" id="heat-status-badge" style="font-size:12px">—</div>
-      </div>
-    </div>
+  <!-- Hidden IDs kept for JS compatibility -->
+  <div style="display:none">
+    <span id="dash-pv-sub"></span>
+    <span id="dash-realised-pl"></span><span id="dash-realised-sub"></span><span id="dash-realised-badge"></span>
+    <span id="dash-today-pl"></span><span id="dash-today-sub"></span>
+    <span id="dash-return-breakdown"></span><span id="dash-return-badge"></span>
+    <span id="dash-deployed"></span><span id="dash-deployed-sub"></span>
+    <span id="dash-deployed-bar"></span><span id="dash-deployed-badge"></span>
+    <span id="dash-avgloss-val"></span><span id="dash-slippage-val"></span>
+    <span id="dash-week-range"></span><span id="dash-week-entries"></span><span id="dash-week-exits"></span>
+    <span id="dash-week-pl"></span><span id="dash-week-bar"></span><span id="dash-week-badge"></span>
+    <span id="dash-cadence-week"></span><span id="dash-cadence-month"></span><span id="dash-cadence-badge"></span>
+    <span id="dash-init-risk"></span><span id="dash-curr-risk"></span><span id="dash-curr-risk-sub"></span>
+    <span id="dash-risk-trend-pill"></span><span id="dash-init-risk-badge"></span>
+    <span id="dash-open-count"></span><span id="dash-closed-count"></span>
+    <span id="dash-open-badge"></span><span id="dash-closed-badge"></span>
+    <span id="dash-risk-tier"></span><span id="dash-risk-tier-sub"></span><span id="dash-risk-tier-badge"></span>
+    <span id="dash-conc-pct"></span><span id="dash-conc-sub"></span><span id="dash-conc-badge"></span>
+    <span id="dash-sector-card"></span><span id="dash-sector-top"></span><span id="dash-sector-sub"></span>
+    <span id="dash-sector-bars"></span><span id="dash-sector-badge"></span>
+    <span id="heat-actual-value"></span><span id="heat-actual-fill"></span>
+    <span id="heat-markers"></span><span id="heat-green-marker"></span>
+    <span id="heat-amber-marker"></span><span id="heat-max-marker"></span><span id="heat-status-badge"></span>
+    <span id="open-health-card"></span><span id="loss-discipline-card"></span>
   </div>
 
   <div class="alert-group" style="margin-top:20px">
@@ -2954,6 +2821,13 @@ function renderDashboard(data, cfg) {
   // ── System health strip ──────────────────────────────────────────────────
   const dWins   = closed.filter(t => t.finalPlPct > 0);
   const dLosses = closed.filter(t => t.finalPlPct < 0);
+
+  // Win/loss counts + avg win for new clean strip
+  set('dash-win-count', dWins.length);
+  set('dash-loss-count', dLosses.length);
+  const avgWinPct = dWins.length > 0 ? dWins.reduce((s,t) => s + t.finalPlPct, 0) / dWins.length : 0;
+  const avgWinEl = document.getElementById('dash-avg-win');
+  if (avgWinEl) { avgWinEl.textContent = dWins.length > 0 ? '+' + avgWinPct.toFixed(1) + '%' : '—'; avgWinEl.style.color = 'var(--green)'; }
   const dWR     = closed.length > 0 ? dWins.length / closed.length * 100 : 0;
   const totalOpenMTM = open.reduce((s,t) => s + (t.notionalPl || 0), 0);
 
@@ -2965,13 +2839,12 @@ function renderDashboard(data, cfg) {
   const entryHitPct = allEntries > 0 ? (openWinning + dWins.length) / allEntries * 100 : 0;
   const dWREl = document.getElementById('dash-sys-wr');
   // For this style, 25-40% exit WR is healthy — don't show amber just because WR < 40
-  set('dash-sys-wr', dWR.toFixed(1) + '% / ' + entryHitPct.toFixed(0) + '%');
-  if (dWREl) dWREl.style.color = dWR >= 20 ? 'var(--green)' : dWR >= 12 ? 'var(--amber)' : 'var(--red)';
+  set('dash-sys-wr', dWR.toFixed(1) + '%');
+  if (dWREl) dWREl.style.color = dWR >= 40 ? 'var(--green)' : dWR >= 20 ? 'var(--amber)' : 'var(--red)';
   const recentWREl = document.getElementById('dash-sys-wr-recent');
   if (recentWREl) {
-    const entryVerdict = entryHitPct >= 40 ? '✓ entries producing' : entryHitPct >= 25 ? '⚠ entries slow' : '🚨 entries not working';
-    recentWREl.textContent = entryVerdict;
-    recentWREl.style.color = entryHitPct >= 40 ? 'var(--green)' : entryHitPct >= 25 ? 'var(--amber)' : 'var(--red)';
+    recentWREl.textContent = 'closed only · 25-40% normal';
+    recentWREl.style.color = 'var(--text-muted)';
   }
 
   // 2. Avg loss size — calibrated: ≤5% great, ≤7% ok, >7% problem
