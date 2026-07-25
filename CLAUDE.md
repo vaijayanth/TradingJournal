@@ -48,7 +48,7 @@ This is a **Minervini/Bonde/Zanger momentum breakout system** with a deliberate 
 | Init Risk ₹ | K |
 | Init Risk % | L |
 | Entry Price | R |
-| Setup Type | S (static label at entry — compound code, see below) |
+| Setup Type | S (plain label: "Breakout" or "Pullback" — see below) |
 | % From Stop | W |
 | Notional P&L% | X (plPct — blank for closed trades) |
 | Notional P&L ₹ | Y (notionalPl — MTM, only filled for OPEN positions) |
@@ -59,27 +59,26 @@ This is a **Minervini/Bonde/Zanger momentum breakout system** with a deliberate 
 | Final P&L ₹ | AD |
 | Final P&L % | AE |
 | Age (days) | AF |
+| MAE% | AL |
+| MFE% | AM |
 
 ## Critical Data Facts
 - **Column Y (notionalPl)**: mark-to-market, only populated for OPEN positions. Zero/blank for closed trades.
 - **Column X (plPct)**: also blank for closed trades in this sheet.
 - **Column F (ema21)**: live formula showing current EMA position — NOT entry-time value. Do NOT use for analysis.
-- **Setup Type (col S)**: compound code `{PATTERN}_{SL}_{TIER}`. Parser: `parseSetupType(s)` → `{ pattern, slTier, label }`.
-  - Pattern: `BKT` = Breakout, `VCP` = VCP, `VCL` = VCL
-  - SL tier: `LT10` = stop < 10%, `GT10` = stop > 10%, `LT8` = stop < 8%, `GT8` = stop > 8%
-  - Examples: `BKT_SL_LT10`, `VCP_SL_LT8`, `VCL_SL_GT8`
-  - For grouping in analysis, group by `pattern` (BKT/VCP/VCL) and optionally by `slTier`
+- **Setup Type (col S)**: SIMPLIFIED — now plain text only: `"Breakout"` or `"Pullback"`. Old compound codes (BKT/VCP/VCL_SL_LT10 etc.) are retired. `parseSetupType(code)` now does a direct passthrough: `{ label: code.trim(), pattern: code.trim() }`. No more SETUP_PATTERN_LABELS, SETUP_TIER_LABELS, patternMap references — all removed.
 - **portfolioValue (AK26)**: realised only — does NOT include open position unrealized P&L. True combined P&L = `(portfolioValue - initialCapital) + sum(notionalPl)` = `totalFinalPl + totalUnrealisedPl`.
 - **Date format from Apps Script**: `dd-MMM-yyyy` (e.g., `21-Apr-2026`) — NOT parseable by `new Date()`. Use `parseDate()` helper everywhere.
 
 ## Trading Strategy (IMPORTANT — Minervini momentum style)
-- **Entry**: 52-week high breakouts, VCP (Volatility Contraction Pattern) style
-- **Stop Loss — 3 triggers (all active simultaneously):**
-  1. 7-day low (col I) — always the base trail
-  2. Manual stop col J — user sets this; moves to entry price (breakeven) once trade reaches +5% profit
-  3. 21 EMA breach (col F = "Below") — exit signal for profitable trades
-  - **Effective stop = MAX(J, I)** — whichever is tighter. Once J is moved to entry price at +5%, MAX naturally enforces the breakeven floor
-- **Profit taking**: 50% partial exit at +10%, remainder trailed via 7-day low
+- **Entry (2 triggers)**:
+  1. Smooth breakout of 52-week high (Breakout setup)
+  2. Clear pullback to 21 EMA on an existing breakout stock only (Pullback setup)
+- **Stop Loss — Two-Phase System:**
+  - **Phase 1 (profit < +7%)**: 7-day low AND 21 EMA breach are both active exit signals → exits failed breakouts fast
+  - **Phase 2 (profit ≥ +7%)**: Move col J to entry price (breakeven floor). Trail via 21 EMA ONLY. 7-day low dips = normal breakout consolidation — do NOT exit on 7DL alone in Phase 2.
+  - **Effective stop = MAX(J, I)** — whichever is tighter. Once J is at entry price, MAX naturally enforces the breakeven floor.
+- **Profit taking**: 50% partial exit at +10%, remainder trailed via stop until 21 EMA exit
 - **Risk sizing progression**:
   - Start: ₹1,000 risk per trade
   - Increase: +₹500 every 100 closed trades
@@ -208,8 +207,8 @@ const effPct = (t.cmp && effStop) ? ((t.cmp - effStop) / t.cmp * 100) : t.pctFro
 - Analysis tab: `initialCapital` read from `window._data` (was crashing on standalone re-init)
 - Analysis tab: all chart instantiations wrapped in try-catch (one bad chart no longer aborts KPI population)
 - Analysis tab: Stop Slippage colour fixed (negative/saved = green, was backwards)
-- Analysis tab: added Current Streak, Learning Curve, Setup Type WR (Last 30), Monthly P&L chart (see Analysis Tab section above) — completed 2026-06-16
-- Setup type: `parseSetupType(code)` helper parses compound codes (BKT/VCP/VCL_SL_LT10 etc.) into friendly labels. Used in positions table, closed trades table, and Analysis setup breakdown.
+- Analysis tab: added Current Streak, Learning Curve, Setup Type WR (Last 30), Monthly P&L chart — completed 2026-06-16
+- **Setup type SIMPLIFIED** (2026-07-25): `parseSetupType(code)` now does direct passthrough — label = raw col S value. Sheet values changed to plain "Breakout" / "Pullback". All old compound-code parsing removed (no SETUP_PATTERN_LABELS, patternMap etc.). Analysis setup breakdown now shows Breakout vs Pullback head-to-head.
 - Position count limit alert REMOVED — system scales by 0.8% portfolio risk cap (not a fixed 15-position limit). Do NOT add a position count alert.
 
 ## Changes — 2026-07-04 Session (Two-Phase Trailing Stop System)
@@ -277,11 +276,80 @@ const avgWinR  = useRs ? winsR.reduce((s,t) => s + t.finalPl/t.initRiskRs, 0)/wi
 const avgLossR = useRs ? Math.abs(lossR.reduce((s,t) => s + t.finalPl/t.initRiskRs, 0)/lossR.length) : al;
 ```
 
+### Changes — 2026-07-25 Session
+
+#### Setup Type Simplification
+- Removed all compound-code parsing (BKT/VCP/VCL_SL_LT10 etc.)
+- Sheet col S now contains plain `"Breakout"` or `"Pullback"` — user updated sheet directly
+- `parseSetupType()` is now a 3-line passthrough
+- Analysis breakdown compares Breakout vs Pullback head-to-head (no more pattern/tier sub-groups)
+- Positions table, closed trades table, and all analysis charts updated
+
+#### Strategy Tab Updated
+- Entry: two triggers — 52W high breakout OR 21 EMA pullback on breakout stocks only
+- Stop: Phase 1 / Phase 2 system documented (7% threshold = beTrigger)
+- Profit: 50% at +10%, trail rest via stop
+
+#### Market Regime / Portfolio Breadth (Today Tab)
+- **Portfolio Breadth Panel** (`#today-breadth-panel`) — collapsible panel in Today tab above action sections
+- Shows open position health bars: above 21 EMA %, profitable %, risk-free %
+- **Market Regime section** — inside breadth panel, fetches from NSEFO sheet (F&O watchlist) silently in background
+  - Three ETFs tracked: NIFTYBEES (`/NIFTY.*BEES|NIFTYBEES/i`), MIDCAPETF (`/MIDCAP/i`), SMALLCAP (`/SMALLCAP/i`)
+  - `haColour` normalised: `typeof v === 'string' ? v : (v === true ? 'Green' : v === false ? 'Red' : '')`
+  - Combined regime score = avg of [ema200, ema50, ema20, haGreen] across all found ETFs (0–4 range)
+  - Bull ≥ 3, Bear < 2, Neutral in between
+- **`window._breadthData`** — cached F&O watchlist for swing breadth panel (set after silent background fetch in `refreshData()`)
+- Silent F&O fetch in `refreshData()`:
+  ```javascript
+  if (cfg.url && !window._breadthData) {
+    fetchFnoData().then(d => {
+      if (d && d.watchlist) {
+        window._breadthData = d.watchlist;
+        if (window._data) renderTodayActions(window._data.open, loadConfig());
+      }
+    }).catch(() => {});
+  }
+  ```
+
+#### F&O Breadth Section Extended
+- `fnoRenderBreadth(watchlist)` rewritten with INDEX_ETFS array
+- F&O breadth now shows NIFTYBEES + MIDCAPETF + SMALLCAP ETF cards with EMA/HA status
+- Divergence note shown when ETFs disagree on direction
+- Stock breadth bars exclude ETF rows (filtered by name regex)
+
+#### 5 Minervini-Standard Improvements (2026-07-25)
+1. **Market Direction toggle** (`#mkt-direction-bar`) — top of Today tab, 3 states:
+   - 📈 Confirmed Uptrend → full size, seek breakouts
+   - ⚠ Under Pressure → 50% size, no new breakouts, tighten stops
+   - 📉 In Correction → no new entries, protect profits, raise all stops to BE
+   - Persists in `localStorage` key `MKT_DIR_KEY = 'tj_mkt_direction'`
+   - Functions: `setMktDirection(state)`, `renderMktDirection()` — called at start of every `renderTodayActions()`
+   - Bar colour and background change to match active state
+
+2. **No-winner-in-30-days alert** (`#dash-no-winner-alert`) — Dashboard
+   - Amber pill shown when `daysSinceWin > 30`
+   - Asks: "is your system still producing? Review open positions and market conditions"
+   - Hidden (display:none) when daysSinceWin ≤ 30 or no closed trades
+
+3. **Edge Diagnostics jump link** — Analysis sub-nav
+   - Added `<a href="#asec-edge">Edge Diagnostics</a>` after MAE/MFE link
+
+4. **Entry Precision proxy card** — Trade Management section (spans 2 columns)
+   - Splits closed trades by `initRiskPct ≤ 5%` (tight, near pivot) vs `> 5%` (extended)
+   - Shows WR and avg P&L% for each tier — O'Neil entry discipline check
+   - Elements: `#ep-tight-wr`, `#ep-tight-sub`, `#ep-wide-wr`, `#ep-wide-sub`, `#ep-insight`
+   - Wrapped in try-catch
+
+5. **Init Risk ₹ column** — Positions table
+   - New `<th>Risk ₹</th>` after Entry ₹
+   - Shows `t.initRiskRs` formatted as ₹ amount (or "—")
+   - Expand row colspan bumped from 12 → 13
+
 ### Pending — Next Logical Enhancements
-7. **Position Concentration Risk card (Dashboard)** — top-3 positions as % of portfolio notional. No new sheet columns needed, can implement immediately.
-1. **Market Timing / Tape Health** — NIFTY trend status on Dashboard (needs data feed decision).
-3. **Alpha vs NIFTY** — monthly return overlay on equity curve (needs NIFTY monthly data).
-- **Equity curve red/green gradient** — indexed colorStops based on cumulative P&L direction. Partially explored; can complete.
+- **Position Concentration Risk card (Dashboard)** — top-3 positions as % of portfolio notional. No new sheet columns needed, can implement immediately.
+- **Market Timing / Tape Health** — NIFTY trend status on Dashboard (needs data feed decision; Market Direction toggle is manual workaround for now).
+- **Alpha vs NIFTY** — monthly return overlay on equity curve (needs NIFTY monthly data).
+- **Equity curve red/green gradient** — indexed colorStops based on cumulative P&L direction.
 
 ## Performance Tab — Calibrated Metric Rules (CRITICAL)
 
