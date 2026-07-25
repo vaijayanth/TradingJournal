@@ -83,10 +83,11 @@ This is a **Minervini/Bonde/Zanger momentum breakout system** with a deliberate 
   3. Clear pullback to 21 EMA on an existing breakout stock → `"21 EMA Pullback"`
   4. Tight pullback to 10 EMA on a strongly trending stock → `"10 EMA Pullback"`
 - **Stop Loss — Two-Phase System:**
-  - **Phase 1 (profit < +7%)**: 7-day low AND 21 EMA breach are both active exit signals → exits failed breakouts fast
-  - **Phase 2 (profit ≥ +7%)**: Move col J to entry price (breakeven floor). Trail via 21 EMA ONLY. 7-day low dips = normal breakout consolidation — do NOT exit on 7DL alone in Phase 2.
-  - **Effective stop = MAX(J, I)** — whichever is tighter. Once J is at entry price, MAX naturally enforces the breakeven floor.
-- **Profit taking**: 50% partial exit at +10%, remainder trailed via stop until 21 EMA exit
+  - **Phase 1 (profit < +7%)**: Hold initial stop loss exactly as defined at entry (col J = initial risk stop from col K/L). Do NOT trail via 7-day low in Phase 1 — the stop stays fixed at the original risk-defined level until the 7% threshold is hit.
+  - **Phase 2 (profit ≥ +7%)**: Move col J ONE TIME to entry price (breakeven). Stop does not move again automatically. After breakeven, watch for stock to find support near 21 EMA — trail manually and exit when 21 EMA support breaks.
+  - **No rolling 7-day low stop** — 7DL (col I) is informational only. The mechanical stop is col J (initial risk stop → then breakeven floor).
+  - **Effective stop = col J** (not MAX(J,I) anymore — 7DL is not a mechanical stop in this system).
+- **Profit taking**: 50% partial exit at +10%, remainder trailed via 21 EMA support watching until exit
 - **Risk sizing progression**:
   - Start: ₹1,000 risk per trade
   - Increase: +₹500 every 100 closed trades
@@ -294,9 +295,10 @@ const avgLossR = useRs ? Math.abs(lossR.reduce((s,t) => s + t.finalPl/t.initRisk
 - Positions table, closed trades table, and all analysis charts updated
 
 #### Strategy Tab Updated
-- Entry: two triggers — 52W high breakout OR 21 EMA pullback on breakout stocks only
-- Stop: Phase 1 / Phase 2 system documented (7% threshold = beTrigger)
-- Profit: 50% at +10%, trail rest via stop
+- Entry: four setup types — Breakout, Pullback, 21 EMA Pullback, 10 EMA Pullback
+- Stop: Phase 1 = hold initial risk-defined stop (col J fixed). Phase 2 at ≥7% profit = move col J ONCE to breakeven. After BE, watch 21 EMA support manually and trail/exit there.
+- 7-day low is NOT a mechanical stop — informational only
+- Profit: 50% at +10%, trail rest watching 21 EMA support
 
 #### Market Regime / Portfolio Breadth (Today Tab)
 - **Portfolio Breadth Panel** (`#today-breadth-panel`) — collapsible panel in Today tab above action sections
