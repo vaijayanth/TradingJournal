@@ -1822,7 +1822,7 @@ tbody tr:hover { filter: brightness(0.97); }
 
   <!-- 4b. Stop Trigger Calibration (forward-looking, based on current 7% BE trigger) -->
   <div class="section-title" id="asec-be-impact" style="margin-top:20px">Stop Trigger Calibration — Is +<span id="be-trig-label">7</span>% the Right Threshold?</div>
-  <div style="font-size:12px;color:var(--text-muted);margin-bottom:10px">Two-phase trailing system: Phase 1 = 7-day low stops failed breakouts fast. Phase 2 (≥ +<span id="be-trig-label2">7</span>%) = move col J to entry, trail via 21 EMA only. Uses MFE/MAE data (cols AL/AM).</div>
+  <div style="font-size:12px;color:var(--text-muted);margin-bottom:10px">Two-phase stop system: Phase 1 = hold initial risk-defined stop (col J fixed). Phase 2 (≥ +<span id="be-trig-label2">7</span>%) = move col J once to breakeven, then trail by watching 21 EMA support. Uses MFE/MAE data (cols AL/AM).</div>
   <div class="grid-3" style="margin-bottom:14px">
     <div class="card card-sm">
       <div class="stat-label">Trades Reaching +<span id="be-trig-label3">7</span>% That Became Big Winners (&gt;15%)</div>
@@ -2240,7 +2240,7 @@ tbody tr:hover { filter: brightness(0.97); }
           <th>Entry ₹</th>
           <th title="Initial risk in ₹ if stop is hit at entry">Risk ₹</th>
           <th>CMP ₹</th>
-          <th title="MAX(manual stop J, 7-day low I)">Eff Stop ₹</th>
+          <th title="Col J stop loss — mechanical exit level">Stop ₹</th>
           <th title="% from effective stop = MAX(J, I)">% from Stop</th>
           <th>P&L%</th>
           <th title="Breakeven stop active — stop has been moved to entry price">BE Stop</th>
@@ -2895,12 +2895,12 @@ function renderDashboard(data, cfg) {
   const totalInitRisk = open.reduce((s, t) => s + t.initRiskRs, 0);
   // Current heat: zero out positions where stop has moved to breakeven or better
   const totalHeat = open.reduce((s, t) => {
-    const effStop = Math.max(t.stopLoss || 0, t.sevenDayLow || 0);
+    const effStop = t.stopLoss || 0;
     const atBreakeven = effStop >= t.entryPrice;
     return s + (atBreakeven ? 0 : (t.initRiskPct || 0));
   }, 0);
   const protectedCount = open.filter(t => {
-    const effStop = Math.max(t.stopLoss || 0, t.sevenDayLow || 0);
+    const effStop = t.stopLoss || 0;
     return effStop >= t.entryPrice;
   }).length;
   const fmt = v => '₹' + Math.abs(v).toLocaleString('en-IN', { maximumFractionDigits: 0 });
@@ -3056,7 +3056,7 @@ function renderDashboard(data, cfg) {
     // Safe = profitable (notionalPl > 0) OR risk-free (effStop >= entryPrice); In Loss = everything else
     let safeCount = 0, lossCount = 0;
     open.forEach(t => {
-      const effStop = Math.max(t.stopLoss || 0, t.sevenDayLow || 0);
+      const effStop = t.stopLoss || 0;
       const isRiskFree = effStop > 0 && t.entryPrice > 0 && effStop >= t.entryPrice;
       if ((t.notionalPl || 0) > 0 || isRiskFree) safeCount++; else lossCount++;
     });
@@ -3232,7 +3232,7 @@ function renderDashboard(data, cfg) {
 
   // Open/Closed count card in Risk section
   const alertCount = open.filter(t => {
-    const es = Math.max(t.stopLoss || 0, t.sevenDayLow || 0);
+    const es = t.stopLoss || 0;
     const ep = (t.cmp && es) ? ((t.cmp - es) / t.cmp * 100) : t.pctFromStop;
     return ep <= 0 || ep <= cfg.stopProximity || (t.plPct >= cfg.partialTrigger && t.partialTaken === 'N') || (t.plPct >= cfg.beTrigger && t.stopLoss < t.entryPrice) || ((t.ema21||'').trim().toLowerCase()==='below' && (t.plPct > 0 || (t.notionalPl||0) > 0)) || (String(t.haChanged||'').toUpperCase()==='Y') || (t.plPct >= cfg.beTrigger && (t.haColour||'').toLowerCase()==='red');
   }).length;
@@ -3334,7 +3334,7 @@ function renderDashboard(data, cfg) {
 
   // Risk cards
   const totalCurrRisk = open.reduce((s, t) => {
-    const effStop = Math.max(t.stopLoss || 0, t.sevenDayLow || 0);
+    const effStop = t.stopLoss || 0;
     return s + Math.max(0, ((t.entryPrice || 0) - effStop) * (t.qty || 0));
   }, 0);
   const riskFreePct = open.length > 0 ? (protectedCount / open.length * 100) : 0;
@@ -3510,33 +3510,22 @@ function renderDashboard(data, cfg) {
     const alerts = [];
     // Position count limit removed — system scales to 0.8% portfolio risk cap, not a fixed position count
     open.forEach(t => {
-      const effStop = Math.max(t.stopLoss || 0, t.sevenDayLow || 0);
+      const effStop = t.stopLoss || 0;
       const effPct = (t.cmp && effStop) ? ((t.cmp - effStop) / t.cmp * 100) : t.pctFromStop;
       const isProfitPhase = (t.plPct || 0) >= cfg.beTrigger; // profit ≥ BE trigger → 21 EMA is primary exit, 7DL is warning only
 
+      // EXIT TRIGGERED — only when CMP ≤ col J stop loss (mechanical stop)
+      // 7-day low is informational only — NOT a mechanical exit trigger
       if (effPct <= 0) {
-        const rules = [];
-        const sevenDLBreached = t.cmp && t.sevenDayLow && t.cmp <= t.sevenDayLow;
-        const manualStopHit = t.cmp && t.stopLoss && t.cmp <= t.stopLoss;
-        if (sevenDLBreached) rules.push(`7-Day Low breached (CMP ₹${t.cmp.toLocaleString('en-IN')} ≤ 7DL ₹${t.sevenDayLow.toLocaleString('en-IN')})`);
-        if (manualStopHit) rules.push(`Manual stop hit (CMP ₹${t.cmp.toLocaleString('en-IN')} ≤ Stop ₹${t.stopLoss.toLocaleString('en-IN')})`);
-        const ruleStr = rules.length > 0 ? rules.join(' · ') : `Price at/below effective stop ₹${Math.max(t.stopLoss||0, t.sevenDayLow||0).toLocaleString('en-IN')}`;
-
-        if (isProfitPhase && sevenDLBreached && !manualStopHit) {
-          // Profit phase: 7DL breach alone is a WARNING — may be normal consolidation; 21 EMA is primary exit
-          alerts.push({ type:'amber', icon:'🟡', title:`${t.stock} — 7DL Breached (Normal Consolidation?) +${(t.plPct||0).toFixed(1)}%`, desc:`7-Day Low breached but position is +${(t.plPct||0).toFixed(1)}% (above BE trigger). At this profit stage your primary exit is 21 EMA breach — not the 7-day low. This may be a normal breakout consolidation. Watch 21 EMA closely.` });
-        } else {
-          // Pre-profit phase OR manual stop hit: hard exit
-          const shortRule = rules.length > 0 ? rules.map(r => r.split('(')[0].trim()).join(' + ') : 'Stop breached';
-          alerts.push({ type:'red', icon:'🔴', title:`${t.stock} — ${shortRule}`, desc:`${ruleStr}. Effective stop = MAX(J, 7DL) = ₹${Math.max(t.stopLoss||0, t.sevenDayLow||0).toLocaleString('en-IN')}. Mechanical exit required — no exceptions.` });
-        }
+        const stopRs = t.stopLoss ? '₹' + t.stopLoss.toLocaleString('en-IN') : '—';
+        alerts.push({ type:'red', icon:'🔴', title:`${t.stock} — Stop Hit`, desc:`CMP ₹${(t.cmp||0).toLocaleString('en-IN')} has hit/crossed your stop loss ${stopRs} (col J). Mechanical exit required — no exceptions.` });
       }
       else if (effPct <= cfg.stopProximity) {
-        if (isProfitPhase) {
-          alerts.push({ type:'amber', icon:'🟡', title:`${t.stock} — Near 7DL (${effPct.toFixed(1)}% away) — Watch 21 EMA`, desc:`Approaching 7-Day Low but position is +${(t.plPct||0).toFixed(1)}% — in profit phase. 21 EMA is your primary exit signal at this stage. If 21 EMA breached, exit. If price bounces above 7DL, normal consolidation.` });
-        } else {
-          alerts.push({ type:'amber', icon:'🟡', title:`${t.stock} — Within ${effPct.toFixed(1)}% of Stop`, desc:`Only ${effPct.toFixed(1)}% above effective stop (MAX of ₹${t.stopLoss.toLocaleString('en-IN')}, ₹${t.sevenDayLow.toLocaleString('en-IN')}). Review before market open.` });
-        }
+        alerts.push({ type:'amber', icon:'🟡', title:`${t.stock} — Within ${effPct.toFixed(1)}% of Stop`, desc:`Only ${effPct.toFixed(1)}% above stop loss ${t.stopLoss ? '₹'+t.stopLoss.toLocaleString('en-IN') : '—'} (col J). Review before market open. Exit only when stop actually hits.` });
+      }
+      // 7DL informational note — not an exit signal, just awareness
+      if (t.cmp && t.sevenDayLow && t.cmp <= t.sevenDayLow && effPct > 0) {
+        alerts.push({ type:'info', icon:'ℹ️', title:`${t.stock} — Below 7-Day Low (informational)`, desc:`CMP ₹${t.cmp.toLocaleString('en-IN')} is below 7DL ₹${t.sevenDayLow.toLocaleString('en-IN')}. 7-day low is not your stop — your stop (col J) at ₹${(t.stopLoss||0).toLocaleString('en-IN')} has not been hit. Watch 21 EMA for trail/exit signal.` });
       }
       if ((t.ema21 || '').trim().toLowerCase() === 'below' && (t.plPct > 0 || (t.notionalPl||0) > 0)) {
         const emaPlLabel = t.plPct > 0 ? `+${t.plPct.toFixed(1)}%` : `+₹${Math.round(t.notionalPl).toLocaleString('en-IN')}`;
@@ -3570,6 +3559,7 @@ function renderDashboard(data, cfg) {
         { key:'breakeven', icon:'🛡', label:'Move Stop to Breakeven', color:'var(--amber)', bg:'var(--amber-soft)', countBg:'rgba(255,159,10,0.2)', autoOpen: false },
         { key:'amber',   icon:'🟡', label:'Near Stop / Review',      color:'var(--amber)', bg:'var(--amber-soft)', countBg:'rgba(255,159,10,0.2)', autoOpen: false },
         { key:'green',   icon:'🟢', label:'Partial Exit Pending',    color:'var(--green)', bg:'var(--green-soft)', countBg:'rgba(52,199,89,0.2)',  autoOpen: false },
+        { key:'info',    icon:'ℹ️', label:'7-Day Low (Informational)', color:'var(--text-muted)', bg:'var(--surface2)', countBg:'rgba(100,116,139,0.2)', autoOpen: false },
       ];
 
       // Tag each alert with a group key
@@ -3744,12 +3734,12 @@ function renderTodayActions(open, cfg) {
     const profitable    = open.filter(t => (t.plPct||0) > 0).length;
     const riskFree      = open.filter(t => t.stopLoss >= t.entryPrice && t.entryPrice > 0).length;
     const nearStop      = open.filter(t => {
-      const effStop = Math.max(t.stopLoss||0, t.sevenDayLow||0);
+      const effStop = t.stopLoss||0;
       const effPct = (t.cmp && effStop) ? ((t.cmp - effStop)/t.cmp*100) : (t.pctFromStop||0);
       return effPct <= cfg.stopProximity && effPct > 0;
     }).length;
     const exitTriggered = open.filter(t => {
-      const effStop = Math.max(t.stopLoss||0, t.sevenDayLow||0);
+      const effStop = t.stopLoss||0;
       const effPct = (t.cmp && effStop) ? ((t.cmp - effStop)/t.cmp*100) : (t.pctFromStop||0);
       return effPct <= 0;
     }).length;
@@ -3787,7 +3777,7 @@ function renderTodayActions(open, cfg) {
       meter('HA Green', haGreen, n, 'var(--green)', 'Heikin-Ashi candle is green — uptrend confirmed'),
       meter('Profitable (MTM)', profitable, n, 'var(--green)', 'Open positions with positive mark-to-market P&L'),
       meter('Risk-Free (BE active)', riskFree, n, '#22d3ee', 'Stop moved to entry — can\'t lose money on these trades'),
-      phase2 > 0 ? meter('In Phase 2 (≥+'+cfg.beTrigger+'%)', phase2, n, '#a78bfa', 'Profit ≥ '+cfg.beTrigger+'% — 21 EMA is primary exit, 7DL dips are normal') : '',
+      phase2 > 0 ? meter('In Phase 2 (≥+'+cfg.beTrigger+'%)', phase2, n, '#a78bfa', 'Profit ≥ '+cfg.beTrigger+'% — stop moved to BE. Watch 21 EMA support for trail/exit') : '',
       nearStop > 0 ? meter('Near Stop (watch)', nearStop, n, 'var(--amber)', 'Within '+cfg.stopProximity+'% of effective stop — no action but monitor') : '',
       exitTriggered > 0 ? meter('Exit Triggered ⚠', exitTriggered, n, 'var(--red)', 'Price at or below effective stop — exit at market') : '',
       haShiftToday > 0 ? meter('HA Shift Today', haShiftToday, n, 'var(--amber)', 'HA candle colour changed today — momentum shift in progress') : '',
@@ -3803,7 +3793,7 @@ function renderTodayActions(open, cfg) {
     if (bullish === 3)          insight += `📈 <strong>Book breadth is strong</strong> — majority above EMA, HA green, and profitable. Hold your runners. `;
     else if (aboveEma/n < 0.4)  insight += `⚡ <strong>Fewer than half above 21 EMA</strong> — market may be rotating. Review weakest positions. `;
     if (haShiftToday > 0)       insight += `🔄 <strong>${haShiftToday} HA shift${haShiftToday>1?'s':''} today</strong> — ${haShiftToday>1?'multiple':'a'} momentum change${haShiftToday>1?'s':''} in play, check direction. `;
-    if (phase2 > 0)             insight += `🚀 <strong>${phase2} runner${phase2>1?'s':''} in phase 2</strong> — trail via 21 EMA, ignore 7DL dips. `;
+    if (phase2 > 0)             insight += `🚀 <strong>${phase2} runner${phase2>1?'s':''} in phase 2</strong> — stop at BE, watch 21 EMA support to trail and exit. `;
     if (!insight)               insight = `📊 ${n} open positions · Breadth score <strong style="color:${scoreColor}">${scorePct}</strong>/100 · No urgent signals.`;
     breadthInsight.innerHTML = insight;
 
@@ -3814,7 +3804,7 @@ function renderTodayActions(open, cfg) {
   // Build action list with priority group for each trade
   const actions = [];
   open.forEach(t => {
-    const effStop = Math.max(t.stopLoss || 0, t.sevenDayLow || 0);
+    const effStop = t.stopLoss || 0;
     const effPct = (t.cmp && effStop) ? ((t.cmp - effStop) / t.cmp * 100) : (t.pctFromStop || 0);
     const plPct = t.plPct || 0;
     const pnlLabel = (plPct >= 0 ? '+' : '') + plPct.toFixed(1) + '%';
@@ -3822,20 +3812,25 @@ function renderTodayActions(open, cfg) {
     const nums = [];
     if (t.entryPrice) nums.push(`Entry: ${fmtRs(t.entryPrice)}`);
     if (t.cmp) nums.push(`CMP: ${fmtRs(t.cmp)}`);
-    if (effStop) nums.push(`Eff Stop: ${fmtRs(effStop)}`);
+    if (effStop) nums.push(`Stop: ${fmtRs(effStop)}`);
     if (t.age) nums.push(`Age: ${t.age}d`);
     const numHtml = nums.map(n => `<span>${n}</span>`).join('');
 
-    // 1. EXIT TRIGGERED — stop/7DL breach
+    // 1. EXIT TRIGGERED — col J stop hit (mechanical stop only; 7DL is not a mechanical trigger)
     if (effPct <= 0) {
-      const rules = [];
-      if (t.cmp && t.sevenDayLow && t.cmp <= t.sevenDayLow) rules.push('7DL breached');
-      if (t.cmp && t.stopLoss && t.cmp <= t.stopLoss) rules.push('Manual stop hit');
       actions.push({ priority: 0, group: 'exit', stock: t.stock, sector: t.sector || '',
         pnlLabel, pnlColor, effPctLabel: effPct.toFixed(1) + '%', cmp: t.cmp, effStop, age: t.age || '',
         verb: 'EXIT NOW', verbBg: 'rgba(239,68,68,0.2)', verbColor: 'var(--red)',
         directive: 'Sell at market — no exceptions',
-        detail: (rules.join(' + ') || 'Price at/below effective stop') + '. Mechanical exit — no discretion.' });
+        detail: `Stop loss ₹${(effStop||0).toLocaleString('en-IN')} (col J) hit. Mechanical exit — no discretion.` });
+    }
+    // 1b. 7DL informational — not an exit trigger
+    if (t.cmp && t.sevenDayLow && t.cmp <= t.sevenDayLow && effPct > 0) {
+      actions.push({ priority: 6, group: 'info', stock: t.stock, sector: t.sector || '',
+        pnlLabel, pnlColor, effPctLabel: effPct.toFixed(1) + '%', cmp: t.cmp, effStop, age: t.age || '',
+        verb: 'INFO', verbBg: 'rgba(100,116,139,0.15)', verbColor: 'var(--text-muted)',
+        directive: 'Below 7-day low — watch 21 EMA',
+        detail: `CMP ₹${t.cmp.toLocaleString('en-IN')} < 7DL ₹${t.sevenDayLow.toLocaleString('en-IN')} but stop (col J) ₹${(effStop||0).toLocaleString('en-IN')} not hit. No action unless 21 EMA breaks.` });
     }
 
     // 2. BELOW 21 EMA on a profitable position
@@ -3853,7 +3848,7 @@ function renderTodayActions(open, cfg) {
         pnlLabel, pnlColor, effPctLabel: effPct.toFixed(1) + '%', cmp: t.cmp, effStop, age: t.age || '',
         verb: 'TAKE PARTIAL', verbBg: 'rgba(52,199,89,0.2)', verbColor: 'var(--green)',
         directive: 'Sell 50% qty now',
-        detail: `+${plPct.toFixed(1)}% ≥ +${cfg.partialTrigger}% trigger. Trail rest on 7DL ${t.sevenDayLow ? fmtRs(t.sevenDayLow) : '—'}.` });
+        detail: `+${plPct.toFixed(1)}% ≥ +${cfg.partialTrigger}% trigger. Sell 50% now. Trail remainder — watch 21 EMA support for exit.` });
     }
 
     // 4. MOVE STOP TO BREAKEVEN
@@ -3899,7 +3894,7 @@ function renderTodayActions(open, cfg) {
         pnlLabel, pnlColor, effPctLabel: effPct.toFixed(1) + '%', cmp: t.cmp, effStop, age: t.age || '',
         verb: 'NEAR STOP', verbBg: 'rgba(96,165,250,0.12)', verbColor: '#60a5fa',
         directive: 'Watch intraday — no action yet',
-        detail: `${effPct.toFixed(1)}% above effective stop ${fmtRs(effStop)}. Hold plan — exit only when stop actually hits.` });
+        detail: `${effPct.toFixed(1)}% above stop loss ${fmtRs(effStop)} (col J). Hold plan — exit only when stop actually hits.` });
     }
   });
 
@@ -4033,7 +4028,7 @@ function renderPositionsReal(open, cfg) {
   const tbody = document.getElementById('positions-tbody');
   const _rows = [];
   const trades = open.map(t => {
-    const effStop = Math.max(t.stopLoss || 0, t.sevenDayLow || 0);
+    const effStop = t.stopLoss || 0;
     const effPct = (t.cmp && effStop) ? ((t.cmp - effStop) / t.cmp * 100) : (t.pctFromStop || 0);
     let alertType = 'none';
     if (effPct <= 0) alertType = 'red';
@@ -8300,7 +8295,7 @@ function renderProjections(open, closed) {
 
   // ── 4. Open Portfolio Scenarios ──
   const bearPl = open.reduce((s,t) => {
-    const effStop = Math.max(t.stopLoss||0, t.sevenDayLow||0);
+    const effStop = t.stopLoss||0;
     if (!effStop || !t.entryPrice) return s;
     const stopPl = (effStop - t.entryPrice) * (t.qty||0);
     // Approx: use initRiskRs as worst-case loss if qty unknown

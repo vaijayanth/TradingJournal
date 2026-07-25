@@ -190,14 +190,16 @@ EMA analysis REMOVED (col F is live formula, not entry-time — never use for an
 6. 🟡 Near Stop / Review — effPct ≤ stopProximity
 7. 🟢 Partial Exit Pending — plPct ≥ partialTrigger AND partialTaken = 'N'
 
-## Effective Stop Logic
+## Stop Logic
 ```javascript
-const effStop = Math.max(t.stopLoss || 0, t.sevenDayLow || 0);
+const effStop = t.stopLoss || 0;  // col J only — 7DL is NOT a mechanical stop
 const effPct = (t.cmp && effStop) ? ((t.cmp - effStop) / t.cmp * 100) : t.pctFromStop;
 ```
-- Used everywhere for alerts, sort order, and table display
-- Positions table header: "Eff Stop ₹" (not "Stop ₹")
-- Expand row shows: Manual Stop (J), 7-Day Low (I), Effective Stop separately
+- `effStop = t.stopLoss` (col J) — never MAX(J,I). 7-day low is informational only.
+- "Exit Triggered" alert fires only when CMP ≤ col J
+- 7DL breach renders as a grey `info` group alert — "watch 21 EMA, no action required"
+- Positions table header: "Stop ₹" (col J mechanical stop)
+- Expand row shows: col J stop, 7-Day Low (informational), separately labelled
 
 ## Risk Tier Card (Dashboard)
 - Shows current recommended risk per trade based on closed trade count
