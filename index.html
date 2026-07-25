@@ -738,7 +738,7 @@ tbody tr:hover { filter: brightness(0.97); }
 <nav>
   <div class="nav-logo">📈 <span>Trading</span>Journal</div>
   <div class="nav-tabs">
-    <button class="nav-tab" onclick="showPage('dashboard', this)"><span class="nav-label-full">Dashboard</span><span class="nav-label-short">Dash</span></button>
+    <button class="nav-tab active" id="nav-dashboard" onclick="showPage('dashboard', this)"><span class="nav-label-full">Dashboard</span><span class="nav-label-short">Dash</span></button>
     <button class="nav-tab" onclick="showPage('performance', this)"><span class="nav-label-full">Performance</span><span class="nav-label-short">Perf</span></button>
     <button class="nav-tab" onclick="showPage('analysis', this)"><span class="nav-label-full">Analysis</span><span class="nav-label-short">Analysis</span></button>
     <button class="nav-tab" onclick="showPage('positions', this)"><span class="nav-label-full">Positions</span><span class="nav-label-short">Pos</span></button>
@@ -760,7 +760,7 @@ tbody tr:hover { filter: brightness(0.97); }
 <div id="swing-pages">
 
 <!-- ════ DASHBOARD ════ -->
-<div id="page-dashboard" class="page">
+<div id="page-dashboard" class="page active">
 
   <!-- Urgent action banner — shown only when exits or partials pending -->
   <div id="dash-urgent-banner" style="display:none;margin-bottom:14px;padding:12px 16px;border-radius:10px;display:none;align-items:center;gap:12px;flex-wrap:wrap">
@@ -924,7 +924,7 @@ tbody tr:hover { filter: brightness(0.97); }
 </div>
 
 <!-- ════ TODAY'S ACTIONS ════ -->
-<div id="page-today" class="page active">
+<div id="page-today" class="page">
   <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:20px">
     <div>
       <div style="font-size:16px;font-weight:800">⚡ Today's Action Board</div>
