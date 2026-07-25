@@ -66,14 +66,22 @@ This is a **Minervini/Bonde/Zanger momentum breakout system** with a deliberate 
 - **Column Y (notionalPl)**: mark-to-market, only populated for OPEN positions. Zero/blank for closed trades.
 - **Column X (plPct)**: also blank for closed trades in this sheet.
 - **Column F (ema21)**: live formula showing current EMA position — NOT entry-time value. Do NOT use for analysis.
-- **Setup Type (col S)**: SIMPLIFIED — now plain text only: `"Breakout"` or `"Pullback"`. Old compound codes (BKT/VCP/VCL_SL_LT10 etc.) are retired. `parseSetupType(code)` now does a direct passthrough: `{ label: code.trim(), pattern: code.trim() }`. No more SETUP_PATTERN_LABELS, SETUP_TIER_LABELS, patternMap references — all removed.
+- **Setup Type (col S)**: SIMPLIFIED — plain text label only. Four valid values:
+  - `"Breakout"` — smooth breakout of 52-week high
+  - `"Pullback"` — generic pullback entry
+  - `"21 EMA Pullback"` — clear pullback to 21 EMA on a breakout stock
+  - `"10 EMA Pullback"` — tight pullback to 10 EMA on a strongly trending stock
+  - Old compound codes (BKT/VCP/VCL_SL_LT10 etc.) are fully retired.
+  - `parseSetupType(code)` is a direct passthrough: `{ label: code.trim(), pattern: code.trim() }`. No SETUP_PATTERN_LABELS, SETUP_TIER_LABELS, or patternMap. Any new setup type added to the sheet automatically appears in Analysis breakdown with no code changes needed.
 - **portfolioValue (AK26)**: realised only — does NOT include open position unrealized P&L. True combined P&L = `(portfolioValue - initialCapital) + sum(notionalPl)` = `totalFinalPl + totalUnrealisedPl`.
 - **Date format from Apps Script**: `dd-MMM-yyyy` (e.g., `21-Apr-2026`) — NOT parseable by `new Date()`. Use `parseDate()` helper everywhere.
 
 ## Trading Strategy (IMPORTANT — Minervini momentum style)
-- **Entry (2 triggers)**:
-  1. Smooth breakout of 52-week high (Breakout setup)
-  2. Clear pullback to 21 EMA on an existing breakout stock only (Pullback setup)
+- **Entry (4 setup types)**:
+  1. Smooth breakout of 52-week high → `"Breakout"`
+  2. Generic pullback entry → `"Pullback"`
+  3. Clear pullback to 21 EMA on an existing breakout stock → `"21 EMA Pullback"`
+  4. Tight pullback to 10 EMA on a strongly trending stock → `"10 EMA Pullback"`
 - **Stop Loss — Two-Phase System:**
   - **Phase 1 (profit < +7%)**: 7-day low AND 21 EMA breach are both active exit signals → exits failed breakouts fast
   - **Phase 2 (profit ≥ +7%)**: Move col J to entry price (breakeven floor). Trail via 21 EMA ONLY. 7-day low dips = normal breakout consolidation — do NOT exit on 7DL alone in Phase 2.
