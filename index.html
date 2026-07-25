@@ -762,13 +762,9 @@ tbody tr:hover { filter: brightness(0.97); }
 <!-- ════ DASHBOARD ════ -->
 <div id="page-dashboard" class="page active">
 
-  <!-- Urgent action banner — shown only when exits or partials pending -->
-  <div id="dash-urgent-banner" style="display:none;margin-bottom:14px;padding:12px 16px;border-radius:10px;display:none;align-items:center;gap:12px;flex-wrap:wrap">
-    <span id="dash-urgent-icon" style="font-size:18px"></span>
-    <span id="dash-urgent-text" style="font-size:13px;font-weight:700;flex:1"></span>
-    <button onclick="showPage('today',document.getElementById('nav-today'))" style="background:#fff;border:none;border-radius:6px;padding:5px 14px;font-size:12px;font-weight:700;cursor:pointer;color:#111">Go to Action Board →</button>
-  </div>
-  <div id="dash-no-winner-alert" style="display:none;align-items:center;gap:10px;margin-bottom:10px;padding:10px 14px;border-radius:8px;background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.3)"></div>
+  <!-- Hidden banners kept for JS compatibility -->
+  <div id="dash-urgent-banner" style="display:none"><span id="dash-urgent-icon"></span><span id="dash-urgent-text"></span></div>
+  <div id="dash-no-winner-alert" style="display:none"></div>
 
   <!-- ① HEADLINE ROW -->
   <div class="grid-3">
@@ -914,13 +910,16 @@ tbody tr:hover { filter: brightness(0.97); }
     </div>
   </div>
 
-  <!-- Today's Actions summary strip — links to Today tab -->
-  <div id="today-dash-strip" style="margin-top:20px;padding:14px 16px;background:var(--surface);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;flex-wrap:wrap;gap:10px">
-    <span style="font-size:12px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em">Today's Actions</span>
-    <div id="today-dash-pills" style="display:flex;gap:8px;flex-wrap:wrap;flex:1"></div>
-    <button class="btn-secondary" style="font-size:11px;padding:5px 12px;flex-shrink:0" onclick="showPage('today',document.getElementById('nav-today'))">Open Action Board →</button>
+  <!-- Hidden for JS compatibility -->
+  <div id="today-dash-strip" style="display:none"><div id="today-dash-pills"></div></div>
+  <div id="alerts-wrap" style="display:none"></div>
+
+  <!-- ③ EXECUTIVE SUMMARY -->
+  <div class="card card-sm" id="exec-summary-card" style="margin-top:14px">
+    <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px">📋 Executive Summary</div>
+    <div id="exec-summary-body" style="font-size:13px;color:var(--text-primary);line-height:1.8">—</div>
   </div>
-  <div class="alerts-wrap" id="alerts-wrap" style="display:none"></div>
+
 </div>
 
 <!-- ════ TODAY'S ACTIONS ════ -->
@@ -3496,6 +3495,84 @@ function renderDashboard(data, cfg) {
       }).join('');
     }
   }
+
+  renderExecSummary(closed, open, portfolioValue, initialCapital);
+}
+
+// ── EXECUTIVE SUMMARY ─────────────────────────────────────────────────────────
+function renderExecSummary(closed, open, portfolioValue, initialCapital) {
+  const el = document.getElementById('exec-summary-body');
+  if (!el) return;
+
+  const wins   = closed.filter(t => (t.finalPlPct || 0) > 0);
+  const losses = closed.filter(t => (t.finalPlPct || 0) < 0);
+  const wr     = closed.length > 0 ? wins.length / closed.length * 100 : 0;
+  const totalWinPl  = wins.reduce((s,t) => s + (t.finalPl||0), 0);
+  const totalLossPl = Math.abs(losses.reduce((s,t) => s + (t.finalPl||0), 0));
+  const pf         = totalLossPl > 0 ? totalWinPl / totalLossPl : null;
+  const avgWinPct  = wins.length   > 0 ? wins.reduce((s,t)   => s + (t.finalPlPct||0), 0) / wins.length   : 0;
+  const avgLossPct = losses.length > 0 ? Math.abs(losses.reduce((s,t) => s + (t.finalPlPct||0), 0) / losses.length) : 0;
+  const openMtm    = open.reduce((s,t) => s + (t.notionalPl||0), 0);
+  const riskFreeOpen = open.filter(t => t.stopLoss && t.entryPrice && t.stopLoss >= t.entryPrice);
+  const profitableOpen = open.filter(t => (t.plPct||0) > 0);
+
+  const lines = [];
+
+  // 1. System edge
+  if (closed.length < 5) {
+    lines.push(`📊 <b>System edge:</b> Only ${closed.length} closed trade${closed.length===1?'':'s'} so far — too early for statistics. Focus on process: cut losses at stop, no exceptions.`);
+  } else {
+    const pfColor  = pf === null ? 'var(--text-muted)' : pf >= 1.5 ? 'var(--green)' : pf >= 1.0 ? 'var(--amber)' : 'var(--red)';
+    const pfLabel  = pf === null ? 'n/a' : pf.toFixed(2);
+    const pfNote   = pf === null ? '' : pf >= 1.5 ? ' — system has a clear edge' : pf >= 1.0 ? ' — edge exists but thin' : ' — system is not yet profitable; review entries';
+    const wrColor  = wr >= 35 ? 'var(--green)' : wr >= 20 ? 'var(--amber)' : 'var(--red)';
+    lines.push(`📊 <b>System edge:</b> Profit Factor <span style="color:${pfColor}">${pfLabel}${pfNote}</span>. Win rate <span style="color:${wrColor}">${wr.toFixed(0)}%</span> (25–40% is healthy for this style). Average winner <span style="color:var(--green)">+${avgWinPct.toFixed(1)}%</span> vs average loser <span style="color:var(--red)">-${avgLossPct.toFixed(1)}%</span>.`);
+  }
+
+  // 2. Open book
+  if (open.length > 0) {
+    const mtmStr   = (openMtm >= 0 ? '+' : '-') + '₹' + Math.abs(Math.round(openMtm)).toLocaleString('en-IN');
+    const mtmColor = openMtm >= 0 ? 'var(--green)' : 'var(--red)';
+    const rfNote   = riskFreeOpen.length > 0 ? `, ${riskFreeOpen.length} risk-free (stop ≥ breakeven)` : '';
+    lines.push(`📂 <b>Open book:</b> ${open.length} positions live — ${profitableOpen.length} profitable${rfNote}. Unrealised MTM: <span style="color:${mtmColor}">${mtmStr}</span>. True portfolio return = realised + unrealised combined.`);
+  } else {
+    lines.push(`📂 <b>Open book:</b> No open positions — fully in cash.`);
+  }
+
+  // 3. Execution quality — avg loss vs 7% rule
+  if (losses.length >= 3) {
+    const s = avgLossPct <= 5 ? { label:'excellent', color:'var(--green)' }
+            : avgLossPct <= 7 ? { label:'on target', color:'var(--green)' }
+            : avgLossPct <= 10 ? { label:'slightly large — tighten stop discipline', color:'var(--amber)' }
+            : { label:'too large — stops not being taken cleanly', color:'var(--red)' };
+    lines.push(`✂️ <b>Cut-loss execution:</b> Average closed loss is <span style="color:${s.color}">-${avgLossPct.toFixed(1)}%</span> — <span style="color:${s.color}">${s.label}</span>. Target: keep under 7%.`);
+  }
+
+  // 4. Winner pipeline
+  const sortedWins = wins.map(t => ({ d: parseDate(t.closeDate) })).filter(x => x.d && x.d.getTime() > 0).sort((a,b) => b.d - a.d);
+  const daysSinceWin = sortedWins.length > 0 ? Math.floor((Date.now() - sortedWins[0].d.getTime()) / 86400000) : null;
+  if (daysSinceWin !== null) {
+    const dswColor = daysSinceWin <= 14 ? 'var(--green)' : daysSinceWin <= 30 ? 'var(--amber)' : 'var(--red)';
+    const dswNote  = daysSinceWin > 30 ? ' — worth reviewing if market conditions are hostile or entries need tightening' : '';
+    lines.push(`🏆 <b>Winner pipeline:</b> Last closed winner was <span style="color:${dswColor}">${daysSinceWin} days ago</span>${dswNote}. Your real gains currently sit in ${open.length} open position${open.length===1?'':'s'} as unrealised MTM.`);
+  }
+
+  // 5. Current streak context
+  const recent = [...closed].sort((a,b) => parseDate(b.closeDate) - parseDate(a.closeDate));
+  let streak = 0, streakWin = null;
+  for (const t of recent) {
+    const w = (t.finalPlPct||0) > 0;
+    if (streakWin === null) streakWin = w;
+    if (w !== streakWin) break;
+    streak++;
+  }
+  if (streak >= 3 && !streakWin) {
+    lines.push(`📉 <b>Closed-trade streak:</b> ${streak} consecutive losses — <b>this is normal and expected</b> in a momentum system that cuts losses mechanically. Closed trades will always be loss-heavy; the winners are in your open book.`);
+  } else if (streak >= 2 && streakWin) {
+    lines.push(`✅ <b>Closed-trade streak:</b> ${streak} consecutive winners — system is in a productive phase.`);
+  }
+
+  el.innerHTML = lines.map(l => `<div style="margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--border)">${l}</div>`).join('').replace(/border-bottom:1px solid var\(--border\)">([\s\S]*?)<\/div>$/, 'border-bottom:none">$1</div>');
 }
 
 // ── TODAY'S ACTION BOARD ─────────────────────────────
