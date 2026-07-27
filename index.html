@@ -3137,7 +3137,8 @@ function renderDashboard(data, cfg) {
   const alertCount = open.filter(t => {
     const es = t.stopLoss || 0;
     const ep = (t.cmp && es) ? ((t.cmp - es) / t.cmp * 100) : t.pctFromStop;
-    return ep <= 0 || ep <= cfg.stopProximity || (t.plPct >= cfg.partialTrigger && t.partialTaken === 'N') || (t.plPct >= cfg.beTrigger && t.stopLoss < t.entryPrice) || ((t.ema21||'').trim().toLowerCase()==='below' && (t.plPct > 0 || (t.notionalPl||0) > 0)) || (String(t.haChanged||'').toUpperCase()==='Y') || (t.plPct >= cfg.beTrigger && (t.haColour||'').toLowerCase()==='red');
+    // SST: alert = at target, at lock-in, or in loss
+    return (t.plPct||0) >= (cfg.lockInPct||6) || (t.plPct||0) < 0;
   }).length;
   set('dash-open-count', open.length);
   set('dash-closed-count', closed.length);
@@ -4603,10 +4604,10 @@ function sortTable(key) {
     if (key === 'age') return (parseInt(b.age) || 0) - (parseInt(a.age) || 0);
     if (key === 'pnl') return b.plPct - a.plPct;
     // Priority sort: Exit → Partial Due → Near Stop → rest, then by % from stop within each group
-    const ea = Math.max(a.stopLoss||0,a.sevenDayLow||0); const epA = (a.cmp&&ea)?((a.cmp-ea)/a.cmp*100):a.pctFromStop;
-    const eb = Math.max(b.stopLoss||0,b.sevenDayLow||0); const epB = (b.cmp&&eb)?((b.cmp-eb)/b.cmp*100):b.pctFromStop;
-    const pri = (t, ep) => ep<=0?0:(t.plPct>=(cfg.partialTrigger||10)&&t.partialTaken==='N')?1:ep<=(cfg.stopProximity||2)?2:3;
-    const pa = pri(a,epA), pb = pri(b,epB);
+    const epA = a.plPct || 0; const epB = b.plPct || 0;
+    // SST priority: target (≥7%) → lockin (≥6%) → in loss → tracking
+    const pri = (t) => t.plPct>=(cfg.targetPct||7)?0:t.plPct>=(cfg.lockInPct||6)?1:t.plPct<0?2:3;
+    const pa = pri(a), pb = pri(b);
     if (pa !== pb) return pa - pb;
     return epA - epB;
   });
@@ -4891,15 +4892,15 @@ function populateConfigPage() {
   setVal('cfg-portfolio-cell', cfg.portfolioCell);
   setVal('cfg-initial-cap-cell', cfg.initialCapCell);
   setVal('cfg-max-heat', cfg.maxHeat);
-  setVal('cfg-partial-trigger', cfg.partialTrigger);
-  setVal('cfg-be-trigger', cfg.beTrigger);
+  setVal('cfg-partial-trigger', (cfg.targetPct||7));
+  setVal('cfg-be-trigger', (cfg.targetPct||7));
   setVal('cfg-be-rule-change-date', cfg.beRuleChangeDate || '');
   setVal('cfg-be-rule-old-trigger', cfg.beRuleOldTrigger || '');
-  setVal('cfg-stop-proximity', cfg.stopProximity);
+  setVal('cfg-stop-proximity', (cfg.lockInPct||6));
   setVal('cfg-heat-green', cfg.heatGreen);
   setVal('cfg-heat-amber', cfg.heatAmber);
   setVal('cfg-max-positions', cfg.maxPositions);
-  setVal('cfg-max-age', cfg.maxAge);
+  setVal('cfg-max-age', (cfg.maxAge||90));
   setVal('cfg-weekly-target', cfg.weeklyTarget || 0);
   updateConnStatus(cfg.url ? 'configured' : 'not-configured');
 }
@@ -4956,15 +4957,15 @@ function saveAllConfig() {
   cfg.portfolioCell = getVal('cfg-portfolio-cell', cfg.portfolioCell).toUpperCase() || cfg.portfolioCell;
   cfg.initialCapCell = getVal('cfg-initial-cap-cell', cfg.initialCapCell).toUpperCase() || cfg.initialCapCell;
   cfg.maxHeat = parseFloat(getVal('cfg-max-heat', cfg.maxHeat)) || cfg.maxHeat;
-  cfg.partialTrigger = parseFloat(getVal('cfg-partial-trigger', cfg.partialTrigger)) || cfg.partialTrigger;
-  cfg.beTrigger = parseFloat(getVal('cfg-be-trigger', cfg.beTrigger)) || cfg.beTrigger;
+  (cfg.targetPct||7) = parseFloat(getVal('cfg-partial-trigger', (cfg.targetPct||7))) || (cfg.targetPct||7);
+  (cfg.targetPct||7) = parseFloat(getVal('cfg-be-trigger', (cfg.targetPct||7))) || (cfg.targetPct||7);
   cfg.beRuleChangeDate = getVal('cfg-be-rule-change-date', cfg.beRuleChangeDate || '');
   cfg.beRuleOldTrigger = parseFloat(getVal('cfg-be-rule-old-trigger', cfg.beRuleOldTrigger || 5)) || 5;
-  cfg.stopProximity = parseFloat(getVal('cfg-stop-proximity', cfg.stopProximity)) || cfg.stopProximity;
+  (cfg.lockInPct||6) = parseFloat(getVal('cfg-stop-proximity', (cfg.lockInPct||6))) || (cfg.lockInPct||6);
   cfg.heatGreen = parseFloat(getVal('cfg-heat-green', cfg.heatGreen)) || cfg.heatGreen;
   cfg.heatAmber = parseFloat(getVal('cfg-heat-amber', cfg.heatAmber)) || cfg.heatAmber;
   cfg.maxPositions = parseInt(getVal('cfg-max-positions', cfg.maxPositions)) || cfg.maxPositions;
-  cfg.maxAge = parseInt(getVal('cfg-max-age', cfg.maxAge)) || cfg.maxAge;
+  (cfg.maxAge||90) = parseInt(getVal('cfg-max-age', (cfg.maxAge||90))) || (cfg.maxAge||90);
   cfg.weeklyTarget = parseInt(getVal('cfg-weekly-target', cfg.weeklyTarget || 0)) || 0;
   ['flagCol','stockCol','openDateCol','closeDateCol','ema21Col','cmpCol','sevenDayLowCol','stopLossCol',
    'initRiskRsCol','initRiskPctCol','qtyCol','entryPriceCol','setupTypeCol','pctFromStopCol','plPctCol',
@@ -5867,8 +5868,8 @@ function initAnalysisCharts(open, closed) {
   const c = chartColors();
   const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
   const _cfg = loadConfig();
-  const BE_TRIGGER = _cfg.beTrigger || 7;       // move stop to breakeven at this % profit
-  const PARTIAL_TRIGGER = _cfg.partialTrigger || 10; // take 50% partial at this % profit
+  const BE_TRIGGER = _cfg.targetPct || 7;       // move stop to breakeven at this % profit
+  const PARTIAL_TRIGGER = _cfg.targetPct || 7; // take 50% partial at this % profit
 
   // ── Setup Type Breakdown ──
   const calcStats = trades => {
@@ -6089,7 +6090,7 @@ function initAnalysisCharts(open, closed) {
     const stopPct = lossTrades.length > 0 ? stopsHeld / lossTrades.length * 100 : null;
 
     // 2. Partial execution — % of eligible trades where partial was taken
-    const partialEligible = closed.filter(t => (t.finalPlPct || 0) >= (_cfg.partialTrigger || 10));
+    const partialEligible = closed.filter(t => (t.finalPlPct || 0) >= (_cfg.targetPct || 7));
     const partialTaken = partialEligible.filter(t => t.partialTaken === 'Y').length;
     const partialPct = partialEligible.length > 0 ? Math.min(100, partialTaken / partialEligible.length * 100) : null;
 
@@ -6129,7 +6130,7 @@ function initAnalysisCharts(open, closed) {
     if (partialPct !== null) {
       const col = partialPct >= 70 ? 'var(--green)' : partialPct >= 40 ? 'var(--amber)' : 'var(--red)';
       const ic = partialPct >= 70 ? '✓' : '⚠';
-      html += metric('Partial Execution', partialPct.toFixed(0) + '%', `of ${partialEligible.length} winners that reached +${_cfg.partialTrigger||10}% trigger`, col, ic);
+      html += metric('Partial Execution', partialPct.toFixed(0) + '%', `of ${partialEligible.length} winners that reached +${_(cfg.targetPct||7)||10}% trigger`, col, ic);
       scoreItems.push({ label: 'Partial execution', ok: partialPct >= 70, msg: partialPct < 40 ? `Only ${partialPct.toFixed(0)}% of eligible winners had a partial exit — you may be leaving profit protection on the table` : '' });
     }
     if (avgWinDays !== null && avgLossDays !== null) {
@@ -7315,7 +7316,7 @@ function initAnalysisCharts(open, closed) {
     if (trackerEl) {
       const changeDate = parseDate(_cfg.beRuleChangeDate || '19-Jun-2026');
       const oldTrigger = _cfg.beRuleOldTrigger || 5;
-      const newTrigger = _cfg.beTrigger || 7;
+      const newTrigger = _cfg.targetPct || 7;
       const allT = [...closed, ...open].filter(t => t.openDate);
       const before = allT.filter(t => parseDate(t.openDate) < changeDate);
       const after  = allT.filter(t => parseDate(t.openDate) >= changeDate);
@@ -8013,7 +8014,7 @@ function renderStockLeader(sortBy) {
 function renderProjections(open, closed) {
   const _ic = (window._data && window._data.initialCapital) || 5000000;
   const _cfg = loadConfig();
-  const PARTIAL_TRIGGER = _cfg.partialTrigger || 10;
+  const PARTIAL_TRIGGER = _cfg.targetPct || 7;
   const fmtRs = v => (v >= 0 ? '+₹' : '-₹') + Math.abs(Math.round(v)).toLocaleString('en-IN');
   const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
   const setHtml = (id, v) => { const el = document.getElementById(id); if (el) el.innerHTML = v; };
