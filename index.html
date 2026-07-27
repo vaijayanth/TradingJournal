@@ -1447,13 +1447,13 @@ tbody tr:hover { filter: brightness(0.97); }
       </div>
     </div>
     <div class="card card-sm" id="proj-partial-card">
-      <div class="stat-label">💰 Partial Exit Locked-in</div>
+      <div class="stat-label">🟡 At Lock-In / Target</div>
       <div style="font-size:22px;font-weight:700;color:var(--green);margin-top:6px" id="proj-partial-rs">—</div>
-      <div class="stat-sub" id="proj-partial-sub">potential gain if partials triggered now</div>
+      <div class="stat-sub" id="proj-partial-sub">unrealised MTM in positions at or above lock-in</div>
       <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
-        <div style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:4px">POSITIONS ELIGIBLE</div>
+        <div style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:4px">POSITIONS AT TARGET</div>
         <div style="font-size:18px;font-weight:700" id="proj-partial-count">—</div>
-        <div class="stat-sub" id="proj-partial-detail">at or above partial trigger</div>
+        <div class="stat-sub" id="proj-partial-detail">trailing SL active</div>
       </div>
     </div>
     <div class="card card-sm" id="proj-tier-card">
@@ -1570,10 +1570,6 @@ tbody tr:hover { filter: brightness(0.97); }
       </div>
     </details>
   </div>
-  <div class="card" style="margin-bottom:14px;border-left:3px solid var(--green)">
-    <div style="font-size:12px;font-weight:700;color:var(--green);margin-bottom:6px;text-transform:uppercase;letter-spacing:.06em">BE Rule Change Tracker — +5% → +2% (from 19 Jun 2026)</div>
-    <div id="be-rule-tracker" style="font-size:13px;line-height:1.7;color:var(--text-secondary)">Loading…</div>
-  </div>
   <div class="grid-2" style="margin-bottom:14px">
     <div class="card">
       <div class="chart-title">₹ Risk per Trade Distribution</div>
@@ -1656,70 +1652,28 @@ tbody tr:hover { filter: brightness(0.97); }
     <div id="discipline-scorecard-verdict" style="margin-top:14px;padding-top:12px;border-top:1px solid var(--border);font-size:13px;line-height:1.7;color:var(--text-secondary)"></div>
   </div>
 
-  <!-- 4. Partial Exit Analysis -->
-  <div class="section-title" id="asec-partial" style="margin-top:20px">Partial Exit Analysis</div>
+  <!-- 4. Add Signal Tracker (SST) -->
+  <div class="section-title" id="asec-partial" style="margin-top:20px">Add Signal Tracker</div>
+  <div style="font-size:12px;color:var(--text-muted);margin-bottom:10px">SST add rule: when a position is in loss and still above 200+50 EMA, place a GTT at 21-day high for 50% add-on qty. Tracks how many current positions qualify.</div>
   <div class="grid-3" style="margin-bottom:14px">
     <div class="card card-sm">
-      <div class="stat-label">Took 50% Partial at +<span id="partial-trigger-label-a">10</span>%</div>
-      <div style="font-size:11px;color:var(--text-muted);margin-top:4px;line-height:1.5">Sold half the position at trigger, held remainder via 7-day low trail</div>
-      <div style="font-size:28px;font-weight:700;margin-top:10px" id="partial-yes-avg">—</div>
-      <div class="stat-sub">Avg blended final P&L%</div>
-      <div style="font-size:16px;font-weight:700;margin-top:8px;color:var(--green)" id="partial-yes-gain-after">—</div>
-      <div class="stat-sub" title="How much extra did the remaining 50% capture beyond the trigger? e.g. +5% means the remainder ran to +15% on average">Remainder captured past trigger ⓘ</div>
-      <div style="font-size:13px;margin-top:6px;color:var(--text-muted)" id="partial-yes-n">n = —</div>
+      <div class="stat-label">🔵 Add Eligible Now</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:4px;line-height:1.5">In loss + above 200 &amp; 50 EMA — place GTT at 21DH</div>
+      <div style="font-size:28px;font-weight:700;margin-top:10px;color:#60A5FA" id="sst-add-eligible">—</div>
+      <div class="stat-sub">open positions eligible for add</div>
+      <div style="font-size:13px;margin-top:6px;color:var(--text-muted)" id="sst-add-invested">—</div>
     </div>
     <div class="card card-sm">
-      <div class="stat-label">Hit +<span id="partial-trigger-label">10</span>%, Held Full Position</div>
-      <div style="font-size:11px;color:var(--text-muted);margin-top:4px;line-height:1.5">Closed trades that reached trigger but no partial was taken — full position held to close</div>
-      <div style="font-size:28px;font-weight:700;margin-top:10px" id="partial-no-avg">—</div>
-      <div class="stat-sub">Avg final P&L%</div>
-      <div style="font-size:13px;font-weight:600;margin-top:8px" id="partial-compare">—</div>
-      <div style="font-size:13px;margin-top:6px;color:var(--text-muted)" id="partial-no-n">n = —</div>
+      <div class="stat-label">⏳ Hold (Below 50 EMA)</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:4px;line-height:1.5">In loss + below 50 EMA — hold, do nothing, wait</div>
+      <div style="font-size:28px;font-weight:700;margin-top:10px;color:var(--text-muted)" id="sst-hold-count">—</div>
+      <div class="stat-sub">positions to hold without action</div>
     </div>
     <div class="card card-sm">
-      <div class="stat-label">Action Now</div>
-      <div style="font-size:13px;font-weight:600;margin-top:8px;line-height:1.6" id="partial-pending-list">—</div>
-      <div style="margin-top:10px;padding-top:8px;border-top:1px solid var(--border)" id="partial-insight-wrap">
-        <div style="font-size:12px;font-weight:600;color:var(--text-muted)">Strategy verdict</div>
-        <div style="font-size:13px;font-weight:700;margin-top:4px;line-height:1.5" id="partial-insight">—</div>
-      </div>
+      <div class="stat-label">Closed — Added vs Not Added</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:4px;line-height:1.5">Outcome comparison for add-eligible closed trades</div>
+      <div style="font-size:13px;font-weight:600;margin-top:8px;line-height:1.7" id="sst-add-outcome">—</div>
     </div>
-  </div>
-
-  <!-- 4b. Stop Trigger Calibration (forward-looking, based on current 7% BE trigger) -->
-  <div class="section-title" id="asec-be-impact" style="margin-top:20px">Stop Trigger Calibration — Is +<span id="be-trig-label">7</span>% the Right Threshold?</div>
-  <div style="font-size:12px;color:var(--text-muted);margin-bottom:10px">Two-phase stop system: Phase 1 = hold initial risk-defined stop (col J fixed). Phase 2 (≥ +<span id="be-trig-label2">7</span>%) = move col J once to breakeven, then trail by watching 21 EMA support. Uses MFE/MAE data (cols AL/AM).</div>
-  <div class="grid-3" style="margin-bottom:14px">
-    <div class="card card-sm">
-      <div class="stat-label">Trades Reaching +<span id="be-trig-label3">7</span>% That Became Big Winners (&gt;15%)</div>
-      <div style="font-size:28px;font-weight:700;margin-top:10px;color:var(--green)" id="be-runner-count">—</div>
-      <div class="stat-sub" id="be-runner-sub">of trades that hit the trigger</div>
-      <div style="font-size:14px;font-weight:700;margin-top:8px" id="be-runner-mfe">—</div>
-      <div class="stat-sub">avg MFE peak for those runners</div>
-    </div>
-    <div class="card card-sm">
-      <div class="stat-label">Trades Reaching +<span id="be-trig-label4">7</span>% That Reversed to ~0 (BE Stop)</div>
-      <div style="font-size:28px;font-weight:700;margin-top:10px;color:var(--amber)" id="be-stopped-count">—</div>
-      <div class="stat-sub" id="be-stopped-sub">closed within −2% to +2% after hitting trigger</div>
-      <div style="font-size:14px;font-weight:700;margin-top:8px" id="be-stopped-mfe">—</div>
-      <div class="stat-sub">avg MFE before reversal</div>
-    </div>
-    <div class="card card-sm">
-      <div class="stat-label">7DL Breach in Phase 2 — Consolidation or Real Reversal?</div>
-      <div style="font-size:12px;margin-top:10px;line-height:2" id="be-outcome-breakdown">—</div>
-    </div>
-  </div>
-  <div class="card" style="margin-bottom:14px">
-    <div class="chart-title">After Reaching +<span id="be-chart-label">7</span>%, Where Do Trades End Up?</div>
-    <div class="chart-sub">Final P&L% for all closed trades that ever hit +<span id="be-chart-label2">7</span>% · Validates the two-phase approach — most should continue as winners</div>
-    <div id="chart-be-outcome" style="height:240px"></div>
-    <div style="font-size:12px;margin-top:8px;color:var(--text-muted);line-height:1.8" id="be-outcome-insight">—</div>
-  </div>
-  <div class="card" style="margin-bottom:14px">
-    <div class="chart-title">MFE Distribution — Trades That Hit +<span id="be-chart-label3">7</span>%</div>
-    <div class="chart-sub">Peak gain reached before exit · Shows the "runway" available — how much profit was left on the table by early exits vs how much was captured</div>
-    <div id="chart-be-compare" style="height:220px"></div>
-    <div style="font-size:12px;margin-top:8px;color:var(--text-muted);line-height:1.8" id="be-compare-insight">—</div>
   </div>
 
   <!-- 4. Behavioural Patterns -->
@@ -1877,7 +1831,7 @@ tbody tr:hover { filter: brightness(0.97); }
       <details style="margin-top:6px">
         <summary style="font-size:12px;font-weight:600;color:var(--text-muted);cursor:pointer;padding:4px 0;user-select:none">How to read this chart ▸</summary>
         <div style="padding:10px 12px;background:var(--surface2);border-radius:8px;font-size:12px;line-height:1.7;color:var(--text-secondary);margin-top:6px">
-          <strong>Ideal Minervini pattern:</strong> Red dots cluster bottom-left (small losses, cut quickly). Green/amber stretch up and right (big gains, held long).<br>
+          <strong>Ideal SST pattern:</strong> Red dots cluster bottom-left (small losses, cut quickly). Green/amber stretch up and right (big gains, held long).<br>
           <strong>Warning signs:</strong> Red dots spread far right = holding losses too long. Green dots all cramped left = exiting winners too early.<br>
           <strong>Amber note:</strong> Open positions show their gain <em>so far</em> — not their final outcome. They will move right as they age. These are typically your biggest winners.
         </div>
@@ -1945,7 +1899,7 @@ tbody tr:hover { filter: brightness(0.97); }
   <!-- 7a. R-Multiple Distribution -->
   <div class="card" style="margin-bottom:14px">
     <div class="chart-title">R-Multiple Distribution</div>
-    <div class="chart-sub">Each bar = trades landing in that R bucket · Right-skewed (long green tail) = healthy Minervini edge</div>
+    <div class="chart-sub">Each bar = trades landing in that R bucket · Right-skewed (long green tail) = healthy SST edge</div>
     <div id="chart-r-dist" style="height:220px"></div>
     <div id="r-dist-insight" style="margin-top:8px;font-size:12px;color:var(--text-muted);line-height:1.8"></div>
   </div>
@@ -2214,20 +2168,12 @@ tbody tr:hover { filter: brightness(0.97); }
         <input type="number" id="cfg-max-heat" class="config-input config-input-sm" step="0.5">
       </div>
       <div class="config-field">
-        <label class="config-label">Partial Exit Trigger (%)</label>
-        <input type="number" id="cfg-partial-trigger" class="config-input config-input-sm" step="0.5">
+        <label class="config-label">Profit Target — Trail SL (%) <span style="font-weight:400;font-size:10px;color:var(--text-muted)">🚀 trail up above this</span></label>
+        <input type="number" id="cfg-target-pct" class="config-input config-input-sm" step="0.5">
       </div>
       <div class="config-field">
-        <label class="config-label">Breakeven Trigger (%)</label>
-        <input type="number" id="cfg-be-trigger" class="config-input config-input-sm" step="0.5">
-      </div>
-      <div class="config-field">
-        <label class="config-label">BE Rule Change Date <span style="font-weight:400;font-size:10px;color:var(--text-muted)">(dd-Mon-yyyy)</span></label>
-        <input type="text" id="cfg-be-rule-change-date" class="config-input config-input-sm" placeholder="19-Jun-2026">
-      </div>
-<div class="config-field">
-        <label class="config-label">Stop Proximity Alert (%)</label>
-        <input type="number" id="cfg-stop-proximity" class="config-input config-input-sm" step="0.5">
+        <label class="config-label">Lock-In Zone (%) <span style="font-weight:400;font-size:10px;color:var(--text-muted)">🟡 verify GTT active</span></label>
+        <input type="number" id="cfg-lockin-pct" class="config-input config-input-sm" step="0.5">
       </div>
       <div class="config-field">
         <label class="config-label">Heat Gauge — Green below (%)</label>
@@ -2276,7 +2222,7 @@ tbody tr:hover { filter: brightness(0.97); }
   <div class="page-header" style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px">
     <div>
       <h2 style="margin:0;font-size:18px;font-weight:800">📖 My Trading Strategy</h2>
-      <div style="font-size:12px;color:var(--text-muted);margin-top:3px">Minervini / Bonde / Zanger momentum breakout system · Updated as rules evolve</div>
+      <div style="font-size:12px;color:var(--text-muted);margin-top:3px">SST-Hybrid — Sharegenius Swing Trading adapted for momentum stocks · Updated as rules evolve</div>
     </div>
     <button onclick="openStrategyEditor()" style="padding:7px 16px;border-radius:8px;border:1.5px solid var(--accent);background:var(--accent);color:#fff;font-size:12px;font-weight:700;cursor:pointer">+ Log a Rule Change</button>
   </div>
@@ -2789,17 +2735,11 @@ function renderDashboard(data, cfg) {
   const totalCombinedPl = totalFinalPl + totalUnrealisedPl;
   // AK26 = realised only (initial capital + closed P&L). Add open MTM (col Y) for true combined return.
   const totalReturn = initialCapital > 0 ? (totalCombinedPl / initialCapital * 100) : 0;
-  const totalInitRisk = open.reduce((s, t) => s + t.initRiskRs, 0);
-  // Current heat: zero out positions where stop has moved to breakeven or better
-  const totalHeat = open.reduce((s, t) => {
-    const effStop = t.stopLoss || 0;
-    const atBreakeven = effStop >= t.entryPrice;
-    return s + (atBreakeven ? 0 : (t.initRiskPct || 0));
-  }, 0);
-  const protectedCount = open.filter(t => {
-    const effStop = t.stopLoss || 0;
-    return effStop >= t.entryPrice;
-  }).length;
+  const totalInitRisk = open.reduce((s, t) => s + (t.positionSize || 0), 0);
+  // SST heat: capital deployed as % of portfolio
+  const totalDeployed = open.reduce((s, t) => s + (t.totalInvested || t.positionSize || 0), 0);
+  const totalHeat = initialCapital > 0 ? totalDeployed / initialCapital * 100 : 0;
+  const protectedCount = open.filter(t => (t.plPct || 0) >= (cfg.lockInPct || 6)).length;
   const fmt = v => '₹' + Math.abs(v).toLocaleString('en-IN', { maximumFractionDigits: 0 });
   const fmtSigned = v => (v >= 0 ? '+' : '-') + fmt(v);
 
@@ -3133,13 +3073,8 @@ function renderDashboard(data, cfg) {
     }
   })();
 
-  // Open/Closed count card in Risk section
-  const alertCount = open.filter(t => {
-    const es = t.stopLoss || 0;
-    const ep = (t.cmp && es) ? ((t.cmp - es) / t.cmp * 100) : t.pctFromStop;
-    // SST: alert = at target, at lock-in, or in loss
-    return (t.plPct||0) >= (cfg.lockInPct||6) || (t.plPct||0) < 0;
-  }).length;
+  // Alert count: positions needing attention (at target, lock-in zone, or in loss)
+  const alertCount = open.filter(t => (t.plPct||0) >= (cfg.lockInPct||6) || (t.plPct||0) < 0).length;
   set('dash-open-count', open.length);
   set('dash-closed-count', closed.length);
   const openBadge = document.getElementById('dash-open-badge');
@@ -4449,7 +4384,7 @@ function renderPerfStats(closed, open, portfolioValue, initialCapital) {
     }
     if (tailEl) tailEl.textContent = rightTailPct + '%';
     if (verdictEl) {
-      if (skew > 0.5) verdictEl.innerHTML = `<span style="color:var(--green)">✓ Strong positive skew</span> — your distribution has a long right tail of big winners. This is exactly what a Minervini momentum system should look like. Keep cutting losses fast and running winners.`;
+      if (skew > 0.5) verdictEl.innerHTML = `<span style="color:var(--green)">✓ Strong positive skew</span> — your distribution has a long right tail of big winners. This is the ideal SST-Hybrid outcome: losses held small, winners allowed to run. Keep cutting losses fast and running winners.`;
       else if (skew > 0) verdictEl.innerHTML = `<span style="color:var(--amber)">~ Mild positive skew</span> — leaning right but not strongly. ${rightTailPct}% of trades are +10% winners. Ideally this grows as you hold winners longer.`;
       else if (skew > -0.5) verdictEl.innerHTML = `<span style="color:var(--amber)">⚠ Near-neutral skew</span> — wins and losses are roughly symmetric. Momentum system should have positive skew. Check if you are cutting winners too early.`;
       else verdictEl.innerHTML = `<span style="color:var(--red)">🚨 Negative skew</span> — you have more large losses than large wins. This is the wrong shape for a momentum system. Review stop discipline — are losers running past plan?`;
@@ -4777,7 +4712,7 @@ function renderCalendarReal(closed, forceYear) {
           pl: (t.finalPl >= 0 ? '+₹' : '-₹') + Math.round(Math.abs(t.finalPl)).toLocaleString('en-IN'),
           plSign: t.finalPl >= 0 ? '+' : '-',
           setup: parseSetupType(t.setupType).label,
-          partial: t.partialTaken === 'Y' ? 'Y' : 'N'
+          invested: t.totalInvested || t.positionSize || 0
         }));
         const tip = JSON.stringify({ pnl: plFmt, trades: tradesInfo }).replace(/"/g, '&quot;');
         const plCompact = (entry.pl >= 0 ? '+' : '-') + (Math.abs(entry.pl) >= 100000 ? (Math.abs(entry.pl)/1000).toFixed(0)+'k' : Math.abs(entry.pl) >= 1000 ? (Math.abs(entry.pl)/1000).toFixed(1)+'k' : Math.round(Math.abs(entry.pl)));
@@ -4849,30 +4784,23 @@ function renderColMappings() {
     { label: 'Stock Name', key: 'stockCol' },
     { label: 'Entry / Open Date', key: 'openDateCol' },
     { label: 'Exit / Close Date', key: 'closeDateCol' },
-    { label: '21 EMA Context (Above/Below)', key: 'ema21Col' },
     { label: 'CMP — Current Market Price', key: 'cmpCol' },
-    { label: '7-Day Low', key: 'sevenDayLowCol' },
-    { label: 'Stop Loss Price', key: 'stopLossCol' },
-    { label: 'Initial Risk ₹', key: 'initRiskRsCol' },
-    { label: 'Initial Risk %', key: 'initRiskPctCol' },
-    { label: 'Initial Qty', key: 'qtyCol' },
+    { label: '21-Day High (GTT trigger price)', key: 'sevenDayLowCol' },
+    { label: 'GTT Placed Price (col J)', key: 'stopLossCol' },
+    { label: 'Position Size ₹ (base lot)', key: 'initRiskRsCol' },
+    { label: 'Risk % of Portfolio', key: 'initRiskPctCol' },
+    { label: 'Qty', key: 'qtyCol' },
     { label: 'Entry Price', key: 'entryPriceCol' },
-    { label: 'Setup Type', key: 'setupTypeCol', optional: true },
-    { label: '% from Stop Loss', key: 'pctFromStopCol' },
-    { label: 'Notional P&L %', key: 'plPctCol' },
-    { label: 'Notional P&L ₹', key: 'notionalPlCol' },
-    { label: 'Partial Exit Qty', key: 'partialQtyCol' },
-    { label: 'Partial Exit Price', key: 'partialPriceCol' },
-    { label: 'Partial P&L ₹', key: 'partialPlCol' },
+    { label: 'Total Invested ₹ (col S)', key: 'setupTypeCol' },
+    { label: '6% Target CMP (col X)', key: 'plPctCol' },
+    { label: 'Notional P&L ₹ (col V)', key: 'notionalPlCol' },
     { label: 'Final Exit Price', key: 'finalExitPriceCol' },
     { label: 'Final P&L ₹', key: 'finalPlCol' },
     { label: 'Final P&L %', key: 'finalPlPctCol' },
     { label: 'Trade Age (days)', key: 'ageCol' },
-    { label: 'HA Colour (AG)', key: 'haColourCol', optional: true },
-    { label: 'HA Colour Changed (AH)', key: 'haChangedCol', optional: true },
-    { label: 'MAE % — Max Adverse Excursion (AL)', key: 'maeCol', optional: true },
-    { label: 'MFE % — Max Favorable Excursion (AM)', key: 'mfeCol', optional: true },
-    { label: 'Sector (AN)', key: 'sectorCol', optional: true },
+    { label: 'MAE %', key: 'maeCol', optional: true },
+    { label: 'MFE %', key: 'mfeCol', optional: true },
+    { label: 'Sector', key: 'sectorCol', optional: true },
   ];
   const container = document.getElementById('col-mappings');
   container.innerHTML = fields.map(f => `
@@ -4892,11 +4820,8 @@ function populateConfigPage() {
   setVal('cfg-portfolio-cell', cfg.portfolioCell);
   setVal('cfg-initial-cap-cell', cfg.initialCapCell);
   setVal('cfg-max-heat', cfg.maxHeat);
-  setVal('cfg-partial-trigger', (cfg.targetPct||7));
-  setVal('cfg-be-trigger', (cfg.targetPct||7));
-  setVal('cfg-be-rule-change-date', cfg.beRuleChangeDate || '');
-  setVal('cfg-be-rule-old-trigger', cfg.beRuleOldTrigger || '');
-  setVal('cfg-stop-proximity', (cfg.lockInPct||6));
+  setVal('cfg-target-pct', cfg.targetPct || 7);
+  setVal('cfg-lockin-pct', cfg.lockInPct || 6);
   setVal('cfg-heat-green', cfg.heatGreen);
   setVal('cfg-heat-amber', cfg.heatAmber);
   setVal('cfg-max-positions', cfg.maxPositions);
@@ -4956,27 +4881,22 @@ function saveAllConfig() {
   cfg.headerRows = getVal('cfg-header-rows', cfg.headerRows) || '1';
   cfg.portfolioCell = getVal('cfg-portfolio-cell', cfg.portfolioCell).toUpperCase() || cfg.portfolioCell;
   cfg.initialCapCell = getVal('cfg-initial-cap-cell', cfg.initialCapCell).toUpperCase() || cfg.initialCapCell;
-  cfg.maxHeat = parseFloat(getVal('cfg-max-heat', cfg.maxHeat)) || cfg.maxHeat;
-  (cfg.targetPct||7) = parseFloat(getVal('cfg-partial-trigger', (cfg.targetPct||7))) || (cfg.targetPct||7);
-  (cfg.targetPct||7) = parseFloat(getVal('cfg-be-trigger', (cfg.targetPct||7))) || (cfg.targetPct||7);
-  cfg.beRuleChangeDate = getVal('cfg-be-rule-change-date', cfg.beRuleChangeDate || '');
-  cfg.beRuleOldTrigger = parseFloat(getVal('cfg-be-rule-old-trigger', cfg.beRuleOldTrigger || 5)) || 5;
-  (cfg.lockInPct||6) = parseFloat(getVal('cfg-stop-proximity', (cfg.lockInPct||6))) || (cfg.lockInPct||6);
+  cfg.maxHeat    = parseFloat(getVal('cfg-max-heat', cfg.maxHeat)) || cfg.maxHeat;
+  cfg.targetPct  = parseFloat(getVal('cfg-target-pct', cfg.targetPct || 7)) || cfg.targetPct || 7;
+  cfg.lockInPct  = parseFloat(getVal('cfg-lockin-pct', cfg.lockInPct || 6)) || cfg.lockInPct || 6;
   cfg.heatGreen = parseFloat(getVal('cfg-heat-green', cfg.heatGreen)) || cfg.heatGreen;
   cfg.heatAmber = parseFloat(getVal('cfg-heat-amber', cfg.heatAmber)) || cfg.heatAmber;
   cfg.maxPositions = parseInt(getVal('cfg-max-positions', cfg.maxPositions)) || cfg.maxPositions;
   (cfg.maxAge||90) = parseInt(getVal('cfg-max-age', (cfg.maxAge||90))) || (cfg.maxAge||90);
   cfg.weeklyTarget = parseInt(getVal('cfg-weekly-target', cfg.weeklyTarget || 0)) || 0;
-  ['flagCol','stockCol','openDateCol','closeDateCol','ema21Col','cmpCol','sevenDayLowCol','stopLossCol',
-   'initRiskRsCol','initRiskPctCol','qtyCol','entryPriceCol','setupTypeCol','pctFromStopCol','plPctCol',
-   'notionalPlCol','partialQtyCol','partialPriceCol','partialPlCol','finalExitPriceCol','finalPlCol','finalPlPctCol','ageCol',
-   'haColourCol','haChangedCol','maeCol','mfeCol','sectorCol'
-  ].forEach(key => { const v = getVal('cfg-' + key, cfg[key]).toUpperCase().trim(); if (v) cfg[key] = v; });
+  ['flagCol','stockCol','openDateCol','closeDateCol','cmpCol','sevenDayLowCol','stopLossCol',
+   'initRiskRsCol','initRiskPctCol','qtyCol','entryPriceCol','setupTypeCol','plPctCol',
+   'notionalPlCol','finalExitPriceCol','finalPlCol','finalPlPctCol','ageCol','maeCol','mfeCol','sectorCol'
+  ].forEach(key => { const v = getVal('cfg-' + key, cfg[key] || '').toUpperCase().trim(); if (v) cfg[key] = v; });
   // Validate column letters — warn if any col mapping looks wrong (not A-ZZ pattern)
-  const colKeys = ['flagCol','stockCol','openDateCol','closeDateCol','ema21Col','cmpCol','sevenDayLowCol','stopLossCol',
-    'initRiskRsCol','initRiskPctCol','qtyCol','entryPriceCol','setupTypeCol','pctFromStopCol','plPctCol',
-    'notionalPlCol','partialQtyCol','partialPriceCol','partialPlCol','finalExitPriceCol','finalPlCol','finalPlPctCol','ageCol',
-    'haColourCol','haChangedCol','maeCol','mfeCol','sectorCol'];
+  const colKeys = ['flagCol','stockCol','openDateCol','closeDateCol','cmpCol','sevenDayLowCol','stopLossCol',
+    'initRiskRsCol','initRiskPctCol','qtyCol','entryPriceCol','setupTypeCol','plPctCol',
+    'notionalPlCol','finalExitPriceCol','finalPlCol','finalPlPctCol','ageCol','maeCol','mfeCol','sectorCol'];
   const badCols = colKeys.filter(k => cfg[k] && !/^[A-Z]{1,3}$/.test(cfg[k]));
   if (badCols.length > 0) {
     showToast('⚠ Invalid column(s): ' + badCols.map(k => k.replace('Col','') + '=' + cfg[k]).join(', '), 'red');
@@ -5868,7 +5788,7 @@ function initAnalysisCharts(open, closed) {
   const c = chartColors();
   const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
   const _cfg = loadConfig();
-  const BE_TRIGGER = _cfg.targetPct || 7;       // move stop to breakeven at this % profit
+  const LOCK_IN_TRIGGER = _cfg.lockInPct || 6; const BE_TRIGGER = _cfg.targetPct || 7;
   const PARTIAL_TRIGGER = _cfg.targetPct || 7; // take 50% partial at this % profit
 
   // ── Setup Type Breakdown ──
@@ -6090,9 +6010,7 @@ function initAnalysisCharts(open, closed) {
     const stopPct = lossTrades.length > 0 ? stopsHeld / lossTrades.length * 100 : null;
 
     // 2. Partial execution — % of eligible trades where partial was taken
-    const partialEligible = closed.filter(t => (t.finalPlPct || 0) >= (_cfg.targetPct || 7));
-    const partialTaken = partialEligible.filter(t => t.partialTaken === 'Y').length;
-    const partialPct = partialEligible.length > 0 ? Math.min(100, partialTaken / partialEligible.length * 100) : null;
+    const partialPct = null; // SST: no partial exit column — removed
 
     // 3. Avg hold days — winners vs losers (only trades with age > 0)
     const closedWins = closed.filter(t => (t.finalPlPct||0) > 0 && parseInt(t.age||0) > 0);
@@ -6127,12 +6045,7 @@ function initAnalysisCharts(open, closed) {
       html += metric('Stop Discipline', stopPct.toFixed(0) + '%', `of ${lossTrades.length} losses taken within planned risk ₹ (±10%)`, col, ic);
       scoreItems.push({ label: 'Stop discipline', ok: stopPct >= 80, msg: stopPct < 80 ? `Only ${stopPct.toFixed(0)}% of losses taken within planned ₹ risk — exits are running past the stop` : '' });
     }
-    if (partialPct !== null) {
-      const col = partialPct >= 70 ? 'var(--green)' : partialPct >= 40 ? 'var(--amber)' : 'var(--red)';
-      const ic = partialPct >= 70 ? '✓' : '⚠';
-      html += metric('Partial Execution', partialPct.toFixed(0) + '%', `of ${partialEligible.length} winners that reached +${_(cfg.targetPct||7)||10}% trigger`, col, ic);
-      scoreItems.push({ label: 'Partial execution', ok: partialPct >= 70, msg: partialPct < 40 ? `Only ${partialPct.toFixed(0)}% of eligible winners had a partial exit — you may be leaving profit protection on the table` : '' });
-    }
+    // SST: no partial exit tracking — skipped
     if (avgWinDays !== null && avgLossDays !== null) {
       const ratio = avgLossDays > 0 ? avgWinDays / avgLossDays : 0;
       const col = ratio >= 2 ? 'var(--green)' : ratio >= 1.2 ? 'var(--amber)' : 'var(--red)';
@@ -6215,207 +6128,27 @@ function initAnalysisCharts(open, closed) {
     setupAvgPh.style.display = '';
   }
 
-  // Partial Exit Analysis
-  const partialYes = closed.filter(t => (t.partialTaken||'').toUpperCase() === 'Y');
-  // Fair comparison: only closed trades that actually REACHED the trigger but didn't take partial
-  const reachedNoPartial = closed.filter(t => (t.partialTaken||'').toUpperCase() !== 'Y' && t.finalPlPct >= PARTIAL_TRIGGER);
-  const pStats = trades => {
-    const wins = trades.filter(t => t.finalPlPct > 0);
-    return {
-      wr: trades.length ? wins.length/trades.length*100 : 0,
-      avg: trades.length ? trades.reduce((s,t)=>s+t.finalPlPct,0)/trades.length : 0,
-      n: trades.length
-    };
-  };
-  const py = pStats(partialYes), pn = pStats(reachedNoPartial);
-  // Avg remainder gain: how much beyond trigger did the remainder capture
-  const gainAfterPartial = partialYes.length
-    ? partialYes.reduce((s,t) => s + Math.max(0, t.finalPlPct - PARTIAL_TRIGGER), 0) / partialYes.length
-    : 0;
-  set('partial-yes-avg', (py.avg>=0?'+':'')+py.avg.toFixed(1)+'%');
-  set('partial-yes-gain-after', gainAfterPartial > 0 ? '+'+gainAfterPartial.toFixed(1)+'%' : '—');
-  set('partial-yes-n', 'n = '+py.n+' closed trades');
-  set('partial-trigger-label', PARTIAL_TRIGGER);
-  set('partial-trigger-label-a', PARTIAL_TRIGGER);
-  if (pn.n > 0) {
-    set('partial-no-avg', (pn.avg>=0?'+':'')+pn.avg.toFixed(1)+'%');
-    set('partial-no-n', 'n = '+pn.n+' closed trades');
-    const diff = pn.avg - py.avg;
-    const compareEl = document.getElementById('partial-compare');
-    if (compareEl) {
-      if (diff > 0.5) {
-        compareEl.innerHTML = `<span style="color:var(--amber)">↑ ${diff.toFixed(1)}% more than taking partial — your runners run far</span>`;
-      } else if (diff < -0.5) {
-        compareEl.innerHTML = `<span style="color:var(--green)">↓ ${Math.abs(diff).toFixed(1)}% less — partial exit protected gains</span>`;
-      } else {
-        compareEl.innerHTML = `<span style="color:var(--text-muted)">Similar outcome either way</span>`;
-      }
-    }
-  } else {
-    set('partial-no-avg', '—');
-    set('partial-no-n', 'No closed trades hit +' + PARTIAL_TRIGGER + '% without partial yet');
-    const compareEl = document.getElementById('partial-compare'); if (compareEl) compareEl.textContent = '';
-  }
-
-  // Action Now: open positions pending partial exit
-  const pendingPartial = open.filter(t => (t.plPct||0) >= PARTIAL_TRIGGER && (t.partialTaken||'').toUpperCase() !== 'Y');
-  const pendingListEl = document.getElementById('partial-pending-list');
-  if (pendingListEl) {
-    if (pendingPartial.length > 0) {
-      pendingListEl.innerHTML = pendingPartial.map(t =>
-        `<div style="color:var(--green);font-weight:700">⚡ ${t.stock} <span style="color:var(--text-secondary);font-weight:400">+${(t.plPct||0).toFixed(1)}%</span></div>`
-      ).join('') + `<div style="margin-top:4px;font-size:11px;color:var(--amber)">Take 50% partial on ${pendingPartial.length} position${pendingPartial.length>1?'s':''} — trigger hit</div>`;
-    } else {
-      pendingListEl.innerHTML = `<span style="color:var(--green)">✓ All caught up — no partial exits pending</span>`;
-    }
-  }
-
-  // Strategy verdict — plain "should you take partials?"
-  const partialInsightEl = document.getElementById('partial-insight');
-  if (partialInsightEl) {
-    if (py.n === 0 && pn.n === 0) {
-      partialInsightEl.textContent = 'No data yet — need closed trades to compare.';
-      partialInsightEl.style.color = 'var(--text-muted)';
-    } else if (pn.n < 3) {
-      const msg = py.n > 0 ? `${py.n} partials taken, avg +${py.avg.toFixed(1)}%. Need more "held full" closed trades for comparison.` : 'No partial exits taken yet.';
-      partialInsightEl.textContent = msg; partialInsightEl.style.color = 'var(--text-muted)';
-    } else {
-      const diff = pn.avg - py.avg; // positive = full hold wins more
-      const confNote = `(${py.n} partial vs ${pn.n} full, ${Math.min(py.n, pn.n) < 10 ? 'small sample — directional only' : 'reasonable sample'})`;
-      if (diff > 5) {
-        partialInsightEl.innerHTML = `<span style="color:var(--amber)">📊 Verdict: <strong>STOP TAKING PARTIALS</strong> — your winners run far.<br>Full hold avg: <strong>+${pn.avg.toFixed(1)}%</strong> · Partial avg: <strong>+${py.avg.toFixed(1)}%</strong> · You leave +${diff.toFixed(1)}% on the table per trade by exiting early. ${confNote}<br><span style="font-size:11px">Action: Raise partial trigger to +${Math.round(PARTIAL_TRIGGER * 1.5)}% or remove it. Let the 7-day-low trail do the work.</span></span>`;
-      } else if (diff > 1) {
-        partialInsightEl.innerHTML = `<span style="color:var(--amber)">📊 Full holds slightly better (+${diff.toFixed(1)}% edge). ${confNote}<br>Consider raising trigger from +${PARTIAL_TRIGGER}% to +${Math.round(PARTIAL_TRIGGER * 1.3)}% to let more winners develop.</span>`;
-      } else if (diff < -3) {
-        partialInsightEl.innerHTML = `<span style="color:var(--green)">✅ Verdict: <strong>KEEP TAKING PARTIALS</strong> — they protect your gains.<br>Partial avg: <strong>+${py.avg.toFixed(1)}%</strong> · Full hold avg: <strong>+${pn.avg.toFixed(1)}%</strong> · Partials add +${Math.abs(diff).toFixed(1)}% to blended outcome. ${confNote}</span>`;
-      } else {
-        partialInsightEl.innerHTML = `<span style="color:var(--text-secondary)">📊 Roughly equal — partial vs full within ${Math.abs(diff).toFixed(1)}% of each other. ${confNote}<br>Personal preference: partials reduce psychological pressure; full holds maximise upside if you can hold.</span>`;
-      }
-    }
-  }
-
-  // ── Stop Trigger Calibration (forward-looking, 7% two-phase system) ──
+  // ── SST Add Signal Tracker ──
   try {
-    const BET = BE_TRIGGER; // current trigger (from Config — default 7%)
-    const maeMfeClosed = closed.filter(t => t.mfe != null && t.mae != null && t.finalPlPct !== undefined);
+    const sstAddEligible = open.filter(t => {
+      if ((t.plPct||0) >= 0) return false;
+      const a200 = t.ema200 === true || String(t.ema200||'').toLowerCase() === 'true';
+      const a50  = t.ema50  === true || String(t.ema50 ||'').toLowerCase() === 'true';
+      return a200 && a50;
+    });
+    const sstHold = open.filter(t => {
+      if ((t.plPct||0) >= 0) return false;
+      const a50 = t.ema50 === true || String(t.ema50||'').toLowerCase() === 'true';
+      return !a50;
+    });
+    const addInvested = sstAddEligible.reduce((s,t) => s + (t.totalInvested||t.positionSize||0), 0);
+    set('sst-add-eligible', sstAddEligible.length);
+    set('sst-add-invested', sstAddEligible.length > 0 ? '₹' + Math.round(addInvested).toLocaleString('en-IN') + ' deployed in add-eligible positions' : 'No positions eligible');
+    set('sst-hold-count', sstHold.length);
 
-    // Update all trigger labels in the HTML
-    ['be-trig-label','be-trig-label2','be-trig-label3','be-trig-label4','be-chart-label','be-chart-label2','be-chart-label3'].forEach(id => set(id, BET));
-
-    if (maeMfeClosed.length >= 5) {
-      const hitTrigger = maeMfeClosed.filter(t => t.mfe >= BET);
-      const beZoneLow = -2.0, beZoneHigh = 2.0; // "closed at ~0%" = within 2% of entry
-      const beStopped  = hitTrigger.filter(t => t.finalPlPct >= beZoneLow && t.finalPlPct <= beZoneHigh);
-      const bigRunners = hitTrigger.filter(t => t.finalPlPct > 15);
-      const modWinners = hitTrigger.filter(t => t.finalPlPct > BET && t.finalPlPct <= 15);
-      const lossAfter  = hitTrigger.filter(t => t.finalPlPct < beZoneLow);
-
-      const avgMfeBeStopped = beStopped.length  > 0 ? beStopped.reduce((s,t)  => s + t.mfe, 0) / beStopped.length  : 0;
-      const avgMfeBigRunner = bigRunners.length  > 0 ? bigRunners.reduce((s,t) => s + t.mfe, 0) / bigRunners.length : 0;
-
-      // Card 1: big runner %
-      set('be-runner-count', bigRunners.length + ' of ' + hitTrigger.length);
-      set('be-runner-sub', hitTrigger.length > 0 ? '(' + (bigRunners.length / hitTrigger.length * 100).toFixed(0) + '%) continued past +15% — these are your runners' : 'trades that hit the trigger');
-      set('be-runner-mfe', bigRunners.length > 0 ? '+' + avgMfeBigRunner.toFixed(1) + '% avg MFE (peak)' : '—');
-
-      // Card 2: reversed to BE
-      set('be-stopped-count', beStopped.length);
-      set('be-stopped-sub', hitTrigger.length > 0 ? 'of ' + hitTrigger.length + ' that hit +' + BET + '% (' + (beStopped.length / hitTrigger.length * 100).toFixed(0) + '%)' : '—');
-      set('be-stopped-mfe', beStopped.length > 0 ? '+' + avgMfeBeStopped.toFixed(1) + '% avg MFE before reversal' : '—');
-
-      // Card 3: 7DL in phase 2 — did trades that dipped below 7DL after +7% recover or reverse?
-      // Proxy: trades with MFE >= BET that closed < BET but > 0 = probable 7DL exit that lost the runner
-      const probPhase2DL = hitTrigger.filter(t => t.finalPlPct > 0 && t.finalPlPct < BET);
-      const outEl = document.getElementById('be-outcome-breakdown');
-      if (outEl) {
-        const items = [
-          { label: `Loss after +${BET}%`, count: lossAfter.length, col: 'var(--red)' },
-          { label: '~0% (BE stop)', count: beStopped.length, col: 'var(--amber)' },
-          { label: `+0 to +${BET}%`, count: probPhase2DL.length, col: 'var(--amber)' },
-          { label: `+${BET} to +15%`, count: modWinners.length, col: 'var(--green)' },
-          { label: 'Big win >+15%', count: bigRunners.length, col: '#22d3ee' },
-        ].filter(o => o.count > 0);
-        const n = hitTrigger.length || 1;
-        outEl.innerHTML = items.map(o => {
-          const pct = (o.count / n * 100).toFixed(0);
-          const bar = '█'.repeat(Math.max(1, Math.round(o.count / n * 12)));
-          return `<span style="display:flex;align-items:center;gap:6px;font-size:11px;margin-bottom:3px"><span style="min-width:115px;color:var(--text-muted)">${o.label}</span><span style="color:${o.col};font-family:monospace">${bar}</span><span style="color:${o.col};font-weight:600">${o.count} (${pct}%)</span></span>`;
-        }).join('') + (probPhase2DL.length > 0 ? `<div style="font-size:10px;color:var(--text-muted);margin-top:4px">+0→+${BET}% exits: possible early 7DL exits in phase 2 — these are the trades to study</div>` : '');
-      }
-
-      // Chart 1: final P&L distribution for all hitTrigger trades
-      const buckets = ['-10%+', '-5–-10%', '-2–-5%', '~0% BE', `+0–+${BET}%`, `+${BET}–+15%`, '+15–+25%', '+25%+'];
-      const bktFn = v =>
-        v < -10 ? '-10%+' : v < -5 ? '-5–-10%' : v < beZoneLow ? '-2–-5%' : v <= beZoneHigh ? '~0% BE' :
-        v <= BET ? `+0–+${BET}%` : v <= 15 ? `+${BET}–+15%` : v <= 25 ? '+15–+25%' : '+25%+';
-      const bktMap = Object.fromEntries(buckets.map(k => [k, 0]));
-      hitTrigger.forEach(t => { const b = bktFn(t.finalPlPct); if (bktMap[b] !== undefined) bktMap[b]++; });
-      const bktKeys = buckets.filter(k => bktMap[k] > 0);
-      const bktVals = bktKeys.map(k => bktMap[k]);
-      const bktColors = bktKeys.map(k => k.startsWith('-') ? c.red : k.includes('BE') ? c.amber : k.includes('+0') ? '#f59e0b' : '#22d3ee');
-      _chartQ(() => { try { const beChart = new ApexCharts(document.getElementById('chart-be-outcome'), {
-        ...baseOpts(240), chart: { ...baseOpts(240).chart, type: 'bar' },
-        series: [{ name: 'Trades', data: bktVals }],
-        xaxis: { ...baseOpts().xaxis, categories: bktKeys },
-        yaxis: { labels: { style: { colors: c.text, fontSize: '11px' } }, title: { text: '# trades', style: { color: c.text, fontSize: '10px' } } },
-        colors: bktColors,
-        plotOptions: { bar: { columnWidth: '70%', distributed: true, borderRadius: 3 } },
-        legend: { show: false },
-        dataLabels: { enabled: true, formatter: v => v > 0 ? v : '', style: { fontSize: '11px', colors: ['#fff'] } },
-        annotations: { xaxis: [{ x: '~0% BE', fillColor: 'rgba(255,179,0,0.08)', label: { text: 'BE zone', style: { color: c.amber, fontSize: '10px', background: 'transparent' } } }] },
-      }); beChart.render(); analysisCharts.push(beChart); } catch(e) { console.warn('chart-be-outcome failed', e); } });
-
-      const n = hitTrigger.length || 1;
-      const runnerPct = (bigRunners.length / n * 100).toFixed(0);
-      const bePct     = (beStopped.length  / n * 100).toFixed(0);
-      const lossPct   = (lossAfter.length   / n * 100).toFixed(0);
-      const beInsEl = document.getElementById('be-outcome-insight');
-      if (beInsEl) beInsEl.innerHTML =
-        `<strong>Of ${hitTrigger.length} trades that ever hit +${BET}%:</strong> ` +
-        `<span style="color:#22d3ee">${runnerPct}% became big winners (>+15%)</span> · ` +
-        `<span style="color:var(--amber)">${bePct}% reversed to ~0 (BE stop saved them from a loss)</span> · ` +
-        `<span style="color:var(--red)">${lossPct}% lost money anyway (gap-down or fast reversal past BE)</span>` +
-        (bigRunners.length / n >= 0.35
-          ? `<br>✅ <strong>Strong runner rate — the two-phase system is correct for your trades.</strong> Over ${runnerPct}% of trades that hit +${BET}% go on to +15%+. Trailing via 21 EMA in phase 2 will capture most of these.`
-          : bigRunners.length / n >= 0.20
-            ? `<br>📊 <strong>Moderate runner rate.</strong> ${runnerPct}% become big winners. The 7% threshold looks reasonable — watch if the ${bePct}% BE exits could have been held longer by widening the phase-2 trail.`
-            : `<br>⚠ <strong>Lower runner rate so far (${runnerPct}%).</strong> This may reflect market conditions or small sample. Keep observing as more trades complete.`);
-
-      // Chart 2: MFE distribution (peak profit reached) for hitTrigger trades
-      const mfeBuckets = [`+${BET}–+10%`, '+10–+15%', '+15–+20%', '+20–+30%', '+30–+50%', '+50%+'];
-      const mfeFn = v => v <= 10 ? `+${BET}–+10%` : v <= 15 ? '+10–+15%' : v <= 20 ? '+15–+20%' : v <= 30 ? '+20–+30%' : v <= 50 ? '+30–+50%' : '+50%+';
-      const mfeMap = Object.fromEntries(mfeBuckets.map(k => [k, 0]));
-      hitTrigger.forEach(t => { const b = mfeFn(t.mfe); if (mfeMap[b] !== undefined) mfeMap[b]++; });
-      const mfeKeys = mfeBuckets.filter(k => mfeMap[k] > 0);
-      const mfeVals = mfeKeys.map(k => mfeMap[k]);
-      const mfeAvg  = hitTrigger.length > 0 ? hitTrigger.reduce((s,t) => s + t.mfe, 0) / hitTrigger.length : 0;
-      _chartQ(() => { try { const mfeChart = new ApexCharts(document.getElementById('chart-be-compare'), {
-        ...baseOpts(220), chart: { ...baseOpts(220).chart, type: 'bar' },
-        series: [{ name: 'Trades', data: mfeVals }],
-        xaxis: { ...baseOpts().xaxis, categories: mfeKeys },
-        yaxis: { labels: { style: { colors: c.text, fontSize: '11px' } }, title: { text: '# trades', style: { color: c.text, fontSize: '10px' } } },
-        colors: mfeKeys.map((_,i) => `hsl(${160 + i*18},70%,${45+i*5}%)`),
-        plotOptions: { bar: { columnWidth: '65%', distributed: true, borderRadius: 4 } },
-        legend: { show: false },
-        dataLabels: { enabled: true, formatter: v => v > 0 ? v : '', style: { fontSize: '12px', colors: ['#fff'] } },
-        annotations: { yaxis: [{ y: hitTrigger.length * 0.25, borderColor: c.amber, label: { text: '25% of trades', style: { color: c.amber, fontSize: '10px', background: 'transparent' } } }] },
-      }); mfeChart.render(); analysisCharts.push(mfeChart); } catch(e) { console.warn('chart-be-compare failed', e); } });
-
-      const topBucket = mfeKeys.reduce((best, k) => mfeMap[k] > (mfeMap[best]||0) ? k : best, mfeKeys[0] || '');
-      const cmpEl = document.getElementById('be-compare-insight');
-      if (cmpEl) cmpEl.innerHTML =
-        `Avg peak (MFE) for trades that hit +${BET}%: <strong style="color:var(--green)">+${mfeAvg.toFixed(1)}%</strong> · ` +
-        `Most trades peak in the <strong>${topBucket}</strong> zone · ` +
-        (mfeAvg > BET * 2.5
-          ? `✅ Avg MFE is ${(mfeAvg/BET).toFixed(1)}× your trigger — plenty of runway. Your phase-2 trail (21 EMA) should capture most of this vs 7DL which would stop you early.`
-          : `📊 Avg MFE is ${(mfeAvg/BET).toFixed(1)}× your trigger. As more trades accumulate this will clarify whether 7% is the right phase-change point.`);
-
-    } else {
-      ['be-runner-count','be-stopped-count'].forEach(id => set(id, '—'));
-      const noDataEl = document.getElementById('be-outcome-insight');
-      if (noDataEl) noDataEl.textContent = `Need MAE/MFE data (cols AL/AM) and at least 5 closed trades. Map maeCol/mfeCol in Config.`;
-    }
-  } catch(e) { console.warn('Stop trigger calibration failed', e); }
+    const addOutcomeEl = document.getElementById('sst-add-outcome');
+    if (addOutcomeEl) addOutcomeEl.innerHTML = '<span style="color:var(--text-muted)">Add outcome comparison requires closed add-on trades with matching open dates — will populate as data accumulates.</span>';
+  } catch(e) { console.warn('SST Add Signal Tracker error', e); }
 
   // Consecutive loss behaviour — entry-date order (open + closed combined)
   // Using close-date-only always shows a "loss streak" because winners stay open for weeks.
@@ -7308,80 +7041,6 @@ function initAnalysisCharts(open, closed) {
     beInsightEl.textContent = 'Not enough closed trades to compute breakeven stop analysis.';
   }
 
-  // ── BE Rule Change Tracker ──
-  // Compares entries before and after the BE trigger was changed from 5% → 2% on 19-Jun-2026.
-  // Uses entry date (open+closed combined) so open winners aren't invisible.
-  try {
-    const trackerEl = document.getElementById('be-rule-tracker');
-    if (trackerEl) {
-      const changeDate = parseDate(_cfg.beRuleChangeDate || '19-Jun-2026');
-      const oldTrigger = _cfg.beRuleOldTrigger || 5;
-      const newTrigger = _cfg.targetPct || 7;
-      const allT = [...closed, ...open].filter(t => t.openDate);
-      const before = allT.filter(t => parseDate(t.openDate) < changeDate);
-      const after  = allT.filter(t => parseDate(t.openDate) >= changeDate);
-
-      const cohortStats = arr => {
-        const cl = arr.filter(t => t.closeDate);
-        const op = arr.filter(t => !t.closeDate);
-        const wins = cl.filter(t => t.finalPlPct > 0).length + op.filter(t => (t.notionalPl||0) > 0).length;
-        const wr = arr.length > 0 ? wins / arr.length * 100 : null;
-        const avgLoss = cl.filter(t => t.finalPlPct < 0).length > 0
-          ? cl.filter(t => t.finalPlPct < 0).reduce((s,t) => s + Math.abs(t.finalPlPct), 0) / cl.filter(t => t.finalPlPct < 0).length : null;
-        const avgWin = cl.filter(t => t.finalPlPct > 0).length > 0
-          ? cl.filter(t => t.finalPlPct > 0).reduce((s,t) => s + t.finalPlPct, 0) / cl.filter(t => t.finalPlPct > 0).length : null;
-        // Trades that hit BE threshold (useful to compare: did more trades survive past 2% vs 5%?)
-        const hitNew = cl.filter(t => t.finalPlPct >= newTrigger).length;
-        const hitOld = cl.filter(t => t.finalPlPct >= oldTrigger).length;
-        return { total: arr.length, openCount: op.length, closedCount: cl.length, wr, avgLoss, avgWin, hitNew, hitOld };
-      };
-
-      const B = cohortStats(before);
-      const A = cohortStats(after);
-      const fmt = (v, suf='%') => v !== null ? (v >= 0 ? '+' : '') + v.toFixed(1) + suf : '—';
-      const pct = v => v !== null ? v.toFixed(0) + '%' : '—';
-
-      if (after.length === 0) {
-        trackerEl.innerHTML = `<span style="color:var(--text-muted)">⏳ No entries yet under the new +${newTrigger}% rule (started ${_cfg.beRuleChangeDate}). This card will populate as you make new trades.</span>`;
-      } else {
-        const wrDiff = (A.wr !== null && B.wr !== null) ? A.wr - B.wr : null;
-        const lossColor = A.avgLoss !== null && B.avgLoss !== null
-          ? (A.avgLoss < B.avgLoss ? 'var(--green)' : A.avgLoss > B.avgLoss * 1.1 ? 'var(--red)' : 'var(--amber)') : 'var(--text-muted)';
-        const wrColor = wrDiff !== null ? (wrDiff > 3 ? 'var(--green)' : wrDiff < -3 ? 'var(--red)' : 'var(--amber)') : 'var(--text-muted)';
-
-        let verdict = '';
-        if (A.closedCount < 5) {
-          verdict = `<span style="color:var(--text-muted)">⏳ Only ${A.closedCount} closed trade${A.closedCount !== 1 ? 's' : ''} under new rule so far — too early for a verdict. Check back after 20+ close.</span>`;
-        } else if (wrDiff !== null && wrDiff > 5) {
-          verdict = `<span style="color:var(--green)">✓ Win rate up ${wrDiff.toFixed(0)}pp under the +${newTrigger}% rule — earlier breakeven protection is working.</span>`;
-        } else if (wrDiff !== null && wrDiff < -5) {
-          verdict = `<span style="color:var(--amber)">⚡ Win rate down ${Math.abs(wrDiff).toFixed(0)}pp so far — could be market conditions or sample size. Watch avg loss size as the primary signal.</span>`;
-        } else {
-          verdict = `<span style="color:var(--amber)">→ Too early or no significant difference yet. Key metric to watch: avg loss % — should fall as more trades get protected at +${newTrigger}%.</span>`;
-        }
-
-        trackerEl.innerHTML = `
-          <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px">
-            <div style="padding:10px;background:var(--surface2);border-radius:8px">
-              <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">Before — BE at +${oldTrigger}%</div>
-              <div style="font-size:11px;color:var(--text-secondary);margin-bottom:2px">${B.total} entries · ${B.closedCount} closed · ${B.openCount} open</div>
-              <div style="font-size:13px;margin-top:4px"><strong>WR:</strong> ${pct(B.wr)} &nbsp; <strong>Avg loss:</strong> ${B.avgLoss !== null ? '-'+B.avgLoss.toFixed(1)+'%' : '—'} &nbsp; <strong>Avg win:</strong> ${B.avgWin !== null ? '+'+B.avgWin.toFixed(1)+'%' : '—'}</div>
-            </div>
-            <div style="padding:10px;background:var(--surface2);border-radius:8px;border:1px solid var(--green)">
-              <div style="font-size:10px;font-weight:700;color:var(--green);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">After — BE at +${newTrigger}% ← new rule</div>
-              <div style="font-size:11px;color:var(--text-secondary);margin-bottom:2px">${A.total} entries · ${A.closedCount} closed · ${A.openCount} open</div>
-              <div style="font-size:13px;margin-top:4px">
-                <strong>WR:</strong> <span style="color:${wrColor}">${pct(A.wr)}</span>
-                &nbsp; <strong>Avg loss:</strong> <span style="color:${lossColor}">${A.avgLoss !== null ? '-'+A.avgLoss.toFixed(1)+'%' : '—'}</span>
-                &nbsp; <strong>Avg win:</strong> ${A.avgWin !== null ? '+'+A.avgWin.toFixed(1)+'%' : '—'}
-              </div>
-            </div>
-          </div>
-          <div style="font-size:12px;font-weight:600">${verdict}</div>
-          <div style="font-size:11px;color:var(--text-muted);margin-top:6px">Primary signal: avg loss % should decrease — more losers now exit at 0% (breakeven) instead of a full stop. Win rate change is secondary.</div>`;
-      }
-    }
-  } catch(e) { console.warn('BE rule tracker error:', e); }
 
   // ── ₹ Risk per Trade Distribution (col K = initRiskRs) ──
   // Since ₹ risk is fixed at ~₹1K, this chart shows whether you're actually consistent.
@@ -7531,7 +7190,7 @@ function initAnalysisCharts(open, closed) {
     const hitsPartial = tmWinners.filter(t=>t.finalPlPct>=PARTIAL_TRIGGER).length;
     const hitsBE = tmWinners.filter(t=>t.finalPlPct>=BE_TRIGGER).length;
     const smallWins = tmWinners.filter(t=>t.finalPlPct<BE_TRIGGER).length;
-    let winIns = `Avg closed winner: <strong>+${avgWin.toFixed(1)}%</strong> · ${hitsBE} of ${tmWinners.length} (${(hitsBE/tmWinners.length*100).toFixed(0)}%) clear +${BE_TRIGGER}% BE trigger · ${hitsPartial} (${(hitsPartial/tmWinners.length*100).toFixed(0)}%) reach +${PARTIAL_TRIGGER}% partial`;
+    let winIns = `Avg closed winner: <strong>+${avgWin.toFixed(1)}%</strong> · ${hitsBE} of ${tmWinners.length} (${(hitsBE/tmWinners.length*100).toFixed(0)}%) reached +${BE_TRIGGER}% target · ${hitsPartial} (${(hitsPartial/tmWinners.length*100).toFixed(0)}%) cleared lock-in zone`;
     if (smallWins > 0) winIns += `<br>⚡ ${smallWins} winner${smallWins!==1?'s':''} close below +${BE_TRIGGER}% — these are never touched by your BE stop rule (they exit before the rule fires)`;
     // Open positions note
     if (open.length > 0) {
@@ -8070,13 +7729,12 @@ function renderProjections(open, closed) {
   set('proj-full-risk-sub', `${effectiveRate} trades/mo × ₹${Math.round(Math.abs(fullRiskEdge)).toLocaleString('en-IN')} edge (${scaleStr})`);
   set('proj-full-risk-note', `Current risk: ₹${Math.round(currentTierProj).toLocaleString('en-IN')}/trade · Cap: ₹${Math.round(riskCapRsProj).toLocaleString('en-IN')}/trade · Max drawdown also scales ~${scaleFactor.toFixed(1)}×`);
 
-  // ── 2. Partial Exit Locked-in ──
-  const eligible = open.filter(t => t.plPct >= PARTIAL_TRIGGER && t.partialTaken === 'N');
-  // Estimated gain: 50% of current notionalPl (since partial = 50% of position)
-  const lockedIn = eligible.reduce((s,t) => s + (t.notionalPl||0) * 0.5, 0);
+  // ── 2. At Lock-In / Target (SST) ──
+  const atTarget = open.filter(t => (t.plPct||0) >= PARTIAL_TRIGGER);
+  const lockedIn = atTarget.reduce((s,t) => s + (t.notionalPl||0), 0);
   set('proj-partial-rs', fmtRs(lockedIn));
-  set('proj-partial-count', eligible.length + ' positions');
-  set('proj-partial-detail', `≥${PARTIAL_TRIGGER}% gain, partial not yet taken · 50% of current MTM`);
+  set('proj-partial-count', atTarget.length + ' positions');
+  set('proj-partial-detail', `≥${PARTIAL_TRIGGER}% gain — trailing SL active, profit protected`);
 
   // ── 3. Risk Tier Progression ──
   const riskCapRs = _ic * 0.008;
@@ -8226,12 +7884,12 @@ const STRAT_RULES_KEY = 'tj_strategy_rules_v1';
 const STRAT_LOG_KEY   = 'tj_strategy_log_v1';
 
 const STRAT_DEFAULT_RULES = {
-  entry: `• TWO valid entry triggers (breakout stocks only):\n\n  1. SMOOTH 52-WEEK HIGH BREAKOUT\n     • Price clears 52-week high cleanly on above-average volume\n     • No wide, sloppy candle — smooth, controlled breakout preferred\n     • Enter on breakout day or next day open\n\n  2. PULLBACK TO 21 EMA (existing breakout stocks only)\n     • Stock already broke out of a 52-week high previously\n     • Price pulls back and touches / bounces off the 21 EMA\n     • 21 EMA must be rising — confirms Stage 2 uptrend intact\n     • Enter on the bounce candle — do NOT chase if stock runs away\n\n• Stock must be in Stage 2 uptrend (above 50 & 200 EMA)\n• Never enter a stock that hasn't already broken 52-week highs`,
-  stop: `• TWO-PHASE trailing stop system:\n\n  PHASE 1 — Notional profit < +${(()=>{try{return JSON.parse(localStorage.getItem('tj_config_v1')||'{}').beTrigger||7}catch(e){return 7}})()}% (early stage):\n  • Rolling 7-Day Low (col I) is primary stop — catches failed breakouts fast\n  • 21 EMA breach is ALSO an exit trigger in this phase\n  • Effective stop = MAX(col J manual stop, 7-Day Low)\n  • Exit immediately on either signal — no hoping\n\n  PHASE 2 — Notional profit ≥ +${(()=>{try{return JSON.parse(localStorage.getItem('tj_config_v1')||'{}').beTrigger||7}catch(e){return 7}})()}% (runner stage):\n  • Move col J manual stop to entry price → trade is now risk-free\n  • Trail via 21 EMA ONLY — 7-Day Low dips are normal breakout consolidation at this stage\n  • 21 EMA breach is the PRIMARY EXIT — exit at next open\n  • 7-Day Low breach alone in this phase = amber warning, not a mandatory exit\n\n• Rationale: Breakouts consolidate above the 7-day low before the next leg. At +7%+ the 21 EMA is the better trail — wider and respects consolidation.`,
-  profit: `• Sell 50% of position when notional profit reaches +10%\n• Trail the remaining 50% via the two-phase stop (7DL or 21 EMA depending on profit phase)\n• DO NOT set price targets — let the stop do the exiting\n• If HA turns Red with profit ≥ 5%: monitor closely — 21 EMA breach confirms full exit`,
-  sizing: `• Start: ₹1,000 risk per trade\n• Increase: +₹500 every 100 closed trades\n• Hard cap: 0.8% of portfolio (at ₹50L = ₹40,000 max risk)\n• Never risk more than cap regardless of conviction\n• Sizing = Risk ₹ ÷ (Entry − Stop) = share qty`,
-  exit: `• Phase 1 (profit < +7%): exit on 7-Day Low breach OR 21 EMA breach — whichever hits first\n• Phase 2 (profit ≥ +7%): exit ONLY on 21 EMA breach — ignore 7DL dips\n• After partial at +10%: trail remainder via same two-phase rule\n• HA turns Red + profit ≥ 5% → watch closely, 21 EMA breach confirms exit\n• Age > 60 days with no progress → review, consider exiting\n• Do NOT exit because a stock "feels extended" — let the stop work`,
-  mindset: `• Losses are NORMAL — the system wins via large winners, not high WR\n• A 30-40% win rate with large winners is healthy for this system\n• Never average down — add only to winning positions (future rule)\n• After 3 consecutive losses: review but do NOT change the system\n• The stop is your contract with yourself — honour it every time`
+  entry: `• Universe: Fundamentally strong stocks above 200 EMA and 50 EMA\n• Signal: Stock touches 21-Day High (breakout candidate)\n• Action: Place GTT order at the 21-Day High price — entry triggers automatically when price breaks out\n• All four setup types work: Breakout, Pullback, 21 EMA Pullback, 10 EMA Pullback\n• Never chase — if GTT misses, wait for the next 21DH signal`,
+  stop: `• SST Trailing Stop — NO hard stop loss\n\n  IN PROFIT (P&L > 0):\n  • Hold position — do nothing unless at lock-in or target zone\n  • At 6% profit (lock-in zone): trailing SL becomes active — verify GTT is set\n  • At 7%+ (target zone): raise GTT further to lock in more profit\n  • Hold indefinitely while fundamentals are intact\n\n  IN LOSS (P&L < 0):\n  • If stock is above 200 EMA AND 50 EMA: place a new GTT at 21-Day High for 50% add-on qty\n  • If stock drops below 50 EMA: hold indefinitely, do nothing — wait for structure to return\n  • No hard stop loss — exit only on genuine fundamental deterioration of the company`,
+  profit: `• Lock-in at 6%: trailing SL activates — minimum 6% profit is protected\n• At 7%+: raise trailing SL higher to capture more of the move\n• Continue trailing as long as stock holds above support\n• No fixed profit target — let the trailing SL do the exiting\n• Hold for weeks or months if the trend is intact`,
+  sizing: `• Base position size: ₹20,000 per trade\n• Increase: +₹1,000 every 100 closed trades\n• Hard cap: 0.8% of portfolio\n• Add-on size: 50% of current position size (when adding to a losing trade above 200+50 EMA)\n• Max open positions: 200`,
+  exit: `• Exit only when trailing SL is hit (GTT triggers)\n• In profit: GTT trailing SL at 6%+ locks exit automatically\n• In loss above 200+50 EMA: wait and consider adding — SST expects recovery on strong stocks\n• In loss below 50 EMA: hold, no exit — wait for structure return\n• Full exit only on fundamental company issue (earnings collapse, fraud, sector disruption)\n• Time-based exits: not used — hold as long as fundamentals and trend are intact`,
+  mindset: `• This is a high-WR system — target ≥70% win rate on closed trades\n• Losses are held until recovery (above 200+50 EMA) — this is intentional\n• Patience is the edge: GTT entries are automatic, no screen time needed\n• Never add below 50 EMA — the structure is broken, wait for it to rebuild\n• The system works on volume: 200 open positions, ₹20K each, diversified across N100`
 };
 
 function loadStrategyRules() {
@@ -8466,8 +8124,8 @@ document.addEventListener('DOMContentLoaded', () => {
   // Seed strategy log with known historical rule changes if first visit
   if (!localStorage.getItem(STRAT_LOG_KEY)) {
     const seedLog = [
-      { date: '2026-06-19', category: 'Stop Loss', title: 'Changed BE trigger from 5% to 2%', why: 'Noticed too many trades hitting +5% then reversing back through entry. Moving stop to BE at +2% protects more capital while still giving trades room to work.', oldRule: 'Move stop (col J) to entry price when profit ≥ 5%', newRule: 'Move stop (col J) to entry price when profit ≥ 2%' },
-      { date: '2026-06-01', category: 'Position Sizing', title: 'Added portfolio heat cap of 0.8%', why: 'Needed a hard cap on total risk regardless of how many positions are open. 0.8% of portfolio prevents over-leveraging in a high-confidence tape.', oldRule: 'Fixed ₹1,000 risk per trade, no portfolio-level cap', newRule: 'Risk per trade capped at MIN(tiered ₹ amount, 0.8% of portfolio)' },
+      { date: '2026-07-25', category: 'Stop Loss', title: 'Switched to SST-Hybrid trailing stop — no hard stop', why: 'Old Minervini two-phase stop was shaking out too many fundamentally strong stocks. SST holds indefinitely when above 200+50 EMA, trailing via GTT at 6% profit floor.', oldRule: 'Hard stop via 7-Day Low / 21 EMA two-phase rule', newRule: 'No hard stop: trailing SL at 6%+, add when in loss above 200+50 EMA, hold below 50 EMA' },
+      { date: '2026-07-25', category: 'Position Sizing', title: 'Changed to ₹20,000 base position size', why: 'SST uses fixed position size rather than risk-based sizing. ₹20K per trade with +₹1K every 100 closed trades. 0.8% portfolio cap still applies.', oldRule: '₹1,000 risk per trade (risk-based), +₹500 every 100 trades', newRule: '₹20,000 per position (fixed), +₹1,000 every 100 closed trades, cap 0.8% of portfolio' },
     ];
     saveStrategyLogData(seedLog);
   }
