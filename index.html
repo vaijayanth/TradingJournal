@@ -2542,8 +2542,8 @@ const DEFAULT_CONFIG = {
   finalPlCol: 'AD',    // col AD: Final P&L ₹
   finalPlPctCol: 'AE', // col AE: Final P&L %
   ageCol: 'AF',        // col AF: Age (days)
-  portfolioCell: 'AK26',  // AK26: Portfolio value (realised)
-  initialCapCell: 'AK20', // AK20: Initial capital
+  portfolioCell: 'AH3',   // AH3: Compounded portfolio value
+  initialCapCell: 'AH2',  // AH2: Initial portfolio size
   // SST strategy params
   targetPct: 7,        // trail target %
   lockInPct: 6,        // trailing SL lock-in %
@@ -2583,10 +2583,10 @@ function renderMktDirection() {
 function loadConfig() {
   try {
     const saved = JSON.parse(localStorage.getItem(CONFIG_KEY) || '{}');
-    // Migration: fix wrong SST column letters written by previous broken config
+    // Migration: fix wrong column letters written by previous broken config
     const wrongCols = { flagCol:'A', stockCol:'D', openDateCol:'B', closeDateCol:'C', cmpCol:'K',
       initRiskRsCol:'M', initRiskPctCol:'N', notionalPlCol:'V', finalPlCol:'AE',
-      finalPlPctCol:'AF', ageCol:'AG', portfolioCell:'AH3', initialCapCell:'AH2' };
+      finalPlPctCol:'AF', ageCol:'AG', portfolioCell:'AK26', initialCapCell:'AK20' };
     let migrated = false;
     for (const [k, wrongVal] of Object.entries(wrongCols)) {
       if (saved[k] === wrongVal) { delete saved[k]; migrated = true; }
