@@ -762,115 +762,10 @@ tbody tr:hover { filter: brightness(0.97); }
 <!-- ════ DASHBOARD ════ -->
 <div id="page-dashboard" class="page active">
 
-  <!-- Hidden banners kept for JS compatibility -->
-  <div id="dash-urgent-banner" style="display:none"><span id="dash-urgent-icon"></span><span id="dash-urgent-text"></span></div>
-  <div id="dash-no-winner-alert" style="display:none"></div>
-
-  <!-- ① HEADLINE ROW -->
-  <div class="grid-3">
-    <!-- Portfolio Value + Return -->
-    <div class="card card-sm">
-      <div class="stat-label">Portfolio Value</div>
-      <div class="stat-value" id="dash-pv">—</div>
-      <div style="display:flex;align-items:baseline;gap:8px;margin-top:6px;flex-wrap:wrap">
-        <div style="font-size:22px;font-weight:700" id="dash-return">—</div>
-        <div style="font-size:11px;color:var(--text-muted)" id="dash-return-sub">combined return</div>
-      </div>
-      <div style="font-size:11px;color:var(--text-muted);margin-top:4px" id="dash-realised-breakdown">—</div>
-      <div class="stat-badge badge-green" id="dash-pv-badge" style="margin-top:8px">—</div>
-    </div>
-
-    <!-- Open Positions Health -->
-    <div class="card card-sm">
-      <div class="stat-label">Open Positions</div>
-      <div style="display:flex;gap:14px;margin-top:8px;align-items:flex-end;flex-wrap:wrap">
-        <div>
-          <div style="font-size:30px;font-weight:700" id="dash-open">—</div>
-          <div class="stat-sub">positions</div>
-        </div>
-        <div style="color:var(--border);padding-bottom:6px">|</div>
-        <div>
-          <div style="font-size:22px;font-weight:700;color:var(--green)" id="dash-open-profitable">—</div>
-          <div class="stat-sub">profitable / risk-free</div>
-        </div>
-        <div style="color:var(--border);padding-bottom:6px">|</div>
-        <div>
-          <div style="font-size:22px;font-weight:700;color:var(--red)" id="dash-open-losing">—</div>
-          <div class="stat-sub">in loss</div>
-        </div>
-      </div>
-      <div style="margin-top:10px;height:5px;border-radius:3px;background:var(--surface2);overflow:hidden">
-        <div id="dash-health-bar" style="height:100%;border-radius:3px;transition:width 0.4s"></div>
-      </div>
-      <div class="stat-badge" id="dash-health-badge" style="margin-top:8px">—</div>
-    </div>
-
-    <!-- Trades + Days since win + Open MTM -->
-    <div class="card card-sm">
-      <div class="stat-label">Closed Trades</div>
-      <div style="display:flex;gap:14px;margin-top:8px;align-items:flex-end;flex-wrap:wrap">
-        <div>
-          <div style="font-size:30px;font-weight:700" id="dash-closed">—</div>
-          <div class="stat-sub">closed</div>
-        </div>
-        <div style="color:var(--border);padding-bottom:6px">|</div>
-        <div>
-          <div style="font-size:22px;font-weight:700" id="dash-days-winner">—</div>
-          <div class="stat-sub">days since win</div>
-        </div>
-        <div style="color:var(--border);padding-bottom:6px">|</div>
-        <div>
-          <div style="font-size:22px;font-weight:700" id="dash-sys-exp">—</div>
-          <div class="stat-sub" id="dash-sys-exp-sub">open MTM</div>
-        </div>
-      </div>
-      <div class="stat-badge" id="dash-discipline-badge" style="margin-top:16px">—</div>
-    </div>
-  </div>
-
-  <!-- ② SYSTEM QUALITY STRIP -->
-  <div class="card card-sm" style="margin-top:14px;padding:10px 16px">
-    <div style="display:flex;align-items:stretch;gap:0;flex-wrap:wrap">
-      <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em;margin-right:16px;white-space:nowrap;display:flex;align-items:center">System</div>
-      <div style="display:flex;flex:1;flex-wrap:wrap">
-        <div style="flex:1;min-width:80px;padding:6px 14px;border-right:1px solid var(--border)">
-          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Win Trades</div>
-          <div style="font-size:22px;font-weight:700;color:var(--green);margin-top:3px" id="dash-win-count">—</div>
-        </div>
-        <div style="flex:1;min-width:80px;padding:6px 14px;border-right:1px solid var(--border)">
-          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Loss Trades</div>
-          <div style="font-size:22px;font-weight:700;color:var(--red);margin-top:3px" id="dash-loss-count">—</div>
-        </div>
-        <div style="flex:1;min-width:80px;padding:6px 14px;border-right:1px solid var(--border)">
-          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Win Rate</div>
-          <div style="font-size:22px;font-weight:700;margin-top:3px" id="dash-sys-wr">—</div>
-          <div style="font-size:9px;margin-top:1px;color:var(--text-muted)" id="dash-sys-wr-recent"></div>
-        </div>
-        <div style="flex:1;min-width:80px;padding:6px 14px;border-right:1px solid var(--border)">
-          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Avg Win %</div>
-          <div style="font-size:22px;font-weight:700;color:var(--green);margin-top:3px" id="dash-avg-win">—</div>
-        </div>
-        <div style="flex:1;min-width:80px;padding:6px 14px;border-right:1px solid var(--border)">
-          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Avg Loss %</div>
-          <div style="font-size:22px;font-weight:700;margin-top:3px" id="dash-sys-avgloss">—</div>
-          <div style="font-size:9px;margin-top:1px" id="dash-sys-avgloss-sub"></div>
-        </div>
-        <div style="flex:1;min-width:80px;padding:6px 14px;border-right:1px solid var(--border)">
-          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">R:R</div>
-          <div style="font-size:22px;font-weight:700;margin-top:3px" id="dash-sys-r">—</div>
-          <div style="font-size:9px;margin-top:1px;color:var(--text-muted)" id="dash-sys-hold-sub"></div>
-        </div>
-        <div style="flex:1;min-width:80px;padding:6px 14px">
-          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Profit Factor</div>
-          <div style="font-size:22px;font-weight:700;margin-top:3px" id="dash-sys-pf">—</div>
-          <div style="font-size:9px;margin-top:1px;color:var(--text-muted)" id="dash-sys-pf-sub"></div>
-        </div>
-      </div>
-    </div>
-  </div>
-
   <!-- Hidden IDs kept for JS compatibility -->
   <div style="display:none">
+    <span id="dash-urgent-banner"></span><span id="dash-urgent-icon"></span><span id="dash-urgent-text"></span>
+    <span id="dash-no-winner-alert"></span>
     <span id="dash-pv-sub"></span>
     <span id="dash-realised-pl"></span><span id="dash-realised-sub"></span><span id="dash-realised-badge"></span>
     <span id="dash-today-pl"></span><span id="dash-today-sub"></span>
@@ -893,31 +788,140 @@ tbody tr:hover { filter: brightness(0.97); }
     <span id="heat-markers"></span><span id="heat-green-marker"></span>
     <span id="heat-amber-marker"></span><span id="heat-max-marker"></span><span id="heat-status-badge"></span>
     <span id="open-health-card"></span><span id="loss-discipline-card"></span>
+    <span id="waterfall-count"></span><span id="waterfall-body"></span><span id="waterfall-wrap"></span>
+    <span id="today-dash-strip"></span><span id="today-dash-pills"></span>
+    <span id="alerts-wrap"></span>
+    <span id="dash-discipline-badge"></span>
+    <span id="dash-sys-wr-recent"></span><span id="dash-sys-avgloss-sub"></span>
+    <span id="dash-sys-hold-sub"></span><span id="dash-sys-pf-sub"></span>
   </div>
 
-  <div class="alert-group" style="margin-top:20px">
-    <div class="alert-group-header" style="background:var(--surface2);color:var(--text-primary)"
-         onclick="toggleCollapsible('waterfall-body', this)">
-      <span>📊</span>
-      <span style="flex:1;font-size:12px;font-weight:700">Open Position P&amp;L Waterfall</span>
-      <span id="waterfall-count" class="ag-count" style="background:rgba(255,255,255,0.08);color:var(--text-secondary)">—</span>
-      <span class="ag-chevron">▶</span>
+  <!-- ① KPI ROW -->
+  <div class="grid-3" style="gap:14px">
+
+    <!-- Portfolio Value -->
+    <div class="card card-sm">
+      <div class="stat-label">Portfolio Value</div>
+      <div class="stat-value" id="dash-pv">—</div>
+      <div style="display:flex;align-items:baseline;gap:8px;margin-top:6px;flex-wrap:wrap">
+        <div style="font-size:22px;font-weight:700" id="dash-return">—</div>
+        <div style="font-size:11px;color:var(--text-muted)" id="dash-return-sub">combined return</div>
+      </div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:4px" id="dash-realised-breakdown">—</div>
+      <div class="stat-badge badge-green" id="dash-pv-badge" style="margin-top:8px">—</div>
     </div>
-    <div class="alert-group-body" id="waterfall-body" style="padding:12px 16px">
-      <div id="waterfall-wrap" style="display:flex;flex-direction:column;gap:6px">
-        <div style="color:var(--text-muted);font-size:13px;text-align:center;padding:12px">Loading…</div>
+
+    <!-- Open Positions -->
+    <div class="card card-sm">
+      <div class="stat-label">Open Positions</div>
+      <div style="display:flex;gap:14px;margin-top:8px;align-items:flex-end;flex-wrap:wrap">
+        <div>
+          <div style="font-size:30px;font-weight:700" id="dash-open">—</div>
+          <div class="stat-sub">positions</div>
+        </div>
+        <div style="color:var(--border);padding-bottom:6px">|</div>
+        <div>
+          <div style="font-size:22px;font-weight:700;color:var(--green)" id="dash-open-profitable">—</div>
+          <div class="stat-sub">profitable</div>
+        </div>
+        <div style="color:var(--border);padding-bottom:6px">|</div>
+        <div>
+          <div style="font-size:22px;font-weight:700;color:var(--red)" id="dash-open-losing">—</div>
+          <div class="stat-sub">in loss</div>
+        </div>
+      </div>
+      <div style="margin-top:10px;height:5px;border-radius:3px;background:var(--surface2);overflow:hidden">
+        <div id="dash-health-bar" style="height:100%;border-radius:3px;transition:width 0.4s"></div>
+      </div>
+      <div class="stat-badge" id="dash-health-badge" style="margin-top:8px">—</div>
+    </div>
+
+    <!-- System stats -->
+    <div class="card card-sm">
+      <div class="stat-label">System · Closed Trades</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;margin-top:10px">
+        <div>
+          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Closed</div>
+          <div style="font-size:24px;font-weight:700" id="dash-closed">—</div>
+        </div>
+        <div>
+          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Win Rate</div>
+          <div style="font-size:24px;font-weight:700" id="dash-sys-wr">—</div>
+        </div>
+        <div>
+          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Wins</div>
+          <div style="font-size:18px;font-weight:700;color:var(--green)" id="dash-win-count">—</div>
+        </div>
+        <div>
+          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Losses</div>
+          <div style="font-size:18px;font-weight:700;color:var(--red)" id="dash-loss-count">—</div>
+        </div>
+        <div>
+          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Avg Win</div>
+          <div style="font-size:18px;font-weight:700;color:var(--green)" id="dash-avg-win">—</div>
+        </div>
+        <div>
+          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Avg Loss</div>
+          <div style="font-size:18px;font-weight:700" id="dash-sys-avgloss">—</div>
+        </div>
+        <div>
+          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Profit Factor</div>
+          <div style="font-size:18px;font-weight:700" id="dash-sys-pf">—</div>
+        </div>
+        <div>
+          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Unrealised MTM</div>
+          <div style="font-size:18px;font-weight:700" id="dash-sys-exp">—</div>
+        </div>
       </div>
     </div>
   </div>
 
-  <!-- Hidden for JS compatibility -->
-  <div id="today-dash-strip" style="display:none"><div id="today-dash-pills"></div></div>
-  <div id="alerts-wrap" style="display:none"></div>
+  <!-- ② CHARTS ROW 1: Full-width P&L Waterfall -->
+  <div class="card" style="margin-top:14px;padding:16px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:8px">
+      <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em">📊 Open Position P&L %</div>
+      <div style="display:flex;gap:12px;font-size:10px;color:var(--text-muted)">
+        <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#10B981;margin-right:4px"></span>At target ≥<span id="dash-legend-target">7</span>%</span>
+        <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#FBBF24;margin-right:4px"></span>Lock-in zone</span>
+        <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#34D399;margin-right:4px"></span>Profitable</span>
+        <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#F87171;margin-right:4px"></span>In loss</span>
+      </div>
+    </div>
+    <div id="dash-pl-chart" style="min-height:300px"></div>
+  </div>
 
-  <!-- ③ EXECUTIVE SUMMARY -->
+  <!-- ③ CHARTS ROW 2: Zone Donut + Capital Allocation -->
+  <div style="display:grid;grid-template-columns:280px 1fr;gap:14px;margin-top:14px">
+
+    <!-- Zone Donut -->
+    <div class="card" style="padding:16px">
+      <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">🎯 Position Zones</div>
+      <div id="dash-zone-chart"></div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;margin-top:8px;font-size:11px">
+        <div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:#10B981;flex-shrink:0"></span><span id="dash-zone-target-lbl" style="color:var(--text-muted)">At target: —</span></div>
+        <div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:#FBBF24;flex-shrink:0"></span><span id="dash-zone-lockin-lbl" style="color:var(--text-muted)">Lock-in: —</span></div>
+        <div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:#34D399;flex-shrink:0"></span><span id="dash-zone-profit-lbl" style="color:var(--text-muted)">Profitable: —</span></div>
+        <div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:#F87171;flex-shrink:0"></span><span id="dash-zone-loss-lbl" style="color:var(--text-muted)">In loss: —</span></div>
+      </div>
+    </div>
+
+    <!-- Capital Allocation -->
+    <div class="card" style="padding:16px">
+      <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">💰 Capital Deployed — Top 15 Positions</div>
+      <div id="dash-capital-chart" style="min-height:280px"></div>
+    </div>
+  </div>
+
+  <!-- ④ EXECUTIVE SUMMARY -->
   <div class="card card-sm" id="exec-summary-card" style="margin-top:14px">
     <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px">📋 Executive Summary</div>
     <div id="exec-summary-body" style="font-size:13px;color:var(--text-primary);line-height:1.8">—</div>
+  </div>
+
+  <!-- System quality — hidden, values still set by JS -->
+  <div style="display:none">
+    <span id="dash-sys-r"></span>
+    <span id="dash-days-winner"></span><span id="dash-sys-exp-sub"></span>
   </div>
 
 </div>
@@ -3410,6 +3414,114 @@ function renderDashboard(data, cfg) {
   }
 
   renderExecSummary(closed, open, portfolioValue, initialCapital);
+  // Update legend target label
+  const legEl = document.getElementById('dash-legend-target');
+  if (legEl) legEl.textContent = cfg.targetPct || 7;
+  renderDashCharts(open, cfg);
+}
+
+// ── DASHBOARD CHARTS ─────────────────────────────────────────────────────────
+const _dashCharts = {};
+function renderDashCharts(open, cfg) {
+  if (!window.ApexCharts) return;
+  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
+  const textClr = isDark ? '#A0AEC0' : '#64748B';
+  const gridClr = isDark ? '#2A3347' : '#E2E8F0';
+  const bgClr   = isDark ? '#161A23' : '#FFFFFF';
+  const targetPct = cfg.targetPct || 7;
+  const lockInPct = cfg.lockInPct || 6;
+
+  function zoneColor(plPct) {
+    if (plPct >= targetPct) return '#10B981';
+    if (plPct >= lockInPct) return '#FBBF24';
+    if (plPct > 0)          return '#34D399';
+    return '#F87171';
+  }
+
+  // ── Chart 1: P&L Waterfall (horizontal bars, all positions sorted desc) ──
+  try {
+    if (_dashCharts.wf) { _dashCharts.wf.destroy(); delete _dashCharts.wf; }
+    const sorted = [...open].sort((a,b) => (b.plPct||0) - (a.plPct||0));
+    const labels = sorted.map(t => t.stock);
+    const vals   = sorted.map(t => parseFloat((t.plPct||0).toFixed(2)));
+    const clrs   = sorted.map(t => zoneColor(t.plPct||0));
+    const h = Math.max(320, Math.min(sorted.length * 21, 700));
+    const wfEl = document.getElementById('dash-pl-chart');
+    if (wfEl && sorted.length) {
+      _dashCharts.wf = new ApexCharts(wfEl, {
+        chart: { type:'bar', height:h, toolbar:{show:false}, background:'transparent', animations:{enabled:false} },
+        plotOptions: { bar: { horizontal:true, distributed:true, barHeight:'72%', borderRadius:2 } },
+        series: [{ name:'P&L %', data:vals }],
+        xaxis: { categories:labels, labels:{ style:{colors:textClr,fontSize:'10px'}, formatter:v=>v+'%' }, tickAmount:6, crosshairs:{show:false} },
+        yaxis: { labels:{ style:{colors:textClr,fontSize:'10px'}, maxWidth:90 } },
+        colors: clrs,
+        legend: { show:false },
+        dataLabels: { enabled:true, formatter:(v)=>(v>0?'+':'')+v.toFixed(1)+'%', style:{fontSize:'9px',fontWeight:600,colors:['#fff']}, dropShadow:{enabled:false} },
+        tooltip: { theme:isDark?'dark':'light', y:{ formatter:v=>(v>0?'+':'')+v.toFixed(2)+'%' } },
+        grid: { borderColor:gridClr, strokeDashArray:3, xaxis:{lines:{show:true}}, yaxis:{lines:{show:false}} },
+        annotations: { xaxis:[{ x:0, borderColor:isDark?'#4B5563':'#9CA3AF', strokeDashArray:0, borderWidth:1.5 }] },
+        theme: { mode:isDark?'dark':'light' },
+      });
+      _dashCharts.wf.render();
+    }
+  } catch(e) { console.warn('dash-pl-chart error', e); }
+
+  // ── Chart 2: Zone Donut ───────────────────────────────────────────────────
+  try {
+    if (_dashCharts.zone) { _dashCharts.zone.destroy(); delete _dashCharts.zone; }
+    const atTarget  = open.filter(t => (t.plPct||0) >= targetPct).length;
+    const atLockIn  = open.filter(t => (t.plPct||0) >= lockInPct && (t.plPct||0) < targetPct).length;
+    const profitable= open.filter(t => (t.plPct||0) > 0 && (t.plPct||0) < lockInPct).length;
+    const inLoss    = open.filter(t => (t.plPct||0) <= 0).length;
+    // Update legend labels
+    const setLbl = (id, txt) => { const el=document.getElementById(id); if(el) el.textContent=txt; };
+    setLbl('dash-zone-target-lbl', `At target: ${atTarget}`);
+    setLbl('dash-zone-lockin-lbl', `Lock-in: ${atLockIn}`);
+    setLbl('dash-zone-profit-lbl', `Profitable: ${profitable}`);
+    setLbl('dash-zone-loss-lbl',   `In loss: ${inLoss}`);
+    const zoneEl = document.getElementById('dash-zone-chart');
+    if (zoneEl && open.length) {
+      _dashCharts.zone = new ApexCharts(zoneEl, {
+        chart: { type:'donut', height:200, background:'transparent', toolbar:{show:false} },
+        series: [atTarget, atLockIn, profitable, inLoss],
+        labels: [`≥${targetPct}% target`, `${lockInPct}-${targetPct}% lock-in`, 'Profitable', 'In loss'],
+        colors: ['#10B981','#FBBF24','#34D399','#F87171'],
+        legend: { show:false },
+        plotOptions: { pie: { donut: { size:'68%', labels: { show:true, total:{ show:true, showAlways:true, label:'Positions', color:textClr, fontSize:'11px', fontWeight:700, formatter:()=>open.length } } } } },
+        dataLabels: { enabled:true, formatter:(v,opts)=>opts.w.config.series[opts.seriesIndex]||'', style:{fontSize:'11px',fontWeight:700}, dropShadow:{enabled:false} },
+        tooltip: { theme:isDark?'dark':'light', y:{ formatter:v=>v+' positions' } },
+        stroke: { show:false },
+        theme: { mode:isDark?'dark':'light' },
+      });
+      _dashCharts.zone.render();
+    }
+  } catch(e) { console.warn('dash-zone-chart error', e); }
+
+  // ── Chart 3: Capital Allocation (top 15 by invested ₹) ───────────────────
+  try {
+    if (_dashCharts.cap) { _dashCharts.cap.destroy(); delete _dashCharts.cap; }
+    const top = [...open].sort((a,b)=>(b.totalInvested||0)-(a.totalInvested||0)).slice(0,15);
+    const capEl = document.getElementById('dash-capital-chart');
+    if (capEl && top.length) {
+      _dashCharts.cap = new ApexCharts(capEl, {
+        chart: { type:'bar', height:Math.max(280, top.length*22+60), toolbar:{show:false}, background:'transparent', animations:{enabled:false} },
+        plotOptions: { bar: { horizontal:true, distributed:true, barHeight:'70%', borderRadius:2 } },
+        series: [{ name:'Invested ₹', data: top.map(t=>Math.round(t.totalInvested||0)) }],
+        xaxis: { categories: top.map(t=>t.stock), labels:{ style:{colors:textClr,fontSize:'10px'}, formatter:v=>'₹'+(v/1000).toFixed(0)+'K' }, crosshairs:{show:false} },
+        yaxis: { labels:{ style:{colors:textClr,fontSize:'10px'} } },
+        colors: top.map(t=>zoneColor(t.plPct||0)),
+        legend: { show:false },
+        dataLabels: { enabled:true, formatter:v=>'₹'+(v/1000).toFixed(0)+'K', style:{fontSize:'9px',fontWeight:600,colors:['#fff']}, dropShadow:{enabled:false} },
+        tooltip: { theme:isDark?'dark':'light', custom:({seriesIndex,dataPointIndex,w})=>{
+          const t=top[dataPointIndex];
+          return `<div style="padding:8px 12px;font-size:12px"><b>${t.stock}</b><br>Invested: ₹${(t.totalInvested||0).toLocaleString('en-IN')}<br>P&L: ${(t.plPct||0)>0?'+':''}${(t.plPct||0).toFixed(2)}%</div>`;
+        }},
+        grid: { borderColor:gridClr, strokeDashArray:3, xaxis:{lines:{show:true}}, yaxis:{lines:{show:false}} },
+        theme: { mode:isDark?'dark':'light' },
+      });
+      _dashCharts.cap.render();
+    }
+  } catch(e) { console.warn('dash-capital-chart error', e); }
 }
 
 // ── EXECUTIVE SUMMARY (SST-Hybrid) ────────────────────────────────────────────
