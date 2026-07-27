@@ -1395,8 +1395,8 @@ tbody tr:hover { filter: brightness(0.97); }
       <table>
         <thead>
           <tr>
-            <th>Stock</th><th>Setup</th><th>Entry Date</th><th>Exit Date</th><th>Days Held</th>
-            <th>Entry ₹</th><th>Init Risk ₹</th><th>Final P&L%</th><th>Final P&L ₹</th><th>Partial</th><th>21 EMA</th>
+            <th>Stock</th><th>Entry Date</th><th>Exit Date</th><th>Days Held</th>
+            <th>Entry ₹</th><th>Invested ₹</th><th>Final P&L%</th><th>Final P&L ₹</th>
           </tr>
         </thead>
         <tbody id="closed-trades-tbody"></tbody>
@@ -2075,10 +2075,10 @@ tbody tr:hover { filter: brightness(0.97); }
   <!-- Alert strip -->
   <div class="alert-strip">
     <span style="font-size:12px; font-weight:600; color:var(--text-muted)">Live Alerts:</span>
-    <div class="strip-badge badge-red" id="strip-red" onclick="filterByAlert('red')" style="cursor:pointer" title="Click to filter">🔴 — exit triggered</div>
-    <div class="strip-badge badge-amber" id="strip-amber" onclick="filterByAlert('amber')" style="cursor:pointer" title="Click to filter">🟡 — near stop</div>
-    <div class="strip-badge badge-green" id="strip-green" onclick="filterByAlert('green')" style="cursor:pointer" title="Click to filter">🟢 — partial pending</div>
-    <div class="strip-badge" id="strip-ha" onclick="filterByAlert('ha')" style="cursor:pointer;background:rgba(255,159,10,0.15);color:var(--amber);border-color:var(--amber)" title="Click to filter">🔄 0 HA shift</div>
+    <div class="strip-badge" id="strip-red" onclick="filterByAlert('red')" style="cursor:pointer;background:rgba(34,197,94,0.12);color:var(--green);border-color:var(--green)" title="Click to filter">🚀 0 target hit (≥7%)</div>
+    <div class="strip-badge badge-amber" id="strip-amber" onclick="filterByAlert('amber')" style="cursor:pointer" title="Click to filter">🟡 0 lock-in zone (6%)</div>
+    <div class="strip-badge" id="strip-green" onclick="filterByAlert('green')" style="cursor:pointer;background:rgba(96,165,250,0.12);color:#60A5FA;border-color:#60A5FA" title="Click to filter">🔵 0 add signal</div>
+    <div class="strip-badge" id="strip-ha" onclick="filterByAlert('ha')" style="cursor:pointer;background:rgba(100,116,139,0.12);color:var(--text-muted);border-color:var(--border)" title="Click to filter">⏳ 0 in loss</div>
     <div class="strip-badge" id="strip-all" onclick="filterByAlert('all')" style="cursor:pointer;display:none">✕ Clear filter</div>
   </div>
 
@@ -2086,13 +2086,13 @@ tbody tr:hover { filter: brightness(0.97); }
   <div class="table-controls">
     <input type="text" class="search-input" placeholder="🔍 Search stock name..." oninput="filterTable(this.value)">
     <select class="select-control" onchange="sortTable(this.value)">
-      <option value="stop">Sort: % from Stop ↑</option>
+      <option value="pnl">Sort: P&L% ↓</option>
       <option value="age">Sort: Age</option>
-      <option value="pnl">Sort: P&L%</option>
+      <option value="stop">Sort: Capital deployed</option>
     </select>
     <select class="select-control" onchange="filterAlert(this.value)">
       <option value="all">Show: All Positions</option>
-      <option value="alerts">Alerts Only</option>
+      <option value="alerts">Action needed only</option>
     </select>
   </div>
 
@@ -2103,24 +2103,22 @@ tbody tr:hover { filter: brightness(0.97); }
         <tr>
           <th>Stock</th>
           <th>Age</th>
-          <th>Entry ₹</th>
-          <th title="Initial risk in ₹ if stop is hit at entry">Risk ₹</th>
+          <th>Qty</th>
+          <th title="Entry price (first lot)">Entry ₹</th>
+          <th title="Total capital invested (all lots)">Invested ₹</th>
           <th>CMP ₹</th>
-          <th title="Col J stop loss — mechanical exit level">Stop ₹</th>
-          <th title="% from effective stop = MAX(J, I)">% from Stop</th>
-          <th>P&L%</th>
-          <th title="Breakeven stop active — stop has been moved to entry price">BE Stop</th>
-          <th>Sector</th>
-          <th>Partial</th>
-          <th>21 EMA</th>
-          <th>HA</th>
+          <th>P&amp;L%</th>
+          <th>P&amp;L ₹</th>
+          <th title="Price at which 6% profit is locked (entry × 1.06)">6% Target ₹</th>
+          <th title="GTT order placed at this price (col J)">GTT ₹</th>
+          <th>Status</th>
         </tr>
       </thead>
       <tbody id="positions-tbody"></tbody>
     </table>
   </div>
   <div style="font-size:11.5px; color:var(--text-muted); margin-top:10px">
-    Click any row to expand position details. Red = exit triggered · Amber = within stop proximity · Green = partial exit due
+    Click any row to expand details. 🚀 Target hit → trail SL up · 🟡 At 6% lock-in · 🔵 In loss + check EMAs to add · ⏳ In loss, waiting
   </div>
 </div>
 
@@ -2579,18 +2577,36 @@ const CONFIG_KEY = 'tj_config_v1';
 const DEFAULT_CONFIG = {
   url: 'https://script.google.com/macros/s/AKfycbwh85dD1AlNlMFRk4M4A8yCA5YAs5gvnCIMgq6ixQUhdxmes-CqU3OYOdxtzDRLRgLq/exec',
   sheet: 'TRADES', headerRows: '1',
-  flagCol: 'B', stockCol: 'E', openDateCol: 'C', closeDateCol: 'D',
-  ema21Col: 'F', cmpCol: 'H', sevenDayLowCol: 'I', stopLossCol: 'J',
-  initRiskRsCol: 'K', initRiskPctCol: 'L', qtyCol: 'Q', entryPriceCol: 'R',
-  setupTypeCol: 'S', pctFromStopCol: 'W', plPctCol: 'X',
-  notionalPlCol: 'Y', partialQtyCol: 'Z', partialPriceCol: 'AA',
-  partialPlCol: 'AB', finalExitPriceCol: 'AC', finalPlCol: 'AD',
-  finalPlPctCol: 'AE', ageCol: 'AF',
-  haColourCol: 'AG', haChangedCol: 'AH',
-  maeCol: 'AL', mfeCol: 'AM', sectorCol: 'AN',
-  portfolioCell: 'AK26', initialCapCell: 'AK20',
-  maxHeat: 5, partialTrigger: 10, beTrigger: 7, stopProximity: 2, heatGreen: 2.5, heatAmber: 4, maxAge: 60, maxPositions: 15, weeklyTarget: 0,
-  beRuleChangeDate: '19-Jun-2026', beRuleOldTrigger: 5,
+  // SST-Hybrid column mapping (as of 2026-07-27)
+  flagCol: 'A',        // col A: Open Position flag (YES/NO)
+  stockCol: 'D',       // col D: NSE:STOCK (strip "NSE:" in frontend)
+  openDateCol: 'B',    // col B: Open Date
+  closeDateCol: 'C',   // col C: Close Date
+  cmpCol: 'K',         // col K: CMP
+  // Reusing old param names for new column meanings:
+  sevenDayLowCol: 'I', // col I: 21-Day High (returned as sevenDayLow, aliased as twentyOneDayHigh)
+  stopLossCol: 'J',    // col J: GTT Placed price (returned as stopLoss, aliased as gttPlaced)
+  initRiskRsCol: 'M',  // col M: Position size ₹ (₹20K base)
+  initRiskPctCol: 'N', // col N: Risk % of portfolio
+  qtyCol: 'Q',         // col Q: Purchased qty
+  entryPriceCol: 'R',  // col R: Entry price
+  setupTypeCol: 'S',   // col S: Total Invested ₹ (returned as setupType, parsed as number)
+  plPctCol: 'X',       // col X: 6% Target CMP price (returned as plPct, aliased as sixPctTargetCmp)
+  notionalPlCol: 'V',  // col V: Notional P&L ₹
+  finalExitPriceCol: 'AC', // col AC: SL Trailing/Add info
+  finalPlCol: 'AE',    // col AE: Final P&L ₹
+  finalPlPctCol: 'AF', // col AF: Final P&L %
+  ageCol: 'AG',        // col AG: Age (days)
+  // Portfolio summary cells (new location in AH column)
+  portfolioCell: 'AH3',   // AH3: Compounded portfolio (initial + realised + notional)
+  initialCapCell: 'AH2',  // AH2: Initial portfolio size
+  // SST strategy params
+  targetPct: 7,        // trail target %
+  lockInPct: 6,        // trailing SL lock-in %
+  maxPositions: 200,   // max open positions
+  baseLotSize: 20000,  // base ₹ per lot
+  lotSizeStep: 1000,   // +₹1000 every 100 closed trades
+  portfolioCapPct: 0.8,// cap: 0.8% of portfolio
 };
 
 const MKT_DIR_KEY = 'tj_mkt_direction';
@@ -2661,17 +2677,15 @@ async function fetchData() {
     sheet: cfg.sheet, headerRows: cfg.headerRows,
     flagCol: cfg.flagCol, stockCol: cfg.stockCol,
     openDateCol: cfg.openDateCol, closeDateCol: cfg.closeDateCol,
-    ema21Col: cfg.ema21Col, cmpCol: cfg.cmpCol,
+    cmpCol: cfg.cmpCol,
     sevenDayLowCol: cfg.sevenDayLowCol, stopLossCol: cfg.stopLossCol,
     initRiskRsCol: cfg.initRiskRsCol, initRiskPctCol: cfg.initRiskPctCol,
-    qtyCol: cfg.qtyCol, entryPriceCol: cfg.entryPriceCol, setupTypeCol: cfg.setupTypeCol,
-    pctFromStopCol: cfg.pctFromStopCol, plPctCol: cfg.plPctCol,
-    notionalPlCol: cfg.notionalPlCol, partialQtyCol: cfg.partialQtyCol,
-    partialPriceCol: cfg.partialPriceCol, partialPlCol: cfg.partialPlCol,
-    finalExitPriceCol: cfg.finalExitPriceCol, finalPlCol: cfg.finalPlCol,
-    finalPlPctCol: cfg.finalPlPctCol, ageCol: cfg.ageCol,
-    haColourCol: cfg.haColourCol, haChangedCol: cfg.haChangedCol,
-    maeCol: cfg.maeCol, mfeCol: cfg.mfeCol, sectorCol: cfg.sectorCol,
+    qtyCol: cfg.qtyCol, entryPriceCol: cfg.entryPriceCol,
+    setupTypeCol: cfg.setupTypeCol, plPctCol: cfg.plPctCol,
+    notionalPlCol: cfg.notionalPlCol,
+    finalExitPriceCol: cfg.finalExitPriceCol,
+    finalPlCol: cfg.finalPlCol, finalPlPctCol: cfg.finalPlPctCol,
+    ageCol: cfg.ageCol,
     portfolioCell: cfg.portfolioCell, initialCapCell: cfg.initialCapCell,
   });
   try {
@@ -2701,6 +2715,23 @@ async function refreshData() {
   }
   document.body.classList.remove('loading');
   if (!data) { if (btn) { btn.textContent = '↻'; btn.disabled = false; } return; }
+  // ── SST post-processing: semantic aliases + computed fields ──────────────
+  function sstProcess(t) {
+    // Strip "NSE:" / "BSE:" prefix from stock name
+    t.stock = (t.stock || '').replace(/^(NSE|BSE):/i, '').trim();
+    // Semantic aliases (Apps Script returns old field names, we alias to new meaning)
+    t.twentyOneDayHigh = t.sevenDayLow || 0;  // col I → 21-Day High
+    t.gttPlaced        = t.stopLoss    || 0;  // col J → GTT placed price
+    t.positionSize     = t.initRiskRs  || 0;  // col M → position size ₹
+    t.totalInvested    = parseFloat(t.setupType) || 0; // col S → total invested ₹
+    t.sixPctTargetCmp  = t.plPct || 0;        // col X → 6% target CMP price
+    // Compute actual P&L% from CMP and entry price
+    t.plPct = (t.cmp && t.entryPrice) ? (t.cmp - t.entryPrice) / t.entryPrice * 100 : 0;
+    return t;
+  }
+  if (data && data.open)   data.open   = data.open.map(sstProcess);
+  if (data && data.closed) data.closed = data.closed.map(sstProcess);
+  // ─────────────────────────────────────────────────────────────────────────
   window._data = data;
   const cfg = loadConfig();
   // Silently fetch F&O data for NIFTYBEES/MIDCAPBEES market regime signals (no spinner, no toast on failure)
@@ -3376,100 +3407,42 @@ function renderDashboard(data, cfg) {
     }
   })();
 
-  // Alerts
+  // SST Alerts (hidden wrap — alerts shown via Positions tab instead)
   const alertsWrap = document.getElementById('alerts-wrap');
   if (alertsWrap) {
+    const targetPct = cfg.targetPct || 7;
+    const lockInPct = cfg.lockInPct || 6;
     const alerts = [];
-    // Position count limit removed — system scales to 0.8% portfolio risk cap, not a fixed position count
     open.forEach(t => {
-      const effStop = t.stopLoss || 0;
-      const effPct = (t.cmp && effStop) ? ((t.cmp - effStop) / t.cmp * 100) : t.pctFromStop;
-      const isProfitPhase = (t.plPct || 0) >= cfg.beTrigger; // profit ≥ BE trigger → 21 EMA is primary exit, 7DL is warning only
-
-      // EXIT TRIGGERED — only when CMP ≤ col J stop loss (mechanical stop)
-      // 7-day low is informational only — NOT a mechanical exit trigger
-      if (effPct <= 0) {
-        const stopRs = t.stopLoss ? '₹' + t.stopLoss.toLocaleString('en-IN') : '—';
-        alerts.push({ type:'red', icon:'🔴', title:`${t.stock} — Stop Hit`, desc:`CMP ₹${(t.cmp||0).toLocaleString('en-IN')} has hit/crossed your stop loss ${stopRs} (col J). Mechanical exit required — no exceptions.` });
-      }
-      else if (effPct <= cfg.stopProximity) {
-        alerts.push({ type:'amber', icon:'🟡', title:`${t.stock} — Within ${effPct.toFixed(1)}% of Stop`, desc:`Only ${effPct.toFixed(1)}% above stop loss ${t.stopLoss ? '₹'+t.stopLoss.toLocaleString('en-IN') : '—'} (col J). Review before market open. Exit only when stop actually hits.` });
-      }
-      // 7DL informational note — not an exit signal, just awareness
-      if (t.cmp && t.sevenDayLow && t.cmp <= t.sevenDayLow && effPct > 0) {
-        alerts.push({ type:'info', icon:'ℹ️', title:`${t.stock} — Below 7-Day Low (informational)`, desc:`CMP ₹${t.cmp.toLocaleString('en-IN')} is below 7DL ₹${t.sevenDayLow.toLocaleString('en-IN')}. 7-day low is not your stop — your stop (col J) at ₹${(t.stopLoss||0).toLocaleString('en-IN')} has not been hit. Watch 21 EMA for trail/exit signal.` });
-      }
-      if ((t.ema21 || '').trim().toLowerCase() === 'below' && (t.plPct > 0 || (t.notionalPl||0) > 0)) {
-        const emaPlLabel = t.plPct > 0 ? `+${t.plPct.toFixed(1)}%` : `+₹${Math.round(t.notionalPl).toLocaleString('en-IN')}`;
-        const exitMsg = isProfitPhase ? 'PRIMARY EXIT SIGNAL — in profit phase, 21 EMA breach is your exit trigger. Exit at market.' : 'Position is profitable — consider tightening stop to protect gains.';
-        alerts.push({ type:'red', icon:'📉', title:`${t.stock} — Below 21 EMA (${emaPlLabel})`, desc:`Price has crossed below 21 EMA. ${exitMsg}` });
-      }
-      if (t.plPct >= cfg.beTrigger && t.stopLoss < t.entryPrice) {
-        alerts.push({ type:'amber', icon:'🛡', title:`${t.stock} — Move Stop to Breakeven (+${t.plPct.toFixed(1)}%)`, desc:`Position up ${t.plPct.toFixed(1)}%. Per your strategy, move col J stop to entry price ₹${t.entryPrice.toLocaleString('en-IN')} to make this trade risk-free.` });
-      }
-      else if (t.plPct >= cfg.partialTrigger && t.partialTaken === 'N') alerts.push({ type:'green', icon:'🟢', title:`${t.stock} — Partial Exit Pending (+${t.plPct.toFixed(1)}%)`, desc:`At +${cfg.partialTrigger}% trigger. Partial exit not yet taken. Act today.` });
-      const cfg_maxAge = cfg.maxAge || 60;
-      if (t.age && parseInt(t.age) > cfg_maxAge && t.partialTaken !== 'Y') {
-        alerts.push({ type:'amber', icon:'🕐', title:`${t.stock} — Held ${t.age} days, no partial taken`, desc:`Position is ${t.age} days old and partial exit hasn't been taken. Review your exit plan.` });
-      }
-      if (String(t.haChanged || '').toUpperCase() === 'Y' && t.haColour) {
-        alerts.push({ type:'amber', icon:'🔄', title:`${t.stock} — HA colour flipped to ${t.haColour}`, desc:`Heikin-Ashi candle colour changed — momentum shift signal. Review position and consider tightening stop.` });
-      }
-      if (t.plPct >= cfg.beTrigger && (t.haColour || '').trim().toLowerCase() === 'red') {
-        alerts.push({ type:'amber', icon:'⚠', title:`${t.stock} — Profit at risk: +${t.plPct.toFixed(1)}% but HA is Red`, desc:`Healthy gain but Heikin-Ashi momentum has turned red. Consider tightening stop or taking partial profits to protect gains.` });
-      }
+      if (t.plPct >= targetPct)
+        alerts.push({ type:'green', groupKey:'target', icon:'🚀', title:`${t.stock}`, desc:`Up ${t.plPct.toFixed(1)}% — above ${targetPct}% target. Trail your SL up.` });
+      else if (t.plPct >= lockInPct)
+        alerts.push({ type:'amber', groupKey:'lockin', icon:'🟡', title:`${t.stock}`, desc:`Up ${t.plPct.toFixed(1)}% — at ${lockInPct}% lock-in zone. Trailing SL protecting profit.` });
+      else if (t.plPct < 0)
+        alerts.push({ type:'info', groupKey:'add', icon:'🔵', title:`${t.stock}`, desc:`Down ${Math.abs(t.plPct).toFixed(1)}%. Check 200+50 EMA. If above both, place GTT at 21DH ₹${t.twentyOneDayHigh ? t.twentyOneDayHigh.toLocaleString('en-IN') : '—'} for 50% add.` });
     });
-    if (alerts.length === 0) {
-      alertsWrap.innerHTML = '<div style="padding:16px;text-align:center;color:var(--text-muted);font-size:13px">✓ No alerts — all positions within parameters</div>';
-    } else {
-      // Group alerts by priority order
-      const groups = [
-        { key:'red',     icon:'🔴', label:'Exit Triggered',          color:'var(--red)',   bg:'var(--red-soft)',   countBg:'rgba(255,69,58,0.2)',   autoOpen: false },
-        { key:'ema21',   icon:'📉', label:'Below 21 EMA — Protect Gains', color:'var(--red)', bg:'var(--red-soft)', countBg:'rgba(255,69,58,0.2)',   autoOpen: false },
-        { key:'ha-warn', icon:'⚠',  label:'Profit at Risk — HA Red', color:'var(--red)',   bg:'var(--red-soft)',   countBg:'rgba(255,69,58,0.2)',   autoOpen: false },
-        { key:'ha',      icon:'🔄', label:'HA Momentum Shift',       color:'var(--amber)', bg:'var(--amber-soft)', countBg:'rgba(255,159,10,0.2)', autoOpen: false },
-        { key:'breakeven', icon:'🛡', label:'Move Stop to Breakeven', color:'var(--amber)', bg:'var(--amber-soft)', countBg:'rgba(255,159,10,0.2)', autoOpen: false },
-        { key:'amber',   icon:'🟡', label:'Near Stop / Review',      color:'var(--amber)', bg:'var(--amber-soft)', countBg:'rgba(255,159,10,0.2)', autoOpen: false },
-        { key:'green',   icon:'🟢', label:'Partial Exit Pending',    color:'var(--green)', bg:'var(--green-soft)', countBg:'rgba(52,199,89,0.2)',  autoOpen: false },
-        { key:'info',    icon:'ℹ️', label:'7-Day Low (Informational)', color:'var(--text-muted)', bg:'var(--surface2)', countBg:'rgba(100,116,139,0.2)', autoOpen: false },
-      ];
 
-      // Tag each alert with a group key
-      // 21 EMA breach is a full exit trigger (same priority as stop breach) — goes into 'red' group
-      const tagged = alerts.map(a => {
-        if (a.icon === '📉') return { ...a, groupKey: 'ema21' };
-        if (a.icon === '🛡') return { ...a, groupKey: 'breakeven' };
-        if (a.icon === '⚠') return { ...a, groupKey: 'ha-warn' };
-        if (a.icon === '🔄') return { ...a, groupKey: 'ha' };
-        return { ...a, groupKey: a.type };
-      });
+    const groups = [
+      { key:'target', icon:'🚀', label:'Trail SL Up — At Target (≥'+( cfg.targetPct||7)+'%)', color:'var(--green)', bg:'rgba(34,197,94,0.08)', countBg:'rgba(34,197,94,0.2)', autoOpen:true },
+      { key:'lockin', icon:'🟡', label:'At Lock-in Zone ('+( cfg.lockInPct||6)+'%)',          color:'var(--amber)', bg:'var(--amber-soft)',       countBg:'rgba(245,158,11,0.2)', autoOpen:false },
+      { key:'add',    icon:'🔵', label:'In Loss — Check EMAs to Add',                        color:'#60A5FA',      bg:'rgba(96,165,250,0.08)',    countBg:'rgba(96,165,250,0.2)', autoOpen:false },
+    ];
 
       alertsWrap.innerHTML = groups.map(g => {
-        const items = tagged.filter(a => a.groupKey === g.key);
+        const items = alerts.filter(a => a.groupKey === g.key);
         if (items.length === 0) return '';
         const headerId = 'ag-hdr-' + g.key;
         const bodyId   = 'ag-body-' + g.key;
         const isOpen   = g.autoOpen;
         const tbody = items.map(a => {
-          // Extract stock name from title (always first word before ' — ')
-          const stockName = a.title.split(' — ')[0];
-          const detail = a.title.split(' — ')[1] || '';
-          const badge = g.key === 'red'
-            ? (a.icon === '📉'
-              ? `<span class="fno-badge fno-badge-call">📉 Exit — 21 EMA</span>`
-              : `<span class="fno-badge fno-badge-call">🔴 Exit Now</span>`)
-            : g.key === 'ha-warn'
-                ? `<span class="fno-badge" style="background:var(--red-soft);color:var(--red);border:1px solid rgba(239,68,68,.3)">⚠ Tighten Stop</span>`
-                : g.key === 'breakeven'
-                  ? `<span class="fno-badge" style="background:var(--amber-soft);color:var(--amber);border:1px solid rgba(245,158,11,.3)">🛡 Move to BE</span>`
-                  : g.key === 'ha'
-                    ? `<span class="fno-badge" style="background:var(--amber-soft);color:var(--amber);border:1px solid rgba(245,158,11,.3)">🔄 Review</span>`
-                    : g.key === 'green'
-                      ? `<span class="fno-badge fno-badge-put">🟢 Take Partial</span>`
-                      : `<span class="fno-badge" style="background:var(--amber-soft);color:var(--amber);border:1px solid rgba(245,158,11,.3)">🟡 Review Stop</span>`;
+          const badge = g.key === 'target'
+            ? `<span class="fno-badge" style="background:rgba(34,197,94,0.15);color:var(--green);border:1px solid rgba(34,197,94,.3)">🚀 Trail SL</span>`
+            : g.key === 'lockin'
+              ? `<span class="fno-badge" style="background:var(--amber-soft);color:var(--amber);border:1px solid rgba(245,158,11,.3)">🟡 Lock-in active</span>`
+              : `<span class="fno-badge" style="background:rgba(96,165,250,0.15);color:#60A5FA;border:1px solid rgba(96,165,250,.3)">🔵 Check add</span>`;
           return `<tr style="cursor:pointer" onclick="showPage('positions',document.querySelectorAll('.nav-tab')[3])">
-            <td><span class="stock-name">${stockName}</span></td>
-            <td style="color:var(--text-secondary)">${detail}</td>
+            <td><span class="stock-name">${a.title}</span></td>
+            <td style="color:var(--text-secondary);font-size:11px">${a.desc}</td>
             <td>${badge}</td>
           </tr>`;
         }).join('');
@@ -3499,80 +3472,72 @@ function renderDashboard(data, cfg) {
   renderExecSummary(closed, open, portfolioValue, initialCapital);
 }
 
-// ── EXECUTIVE SUMMARY ─────────────────────────────────────────────────────────
+// ── EXECUTIVE SUMMARY (SST-Hybrid) ────────────────────────────────────────────
 function renderExecSummary(closed, open, portfolioValue, initialCapital) {
   const el = document.getElementById('exec-summary-body');
   if (!el) return;
 
-  const wins   = closed.filter(t => (t.finalPlPct || 0) > 0);
-  const losses = closed.filter(t => (t.finalPlPct || 0) < 0);
-  const wr     = closed.length > 0 ? wins.length / closed.length * 100 : 0;
-  const totalWinPl  = wins.reduce((s,t) => s + (t.finalPl||0), 0);
-  const totalLossPl = Math.abs(losses.reduce((s,t) => s + (t.finalPl||0), 0));
+  const cfg        = loadConfig();
+  const targetPct  = cfg.targetPct  || 7;
+  const lockInPct  = cfg.lockInPct  || 6;
+  const wins       = closed.filter(t => (t.finalPlPct||0) > 0);
+  const losses     = closed.filter(t => (t.finalPlPct||0) < 0);
+  const wr         = closed.length > 0 ? wins.length / closed.length * 100 : 0;
+  const totalWinPl = wins.reduce((s,t)   => s + (t.finalPl||0), 0);
+  const totalLossPl= Math.abs(losses.reduce((s,t) => s + (t.finalPl||0), 0));
   const pf         = totalLossPl > 0 ? totalWinPl / totalLossPl : null;
   const avgWinPct  = wins.length   > 0 ? wins.reduce((s,t)   => s + (t.finalPlPct||0), 0) / wins.length   : 0;
-  const avgLossPct = losses.length > 0 ? Math.abs(losses.reduce((s,t) => s + (t.finalPlPct||0), 0) / losses.length) : 0;
   const openMtm    = open.reduce((s,t) => s + (t.notionalPl||0), 0);
-  const riskFreeOpen = open.filter(t => t.stopLoss && t.entryPrice && t.stopLoss >= t.entryPrice);
   const profitableOpen = open.filter(t => (t.plPct||0) > 0);
-
+  const atTarget   = open.filter(t => (t.plPct||0) >= targetPct);
+  const atLockin   = open.filter(t => (t.plPct||0) >= lockInPct && (t.plPct||0) < targetPct);
+  const inLoss     = open.filter(t => (t.plPct||0) < 0);
+  const totalDeployed = open.reduce((s,t) => s + (t.totalInvested || t.positionSize || 0), 0);
   const lines = [];
 
-  // 1. System edge
-  if (closed.length < 5) {
-    lines.push(`📊 <b>System edge:</b> Only ${closed.length} closed trade${closed.length===1?'':'s'} so far — too early for statistics. Focus on process: cut losses at stop, no exceptions.`);
-  } else {
-    const pfColor  = pf === null ? 'var(--text-muted)' : pf >= 1.5 ? 'var(--green)' : pf >= 1.0 ? 'var(--amber)' : 'var(--red)';
-    const pfLabel  = pf === null ? 'n/a' : pf.toFixed(2);
-    const pfNote   = pf === null ? '' : pf >= 1.5 ? ' — system has a clear edge' : pf >= 1.0 ? ' — edge exists but thin' : ' — system is not yet profitable; review entries';
-    const wrColor  = wr >= 35 ? 'var(--green)' : wr >= 20 ? 'var(--amber)' : 'var(--red)';
-    lines.push(`📊 <b>System edge:</b> Profit Factor <span style="color:${pfColor}">${pfLabel}${pfNote}</span>. Win rate <span style="color:${wrColor}">${wr.toFixed(0)}%</span> (25–40% is healthy for this style). Average winner <span style="color:var(--green)">+${avgWinPct.toFixed(1)}%</span> vs average loser <span style="color:var(--red)">-${avgLossPct.toFixed(1)}%</span>.`);
-  }
+  // 1. Portfolio snapshot
+  const pvFmt = portfolioValue ? '₹' + Math.round(portfolioValue).toLocaleString('en-IN') : '—';
+  const retPct = initialCapital > 0 ? ((portfolioValue - initialCapital) / initialCapital * 100) : 0;
+  const retColor = retPct >= 0 ? 'var(--green)' : 'var(--red)';
+  lines.push(`💼 <b>Portfolio:</b> <span style="font-size:15px;font-weight:700">${pvFmt}</span> &nbsp;·&nbsp; <span style="color:${retColor}">${retPct >= 0 ? '+' : ''}${retPct.toFixed(2)}% total return</span> &nbsp;·&nbsp; ₹${Math.round(totalDeployed).toLocaleString('en-IN')} deployed across ${open.length} positions.`);
 
-  // 2. Open book
+  // 2. Open book status
   if (open.length > 0) {
-    const mtmStr   = (openMtm >= 0 ? '+' : '-') + '₹' + Math.abs(Math.round(openMtm)).toLocaleString('en-IN');
+    const mtmStr   = (openMtm >= 0 ? '+' : '') + '₹' + Math.round(Math.abs(openMtm)).toLocaleString('en-IN');
     const mtmColor = openMtm >= 0 ? 'var(--green)' : 'var(--red)';
-    const rfNote   = riskFreeOpen.length > 0 ? `, ${riskFreeOpen.length} risk-free (stop ≥ breakeven)` : '';
-    lines.push(`📂 <b>Open book:</b> ${open.length} positions live — ${profitableOpen.length} profitable${rfNote}. Unrealised MTM: <span style="color:${mtmColor}">${mtmStr}</span>. True portfolio return = realised + unrealised combined.`);
+    lines.push(`📂 <b>Open positions:</b> ${profitableOpen.length} profitable · ${inLoss.length} in loss. <span style="color:var(--green)">${atTarget.length} at/above ${targetPct}% target (trail SL)</span> · <span style="color:var(--amber)">${atLockin.length} at ${lockInPct}% lock-in zone</span> · <span style="color:#60A5FA">${inLoss.length} in loss (check EMAs before adding)</span>. Notional MTM: <span style="color:${mtmColor}">${mtmStr}</span>.`);
   } else {
-    lines.push(`📂 <b>Open book:</b> No open positions — fully in cash.`);
+    lines.push(`📂 <b>Open positions:</b> None — fully in cash.`);
   }
 
-  // 3. Execution quality — avg loss vs 7% rule
-  if (losses.length >= 3) {
-    const s = avgLossPct <= 5 ? { label:'excellent', color:'var(--green)' }
-            : avgLossPct <= 7 ? { label:'on target', color:'var(--green)' }
-            : avgLossPct <= 10 ? { label:'slightly large — tighten stop discipline', color:'var(--amber)' }
-            : { label:'too large — stops not being taken cleanly', color:'var(--red)' };
-    lines.push(`✂️ <b>Cut-loss execution:</b> Average closed loss is <span style="color:${s.color}">-${avgLossPct.toFixed(1)}%</span> — <span style="color:${s.color}">${s.label}</span>. Target: keep under 7%.`);
+  // 3. Closed trade performance
+  if (closed.length < 3) {
+    lines.push(`📊 <b>Closed trades:</b> Only ${closed.length} closed so far — too early for statistics. Strategy needs time to cycle positions through to the ${targetPct}% target.`);
+  } else {
+    const pfColor = pf === null ? 'var(--text-muted)' : pf >= 2 ? 'var(--green)' : pf >= 1 ? 'var(--amber)' : 'var(--red)';
+    const pfNote  = pf === null ? '' : pf >= 2 ? ' — excellent edge' : pf >= 1.5 ? ' — healthy edge' : pf >= 1 ? ' — thin edge' : ' — review entries';
+    const wrColor = wr >= 70 ? 'var(--green)' : wr >= 50 ? 'var(--amber)' : 'var(--red)';
+    lines.push(`📊 <b>Closed trades (${closed.length}):</b> Win rate <span style="color:${wrColor}">${wr.toFixed(0)}%</span> (SST targets ≥70%). Profit Factor <span style="color:${pfColor}">${pf !== null ? pf.toFixed(2) : '—'}${pfNote}</span>. Average winner <span style="color:var(--green)">+${avgWinPct.toFixed(1)}%</span> (target: ${targetPct}% minimum).`);
   }
 
-  // 4. Winner pipeline
+  // 4. Position sizing — current tier
+  const lotSize = Math.min(
+    (cfg.baseLotSize || 20000) + Math.floor(closed.length / 100) * (cfg.lotSizeStep || 1000),
+    initialCapital > 0 ? initialCapital * ((cfg.portfolioCapPct || 0.8) / 100) : Infinity
+  );
+  const nextTier  = 100 - (closed.length % 100);
+  const atCap     = initialCapital > 0 && lotSize >= initialCapital * ((cfg.portfolioCapPct || 0.8) / 100);
+  lines.push(`📐 <b>Position sizing:</b> Current lot size <span style="color:var(--green);font-weight:700">₹${Math.round(lotSize).toLocaleString('en-IN')}</span> · Add lot = ₹${Math.round(lotSize/2).toLocaleString('en-IN')}. ${atCap ? 'At portfolio cap (0.8%).' : `Next tier upgrade in <b>${nextTier}</b> more closed trades.`}`);
+
+  // 5. Last win context
   const sortedWins = wins.map(t => ({ d: parseDate(t.closeDate) })).filter(x => x.d && x.d.getTime() > 0).sort((a,b) => b.d - a.d);
-  const daysSinceWin = sortedWins.length > 0 ? Math.floor((Date.now() - sortedWins[0].d.getTime()) / 86400000) : null;
-  if (daysSinceWin !== null) {
-    const dswColor = daysSinceWin <= 14 ? 'var(--green)' : daysSinceWin <= 30 ? 'var(--amber)' : 'var(--red)';
-    const dswNote  = daysSinceWin > 30 ? ' — worth reviewing if market conditions are hostile or entries need tightening' : '';
-    lines.push(`🏆 <b>Winner pipeline:</b> Last closed winner was <span style="color:${dswColor}">${daysSinceWin} days ago</span>${dswNote}. Your real gains currently sit in ${open.length} open position${open.length===1?'':'s'} as unrealised MTM.`);
+  const dsw = sortedWins.length > 0 ? Math.floor((Date.now() - sortedWins[0].d.getTime()) / 86400000) : null;
+  if (dsw !== null) {
+    const dswColor = dsw <= 14 ? 'var(--green)' : dsw <= 30 ? 'var(--amber)' : 'var(--red)';
+    lines.push(`🏆 <b>Last closed winner:</b> <span style="color:${dswColor}">${dsw} days ago</span>.${dsw > 30 ? ' — strategy needs time; positions in loss may need adding if EMAs still hold.' : ''}`);
   }
 
-  // 5. Current streak context
-  const recent = [...closed].sort((a,b) => parseDate(b.closeDate) - parseDate(a.closeDate));
-  let streak = 0, streakWin = null;
-  for (const t of recent) {
-    const w = (t.finalPlPct||0) > 0;
-    if (streakWin === null) streakWin = w;
-    if (w !== streakWin) break;
-    streak++;
-  }
-  if (streak >= 3 && !streakWin) {
-    lines.push(`📉 <b>Closed-trade streak:</b> ${streak} consecutive losses — <b>this is normal and expected</b> in a momentum system that cuts losses mechanically. Closed trades will always be loss-heavy; the winners are in your open book.`);
-  } else if (streak >= 2 && streakWin) {
-    lines.push(`✅ <b>Closed-trade streak:</b> ${streak} consecutive winners — system is in a productive phase.`);
-  }
-
-  el.innerHTML = lines.map(l => `<div style="margin-bottom:8px;padding-bottom:8px;border-bottom:1px solid var(--border)">${l}</div>`).join('').replace(/border-bottom:1px solid var\(--border\)">([\s\S]*?)<\/div>$/, 'border-bottom:none">$1</div>');
+  el.innerHTML = lines.map((l,i,a) => `<div style="margin-bottom:${i<a.length-1?'8px':'0'};padding-bottom:${i<a.length-1?'8px':'0'};border-bottom:${i<a.length-1?'1px solid var(--border)':'none'}">${l}</div>`).join('');
 }
 
 // ── TODAY'S ACTION BOARD ─────────────────────────────
@@ -3678,36 +3643,23 @@ function renderTodayActions(open, cfg) {
       }
     }
 
-    // Compute each breadth dimension
-    const aboveEma      = open.filter(t => (t.ema21||'').trim().toLowerCase() === 'above').length;
-    const haGreen       = open.filter(t => (t.haColour||'').trim().toLowerCase() === 'green').length;
+    // SST breadth dimensions
     const profitable    = open.filter(t => (t.plPct||0) > 0).length;
-    const riskFree      = open.filter(t => t.stopLoss >= t.entryPrice && t.entryPrice > 0).length;
-    const nearStop      = open.filter(t => {
-      const effStop = t.stopLoss||0;
-      const effPct = (t.cmp && effStop) ? ((t.cmp - effStop)/t.cmp*100) : (t.pctFromStop||0);
-      return effPct <= cfg.stopProximity && effPct > 0;
+    const atTarget      = open.filter(t => (t.plPct||0) >= (cfg.targetPct||7)).length;
+    const atLockin      = open.filter(t => (t.plPct||0) >= (cfg.lockInPct||6) && (t.plPct||0) < (cfg.targetPct||7)).length;
+    const inLoss        = open.filter(t => (t.plPct||0) < 0).length;
+    const addEligible   = open.filter(t => {
+      if ((t.plPct||0) >= 0) return false;
+      const a200 = t.ema200 === true || String(t.ema200||'').toLowerCase() === 'true';
+      const a50  = t.ema50  === true || String(t.ema50 ||'').toLowerCase() === 'true';
+      return a200 && a50;
     }).length;
-    const exitTriggered = open.filter(t => {
-      const effStop = t.stopLoss||0;
-      const effPct = (t.cmp && effStop) ? ((t.cmp - effStop)/t.cmp*100) : (t.pctFromStop||0);
-      return effPct <= 0;
-    }).length;
-    const haShiftToday  = open.filter(t => String(t.haChanged||'').toUpperCase() === 'Y').length;
-    const phase2        = open.filter(t => (t.plPct||0) >= cfg.beTrigger).length; // in profit phase, 21 EMA is primary
 
-    // Overall breadth score: 0–100 weighted across key dimensions
-    // Weights: above EMA 25, HA green 20, profitable 25, risk-free 20, exit triggered -30 (penalty), near stop -10
-    const scorePct = Math.max(0, Math.min(100,
-      Math.round(
-        (aboveEma/n*25) + (haGreen/n*20) + (profitable/n*25) + (riskFree/n*20)
-        - (exitTriggered/n*30) - (nearStop/n*10)
-      )
-    ));
-    const scoreColor = scorePct >= 60 ? 'var(--green)' : scorePct >= 35 ? 'var(--amber)' : 'var(--red)';
-    const scoreLabel = scorePct >= 60 ? 'HEALTHY' : scorePct >= 35 ? 'MIXED' : 'UNDER PRESSURE';
+    // Breadth score: profitable %, atTarget/lockin as green signal
+    const scorePct = Math.max(0, Math.min(100, Math.round((profitable/n*50) + (atTarget/n*30) + (atLockin/n*20))));
+    const scoreColor = scorePct >= 50 ? 'var(--green)' : scorePct >= 25 ? 'var(--amber)' : 'var(--red)';
+    const scoreLabel = scorePct >= 50 ? 'HEALTHY' : scorePct >= 25 ? 'MIXED' : 'UNDER PRESSURE';
 
-    // Render meter function: label, count, total, color
     const meter = (label, count, total, activeColor, tooltip) => {
       const pct = total > 0 ? Math.round(count/total*100) : 0;
       const barColor = count === 0 ? 'var(--surface2)' : activeColor;
@@ -3723,204 +3675,144 @@ function renderTodayActions(open, cfg) {
     };
 
     breadthMeters.innerHTML = [
-      meter('Above 21 EMA', aboveEma, n, 'var(--green)', 'Stocks trading above their 21-day EMA — momentum intact'),
-      meter('HA Green', haGreen, n, 'var(--green)', 'Heikin-Ashi candle is green — uptrend confirmed'),
-      meter('Profitable (MTM)', profitable, n, 'var(--green)', 'Open positions with positive mark-to-market P&L'),
-      meter('Risk-Free (BE active)', riskFree, n, '#22d3ee', 'Stop moved to entry — can\'t lose money on these trades'),
-      phase2 > 0 ? meter('In Phase 2 (≥+'+cfg.beTrigger+'%)', phase2, n, '#a78bfa', 'Profit ≥ '+cfg.beTrigger+'% — stop moved to BE. Watch 21 EMA support for trail/exit') : '',
-      nearStop > 0 ? meter('Near Stop (watch)', nearStop, n, 'var(--amber)', 'Within '+cfg.stopProximity+'% of effective stop — no action but monitor') : '',
-      exitTriggered > 0 ? meter('Exit Triggered ⚠', exitTriggered, n, 'var(--red)', 'Price at or below effective stop — exit at market') : '',
-      haShiftToday > 0 ? meter('HA Shift Today', haShiftToday, n, 'var(--amber)', 'HA candle colour changed today — momentum shift in progress') : '',
+      meter('Profitable (MTM > 0)', profitable, n, 'var(--green)', 'Open positions with positive mark-to-market P&L'),
+      meter('At Target (≥'+(cfg.targetPct||7)+'%)', atTarget, n, '#22d3ee', 'Reached profit target — trailing SL should be raised'),
+      atLockin > 0 ? meter('Lock-In Zone (6–'+(cfg.targetPct||7)+'%)', atLockin, n, 'var(--amber)', '6% profit locked — verify GTT is active') : '',
+      inLoss > 0 ? meter('In Loss', inLoss, n, 'rgba(239,68,68,0.7)', 'Positions below entry — evaluate add signal or hold') : '',
+      addEligible > 0 ? meter('Add Eligible (above 200+50 EMA)', addEligible, n, '#60A5FA', 'In loss but above 200+50 EMA — place GTT at 21DH for add') : '',
     ].filter(Boolean).join('');
 
     // Insight text
-    const bullish = [aboveEma, haGreen, profitable].map(v => v/n).filter(r => r >= 0.6).length;
-    const warning = exitTriggered > 0 || (nearStop >= 2);
     let insight = '';
-    if (exitTriggered > 0)      insight += `⚠ <strong>${exitTriggered} position${exitTriggered>1?'s':''} at/below stop</strong> — exit before open today. `;
-    if (riskFree === n && n > 0) insight += `✅ <strong>All ${n} positions are risk-free</strong> (stops at entry). `;
-    else if (riskFree > n/2)    insight += `🛡 <strong>${riskFree} of ${n} positions risk-free</strong> — good capital protection. `;
-    if (bullish === 3)          insight += `📈 <strong>Book breadth is strong</strong> — majority above EMA, HA green, and profitable. Hold your runners. `;
-    else if (aboveEma/n < 0.4)  insight += `⚡ <strong>Fewer than half above 21 EMA</strong> — market may be rotating. Review weakest positions. `;
-    if (haShiftToday > 0)       insight += `🔄 <strong>${haShiftToday} HA shift${haShiftToday>1?'s':''} today</strong> — ${haShiftToday>1?'multiple':'a'} momentum change${haShiftToday>1?'s':''} in play, check direction. `;
-    if (phase2 > 0)             insight += `🚀 <strong>${phase2} runner${phase2>1?'s':''} in phase 2</strong> — stop at BE, watch 21 EMA support to trail and exit. `;
-    if (!insight)               insight = `📊 ${n} open positions · Breadth score <strong style="color:${scoreColor}">${scorePct}</strong>/100 · No urgent signals.`;
+    if (atTarget > 0)     insight += `🚀 <strong>${atTarget} position${atTarget>1?'s':''} at target</strong> — trail your SL up to lock in more profit. `;
+    if (atLockin > 0)     insight += `🟡 <strong>${atLockin} in lock-in zone</strong> — verify GTT is active. `;
+    if (addEligible > 0)  insight += `🔵 <strong>${addEligible} add-eligible</strong> — in loss but above 200+50 EMA, GTT at 21DH. `;
+    if (!insight && profitable === n && n > 0) insight = `✅ <strong>All ${n} positions profitable</strong> — book is healthy, hold plan. `;
+    if (!insight) insight = `📊 ${n} open positions · ${profitable} profitable · ${inLoss} in loss · No urgent signals.`;
     breadthInsight.innerHTML = insight;
 
     if (breadthSignal) breadthSignal.innerHTML = `<span style="color:${scoreColor}">${scoreLabel}</span> <span style="color:var(--text-muted);font-weight:400">${scorePct}/100</span>`;
     breadthPanel.style.display = 'block';
   }
 
-  // Build action list with priority group for each trade
+  // ── SST Action List ─────────────────────────────────────────────────────────
+  // SST alert types: target (≥7%), lockin (6-7%), add (in loss), none (0-6%)
   const actions = [];
+  const targetPctDash = cfg.targetPct || 7;
+  const lockInPctDash = cfg.lockInPct || 6;
+
   open.forEach(t => {
-    const effStop = t.stopLoss || 0;
-    const effPct = (t.cmp && effStop) ? ((t.cmp - effStop) / t.cmp * 100) : (t.pctFromStop || 0);
     const plPct = t.plPct || 0;
     const pnlLabel = (plPct >= 0 ? '+' : '') + plPct.toFixed(1) + '%';
     const pnlColor = plPct >= 0 ? 'var(--green)' : 'var(--red)';
-    const nums = [];
-    if (t.entryPrice) nums.push(`Entry: ${fmtRs(t.entryPrice)}`);
-    if (t.cmp) nums.push(`CMP: ${fmtRs(t.cmp)}`);
-    if (effStop) nums.push(`Stop: ${fmtRs(effStop)}`);
-    if (t.age) nums.push(`Age: ${t.age}d`);
-    const numHtml = nums.map(n => `<span>${n}</span>`).join('');
+    const cmp = t.cmp || 0;
+    const gtt = t.gttPlaced || 0;
+    const sixTgt = t.sixPctTargetCmp || (t.entryPrice ? Math.round(t.entryPrice * 1.06) : 0);
+    const invested = t.totalInvested || t.positionSize || 0;
 
-    // 1. EXIT TRIGGERED — col J stop hit (mechanical stop only; 7DL is not a mechanical trigger)
-    if (effPct <= 0) {
-      actions.push({ priority: 0, group: 'exit', stock: t.stock, sector: t.sector || '',
-        pnlLabel, pnlColor, effPctLabel: effPct.toFixed(1) + '%', cmp: t.cmp, effStop, age: t.age || '',
-        verb: 'EXIT NOW', verbBg: 'rgba(239,68,68,0.2)', verbColor: 'var(--red)',
-        directive: 'Sell at market — no exceptions',
-        detail: `Stop loss ₹${(effStop||0).toLocaleString('en-IN')} (col J) hit. Mechanical exit — no discretion.` });
-    }
-    // 1b. 7DL informational — not an exit trigger
-    if (t.cmp && t.sevenDayLow && t.cmp <= t.sevenDayLow && effPct > 0) {
-      actions.push({ priority: 6, group: 'info', stock: t.stock, sector: t.sector || '',
-        pnlLabel, pnlColor, effPctLabel: effPct.toFixed(1) + '%', cmp: t.cmp, effStop, age: t.age || '',
-        verb: 'INFO', verbBg: 'rgba(100,116,139,0.15)', verbColor: 'var(--text-muted)',
-        directive: 'Below 7-day low — watch 21 EMA',
-        detail: `CMP ₹${t.cmp.toLocaleString('en-IN')} < 7DL ₹${t.sevenDayLow.toLocaleString('en-IN')} but stop (col J) ₹${(effStop||0).toLocaleString('en-IN')} not hit. No action unless 21 EMA breaks.` });
-    }
-
-    // 2. BELOW 21 EMA on a profitable position
-    if ((t.ema21 || '').trim().toLowerCase() === 'below' && plPct > 0) {
-      actions.push({ priority: 1, group: 'exit', stock: t.stock, sector: t.sector || '',
-        pnlLabel, pnlColor, effPctLabel: effPct.toFixed(1) + '%', cmp: t.cmp, effStop, age: t.age || '',
-        verb: 'REVIEW EXIT', verbBg: 'rgba(239,68,68,0.15)', verbColor: 'var(--red)',
-        directive: 'Exit or tighten stop today',
-        detail: `Below 21 EMA at +${plPct.toFixed(1)}%. Momentum gone — protect gains.` });
-    }
-
-    // 3. TAKE PARTIAL — at trigger, not yet taken
-    if (plPct >= cfg.partialTrigger && t.partialTaken === 'N') {
-      actions.push({ priority: 2, group: 'profit', stock: t.stock, sector: t.sector || '',
-        pnlLabel, pnlColor, effPctLabel: effPct.toFixed(1) + '%', cmp: t.cmp, effStop, age: t.age || '',
-        verb: 'TAKE PARTIAL', verbBg: 'rgba(52,199,89,0.2)', verbColor: 'var(--green)',
-        directive: 'Sell 50% qty now',
-        detail: `+${plPct.toFixed(1)}% ≥ +${cfg.partialTrigger}% trigger. Sell 50% now. Trail remainder — watch 21 EMA support for exit.` });
-    }
-
-    // 4. MOVE STOP TO BREAKEVEN
-    if (plPct >= cfg.beTrigger && t.stopLoss < t.entryPrice) {
-      actions.push({ priority: 3, group: 'profit', stock: t.stock, sector: t.sector || '',
-        pnlLabel, pnlColor, effPctLabel: effPct.toFixed(1) + '%', cmp: t.cmp, effStop, age: t.age || '',
-        verb: 'MOVE STOP→BE', verbBg: 'rgba(99,102,241,0.2)', verbColor: 'var(--accent)',
-        directive: `Set col J = ${t.entryPrice ? fmtRs(t.entryPrice) : 'entry'}`,
-        detail: `+${plPct.toFixed(1)}%, stop still at ${fmtRs(t.stopLoss)} (below entry). Move to breakeven — risk-free trade.` });
-    }
-
-    // 5. PROFIT AT RISK — HA Red on a winner
-    if (plPct >= cfg.beTrigger && (t.haColour || '').trim().toLowerCase() === 'red' && !(plPct >= cfg.partialTrigger && t.partialTaken === 'N') && !(plPct >= cfg.beTrigger && t.stopLoss < t.entryPrice)) {
-      actions.push({ priority: 4, group: 'monitor', stock: t.stock, sector: t.sector || '',
-        pnlLabel, pnlColor, effPctLabel: effPct.toFixed(1) + '%', cmp: t.cmp, effStop, age: t.age || '',
-        verb: 'PROTECT GAINS', verbBg: 'rgba(96,165,250,0.18)', verbColor: '#60a5fa',
-        directive: 'Watch — tighten if HA stays red',
-        detail: `+${plPct.toFixed(1)}% but HA Red. Momentum fading — prepare exit if red tomorrow.` });
-    }
-
-    // 6. HA MOMENTUM SHIFT today
-    if (String(t.haChanged || '').toUpperCase() === 'Y') {
-      actions.push({ priority: 5, group: 'monitor', stock: t.stock, sector: t.sector || '',
-        pnlLabel, pnlColor, effPctLabel: effPct.toFixed(1) + '%', cmp: t.cmp, effStop, age: t.age || '',
-        verb: 'HA SHIFT TODAY', verbBg: 'rgba(96,165,250,0.15)', verbColor: '#60a5fa',
-        directive: `HA now ${t.haColour || '?'} — monitor`,
-        detail: `Colour flipped to ${t.haColour || '?'} today. If Red: tighten stop. If Green: momentum resuming.` });
-    }
-
-    // 6b. OVERDUE PARTIAL — held past maxAge with no partial taken
-    const maxAge = cfg.maxAge || 60;
-    if (t.age && parseInt(t.age) > maxAge && String(t.partialTaken || '').toUpperCase() !== 'Y') {
-      actions.push({ priority: 5, group: 'monitor', stock: t.stock, sector: t.sector || '',
-        pnlLabel, pnlColor, effPctLabel: effPct.toFixed(1) + '%', cmp: t.cmp, effStop, age: t.age || '',
-        verb: 'REVIEW PARTIAL', verbBg: 'rgba(96,165,250,0.15)', verbColor: '#60a5fa',
-        directive: `Held ${t.age}d — revisit exit plan`,
-        detail: `${t.age} days open, no partial taken. Above your ${maxAge}-day max. Review: still trending? If yes hold, if not exit.` });
-    }
-
-    // 7. NEAR STOP — within stop proximity %
-    if (effPct > 0 && effPct <= cfg.stopProximity) {
-      actions.push({ priority: 6, group: 'monitor', stock: t.stock, sector: t.sector || '',
-        pnlLabel, pnlColor, effPctLabel: effPct.toFixed(1) + '%', cmp: t.cmp, effStop, age: t.age || '',
-        verb: 'NEAR STOP', verbBg: 'rgba(96,165,250,0.12)', verbColor: '#60a5fa',
-        directive: 'Watch intraday — no action yet',
-        detail: `${effPct.toFixed(1)}% above stop loss ${fmtRs(effStop)} (col J). Hold plan — exit only when stop actually hits.` });
+    if (plPct >= targetPctDash) {
+      // 🚀 TARGET HIT — trail trailing SL up
+      actions.push({ priority: 0, group: 'target', stock: t.stock,
+        pnlLabel, pnlColor, cmp, gtt, sixTgt, invested, age: t.age || '',
+        verb: 'TRAIL SL UP', verbBg: 'rgba(34,197,94,0.18)', verbColor: 'var(--green)',
+        directive: 'Update GTT — raise trailing SL to lock in more profit',
+        detail: `+${plPct.toFixed(1)}% ≥ +${targetPctDash}% target. Profit locked in at 6%. Raise your GTT stop to protect more gains. Hold while above support.` });
+    } else if (plPct >= lockInPctDash) {
+      // 🟡 LOCK-IN ZONE — 6% profit zone
+      actions.push({ priority: 1, group: 'lockin', stock: t.stock,
+        pnlLabel, pnlColor, cmp, gtt, sixTgt, invested, age: t.age || '',
+        verb: 'LOCK-IN ACTIVE', verbBg: 'rgba(245,158,11,0.18)', verbColor: 'var(--amber)',
+        directive: 'Trailing SL should be active — verify GTT is set',
+        detail: `+${plPct.toFixed(1)}% in lock-in zone (6–${targetPctDash}%). Trailing SL active — verify your GTT is placed. Hold while above 21D high.` });
+    } else if (plPct < 0) {
+      // 🔵 IN LOSS — evaluate add signal
+      const above200 = (t.ema200 === true || String(t.ema200||'').toLowerCase() === 'true');
+      const above50  = (t.ema50  === true || String(t.ema50 ||'').toLowerCase() === 'true');
+      const canAdd   = above200 && above50;
+      actions.push({ priority: 2, group: 'add', stock: t.stock,
+        pnlLabel, pnlColor, cmp, gtt, sixTgt, invested, age: t.age || '',
+        canAdd,
+        verb: canAdd ? 'CHECK ADD' : 'HOLD',
+        verbBg: canAdd ? 'rgba(96,165,250,0.18)' : 'rgba(100,116,139,0.12)',
+        verbColor: canAdd ? '#60A5FA' : 'var(--text-muted)',
+        directive: canAdd
+          ? 'Above 200+50 EMA — place GTT at 21-day high for add (50% qty)'
+          : 'Below 50 EMA — hold, do nothing. Wait for structure to return.',
+        detail: canAdd
+          ? `${plPct.toFixed(1)}% — still above 200+50 EMA. Place GTT at 21-day high (${fmtRs(t.twentyOneDayHigh||0)}) for 50% add-on. Hold current position.`
+          : `${plPct.toFixed(1)}% and below 50 EMA. SST rule: hold indefinitely unless company fundamentals deteriorate.` });
     }
   });
 
-  // Sort by priority then by pnlLabel (worst P&L first within same priority)
   actions.sort((a, b) => a.priority - b.priority);
 
-  // Update dashboard summary pills
-  const exitCount = actions.filter(a => a.group === 'exit').length;
-  const profitCount = actions.filter(a => a.group === 'profit').length;
-  const monitorCount = actions.filter(a => a.group === 'monitor').length;
+  // Counts for pills
+  const targetCount = actions.filter(a => a.group === 'target').length;
+  const lockinCount = actions.filter(a => a.group === 'lockin').length;
+  const addCount    = actions.filter(a => a.group === 'add' && a.canAdd).length;
+  const holdCount   = actions.filter(a => a.group === 'add' && !a.canAdd).length;
+
   const pillsHtml = [
-    exitCount > 0 ? `<span class="today-summary-pill" style="background:var(--red-soft);color:var(--red)">🔴 ${exitCount} exit action${exitCount > 1 ? 's' : ''}</span>` : '',
-    profitCount > 0 ? `<span class="today-summary-pill" style="background:rgba(99,102,241,0.12);color:var(--accent)">⚡ ${profitCount} profit action${profitCount > 1 ? 's' : ''}</span>` : '',
-    monitorCount > 0 ? `<span class="today-summary-pill" style="background:rgba(96,165,250,0.12);color:#60a5fa">👁 ${monitorCount} to monitor</span>` : '',
-    actions.length === 0 ? `<span class="today-summary-pill" style="background:var(--green-soft);color:var(--green)">✓ No actions needed</span>` : '',
+    targetCount > 0 ? `<span class="today-summary-pill" style="background:rgba(34,197,94,0.15);color:var(--green)">🚀 ${targetCount} trail up</span>` : '',
+    lockinCount > 0 ? `<span class="today-summary-pill" style="background:rgba(245,158,11,0.15);color:var(--amber)">🟡 ${lockinCount} lock-in</span>` : '',
+    addCount > 0    ? `<span class="today-summary-pill" style="background:rgba(96,165,250,0.15);color:#60A5FA">🔵 ${addCount} add signal</span>` : '',
+    holdCount > 0   ? `<span class="today-summary-pill" style="background:rgba(100,116,139,0.12);color:var(--text-muted)">⏳ ${holdCount} hold (below 50 EMA)</span>` : '',
+    actions.length === 0 ? `<span class="today-summary-pill" style="background:var(--green-soft);color:var(--green)">✓ All tracking — no actions</span>` : '',
   ].join('');
   if (dashPills) dashPills.innerHTML = pillsHtml;
 
-  // Urgent banner on Dashboard
+  // Dashboard urgent banner
   const banner = document.getElementById('dash-urgent-banner');
   if (banner) {
-    if (exitCount > 0) {
-      const exitStocks = actions.filter(a => a.group === 'exit').map(a => a.stock).join(', ');
+    if (targetCount > 0) {
+      const stks = actions.filter(a => a.group === 'target').map(a => a.stock).join(', ');
       banner.style.display = 'flex';
-      banner.style.background = 'rgba(239,68,68,0.15)';
-      banner.style.border = '1.5px solid rgba(239,68,68,0.4)';
-      document.getElementById('dash-urgent-icon').textContent = '🔴';
-      document.getElementById('dash-urgent-text').textContent = `Exit triggered: ${exitStocks} — sell at market before open`;
-      document.getElementById('dash-urgent-text').style.color = 'var(--red)';
-    } else if (profitCount > 0) {
-      const profitStocks = actions.filter(a => a.group === 'profit').map(a => a.stock).filter((s,i,a)=>a.indexOf(s)===i).join(', ');
+      banner.style.background = 'rgba(34,197,94,0.12)';
+      banner.style.border = '1.5px solid rgba(34,197,94,0.4)';
+      document.getElementById('dash-urgent-icon').textContent = '🚀';
+      document.getElementById('dash-urgent-text').textContent = `Trail SL up: ${stks} — at or above ${targetPctDash}% target`;
+      document.getElementById('dash-urgent-text').style.color = 'var(--green)';
+    } else if (lockinCount > 0) {
       banner.style.display = 'flex';
-      banner.style.background = 'rgba(99,102,241,0.1)';
-      banner.style.border = '1.5px solid rgba(99,102,241,0.3)';
-      document.getElementById('dash-urgent-icon').textContent = '⚡';
-      document.getElementById('dash-urgent-text').textContent = `${profitCount} profit action${profitCount > 1 ? 's' : ''} pending: ${profitStocks}`;
-      document.getElementById('dash-urgent-text').style.color = 'var(--accent)';
+      banner.style.background = 'rgba(245,158,11,0.1)';
+      banner.style.border = '1.5px solid rgba(245,158,11,0.35)';
+      document.getElementById('dash-urgent-icon').textContent = '🟡';
+      document.getElementById('dash-urgent-text').textContent = `${lockinCount} position${lockinCount>1?'s':''} at lock-in zone — verify GTT is active`;
+      document.getElementById('dash-urgent-text').style.color = 'var(--amber)';
     } else {
       banner.style.display = 'none';
     }
   }
 
-  // Summary bar in Today tab
+  // Summary bar
   if (summaryBar) {
     if (actions.length === 0) {
-      summaryBar.innerHTML = '<span style="color:var(--green);font-weight:700;font-size:13px">✓ All clear — no actions required today.</span> <span style="color:var(--text-muted);font-size:12px">All ' + open.length + ' positions within parameters.</span>';
+      summaryBar.innerHTML = '<span style="color:var(--green);font-weight:700;font-size:13px">✓ All positions tracking.</span> <span style="color:var(--text-muted);font-size:12px">' + open.length + ' open · no actions needed today.</span>';
     } else {
       summaryBar.innerHTML = [
-        exitCount > 0 ? `<span class="today-summary-pill" style="background:var(--red-soft);color:var(--red);font-size:13px">🔴 ${exitCount} EXIT</span>` : '',
-        profitCount > 0 ? `<span class="today-summary-pill" style="background:rgba(99,102,241,0.12);color:var(--accent);font-size:13px">⚡ ${profitCount} PROFIT ACTION</span>` : '',
-        monitorCount > 0 ? `<span class="today-summary-pill" style="background:rgba(96,165,250,0.12);color:#60a5fa;font-size:13px">👁 ${monitorCount} MONITOR</span>` : '',
-        `<span style="margin-left:auto;font-size:11px;color:var(--text-muted)">${open.length} open positions · ${actions.length} total actions</span>`,
+        targetCount > 0 ? `<span class="today-summary-pill" style="background:rgba(34,197,94,0.15);color:var(--green);font-size:13px">🚀 ${targetCount} TRAIL SL</span>` : '',
+        lockinCount > 0 ? `<span class="today-summary-pill" style="background:rgba(245,158,11,0.15);color:var(--amber);font-size:13px">🟡 ${lockinCount} LOCK-IN</span>` : '',
+        addCount > 0    ? `<span class="today-summary-pill" style="background:rgba(96,165,250,0.15);color:#60A5FA;font-size:13px">🔵 ${addCount} ADD SIGNAL</span>` : '',
+        `<span style="margin-left:auto;font-size:11px;color:var(--text-muted)">${open.length} open · ${actions.length} actions</span>`,
       ].join('');
     }
   }
 
   if (actions.length === 0) {
     body.innerHTML = `<div class="today-empty">
-      <div style="font-size:32px;margin-bottom:12px">✅</div>
-      <div style="font-size:16px;font-weight:700;color:var(--green);margin-bottom:8px">All clear for today</div>
-      <div style="font-size:13px">All ${open.length} open positions are within parameters.<br>No stops triggered · No actions required · Hold your plan.</div>
+      <div style="font-size:32px;margin-bottom:12px">📊</div>
+      <div style="font-size:16px;font-weight:700;color:var(--green);margin-bottom:8px">All positions tracking</div>
+      <div style="font-size:13px">All ${open.length} positions between 0–${lockInPctDash}%. Hold plan — no GTT changes needed today.</div>
     </div>`;
     return;
   }
 
-  // Collapsible sections per verb type — collapsed by default, exit sections open
-  // Group verbs into sections
+  // Collapsible sections per SST alert type
   const verbSections = [
-    { verb: 'EXIT NOW',      label: '🔴 Exit Now',            color: 'var(--red)',    bg: 'var(--red-soft)',         desc: 'Sell at market — no exceptions', defaultOpen: true },
-    { verb: 'REVIEW EXIT',   label: '🔴 Review Exit',         color: 'var(--red)',    bg: 'rgba(239,68,68,0.1)',     desc: 'Exit or tighten stop today',     defaultOpen: true },
-    { verb: 'TAKE PARTIAL',  label: '⚡ Take Partial Profit', color: 'var(--green)',  bg: 'rgba(52,199,89,0.12)',    desc: 'Sell 50% qty now',               defaultOpen: true },
-    { verb: 'MOVE STOP→BE',  label: '🛡 Move Stop to BE',     color: 'var(--accent)', bg: 'rgba(99,102,241,0.1)',   desc: 'Update col J to entry price',    defaultOpen: true },
-    { verb: 'PROTECT GAINS', label: '⚠ Protect Gains',       color: '#60a5fa',       bg: 'rgba(96,165,250,0.1)',   desc: 'HA Red on winner — watch',       defaultOpen: false },
-    { verb: 'HA SHIFT TODAY',label: '🔄 HA Shift Today',      color: '#60a5fa',       bg: 'rgba(96,165,250,0.1)',   desc: 'Colour changed — monitor',       defaultOpen: false },
-    { verb: 'REVIEW PARTIAL',label: '📋 Review Partial',      color: '#60a5fa',       bg: 'rgba(96,165,250,0.1)',   desc: 'Long hold — revisit exit plan',  defaultOpen: false },
-    { verb: 'NEAR STOP',     label: '🟡 Near Stop',           color: '#60a5fa',       bg: 'rgba(96,165,250,0.08)',  desc: 'Watch intraday — no action yet', defaultOpen: false },
+    { verb: 'TRAIL SL UP',   label: '🚀 Trail SL Up',        color: 'var(--green)', bg: 'rgba(34,197,94,0.12)',   desc: `≥${targetPctDash}% — raise GTT stop`,     defaultOpen: true },
+    { verb: 'LOCK-IN ACTIVE',label: '🟡 Lock-In Zone',        color: 'var(--amber)', bg: 'rgba(245,158,11,0.12)', desc: `${lockInPctDash}–${targetPctDash}% — verify GTT`,  defaultOpen: true },
+    { verb: 'CHECK ADD',     label: '🔵 Add Signal',          color: '#60A5FA',      bg: 'rgba(96,165,250,0.1)',  desc: 'In loss, above 200+50 EMA',               defaultOpen: true },
+    { verb: 'HOLD',          label: '⏳ Hold (Below 50 EMA)', color: 'var(--text-muted)', bg: 'rgba(100,116,139,0.08)', desc: 'In loss, below 50 EMA — do nothing', defaultOpen: false },
   ];
 
   let sectionsHtml = '';
@@ -3932,14 +3824,15 @@ function renderTodayActions(open, cfg) {
     const isOpen = vs.defaultOpen;
     const tableRows = items.map(a => {
       const cmpStr = a.cmp ? fmtRs(a.cmp) : '—';
-      const stopStr = a.effStop ? fmtRs(a.effStop) : '—';
-      const sectorBadge = a.sector ? `<span style="font-size:10px;color:var(--text-muted);background:var(--surface2);padding:1px 6px;border-radius:8px;margin-left:5px">${a.sector}</span>` : '';
+      const gttStr = a.gtt ? fmtRs(a.gtt) : '—';
+      const sixStr = a.sixTgt ? fmtRs(a.sixTgt) : '—';
       return `<tr style="cursor:default" title="${a.detail.replace(/"/g,'&quot;')}">
-        <td style="font-weight:700;min-width:90px">${a.stock}${sectorBadge}<div style="font-size:10px;font-weight:500;color:${vs.color};margin-top:2px;display:none" class="today-directive-mobile">${a.directive}</div></td>
+        <td style="font-weight:700;min-width:90px">${a.stock}</td>
         <td style="font-weight:700;color:${a.pnlColor};text-align:right;white-space:nowrap">${a.pnlLabel}</td>
         <td style="text-align:right;white-space:nowrap">${cmpStr}</td>
-        <td style="text-align:right;white-space:nowrap">${stopStr}</td>
-        <td style="text-align:right;white-space:nowrap;color:${parseFloat(a.effPctLabel) <= 1 ? 'var(--red)' : parseFloat(a.effPctLabel) <= 2 ? 'var(--amber)' : 'var(--text-secondary)'}">${a.effPctLabel}</td>
+        <td style="text-align:right;white-space:nowrap;color:var(--text-muted)">${sixStr}</td>
+        <td style="text-align:right;white-space:nowrap;color:var(--text-muted)">${gttStr}</td>
+        <td style="text-align:right;white-space:nowrap;color:var(--text-muted)">${a.age ? a.age+'d' : '—'}</td>
         <td class="today-directive-desktop" style="color:${vs.color};font-size:11px;font-weight:500">${a.directive}</td>
       </tr>`;
     }).join('');
@@ -3959,8 +3852,9 @@ function renderTodayActions(open, cfg) {
             <th>Stock</th>
             <th style="text-align:right">P&amp;L%</th>
             <th style="text-align:right">CMP</th>
-            <th style="text-align:right">Eff Stop</th>
-            <th style="text-align:right">% from Stop</th>
+            <th style="text-align:right">6% Target</th>
+            <th style="text-align:right">GTT ₹</th>
+            <th style="text-align:right">Age</th>
             <th>What to do</th>
           </tr></thead>
           <tbody>${tableRows}</tbody>
@@ -3976,141 +3870,105 @@ function renderTodayActions(open, cfg) {
 // ── POSITIONS (REAL DATA) ─────────────────────────────
 function renderPositionsReal(open, cfg) {
   const tbody = document.getElementById('positions-tbody');
-  const _rows = [];
+  if (!tbody) return;
+  const targetPct  = cfg.targetPct  || 7;
+  const lockInPct  = cfg.lockInPct  || 6;
+
+  // ── SST alert classification ─────────────────────────────────────────────
   const trades = open.map(t => {
-    const effStop = t.stopLoss || 0;
-    const effPct = (t.cmp && effStop) ? ((t.cmp - effStop) / t.cmp * 100) : (t.pctFromStop || 0);
     let alertType = 'none';
-    if (effPct <= 0) alertType = 'red';
-    else if (effPct <= cfg.stopProximity) alertType = 'amber';
-    if (t.plPct >= cfg.partialTrigger && t.partialTaken === 'N') alertType = 'green';
-    const haWarn = t.plPct >= cfg.beTrigger && (t.haColour || '').trim().toLowerCase() === 'red';
-    const emaBelow = (t.ema21 || '').trim().toLowerCase() === 'below' && t.plPct > 0;
-    const needsBreakeven = t.plPct >= cfg.beTrigger && t.stopLoss < t.entryPrice;
-    // Count simultaneous signals — ≥2 means priority trade to action
-    const signalCount = [alertType==='red'||alertType==='amber', haWarn, emaBelow, needsBreakeven, String(t.haChanged || '').toUpperCase()==='Y'].filter(Boolean).length;
-    return { ...t, alertType, haWarn, effStop, effPct, emaBelow, needsBreakeven, signalCount };
+    if (t.plPct >= targetPct)      alertType = 'target';   // 🚀 ≥7% — trail up
+    else if (t.plPct >= lockInPct) alertType = 'lockin';   // 🟡 6–7% — at lock-in
+    else if (t.plPct < 0)          alertType = 'add';      // 🔵 in loss — check EMAs to add
+    return { ...t, alertType };
   }).sort((a, b) => {
-    // Priority order: 1) Exit triggered (red), 2) Partial due (green), 3) Near stop (amber), 4) Rest by % from stop
-    const priority = t => t.alertType === 'red' ? 0 : t.alertType === 'green' ? 1 : t.alertType === 'amber' ? 2 : 3;
-    const pa = priority(a), pb = priority(b);
-    if (pa !== pb) return pa - pb;
-    // Within same priority group: sort by % from stop ascending (closest to danger first)
-    return a.effPct - b.effPct;
+    const p = { target: 0, lockin: 1, add: 2, none: 3 };
+    if (p[a.alertType] !== p[b.alertType]) return p[a.alertType] - p[b.alertType];
+    return b.plPct - a.plPct; // within group: highest P&L first
   });
 
+  const fmtRs = v => v ? '₹' + Math.round(v).toLocaleString('en-IN') : '—';
+  const _rows = [];
+
   trades.forEach((t, i) => {
-    const haColour = (t.haColour || '').trim();
-    const haChanged = String(t.haChanged || '').toUpperCase() === 'Y';
-    const rowClass = [t.alertType !== 'none' ? 'row-' + t.alertType : '', haChanged ? 'row-ha' : '', t.haWarn ? 'row-ha-warn' : ''].filter(Boolean).join(' ');
     const pnlClass = t.plPct >= 0 ? 'pnl-pos' : 'pnl-neg';
-    const emaStr = (t.ema21 || '').trim();
-    const emaClass = emaStr.toLowerCase() === 'above' ? 'tag-above' : 'tag-below';
-    const partialClass = t.partialTaken === 'Y' ? 'tag-y' : 'tag-n';
-    const fromStopClass = t.effPct < 0 ? 'pnl-neg' : t.effPct <= cfg.stopProximity ? 'text-amber' : 'pnl-pos';
-    const haClass = haColour.toLowerCase() === 'green' ? 'tag-ha-green' : haColour.toLowerCase() === 'red' ? 'tag-ha-red' : '';
-    const haChangedClass = haChanged ? 'tag-ha-changed' : '';
-    const haLabel = haColour ? (haChanged ? '🔄 ' + haColour : haColour) : '—';
-    const haWarnStyle = t.haWarn ? 'box-shadow:0 0 0 2px var(--red);' : '';
+    const notionalPl = t.notionalPl || (t.cmp && t.totalInvested && t.qty
+      ? (t.cmp - t.entryPrice) * (t.qty || 0) : 0);
+    const rowBg = t.alertType === 'target' ? 'rgba(34,197,94,0.06)' :
+                  t.alertType === 'lockin' ? 'rgba(245,158,11,0.06)' :
+                  t.alertType === 'add'    ? 'rgba(96,165,250,0.04)' : '';
+
+    // Status badge
+    const statusBadge = t.alertType === 'target'
+      ? `<span style="background:rgba(34,197,94,0.15);color:var(--green);border-radius:10px;padding:2px 8px;font-size:11px;font-weight:700">🚀 Trail SL up</span>`
+      : t.alertType === 'lockin'
+      ? `<span style="background:rgba(245,158,11,0.15);color:var(--amber);border-radius:10px;padding:2px 8px;font-size:11px;font-weight:700">🟡 At lock-in</span>`
+      : t.alertType === 'add'
+      ? `<span style="background:rgba(96,165,250,0.15);color:#60A5FA;border-radius:10px;padding:2px 8px;font-size:11px;font-weight:700">🔵 Check add</span>`
+      : `<span style="color:var(--text-muted);font-size:11px">📊 Tracking</span>`;
+
+    const gttStr = t.gttPlaced ? fmtRs(t.gttPlaced) : '—';
+    const sixPctStr = t.sixPctTargetCmp ? fmtRs(t.sixPctTargetCmp) : (t.entryPrice ? fmtRs(Math.round(t.entryPrice * 1.06)) : '—');
+    const invested = t.totalInvested || t.positionSize || 0;
+
     _rows.push(`
-      <tr class="${rowClass}" onclick="toggleExpand(${i})">
-        <td><span class="stock-name">${t.stock}</span>${t.dataError ? ' <span style="font-size:10px;color:var(--red)">⚠</span>' : ''}${t.signalCount >= 2 ? ` <span title="${t.signalCount} signals firing — priority action needed" style="font-size:10px;background:var(--red);color:#fff;border-radius:8px;padding:1px 5px;margin-left:3px;font-weight:700">${t.signalCount}⚡</span>` : ''}</td>
-        <td>${t.age}d</td>
-        <td>₹${t.entryPrice.toLocaleString('en-IN')}</td>
-        <td style="font-size:11px;color:var(--text-muted)">${t.initRiskRs ? '₹'+Math.round(t.initRiskRs).toLocaleString('en-IN') : '—'}</td>
-        <td class="${pnlClass}" style="font-weight:700">₹${t.cmp.toLocaleString('en-IN')}</td>
-        <td title="Effective stop: MAX(manual ₹${t.stopLoss.toLocaleString('en-IN')}, 7d low ₹${t.sevenDayLow.toLocaleString('en-IN')}) = ₹${t.effStop.toLocaleString('en-IN')}">₹${t.effStop.toLocaleString('en-IN')}</td>
-        <td class="${fromStopClass} fw-700">${t.effPct >= 0 ? '+' : ''}${t.effPct.toFixed(1)}%</td>
-        <td class="${pnlClass}">${t.plPct >= 0 ? '+' : ''}${t.plPct.toFixed(1)}%</td>
-        <td>${(function(){
-          const beActive = t.stopLoss >= t.entryPrice && t.entryPrice > 0;
-          const beNeeded = t.plPct >= cfg.beTrigger && t.stopLoss < t.entryPrice;
-          if (beActive) return '<span class="tag tag-y" title="Stop moved to entry — trade is risk-free">🛡 Active</span>';
-          if (beNeeded) return '<span class="tag tag-ha-red" title="Move col J stop to entry price now">⚠ Move now</span>';
-          return '<span style="color:var(--text-muted);font-size:11px">—</span>';
-        })()}</td>
-        <td style="font-size:11px;color:var(--text-secondary)">${t.sector || '—'}</td>
-        <td><span class="tag ${partialClass}">${t.partialTaken}</span></td>
-        <td><span class="tag ${emaClass}">${emaStr || '—'}</span></td>
-        <td><span class="tag ${haClass} ${haChangedClass}" style="${haWarnStyle}" title="${t.haWarn ? '⚠ Profit at risk — HA Red with healthy gain, consider protecting' : haChanged ? 'HA colour just changed — momentum shift!' : ''}">${t.haWarn ? '⚠ ' : ''}${haLabel}</span></td>
+      <tr style="background:${rowBg}" onclick="toggleExpand(${i})">
+        <td><span class="stock-name">${t.stock}</span></td>
+        <td>${t.age || '—'}d</td>
+        <td style="font-size:11px;color:var(--text-secondary)">${t.qty || '—'}</td>
+        <td>₹${(t.entryPrice||0).toLocaleString('en-IN')}</td>
+        <td style="font-size:11px;color:var(--text-secondary)">${invested ? '₹'+Math.round(invested).toLocaleString('en-IN') : '—'}</td>
+        <td style="font-weight:700">₹${(t.cmp||0).toLocaleString('en-IN')}</td>
+        <td class="${pnlClass}" style="font-weight:700">${t.plPct >= 0 ? '+' : ''}${t.plPct.toFixed(1)}%</td>
+        <td class="${pnlClass}">${notionalPl ? (notionalPl>=0?'+':'')+fmtRs(Math.abs(notionalPl)) : '—'}</td>
+        <td style="font-size:11px;color:var(--text-muted)">${sixPctStr}</td>
+        <td style="font-size:11px;color:var(--text-muted)">${gttStr}</td>
+        <td>${statusBadge}</td>
       </tr>
       <tr class="expand-row" id="expand-${i}">
-        <td colspan="13" style="padding:0">
+        <td colspan="11" style="padding:0">
           <div class="expand-content">
             <div class="expand-item"><div class="expand-label">Entry Date</div><div class="expand-value">${t.openDate || '—'}</div></div>
-            <div class="expand-item"><div class="expand-label">Manual Stop (J)</div><div class="expand-value">₹${t.stopLoss.toLocaleString('en-IN')}</div></div>
-            <div class="expand-item"><div class="expand-label">7-Day Low (I)</div><div class="expand-value">₹${t.sevenDayLow.toLocaleString('en-IN')}</div></div>
-            <div class="expand-item"><div class="expand-label">Effective Stop</div><div class="expand-value" style="color:var(--amber);font-weight:700">₹${t.effStop.toLocaleString('en-IN')} <span style="font-size:10px;opacity:0.7">(MAX of J,I)</span></div></div>
-            <div class="expand-item"><div class="expand-label">CMP</div><div class="expand-value">₹${t.cmp.toLocaleString('en-IN')}</div></div>
-            <div class="expand-item"><div class="expand-label">Initial Risk ₹</div><div class="expand-value">₹${t.initRiskRs.toLocaleString('en-IN')}</div></div>
-            <div class="expand-item"><div class="expand-label">Initial Risk %</div><div class="expand-value">${t.initRiskPct.toFixed(2)}% of capital</div></div>
-            ${(function(){
-              const partialTargetPrice = Math.round(t.entryPrice * (1 + (cfg.partialTrigger||10) / 100));
-              const gapToTrigger = partialTargetPrice - t.cmp;
-              const gapPct = t.cmp > 0 ? ((partialTargetPrice - t.cmp) / t.cmp * 100) : 0;
-              const beTargetPrice = t.entryPrice;
-              const beGapPct = t.cmp > 0 ? ((beTargetPrice - t.cmp) / t.cmp * 100) : 0;
-              const alreadyPartial = t.partialTaken === 'Y';
-              const atPartial = t.plPct >= (cfg.partialTrigger||10);
-              const atBE = t.plPct >= (cfg.beTrigger||7);
-              if (alreadyPartial) return `
-                <div class="expand-item" style="grid-column:span 2"><div class="expand-label">Partial Target</div><div class="expand-value" style="color:var(--green);font-size:12px">✓ Partial taken at ${cfg.partialTrigger||10}% · Trailing remainder via 7-day low</div></div>`;
-              if (atPartial) return `
-                <div class="expand-item" style="grid-column:span 2"><div class="expand-label">Partial Target ₹</div><div class="expand-value" style="color:var(--amber);font-size:12px;font-weight:700">⚡ ₹${partialTargetPrice.toLocaleString('en-IN')} hit — take 50% now!</div></div>`;
-              return `
-                <div class="expand-item" style="grid-column:span 2"><div class="expand-label">Partial Target ₹</div><div class="expand-value" style="font-size:12px">₹${partialTargetPrice.toLocaleString('en-IN')} <span style="color:var(--text-muted)">(+${cfg.partialTrigger||10}%)</span> · <span style="${gapPct<=3?'color:var(--amber);font-weight:700':'color:var(--text-muted)'}">₹${Math.abs(gapToTrigger).toLocaleString('en-IN')} away (${Math.abs(gapPct).toFixed(1)}%${gapPct<=3?' — close!':''})</span>${atBE&&!alreadyPartial?` · <span style="color:var(--green)">Breakeven stop: ₹${beTargetPrice.toLocaleString('en-IN')}</span>`:''}</div></div>`;
-            })()}
-            <div class="expand-item" style="grid-column:span 2"><div class="expand-label">Partial Status</div><div class="expand-value" style="font-size:12px">${(function(){ const daysSinceEntry = t.age ? parseInt(t.age) : 0; const partialDue = t.plPct >= cfg.partialTrigger && t.partialTaken !== 'Y'; return partialDue ? '<span style="color:var(--amber)">⚠ Partial overdue — up ' + t.plPct.toFixed(1) + '% for ' + daysSinceEntry + 'd</span>' : t.partialTaken === 'Y' ? '<span style="color:var(--green)">✓ Partial taken</span>' : '—'; })()}</div></div>
-            <div class="expand-item" style="grid-column:span 3"><div class="expand-label">Trail Guidance</div><div class="expand-value" style="font-size:12px">${(function(){
-              if (t.partialTaken === 'Y') {
-                const trailStop = t.effStop;
-                const trailPct = t.effPct;
-                return '<span style="color:var(--green)">✓ Partial taken — trailing remainder · Active trail: ₹' + trailStop.toLocaleString('en-IN') + ' (' + (trailPct >= 0 ? '+' : '') + trailPct.toFixed(1) + '% buffer) · Let winners run via 7-day low trail</span>';
-              }
-              if (t.plPct >= (cfg.beTrigger||7) && t.stopLoss < t.entryPrice) return '<span style="color:var(--amber)">⚠ Move col J stop to entry ₹' + t.entryPrice.toLocaleString('en-IN') + ' — make trade risk-free</span>';
-              if (t.plPct >= (cfg.beTrigger||7)) return '<span style="color:var(--green)">✓ Breakeven stop in place — trail via 7-day low (₹' + t.sevenDayLow.toLocaleString('en-IN') + ')</span>';
-              return '<span style="color:var(--text-muted)">—</span>';
+            <div class="expand-item"><div class="expand-label">Entry Price</div><div class="expand-value">₹${(t.entryPrice||0).toLocaleString('en-IN')}</div></div>
+            <div class="expand-item"><div class="expand-label">CMP</div><div class="expand-value">₹${(t.cmp||0).toLocaleString('en-IN')}</div></div>
+            <div class="expand-item"><div class="expand-label">Qty Purchased</div><div class="expand-value">${t.qty || '—'}</div></div>
+            <div class="expand-item"><div class="expand-label">Total Invested</div><div class="expand-value">${invested ? '₹'+Math.round(invested).toLocaleString('en-IN') : '—'}</div></div>
+            <div class="expand-item"><div class="expand-label">Position Size ₹</div><div class="expand-value">${t.positionSize ? '₹'+Math.round(t.positionSize).toLocaleString('en-IN') : '—'}</div></div>
+            <div class="expand-item"><div class="expand-label">21-Day High</div><div class="expand-value">${t.twentyOneDayHigh ? '₹'+t.twentyOneDayHigh.toLocaleString('en-IN') : '—'}</div></div>
+            <div class="expand-item"><div class="expand-label">GTT Order ₹</div><div class="expand-value" style="color:var(--amber)">${gttStr}</div></div>
+            <div class="expand-item"><div class="expand-label">6% Lock-in Target</div><div class="expand-value" style="color:var(--green)">${sixPctStr}</div></div>
+            <div class="expand-item" style="grid-column:span 2"><div class="expand-label">SST Guidance</div><div class="expand-value" style="font-size:12px">${(function(){
+              if (t.plPct >= targetPct) return `<span style="color:var(--green);font-weight:700">🚀 Position up ${t.plPct.toFixed(1)}% — above 7% target. Trail your SL up to lock in more than the 6% minimum. Let it run.</span>`;
+              if (t.plPct >= lockInPct) return `<span style="color:var(--amber);font-weight:700">🟡 At 6% lock-in zone. Trailing SL is protecting your profit. Watch for reversal — exit when SL is hit.</span>`;
+              if (t.plPct < 0)         return `<span style="color:#60A5FA;font-weight:700">🔵 In loss ${t.plPct.toFixed(1)}%. Check: is stock above 200 EMA + 50 EMA? If yes, place another GTT at current 21-day high (₹${t.twentyOneDayHigh ? t.twentyOneDayHigh.toLocaleString('en-IN') : '—'}) to add 50% more. If below 50 EMA → hold, wait.</span>`;
+              return `<span style="color:var(--text-muted)">📊 Tracking — up ${t.plPct.toFixed(1)}%. Hold until 6% trailing SL locks in. No action needed.</span>`;
             })()}</div></div>
-            ${haColour ? `<div class="expand-item"><div class="expand-label">HA Colour</div><div class="expand-value"><span class="tag ${haClass} ${haChangedClass}">${haLabel}</span>${haChanged ? ' <span style="color:var(--amber);font-size:11px">— momentum shift, review stop</span>' : ''}</div></div>` : ''}
-            ${t.signalCount > 0 ? `<div class="expand-item" style="grid-column:span 3"><div class="expand-label">Active Signals</div><div class="expand-value" style="font-size:12px;display:flex;flex-wrap:wrap;gap:6px">
-              ${t.alertType==='red' ? '<span style="background:var(--red-soft);color:var(--red);padding:2px 7px;border-radius:10px;font-weight:600">🔴 Exit</span>' : ''}
-              ${t.alertType==='amber' ? '<span style="background:var(--amber-soft);color:var(--amber);padding:2px 7px;border-radius:10px;font-weight:600">🟡 Near Stop</span>' : ''}
-              ${t.needsBreakeven ? '<span style="background:var(--amber-soft);color:var(--amber);padding:2px 7px;border-radius:10px;font-weight:600">🛡 Move to BE</span>' : ''}
-              ${t.emaBelow ? '<span style="background:var(--red-soft);color:var(--red);padding:2px 7px;border-radius:10px;font-weight:600">📉 Below EMA</span>' : ''}
-              ${t.haWarn ? '<span style="background:var(--red-soft);color:var(--red);padding:2px 7px;border-radius:10px;font-weight:600">⚠ HA Red</span>' : ''}
-              ${haChanged ? '<span style="background:var(--amber-soft);color:var(--amber);padding:2px 7px;border-radius:10px;font-weight:600">🔄 HA Flip</span>' : ''}
-            </div></div>` : ''}
-            ${(function(){
-              const age = t.age ? parseInt(t.age) : 0;
-              const mae = t.mae || 0, mfe = t.mfe || 0;
-              if (!mae && !mfe) return '';
-              if (age < 3 || mae <= 0) {
-                return `<div class="expand-item" style="grid-column:span 3"><div class="expand-label">Early Read (MAE/MFE)</div><div class="expand-value" style="font-size:12px;color:var(--text-muted)">Too early to tell — needs a few more days of price action.</div></div>`;
-              }
-              const ratio = mfe / mae;
-              const strong = ratio >= 3;
-              return `<div class="expand-item" style="grid-column:span 3"><div class="expand-label">Early Read (MAE/MFE)</div><div class="expand-value" style="font-size:12px">
-                <span style="background:${strong ? 'var(--green-soft)' : 'var(--amber-soft)'};color:${strong ? 'var(--green)' : 'var(--amber)'};padding:2px 7px;border-radius:10px;font-weight:600">${strong ? '✓ Tracking like a winner' : '⚠ Tracking like a struggler'}</span>
-                <span style="color:var(--text-muted)"> — best move so far +${mfe.toFixed(1)}% vs worst dip -${mae.toFixed(1)}% (${ratio.toFixed(1)}x)</span>
-                <div style="color:var(--text-muted);font-size:11px;margin-top:4px">Informational only — does <strong>not</strong> override your 7-day-low / 21-EMA stop.</div>
-              </div></div>`;
-            })()}
           </div>
         </td>
       </tr>`);
   });
+
   tbody.innerHTML = _rows.join('');
 
   const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
-  set('pos-count-text', `${open.length} active trades · Exit → Partial Due → Near Stop → rest · Read-only`);
-  const reds = trades.filter(t => t.alertType === 'red').length;
-  const ambers = trades.filter(t => t.alertType === 'amber').length;
-  const greens = trades.filter(t => t.alertType === 'green').length;
-  const has = trades.filter(t => String(t.haChanged || '').toUpperCase() === 'Y' || t.haWarn).length;
-  set('strip-red', `🔴 ${reds} exit triggered`);
-  set('strip-amber', `🟡 ${ambers} near stop`);
-  set('strip-green', `🟢 ${greens} partial pending`);
-  set('strip-ha', `🔄 ${has} HA watch`);
+  set('pos-count-text', `${open.length} active positions · 🚀 Target hit → trail SL · 🔵 In loss → check EMAs to add`);
+
+  const targets  = trades.filter(t => t.alertType === 'target').length;
+  const lockins  = trades.filter(t => t.alertType === 'lockin').length;
+  const adds     = trades.filter(t => t.alertType === 'add').length;
+  const waiting  = trades.filter(t => t.alertType === 'none').length;
+  set('strip-red',   `🚀 ${targets} target hit (≥${targetPct}%)`);
+  set('strip-amber', `🟡 ${lockins} lock-in zone (${lockInPct}%)`);
+  set('strip-green', `🔵 ${adds} add signal`);
+  set('strip-ha',    `⏳ ${waiting} in loss`);
+
+  // Update portfolio heat badge for SST
+  const heatEl = document.getElementById('pos-heat-badge');
+  if (heatEl) {
+    const totalDeployed = open.reduce((s, t) => s + (t.totalInvested || t.positionSize || 0), 0);
+    heatEl.textContent = `Capital deployed: ₹${Math.round(totalDeployed).toLocaleString('en-IN')}`;
+    heatEl.className = 'stat-badge badge-green';
+  }
 }
 
 // ── PERFORMANCE STATS ─────────────────────────────────
@@ -4601,25 +4459,20 @@ function renderPerfStats(closed, open, portfolioValue, initialCapital) {
 // ── CLOSED TRADES TABLE ───────────────────────────────
 function renderClosedTradesReal(closed) {
   const tbody = document.getElementById('closed-trades-tbody');
+  if (!tbody) return;
   const sorted = [...closed].sort((a, b) => parseDate(b.closeDate) - parseDate(a.closeDate));
   tbody.innerHTML = sorted.map(t => {
     const pnlClass = t.finalPlPct >= 0 ? 'pnl-pos' : 'pnl-neg';
-    const nPnlClass = t.plPct >= 0 ? 'pnl-pos' : 'pnl-neg';
-    const emaClass = (t.ema21 || '').toLowerCase() === 'above' ? 'tag-above' : 'tag-below';
-    const partialClass = t.partialTaken === 'Y' ? 'tag-y' : 'tag-n';
-    const initRiskFmt = t.initRiskRs ? '₹' + Math.round(t.initRiskRs).toLocaleString('en-IN') : '—';
+    const invested = t.totalInvested || t.positionSize || 0;
     return `<tr>
       <td><span class="stock-name">${t.stock}</span></td>
-      <td style="color:var(--text-secondary);font-size:11px">${parseSetupType(t.setupType).label}</td>
       <td>${t.openDate || '—'}</td>
       <td>${t.closeDate || '—'}</td>
       <td>${t.age || '—'}d</td>
-      <td>₹${t.entryPrice.toLocaleString('en-IN')}</td>
-      <td style="color:var(--text-secondary)">${initRiskFmt}</td>
-      <td class="${pnlClass}">${t.finalPlPct >= 0 ? '+' : ''}${t.finalPlPct.toFixed(1)}%</td>
-      <td class="${t.finalPl >= 0 ? 'pnl-pos' : 'pnl-neg'}">${t.finalPl >= 0 ? '+' : ''}₹${Math.abs(Math.round(t.finalPl)).toLocaleString('en-IN')}</td>
-      <td><span class="tag ${partialClass}">${t.partialTaken}</span></td>
-      <td><span class="tag ${emaClass}">${t.ema21 || '—'}</span></td>
+      <td>₹${(t.entryPrice||0).toLocaleString('en-IN')}</td>
+      <td style="color:var(--text-secondary)">${invested ? '₹'+Math.round(invested).toLocaleString('en-IN') : '—'}</td>
+      <td class="${pnlClass}">${t.finalPlPct >= 0 ? '+' : ''}${(t.finalPlPct||0).toFixed(1)}%</td>
+      <td class="${t.finalPl >= 0 ? 'pnl-pos' : 'pnl-neg'}">${(t.finalPl||0) >= 0 ? '+' : ''}₹${Math.abs(Math.round(t.finalPl||0)).toLocaleString('en-IN')}</td>
     </tr>`;
   }).join('');
 }
