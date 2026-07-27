@@ -3402,7 +3402,6 @@ function renderDashboard(data, cfg) {
             </div>
           </div>`;
       }).join('');
-    }
   }
 
   renderExecSummary(closed, open, portfolioValue, initialCapital);
@@ -4887,7 +4886,7 @@ function saveAllConfig() {
   cfg.heatGreen = parseFloat(getVal('cfg-heat-green', cfg.heatGreen)) || cfg.heatGreen;
   cfg.heatAmber = parseFloat(getVal('cfg-heat-amber', cfg.heatAmber)) || cfg.heatAmber;
   cfg.maxPositions = parseInt(getVal('cfg-max-positions', cfg.maxPositions)) || cfg.maxPositions;
-  (cfg.maxAge||90) = parseInt(getVal('cfg-max-age', (cfg.maxAge||90))) || (cfg.maxAge||90);
+  cfg.maxAge = parseInt(getVal('cfg-max-age', cfg.maxAge || 90)) || cfg.maxAge || 90;
   cfg.weeklyTarget = parseInt(getVal('cfg-weekly-target', cfg.weeklyTarget || 0)) || 0;
   ['flagCol','stockCol','openDateCol','closeDateCol','cmpCol','sevenDayLowCol','stopLossCol',
    'initRiskRsCol','initRiskPctCol','qtyCol','entryPriceCol','setupTypeCol','plPctCol',
