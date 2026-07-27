@@ -2523,29 +2523,27 @@ const CONFIG_KEY = 'tj_config_v1';
 const DEFAULT_CONFIG = {
   url: 'https://script.google.com/macros/s/AKfycbwh85dD1AlNlMFRk4M4A8yCA5YAs5gvnCIMgq6ixQUhdxmes-CqU3OYOdxtzDRLRgLq/exec',
   sheet: 'TRADES', headerRows: '1',
-  // SST-Hybrid column mapping (as of 2026-07-27)
-  flagCol: 'A',        // col A: Open Position flag (YES/NO)
-  stockCol: 'D',       // col D: NSE:STOCK (strip "NSE:" in frontend)
-  openDateCol: 'B',    // col B: Open Date
-  closeDateCol: 'C',   // col C: Close Date
-  cmpCol: 'K',         // col K: CMP
-  // Reusing old param names for new column meanings:
-  sevenDayLowCol: 'I', // col I: 21-Day High (returned as sevenDayLow, aliased as twentyOneDayHigh)
-  stopLossCol: 'J',    // col J: GTT Placed price (returned as stopLoss, aliased as gttPlaced)
-  initRiskRsCol: 'M',  // col M: Position size ₹ (₹20K base)
-  initRiskPctCol: 'N', // col N: Risk % of portfolio
+  // Column mapping — matches actual TRADES sheet layout
+  flagCol: 'B',        // col B: Open Position flag (YES=open, NO=closed)
+  stockCol: 'E',       // col E: Stock name (NSE:TICKER)
+  openDateCol: 'C',    // col C: Open Date
+  closeDateCol: 'D',   // col D: Close Date
+  cmpCol: 'H',         // col H: CMP
+  sevenDayLowCol: 'I', // col I: 21-Day High (aliased as twentyOneDayHigh in sstProcess)
+  stopLossCol: 'J',    // col J: GTT Placed price (aliased as gttPlaced)
+  initRiskRsCol: 'K',  // col K: Position size ₹
+  initRiskPctCol: 'L', // col L: Risk % of portfolio
   qtyCol: 'Q',         // col Q: Purchased qty
   entryPriceCol: 'R',  // col R: Entry price
-  setupTypeCol: 'S',   // col S: Total Invested ₹ (returned as setupType, parsed as number)
-  plPctCol: 'X',       // col X: 6% Target CMP price (returned as plPct, aliased as sixPctTargetCmp)
-  notionalPlCol: 'V',  // col V: Notional P&L ₹
-  finalExitPriceCol: 'AC', // col AC: SL Trailing/Add info
-  finalPlCol: 'AE',    // col AE: Final P&L ₹
-  finalPlPctCol: 'AF', // col AF: Final P&L %
-  ageCol: 'AG',        // col AG: Age (days)
-  // Portfolio summary cells (new location in AH column)
-  portfolioCell: 'AH3',   // AH3: Compounded portfolio (initial + realised + notional)
-  initialCapCell: 'AH2',  // AH2: Initial portfolio size
+  setupTypeCol: 'S',   // col S: Total Invested ₹ (parsed as number in sstProcess)
+  plPctCol: 'X',       // col X: 6% Target CMP price (aliased as sixPctTargetCmp)
+  notionalPlCol: 'Y',  // col Y: Notional P&L ₹
+  finalExitPriceCol: 'AC', // col AC: Final Exit Price
+  finalPlCol: 'AD',    // col AD: Final P&L ₹
+  finalPlPctCol: 'AE', // col AE: Final P&L %
+  ageCol: 'AF',        // col AF: Age (days)
+  portfolioCell: 'AK26',  // AK26: Portfolio value (realised)
+  initialCapCell: 'AK20', // AK20: Initial capital
   // SST strategy params
   targetPct: 7,        // trail target %
   lockInPct: 6,        // trailing SL lock-in %
@@ -2585,12 +2583,15 @@ function renderMktDirection() {
 function loadConfig() {
   try {
     const saved = JSON.parse(localStorage.getItem(CONFIG_KEY) || '{}');
-    // One-time migration: fix old cell refs that shifted when AG/AH columns were inserted
-    if (saved.portfolioCell === 'AI26') saved.portfolioCell = 'AK26';
-    if (saved.initialCapCell === 'AI20') saved.initialCapCell = 'AK20';
-    if (saved.portfolioCell === 'AI26' || saved.initialCapCell === 'AI20') {
-      localStorage.setItem(CONFIG_KEY, JSON.stringify(saved));
+    // Migration: fix wrong SST column letters written by previous broken config
+    const wrongCols = { flagCol:'A', stockCol:'D', openDateCol:'B', closeDateCol:'C', cmpCol:'K',
+      initRiskRsCol:'M', initRiskPctCol:'N', notionalPlCol:'V', finalPlCol:'AE',
+      finalPlPctCol:'AF', ageCol:'AG', portfolioCell:'AH3', initialCapCell:'AH2' };
+    let migrated = false;
+    for (const [k, wrongVal] of Object.entries(wrongCols)) {
+      if (saved[k] === wrongVal) { delete saved[k]; migrated = true; }
     }
+    if (migrated) localStorage.setItem(CONFIG_KEY, JSON.stringify(saved));
     return { ...DEFAULT_CONFIG, ...saved };
   }
   catch(e) { return { ...DEFAULT_CONFIG }; }
