@@ -2674,6 +2674,10 @@ async function refreshData() {
     t.sixPctTargetCmp  = t.plPct || 0;        // col X → 6% target CMP price
     // Compute actual P&L% from CMP and entry price
     t.plPct = (t.cmp && t.entryPrice) ? (t.cmp - t.entryPrice) / t.entryPrice * 100 : 0;
+    // Compute unrealised P&L ₹ from plPct × totalInvested if col Y is empty
+    if (!t.notionalPl && t.totalInvested && t.plPct) {
+      t.notionalPl = (t.plPct / 100) * t.totalInvested;
+    }
     return t;
   }
   if (data && data.open)   data.open   = data.open.map(sstProcess);
