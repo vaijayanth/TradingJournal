@@ -2542,7 +2542,7 @@ const DEFAULT_CONFIG = {
   entryPriceCol: 'R',  // col R: Entry price
   setupTypeCol: 'S',   // col S: Total Invested ₹ (parsed as number in sstProcess)
   plPctCol: 'X',       // col X: 6% Target CMP price (aliased as sixPctTargetCmp)
-  notionalPlCol: 'Y',  // col Y: Notional P&L ₹
+  notionalPlCol: 'W',  // col W: Notional P&L ₹
   finalExitPriceCol: 'AC', // col AC: Final Exit Price
   finalPlCol: 'AD',    // col AD: Final P&L ₹
   finalPlPctCol: 'AE', // col AE: Final P&L %
@@ -2590,11 +2590,12 @@ function loadConfig() {
     const saved = JSON.parse(localStorage.getItem(CONFIG_KEY) || '{}');
     // Migration: fix wrong column letters written by previous broken config
     const wrongCols = { flagCol:'A', stockCol:'D', openDateCol:'B', closeDateCol:'C', cmpCol:'K',
-      initRiskRsCol:'M', initRiskPctCol:'N', notionalPlCol:'V', finalPlCol:'AE',
+      initRiskRsCol:'M', initRiskPctCol:'N', notionalPlCol:'V', notionalPlCol2:'Y', finalPlCol:'AE',
       finalPlPctCol:'AF', ageCol:'AG', portfolioCell:'AK26', initialCapCell:'AK20' };
     let migrated = false;
     for (const [k, wrongVal] of Object.entries(wrongCols)) {
-      if (saved[k] === wrongVal) { delete saved[k]; migrated = true; }
+      const realKey = k.replace('2','');
+      if (saved[realKey] === wrongVal) { delete saved[realKey]; migrated = true; }
     }
     if (migrated) localStorage.setItem(CONFIG_KEY, JSON.stringify(saved));
     return { ...DEFAULT_CONFIG, ...saved };
