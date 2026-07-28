@@ -2,7 +2,7 @@
 <html lang="en" data-theme="light">
 <head>
 <meta charset="UTF-8">
-<script>try{if(location.search.includes('reset=1')){localStorage.removeItem('tj_auth_hash');localStorage.removeItem('tj_config_v1');localStorage.removeItem('tj_config_v2');localStorage.removeItem('tj_config_v3');sessionStorage.removeItem('tj_authed');history.replaceState(null,'',location.pathname);}var t=localStorage.getItem('tj_theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
+<script>try{if(location.search.includes('reset=1')){localStorage.removeItem('tj_auth_hash');localStorage.removeItem('tj_config_v1');localStorage.removeItem('tj_config_v2');localStorage.removeItem('tj_config_v3');localStorage.removeItem('tj_config_v4');sessionStorage.removeItem('tj_authed');history.replaceState(null,'',location.pathname);}var t=localStorage.getItem('tj_theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Trading Journal</title>
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
@@ -2525,15 +2525,15 @@ tbody tr:hover { filter: brightness(0.97); }
 <!-- ════════════════════ SCRIPTS ════════════════════ -->
 <script>
 // ── CONFIG ───────────────────────────────────────────
-const CONFIG_KEY = 'tj_config_v3'; // bumped v1→v3 to force-clear stale column mappings
+const CONFIG_KEY = 'tj_config_v4'; // v4: flagCol back to B (col A is not YES/NO)
 const DEFAULT_CONFIG = {
   url: 'https://script.google.com/macros/s/AKfycbwh85dD1AlNlMFRk4M4A8yCA5YAs5gvnCIMgq6ixQUhdxmes-CqU3OYOdxtzDRLRgLq/exec',
   sheet: 'TRADES', headerRows: '1',
   // Column mapping — matches actual TRADES sheet layout (confirmed from sheet screenshot)
-  flagCol: 'A',        // col A: Open Position flag (YES=open, NO=closed)
+  flagCol: 'B',        // col B: Open Position flag (YES=open, NO=closed)
   stockCol: 'E',       // col E: Stock name (NSE:TICKER)
-  openDateCol: 'B',    // col B: Open Date
-  closeDateCol: 'C',   // col C: Close Date
+  openDateCol: 'C',    // col C: Open Date
+  closeDateCol: 'D',   // col D: Close Date
   cmpCol: 'J',         // col J: CMP (Current Market Price)
   sevenDayLowCol: 'K', // col K: 21-Day High (aliased as twentyOneDayHigh in sstProcess)
   stopLossCol: 'L',    // col L: GTT Placed price (aliased as gttPlaced)
