@@ -2748,8 +2748,8 @@ function renderDashboard(data, cfg) {
   const { portfolioValue, initialCapital, open, closed } = data;
   const totalFinalPl = closed.reduce((s, t) => s + t.finalPl, 0);
   const totalUnrealisedPl = open.reduce((s, t) => s + (t.notionalPl || 0), 0);
-  const totalCombinedPl = totalFinalPl + totalUnrealisedPl;
-  // AK26 = realised only (initial capital + closed P&L). Add open MTM (col Y) for true combined return.
+  // AH3 already includes unrealised MTM — use it as the single source of truth for portfolio value
+  const totalCombinedPl = portfolioValue - initialCapital;
   const totalReturn = initialCapital > 0 ? (totalCombinedPl / initialCapital * 100) : 0;
   const totalInitRisk = open.reduce((s, t) => s + (t.positionSize || 0), 0);
   // SST heat: capital deployed as % of portfolio
@@ -2761,10 +2761,9 @@ function renderDashboard(data, cfg) {
 
   const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
 
-  // Card 1: Portfolio Value
-  const combinedPortfolioValue = portfolioValue + totalUnrealisedPl;
-  set('dash-pv', fmt(combinedPortfolioValue));
-  set('dash-pv-sub', 'Initial: ' + fmt(initialCapital) + ' · Realised: ' + fmt(portfolioValue));
+  // Card 1: Portfolio Value — AH3 is the single source of truth (includes unrealised MTM)
+  set('dash-pv', fmt(portfolioValue));
+  set('dash-pv-sub', 'Combined · ' + fmt(initialCapital) + ' base');
   const pvBadge = document.getElementById('dash-pv-badge');
   if (pvBadge) {
     pvBadge.className = 'stat-badge ' + (totalCombinedPl >= 0 ? 'badge-green' : 'badge-red');
@@ -2776,7 +2775,7 @@ function renderDashboard(data, cfg) {
   set('dash-realised-pl', fmtSigned(totalCombinedPl));
   if (dashPlEl2) dashPlEl2.className = 'stat-value ' + (totalCombinedPl >= 0 ? 'green' : 'red');
   set('dash-realised-sub', 'Realised + Unrealised MTM');
-  set('dash-realised-breakdown', 'Realised: ' + fmtSigned(totalFinalPl) + ' · Unrealised: ' + fmtSigned(totalUnrealisedPl));
+  set('dash-realised-breakdown', 'Closed P&L: ' + fmtSigned(totalFinalPl) + ' · Open MTM: ' + fmtSigned(totalUnrealisedPl));
   const realBadge2 = document.getElementById('dash-realised-badge');
   if (realBadge2) { realBadge2.className = 'stat-badge ' + (totalCombinedPl >= 0 ? 'badge-green' : 'badge-red'); realBadge2.textContent = (totalCombinedPl >= 0 ? '▲ Profit' : '▼ Loss'); }
 
