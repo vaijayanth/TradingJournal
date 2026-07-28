@@ -2648,6 +2648,7 @@ async function fetchData() {
     params.append('_t', Date.now());
     const res = await fetch(cfg.url + '?' + params.toString(), { redirect: 'follow', cache: 'no-store' });
     const data = await res.json();
+    console.log('[TJ] fetchData response:', JSON.stringify(data).slice(0, 2000));
     if (!data.success) throw new Error(data.error || 'Unknown error');
     return data;
   } catch(e) {
