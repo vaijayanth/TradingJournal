@@ -2678,9 +2678,11 @@ async function refreshData() {
     t.sixPctTargetCmp  = t.plPct || 0;        // col X → 6% target CMP price
     // Compute actual P&L% from CMP and entry price
     t.plPct = (t.cmp && t.entryPrice) ? (t.cmp - t.entryPrice) / t.entryPrice * 100 : 0;
-    // Compute unrealised P&L ₹ from plPct × totalInvested if col Y is empty
-    if (!t.notionalPl && t.totalInvested && t.plPct) {
-      t.notionalPl = (t.plPct / 100) * t.totalInvested;
+    // Compute unrealised P&L ₹ if col Y is empty
+    // Prefer totalInvested (col S); fall back to qty × entryPrice
+    if (!t.notionalPl && t.plPct) {
+      const basis = t.totalInvested || (t.qty && t.entryPrice ? t.qty * t.entryPrice : 0);
+      if (basis) t.notionalPl = (t.plPct / 100) * basis;
     }
     return t;
   }
@@ -3093,7 +3095,8 @@ function renderDashboard(data, cfg) {
 
   // Card 4: Return — portfolioValue from AK26 already includes open positions at market price
   // So this is the TRUE combined return (realised + unrealised), not closed-only
-  const retStr = (totalReturn >= 0 ? '+' : '') + totalReturn.toFixed(1) + '%';
+  const retDecimals = Math.abs(totalReturn) < 0.1 ? 2 : 1;
+  const retStr = (totalReturn >= 0 ? '+' : '') + totalReturn.toFixed(retDecimals) + '%';
   const retRs   = totalCombinedPl;
   const realisedPct  = initialCapital > 0 ? totalFinalPl / initialCapital * 100 : 0;
   const unrealisedPct = initialCapital > 0 ? totalUnrealisedPl / initialCapital * 100 : 0;
