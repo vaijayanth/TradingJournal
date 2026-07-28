@@ -761,7 +761,6 @@ tbody tr:hover { filter: brightness(0.97); }
 
 <!-- ════ DASHBOARD ════ -->
 <div id="page-dashboard" class="page active">
-<div id="_debug_panel" style="display:none;background:#1a1a2e;color:#0ff;font-family:monospace;font-size:12px;padding:10px 14px;border:1px solid #0ff4;border-radius:6px;margin:8px"></div>
 
   <!-- Hidden IDs kept for JS compatibility -->
   <div style="display:none">
@@ -2649,16 +2648,6 @@ async function fetchData() {
     params.append('_t', Date.now());
     const res = await fetch(cfg.url + '?' + params.toString(), { redirect: 'follow', cache: 'no-store' });
     const data = await res.json();
-    // Debug panel — shows raw API response so we can diagnose column mapping
-    const dbg = document.getElementById('_debug_panel');
-    if (dbg) {
-      const first = (data.open||[])[0] || (data.closed||[])[0] || null;
-      dbg.innerHTML = `<b>API Debug</b> — open:${(data.open||[]).length} closed:${(data.closed||[]).length}<br>`
-        + `Portfolio:₹${data.portfolioValue} InitCap:₹${data.initialCapital}<br>`
-        + (first ? `First row: flag=${first.flag} stock=${first.stock} cmp=${first.cmp} entry=${first.entryPrice}` : 'No rows returned — all filtered out')
-        + `<br><small>Sent flagCol=${new URLSearchParams(params).get('flagCol')} cmpCol=${new URLSearchParams(params).get('cmpCol')}</small>`;
-      dbg.style.display = 'block';
-    }
     if (!data.success) throw new Error(data.error || 'Unknown error');
     return data;
   } catch(e) {
