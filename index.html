@@ -2528,16 +2528,16 @@ const CONFIG_KEY = 'tj_config_v1';
 const DEFAULT_CONFIG = {
   url: 'https://script.google.com/macros/s/AKfycbwh85dD1AlNlMFRk4M4A8yCA5YAs5gvnCIMgq6ixQUhdxmes-CqU3OYOdxtzDRLRgLq/exec',
   sheet: 'TRADES', headerRows: '1',
-  // Column mapping — matches actual TRADES sheet layout
-  flagCol: 'B',        // col B: Open Position flag (YES=open, NO=closed)
+  // Column mapping — matches actual TRADES sheet layout (confirmed from sheet screenshot)
+  flagCol: 'A',        // col A: Open Position flag (YES=open, NO=closed)
   stockCol: 'E',       // col E: Stock name (NSE:TICKER)
-  openDateCol: 'C',    // col C: Open Date
-  closeDateCol: 'D',   // col D: Close Date
-  cmpCol: 'H',         // col H: CMP
-  sevenDayLowCol: 'I', // col I: 21-Day High (aliased as twentyOneDayHigh in sstProcess)
-  stopLossCol: 'J',    // col J: GTT Placed price (aliased as gttPlaced)
-  initRiskRsCol: 'K',  // col K: Position size ₹
-  initRiskPctCol: 'L', // col L: Risk % of portfolio
+  openDateCol: 'B',    // col B: Open Date
+  closeDateCol: 'C',   // col C: Close Date
+  cmpCol: 'J',         // col J: CMP (Current Market Price)
+  sevenDayLowCol: 'K', // col K: 21-Day High (aliased as twentyOneDayHigh in sstProcess)
+  stopLossCol: 'L',    // col L: GTT Placed price (aliased as gttPlaced)
+  initRiskRsCol: 'M',  // col M: Initial Risk per Trade ₹
+  initRiskPctCol: 'N', // col N: Risk % of portfolio
   qtyCol: 'Q',         // col Q: Purchased qty
   entryPriceCol: 'R',  // col R: Entry price
   setupTypeCol: 'S',   // col S: Total Invested ₹ (parsed as number in sstProcess)
@@ -2589,9 +2589,12 @@ function loadConfig() {
   try {
     const saved = JSON.parse(localStorage.getItem(CONFIG_KEY) || '{}');
     // Migration: fix wrong column letters written by previous broken config
-    const wrongCols = { flagCol:'A', stockCol:'D', openDateCol:'B', closeDateCol:'C', cmpCol:'K',
-      initRiskRsCol:'M', initRiskPctCol:'N', notionalPlCol:'V', notionalPlCol2:'Y', finalPlCol:'AE',
-      finalPlPctCol:'AF', ageCol:'AG', portfolioCell:'AK26', initialCapCell:'AK20' };
+    const wrongCols = {
+      flagCol:'B', openDateCol:'C', closeDateCol:'D',
+      cmpCol:'H', sevenDayLowCol:'I', stopLossCol:'J', initRiskRsCol:'K', initRiskPctCol:'L',
+      notionalPlCol:'V', notionalPlCol2:'Y', finalPlCol:'AE',
+      finalPlPctCol:'AF', ageCol:'AG', portfolioCell:'AK26', initialCapCell:'AK20'
+    };
     let migrated = false;
     for (const [k, wrongVal] of Object.entries(wrongCols)) {
       const realKey = k.replace('2','');
