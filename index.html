@@ -3452,14 +3452,14 @@ function renderDashCharts(open, closed, cfg) {
     const distEl = document.getElementById('dash-pl-chart');
     if (distEl) {
       _dashCharts.dist = new ApexCharts(distEl, {
-        chart: { type:'bar', height:240, stacked:true, toolbar:{show:false}, background:'transparent', animations:{enabled:false} },
-        plotOptions: { bar: { borderRadius:3, columnWidth:'55%' } },
+        chart: { type:'bar', height:240, stacked:false, toolbar:{show:false}, background:'transparent', animations:{enabled:false} },
+        plotOptions: { bar: { borderRadius:3, columnWidth:'70%', dataLabels:{position:'top'} } },
         series: [
           { name:'Open (unrealised)', data: openCounts },
           { name:'Closed (realised)', data: closedCounts },
         ],
         xaxis: { categories: buckets.map(b=>b.label), labels:{ style:{ colors: buckets.map(b=>b.color), fontSize:'10px', fontWeight:700 }, rotate:-15 } },
-        yaxis: { labels:{ style:{colors:textClr,fontSize:'11px'} }, title:{ text:'# Trades', style:{color:textClr,fontSize:'10px'} }, tickAmount:5, min:0 },
+        yaxis: { logarithmic:true, logBase:10, labels:{ style:{colors:textClr,fontSize:'11px'}, formatter:v=>Math.round(v) }, title:{ text:'# Trades (log)', style:{color:textClr,fontSize:'10px'} }, min:1 },
         colors: ['#60A5FA','#A78BFA'],
         fill: { opacity:[0.85, 1] },
         legend: { show:true, position:'top', fontSize:'11px', labels:{colors:textClr} },
