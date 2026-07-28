@@ -3451,21 +3451,54 @@ function renderDashCharts(open, closed, cfg) {
     const closedCounts = buckets.map(b => closed.filter(t => { const p=t.finalPlPct||0; return p>=b.min && p<b.max; }).length);
     const distEl = document.getElementById('dash-pl-chart');
     if (distEl) {
+      // Manual log transform: log10(n+1) so 0 stays 0, 1→0.3, 10→1, 100→2
+      const logOpen   = openCounts.map(n => parseFloat(Math.log10(n + 1).toFixed(4)));
+      const logClosed = closedCounts.map(n => parseFloat(Math.log10(n + 1).toFixed(4)));
+      // Build y-axis tick labels at round powers (0,1,2,5,10,20,50,100)
+      const allMax = Math.max(...openCounts, ...closedCounts, 1);
+      const ticksReal = [0,1,2,5,10,20,50,100].filter(t => t <= allMax + 1);
+      if (!ticksReal.includes(allMax)) ticksReal.push(allMax);
       _dashCharts.dist = new ApexCharts(distEl, {
-        chart: { type:'bar', height:240, stacked:false, toolbar:{show:false}, background:'transparent', animations:{enabled:false} },
-        plotOptions: { bar: { borderRadius:3, columnWidth:'70%', dataLabels:{position:'top'} } },
+        chart: { type:'bar', height:250, toolbar:{show:false}, background:'transparent', animations:{enabled:false} },
+        plotOptions: { bar: { borderRadius:3, columnWidth:'65%' } },
         series: [
-          { name:'Open (unrealised)', data: openCounts },
-          { name:'Closed (realised)', data: closedCounts },
+          { name:'Open (unrealised)', data: logOpen },
+          { name:'Closed (realised)', data: logClosed },
         ],
         xaxis: { categories: buckets.map(b=>b.label), labels:{ style:{ colors: buckets.map(b=>b.color), fontSize:'10px', fontWeight:700 }, rotate:-15 } },
-        yaxis: { logarithmic:true, logBase:10, labels:{ style:{colors:textClr,fontSize:'11px'}, formatter:v=>Math.round(v) }, title:{ text:'# Trades (log)', style:{color:textClr,fontSize:'10px'} }, min:1 },
+        yaxis: {
+          min: 0,
+          max: parseFloat(Math.log10(allMax + 1).toFixed(4)),
+          tickAmount: ticksReal.length - 1,
+          labels: {
+            style: { colors:textClr, fontSize:'11px' },
+            formatter: v => {
+              // Reverse the log transform to show real count
+              const real = Math.round(Math.pow(10, v) - 1);
+              return real >= 0 ? real : '';
+            }
+          },
+          title: { text:'# Trades (log scale)', style:{color:textClr,fontSize:'10px'} }
+        },
         colors: ['#60A5FA','#A78BFA'],
         fill: { opacity:[0.85, 1] },
         legend: { show:true, position:'top', fontSize:'11px', labels:{colors:textClr} },
-        dataLabels: { enabled:false },
-        tooltip: { theme:isDark?'dark':'light', shared:true, intersect:false,
-          y:{ formatter:(v,{seriesIndex})=>v + (seriesIndex===0?' open':' closed') }
+        dataLabels: {
+          enabled: true,
+          formatter: (v, {seriesIndex, dataPointIndex}) => {
+            const real = seriesIndex===0 ? openCounts[dataPointIndex] : closedCounts[dataPointIndex];
+            return real > 0 ? real : '';
+          },
+          style: { fontSize:'10px', fontWeight:700, colors:[isDark?'#E2E8F0':'#1E293B'] },
+          dropShadow: { enabled:false },
+          offsetY: -4,
+        },
+        tooltip: {
+          theme: isDark?'dark':'light', shared:true, intersect:false,
+          y: { formatter:(v,{seriesIndex, dataPointIndex}) => {
+            const real = seriesIndex===0 ? openCounts[dataPointIndex] : closedCounts[dataPointIndex];
+            return real + (seriesIndex===0?' open':' closed');
+          }}
         },
         grid: { borderColor:gridClr, strokeDashArray:3 },
         theme: { mode:isDark?'dark':'light' },
