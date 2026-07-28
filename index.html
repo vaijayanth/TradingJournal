@@ -876,27 +876,13 @@ tbody tr:hover { filter: brightness(0.97); }
     </div>
   </div>
 
-  <!-- ② CHARTS ROW: Distribution histogram + Zone donut -->
-  <div style="display:grid;grid-template-columns:1fr 260px;gap:14px;margin-top:14px">
-
-    <!-- P&L Distribution histogram -->
-    <div class="card" style="padding:16px">
-      <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">📊 P&amp;L Distribution — <span id="dash-legend-target">7</span>% target · how many positions in each zone</div>
-      <div id="dash-pl-chart" style="min-height:220px"></div>
-    </div>
-
-    <!-- Zone Donut -->
-    <div class="card" style="padding:16px">
-      <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">🎯 Zone Breakdown</div>
-      <div id="dash-zone-chart"></div>
-      <div style="display:flex;flex-direction:column;gap:4px;margin-top:8px;font-size:11px">
-        <div style="display:flex;justify-content:space-between;align-items:center"><span style="display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:2px;background:#10B981;flex-shrink:0"></span>At target</span><span id="dash-zone-target-lbl" style="color:var(--text-muted);font-weight:700">—</span></div>
-        <div style="display:flex;justify-content:space-between;align-items:center"><span style="display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:2px;background:#FBBF24;flex-shrink:0"></span>Lock-in</span><span id="dash-zone-lockin-lbl" style="color:var(--text-muted);font-weight:700">—</span></div>
-        <div style="display:flex;justify-content:space-between;align-items:center"><span style="display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:2px;background:#34D399;flex-shrink:0"></span>Profitable</span><span id="dash-zone-profit-lbl" style="color:var(--text-muted);font-weight:700">—</span></div>
-        <div style="display:flex;justify-content:space-between;align-items:center"><span style="display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:2px;background:#F87171;flex-shrink:0"></span>In loss</span><span id="dash-zone-loss-lbl" style="color:var(--text-muted);font-weight:700">—</span></div>
-      </div>
-    </div>
+  <!-- ② P&L Distribution — full width -->
+  <div class="card" style="padding:16px;margin-top:14px">
+    <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">📊 P&amp;L Distribution — <span id="dash-legend-target">7</span>% target · positions in each zone</div>
+    <div id="dash-pl-chart" style="min-height:240px"></div>
   </div>
+  <!-- hidden IDs for JS compat -->
+  <div style="display:none"><div id="dash-zone-chart"></div><span id="dash-zone-target-lbl"></span><span id="dash-zone-lockin-lbl"></span><span id="dash-zone-profit-lbl"></span><span id="dash-zone-loss-lbl"></span></div>
 
   <!-- ③ TOP MOVERS -->
   <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px">
