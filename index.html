@@ -876,41 +876,42 @@ tbody tr:hover { filter: brightness(0.97); }
     </div>
   </div>
 
-  <!-- ② CHARTS ROW 1: Full-width P&L Waterfall -->
-  <div class="card" style="margin-top:14px;padding:16px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:8px;flex-wrap:wrap;gap:8px">
-      <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em">📊 Open Position P&L %</div>
-      <div style="display:flex;gap:12px;font-size:10px;color:var(--text-muted)">
-        <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#10B981;margin-right:4px"></span>At target ≥<span id="dash-legend-target">7</span>%</span>
-        <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#FBBF24;margin-right:4px"></span>Lock-in zone</span>
-        <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#34D399;margin-right:4px"></span>Profitable</span>
-        <span><span style="display:inline-block;width:8px;height:8px;border-radius:50%;background:#F87171;margin-right:4px"></span>In loss</span>
-      </div>
-    </div>
-    <div id="dash-pl-chart" style="min-height:300px"></div>
-  </div>
+  <!-- ② CHARTS ROW: Distribution histogram + Zone donut -->
+  <div style="display:grid;grid-template-columns:1fr 260px;gap:14px;margin-top:14px">
 
-  <!-- ③ CHARTS ROW 2: Zone Donut + Capital Allocation -->
-  <div style="display:grid;grid-template-columns:280px 1fr;gap:14px;margin-top:14px">
+    <!-- P&L Distribution histogram -->
+    <div class="card" style="padding:16px">
+      <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">📊 P&amp;L Distribution — <span id="dash-legend-target">7</span>% target · how many positions in each zone</div>
+      <div id="dash-pl-chart" style="min-height:220px"></div>
+    </div>
 
     <!-- Zone Donut -->
     <div class="card" style="padding:16px">
-      <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">🎯 Position Zones</div>
+      <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">🎯 Zone Breakdown</div>
       <div id="dash-zone-chart"></div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:4px 12px;margin-top:8px;font-size:11px">
-        <div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:#10B981;flex-shrink:0"></span><span id="dash-zone-target-lbl" style="color:var(--text-muted)">At target: —</span></div>
-        <div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:#FBBF24;flex-shrink:0"></span><span id="dash-zone-lockin-lbl" style="color:var(--text-muted)">Lock-in: —</span></div>
-        <div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:#34D399;flex-shrink:0"></span><span id="dash-zone-profit-lbl" style="color:var(--text-muted)">Profitable: —</span></div>
-        <div style="display:flex;align-items:center;gap:6px"><span style="width:8px;height:8px;border-radius:50%;background:#F87171;flex-shrink:0"></span><span id="dash-zone-loss-lbl" style="color:var(--text-muted)">In loss: —</span></div>
+      <div style="display:flex;flex-direction:column;gap:4px;margin-top:8px;font-size:11px">
+        <div style="display:flex;justify-content:space-between;align-items:center"><span style="display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:2px;background:#10B981;flex-shrink:0"></span>At target</span><span id="dash-zone-target-lbl" style="color:var(--text-muted);font-weight:700">—</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center"><span style="display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:2px;background:#FBBF24;flex-shrink:0"></span>Lock-in</span><span id="dash-zone-lockin-lbl" style="color:var(--text-muted);font-weight:700">—</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center"><span style="display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:2px;background:#34D399;flex-shrink:0"></span>Profitable</span><span id="dash-zone-profit-lbl" style="color:var(--text-muted);font-weight:700">—</span></div>
+        <div style="display:flex;justify-content:space-between;align-items:center"><span style="display:flex;align-items:center;gap:5px"><span style="width:8px;height:8px;border-radius:2px;background:#F87171;flex-shrink:0"></span>In loss</span><span id="dash-zone-loss-lbl" style="color:var(--text-muted);font-weight:700">—</span></div>
       </div>
     </div>
+  </div>
 
-    <!-- Capital Allocation -->
+  <!-- ③ TOP MOVERS -->
+  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px">
     <div class="card" style="padding:16px">
-      <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">💰 Capital Deployed — Top 15 Positions</div>
-      <div id="dash-capital-chart" style="min-height:280px"></div>
+      <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">🚀 Top Gainers</div>
+      <div id="dash-top-gainers"></div>
+    </div>
+    <div class="card" style="padding:16px">
+      <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">⚠ Biggest Losers</div>
+      <div id="dash-top-losers"></div>
     </div>
   </div>
+
+  <!-- hidden chart div kept for JS compat -->
+  <div style="display:none"><div id="dash-capital-chart"></div></div>
 
   <!-- ④ EXECUTIVE SUMMARY -->
   <div class="card card-sm" id="exec-summary-card" style="margin-top:14px">
@@ -3427,45 +3428,45 @@ function renderDashboard(data, cfg) {
 const _dashCharts = {};
 function renderDashCharts(open, cfg) {
   if (!window.ApexCharts) return;
-  const isDark = document.documentElement.getAttribute('data-theme') === 'dark';
-  const textClr = isDark ? '#A0AEC0' : '#64748B';
-  const gridClr = isDark ? '#2A3347' : '#E2E8F0';
-  const bgClr   = isDark ? '#161A23' : '#FFFFFF';
+  const isDark    = document.documentElement.getAttribute('data-theme') === 'dark';
+  const textClr   = isDark ? '#A0AEC0' : '#64748B';
+  const gridClr   = isDark ? '#2A3347' : '#E2E8F0';
   const targetPct = cfg.targetPct || 7;
   const lockInPct = cfg.lockInPct || 6;
 
-  function zoneColor(plPct) {
-    if (plPct >= targetPct) return '#10B981';
-    if (plPct >= lockInPct) return '#FBBF24';
-    if (plPct > 0)          return '#34D399';
-    return '#F87171';
-  }
-
-  // ── Chart 1: P&L Waterfall (horizontal bars, all positions sorted desc) ──
+  // ── Chart 1: P&L Distribution Histogram ──────────────────────────────────
+  // Buckets: severe loss / moderate loss / small loss / 0-3% / 3-lockin / lockin-target / at target
   try {
-    if (_dashCharts.wf) { _dashCharts.wf.destroy(); delete _dashCharts.wf; }
-    const sorted = [...open].sort((a,b) => (b.plPct||0) - (a.plPct||0));
-    const labels = sorted.map(t => t.stock);
-    const vals   = sorted.map(t => parseFloat((t.plPct||0).toFixed(2)));
-    const clrs   = sorted.map(t => zoneColor(t.plPct||0));
-    const h = Math.max(320, Math.min(sorted.length * 21, 700));
-    const wfEl = document.getElementById('dash-pl-chart');
-    if (wfEl && sorted.length) {
-      _dashCharts.wf = new ApexCharts(wfEl, {
-        chart: { type:'bar', height:h, toolbar:{show:false}, background:'transparent', animations:{enabled:false} },
-        plotOptions: { bar: { horizontal:true, distributed:true, barHeight:'72%', borderRadius:2 } },
-        series: [{ name:'P&L %', data:vals }],
-        xaxis: { categories:labels, labels:{ style:{colors:textClr,fontSize:'10px'}, formatter:v=>v+'%' }, tickAmount:6, crosshairs:{show:false} },
-        yaxis: { labels:{ style:{colors:textClr,fontSize:'10px'}, maxWidth:90 } },
-        colors: clrs,
+    if (_dashCharts.dist) { _dashCharts.dist.destroy(); delete _dashCharts.dist; }
+    const buckets = [
+      { label: '< −10%',            color:'#EF4444', min:-Infinity, max:-10 },
+      { label: '−10% to −5%',       color:'#F87171', min:-10,       max:-5  },
+      { label: '−5% to 0%',         color:'#FCA5A5', min:-5,        max:0   },
+      { label: '0% to 3%',          color:'#6EE7B7', min:0,         max:3   },
+      { label: `3% to ${lockInPct}%`, color:'#34D399', min:3,       max:lockInPct },
+      { label: `${lockInPct}% to ${targetPct}%`, color:'#FBBF24', min:lockInPct, max:targetPct },
+      { label: `≥ ${targetPct}%`,   color:'#10B981', min:targetPct, max:Infinity },
+    ];
+    const counts = buckets.map(b => open.filter(t => {
+      const p = t.plPct || 0;
+      return p >= b.min && p < b.max;
+    }).length);
+    const distEl = document.getElementById('dash-pl-chart');
+    if (distEl) {
+      _dashCharts.dist = new ApexCharts(distEl, {
+        chart: { type:'bar', height:240, toolbar:{show:false}, background:'transparent', animations:{enabled:false} },
+        plotOptions: { bar: { distributed:true, borderRadius:4, columnWidth:'60%' } },
+        series: [{ name:'Positions', data: counts }],
+        xaxis: { categories: buckets.map(b=>b.label), labels:{ style:{colors:textClr,fontSize:'10px'}, rotate:-20 } },
+        yaxis: { labels:{ style:{colors:textClr,fontSize:'11px'} }, title:{ text:'# Positions', style:{color:textClr,fontSize:'10px'} }, tickAmount:5, min:0 },
+        colors: buckets.map(b=>b.color),
         legend: { show:false },
-        dataLabels: { enabled:true, formatter:(v)=>(v>0?'+':'')+v.toFixed(1)+'%', style:{fontSize:'9px',fontWeight:600,colors:['#fff']}, dropShadow:{enabled:false} },
-        tooltip: { theme:isDark?'dark':'light', y:{ formatter:v=>(v>0?'+':'')+v.toFixed(2)+'%' } },
-        grid: { borderColor:gridClr, strokeDashArray:3, xaxis:{lines:{show:true}}, yaxis:{lines:{show:false}} },
-        annotations: { xaxis:[{ x:0, borderColor:isDark?'#4B5563':'#9CA3AF', strokeDashArray:0, borderWidth:1.5 }] },
+        dataLabels: { enabled:true, formatter:v=>v||'', style:{fontSize:'11px',fontWeight:700,colors:[isDark?'#E2E8F0':'#1E293B']}, dropShadow:{enabled:false} },
+        tooltip: { theme:isDark?'dark':'light', y:{ formatter:v=>v+' position'+(v!==1?'s':'') } },
+        grid: { borderColor:gridClr, strokeDashArray:3 },
         theme: { mode:isDark?'dark':'light' },
       });
-      _dashCharts.wf.render();
+      _dashCharts.dist.render();
     }
   } catch(e) { console.warn('dash-pl-chart error', e); }
 
@@ -3476,22 +3477,21 @@ function renderDashCharts(open, cfg) {
     const atLockIn  = open.filter(t => (t.plPct||0) >= lockInPct && (t.plPct||0) < targetPct).length;
     const profitable= open.filter(t => (t.plPct||0) > 0 && (t.plPct||0) < lockInPct).length;
     const inLoss    = open.filter(t => (t.plPct||0) <= 0).length;
-    // Update legend labels
     const setLbl = (id, txt) => { const el=document.getElementById(id); if(el) el.textContent=txt; };
-    setLbl('dash-zone-target-lbl', `At target: ${atTarget}`);
-    setLbl('dash-zone-lockin-lbl', `Lock-in: ${atLockIn}`);
-    setLbl('dash-zone-profit-lbl', `Profitable: ${profitable}`);
-    setLbl('dash-zone-loss-lbl',   `In loss: ${inLoss}`);
+    setLbl('dash-zone-target-lbl', atTarget);
+    setLbl('dash-zone-lockin-lbl', atLockIn);
+    setLbl('dash-zone-profit-lbl', profitable);
+    setLbl('dash-zone-loss-lbl',   inLoss);
     const zoneEl = document.getElementById('dash-zone-chart');
     if (zoneEl && open.length) {
       _dashCharts.zone = new ApexCharts(zoneEl, {
-        chart: { type:'donut', height:200, background:'transparent', toolbar:{show:false} },
+        chart: { type:'donut', height:190, background:'transparent', toolbar:{show:false} },
         series: [atTarget, atLockIn, profitable, inLoss],
-        labels: [`≥${targetPct}% target`, `${lockInPct}-${targetPct}% lock-in`, 'Profitable', 'In loss'],
+        labels: [`≥${targetPct}% target`, `Lock-in`, 'Profitable', 'In loss'],
         colors: ['#10B981','#FBBF24','#34D399','#F87171'],
         legend: { show:false },
-        plotOptions: { pie: { donut: { size:'68%', labels: { show:true, total:{ show:true, showAlways:true, label:'Positions', color:textClr, fontSize:'11px', fontWeight:700, formatter:()=>open.length } } } } },
-        dataLabels: { enabled:true, formatter:(v,opts)=>opts.w.config.series[opts.seriesIndex]||'', style:{fontSize:'11px',fontWeight:700}, dropShadow:{enabled:false} },
+        plotOptions: { pie: { donut: { size:'65%', labels:{ show:true, total:{ show:true, showAlways:true, label:'Open', color:textClr, fontSize:'11px', fontWeight:700, formatter:()=>open.length } } } } },
+        dataLabels: { enabled:true, formatter:(v,opts)=>opts.w.config.series[opts.seriesIndex]>0?opts.w.config.series[opts.seriesIndex]:'', style:{fontSize:'11px',fontWeight:700}, dropShadow:{enabled:false} },
         tooltip: { theme:isDark?'dark':'light', y:{ formatter:v=>v+' positions' } },
         stroke: { show:false },
         theme: { mode:isDark?'dark':'light' },
@@ -3500,31 +3500,25 @@ function renderDashCharts(open, cfg) {
     }
   } catch(e) { console.warn('dash-zone-chart error', e); }
 
-  // ── Chart 3: Capital Allocation (top 15 by invested ₹) ───────────────────
+  // ── Top Movers: HTML tables (no chart needed) ─────────────────────────────
   try {
-    if (_dashCharts.cap) { _dashCharts.cap.destroy(); delete _dashCharts.cap; }
-    const top = [...open].sort((a,b)=>(b.totalInvested||0)-(a.totalInvested||0)).slice(0,15);
-    const capEl = document.getElementById('dash-capital-chart');
-    if (capEl && top.length) {
-      _dashCharts.cap = new ApexCharts(capEl, {
-        chart: { type:'bar', height:Math.max(280, top.length*22+60), toolbar:{show:false}, background:'transparent', animations:{enabled:false} },
-        plotOptions: { bar: { horizontal:true, distributed:true, barHeight:'70%', borderRadius:2 } },
-        series: [{ name:'Invested ₹', data: top.map(t=>Math.round(t.totalInvested||0)) }],
-        xaxis: { categories: top.map(t=>t.stock), labels:{ style:{colors:textClr,fontSize:'10px'}, formatter:v=>'₹'+(v/1000).toFixed(0)+'K' }, crosshairs:{show:false} },
-        yaxis: { labels:{ style:{colors:textClr,fontSize:'10px'} } },
-        colors: top.map(t=>zoneColor(t.plPct||0)),
-        legend: { show:false },
-        dataLabels: { enabled:true, formatter:v=>'₹'+(v/1000).toFixed(0)+'K', style:{fontSize:'9px',fontWeight:600,colors:['#fff']}, dropShadow:{enabled:false} },
-        tooltip: { theme:isDark?'dark':'light', custom:({seriesIndex,dataPointIndex,w})=>{
-          const t=top[dataPointIndex];
-          return `<div style="padding:8px 12px;font-size:12px"><b>${t.stock}</b><br>Invested: ₹${(t.totalInvested||0).toLocaleString('en-IN')}<br>P&L: ${(t.plPct||0)>0?'+':''}${(t.plPct||0).toFixed(2)}%</div>`;
-        }},
-        grid: { borderColor:gridClr, strokeDashArray:3, xaxis:{lines:{show:true}}, yaxis:{lines:{show:false}} },
-        theme: { mode:isDark?'dark':'light' },
-      });
-      _dashCharts.cap.render();
-    }
-  } catch(e) { console.warn('dash-capital-chart error', e); }
+    const sorted = [...open].sort((a,b) => (b.plPct||0) - (a.plPct||0));
+    const top5   = sorted.slice(0, 7);
+    const bot5   = sorted.slice(-7).reverse();
+    const moversRow = (t) => {
+      const p = t.plPct || 0;
+      const clr = p >= targetPct ? '#10B981' : p >= lockInPct ? '#FBBF24' : p > 0 ? '#34D399' : '#F87171';
+      const pl_rs = t.notionalPl ? ` · ₹${Math.abs(t.notionalPl).toLocaleString('en-IN',{maximumFractionDigits:0})}` : '';
+      return `<div style="display:flex;justify-content:space-between;align-items:center;padding:6px 0;border-bottom:1px solid var(--border)">
+        <span style="font-size:12px;font-weight:600">${t.stock}</span>
+        <span style="font-size:12px;font-weight:700;color:${clr}">${p>0?'+':''}${p.toFixed(2)}%${pl_rs}</span>
+      </div>`;
+    };
+    const gEl = document.getElementById('dash-top-gainers');
+    if (gEl) gEl.innerHTML = top5.length ? top5.map(moversRow).join('') : '<div style="color:var(--text-muted);font-size:12px">No data</div>';
+    const lEl = document.getElementById('dash-top-losers');
+    if (lEl) lEl.innerHTML = bot5.length ? bot5.map(moversRow).join('') : '<div style="color:var(--text-muted);font-size:12px">No data</div>';
+  } catch(e) { console.warn('top-movers error', e); }
 }
 
 // ── EXECUTIVE SUMMARY (SST-Hybrid) ────────────────────────────────────────────
