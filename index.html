@@ -3440,12 +3440,12 @@ function renderDashboard(data, cfg) {
   // Update legend target label
   const legEl = document.getElementById('dash-legend-target');
   if (legEl) legEl.textContent = cfg.targetPct || 7;
-  renderDashCharts(open, closed, cfg);
+  renderDashCharts(open, closed, cfg, portfolioValue, initialCapital);
 }
 
 // ── DASHBOARD CHARTS ─────────────────────────────────────────────────────────
 const _dashCharts = {};
-function renderDashCharts(open, closed, cfg) {
+function renderDashCharts(open, closed, cfg, portfolioValue, initialCapital) {
   if (!window.ApexCharts) return;
   const isDark    = document.documentElement.getAttribute('data-theme') === 'dark';
   const textClr   = isDark ? '#A0AEC0' : '#64748B';
