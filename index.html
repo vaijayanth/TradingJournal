@@ -929,11 +929,6 @@ tbody tr:hover { filter: brightness(0.97); }
     </div>
   </div>
 
-  <!-- ⑤ EXECUTIVE SUMMARY -->
-  <div class="card card-sm" id="exec-summary-card" style="margin-top:14px">
-    <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px">📋 Executive Summary</div>
-    <div id="exec-summary-body" style="font-size:13px;color:var(--text-primary);line-height:1.8">—</div>
-  </div>
 
   <!-- System quality — hidden, values still set by JS -->
   <div style="display:none">
@@ -3436,7 +3431,6 @@ function renderDashboard(data, cfg) {
       }).join('');
   }
 
-  renderExecSummary(closed, open, portfolioValue, initialCapital);
   // Update legend target label
   const legEl = document.getElementById('dash-legend-target');
   if (legEl) legEl.textContent = cfg.targetPct || 7;
@@ -3655,74 +3649,6 @@ function renderDashCharts(open, closed, cfg, portfolioValue, initialCapital) {
       ).join('');
     }
   } catch(e) { console.warn('summary-table error', e); }
-}
-
-// ── EXECUTIVE SUMMARY (SST-Hybrid) ────────────────────────────────────────────
-function renderExecSummary(closed, open, portfolioValue, initialCapital) {
-  const el = document.getElementById('exec-summary-body');
-  if (!el) return;
-
-  const cfg        = loadConfig();
-  const targetPct  = cfg.targetPct  || 7;
-  const lockInPct  = cfg.lockInPct  || 6;
-  const wins       = closed.filter(t => (t.finalPlPct||0) > 0);
-  const losses     = closed.filter(t => (t.finalPlPct||0) < 0);
-  const wr         = closed.length > 0 ? wins.length / closed.length * 100 : 0;
-  const totalWinPl = wins.reduce((s,t)   => s + (t.finalPl||0), 0);
-  const totalLossPl= Math.abs(losses.reduce((s,t) => s + (t.finalPl||0), 0));
-  const pf         = totalLossPl > 0 ? totalWinPl / totalLossPl : null;
-  const avgWinPct  = wins.length   > 0 ? wins.reduce((s,t)   => s + (t.finalPlPct||0), 0) / wins.length   : 0;
-  const openMtm    = open.reduce((s,t) => s + (t.notionalPl||0), 0);
-  const profitableOpen = open.filter(t => (t.plPct||0) > 0);
-  const atTarget   = open.filter(t => (t.plPct||0) >= targetPct);
-  const atLockin   = open.filter(t => (t.plPct||0) >= lockInPct && (t.plPct||0) < targetPct);
-  const inLoss     = open.filter(t => (t.plPct||0) < 0);
-  const totalDeployed = open.reduce((s,t) => s + (t.totalInvested || t.positionSize || 0), 0);
-  const lines = [];
-
-  // 1. Portfolio snapshot
-  const pvFmt = portfolioValue ? '₹' + Math.round(portfolioValue).toLocaleString('en-IN') : '—';
-  const retPct = initialCapital > 0 ? ((portfolioValue - initialCapital) / initialCapital * 100) : 0;
-  const retColor = retPct >= 0 ? 'var(--green)' : 'var(--red)';
-  lines.push(`💼 <b>Portfolio:</b> <span style="font-size:15px;font-weight:700">${pvFmt}</span> &nbsp;·&nbsp; <span style="color:${retColor}">${retPct >= 0 ? '+' : ''}${retPct.toFixed(2)}% total return</span> &nbsp;·&nbsp; ₹${Math.round(totalDeployed).toLocaleString('en-IN')} deployed across ${open.length} positions.`);
-
-  // 2. Open book status
-  if (open.length > 0) {
-    const mtmStr   = (openMtm >= 0 ? '+' : '') + '₹' + Math.round(Math.abs(openMtm)).toLocaleString('en-IN');
-    const mtmColor = openMtm >= 0 ? 'var(--green)' : 'var(--red)';
-    lines.push(`📂 <b>Open positions:</b> ${profitableOpen.length} profitable · ${inLoss.length} in loss. <span style="color:var(--green)">${atTarget.length} at/above ${targetPct}% target (trail SL)</span> · <span style="color:var(--amber)">${atLockin.length} at ${lockInPct}% lock-in zone</span> · <span style="color:#60A5FA">${inLoss.length} in loss (check EMAs before adding)</span>. Notional MTM: <span style="color:${mtmColor}">${mtmStr}</span>.`);
-  } else {
-    lines.push(`📂 <b>Open positions:</b> None — fully in cash.`);
-  }
-
-  // 3. Closed trade performance
-  if (closed.length < 3) {
-    lines.push(`📊 <b>Closed trades:</b> Only ${closed.length} closed so far — too early for statistics. Strategy needs time to cycle positions through to the ${targetPct}% target.`);
-  } else {
-    const pfColor = pf === null ? 'var(--text-muted)' : pf >= 2 ? 'var(--green)' : pf >= 1 ? 'var(--amber)' : 'var(--red)';
-    const pfNote  = pf === null ? '' : pf >= 2 ? ' — excellent edge' : pf >= 1.5 ? ' — healthy edge' : pf >= 1 ? ' — thin edge' : ' — review entries';
-    const wrColor = wr >= 70 ? 'var(--green)' : wr >= 50 ? 'var(--amber)' : 'var(--red)';
-    lines.push(`📊 <b>Closed trades (${closed.length}):</b> Win rate <span style="color:${wrColor}">${wr.toFixed(0)}%</span> (SST targets ≥70%). Profit Factor <span style="color:${pfColor}">${pf !== null ? pf.toFixed(2) : '—'}${pfNote}</span>. Average winner <span style="color:var(--green)">+${avgWinPct.toFixed(1)}%</span> (target: ${targetPct}% minimum).`);
-  }
-
-  // 4. Position sizing — current tier
-  const lotSize = Math.min(
-    (cfg.baseLotSize || 20000) + Math.floor(closed.length / 100) * (cfg.lotSizeStep || 1000),
-    initialCapital > 0 ? initialCapital * ((cfg.portfolioCapPct || 0.8) / 100) : Infinity
-  );
-  const nextTier  = 100 - (closed.length % 100);
-  const atCap     = initialCapital > 0 && lotSize >= initialCapital * ((cfg.portfolioCapPct || 0.8) / 100);
-  lines.push(`📐 <b>Position sizing:</b> Current lot size <span style="color:var(--green);font-weight:700">₹${Math.round(lotSize).toLocaleString('en-IN')}</span> · Add lot = ₹${Math.round(lotSize/2).toLocaleString('en-IN')}. ${atCap ? 'At portfolio cap (0.8%).' : `Next tier upgrade in <b>${nextTier}</b> more closed trades.`}`);
-
-  // 5. Last win context
-  const sortedWins = wins.map(t => ({ d: parseDate(t.closeDate) })).filter(x => x.d && x.d.getTime() > 0).sort((a,b) => b.d - a.d);
-  const dsw = sortedWins.length > 0 ? Math.floor((Date.now() - sortedWins[0].d.getTime()) / 86400000) : null;
-  if (dsw !== null) {
-    const dswColor = dsw <= 14 ? 'var(--green)' : dsw <= 30 ? 'var(--amber)' : 'var(--red)';
-    lines.push(`🏆 <b>Last closed winner:</b> <span style="color:${dswColor}">${dsw} days ago</span>.${dsw > 30 ? ' — strategy needs time; positions in loss may need adding if EMAs still hold.' : ''}`);
-  }
-
-  el.innerHTML = lines.map((l,i,a) => `<div style="margin-bottom:${i<a.length-1?'8px':'0'};padding-bottom:${i<a.length-1?'8px':'0'};border-bottom:${i<a.length-1?'1px solid var(--border)':'none'}">${l}</div>`).join('');
 }
 
 // ── TODAY'S ACTION BOARD ─────────────────────────────
