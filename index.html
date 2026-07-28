@@ -3440,6 +3440,17 @@ function renderDashCharts(open, closed, cfg) {
   // ── Chart 1: P&L Distribution Histogram (open unrealised + closed final) ─
   try {
     if (_dashCharts.dist) { _dashCharts.dist.destroy(); delete _dashCharts.dist; }
+    // Find actual max plPct across open positions to auto-scale buckets
+    const maxPlPct = Math.max(...open.map(t => t.plPct||0), targetPct + 5);
+    const highBuckets = [];
+    let b = targetPct;
+    const step = maxPlPct > 40 ? 10 : maxPlPct > 20 ? 5 : 3;
+    while (b < maxPlPct) {
+      const next = b + step;
+      highBuckets.push({ label: `${b}% to ${next}%`, color:'#10B981', min:b, max:next });
+      b = next;
+    }
+    highBuckets.push({ label: `≥ ${b}%`, color:'#059669', min:b, max:Infinity });
     const buckets = [
       { label: '< −10%',                              color:'#EF4444', min:-Infinity, max:-10 },
       { label: '−10% to −5%',                         color:'#F87171', min:-10,       max:-5  },
@@ -3447,7 +3458,7 @@ function renderDashCharts(open, closed, cfg) {
       { label: '0% to 3%',                            color:'#6EE7B7', min:0,         max:3   },
       { label: `3% to ${lockInPct}%`,                 color:'#34D399', min:3,         max:lockInPct },
       { label: `${lockInPct}% to ${targetPct}%`,      color:'#FBBF24', min:lockInPct, max:targetPct },
-      { label: `≥ ${targetPct}%`,                     color:'#10B981', min:targetPct, max:Infinity },
+      ...highBuckets,
     ];
     // Open: use computed plPct (CMP vs entry). Closed: use finalPlPct.
     const openCounts   = buckets.map(b => open.filter(t => { const p=t.plPct||0; return p>=b.min && p<b.max; }).length);
