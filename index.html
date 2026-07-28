@@ -3421,12 +3421,12 @@ function renderDashboard(data, cfg) {
   // Update legend target label
   const legEl = document.getElementById('dash-legend-target');
   if (legEl) legEl.textContent = cfg.targetPct || 7;
-  renderDashCharts(open, cfg);
+  renderDashCharts(open, closed, cfg);
 }
 
 // ── DASHBOARD CHARTS ─────────────────────────────────────────────────────────
 const _dashCharts = {};
-function renderDashCharts(open, cfg) {
+function renderDashCharts(open, closed, cfg) {
   if (!window.ApexCharts) return;
   const isDark    = document.documentElement.getAttribute('data-theme') === 'dark';
   const textClr   = isDark ? '#A0AEC0' : '#64748B';
@@ -3434,35 +3434,39 @@ function renderDashCharts(open, cfg) {
   const targetPct = cfg.targetPct || 7;
   const lockInPct = cfg.lockInPct || 6;
 
-  // ── Chart 1: P&L Distribution Histogram ──────────────────────────────────
-  // Buckets: severe loss / moderate loss / small loss / 0-3% / 3-lockin / lockin-target / at target
+  // ── Chart 1: P&L Distribution Histogram (open unrealised + closed final) ─
   try {
     if (_dashCharts.dist) { _dashCharts.dist.destroy(); delete _dashCharts.dist; }
     const buckets = [
-      { label: '< −10%',            color:'#EF4444', min:-Infinity, max:-10 },
-      { label: '−10% to −5%',       color:'#F87171', min:-10,       max:-5  },
-      { label: '−5% to 0%',         color:'#FCA5A5', min:-5,        max:0   },
-      { label: '0% to 3%',          color:'#6EE7B7', min:0,         max:3   },
-      { label: `3% to ${lockInPct}%`, color:'#34D399', min:3,       max:lockInPct },
-      { label: `${lockInPct}% to ${targetPct}%`, color:'#FBBF24', min:lockInPct, max:targetPct },
-      { label: `≥ ${targetPct}%`,   color:'#10B981', min:targetPct, max:Infinity },
+      { label: '< −10%',                              color:'#EF4444', min:-Infinity, max:-10 },
+      { label: '−10% to −5%',                         color:'#F87171', min:-10,       max:-5  },
+      { label: '−5% to 0%',                           color:'#FCA5A5', min:-5,        max:0   },
+      { label: '0% to 3%',                            color:'#6EE7B7', min:0,         max:3   },
+      { label: `3% to ${lockInPct}%`,                 color:'#34D399', min:3,         max:lockInPct },
+      { label: `${lockInPct}% to ${targetPct}%`,      color:'#FBBF24', min:lockInPct, max:targetPct },
+      { label: `≥ ${targetPct}%`,                     color:'#10B981', min:targetPct, max:Infinity },
     ];
-    const counts = buckets.map(b => open.filter(t => {
-      const p = t.plPct || 0;
-      return p >= b.min && p < b.max;
-    }).length);
+    // Open: use computed plPct (CMP vs entry). Closed: use finalPlPct.
+    const openCounts   = buckets.map(b => open.filter(t => { const p=t.plPct||0; return p>=b.min && p<b.max; }).length);
+    const closedCounts = buckets.map(b => closed.filter(t => { const p=t.finalPlPct||0; return p>=b.min && p<b.max; }).length);
     const distEl = document.getElementById('dash-pl-chart');
     if (distEl) {
       _dashCharts.dist = new ApexCharts(distEl, {
-        chart: { type:'bar', height:240, toolbar:{show:false}, background:'transparent', animations:{enabled:false} },
-        plotOptions: { bar: { distributed:true, borderRadius:4, columnWidth:'60%' } },
-        series: [{ name:'Positions', data: counts }],
-        xaxis: { categories: buckets.map(b=>b.label), labels:{ style:{colors:textClr,fontSize:'10px'}, rotate:-20 } },
-        yaxis: { labels:{ style:{colors:textClr,fontSize:'11px'} }, title:{ text:'# Positions', style:{color:textClr,fontSize:'10px'} }, tickAmount:5, min:0 },
-        colors: buckets.map(b=>b.color),
-        legend: { show:false },
-        dataLabels: { enabled:true, formatter:v=>v||'', style:{fontSize:'11px',fontWeight:700,colors:[isDark?'#E2E8F0':'#1E293B']}, dropShadow:{enabled:false} },
-        tooltip: { theme:isDark?'dark':'light', y:{ formatter:v=>v+' position'+(v!==1?'s':'') } },
+        chart: { type:'bar', height:240, stacked:true, toolbar:{show:false}, background:'transparent', animations:{enabled:false} },
+        plotOptions: { bar: { borderRadius:3, columnWidth:'55%' } },
+        series: [
+          { name:'Open (unrealised)', data: openCounts },
+          { name:'Closed (realised)', data: closedCounts },
+        ],
+        xaxis: { categories: buckets.map(b=>b.label), labels:{ style:{ colors: buckets.map(b=>b.color), fontSize:'10px', fontWeight:700 }, rotate:-15 } },
+        yaxis: { labels:{ style:{colors:textClr,fontSize:'11px'} }, title:{ text:'# Trades', style:{color:textClr,fontSize:'10px'} }, tickAmount:5, min:0 },
+        colors: ['#60A5FA','#A78BFA'],
+        fill: { opacity:[0.85, 1] },
+        legend: { show:true, position:'top', fontSize:'11px', labels:{colors:textClr} },
+        dataLabels: { enabled:false },
+        tooltip: { theme:isDark?'dark':'light', shared:true, intersect:false,
+          y:{ formatter:(v,{seriesIndex})=>v + (seriesIndex===0?' open':' closed') }
+        },
         grid: { borderColor:gridClr, strokeDashArray:3 },
         theme: { mode:isDark?'dark':'light' },
       });
