@@ -913,7 +913,23 @@ tbody tr:hover { filter: brightness(0.97); }
   <!-- hidden chart div kept for JS compat -->
   <div style="display:none"><div id="dash-capital-chart"></div></div>
 
-  <!-- ④ EXECUTIVE SUMMARY -->
+  <!-- ④ PERFORMANCE SUMMARY TABLE -->
+  <div class="card" style="margin-top:14px;padding:16px">
+    <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">📈 Performance Summary</div>
+    <div style="overflow-x:auto">
+      <table id="dash-summary-table" style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead>
+          <tr style="border-bottom:1px solid var(--border)">
+            <th style="text-align:left;padding:7px 12px;color:var(--text-muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.05em">Metric</th>
+            <th style="text-align:right;padding:7px 12px;color:var(--text-muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.05em">Value</th>
+          </tr>
+        </thead>
+        <tbody id="dash-summary-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- ⑤ EXECUTIVE SUMMARY -->
   <div class="card card-sm" id="exec-summary-card" style="margin-top:14px">
     <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:12px">📋 Executive Summary</div>
     <div id="exec-summary-body" style="font-size:13px;color:var(--text-primary);line-height:1.8">—</div>
@@ -3570,6 +3586,75 @@ function renderDashCharts(open, closed, cfg) {
     const lEl = document.getElementById('dash-top-losers');
     if (lEl) lEl.innerHTML = bot5.length ? bot5.map(moversRow).join('') : '<div style="color:var(--text-muted);font-size:12px">No data</div>';
   } catch(e) { console.warn('top-movers error', e); }
+
+  // ── Performance Summary Table ─────────────────────────────────────────────
+  try {
+    const tbody = document.getElementById('dash-summary-tbody');
+    if (tbody) {
+      const allTrades = [...open, ...closed];
+      const wins = closed.filter(t => (t.finalPl||0) > 0);
+      const losses = closed.filter(t => (t.finalPl||0) < 0);
+      const profitOpen = open.filter(t => (t.plPct||0) > 0);
+      const totalWinPl = wins.reduce((s,t) => s+(t.finalPl||0), 0);
+      const totalLossPl = Math.abs(losses.reduce((s,t) => s+(t.finalPl||0), 0));
+      const pf = totalLossPl > 0 ? totalWinPl / totalLossPl : Infinity;
+      const avgWin = wins.length > 0 ? totalWinPl / wins.length : 0;
+      const avgLoss = losses.length > 0 ? totalLossPl / losses.length : 0;
+      const avgDur = allTrades.length > 0 ? allTrades.reduce((s,t)=>s+parseInt(t.age||0),0)/allTrades.length : 0;
+      const accuracy = allTrades.length > 0 ? (wins.length + profitOpen.length) / allTrades.length * 100 : 0;
+      // CAGR from first trade date
+      const dates = allTrades.map(t=>parseDate(t.openDate)).filter(d=>d&&d.getFullYear()>2000).sort((a,b)=>a-b);
+      const numYears = dates.length > 0 ? (new Date() - dates[0]) / (365.25*24*3600*1000) : 1;
+      const totalReturn = initialCapital > 0 ? (portfolioValue - initialCapital) / initialCapital : 0;
+      const cagr = numYears > 0 ? (Math.pow(1 + totalReturn, 1/numYears) - 1) * 100 : 0;
+      // Max drawdown from closed equity curve
+      let eq = 0, peak = 0, maxDD = 0;
+      [...closed].sort((a,b)=>parseDate(a.closeDate)-parseDate(b.closeDate)).forEach(t => {
+        eq += t.finalPl||0;
+        if (eq > peak) peak = eq;
+        const dd = peak > 0 ? (peak - eq) / peak * 100 : 0;
+        if (dd > maxDD) maxDD = dd;
+      });
+      const calmar = maxDD > 0 ? cagr / maxDD : 0;
+
+      const fmtRs = v => '₹' + Math.round(v).toLocaleString('en-IN');
+      const fmtPct = v => v.toFixed(2) + '%';
+      const rows = [
+        ['Initial Capital',   fmtRs(initialCapital)],
+        ['Current Portfolio', fmtRs(portfolioValue)],
+        ['Total Return',      (totalReturn*100>=0?'+':'')+fmtPct(totalReturn*100)],
+        ['Total Trades',      allTrades.length],
+        ['Open Positions',    open.length],
+        ['Closed Trades',     closed.length],
+        ['Winning Trades',    wins.length + profitOpen.length],
+        ['Losing Trades',     losses.length + open.filter(t=>(t.plPct||0)<0).length],
+        ['Accuracy',          fmtPct(accuracy)],
+        ['Avg Hold (days)',   Math.round(avgDur)],
+        ['Avg Win ₹',         fmtRs(avgWin)],
+        ['Avg Loss ₹',        fmtRs(avgLoss)],
+        ['Profit Factor',     pf === Infinity ? '∞' : pf.toFixed(2)],
+        ['Max Drawdown',      fmtPct(maxDD)],
+        ['CAGR',              fmtPct(cagr)],
+        ['Calmar Ratio',      calmar.toFixed(2)],
+        ['Years Active',      numYears.toFixed(2)],
+      ];
+      const green = 'var(--green)', red = 'var(--red)', neutral = 'var(--text-primary)';
+      const valueColor = (label, val) => {
+        if (label === 'Total Return' || label === 'CAGR') return totalReturn >= 0 ? green : red;
+        if (label === 'Profit Factor') return pf >= 1.5 ? green : pf >= 1 ? 'var(--amber)' : red;
+        if (label === 'Accuracy') return accuracy >= 50 ? green : accuracy >= 30 ? 'var(--amber)' : red;
+        if (label === 'Max Drawdown') return maxDD < 15 ? green : maxDD < 30 ? 'var(--amber)' : red;
+        if (label === 'Calmar Ratio') return calmar >= 0.5 ? green : 'var(--amber)';
+        return neutral;
+      };
+      tbody.innerHTML = rows.map(([label, val], i) =>
+        `<tr style="border-bottom:1px solid var(--border);${i%2===0?'background:var(--surface-alt,rgba(255,255,255,0.02))':''}">
+          <td style="padding:8px 12px;color:var(--text-muted);font-size:12px">${label}</td>
+          <td style="padding:8px 12px;text-align:right;font-weight:700;font-size:13px;color:${valueColor(label,val)}">${val}</td>
+        </tr>`
+      ).join('');
+    }
+  } catch(e) { console.warn('summary-table error', e); }
 }
 
 // ── EXECUTIVE SUMMARY (SST-Hybrid) ────────────────────────────────────────────
