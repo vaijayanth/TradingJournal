@@ -3649,7 +3649,7 @@ function renderDashCharts(open, closed, cfg, portfolioValue, initialCapital) {
       };
       tbody.innerHTML = rows.map(([label, val], i) =>
         `<tr style="border-bottom:1px solid var(--border);${i%2===0?'background:var(--surface-alt,rgba(255,255,255,0.02))':''}">
-          <td style="padding:10px 14px;color:var(--text-secondary);font-size:14px;font-weight:600">${label}</td>
+          <td style="padding:10px 14px;color:var(--text-primary);font-size:15px;font-weight:700">${label}</td>
           <td style="padding:10px 14px;text-align:right;font-weight:800;font-size:16px;color:${valueColor(label,val)}">${val}</td>
         </tr>`
       ).join('');
