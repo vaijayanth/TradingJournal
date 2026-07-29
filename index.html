@@ -1487,54 +1487,55 @@ tbody tr:hover { filter: brightness(0.97); }
   </div>
 
   <!-- 2. Setup Type Breakdown -->
-  <div class="section-title" id="asec-setup">Setup Type vs Outcome</div>
+  <div class="section-title" id="asec-setup">Performance by Hold Duration</div>
   <div class="card" style="margin-bottom:14px">
-    <div class="chart-title">Performance by Trade Setup (Entry Label)</div>
-    <div class="chart-sub">Captured at entry — shows which setups actually work in your system</div>
-    <div id="setup-breakdown-wrap" style="overflow-x:auto;margin-top:12px">
+    <div class="chart-title">Does holding longer pay off?</div>
+    <div class="chart-sub">SST winners are held for weeks/months — this shows whether patience is rewarded</div>
+    <div id="hold-duration-wrap" style="overflow-x:auto;margin-top:12px">
       <table style="width:100%;border-collapse:collapse;font-size:13px">
         <thead>
           <tr style="color:var(--text-muted);text-align:left;border-bottom:1px solid var(--border)">
-            <th style="padding:6px 10px">Setup</th>
-            <th style="padding:6px 10px;text-align:right">Trades</th>
-            <th style="padding:6px 10px;text-align:right">Win Rate</th>
-            <th style="padding:6px 10px;text-align:right" title="Last 30 closed trades win rate">WR (Last 30)</th>
-            <th style="padding:6px 10px;text-align:right" title="Avg Win ÷ Avg Loss">R-Multiple</th>
-            <th style="padding:6px 10px;text-align:right" title="WR × R − (1−WR) × 1: edge per trade in R units">Expectancy R</th>
-            <th style="padding:6px 10px;text-align:right">Avg P&L%</th>
-            <th style="padding:6px 10px;text-align:right">Avg Win%</th>
-            <th style="padding:6px 10px;text-align:right">Avg Loss%</th>
-            <th style="padding:6px 10px;text-align:right">Total P&L</th>
+            <th style="padding:8px 12px">Hold Duration</th>
+            <th style="padding:8px 12px;text-align:right">Trades</th>
+            <th style="padding:8px 12px;text-align:right">Win Rate</th>
+            <th style="padding:8px 12px;text-align:right">Avg P&L%</th>
+            <th style="padding:8px 12px;text-align:right">Avg Win%</th>
+            <th style="padding:8px 12px;text-align:right">Avg Loss%</th>
+            <th style="padding:8px 12px;text-align:right">Total P&L ₹</th>
           </tr>
         </thead>
-        <tbody id="setup-breakdown-tbody">
-          <tr><td colspan="12" style="padding:20px;text-align:center;color:var(--text-muted)">Loading…</td></tr>
+        <tbody id="hold-duration-tbody">
+          <tr><td colspan="7" style="padding:20px;text-align:center;color:var(--text-muted)">Loading…</td></tr>
         </tbody>
       </table>
     </div>
-    <div class="ema-insight" id="ema-insight" style="margin-top:12px">—</div>
-    <!-- Open positions by setup — visible immediately when open trades are labelled -->
+    <div id="hold-duration-insight" style="margin-top:12px;padding:10px 14px;background:var(--surface2);border-radius:6px;font-size:13px;color:var(--text-secondary)">—</div>
+    <!-- Open positions by hold duration -->
     <div style="margin-top:16px;border-top:1px solid var(--border);padding-top:12px">
-      <div style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Open Positions by Setup (live MTM)</div>
+      <div style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Open Positions by Age</div>
       <div style="overflow-x:auto">
         <table style="width:100%;border-collapse:collapse;font-size:13px">
           <thead><tr style="background:var(--surface2)">
-            <th style="padding:6px 10px;text-align:left;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)">Setup</th>
-            <th style="padding:6px 10px;text-align:right;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)">Open</th>
-            <th style="padding:6px 10px;text-align:right;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)">Profitable</th>
-            <th style="padding:6px 10px;text-align:right;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)">Total MTM ₹</th>
+            <th style="padding:6px 12px;text-align:left;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)">Age Bucket</th>
+            <th style="padding:6px 12px;text-align:right;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)">Positions</th>
+            <th style="padding:6px 12px;text-align:right;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)">Profitable</th>
+            <th style="padding:6px 12px;text-align:right;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)">Avg P&L%</th>
+            <th style="padding:6px 12px;text-align:right;font-size:10px;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)">Total MTM ₹</th>
           </tr></thead>
-          <tbody id="open-by-setup-body">
-            <tr><td colspan="4" style="padding:12px;text-align:center;color:var(--text-muted);font-size:12px">Loading…</td></tr>
+          <tbody id="open-by-age-body">
+            <tr><td colspan="5" style="padding:12px;text-align:center;color:var(--text-muted);font-size:12px">Loading…</td></tr>
           </tbody>
         </table>
       </div>
     </div>
-    <!-- Setup Type Health — retirement signals -->
-    <div id="setup-retirement-wrap" style="margin-top:16px;border-top:1px solid var(--border);padding-top:12px;display:none">
-      <div style="font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--text-muted);margin-bottom:8px">Setup Type Health Monitor</div>
-      <div id="setup-retirement-body" style="display:flex;flex-direction:column;gap:8px"></div>
-    </div>
+  </div>
+  <!-- hidden stubs for JS compat -->
+  <div style="display:none">
+    <tbody id="setup-breakdown-tbody"></tbody>
+    <div id="ema-insight"></div>
+    <tbody id="open-by-setup-body"></tbody>
+    <div id="setup-retirement-wrap"></div>
+    <div id="setup-retirement-body"></div>
   </div>
 
   <!-- 2. Trade Management -->
@@ -5979,178 +5980,103 @@ function initAnalysisCharts(open, closed) {
   const LOCK_IN_TRIGGER = _cfg.lockInPct || 6; const BE_TRIGGER = _cfg.targetPct || 7;
   const PARTIAL_TRIGGER = _cfg.targetPct || 7; // take 50% partial at this % profit
 
-  // ── Setup Type Breakdown ──
-  const calcStats = trades => {
-    const wins = trades.filter(t => t.finalPlPct > 0), losses = trades.filter(t => t.finalPlPct < 0);
-    const wr = trades.length > 0 ? wins.length / trades.length * 100 : 0;
-    const avg = trades.length > 0 ? trades.reduce((s,t) => s+t.finalPlPct, 0) / trades.length : 0;
-    const aw = wins.length > 0 ? wins.reduce((s,t) => s+t.finalPlPct, 0)/wins.length : 0;
-    const al = losses.length > 0 ? Math.abs(losses.reduce((s,t) => s+t.finalPlPct, 0)/losses.length) : 0;
-    const totalPl = trades.reduce((s,t) => s+t.finalPl, 0);
-    // True R = P&L ÷ initial risk (both ₹) — falls back to % ratio if initRiskRs missing
-    const winsR = wins.filter(t => t.initRiskRs > 0);
-    const lossR = losses.filter(t => t.initRiskRs > 0);
-    const useRs = winsR.length > 0 && lossR.length > 0;
-    const avgWinR  = useRs ? winsR.reduce((s,t) => s + t.finalPl/t.initRiskRs, 0)/winsR.length : aw;
-    const avgLossR = useRs ? Math.abs(lossR.reduce((s,t) => s + t.finalPl/t.initRiskRs, 0)/lossR.length) : al;
-    const r = avgLossR > 0 ? avgWinR / avgLossR : 0;
-    const wrFrac = trades.length > 0 ? wins.length / trades.length : 0;
-    const rExp = avgLossR > 0 ? (wrFrac * r) - ((1 - wrFrac) * 1) : 0;
-    return { wr, avg, r, rExp, aw, al: -Math.abs(al), n: trades.length, totalPl };
-  };
-
-  // Group by setup label — "Breakout" or "Pullback"
-  const setupMap = {};
-  closed.forEach(t => {
-    const key = parseSetupType(t.setupType).label;
-    if (!setupMap[key]) setupMap[key] = [];
-    setupMap[key].push(t);
-  });
-  const setupKeys = Object.keys(setupMap).filter(s => s !== 'Unlabelled').sort((a,b) => setupMap[b].length - setupMap[a].length);
+  // ── Hold Duration Breakdown ──
   const fmtRsA = v => (v < 0 ? '-' : '+') + '₹' + Math.abs(Math.round(v)).toLocaleString('en-IN');
-
-  // Last 30 closed trades for recency column
-  const last30 = [...closed].sort((a,b) => parseDate(b.closeDate)-parseDate(a.closeDate)).slice(0,30);
-  const last30Map = {};
-  last30.forEach(t => {
-    const key = parseSetupType(t.setupType).label;
-    if (!last30Map[key]) last30Map[key] = [];
-    last30Map[key].push(t);
-  });
-
-  const tbody = document.getElementById('setup-breakdown-tbody');
-  if (tbody) {
-    if (setupKeys.length === 0 || (setupKeys.length === 1 && setupKeys[0] === 'Unlabelled')) {
-      // Diagnose why — help user understand what's happening
-      const openLabelled = open.filter(t => t.setupType && t.setupType.trim() !== '' && t.setupType !== 'Unlabelled').length;
-      const closedHasField = closed.some(t => t.setupType !== undefined);
-      let msg = 'No setup type data — add labels in column S of your sheet';
-      if (openLabelled > 0) {
-        msg = `<strong>${openLabelled} open position${openLabelled !== 1 ? 's' : ''} already labelled</strong> — setup breakdown will populate as those trades close. Closed trades don't have labels yet.`;
-      } else if (!closedHasField && closed.length > 0) {
-        msg = 'Apps Script may not be returning the setup type column. Open browser console and check <code>window._data.closed[0]</code> — if <code>setupType</code> is missing, redeploy the Apps Script with the setupTypeCol parameter.';
-      }
-      tbody.innerHTML = `<tr><td colspan="12" style="padding:20px;text-align:center;color:var(--text-muted);font-size:13px">${msg}</td></tr>`;
-    } else {
-      tbody.innerHTML = setupKeys.map(s => {
-        const st = calcStats(setupMap[s]);
-        const recent = last30Map[s] || [];
-        const recentWr = recent.length > 0 ? recent.filter(t => t.finalPlPct > 0).length / recent.length * 100 : null;
-        const wrColor = st.wr >= 40 ? 'var(--green)' : st.wr >= 20 ? 'var(--amber)' : 'var(--red)';
-        const avgColor = st.avg >= 0 ? 'var(--green)' : 'var(--red)';
-        const plColor = st.totalPl >= 0 ? 'var(--green)' : 'var(--red)';
-        const rExpColor = st.rExp > 0 ? 'var(--green)' : 'var(--red)';
-        const rExpStr = (st.rExp >= 0 ? '+' : '') + st.rExp.toFixed(2) + 'R';
-        let recentWrCell = '—';
-        if (recentWr !== null) {
-          const rWrColor = recentWr >= 40 ? 'var(--green)' : recentWr >= 20 ? 'var(--amber)' : 'var(--red)';
-          const arrow = recentWr > st.wr ? '↑' : recentWr < st.wr ? '↓' : '=';
-          const arrowColor = recentWr > st.wr ? 'var(--green)' : recentWr < st.wr ? 'var(--red)' : 'var(--text-muted)';
-          recentWrCell = `<span style="color:${rWrColor};font-weight:700">${recentWr.toFixed(0)}%</span> <span style="color:${arrowColor};font-size:11px">${arrow}</span><span style="color:var(--text-muted);font-size:11px"> n=${recent.length}</span>`;
-        }
-        return `<tr style="border-bottom:1px solid var(--border)">
-          <td style="padding:8px 10px;font-weight:600">${s}</td>
-          <td style="padding:8px 10px;text-align:right;color:var(--text-muted)">${st.n}</td>
-          <td style="padding:8px 10px;text-align:right;font-weight:700;color:${wrColor}">${st.wr.toFixed(0)}%</td>
-          <td style="padding:8px 10px;text-align:right">${recentWrCell}</td>
-          <td style="padding:8px 10px;text-align:right">${st.r.toFixed(1)}R</td>
-          <td style="padding:8px 10px;text-align:right;font-weight:700;color:${rExpColor}">${rExpStr}</td>
-          <td style="padding:8px 10px;text-align:right;color:${avgColor}">${(st.avg>=0?'+':'')+st.avg.toFixed(1)}%</td>
-          <td style="padding:8px 10px;text-align:right;color:var(--green)">${st.aw > 0 ? '+'+st.aw.toFixed(1)+'%' : '—'}</td>
-          <td style="padding:8px 10px;text-align:right;color:var(--red)">${st.al < 0 ? st.al.toFixed(1)+'%' : '—'}</td>
-          <td style="padding:8px 10px;text-align:right;font-weight:600;color:${plColor}">${fmtRsA(st.totalPl)}</td>
-        </tr>`;
-      }).join('');
-    }
-  }
-
-  // Open positions by setup — shows labelled open trades even before any close
-  const openSetupMap = {};
-  open.forEach(t => {
-    const lbl = parseSetupType(t.setupType).label;
-    if (lbl === 'Unlabelled') return;
-    if (!openSetupMap[lbl]) openSetupMap[lbl] = [];
-    openSetupMap[lbl].push(t);
-  });
-  const openSetupEl = document.getElementById('open-by-setup-body');
-  if (openSetupEl) {
-    const openSetupKeys = Object.keys(openSetupMap).sort((a,b) => openSetupMap[b].length - openSetupMap[a].length);
-    if (openSetupKeys.length === 0) {
-      openSetupEl.innerHTML = '<tr><td colspan="4" style="padding:12px;text-align:center;color:var(--text-muted);font-size:12px">No labelled open positions yet</td></tr>';
-    } else {
-      openSetupEl.innerHTML = openSetupKeys.map(s => {
-        const positions = openSetupMap[s];
-        const totalMtm = positions.reduce((sum,t) => sum + (t.notionalPl||0), 0);
-        const winning = positions.filter(t => (t.notionalPl||0) > 0).length;
-        const mtmColor = totalMtm >= 0 ? 'var(--green)' : 'var(--red)';
-        return `<tr>
-          <td style="padding:8px 10px">${s}</td>
-          <td style="padding:8px 10px;text-align:right">${positions.length}</td>
-          <td style="padding:8px 10px;text-align:right">${winning}/${positions.length} profitable</td>
-          <td style="padding:8px 10px;text-align:right;font-weight:700;color:${mtmColor}">${totalMtm >= 0 ? '+' : ''}₹${Math.round(totalMtm).toLocaleString('en-IN')}</td>
-        </tr>`;
-      }).join('');
-    }
-  }
-
-  // Insight: Breakout vs Pullback comparison
-  const insEl = document.getElementById('ema-insight');
-  if (insEl && setupKeys.length >= 2) {
-    const stats = setupKeys.map(s => ({ s, ...calcStats(setupMap[s]) }));
-    const best  = stats.reduce((a, b) => b.avg > a.avg ? b : a);
-    const worst = stats.reduce((a, b) => b.avg < a.avg ? b : a);
-    const vs = stats.map(s => `<strong>${s.s}</strong> ${s.wr.toFixed(0)}%WR / ${(s.avg>=0?'+':'')+s.avg.toFixed(1)}% avg / ${s.r.toFixed(1)}R (n=${s.n})`).join(' vs ');
-    insEl.innerHTML = `${vs} → <strong style="color:var(--green)">${best.s} is better</strong> by avg P&L. Focus energy there.`;
-  } else if (insEl && setupKeys.length === 1) {
-    const s = calcStats(setupMap[setupKeys[0]]);
-    insEl.innerHTML = `→ Only <strong>${setupKeys[0]}</strong> entries so far (n=${s.n}). Add Pullback entries to enable comparison.`;
-  } else if (insEl) {
-    insEl.textContent = '→ Label trades in column S as "Breakout" or "Pullback" to see which setup works best.';
-  }
-
-  // ── Setup Type Retirement Monitor ──
-  const retireWrap = document.getElementById('setup-retirement-wrap');
-  const retireBody = document.getElementById('setup-retirement-body');
-  if (retireWrap && retireBody && setupKeys.length > 0) {
-    retireWrap.style.display = '';
-    // For each setup, compare last 20 trades WR vs overall WR
-    const retireItems = setupKeys.map(s => {
-      const all = setupMap[s];
-      const overall = calcStats(all);
-      const last20 = [...all].sort((a,b) => parseDate(b.closeDate)-parseDate(a.closeDate)).slice(0,20);
-      const prev20 = [...all].sort((a,b) => parseDate(b.closeDate)-parseDate(a.closeDate)).slice(20,40);
-      const recentSt = last20.length >= 5 ? calcStats(last20) : null;
-      const prevSt = prev20.length >= 5 ? calcStats(prev20) : null;
-      return { s, overall, recentSt, prevSt, n: all.length };
+  const HOLD_BUCKETS = [
+    { label: '< 7 days',    min: 0,   max: 7   },
+    { label: '7 – 30 days', min: 7,   max: 30  },
+    { label: '30 – 60 days',min: 30,  max: 60  },
+    { label: '60 – 90 days',min: 60,  max: 90  },
+    { label: '> 90 days',   min: 90,  max: Infinity },
+  ];
+  const hdBuckets = HOLD_BUCKETS.map(b => {
+    const trades = closed.filter(t => {
+      const age = parseInt(t.age || 0);
+      return age >= b.min && age < b.max;
     });
-    retireBody.innerHTML = retireItems.map(({ s, overall, recentSt, prevSt, n }) => {
-      if (!recentSt) {
-        return `<div style="padding:10px 14px;background:var(--surface2);border-radius:8px;font-size:13px">
-          <strong>${s}</strong> <span style="color:var(--text-muted)">n=${n} — need 5+ trades to analyse</span>
-        </div>`;
-      }
-      const drift = recentSt.wr - overall.wr;
-      const degrading = recentSt.wr < 18 || (prevSt && recentSt.wr < prevSt.wr - 10);
-      const hot = recentSt.wr >= 35;
-      let statusColor, statusIcon, statusText;
-      if (degrading) {
-        statusColor = 'var(--red)'; statusIcon = '⚠';
-        statusText = `WR degraded to ${recentSt.wr.toFixed(0)}% (last 20) vs ${overall.wr.toFixed(0)}% overall — consider pausing ${s} entries for 2 weeks`;
-      } else if (hot) {
-        statusColor = 'var(--green)'; statusIcon = '🔥';
-        statusText = `Hot streak — ${recentSt.wr.toFixed(0)}% WR last 20 trades vs ${overall.wr.toFixed(0)}% overall. Keep executing.`;
-      } else {
-        statusColor = 'var(--amber)'; statusIcon = '✓';
-        const driftStr = drift >= 0 ? `+${drift.toFixed(0)}%` : `${drift.toFixed(0)}%`;
-        statusText = `Stable — ${recentSt.wr.toFixed(0)}% WR last 20 (${driftStr} vs ${overall.wr.toFixed(0)}% overall)`;
-      }
-      return `<div style="padding:10px 14px;background:var(--surface2);border-radius:8px;border-left:3px solid ${statusColor};font-size:13px">
-        <span style="font-weight:700">${statusIcon} ${s}</span>
-        <span style="color:var(--text-muted);font-size:11px;margin-left:8px">n=${n}</span>
-        <div style="color:${statusColor};margin-top:4px;font-size:12px">${statusText}</div>
-        ${prevSt ? `<div style="color:var(--text-muted);font-size:11px;margin-top:2px">WR trend: prev 20 = ${prevSt.wr.toFixed(0)}% → last 20 = ${recentSt.wr.toFixed(0)}%</div>` : ''}
-      </div>`;
-    }).join('');
+    const wins   = trades.filter(t => (t.finalPlPct || 0) > 0);
+    const losses = trades.filter(t => (t.finalPlPct || 0) < 0);
+    const wr     = trades.length ? wins.length / trades.length * 100 : 0;
+    const avg    = trades.length ? trades.reduce((s,t) => s + (t.finalPlPct||0), 0) / trades.length : 0;
+    const aw     = wins.length   ? wins.reduce((s,t) => s + (t.finalPlPct||0), 0) / wins.length : 0;
+    const al     = losses.length ? losses.reduce((s,t) => s + (t.finalPlPct||0), 0) / losses.length : 0;
+    const totalPl = trades.reduce((s,t) => s + (t.finalPl||0), 0);
+    return { ...b, trades, wr, avg, aw, al, totalPl, n: trades.length };
+  });
+
+  const hdTbody = document.getElementById('hold-duration-tbody');
+  if (hdTbody) {
+    if (closed.length === 0) {
+      hdTbody.innerHTML = '<tr><td colspan="7" style="padding:20px;text-align:center;color:var(--text-muted)">No closed trades yet</td></tr>';
+    } else {
+      hdTbody.innerHTML = hdBuckets.map(b => {
+        if (b.n === 0) return `<tr style="border-bottom:1px solid var(--border)">
+          <td style="padding:8px 10px;color:var(--text-muted)">${b.label}</td>
+          <td colspan="6" style="padding:8px 10px;color:var(--text-muted);font-size:12px">No trades</td></tr>`;
+        const wrColor  = b.wr >= 40 ? 'var(--green)' : b.wr >= 20 ? 'var(--amber)' : 'var(--red)';
+        const avgColor = b.avg >= 0 ? 'var(--green)' : 'var(--red)';
+        const plColor  = b.totalPl >= 0 ? 'var(--green)' : 'var(--red)';
+        return `<tr style="border-bottom:1px solid var(--border)">
+          <td style="padding:8px 10px;font-weight:600">${b.label}</td>
+          <td style="padding:8px 10px;text-align:right;color:var(--text-muted)">${b.n}</td>
+          <td style="padding:8px 10px;text-align:right;font-weight:700;color:${wrColor}">${b.wr.toFixed(0)}%</td>
+          <td style="padding:8px 10px;text-align:right;color:${avgColor}">${(b.avg>=0?'+':'')+b.avg.toFixed(1)}%</td>
+          <td style="padding:8px 10px;text-align:right;color:var(--green)">${b.aw > 0 ? '+'+b.aw.toFixed(1)+'%' : '—'}</td>
+          <td style="padding:8px 10px;text-align:right;color:var(--red)">${b.al < 0 ? b.al.toFixed(1)+'%' : '—'}</td>
+          <td style="padding:8px 10px;text-align:right;font-weight:600;color:${plColor}">${fmtRsA(b.totalPl)}</td>
+        </tr>`;
+      }).join('');
+    }
+  }
+
+  // Insight: which bucket performs best
+  const hdInsEl = document.getElementById('hold-duration-insight');
+  if (hdInsEl) {
+    const withTrades = hdBuckets.filter(b => b.n >= 3);
+    if (withTrades.length < 2) {
+      hdInsEl.textContent = 'Need more closed trades across buckets to see hold-duration patterns.';
+    } else {
+      const bestAvg = withTrades.reduce((a,b) => b.avg > a.avg ? b : a);
+      const bestWr  = withTrades.reduce((a,b) => b.wr  > a.wr  ? b : a);
+      const longerBetter = hdBuckets.filter(b=>b.n>=3 && b.min>=30).length > 0 &&
+        hdBuckets.filter(b=>b.n>=3 && b.min>=30).reduce((s,b)=>s+b.avg,0) /
+        Math.max(1,hdBuckets.filter(b=>b.n>=3 && b.min>=30).length) >
+        hdBuckets.filter(b=>b.n>=3 && b.min<30).reduce((s,b)=>s+b.avg,0) /
+        Math.max(1,hdBuckets.filter(b=>b.n>=3 && b.min<30).length);
+      hdInsEl.innerHTML = longerBetter
+        ? `✅ <strong>Longer holds pay off</strong> — "${bestAvg.label}" has best avg P&L of ${(bestAvg.avg>=0?'+':'')+bestAvg.avg.toFixed(1)}% (n=${bestAvg.n}). The trailing stop is working.`
+        : `⚠ Shorter holds currently outperform — best avg P&L in "${bestAvg.label}" at ${(bestAvg.avg>=0?'+':'')+bestAvg.avg.toFixed(1)}% (n=${bestAvg.n}). Review if stops are being triggered too early.`;
+    }
+  }
+
+  // Open positions by hold age
+  const openByAgeEl = document.getElementById('open-by-age-body');
+  if (openByAgeEl && open.length > 0) {
+    const openBuckets = HOLD_BUCKETS.map(b => {
+      const positions = open.filter(t => {
+        const age = parseInt(t.age || 0);
+        return age >= b.min && age < b.max;
+      });
+      const profitable = positions.filter(t => (t.plPct||0) > 0).length;
+      const totalMtm = positions.reduce((s,t) => s + (t.notionalPl||0), 0);
+      const avgPl = positions.length ? positions.reduce((s,t) => s + (t.plPct||0), 0) / positions.length : 0;
+      return { ...b, positions, profitable, totalMtm, avgPl };
+    }).filter(b => b.positions.length > 0);
+    if (openBuckets.length === 0) {
+      openByAgeEl.innerHTML = '<tr><td colspan="5" style="padding:8px;text-align:center;color:var(--text-muted)">No open positions</td></tr>';
+    } else {
+      openByAgeEl.innerHTML = openBuckets.map(b => {
+        const mtmColor = b.totalMtm >= 0 ? 'var(--green)' : 'var(--red)';
+        const avgColor = b.avgPl >= 0 ? 'var(--green)' : 'var(--red)';
+        return `<tr style="border-bottom:1px solid var(--border)">
+          <td style="padding:8px 10px;font-weight:600">${b.label}</td>
+          <td style="padding:8px 10px;text-align:right">${b.positions.length}</td>
+          <td style="padding:8px 10px;text-align:right">${b.profitable} / ${b.positions.length} profitable</td>
+          <td style="padding:8px 10px;text-align:right;color:${avgColor}">${(b.avgPl>=0?'+':'')+b.avgPl.toFixed(1)}% avg</td>
+          <td style="padding:8px 10px;text-align:right;font-weight:700;color:${mtmColor}">${b.totalMtm>=0?'+':''}₹${Math.round(b.totalMtm).toLocaleString('en-IN')}</td>
+        </tr>`;
+      }).join('');
+    }
   }
 
   // ── Entry Precision proxy (initRiskPct as stop-proximity metric) ──
