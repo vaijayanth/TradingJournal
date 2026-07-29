@@ -7885,21 +7885,27 @@ function renderProjections(open, closed) {
     ...closed.map(t => t.openDate ? parseDate(t.openDate) : null)
   ].filter(d => d && !isNaN(d) && d >= thirtyDaysAgo);
   const recentEntries = allEntryDates.length;
-  const tradesPerMonth = recentEntries; // last 30 days ≈ 1 month
 
-  // Fallback: use overall rate if recent is 0
-  const firstDate = sortedClosed.length ? parseDate(sortedClosed[0].closeDate) : null;
-  const lastDate = sortedClosed.length ? parseDate(sortedClosed[sortedClosed.length-1].closeDate) : null;
-  const monthsTotal = firstDate && lastDate ? Math.max(1, (lastDate - firstDate) / (30.5 * 24 * 3600 * 1000)) : 1;
-  const overallRate = totalTrades / monthsTotal;
-  const effectiveRate = tradesPerMonth > 0 ? tradesPerMonth : Math.round(overallRate);
+  // Detect portfolio-building phase: >50% of all trades entered in last 30 days
+  const isBuilding = totalTrades > 0 && recentEntries / totalTrades > 0.5;
+  // Steady-state velocity: use closed trade entry dates spread over full period
+  const allOpenDates = open.map(t => t.openDate ? parseDate(t.openDate) : null).filter(d => d && !isNaN(d));
+  const firstOpenDate = allOpenDates.length ? new Date(Math.min(...allOpenDates)) : null;
+  const monthsSinceFirst = firstOpenDate ? Math.max(1, (new Date() - firstOpenDate) / (30.5*24*3600*1000)) : 1;
+  const steadyRate = Math.round(closed.length / Math.max(monthsSinceFirst, 1)); // new exits/month
+  const effectiveRate = isBuilding ? steadyRate : recentEntries;
   const projAnnual = effectiveRate * 12 * avgCombinedRsPerTrade;
+  const smallSampleProj = closed.length < 30;
 
-  set('proj-velocity-rate', effectiveRate);
-  set('proj-velocity-sub', 'entries in last 30 days');
-  set('proj-annual-pl', fmtRs(projAnnual));
+  set('proj-velocity-rate', recentEntries);
+  set('proj-velocity-sub', isBuilding
+    ? `entries last 30d · portfolio building phase · ~${steadyRate}/mo steady state exits`
+    : 'entries in last 30 days');
+  set('proj-annual-pl', smallSampleProj ? '—' : fmtRs(projAnnual));
   setCol('proj-annual-pl', projAnnual >= 0 ? 'var(--green)' : 'var(--red)');
-  set('proj-annual-sub', `${effectiveRate} trades/mo × ₹${Math.round(Math.abs(avgCombinedRsPerTrade)).toLocaleString('en-IN')} avg edge = annual run rate`);
+  set('proj-annual-sub', smallSampleProj
+    ? `Need 30+ closed trades for reliable projection (${closed.length} so far)`
+    : `${effectiveRate} trades/mo × ₹${Math.round(Math.abs(avgCombinedRsPerTrade)).toLocaleString('en-IN')} avg edge = annual run rate`);
 
   // ── Full 0.8% risk projection ──
   // Scale factor = riskCap / currentTier. Same R-expectancy, bigger position size.
@@ -7911,11 +7917,15 @@ function renderProjections(open, closed) {
   // Max drawdown estimate: scale current realised max DD in ₹ by same factor
   const currentRiskedTotal = closed.filter(t => (t.initRiskRs||0) > 0).reduce((s,t) => s + t.initRiskRs, 0);
   const avgRiskPerTrade = closed.length > 0 ? currentRiskedTotal / closed.length : currentTierProj;
-  set('proj-full-risk-pl', fmtRs(projFullRisk));
-  setCol('proj-full-risk-pl', projFullRisk >= 0 ? 'var(--amber)' : 'var(--red)');
+  set('proj-full-risk-pl', smallSampleProj ? '⚠ Too early' : fmtRs(projFullRisk));
+  setCol('proj-full-risk-pl', smallSampleProj ? 'var(--amber)' : projFullRisk >= 0 ? 'var(--amber)' : 'var(--red)');
   const scaleStr = scaleFactor > 1 ? `${scaleFactor.toFixed(1)}× current size` : 'already at cap';
-  set('proj-full-risk-sub', `${effectiveRate} trades/mo × ₹${Math.round(Math.abs(fullRiskEdge)).toLocaleString('en-IN')} edge (${scaleStr})`);
-  set('proj-full-risk-note', `Current risk: ₹${Math.round(currentTierProj).toLocaleString('en-IN')}/trade · Cap: ₹${Math.round(riskCapRsProj).toLocaleString('en-IN')}/trade · Max drawdown also scales ~${scaleFactor.toFixed(1)}×`);
+  set('proj-full-risk-sub', smallSampleProj
+    ? `Only ${closed.length} closed trades — projection unreliable. Re-check at 30+ trades.`
+    : `${effectiveRate} trades/mo × ₹${Math.round(Math.abs(fullRiskEdge)).toLocaleString('en-IN')} edge (${scaleStr})`);
+  set('proj-full-risk-note', smallSampleProj
+    ? `Cap: ₹${Math.round(riskCapRsProj).toLocaleString('en-IN')}/trade (0.8% of ₹${Math.round(_ic/100000)}L) — will project when sample is adequate`
+    : `Current risk: ₹${Math.round(currentTierProj).toLocaleString('en-IN')}/trade · Cap: ₹${Math.round(riskCapRsProj).toLocaleString('en-IN')}/trade · Max drawdown also scales ~${scaleFactor.toFixed(1)}×`);
 
   // ── 2. At Lock-In / Target (SST) ──
   const atTarget = open.filter(t => (t.plPct||0) >= PARTIAL_TRIGGER);
@@ -7924,13 +7934,23 @@ function renderProjections(open, closed) {
   set('proj-partial-count', atTarget.length + ' positions');
   set('proj-partial-detail', `≥${PARTIAL_TRIGGER}% gain — trailing SL active, profit protected`);
 
-  // ── 3. Risk Tier Progression ──
+  // ── 3. Risk Per Trade (SST) ──
+  // Use actual avg initRiskRs from closed trades if available; otherwise from open
   const riskCapRs = _ic * 0.008;
-  const currentTier = Math.min(1000 + Math.floor(closed.length / 100) * 500, riskCapRs);
+  const closedWithRisk = closed.filter(t => (t.initRiskRs||0) > 0);
+  const openWithRisk   = open.filter(t => (t.initRiskRs||0) > 0);
+  const actualAvgRisk  = closedWithRisk.length > 0
+    ? closedWithRisk.reduce((s,t) => s+t.initRiskRs, 0) / closedWithRisk.length
+    : openWithRisk.length > 0
+      ? openWithRisk.reduce((s,t) => s+t.initRiskRs, 0) / openWithRisk.length
+      : 0;
+  const currentTier = actualAvgRisk > 0 ? actualAvgRisk : Math.min(1000 + Math.floor(closed.length/100)*500, riskCapRs);
+  const riskAsCapPct = _ic > 0 ? currentTier / _ic * 100 : 0;
+  const atCap = currentTier >= riskCapRs;
+  // Next milestone: when does 0.8% cap kick in?
   const nextTierAt = Math.ceil((closed.length + 1) / 100) * 100;
   const tradesToNext = nextTierAt - closed.length;
   const nextTier = Math.min(1000 + Math.floor(nextTierAt / 100) * 500, riskCapRs);
-  const atCap = currentTier >= riskCapRs;
 
   set('proj-tier-current', '₹' + Math.round(currentTier).toLocaleString('en-IN'));
   if (atCap) {
@@ -7939,7 +7959,9 @@ function renderProjections(open, closed) {
     setCol('proj-tier-next', 'var(--green)');
   } else {
     set('proj-tier-next', '₹' + Math.round(nextTier).toLocaleString('en-IN'));
-    set('proj-tier-sub', `${tradesToNext} more closed trades to unlock`);
+    set('proj-tier-sub', actualAvgRisk > 0
+      ? `Avg actual risk · cap = ₹${Math.round(riskCapRs).toLocaleString('en-IN')} (0.8%)`
+      : `${tradesToNext} more closed trades to unlock`);
     setCol('proj-tier-next', 'var(--amber)');
   }
 
