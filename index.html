@@ -8033,6 +8033,9 @@ function initAuth() {
   const hash = localStorage.getItem(AUTH_KEY) || AUTH_HASH;
   const stateEl = document.getElementById('cfg-password-state');
   if (stateEl) stateEl.textContent = 'Password is set ✓';
+  // AUTH TEMPORARILY DISABLED — re-enable by removing the next two lines
+  sessionStorage.setItem(AUTH_SESSION, '1');
+  return;
   if (sessionStorage.getItem(AUTH_SESSION)) return; // already authenticated this session
   const overlay = document.getElementById('auth-overlay');
   overlay.style.display = 'flex';
