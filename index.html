@@ -4108,12 +4108,15 @@ function renderPerfStats(closed, open, portfolioValue, initialCapital) {
   // because position size varies (fixed ₹ risk ÷ stop% = position size, so % swings differ by stop width)
   const winsWithRisk  = wins.filter(t => (t.initRiskRs||0) > 0);
   const lossWithRisk  = losses.filter(t => (t.initRiskRs||0) > 0);
-  const rMultiple = (winsWithRisk.length > 0 && lossWithRisk.length > 0)
+  // R-Multiple: avg winner P&L% / avg loser P&L% — SST target ≥2R (7% win / 3% loss)
+  // Only use ₹ initRiskRs if most trades have it (otherwise % fallback is more reliable)
+  const riskCoverage = closed.length > 0 ? (winsWithRisk.length + lossWithRisk.length) / closed.length : 0;
+  const rMultiple = (riskCoverage >= 0.5 && winsWithRisk.length > 0 && lossWithRisk.length > 0)
     ? Math.abs(
         (winsWithRisk.reduce((s,t) => s + t.finalPl / t.initRiskRs, 0) / winsWithRisk.length) /
         (lossWithRisk.reduce((s,t) => s + t.finalPl / t.initRiskRs, 0) / lossWithRisk.length)
       )
-    : (avgFinalLoss !== 0 ? Math.abs(avgFinalWin / avgFinalLoss) : 0); // fallback to % if no ₹ risk data
+    : (avgFinalLoss !== 0 ? Math.abs(avgFinalWin / avgFinalLoss) : 0);
   const rop = initialCapital > 0 ? (totalFinalPl / initialCapital * 100) : 0;
 
   // ── Open trade (notional) stats — col Y (notionalPl) is mark-to-market for open positions ──
@@ -4135,8 +4138,8 @@ function renderPerfStats(closed, open, portfolioValue, initialCapital) {
   const avgUnrealisedRs = open.length > 0 ? totalNotionalPl / open.length : 0;
   const combinedExpPct = totalTrades > 0 && initialCapital > 0
     ? combined / totalTrades / initialCapital * 100 : 0;
-  // Combined win rate (needed by R-Expectancy below, and Win Rate section)
-  const openWinning = open.filter(t => t.notionalPl > 0).length;
+  // Combined win rate — use plPct (CMP-based) for open, not notionalPl (col W often empty)
+  const openWinning = open.filter(t => (t.plPct||0) > 0).length;
   const combinedWins = wins.length + openWinning;
   const combinedWR = totalTrades > 0 ? combinedWins / totalTrades * 100 : 0;
 
@@ -4176,7 +4179,7 @@ function renderPerfStats(closed, open, portfolioValue, initialCapital) {
   const expEl = document.getElementById('perf-expectancy');
   set('perf-expectancy', fmtPct(expectancy));
   if (expEl) expEl.style.color = expectancy >= 0 ? 'var(--green)' : 'var(--red)';
-  set('perf-expectancy-sub', 'Realised (' + closed.length + ' closed trades)');
+  set('perf-expectancy-sub', 'Realised (' + closed.length + ' closed trades)' + (closed.length < 30 ? ' · small sample' : ''));
   const expOpenEl = document.getElementById('perf-expectancy-open');
   set('perf-expectancy-open', open.length ? fmtRs(avgUnrealisedRs) : 'N/A');
   if (expOpenEl) expOpenEl.style.color = avgUnrealisedRs >= 0 ? 'var(--green)' : 'var(--red)';
@@ -4202,9 +4205,13 @@ function renderPerfStats(closed, open, portfolioValue, initialCapital) {
 
   // ── R-Multiple (closed trades only — open have no % basis) ──
   set('perf-rmultiple', rMultiple.toFixed(2) + 'R');
-  set('perf-rmultiple-badge', rMultiple >= 1.3 ? '✓ Asymmetric edge' : rMultiple >= 1 ? 'Edge — room to improve' : '⚠ Below 1R — check exit rules');
+  const smallSample = closed.length < 30;
+  const rmLabel = smallSample
+    ? `⚠ ${closed.length} trades — need 30+ for reliable R`
+    : rMultiple >= 2 ? '✓ Strong asymmetry — SST target met' : rMultiple >= 1.3 ? '✓ Asymmetric edge' : rMultiple >= 1 ? 'Edge — room to improve (SST target: ≥2R)' : '⚠ Below 1R — check exits';
+  set('perf-rmultiple-badge', rmLabel);
   const rmBadge = document.getElementById('perf-rmultiple-badge');
-  if (rmBadge) rmBadge.className = 'stat-badge ' + (rMultiple >= 1.3 ? 'badge-green' : rMultiple >= 1 ? 'badge-amber' : 'badge-red');
+  if (rmBadge) rmBadge.className = 'stat-badge ' + (smallSample ? 'badge-amber' : rMultiple >= 1.3 ? 'badge-green' : rMultiple >= 1 ? 'badge-amber' : 'badge-red');
 
   // ── R-Expectancy ──
   // Uses COMBINED win rate (closed + open profitable) because in this trailing-stop system
