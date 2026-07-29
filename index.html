@@ -7937,12 +7937,15 @@ function renderProjections(open, closed) {
   }
 
   // ── 4. Open Portfolio Scenarios ──
+  // Bear: trailing stop at lockInPct% below CMP (6% trailing stop rule)
   const bearPl = open.reduce((s,t) => {
-    const effStop = t.stopLoss||0;
-    if (!effStop || !t.entryPrice) return s;
-    const stopPl = (effStop - t.entryPrice) * (t.qty||0);
-    // Approx: use initRiskRs as worst-case loss if qty unknown
-    return s + (t.qty > 0 ? stopPl : -(t.initRiskRs||0));
+    const cmp = t.cmp || 0;
+    const qty = t.qty || 0;
+    const entry = t.entryPrice || 0;
+    if (!cmp || !qty || !entry) return s;
+    const stopPrice = cmp * (1 - (_cfg.lockInPct||6) / 100);
+    const stopPl = (stopPrice - entry) * qty;
+    return s + stopPl;
   }, 0);
   const basePl = totalNotionalPl; // current MTM
   // Bull: avg closed winner % applied to open profitable positions
