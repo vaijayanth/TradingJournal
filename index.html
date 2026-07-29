@@ -3597,6 +3597,23 @@ function renderDashCharts(open, closed, cfg, portfolioValue, initialCapital) {
       });
       const calmar = maxDD > 0 ? cagr / maxDD : 0;
 
+      // Avg return on deployed capital — per trade: P&L / capital deployed
+      const openWithInvested = open.filter(t => (t.totalInvested||0) > 0 || (t.qty&&t.entryPrice));
+      const closedWithInvested = closed.filter(t => (t.qty&&t.entryPrice) || (t.finalPl!==0));
+      const openRoDC = openWithInvested.map(t => {
+        const deployed = t.totalInvested || (t.qty * t.entryPrice) || 0;
+        return deployed > 0 ? (t.notionalPl||0) / deployed * 100 : null;
+      }).filter(v => v !== null);
+      const closedRoDC = closedWithInvested.map(t => {
+        const deployed = (t.qty||0) * (t.entryPrice||0);
+        return deployed > 0 ? (t.finalPl||0) / deployed * 100 : null;
+      }).filter(v => v !== null);
+      const allRoDC = [...openRoDC, ...closedRoDC];
+      const avgRoDC = allRoDC.length > 0 ? allRoDC.reduce((s,v)=>s+v,0) / allRoDC.length : 0;
+      // Total deployed capital (open positions)
+      const totalDeployed = open.reduce((s,t) => s + (t.totalInvested || (t.qty&&t.entryPrice ? t.qty*t.entryPrice : 0)), 0);
+      const totalRoDC = totalDeployed > 0 ? (portfolioValue - initialCapital) / totalDeployed * 100 : 0;
+
       const fmtRs = v => '₹' + Math.round(v).toLocaleString('en-IN');
       const fmtPct = v => v.toFixed(2) + '%';
       const rows = [
@@ -3613,6 +3630,8 @@ function renderDashCharts(open, closed, cfg, portfolioValue, initialCapital) {
         ['Avg Win ₹',         fmtRs(avgWin)],
         ['Avg Loss ₹',        fmtRs(avgLoss)],
         ['Profit Factor',     pf === Infinity ? '∞' : pf.toFixed(2)],
+        ['Avg Return / Trade (on deployed)', (avgRoDC>=0?'+':'')+fmtPct(avgRoDC)],
+        ['Total Return on Deployed Capital', (totalRoDC>=0?'+':'')+fmtPct(totalRoDC)],
         ['Max Drawdown',      fmtPct(maxDD)],
         ['CAGR',              fmtPct(cagr)],
         ['Calmar Ratio',      calmar.toFixed(2)],
@@ -3625,6 +3644,7 @@ function renderDashCharts(open, closed, cfg, portfolioValue, initialCapital) {
         if (label === 'Accuracy') return accuracy >= 50 ? green : accuracy >= 30 ? 'var(--amber)' : red;
         if (label === 'Max Drawdown') return maxDD < 15 ? green : maxDD < 30 ? 'var(--amber)' : red;
         if (label === 'Calmar Ratio') return calmar >= 0.5 ? green : 'var(--amber)';
+        if (label.includes('Return on Deployed') || label.includes('Return / Trade')) return avgRoDC >= 0 ? green : red;
         return neutral;
       };
       tbody.innerHTML = rows.map(([label, val], i) =>
