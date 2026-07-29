@@ -6191,56 +6191,15 @@ function initAnalysisCharts(open, closed) {
     }
   })();
 
-  // Win rate by setup bar chart
+  // Setup WR / Avg P&L charts removed — replaced by Hold Duration breakdown above
   const setupWrEl = document.getElementById('chart-setup-wr');
   const setupWrPh = document.getElementById('chart-setup-wr-placeholder');
-  if (setupKeys.length >= 1 && setupWrEl) {
-    if (setupWrPh) setupWrPh.style.display = 'none';
-    setupWrEl.style.display = '';
-    const wrStats = setupKeys.map(s => calcStats(setupMap[s]));
-    _chartQ(() => { try { const setupWrChart = new ApexCharts(setupWrEl, {
-      ...baseOpts(240), chart: { ...baseOpts(240).chart, type: 'bar' },
-      series: [{ name: 'Win Rate %', data: wrStats.map(s => parseFloat(s.wr.toFixed(1))) }],
-      xaxis: { ...baseOpts().xaxis, categories: setupKeys, labels: { ...baseOpts().xaxis.labels, rotate: -20, hideOverlappingLabels: true } },
-      yaxis: { labels: { style:{colors:c.text,fontSize:'11px'}, formatter: v => v+'%' }, max: 100 },
-      colors: wrStats.map(s => s.wr >= 40 ? c.green : s.wr >= 20 ? c.amber : c.red),
-      plotOptions: { bar: { columnWidth: '55%', distributed: true, borderRadius: 4 } },
-      legend: { show: false }, dataLabels: { enabled: true, formatter: v => v+'%', style: { fontSize:'11px' } },
-      annotations: { yaxis: [{ y: 30, borderColor: c.amber, strokeDashArray: 3, label: { text: '~30% target', style:{color:c.amber,fontSize:'10px'} } }] },
-    }); setupWrChart.render(); analysisCharts.push(setupWrChart); } catch(e) { console.warn('chart-setup-wr failed', e); } });
-    setTimeout(() => window.dispatchEvent(new Event('resize')), 100);
-  } else if (setupWrPh) {
-    if (setupWrEl) setupWrEl.style.display = 'none';
-    setupWrPh.style.display = '';
-  }
-
-  // Avg P&L % by setup type
+  if (setupWrEl) setupWrEl.style.display = 'none';
+  if (setupWrPh) setupWrPh.style.display = 'none';
   const setupAvgEl = document.getElementById('chart-setup-avgpl');
   const setupAvgPh = document.getElementById('chart-setup-avgpl-placeholder');
-  if (setupKeys.length >= 1 && setupAvgEl) {
-    if (setupAvgPh) setupAvgPh.style.display = 'none';
-    setupAvgEl.style.display = '';
-    const avgStats = setupKeys.map(s => calcStats(setupMap[s]));
-    const avgData = avgStats.map(s => parseFloat(s.avg.toFixed(2)));
-    _chartQ(() => { try { const setupAvgChart = new ApexCharts(setupAvgEl, {
-      ...baseOpts(240), chart: { ...baseOpts(240).chart, type: 'bar' },
-      series: [{ name: 'Avg P&L %', data: avgData }],
-      xaxis: { ...baseOpts().xaxis, categories: setupKeys, labels: { ...baseOpts().xaxis.labels, rotate: -20, hideOverlappingLabels: true } },
-      yaxis: { labels: { style:{colors:c.text,fontSize:'11px'}, formatter: v => (v>=0?'+':'')+v.toFixed(1)+'%' } },
-      colors: avgData.map(v => v >= 0 ? c.green : c.red),
-      plotOptions: { bar: { columnWidth: '55%', distributed: true, borderRadius: 4 } },
-      legend: { show: false }, dataLabels: { enabled: true, formatter: v => (v>=0?'+':'')+v.toFixed(1)+'%', style: { fontSize:'11px' } },
-      annotations: { yaxis: [{ y: 0, borderColor: c.text, strokeDashArray: 2 }] },
-      tooltip: { ...baseOpts().tooltip, y: { formatter: (v, {dataPointIndex}) => {
-        const s = setupKeys[dataPointIndex];
-        const st = setupMap[s]; const n = st ? st.length : 0;
-        return (v>=0?'+':'')+v.toFixed(2)+'% avg across '+n+' trade'+(n!==1?'s':'');
-      }}},
-    }); setupAvgChart.render(); analysisCharts.push(setupAvgChart); } catch(e) { console.warn('chart-setup-avgpl failed', e); } });
-  } else if (setupAvgPh) {
-    if (setupAvgEl) setupAvgEl.style.display = 'none';
-    setupAvgPh.style.display = '';
-  }
+  if (setupAvgEl) setupAvgEl.style.display = 'none';
+  if (setupAvgPh) setupAvgPh.style.display = 'none';
 
   // ── SST Add Signal Tracker ──
   try {
