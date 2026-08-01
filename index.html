@@ -659,6 +659,16 @@ tbody tr:hover { filter: brightness(0.97); }
   .sector-tbl-col-hide { display: none; }
   /* Positions table Sector col — shrink font slightly */
   #positions-table td:nth-child(9), #positions-table th:nth-child(9) { font-size: 10px; max-width: 60px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+  /* Dashboard hero: scale down large numbers on mobile */
+  #dash-pv { font-size: 28px !important; }
+  #dash-return { font-size: 16px !important; }
+  #dash-open, #dash-at-target { font-size: 22px !important; }
+  /* Dashboard: Top Movers grid — stack on mobile */
+  .dash-movers-grid { grid-template-columns: 1fr !important; }
+  /* Dashboard: 3-month calendar — single column on mobile */
+  #dash-cal-mini { grid-template-columns: 1fr !important; }
+  /* Dashboard: Open positions inner grid — let 28px numbers shrink */
+  #dash-open, #dash-at-target { font-size: 22px !important; }
 }
 /* Extra-small phones (320px) */
 @media (max-width: 390px) {
@@ -903,7 +913,7 @@ tbody tr:hover { filter: brightness(0.97); }
   <div style="display:none"><div id="dash-zone-chart"></div><span id="dash-zone-target-lbl"></span><span id="dash-zone-lockin-lbl"></span><span id="dash-zone-profit-lbl"></span><span id="dash-zone-loss-lbl"></span></div>
 
   <!-- ③ TOP MOVERS -->
-  <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px">
+  <div class="dash-movers-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px">
     <div class="card" style="padding:16px">
       <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">🚀 Top Gainers</div>
       <div id="dash-top-gainers"></div>
@@ -919,7 +929,10 @@ tbody tr:hover { filter: brightness(0.97); }
 
   <!-- ④ PERFORMANCE SUMMARY TABLE -->
   <div class="card" style="margin-top:14px;padding:16px">
-    <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:12px">📈 Performance Summary</div>
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em">📈 Performance Summary</div>
+      <button onclick="copyDashStats()" style="font-size:11px;font-weight:600;padding:4px 12px;border-radius:14px;border:1px solid var(--border);background:var(--surface2);color:var(--text-secondary);cursor:pointer">📋 Copy</button>
+    </div>
     <div style="overflow-x:auto">
       <table id="dash-summary-table" style="width:100%;border-collapse:collapse;font-size:13px">
         <thead>
@@ -3845,6 +3858,33 @@ function renderDashCharts(open, closed, cfg, portfolioValue, initialCapital) {
       ).join('');
     }
   } catch(e) { console.warn('summary-table error', e); }
+}
+
+// ── COPY DASHBOARD STATS ──────────────────────────────
+function copyDashStats() {
+  try {
+    const tbody = document.getElementById('dash-summary-tbody');
+    if (!tbody) return;
+    const rows = Array.from(tbody.querySelectorAll('tr'));
+    const d = new Date();
+    const dateStr = d.getDate() + ' ' + ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()] + ' ' + d.getFullYear();
+    const lines = ['📊 Trading Journal — ' + dateStr, ''];
+    rows.forEach(tr => {
+      const cells = tr.querySelectorAll('td');
+      if (cells.length >= 2) lines.push(cells[0].textContent.trim() + ': ' + cells[1].textContent.trim());
+    });
+    const text = lines.join('\n');
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(() => showToast('Stats copied to clipboard', 'green')).catch(() => _copyFallback(text));
+    } else { _copyFallback(text); }
+  } catch(e) { showToast('Copy failed', 'red'); }
+}
+function _copyFallback(text) {
+  const ta = document.createElement('textarea');
+  ta.value = text; ta.style.cssText = 'position:fixed;opacity:0;top:0;left:0';
+  document.body.appendChild(ta); ta.select();
+  try { document.execCommand('copy'); showToast('Stats copied to clipboard', 'green'); } catch(e) { showToast('Copy failed', 'red'); }
+  document.body.removeChild(ta);
 }
 
 // ── TODAY'S ACTION BOARD ─────────────────────────────
