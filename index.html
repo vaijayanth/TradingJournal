@@ -2844,8 +2844,7 @@ function renderDashboard(data, cfg) {
       : (totalCombinedPl >= 0 ? '▲ +' : '▼ ') + fmt(Math.abs(totalCombinedPl)) + ' combined';
   }
 
-  // 12-Month Projection — rolling monthly simulation with risk-tier step-ups
-  // Every 100 closed trades the risk per trade increases by ₹5,000, scaling P&L proportionally.
+  // 12-Month Projection — rolling 6-month avg monthly closed P&L × 12
   (function() {
     const projEl = document.getElementById('dash-projection');
     if (!projEl) return;
@@ -2853,8 +2852,8 @@ function renderDashboard(data, cfg) {
       const sortedCl = [...closed].filter(t => t.closeDate).sort((a,b) => parseDate(a.closeDate)-parseDate(b.closeDate));
       if (sortedCl.length < 3) { projEl.style.display = 'none'; return; }
 
-      // ── Step 1: bucket by calendar month ──────────────────────────────────
-      const monthMap = {}; // key → { pl, count }
+      // Bucket closed P&L by calendar month
+      const monthMap = {};
       sortedCl.forEach(t => {
         const d = parseDate(t.closeDate);
         if (!d || d.getFullYear() < 2000) return;
@@ -2864,63 +2863,17 @@ function renderDashboard(data, cfg) {
         monthMap[key].count += 1;
       });
 
+      // Exclude current incomplete month; use last 6 complete months
       const nowKey = new Date().getFullYear() + '-' + String(new Date().getMonth()+1).padStart(2,'0');
-      const completeMonths = Object.keys(monthMap).sort().filter(k => k < nowKey);
-      const useMonths = completeMonths.slice(-6);
+      const useMonths = Object.keys(monthMap).sort().filter(k => k < nowKey).slice(-6);
       if (useMonths.length === 0) { projEl.style.display = 'none'; return; }
 
-      // ── Step 2: baseline averages from the rolling 6-month window ─────────
-      const totalPl    = useMonths.reduce((s,k) => s + monthMap[k].pl,    0);
-      const totalTrades = useMonths.reduce((s,k) => s + monthMap[k].count, 0);
-      const avgTradesPerMonth = totalTrades / useMonths.length;        // e.g. 8.5 trades/month
-      const avgPlPerTrade     = totalTrades > 0 ? totalPl / totalTrades : 0; // avg ₹ P&L per closed trade
+      const avgMonthlyPl    = useMonths.reduce((s,k) => s + monthMap[k].pl, 0) / useMonths.length;
+      const avgTradesPerMonth = useMonths.reduce((s,k) => s + monthMap[k].count, 0) / useMonths.length;
 
-      // ── Step 3: current risk tier ─────────────────────────────────────────
-      // Risk tier: ₹1,000 base + ₹5,000 per 100 closed trades (user's progression rule)
-      const RISK_STEP = 5000;
-      const RISK_BASE = 1000;
-      const riskTier = n => RISK_BASE + Math.floor(n / 100) * RISK_STEP;
-      const currentRisk = riskTier(closed.length);
-
-      // ── Step 4: simulate 12 months forward ────────────────────────────────
-      // Each month: trades close at avg rate, cumulative count grows,
-      // risk tier may step up → scale P&L proportionally at the new tier.
-      let simTradeCount = closed.length;
-      let projectedGain = 0;
-      let tierStepMonths = []; // months where a tier upgrade happens
-
-      for (let m = 0; m < 12; m++) {
-        // Trades this month — use fractional running count to detect tier crossings mid-month
-        const tradesThisMonth = avgTradesPerMonth;
-        let remaining = tradesThisMonth;
-        let monthPl = 0;
-
-        // Check if a 100-trade milestone is crossed within this month
-        while (remaining > 0) {
-          const nextMilestone = Math.ceil((simTradeCount + 0.001) / 100) * 100;
-          const tradesToMilestone = nextMilestone - simTradeCount;
-
-          if (tradesToMilestone >= remaining) {
-            // No tier change this slice
-            const tierMultiplier = riskTier(simTradeCount) / currentRisk;
-            monthPl += remaining * avgPlPerTrade * tierMultiplier;
-            simTradeCount += remaining;
-            remaining = 0;
-          } else {
-            // Complete trades up to milestone at current tier
-            const tierMultiplier = riskTier(simTradeCount) / currentRisk;
-            monthPl += tradesToMilestone * avgPlPerTrade * tierMultiplier;
-            simTradeCount += tradesToMilestone;
-            remaining -= tradesToMilestone;
-            tierStepMonths.push(m + 1); // 1-indexed month
-          }
-        }
-        projectedGain += monthPl;
-      }
-
+      const projectedGain   = avgMonthlyPl * 12;
       const projectedValue  = portfolioValue + projectedGain;
       const projectedRetPct = initialCapital > 0 ? projectedGain / initialCapital * 100 : 0;
-      const tierUpsCount    = tierStepMonths.length;
       const isPos = projectedGain >= 0;
 
       const fmtV = v => '₹' + Math.round(Math.abs(v)).toLocaleString('en-IN');
@@ -2932,9 +2885,8 @@ function renderDashboard(data, cfg) {
       if (projValEl)  { projValEl.textContent = fmtV(projectedValue); projValEl.style.color = isPos ? 'var(--green)' : 'var(--red)'; }
       if (projRetEl)  projRetEl.textContent = fmtP(projectedRetPct) + ' on capital · ' + (isPos?'+':'-') + fmtV(projectedGain) + ' gain';
       if (projBasisEl) projBasisEl.textContent =
-        Math.round(avgTradesPerMonth) + ' trades/mo · ' + (isPos?'+':'-') + fmtV(avgPlPerTrade) + '/trade avg · '
-        + useMonths.length + '-mo base'
-        + (tierUpsCount > 0 ? ' · ' + tierUpsCount + ' tier-up' + (tierUpsCount>1?'s':'') + ' included' : '');
+        'avg ' + (isPos?'+':'-') + fmtV(avgMonthlyPl) + '/mo · '
+        + Math.round(avgTradesPerMonth) + ' trades/mo · last ' + useMonths.length + ' months';
       projEl.style.display = 'block';
     } catch(e) { const projEl2 = document.getElementById('dash-projection'); if (projEl2) projEl2.style.display = 'none'; }
   })();
