@@ -3775,16 +3775,22 @@ function _renderDashEqChart() {
   window._dashEqInst.render();
 
   if (ddOn && ddEl && ddData.length) {
-    ddEl.style.height = '140px'; ddEl.style.marginTop = '8px';
     const maxDD = Math.min(...ddData);
+    const ddDecimals = Math.abs(maxDD) < 1 ? 2 : 1;
+    const ddFmt = v => v === 0 ? '0%' : v.toFixed(ddDecimals) + '%';
+    ddEl.style.height = '100px'; ddEl.style.marginTop = '4px';
+    // Simple label above chart instead of crowded annotation
+    ddEl.setAttribute('data-maxdd', 'Max drawdown: ' + maxDD.toFixed(ddDecimals) + '%');
     window._dashDDInst = new ApexCharts(ddEl, {
-      chart:{ type:'area', height:140, toolbar:{show:false}, background:'transparent', animations:{enabled:false} },
-      series:[{name:'Drawdown %', data:ddData}],
+      chart:{ type:'area', height:100, toolbar:{show:false}, background:'transparent', animations:{enabled:false}, sparkline:{enabled:false} },
+      series:[{name:'Drawdown', data:ddData}],
+      grid:{ show:false },
       xaxis:{ categories:sparseLabels, labels:{style:{colors:c.text,fontSize:'10px'},rotate:0,hideOverlappingLabels:true}, axisBorder:{show:false}, axisTicks:{show:false} },
-      yaxis:{ labels:{style:{colors:c.text,fontSize:'10px'}, formatter: v=>v.toFixed(1)+'%'}, max:0 },
-      colors:[c.red], fill:{type:'gradient',gradient:{shadeIntensity:1,opacityFrom:0.5,opacityTo:0.05}},
-      stroke:{curve:'smooth',width:1.5}, dataLabels:{enabled:false}, markers:{size:0},
-      annotations:{yaxis:[{y:maxDD,borderColor:c.red,strokeDashArray:3,label:{text:'Max DD '+maxDD.toFixed(1)+'%',style:{color:c.red,fontSize:'10px',background:'transparent'}}}]},
+      yaxis:{ tickAmount:3, max:0, min: Math.min(maxDD * 1.3, maxDD - 0.05), labels:{style:{colors:c.text,fontSize:'10px'}, formatter: ddFmt} },
+      colors:[c.red], fill:{type:'gradient',gradient:{shadeIntensity:1,opacityFrom:0.4,opacityTo:0.02}},
+      stroke:{curve:'smooth',width:2}, dataLabels:{enabled:false}, markers:{size:0},
+      tooltip:{ theme:document.documentElement.getAttribute('data-theme')==='dark'?'dark':'light', y:{formatter: v => v.toFixed(ddDecimals)+'% drawdown'} },
+      annotations:{yaxis:[{y:maxDD, borderColor:'rgba(239,68,68,0.5)', strokeDashArray:4, label:{text:'Max '+maxDD.toFixed(ddDecimals)+'%', style:{color:c.red,fontSize:'9px',background:'transparent',padding:{top:0,bottom:0,left:4,right:4}}}}]},
     });
     window._dashDDInst.render();
   } else if (ddEl) { ddEl.style.height='0'; ddEl.style.marginTop='0'; }
@@ -5882,17 +5888,22 @@ function initPerfCharts(closed, initialCapital, open) {
 
     // Drawdown panel
     if (ddOn && ddEl && ddData2.length) {
-      ddEl.style.height = '140px';
-      ddEl.style.marginTop = '8px';
       const maxDD2 = Math.min(...ddData2);
+      const ddDecimals2 = Math.abs(maxDD2) < 1 ? 2 : 1;
+      const ddFmt2 = v => v === 0 ? '0%' : v.toFixed(ddDecimals2) + '%';
+      ddEl.style.height = '100px';
+      ddEl.style.marginTop = '4px';
       window._ddChartInst = new ApexCharts(ddEl, {
-        ...baseOpts(140), chart: { ...baseOpts(140).chart, type: 'area' },
-        series: [{ name: 'Drawdown %', data: ddData2 }],
+        chart: { ...baseOpts(100).chart, type: 'area', sparkline:{enabled:false} },
+        theme: baseOpts().theme,
+        series: [{ name: 'Drawdown', data: ddData2 }],
+        grid: { show: false },
         xaxis: { ...baseOpts().xaxis, categories: sparseLabels, labels: { ...baseOpts().xaxis.labels, rotate: 0, hideOverlappingLabels: true } },
-        yaxis: { labels: { style:{colors:c2.text,fontSize:'10px'}, formatter: v => v.toFixed(1)+'%' }, max: 0 },
-        colors: [c2.red], fill: { type:'gradient', gradient:{shadeIntensity:1,opacityFrom:0.5,opacityTo:0.05} },
-        stroke: { curve:'smooth', width:1.5 }, dataLabels:{enabled:false}, markers:{size:0},
-        annotations: { yaxis: [{ y: maxDD2, borderColor: c2.red, strokeDashArray: 3, label:{text:'Max DD '+maxDD2.toFixed(1)+'%',style:{color:c2.red,fontSize:'10px',background:'transparent'}} }] },
+        yaxis: { tickAmount: 3, max: 0, min: Math.min(maxDD2 * 1.3, maxDD2 - 0.05), labels: { style:{colors:c2.text,fontSize:'10px'}, formatter: ddFmt2 } },
+        colors: [c2.red], fill: { type:'gradient', gradient:{shadeIntensity:1,opacityFrom:0.4,opacityTo:0.02} },
+        stroke: { curve:'smooth', width:2 }, dataLabels:{enabled:false}, markers:{size:0},
+        tooltip: { ...baseOpts().tooltip, y:{ formatter: v => v.toFixed(ddDecimals2)+'% drawdown' } },
+        annotations: { yaxis: [{ y: maxDD2, borderColor:'rgba(239,68,68,0.5)', strokeDashArray:4, label:{text:'Max '+maxDD2.toFixed(ddDecimals2)+'%', style:{color:c2.red,fontSize:'9px',background:'transparent',padding:{top:0,bottom:0,left:4,right:4}}} }] },
       });
       window._ddChartInst.render();
     } else if (ddEl) {
