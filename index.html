@@ -811,24 +811,24 @@ tbody tr:hover { filter: brightness(0.97); }
       <div class="stat-badge badge-green" id="dash-pv-badge" style="margin-top:8px">—</div>
     </div>
 
-    <!-- Open Positions + Risk -->
+    <!-- Open Positions -->
     <div class="card card-sm">
       <div class="stat-label">Open Positions</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;margin-top:10px">
         <div>
           <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Total Open</div>
           <div style="font-size:28px;font-weight:800;line-height:1.05" id="dash-open">—</div>
-          <div style="font-size:11px;color:var(--text-muted);margin-top:1px"><span style="color:var(--green);font-weight:600" id="dash-open-profitable">—</span> profitable · <span style="color:var(--red);font-weight:600" id="dash-open-losing">—</span> loss</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:1px"><span style="color:var(--green);font-weight:600" id="dash-open-profitable">—</span> profit · <span style="color:var(--red);font-weight:600" id="dash-open-losing">—</span> loss</div>
         </div>
         <div>
-          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Risk-Free</div>
-          <div style="font-size:28px;font-weight:800;line-height:1.05;color:var(--green)" id="dash-risk-free-count">—</div>
-          <div style="font-size:11px;color:var(--text-muted);margin-top:1px">stop ≥ entry</div>
+          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">At Target ≥<span id="dash-target-pct-lbl">7</span>%</div>
+          <div style="font-size:28px;font-weight:800;line-height:1.05;color:var(--green)" id="dash-at-target">—</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:1px">trail GTT up now</div>
         </div>
         <div>
-          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Open Risk ₹</div>
-          <div style="font-size:18px;font-weight:700;line-height:1.1" id="dash-open-risk">—</div>
-          <div style="font-size:11px;color:var(--text-muted);margin-top:1px" id="dash-open-risk-sub">if all stops hit</div>
+          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Lock-in Zone</div>
+          <div style="font-size:18px;font-weight:700;line-height:1.1;color:var(--amber)" id="dash-in-lockin">—</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:1px">6–<span class="dash-tgt-ref">7</span>% · verify GTT</div>
         </div>
         <div>
           <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">DD from Peak</div>
@@ -2964,16 +2964,25 @@ function renderDashboard(data, cfg) {
 
   // ── Open Portfolio Health card ──────────────────────────────────────────
   (function() {
-    // Safe = profitable (notionalPl > 0) OR risk-free (effStop >= entryPrice); In Loss = everything else
-    let safeCount = 0, lossCount = 0;
-    open.forEach(t => {
-      const effStop = t.stopLoss || 0;
-      const isRiskFree = effStop > 0 && t.entryPrice > 0 && effStop >= t.entryPrice;
-      if ((t.notionalPl || 0) > 0 || isRiskFree) safeCount++; else lossCount++;
-    });
-    set('dash-open-profitable', safeCount);
+    const targetPct2 = cfg.targetPct || 7;
+    const lockInPct2 = cfg.lockInPct || 6;
+    // Profitable = plPct > 0 (CMP above entry). No stop-loss concept in SST.
+    const profitCount = open.filter(t => (t.plPct || 0) > 0).length;
+    const lossCount   = open.length - profitCount;
+    const atTarget    = open.filter(t => (t.plPct || 0) >= targetPct2).length;
+    const inLockin    = open.filter(t => (t.plPct || 0) >= lockInPct2 && (t.plPct || 0) < targetPct2).length;
+
+    set('dash-open-profitable', profitCount);
     set('dash-open-losing', lossCount);
-    const healthPct = open.length > 0 ? safeCount / open.length * 100 : 0;
+    set('dash-at-target', atTarget);
+    set('dash-in-lockin', inLockin);
+
+    // Update label references
+    document.querySelectorAll('.dash-tgt-ref').forEach(el => { el.textContent = targetPct2; });
+    const tgtLbl = document.getElementById('dash-target-pct-lbl');
+    if (tgtLbl) tgtLbl.textContent = targetPct2;
+
+    const healthPct = open.length > 0 ? profitCount / open.length * 100 : 0;
     const bar = document.getElementById('dash-health-bar');
     if (bar) {
       bar.style.width = healthPct + '%';
@@ -2983,13 +2992,13 @@ function renderDashboard(data, cfg) {
     if (badge && open.length > 0) {
       if (healthPct >= 60) {
         badge.className = 'stat-badge badge-green';
-        badge.textContent = `✓ ${safeCount} of ${open.length} positions profitable or risk-free`;
+        badge.textContent = `✓ ${profitCount} of ${open.length} positions in profit · ${atTarget} at target`;
       } else if (healthPct >= 40) {
         badge.className = 'stat-badge badge-amber';
-        badge.textContent = `⚠ Only ${safeCount} of ${open.length} profitable or risk-free`;
+        badge.textContent = `${profitCount} of ${open.length} profitable · ${lossCount} below entry`;
       } else {
         badge.className = 'stat-badge badge-red';
-        badge.textContent = `🚨 Only ${safeCount} of ${open.length} profitable or risk-free`;
+        badge.textContent = `⚠ Only ${profitCount} of ${open.length} in profit — review open positions`;
       }
     } else if (badge) {
       badge.className = 'stat-badge badge-blue';
@@ -2997,29 +3006,8 @@ function renderDashboard(data, cfg) {
     }
   })();
 
-  // ── Open Risk ₹ + Risk-Free Count + DD from Peak ────────────────────────
+  // ── DD from Peak ──────────────────────────────────────────────────────────
   (function() {
-    // Open Risk: sum of (CMP - stop) * qty across positions where stop < CMP (loss if all stops hit)
-    let openRiskRs = 0, riskFreeCount = 0;
-    open.forEach(t => {
-      const stop = t.stopLoss || 0, cmp = t.cmp || 0, qty = t.qty || 0, entry = t.entryPrice || 0;
-      if (stop > 0 && entry > 0 && stop >= entry) { riskFreeCount++; return; } // stop at or above entry = risk-free
-      if (cmp > stop && stop > 0 && qty > 0) openRiskRs += (cmp - stop) * qty;
-    });
-    const rfEl = document.getElementById('dash-risk-free-count');
-    if (rfEl) rfEl.textContent = riskFreeCount;
-
-    const orEl = document.getElementById('dash-open-risk');
-    const orSubEl = document.getElementById('dash-open-risk-sub');
-    if (orEl) {
-      const orPct = initialCapital > 0 ? openRiskRs / initialCapital * 100 : 0;
-      orEl.textContent = '₹' + Math.round(openRiskRs).toLocaleString('en-IN');
-      orEl.style.color = orPct <= 1 ? 'var(--green)' : orPct <= 2 ? 'var(--amber)' : 'var(--red)';
-      if (orSubEl) {
-        orSubEl.textContent = orPct.toFixed(1) + '% of portfolio · if all stops hit';
-        orSubEl.style.color = orPct <= 1 ? 'var(--green)' : orPct <= 2 ? 'var(--amber)' : 'var(--red)';
-      }
-    }
 
     // DD from Peak: combined equity (realised + open MTM) vs its all-time high from closed equity path
     const sortedClosed = [...closed].filter(t => t.closeDate).sort((a,b) => parseDate(a.closeDate) - parseDate(b.closeDate));
