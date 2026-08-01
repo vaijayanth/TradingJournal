@@ -3751,6 +3751,7 @@ function _renderDashEqChart() {
   window._dashEqInst = new ApexCharts(eqEl, {
     chart: { type:'area', height:260, toolbar:{show:false}, background:'transparent', animations:{enabled:false}, zoom:{enabled:false} },
     series,
+    grid: { borderColor: 'transparent', yaxis: { lines: { show: false } } },
     xaxis: { categories: sparseLabels, labels:{ style:{colors:c.text,fontSize:'11px'}, rotate:0, hideOverlappingLabels:true }, axisBorder:{show:false}, axisTicks:{show:false} },
     yaxis: { labels:{ style:{colors:c.text,fontSize:'11px'}, formatter: v => v!=null ? (isAbsMode ? '₹'+Math.round(v).toLocaleString('en-IN') : (v>=0?'+':'')+v.toFixed(1)+'%') : '' } },
     colors: hasTodaySeries ? [realisedColor, amberColor] : [realisedColor],
@@ -5637,7 +5638,7 @@ function baseOpts(height = 220) {
   return {
     chart: { height, background: c.bg, toolbar: { show: false }, animations: { speed: 500 }, fontFamily: 'inherit' },
     theme: { mode: isDark() ? 'dark' : 'light' },
-    grid: { borderColor: c.grid, strokeDashArray: 3 },
+    grid: { borderColor: c.grid, strokeDashArray: 3, yaxis: { lines: { show: false } } },
     xaxis: { labels: { style: { colors: c.text, fontSize: '11px' } }, axisBorder: { show: false }, axisTicks: { show: false } },
     yaxis: { labels: { style: { colors: c.text, fontSize: '11px' } } },
     tooltip: { theme: isDark() ? 'dark' : 'light' },
