@@ -2844,61 +2844,53 @@ function renderDashboard(data, cfg) {
       : (totalCombinedPl >= 0 ? '▲ +' : '▼ ') + fmt(Math.abs(totalCombinedPl)) + ' combined';
   }
 
-  // 12-Month Projection — based on annualised growth rate of combined equity curve
+  // 12-Month Projection — average monthly combined P&L × 12
+  // Uses calendar months with ≥1 closed trade. Falls back to fewer months if data is sparse.
   (function() {
     const projEl = document.getElementById('dash-projection');
     if (!projEl) return;
     try {
-      // Build combined equity timeline: closed P&L by date + open MTM at end
       const sortedCl = [...closed].filter(t => t.closeDate).sort((a,b) => parseDate(a.closeDate)-parseDate(b.closeDate));
       if (sortedCl.length < 3) { projEl.style.display = 'none'; return; }
 
-      // Use last 90 days of equity curve to estimate recent run rate (more responsive than all-time)
-      const now = new Date();
-      const cutoff90 = new Date(now); cutoff90.setDate(cutoff90.getDate() - 90);
-      const recent = sortedCl.filter(t => parseDate(t.closeDate) >= cutoff90);
-
-      // Fall back to all-time if fewer than 5 trades in last 90 days
-      const sample = recent.length >= 5 ? recent : sortedCl;
-      const firstDate = parseDate(sample[0].closeDate);
-      const lastDate  = parseDate(sample[sample.length - 1].closeDate);
-      const spanDays  = Math.max((lastDate - firstDate) / 86400000, 1);
-
-      // Cumulative P&L at start and end of sample window
-      let runningPl = 0;
-      let plAtStart = 0, plAtEnd = 0;
+      // Bucket closed P&L by YYYY-MM
+      const monthMap = {};
       sortedCl.forEach(t => {
-        const td = parseDate(t.closeDate);
-        if (td < firstDate) runningPl += (t.finalPl||0);
+        const d = parseDate(t.closeDate);
+        if (!d || d.getFullYear() < 2000) return;
+        const key = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+        monthMap[key] = (monthMap[key] || 0) + (t.finalPl || 0);
       });
-      plAtStart = runningPl;
-      sample.forEach(t => { runningPl += (t.finalPl||0); });
-      plAtEnd = runningPl;
 
-      // Open MTM at end
-      const openMTM = open.reduce((s,t) => s + (t.notionalPl||0), 0);
-      const combinedAtEnd   = initialCapital + plAtEnd + openMTM;
-      const combinedAtStart = initialCapital + plAtStart;
+      const monthKeys = Object.keys(monthMap).sort();
+      // Skip the current (incomplete) calendar month so it doesn't deflate the average
+      const nowKey = new Date().getFullYear() + '-' + String(new Date().getMonth()+1).padStart(2,'0');
+      const completeMonths = monthKeys.filter(k => k < nowKey);
 
-      if (combinedAtStart <= 0) { projEl.style.display = 'none'; return; }
+      // Use last 6 complete months if available, else whatever we have (min 1)
+      const useMonths = completeMonths.slice(-6);
+      if (useMonths.length === 0) { projEl.style.display = 'none'; return; }
 
-      // Daily growth rate → annualise → project 12 months from current portfolio value
-      const dailyRate = Math.pow(combinedAtEnd / combinedAtStart, 1 / spanDays) - 1;
-      const annualRate = Math.pow(1 + dailyRate, 365) - 1;
-      const projectedValue = portfolioValue * (1 + annualRate);
-      const projectedGain  = projectedValue - portfolioValue;
+      const avgMonthlyClosedPl = useMonths.reduce((s,k) => s + monthMap[k], 0) / useMonths.length;
 
-      const fmtV = v => '₹' + Math.round(v).toLocaleString('en-IN');
-      const fmtP = v => (v >= 0 ? '+' : '') + (v * 100).toFixed(1) + '%';
-      const isPos = annualRate >= 0;
-      const label = recent.length >= 5 ? 'based on last 90 days' : 'based on all-time CAGR';
+      // Open MTM is a one-time unrealised stock — don't extrapolate it monthly.
+      // Projection = closed monthly run rate × 12 added to current combined portfolio value.
+      const projectedGain  = avgMonthlyClosedPl * 12;
+      const projectedValue = portfolioValue + projectedGain;
+      const projectedRetPct = initialCapital > 0 ? projectedGain / initialCapital * 100 : 0;
 
-      const projValEl = document.getElementById('dash-proj-value');
-      const projRetEl = document.getElementById('dash-proj-return');
+      const fmtV = v => '₹' + Math.round(Math.abs(v)).toLocaleString('en-IN');
+      const fmtP = v => (v >= 0 ? '+' : '-') + Math.abs(v).toFixed(1) + '%';
+      const isPos = projectedGain >= 0;
+      const nMonths = useMonths.length;
+      const label = 'avg ' + (isPos ? '+' : '-') + fmtV(avgMonthlyClosedPl) + '/mo closed P&L · last ' + nMonths + ' month' + (nMonths > 1 ? 's' : '');
+
+      const projValEl  = document.getElementById('dash-proj-value');
+      const projRetEl  = document.getElementById('dash-proj-return');
       const projBasisEl = document.getElementById('dash-proj-basis');
-      if (projValEl) { projValEl.textContent = fmtV(projectedValue); projValEl.style.color = isPos ? 'var(--green)' : 'var(--red)'; }
-      if (projRetEl) projRetEl.textContent = fmtP(annualRate) + ' annualised · ' + fmtV(projectedGain) + ' gain';
-      if (projBasisEl) projBasisEl.textContent = label + ' · if current pace continues';
+      if (projValEl)  { projValEl.textContent = fmtV(projectedValue); projValEl.style.color = isPos ? 'var(--green)' : 'var(--red)'; }
+      if (projRetEl)  projRetEl.textContent = fmtP(projectedRetPct) + ' on capital · ' + (isPos ? '+' : '-') + fmtV(projectedGain) + ' gain';
+      if (projBasisEl) projBasisEl.textContent = label;
       projEl.style.display = 'block';
     } catch(e) { const projEl2 = document.getElementById('dash-projection'); if (projEl2) projEl2.style.display = 'none'; }
   })();
