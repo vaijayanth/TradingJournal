@@ -934,6 +934,25 @@ tbody tr:hover { filter: brightness(0.97); }
   </div>
 
 
+  <!-- ⑤ 3-MONTH P&L CALENDAR -->
+  <div class="card" style="padding:14px 16px;margin-top:14px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em">Recent P&amp;L Calendar</div>
+      <span onclick="showPage('performance',document.querySelectorAll('.nav-tab')[1]);setTimeout(()=>document.getElementById('cal-grid')&&document.getElementById('cal-grid').scrollIntoView({behavior:'smooth'}),300)" style="font-size:11px;color:var(--text-muted);cursor:pointer">Full year ▸</span>
+    </div>
+    <div id="dash-cal-mini" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px"></div>
+    <div id="dash-cal-legend" style="display:flex;align-items:center;gap:10px;margin-top:8px;flex-wrap:wrap">
+      <span style="font-size:10px;color:var(--text-muted)">Less</span>
+      <span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#BBF7D0"></span>
+      <span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#6EE7B7"></span>
+      <span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#10B981"></span>
+      <span style="font-size:10px;color:var(--text-muted)">More profit &nbsp;|&nbsp; Loss:</span>
+      <span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#FECACA"></span>
+      <span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#EF4444"></span>
+      <span style="font-size:10px;color:var(--text-muted)">More</span>
+    </div>
+  </div>
+
   <!-- System quality — hidden, values still set by JS -->
   <div style="display:none">
     <span id="dash-sys-r"></span>
@@ -2071,6 +2090,15 @@ tbody tr:hover { filter: brightness(0.97); }
     </select>
   </div>
 
+  <!-- Row stripe legend -->
+  <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:8px;font-size:11px;color:var(--text-muted)">
+    <span style="font-weight:600">Row colour:</span>
+    <span style="display:flex;align-items:center;gap:4px"><span style="display:inline-block;width:10px;height:14px;border-radius:2px;background:rgba(34,197,94,0.07);box-shadow:inset 3px 0 0 var(--green)"></span> At target — trail SL</span>
+    <span style="display:flex;align-items:center;gap:4px"><span style="display:inline-block;width:10px;height:14px;border-radius:2px;background:rgba(245,158,11,0.07);box-shadow:inset 3px 0 0 var(--amber)"></span> Lock-in zone</span>
+    <span style="display:flex;align-items:center;gap:4px"><span style="display:inline-block;width:10px;height:14px;border-radius:2px;background:rgba(96,165,250,0.05);box-shadow:inset 3px 0 0 #60A5FA"></span> Add signal (above EMAs)</span>
+    <span style="display:flex;align-items:center;gap:4px"><span style="display:inline-block;width:10px;height:14px;border-radius:2px;background:rgba(239,68,68,0.05);box-shadow:inset 3px 0 0 var(--red)"></span> In loss, below 50 EMA</span>
+  </div>
+
   <!-- Positions Table -->
   <div class="table-wrap">
     <table id="positions-table">
@@ -2782,8 +2810,17 @@ function renderDashboard(data, cfg) {
   set('dash-pv-sub', 'Combined · ' + fmt(initialCapital) + ' base');
   const pvBadge = document.getElementById('dash-pv-badge');
   if (pvBadge) {
-    pvBadge.className = 'stat-badge ' + (totalCombinedPl >= 0 ? 'badge-green' : 'badge-red');
-    pvBadge.textContent = (totalCombinedPl >= 0 ? '▲ +' : '▼ ') + fmt(Math.abs(totalCombinedPl)) + ' combined';
+    // Check if combined equity is at all-time high
+    const _sortedCl = [...closed].filter(t => t.closeDate).sort((a,b) => parseDate(a.closeDate)-parseDate(b.closeDate));
+    let _cumPl = 0, _peakPl = 0;
+    _sortedCl.forEach(t => { _cumPl += (t.finalPl||0); if (_cumPl > _peakPl) _peakPl = _cumPl; });
+    const _openMTM = open.reduce((s,t) => s + (t.notionalPl||0), 0);
+    const _combinedNow = _cumPl + _openMTM;
+    const _atNewHigh = _combinedNow >= _peakPl && closed.length > 5;
+    pvBadge.className = 'stat-badge ' + (_atNewHigh ? 'badge-green' : totalCombinedPl >= 0 ? 'badge-green' : 'badge-red');
+    pvBadge.textContent = _atNewHigh
+      ? '★ New Equity High · ' + fmt(portfolioValue)
+      : (totalCombinedPl >= 0 ? '▲ +' : '▼ ') + fmt(Math.abs(totalCombinedPl)) + ' combined';
   }
 
   // Card 2: Combined P&L (moved to prime position)
@@ -3529,6 +3566,7 @@ function renderDashboard(data, cfg) {
     </div>`;
   })();
 
+  renderDashCalendar(closed);
   renderDashCharts(open, closed, cfg, portfolioValue, initialCapital);
 }
 
@@ -5003,6 +5041,83 @@ function renderStreakReal(closed, open) {
 function renderStreak() { /* data loaded on refresh */ }
 
 // ── CALENDAR (REAL DATA) ─────────────────────────────
+function renderDashCalendar(closed) {
+  const miniEl = document.getElementById('dash-cal-mini');
+  if (!miniEl || !closed.length) return;
+  const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+  const dayHeaders = ['S','M','T','W','T','F','S'];
+
+  // Build dayMap from all closed trades
+  const dayMap = {};
+  closed.forEach(t => {
+    if (!t.closeDate) return;
+    const d = parseDate(t.closeDate);
+    if (isNaN(d)) return;
+    const key = `${d.getFullYear()}-${d.getMonth()}-${d.getDate()}`;
+    if (!dayMap[key]) dayMap[key] = { pl: 0, count: 0 };
+    dayMap[key].pl += t.finalPl;
+    dayMap[key].count++;
+  });
+
+  // Show last 3 calendar months
+  const now = new Date();
+  const calMonths = [];
+  for (let i = 2; i >= 0; i--) {
+    const d = new Date(now.getFullYear(), now.getMonth() - i, 1);
+    calMonths.push({ year: d.getFullYear(), month: d.getMonth() });
+  }
+
+  // Intensity scale across these 3 months only
+  const relevantPls = calMonths.flatMap(({ year, month }) =>
+    Object.entries(dayMap)
+      .filter(([k]) => k.startsWith(`${year}-${month}-`))
+      .map(([, v]) => Math.abs(v.pl))
+  );
+  const maxAbs = Math.max(...relevantPls, 1);
+
+  const isLeapYear = y => (y % 4 === 0 && y % 100 !== 0) || y % 400 === 0;
+  const daysInMonth = (y, m) => [31, isLeapYear(y)?29:28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31][m];
+
+  miniEl.innerHTML = calMonths.map(({ year, month }) => {
+    const firstDay = new Date(year, month, 1).getDay();
+    const totalDays = daysInMonth(year, month);
+    const monthPl = Object.entries(dayMap)
+      .filter(([k]) => k.startsWith(`${year}-${month}-`))
+      .reduce((s, [, v]) => s + v.pl, 0);
+    const plFmt = (monthPl >= 0 ? '+₹' : '-₹') + Math.abs(Math.round(monthPl)).toLocaleString('en-IN');
+    const plColor = monthPl >= 0 ? 'var(--green)' : 'var(--red)';
+
+    let cellsHtml = dayHeaders.map(d => `<div style="font-size:7px;color:var(--text-muted);text-align:center;font-weight:600;padding-bottom:2px">${d}</div>`).join('');
+    for (let e = 0; e < firstDay; e++) cellsHtml += `<div></div>`;
+    for (let day = 1; day <= totalDays; day++) {
+      const entry = dayMap[`${year}-${month}-${day}`];
+      if (entry) {
+        const ratio = Math.abs(entry.pl) / maxAbs;
+        let bg;
+        if (entry.pl >= 0) bg = ratio > 0.66 ? '#10B981' : ratio > 0.33 ? '#6EE7B7' : '#BBF7D0';
+        else               bg = ratio > 0.66 ? '#EF4444' : ratio > 0.33 ? '#FCA5A5' : '#FECACA';
+        const isDark2 = document.documentElement.getAttribute('data-theme') === 'dark' || (!document.documentElement.getAttribute('data-theme') && window.matchMedia('(prefers-color-scheme:dark)').matches);
+        if (isDark2 && entry.pl >= 0) bg = ratio > 0.66 ? '#047857' : ratio > 0.33 ? '#065F46' : '#064E3B';
+        if (isDark2 && entry.pl < 0)  bg = ratio > 0.66 ? '#991B1B' : ratio > 0.33 ? '#7F1D1D' : '#450A0A';
+        const plCompact = (entry.pl >= 0 ? '+' : '-') + (Math.abs(entry.pl) >= 100000 ? (Math.abs(entry.pl)/1000).toFixed(0)+'k' : Math.abs(entry.pl) >= 10000 ? (Math.abs(entry.pl)/1000).toFixed(1)+'k' : Math.round(Math.abs(entry.pl)));
+        const tip = `${months[month]} ${day}: ${entry.pl>=0?'+':''}₹${Math.round(Math.abs(entry.pl)).toLocaleString('en-IN')} · ${entry.count} trade${entry.count>1?'s':''}`;
+        cellsHtml += `<div title="${tip}" style="aspect-ratio:1;border-radius:2px;background:${bg};display:flex;align-items:center;justify-content:center;cursor:default;position:relative">
+          <span style="font-size:6px;font-weight:800;color:rgba(0,0,0,0.55);line-height:1">${plCompact}</span>
+        </div>`;
+      } else {
+        cellsHtml += `<div style="aspect-ratio:1;border-radius:2px;background:var(--surface2)"></div>`;
+      }
+    }
+    return `<div>
+      <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px">
+        <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-secondary)">${months[month]} ${year}</span>
+        <span style="font-size:11px;font-weight:700;color:${plColor}">${plFmt}</span>
+      </div>
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px">${cellsHtml}</div>
+    </div>`;
+  }).join('');
+}
+
 function renderCalendarReal(closed, forceYear) {
   const grid = document.getElementById('cal-grid');
   const months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
