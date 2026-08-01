@@ -811,29 +811,35 @@ tbody tr:hover { filter: brightness(0.97); }
       <div class="stat-badge badge-green" id="dash-pv-badge" style="margin-top:8px">—</div>
     </div>
 
-    <!-- Open Positions -->
+    <!-- Open Positions + Risk -->
     <div class="card card-sm">
       <div class="stat-label">Open Positions</div>
-      <div style="display:flex;gap:14px;margin-top:8px;align-items:flex-end;flex-wrap:wrap">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;margin-top:10px">
         <div>
-          <div style="font-size:30px;font-weight:700" id="dash-open">—</div>
-          <div class="stat-sub">positions</div>
+          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Total Open</div>
+          <div style="font-size:28px;font-weight:800;line-height:1.05" id="dash-open">—</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:1px"><span style="color:var(--green);font-weight:600" id="dash-open-profitable">—</span> profitable · <span style="color:var(--red);font-weight:600" id="dash-open-losing">—</span> loss</div>
         </div>
-        <div style="color:var(--border);padding-bottom:6px">|</div>
         <div>
-          <div style="font-size:22px;font-weight:700;color:var(--green)" id="dash-open-profitable">—</div>
-          <div class="stat-sub">profitable</div>
+          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Risk-Free</div>
+          <div style="font-size:28px;font-weight:800;line-height:1.05;color:var(--green)" id="dash-risk-free-count">—</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:1px">stop ≥ entry</div>
         </div>
-        <div style="color:var(--border);padding-bottom:6px">|</div>
         <div>
-          <div style="font-size:22px;font-weight:700;color:var(--red)" id="dash-open-losing">—</div>
-          <div class="stat-sub">in loss</div>
+          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Open Risk ₹</div>
+          <div style="font-size:18px;font-weight:700;line-height:1.1" id="dash-open-risk">—</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:1px" id="dash-open-risk-sub">if all stops hit</div>
+        </div>
+        <div>
+          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">DD from Peak</div>
+          <div style="font-size:18px;font-weight:700;line-height:1.1" id="dash-dd-from-peak">—</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:1px" id="dash-dd-from-peak-sub">combined equity</div>
         </div>
       </div>
-      <div style="margin-top:10px;height:5px;border-radius:3px;background:var(--surface2);overflow:hidden">
+      <div style="margin-top:10px;height:4px;border-radius:3px;background:var(--surface2);overflow:hidden">
         <div id="dash-health-bar" style="height:100%;border-radius:3px;transition:width 0.4s"></div>
       </div>
-      <div class="stat-badge" id="dash-health-badge" style="margin-top:8px">—</div>
+      <div class="stat-badge" id="dash-health-badge" style="margin-top:7px">—</div>
     </div>
 
     <!-- System stats -->
@@ -2954,6 +2960,59 @@ function renderDashboard(data, cfg) {
     }
   })();
 
+  // ── Open Risk ₹ + Risk-Free Count + DD from Peak ────────────────────────
+  (function() {
+    // Open Risk: sum of (CMP - stop) * qty across positions where stop < CMP (loss if all stops hit)
+    let openRiskRs = 0, riskFreeCount = 0;
+    open.forEach(t => {
+      const stop = t.stopLoss || 0, cmp = t.cmp || 0, qty = t.qty || 0, entry = t.entryPrice || 0;
+      if (stop > 0 && entry > 0 && stop >= entry) { riskFreeCount++; return; } // stop at or above entry = risk-free
+      if (cmp > stop && stop > 0 && qty > 0) openRiskRs += (cmp - stop) * qty;
+    });
+    const rfEl = document.getElementById('dash-risk-free-count');
+    if (rfEl) rfEl.textContent = riskFreeCount;
+
+    const orEl = document.getElementById('dash-open-risk');
+    const orSubEl = document.getElementById('dash-open-risk-sub');
+    if (orEl) {
+      const orPct = initialCapital > 0 ? openRiskRs / initialCapital * 100 : 0;
+      orEl.textContent = '₹' + Math.round(openRiskRs).toLocaleString('en-IN');
+      orEl.style.color = orPct <= 1 ? 'var(--green)' : orPct <= 2 ? 'var(--amber)' : 'var(--red)';
+      if (orSubEl) {
+        orSubEl.textContent = orPct.toFixed(1) + '% of portfolio · if all stops hit';
+        orSubEl.style.color = orPct <= 1 ? 'var(--green)' : orPct <= 2 ? 'var(--amber)' : 'var(--red)';
+      }
+    }
+
+    // DD from Peak: combined equity (realised + open MTM) vs its all-time high from closed equity path
+    const sortedClosed = [...closed].filter(t => t.closeDate).sort((a,b) => parseDate(a.closeDate) - parseDate(b.closeDate));
+    let cumPl = 0, peakCumPl = 0;
+    sortedClosed.forEach(t => { cumPl += (t.finalPl||0); if (cumPl > peakCumPl) peakCumPl = cumPl; });
+    const openMTM = open.reduce((s,t) => s + (t.notionalPl||0), 0);
+    const combinedNow = cumPl + openMTM;
+    const peakCombined = Math.max(peakCumPl, combinedNow); // peak includes today if at new high
+    const ddRs = combinedNow - peakCombined;
+    const ddPct = initialCapital > 0 ? ddRs / initialCapital * 100 : 0;
+    const atNewHigh = ddRs >= 0;
+
+    const ddEl = document.getElementById('dash-dd-from-peak');
+    const ddSubEl = document.getElementById('dash-dd-from-peak-sub');
+    if (ddEl) {
+      if (atNewHigh) {
+        ddEl.textContent = '★ New High';
+        ddEl.style.color = 'var(--green)';
+        if (ddSubEl) { ddSubEl.textContent = 'combined equity at peak'; ddSubEl.style.color = 'var(--green)'; }
+      } else {
+        ddEl.textContent = ddPct.toFixed(1) + '%';
+        ddEl.style.color = Math.abs(ddPct) <= 5 ? 'var(--amber)' : 'var(--red)';
+        if (ddSubEl) {
+          ddSubEl.textContent = '₹' + Math.abs(Math.round(ddRs)).toLocaleString('en-IN') + ' below peak';
+          ddSubEl.style.color = 'var(--text-muted)';
+        }
+      }
+    }
+  })();
+
   // ── Loss Discipline card ────────────────────────────────────────────────
   (function() {
     const losers = closed.filter(t => t.finalPlPct < 0);
@@ -4116,9 +4175,20 @@ function renderPositionsReal(open, cfg) {
     const pnlClass = t.plPct >= 0 ? 'pnl-pos' : 'pnl-neg';
     const notionalPl = t.notionalPl || (t.cmp && t.totalInvested && t.qty
       ? (t.cmp - t.entryPrice) * (t.qty || 0) : 0);
-    const rowBg = t.alertType === 'target' ? 'rgba(34,197,94,0.06)' :
-                  t.alertType === 'lockin' ? 'rgba(245,158,11,0.06)' :
-                  t.alertType === 'add'    ? 'rgba(96,165,250,0.04)' : '';
+    // Row styling: left-border stripe + tinted bg for instant scan
+    const isRiskFree = (t.stopLoss || 0) > 0 && (t.entryPrice || 0) > 0 && t.stopLoss >= t.entryPrice;
+    const rowStyle = t.alertType === 'target'
+      ? 'background:rgba(34,197,94,0.07);box-shadow:inset 3px 0 0 var(--green)'
+      : t.alertType === 'lockin'
+      ? 'background:rgba(245,158,11,0.07);box-shadow:inset 3px 0 0 var(--amber)'
+      : t.alertType === 'add' && (t.ema200===true||String(t.ema200||'').toLowerCase()==='true') && (t.ema50===true||String(t.ema50||'').toLowerCase()==='true')
+      ? 'background:rgba(96,165,250,0.05);box-shadow:inset 3px 0 0 #60A5FA'
+      : t.alertType === 'add'
+      ? 'background:rgba(239,68,68,0.05);box-shadow:inset 3px 0 0 var(--red)'
+      : isRiskFree
+      ? 'background:rgba(34,197,94,0.03);box-shadow:inset 3px 0 0 rgba(34,197,94,0.3)'
+      : '';
+    const rowBg = ''; // kept for compat — rowStyle replaces it
 
     // Status badge
     const statusBadge = t.alertType === 'target'
@@ -4134,7 +4204,7 @@ function renderPositionsReal(open, cfg) {
     const invested = t.totalInvested || t.positionSize || 0;
 
     _rows.push(`
-      <tr style="background:${rowBg}" onclick="toggleExpand(${i})">
+      <tr style="${rowStyle}" onclick="toggleExpand(${i})">
         <td><span class="stock-name">${t.stock}</span></td>
         <td>${t.age || '—'}d</td>
         <td style="font-size:11px;color:var(--text-secondary)">${t.qty || '—'}</td>
