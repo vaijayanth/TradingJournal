@@ -920,53 +920,7 @@ tbody tr:hover { filter: brightness(0.97); }
     <div id="dash-eq-insight" class="chart-insight"></div>
   </div>
 
-  <!-- ③ ALERT STRIP — actions needed today -->
-  <div id="dash-alert-strip" style="margin-top:10px;display:none"></div>
-
-  <!-- ④ P&L Distribution — full width -->
-  <div class="card" style="padding:16px;margin-top:14px">
-    <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">📊 P&amp;L Distribution — <span id="dash-legend-target">7</span>% target · positions in each zone</div>
-    <div id="dash-pl-chart" style="min-height:240px"></div>
-  </div>
-  <!-- hidden IDs for JS compat -->
-  <div style="display:none"><div id="dash-zone-chart"></div><span id="dash-zone-target-lbl"></span><span id="dash-zone-lockin-lbl"></span><span id="dash-zone-profit-lbl"></span><span id="dash-zone-loss-lbl"></span></div>
-
-  <!-- ③ TOP MOVERS -->
-  <div class="dash-movers-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px">
-    <div class="card" style="padding:16px">
-      <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">🚀 Top Gainers</div>
-      <div id="dash-top-gainers"></div>
-    </div>
-    <div class="card" style="padding:16px">
-      <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">⚠ Biggest Losers</div>
-      <div id="dash-top-losers"></div>
-    </div>
-  </div>
-
-  <!-- hidden chart div kept for JS compat -->
-  <div style="display:none"><div id="dash-capital-chart"></div></div>
-
-  <!-- ④ PERFORMANCE SUMMARY TABLE -->
-  <div class="card" style="margin-top:14px;padding:16px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-      <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em">📈 Performance Summary</div>
-      <button onclick="copyDashStats()" style="font-size:11px;font-weight:600;padding:4px 12px;border-radius:14px;border:1px solid var(--border);background:var(--surface2);color:var(--text-secondary);cursor:pointer">📋 Copy</button>
-    </div>
-    <div style="overflow-x:auto">
-      <table id="dash-summary-table" style="width:100%;border-collapse:collapse;font-size:13px">
-        <thead>
-          <tr style="border-bottom:1px solid var(--border)">
-            <th style="text-align:left;padding:7px 12px;color:var(--text-muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.05em">Metric</th>
-            <th style="text-align:right;padding:7px 12px;color:var(--text-muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.05em">Value</th>
-          </tr>
-        </thead>
-        <tbody id="dash-summary-tbody"></tbody>
-      </table>
-    </div>
-  </div>
-
-
-  <!-- ⑤ 3-MONTH P&L CALENDAR -->
+  <!-- ③ 3-MONTH P&L CALENDAR (below equity curve) -->
   <div class="card" style="padding:14px 16px;margin-top:14px">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
       <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em">Recent P&amp;L Calendar</div>
@@ -982,6 +936,51 @@ tbody tr:hover { filter: brightness(0.97); }
       <span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#FECACA"></span>
       <span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#EF4444"></span>
       <span style="font-size:10px;color:var(--text-muted)">More</span>
+    </div>
+  </div>
+
+  <!-- ④ ALERT STRIP — actions needed today -->
+  <div id="dash-alert-strip" style="margin-top:10px;display:none"></div>
+
+  <!-- ⑤ P&L Distribution — full width -->
+  <div class="card" style="padding:16px;margin-top:14px">
+    <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">📊 P&amp;L Distribution — <span id="dash-legend-target">7</span>% target · positions in each zone</div>
+    <div id="dash-pl-chart" style="min-height:240px"></div>
+  </div>
+  <!-- hidden IDs for JS compat -->
+  <div style="display:none"><div id="dash-zone-chart"></div><span id="dash-zone-target-lbl"></span><span id="dash-zone-lockin-lbl"></span><span id="dash-zone-profit-lbl"></span><span id="dash-zone-loss-lbl"></span></div>
+
+  <!-- ⑥ TOP MOVERS -->
+  <div class="dash-movers-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:14px;margin-top:14px">
+    <div class="card" style="padding:16px">
+      <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">🚀 Top Gainers</div>
+      <div id="dash-top-gainers"></div>
+    </div>
+    <div class="card" style="padding:16px">
+      <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">⚠ Biggest Losers</div>
+      <div id="dash-top-losers"></div>
+    </div>
+  </div>
+
+  <!-- hidden chart div kept for JS compat -->
+  <div style="display:none"><div id="dash-capital-chart"></div></div>
+
+  <!-- ⑦ PERFORMANCE SUMMARY TABLE -->
+  <div class="card" style="margin-top:14px;padding:16px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em">📈 Performance Summary</div>
+      <button onclick="copyDashStats()" style="font-size:11px;font-weight:600;padding:4px 12px;border-radius:14px;border:1px solid var(--border);background:var(--surface2);color:var(--text-secondary);cursor:pointer">📋 Copy</button>
+    </div>
+    <div style="overflow-x:auto">
+      <table id="dash-summary-table" style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead>
+          <tr style="border-bottom:1px solid var(--border)">
+            <th style="text-align:left;padding:7px 12px;color:var(--text-muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.05em">Metric</th>
+            <th style="text-align:right;padding:7px 12px;color:var(--text-muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.05em">Value</th>
+          </tr>
+        </thead>
+        <tbody id="dash-summary-tbody"></tbody>
+      </table>
     </div>
   </div>
 
