@@ -5304,7 +5304,9 @@ function renderDashCalendar(closed) {
     const monthPl = Object.entries(dayMap)
       .filter(([k]) => k.startsWith(`${year}-${month}-`))
       .reduce((s, [, v]) => s + v.pl, 0);
-    const plFmt = (monthPl >= 0 ? '+₹' : '-₹') + Math.abs(Math.round(monthPl)).toLocaleString('en-IN');
+    const abspl = Math.abs(monthPl);
+    const plShort = (monthPl >= 0 ? '+' : '-') + (abspl >= 100000 ? (abspl/100000).toFixed(1)+'L' : abspl >= 1000 ? (abspl/1000).toFixed(1)+'K' : Math.round(abspl));
+    const plFmt = plShort;
     const plColor = monthPl >= 0 ? 'var(--green)' : 'var(--red)';
 
     let cellsHtml = dayHeaders.map(d => `<div style="font-size:7px;color:var(--text-muted);text-align:center;font-weight:600;padding-bottom:2px">${d}</div>`).join('');
@@ -5330,8 +5332,8 @@ function renderDashCalendar(closed) {
     }
     return `<div>
       <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px">
-        <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-secondary)">${months[month]} ${year}</span>
-        <span style="font-size:11px;font-weight:700;color:${plColor}">${plFmt}</span>
+        <span style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-secondary)">${months[month]} ${year}</span>
+        <span style="font-size:14px;font-weight:800;color:${plColor}">${plFmt}</span>
       </div>
       <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px">${cellsHtml}</div>
     </div>`;
