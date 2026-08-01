@@ -898,7 +898,7 @@ tbody tr:hover { filter: brightness(0.97); }
       <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em">Equity Curve</div>
       <span onclick="showPage('performance',document.querySelectorAll('.nav-tab')[1])" style="font-size:11px;color:var(--text-muted);cursor:pointer">Full view ▸</span>
     </div>
-    <div id="dash-equity-mini" style="height:130px"></div>
+    <div id="dash-equity-mini" style="height:160px"></div>
   </div>
 
   <!-- ③ ALERT STRIP — actions needed today -->
@@ -3608,14 +3608,50 @@ function renderDashCharts(open, closed, cfg, portfolioValue, initialCapital) {
       const paddedEquity = [...equitySeries, null]; // closed series: null at "Today" so it doesn't connect
 
       _dashCharts.equity = new ApexCharts(miniEl, {
-        chart: { type:'area', height:130, toolbar:{show:false}, background:'transparent',
+        chart: { type:'area', height:160, toolbar:{show:false}, background:'transparent',
           sparkline:{enabled:false}, animations:{enabled:false}, zoom:{enabled:false} },
         series: [
           { name:'Realised', data: paddedEquity },
           { name:'Combined (inc. open)', data: amberSeries },
         ],
-        xaxis: { categories: allDates, labels:{show:false}, axisBorder:{show:false}, axisTicks:{show:false} },
-        yaxis: { labels:{show:false} },
+        xaxis: {
+          categories: allDates,
+          labels: {
+            show: true,
+            rotate: 0,
+            style: { fontSize:'9px', colors: isDark?'#94A3B8':'#64748B' },
+            formatter: v => {
+              if (v === 'Today') return 'Today';
+              try {
+                const d = parseDate(v);
+                return d && d.getFullYear() > 2000
+                  ? ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()] + ' ' + d.getFullYear().toString().slice(2)
+                  : '';
+              } catch(e) { return ''; }
+            },
+            // show ~6 labels evenly spaced
+            hideOverlappingLabels: true,
+            showDuplicates: false,
+          },
+          tickAmount: 6,
+          axisBorder: { show:false },
+          axisTicks: { show:false },
+        },
+        yaxis: {
+          labels: {
+            show: true,
+            style: { fontSize:'9px', colors: isDark?'#94A3B8':'#64748B' },
+            formatter: v => {
+              if (v == null) return '';
+              const abs = Math.abs(v);
+              const sign = v < 0 ? '-' : '+';
+              if (abs >= 100000) return sign + '₹' + (abs/100000).toFixed(1) + 'L';
+              if (abs >= 1000)   return sign + '₹' + (abs/1000).toFixed(0) + 'K';
+              return sign + '₹' + abs.toFixed(0);
+            },
+          },
+          tickAmount: 4,
+        },
         stroke: { curve:'smooth', width:[2,2], dashArray:[0,5] },
         colors: [accentColor, '#F59E0B'],
         fill: {
