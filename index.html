@@ -428,6 +428,10 @@ details[open] > summary .toggle-hint::before { content: '▼ collapse'; }
 .chart-insight.green { background: rgba(52,199,89,0.08); border-left: 3px solid var(--green); color: var(--text-primary); display: block; }
 .chart-insight.amber { background: rgba(255,159,10,0.08); border-left: 3px solid var(--amber); color: var(--text-primary); display: block; }
 .chart-insight.red   { background: rgba(255,69,58,0.08);  border-left: 3px solid var(--red);   color: var(--text-primary); display: block; }
+.sst-health-cell { transition: background .15s; }
+.sst-health-cell.pass { background: rgba(52,199,89,0.06); }
+.sst-health-cell.warn { background: rgba(255,159,10,0.06); }
+.sst-health-cell.fail { background: rgba(255,69,58,0.06); }
 .ema-divider {
   display: flex; align-items: center; justify-content: center;
   padding: 0 16px;
@@ -1050,11 +1054,50 @@ tbody tr:hover { filter: brightness(0.97); }
       <div style="font-size:14px; font-weight:700; color:var(--text-primary)">Performance Analytics</div>
       <div style="font-size:11px;color:var(--text-muted);margin-top:2px" id="perf-period-label">Showing: All Time</div>
     </div>
+    <div style="display:flex;align-items:center;gap:8px">
+    <button onclick="copyPerfSummary()" style="font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer" title="Copy key metrics to clipboard">📋 Copy Summary</button>
     <div class="period-filter">
       <button class="period-btn active" onclick="setPeriod(this,'all')">All Time</button>
       <button class="period-btn" onclick="setPeriod(this,'90')">Last 90 Days</button>
       <button class="period-btn" onclick="setPeriod(this,'30')">Last 30 Days</button>
     </div>
+    </div>
+  </div>
+
+  <!-- SST System Health Banner -->
+  <div id="sst-health-banner" style="margin-bottom:16px;border-radius:12px;border:1px solid var(--border);overflow:hidden">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--surface2);border-bottom:1px solid var(--border)">
+      <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted)">SST System Health</div>
+      <div style="font-size:11px;color:var(--text-muted)" id="sst-health-score">Loading…</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:0">
+      <div id="sst-h1" class="sst-health-cell" style="padding:10px 14px;border-right:1px solid var(--border);border-bottom:1px solid var(--border)">
+        <div style="font-size:18px;font-weight:800" id="sst-h1-val">—</div>
+        <div style="font-size:10px;font-weight:700;color:var(--text-muted);margin-top:2px">HOLD ASYMMETRY</div>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:1px" id="sst-h1-sub">Winners held longer than losers?</div>
+      </div>
+      <div id="sst-h2" class="sst-health-cell" style="padding:10px 14px;border-right:1px solid var(--border);border-bottom:1px solid var(--border)">
+        <div style="font-size:18px;font-weight:800" id="sst-h2-val">—</div>
+        <div style="font-size:10px;font-weight:700;color:var(--text-muted);margin-top:2px">AVG LOSS SIZE</div>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:1px" id="sst-h2-sub">Target: &lt;7%</div>
+      </div>
+      <div id="sst-h3" class="sst-health-cell" style="padding:10px 14px;border-right:1px solid var(--border);border-bottom:1px solid var(--border)">
+        <div style="font-size:18px;font-weight:800" id="sst-h3-val">—</div>
+        <div style="font-size:10px;font-weight:700;color:var(--text-muted);margin-top:2px">WIN:LOSS ₹ RATIO</div>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:1px" id="sst-h3-sub">Avg win ÷ avg loss (₹ · closed)</div>
+      </div>
+      <div id="sst-h4" class="sst-health-cell" style="padding:10px 14px;border-right:1px solid var(--border);border-bottom:1px solid var(--border)">
+        <div style="font-size:18px;font-weight:800" id="sst-h4-val">—</div>
+        <div style="font-size:10px;font-weight:700;color:var(--text-muted);margin-top:2px">PROFIT FACTOR</div>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:1px" id="sst-h4-sub">Combined. Target: ≥1.5</div>
+      </div>
+      <div id="sst-h5" class="sst-health-cell" style="padding:10px 14px;border-bottom:1px solid var(--border)">
+        <div style="font-size:18px;font-weight:800" id="sst-h5-val">—</div>
+        <div style="font-size:10px;font-weight:700;color:var(--text-muted);margin-top:2px">OPEN POSITIONS</div>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:1px" id="sst-h5-sub">Profitable / Total open</div>
+      </div>
+    </div>
+    <div style="padding:8px 14px;font-size:11px;line-height:1.5;color:var(--text-muted)" id="sst-health-verdict">—</div>
   </div>
 
   <!-- Group 1: P&L Summary -->
@@ -1117,16 +1160,17 @@ tbody tr:hover { filter: brightness(0.97); }
   <div class="grid-4" style="margin-bottom:14px">
     <!-- Expectancy -->
     <div class="card card-sm">
-      <div class="stat-label">Expectancy Per Trade</div>
+      <div class="stat-label">Closed Avg P&amp;L% <span style="font-size:10px;font-weight:400;color:var(--text-muted)">(expected −ve)</span></div>
       <div class="stat-value" style="font-size:26px; margin-top:4px" id="perf-expectancy">—</div>
-      <div class="stat-sub" style="font-size:12px" id="perf-expectancy-sub">Realised (closed stops — expected negative)</div>
+      <div class="stat-sub" style="font-size:12px" id="perf-expectancy-sub">Realised · closed stops dominate — expected negative</div>
+      <div style="margin-top:8px;font-size:11px;color:var(--text-muted);line-height:1.5;font-style:italic">Closed-only avg is structurally negative in SST — winners are still running open. The combined figure below is the true performance picture.</div>
       <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
         <div style="font-size:15px;font-weight:700" id="perf-expectancy-open">—</div>
-        <div class="stat-sub" style="font-size:11px" id="perf-expectancy-open-sub">Avg unrealised ₹ (open)</div>
+        <div class="stat-sub" style="font-size:11px" id="perf-expectancy-open-sub">Avg unrealised ₹ (open positions)</div>
       </div>
       <div style="margin-top:8px">
         <div style="font-size:15px;font-weight:700" id="perf-expectancy-combined">—</div>
-        <div class="stat-sub" style="font-size:11px">Combined all trades</div>
+        <div class="stat-sub" style="font-size:11px">Combined ₹/trade (all trades incl. open)</div>
       </div>
     </div>
     <!-- Win Rate -->
@@ -1156,16 +1200,21 @@ tbody tr:hover { filter: brightness(0.97); }
     </div>
     <!-- R-Multiple -->
     <div class="card card-sm">
-      <div class="stat-label">R-Multiple (₹ win ÷ ₹ planned risk)</div>
+      <div class="stat-label">Win:Loss Ratio (Avg Win ÷ Avg Loss)</div>
       <div class="stat-value" style="font-size:30px; margin-top:4px" id="perf-rmultiple">—</div>
       <div class="stat-badge badge-green" style="margin-top:6px" id="perf-rmultiple-badge">—</div>
-      <div style="margin-top:8px;font-size:12px;color:var(--text-muted);line-height:1.5;font-style:italic">For every ₹1 you risk on a trade, you make ₹R back on your winners. 1.5R means your average win is 1.5× your planned stop loss. Higher = better asymmetry.</div>
+      <div style="margin-top:8px;font-size:12px;color:var(--text-muted);line-height:1.5;font-style:italic">Your average closed winner vs average closed loser — the core of your asymmetry. At 30% WR you need ≥2.3× just to break even. Higher ratio = more edge at the same win rate. SST target: ≥2×.</div>
       <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
-        <div style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:6px">AVG WIN vs LOSS</div>
+        <div style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:6px">AVG WIN vs LOSS (P&L%)</div>
         <div style="display:flex;gap:12px">
-          <div><div style="font-size:15px;font-weight:700;color:var(--green)" id="perf-avg-final-win">—</div><div class="stat-sub">Avg win</div></div>
+          <div><div style="font-size:15px;font-weight:700;color:var(--green)" id="perf-avg-final-win">—</div><div class="stat-sub">Avg winner %</div></div>
           <div style="color:var(--border)">|</div>
-          <div><div style="font-size:15px;font-weight:700;color:var(--red)" id="perf-avg-final-loss">—</div><div class="stat-sub">Avg loss</div></div>
+          <div><div style="font-size:15px;font-weight:700;color:var(--red)" id="perf-avg-final-loss">—</div><div class="stat-sub">Avg loser %</div></div>
+        </div>
+        <div style="margin-top:8px;display:flex;gap:12px">
+          <div><div style="font-size:14px;font-weight:700;color:var(--green)" id="perf-avg-win-rs">—</div><div class="stat-sub">Avg winner ₹</div></div>
+          <div style="color:var(--border)">|</div>
+          <div><div style="font-size:14px;font-weight:700;color:var(--red)" id="perf-avg-loss-rs">—</div><div class="stat-sub">Avg loser ₹</div></div>
         </div>
       </div>
     </div>
@@ -1198,8 +1247,8 @@ tbody tr:hover { filter: brightness(0.97); }
       <div class="stat-badge badge-green" style="margin-top:8px" id="perf-hold-badge">—</div>
       <div style="margin-top:8px;font-size:12px;color:var(--text-muted);line-height:1.5;font-style:italic">Are you letting winners run and cutting losers fast? Winners held much longer than losers = correct behaviour. If losers are held longer, you're hoping instead of following your stop.</div>
       <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
-        <div style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:4px">MINERVINI RULE</div>
-        <div class="stat-sub" style="line-height:1.5">Winners held longer than losers = discipline. Reverse = cutting winners, holding losers.</div>
+        <div style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:4px">SST RULE</div>
+        <div class="stat-sub" style="line-height:1.5">Winners held longer than losers = discipline. SST target: winners 30+ days. Your GTT trailing stop should be doing the heavy lifting — do not exit manually before it triggers.</div>
       </div>
     </div>
     <!-- MAR Ratio -->
@@ -4053,6 +4102,42 @@ function renderDashCharts(open, closed, cfg, portfolioValue, initialCapital) {
 }
 
 // ── COPY DASHBOARD STATS ──────────────────────────────
+function copyPerfSummary() {
+  try {
+    const d = window._data;
+    if (!d) { showToast('No data loaded', 'red'); return; }
+    const cfg = loadConfig();
+    const dt = new Date();
+    const dateStr = dt.getDate() + ' ' + ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][dt.getMonth()] + ' ' + dt.getFullYear();
+    const g = id => { const el = document.getElementById(id); return el ? el.textContent.trim() : '—'; };
+    const lines = [
+      '📊 SST Performance Summary — ' + dateStr,
+      '',
+      '── P&L ──',
+      'Combined P&L: ' + g('perf-capture') + ' (' + g('perf-capture-label') + ')',
+      'Realised: ' + g('perf-final-pl') + ' (' + g('perf-final-plpct') + ')',
+      'Unrealised (open): ' + g('perf-notional-pl-hero'),
+      '',
+      '── System Quality ──',
+      'Closed Win Rate: ' + g('perf-final-wr') + ' · Combined WR: ' + g('perf-combined-wr'),
+      'Win:Loss Ratio: ' + g('perf-rmultiple') + ' · Avg Win: ' + g('perf-avg-final-win') + ' · Avg Loss: ' + g('perf-avg-final-loss'),
+      'Profit Factor (combined): ' + g('perf-profit-factor'),
+      'R-Expectancy: ' + g('perf-r-expectancy'),
+      'MAR Ratio: ' + g('perf-mar') + ' (CAGR ' + g('perf-mar-cagr') + ' / MaxDD ' + g('perf-mar-dd') + ')',
+      'Hold: Winners ' + g('perf-hold-win') + ' · Losers ' + g('perf-hold-loss'),
+      '',
+      '── SST Health ──',
+      'Hold Asymmetry: ' + g('sst-h1-val').replace(/[✓~⚠ ]/g,'').trim(),
+      'Avg Loss Size: ' + g('sst-h2-val').replace(/[✓~⚠ ]/g,'').trim() + ' (target <7%)',
+      'Win:Loss ₹ Ratio: ' + g('sst-h3-val').replace(/[✓~⚠ ]/g,'').trim(),
+      'Open Positions: ' + g('sst-h5-val').replace(/[✓~⚠ ]/g,'').trim() + ' profitable',
+    ];
+    const text = lines.join('\n');
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(text).then(() => showToast('Performance summary copied', 'green')).catch(() => _copyFallback(text));
+    } else { _copyFallback(text); }
+  } catch(e) { showToast('Copy failed', 'red'); }
+}
 function copyDashStats() {
   try {
     const tbody = document.getElementById('dash-summary-tbody');
@@ -4826,6 +4911,109 @@ function renderPerfStats(closed, open, portfolioValue, initialCapital) {
   set('perf-avg-notional-loss', openLosses.length ? fmtRs(avgNLoss) : 'N/A');
   set('perf-avg-final-win', fmtPct(avgFinalWin));
   set('perf-avg-final-loss', fmtPct(avgFinalLoss));
+
+  // Avg win ₹ / avg loss ₹
+  const avgWinRs  = wins.length > 0   ? wins.reduce((s,t) => s + t.finalPl, 0) / wins.length   : 0;
+  const avgLossRs = losses.length > 0 ? Math.abs(losses.reduce((s,t) => s + t.finalPl, 0)) / losses.length : 0;
+  const winLossRsRatio = avgLossRs > 0 ? avgWinRs / avgLossRs : 0;
+  set('perf-avg-win-rs',  wins.length   ? fmtRs(avgWinRs)  : '—');
+  set('perf-avg-loss-rs', losses.length ? fmtRs(avgLossRs) : '—');
+
+  // ── SST System Health Banner ──
+  (function() {
+    const setCell = (id, valHtml, subHtml, status) => {
+      const cell = document.getElementById(id);
+      if (cell) cell.className = 'sst-health-cell ' + status;
+      const valEl = document.getElementById(id+'-val');
+      const subEl = document.getElementById(id+'-sub');
+      if (valEl) valEl.innerHTML = valHtml;
+      if (subEl) subEl.textContent = subHtml;
+    };
+    const icon = s => s === 'pass' ? '✓ ' : s === 'warn' ? '~ ' : '⚠ ';
+    let passCount = 0;
+
+    // H1: Hold asymmetry — winners held longer than losers
+    const h1ok   = avgHoldWin > 0 && avgHoldLoss > 0 && avgHoldWin >= avgHoldLoss;
+    const h1part = avgHoldWin > 0 && avgHoldLoss > 0 && avgHoldWin >= avgHoldLoss * 0.8;
+    const h1s    = h1ok ? 'pass' : h1part ? 'warn' : 'fail';
+    if (h1ok) passCount++;
+    const h1txt  = avgHoldWin > 0 && avgHoldLoss > 0
+      ? `<span style="color:var(--${h1ok?'green':h1part?'amber':'red'})">${icon(h1s)}${Math.round(avgHoldWin)}d win · ${Math.round(avgHoldLoss)}d loss</span>`
+      : '<span style="color:var(--text-muted)">—</span>';
+    setCell('sst-h1', h1txt, h1ok ? 'Winners held longer ✓' : 'Winners should be held longer', h1s);
+
+    // H2: Avg loss size < 7%
+    const absAvgLoss = Math.abs(avgFinalLoss);
+    const h2ok   = losses.length > 0 && absAvgLoss < 7;
+    const h2part = losses.length > 0 && absAvgLoss < 10;
+    const h2s    = h2ok ? 'pass' : h2part ? 'warn' : 'fail';
+    if (h2ok) passCount++;
+    const h2col  = h2ok ? 'green' : h2part ? 'amber' : 'red';
+    const h2txt  = losses.length > 0
+      ? `<span style="color:var(--${h2col})">${icon(h2s)}${absAvgLoss.toFixed(1)}%</span>`
+      : '<span style="color:var(--text-muted)">—</span>';
+    setCell('sst-h2', h2txt, h2ok ? 'Stops taken tight ✓' : absAvgLoss < 10 ? 'Slightly extended — review' : 'Losses too large — tighten stops', h2s);
+
+    // H3: Win:Loss ₹ ratio ≥ 2×
+    const h3ok   = winLossRsRatio >= 2;
+    const h3part = winLossRsRatio >= 1.3;
+    const h3s    = h3ok ? 'pass' : h3part ? 'warn' : (wins.length > 0 && losses.length > 0 ? 'fail' : 'warn');
+    if (h3ok) passCount++;
+    const h3col  = h3ok ? 'green' : h3part ? 'amber' : 'red';
+    const h3txt  = wins.length > 0 && losses.length > 0
+      ? `<span style="color:var(--${h3col})">${icon(h3s)}${winLossRsRatio.toFixed(1)}×</span>`
+      : '<span style="color:var(--text-muted)">—</span>';
+    setCell('sst-h3', h3txt,
+      h3ok ? 'Strong asymmetry ✓' : h3part ? 'Room to grow — let winners run' : 'Below 1.3× — hold winners longer',
+      h3s);
+
+    // H4: Combined profit factor ≥ 1.5
+    const h4ok   = isFinite(combinedPF) && combinedPF >= 1.5;
+    const h4part = isFinite(combinedPF) && combinedPF >= 1.0;
+    const h4s    = h4ok ? 'pass' : h4part ? 'warn' : 'fail';
+    if (h4ok) passCount++;
+    const h4col  = h4ok ? 'green' : h4part ? 'amber' : 'red';
+    const h4txt  = `<span style="color:var(--${h4col})">${icon(h4s)}${isFinite(combinedPF) ? combinedPF.toFixed(2) : '∞'}</span>`;
+    setCell('sst-h4', h4txt, h4ok ? 'Healthy edge ✓' : h4part ? 'Marginal — need runners to close' : 'Below 1 — review system', h4s);
+
+    // H5: Open positions — profitable / total
+    const openProfCount = open.filter(t => (t.plPct||0) > 0).length;
+    const h5pct = open.length > 0 ? openProfCount / open.length * 100 : 0;
+    const h5ok   = open.length > 0 && h5pct >= 50;
+    const h5part = open.length > 0 && h5pct >= 30;
+    const h5s    = open.length === 0 ? 'warn' : h5ok ? 'pass' : h5part ? 'warn' : 'fail';
+    if (h5ok) passCount++;
+    const h5col  = h5ok ? 'green' : h5part ? 'amber' : 'red';
+    const h5txt  = open.length > 0
+      ? `<span style="color:var(--${h5col})">${icon(h5s)}${openProfCount}/${open.length}</span>`
+      : '<span style="color:var(--text-muted)">No open positions</span>';
+    setCell('sst-h5', h5txt,
+      open.length === 0 ? 'No positions' : `${h5pct.toFixed(0)}% green · ` + (h5ok ? 'Portfolio healthy ✓' : 'Review laggards'),
+      h5s);
+
+    const scoreEl = document.getElementById('sst-health-score');
+    const verdictEl = document.getElementById('sst-health-verdict');
+    if (scoreEl) {
+      const total = 5;
+      const col = passCount >= 4 ? 'var(--green)' : passCount >= 3 ? 'var(--amber)' : 'var(--red)';
+      scoreEl.innerHTML = `<span style="font-weight:700;color:${col}">${passCount}/${total} checks passing</span>`;
+    }
+    if (verdictEl) {
+      if (passCount === 5) {
+        verdictEl.innerHTML = '<span style="color:var(--green)">✓ <strong>System operating well.</strong> All 5 SST health checks green — discipline, loss size, edge, and portfolio health are all in order. Keep following the rules.</span>';
+      } else if (passCount >= 3) {
+        const fails = [];
+        if (!h1ok) fails.push(!h1part ? 'cut losses faster' : 'let winners run longer');
+        if (!h2ok) fails.push('tighten stops (avg loss ' + absAvgLoss.toFixed(1) + '% — target <7%)');
+        if (!h3ok) fails.push('hold winners longer for better win:loss ratio');
+        if (!h4ok) fails.push('profit factor needs more winners to close');
+        if (!h5ok && open.length > 0) fails.push('review underperforming open positions');
+        verdictEl.innerHTML = `<span style="color:var(--amber)">⚡ <strong>System mostly healthy — focus areas:</strong> ${fails.join(' · ')}</span>`;
+      } else {
+        verdictEl.innerHTML = '<span style="color:var(--red)">⚠ <strong>Multiple checks failing.</strong> Review stop discipline, ensure winners are being held through the GTT trailing mechanism, and avoid exiting profitable positions early.</span>';
+      }
+    }
+  })();
 
   const toggle = document.getElementById('closed-toggle');
   if (toggle) { const arrow = toggle.querySelector('span'); toggle.innerHTML = `<span>${arrow ? arrow.textContent : '▶'}</span> Show all closed trades (${closed.length})`; }
