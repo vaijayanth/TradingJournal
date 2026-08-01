@@ -799,12 +799,12 @@ tbody tr:hover { filter: brightness(0.97); }
   <!-- ① KPI ROW -->
   <div class="grid-3" style="gap:14px">
 
-    <!-- Portfolio Value -->
-    <div class="card card-sm">
+    <!-- Portfolio Value — HERO card -->
+    <div class="card card-sm" style="border-left:3px solid var(--accent)">
       <div class="stat-label">Portfolio Value</div>
-      <div class="stat-value" id="dash-pv">—</div>
+      <div style="font-size:38px;font-weight:800;letter-spacing:-1px;line-height:1.05;color:var(--text-primary);margin-top:4px" id="dash-pv">—</div>
       <div style="display:flex;align-items:baseline;gap:8px;margin-top:6px;flex-wrap:wrap">
-        <div style="font-size:22px;font-weight:700" id="dash-return">—</div>
+        <div style="font-size:20px;font-weight:700" id="dash-return">—</div>
         <div style="font-size:11px;color:var(--text-muted)" id="dash-return-sub">combined return</div>
       </div>
       <div style="font-size:11px;color:var(--text-muted);margin-top:4px" id="dash-realised-breakdown">—</div>
@@ -876,7 +876,19 @@ tbody tr:hover { filter: brightness(0.97); }
     </div>
   </div>
 
-  <!-- ② P&L Distribution — full width -->
+  <!-- ② MINI EQUITY CURVE -->
+  <div class="card" style="padding:14px 16px;margin-top:14px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px">
+      <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em">Equity Curve</div>
+      <span onclick="showPage('performance',document.querySelectorAll('.nav-tab')[1])" style="font-size:11px;color:var(--text-muted);cursor:pointer">Full view ▸</span>
+    </div>
+    <div id="dash-equity-mini" style="height:130px"></div>
+  </div>
+
+  <!-- ③ ALERT STRIP — actions needed today -->
+  <div id="dash-alert-strip" style="margin-top:10px;display:none"></div>
+
+  <!-- ④ P&L Distribution — full width -->
   <div class="card" style="padding:16px;margin-top:14px">
     <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">📊 P&amp;L Distribution — <span id="dash-legend-target">7</span>% target · positions in each zone</div>
     <div id="dash-pl-chart" style="min-height:240px"></div>
@@ -3421,6 +3433,43 @@ function renderDashboard(data, cfg) {
   // Update legend target label
   const legEl = document.getElementById('dash-legend-target');
   if (legEl) legEl.textContent = cfg.targetPct || 7;
+
+  // ── Dashboard Alert Strip ─────────────────────────────────────────────────
+  (function() {
+    const strip = document.getElementById('dash-alert-strip');
+    if (!strip || !open.length) return;
+    const targetPct2 = cfg.targetPct || 7;
+    const lockInPct2 = cfg.lockInPct || 6;
+    const trailUp   = open.filter(t => (t.plPct||0) >= targetPct2);
+    const lockin    = open.filter(t => (t.plPct||0) >= lockInPct2 && (t.plPct||0) < targetPct2);
+    const addSig    = open.filter(t => (t.plPct||0) < 0 && (t.ema200 === true || String(t.ema200||'').toLowerCase() === 'true') && (t.ema50 === true || String(t.ema50||'').toLowerCase() === 'true'));
+    const totalActions = trailUp.length + lockin.length + addSig.length;
+    if (totalActions === 0) {
+      strip.style.display = 'none';
+      return;
+    }
+    strip.style.display = 'block';
+    const pill = (emoji, label, n, bg, color) =>
+      `<span style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;background:${bg};border:1px solid ${color}40;font-size:12px;font-weight:700;color:${color};cursor:pointer;white-space:nowrap" onclick="showPage('today',document.getElementById('nav-today'))">${emoji} ${n} ${label}</span>`;
+    const chips = [
+      trailUp.length ? pill('🚀', 'Trail SL Up', trailUp.length, 'rgba(34,197,94,0.10)', 'var(--green)') : '',
+      lockin.length  ? pill('🟡', 'Lock-In Zone', lockin.length, 'rgba(245,158,11,0.10)', 'var(--amber)') : '',
+      addSig.length  ? pill('🔵', 'Add Signal', addSig.length, 'rgba(96,165,250,0.10)', '#60A5FA') : '',
+    ].filter(Boolean).join('');
+    // Top 3 stocks needing the most urgent action
+    const urgentStocks = [...trailUp, ...lockin].slice(0,4).map(t =>
+      `<span style="font-size:11px;padding:2px 8px;border-radius:10px;background:var(--surface2);border:1px solid var(--border);color:var(--text-secondary);font-weight:600">${t.stock} <span style="color:${(t.plPct||0)>=0?'var(--green)':'var(--red)'}${(t.plPct||0)>=0?'':''}">${(t.plPct||0)>=0?'+':''}${(t.plPct||0).toFixed(1)}%</span></span>`
+    ).join('');
+    strip.innerHTML = `<div style="background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:11px 14px">
+      <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
+        <span style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-right:4px">Actions Today</span>
+        ${chips}
+        <span style="margin-left:auto;font-size:11px;color:var(--text-muted);cursor:pointer" onclick="showPage('today',document.getElementById('nav-today'))">Full action board ▸</span>
+      </div>
+      ${urgentStocks ? `<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">${urgentStocks}</div>` : ''}
+    </div>`;
+  })();
+
   renderDashCharts(open, closed, cfg, portfolioValue, initialCapital);
 }
 
@@ -3433,6 +3482,61 @@ function renderDashCharts(open, closed, cfg, portfolioValue, initialCapital) {
   const gridClr   = isDark ? '#2A3347' : '#E2E8F0';
   const targetPct = cfg.targetPct || 7;
   const lockInPct = cfg.lockInPct || 6;
+
+  // ── Mini Equity Curve ─────────────────────────────────────────────────────
+  try {
+    if (_dashCharts.equity) { _dashCharts.equity.destroy(); delete _dashCharts.equity; }
+    const miniEl = document.getElementById('dash-equity-mini');
+    if (miniEl && closed.length > 0) {
+      // Build cumulative realised P&L series from sorted closed trades
+      const sortedClosed = [...closed].filter(t => t.closeDate).sort((a,b) => parseDate(a.closeDate)-parseDate(b.closeDate));
+      let cumPl = 0;
+      const equitySeries = sortedClosed.map(t => { cumPl += (t.finalPl||0); return cumPl; });
+      const equityDates  = sortedClosed.map(t => t.closeDate);
+      // Today point — extend to combined (realised + open MTM)
+      const totalMTM     = open.reduce((s,t) => s + (t.notionalPl||0), 0);
+      const combinedNow  = cumPl + totalMTM;
+      const isProfit     = combinedNow >= 0;
+      const accentColor  = isProfit ? '#22C55E' : '#F43F5E';
+      const fillGradient = isProfit
+        ? [{ offset:0, color:'#22C55E', opacity:0.28 }, { offset:100, color:'#22C55E', opacity:0 }]
+        : [{ offset:0, color:'#F43F5E', opacity:0.18 }, { offset:100, color:'#F43F5E', opacity:0 }];
+      // Null series for "today" dashed amber — aligns with the last closed date + a today point
+      const nullPad  = equitySeries.map(() => null);
+      const amberSeries = [...nullPad];
+      amberSeries[amberSeries.length - 1] = cumPl; // connect from last close
+      amberSeries.push(combinedNow);
+      const allDates = [...equityDates, 'Today'];
+      const paddedEquity = [...equitySeries, null]; // closed series: null at "Today" so it doesn't connect
+
+      _dashCharts.equity = new ApexCharts(miniEl, {
+        chart: { type:'area', height:130, toolbar:{show:false}, background:'transparent',
+          sparkline:{enabled:false}, animations:{enabled:false}, zoom:{enabled:false} },
+        series: [
+          { name:'Realised', data: paddedEquity },
+          { name:'Combined (inc. open)', data: amberSeries },
+        ],
+        xaxis: { categories: allDates, labels:{show:false}, axisBorder:{show:false}, axisTicks:{show:false} },
+        yaxis: { labels:{show:false} },
+        stroke: { curve:'smooth', width:[2,2], dashArray:[0,5] },
+        colors: [accentColor, '#F59E0B'],
+        fill: {
+          type:['gradient','solid'],
+          gradient:{ type:'vertical', gradientToColors:[accentColor], colorStops:[fillGradient,[{offset:0,color:'transparent',opacity:0}]] },
+          opacity:[1,0],
+        },
+        dataLabels: { enabled:false },
+        legend: { show:false },
+        grid: { borderColor:gridClr, strokeDashArray:3, padding:{top:0,bottom:0,left:4,right:4} },
+        tooltip: { theme:isDark?'dark':'light', shared:true, intersect:false,
+          x:{ formatter:(_,{dataPointIndex}) => allDates[dataPointIndex] || '' },
+          y:{ formatter: v => v != null ? (v>=0?'+':'')+'₹'+Math.abs(Math.round(v)).toLocaleString('en-IN') : '' } },
+        annotations: { yaxis:[{ y:0, borderColor: isDark?'#475569':'#94A3B8', strokeDashArray:2, borderWidth:1 }] },
+        theme: { mode:isDark?'dark':'light' },
+      });
+      _dashCharts.equity.render();
+    }
+  } catch(e) { console.warn('dash mini equity failed', e); }
 
   // ── Chart 1: P&L Distribution Histogram (open unrealised + closed final) ─
   try {
