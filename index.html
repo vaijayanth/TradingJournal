@@ -900,13 +900,24 @@ tbody tr:hover { filter: brightness(0.97); }
     </div>
   </div>
 
-  <!-- ② MINI EQUITY CURVE -->
-  <div class="card" style="padding:14px 16px;margin-top:14px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:2px">
-      <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em">Equity Curve</div>
-      <span onclick="showPage('performance',document.querySelectorAll('.nav-tab')[1])" style="font-size:11px;color:var(--text-muted);cursor:pointer">Full view ▸</span>
+  <!-- ② EQUITY CURVE (full, same as Performance tab) -->
+  <div class="card" style="margin-top:14px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="width:10px;height:10px;border-radius:50%;background:var(--green)"></div>
+        <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text-secondary)">Equity Curve</div>
+      </div>
+      <div style="display:flex;gap:6px;align-items:center">
+        <button id="dash-eq-mode-toggle" onclick="toggleDashEqMode()" style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s">% Return</button>
+        <button id="dash-eq-dd-toggle" onclick="toggleDashEqDD()" style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s">▶ DD OFF</button>
+      </div>
     </div>
-    <div id="dash-equity-mini" style="height:160px"></div>
+    <div style="display:flex;flex-wrap:wrap;gap:5px;margin-bottom:12px" id="dash-eq-month-pills">
+      <button class="eq-pill active" onclick="filterDashEqMonth(this,'all')">All</button>
+    </div>
+    <div id="dash-equity-mini" style="height:260px"></div>
+    <div id="dash-eq-drawdown" style="height:0;overflow:hidden;transition:height .3s;margin-top:0"></div>
+    <div id="dash-eq-insight" class="chart-insight"></div>
   </div>
 
   <!-- ③ ALERT STRIP — actions needed today -->
@@ -3626,6 +3637,178 @@ function renderDashboard(data, cfg) {
   renderDashCharts(open, closed, cfg, portfolioValue, initialCapital);
 }
 
+// ── DASHBOARD EQUITY CURVE ───────────────────────────────────────────────────
+window._dashEqMode  = '%';
+window._dashEqDDOn  = false;
+window._dashEqMonth = 'all';
+
+function renderDashEquity(closed, initialCapital, open) {
+  if (!closed || !closed.length || !window.ApexCharts) return;
+  window._dashEqSorted = [...closed].filter(t => t.closeDate).sort((a,b) => parseDate(a.closeDate)-parseDate(b.closeDate));
+  window._dashEqOpen   = open || [];
+  window._dashEqCap    = initialCapital || 0;
+
+  // Build month pills
+  const eqMonths = [...new Set(window._dashEqSorted.map(t => {
+    const d = parseDate(t.closeDate); if (isNaN(d)) return null;
+    return d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+  }).filter(Boolean))].sort();
+  const pillsEl = document.getElementById('dash-eq-month-pills');
+  if (pillsEl) {
+    pillsEl.innerHTML = '<button class="eq-pill active" onclick="filterDashEqMonth(this,\'all\')">All</button>';
+    const MN = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    eqMonths.forEach(m => {
+      const [y, mo] = m.split('-');
+      const btn = document.createElement('button');
+      btn.className = 'eq-pill';
+      btn.textContent = MN[parseInt(mo)-1] + ' ' + y.slice(2);
+      btn.setAttribute('data-month', m);
+      btn.onclick = function() { filterDashEqMonth(this, m); };
+      pillsEl.appendChild(btn);
+    });
+  }
+  // Sync button labels
+  const modeBtn = document.getElementById('dash-eq-mode-toggle');
+  const ddBtn   = document.getElementById('dash-eq-dd-toggle');
+  if (modeBtn) { const isAbs = window._dashEqMode === '₹'; modeBtn.textContent = isAbs ? '₹ Absolute' : '% Return'; modeBtn.style.background = isAbs ? 'rgba(99,102,241,0.15)' : ''; modeBtn.style.borderColor = isAbs ? 'var(--accent)' : ''; modeBtn.style.color = isAbs ? 'var(--accent)' : ''; }
+  if (ddBtn)   { ddBtn.textContent = window._dashEqDDOn ? '■ DD ON' : '▶ DD OFF'; }
+
+  _renderDashEqChart();
+}
+
+function _renderDashEqChart() {
+  const c = chartColors();
+  const allTrades = window._dashEqSorted || [];
+  const cap       = window._dashEqCap    || 0;
+  const openArr   = window._dashEqOpen   || [];
+  const month     = window._dashEqMonth  || 'all';
+  const isAbsMode = window._dashEqMode   === '₹';
+  const ddOn      = window._dashEqDDOn;
+  const amberColor = '#F6AD55';
+
+  if (!allTrades.length) return;
+
+  let displayTrades, startEq;
+  if (month === 'all') {
+    displayTrades = allTrades; startEq = cap;
+  } else {
+    const [fy, fm] = month.split('-').map(Number);
+    const before = allTrades.filter(t => { const d = parseDate(t.closeDate); return d.getFullYear() < fy || (d.getFullYear() === fy && d.getMonth()+1 < fm); });
+    startEq = cap + before.reduce((s,t) => s+t.finalPl, 0);
+    displayTrades = allTrades.filter(t => { const d = parseDate(t.closeDate); return d.getFullYear() === fy && d.getMonth()+1 === fm; });
+  }
+
+  let runEq = startEq, peak = month === 'all' ? cap : startEq;
+  const retData = [], ddData = [], labels = [], tradeLabels = [];
+  displayTrades.forEach(t => {
+    runEq += t.finalPl; if (runEq > peak) peak = runEq;
+    const ret = cap > 0 ? (runEq - cap) / cap * 100 : 0;
+    retData.push(isAbsMode ? parseFloat(runEq.toFixed(0)) : parseFloat(ret.toFixed(2)));
+    ddData.push(parseFloat(((runEq - peak) / peak * 100).toFixed(2)));
+    labels.push(t.closeDate);
+    tradeLabels.push(t.stock + ' · ' + (t.finalPl>=0?'+':'-') + '₹' + Math.abs(Math.round(t.finalPl)).toLocaleString('en-IN') + ' · ' + t.closeDate);
+  });
+
+  // Today dashed amber series
+  const totalUnrealised = openArr.reduce((s,t) => s+(t.notionalPl||0), 0);
+  const todayData = retData.map(() => null);
+  let todayTooltipLabel = '';
+  if (month === 'all' && totalUnrealised !== 0) {
+    todayData[todayData.length-1] = retData[retData.length-1];
+    const combinedEq = runEq + totalUnrealised;
+    todayData.push(isAbsMode ? parseFloat(combinedEq.toFixed(0)) : parseFloat(((combinedEq-cap)/cap*100).toFixed(2)));
+    retData.push(null); labels.push('Today');
+    todayTooltipLabel = 'Open MTM · ' + (totalUnrealised>=0?'+':'-') + '₹' + Math.abs(Math.round(totalUnrealised)).toLocaleString('en-IN');
+    tradeLabels.push(todayTooltipLabel);
+  }
+  const hasTodaySeries = todayData.some(v => v !== null);
+
+  const sparseLabels = labels.map((l,i) => { const step = Math.ceil(labels.length/7); return (i%step===0||i===labels.length-1)?l:''; });
+
+  const validRet = retData.filter(v=>v!=null);
+  const retMin = validRet.length ? Math.min(...validRet) : 0;
+  const retMax = validRet.length ? Math.max(...validRet) : 1;
+  const retRange = (retMax-retMin)||1;
+  const zeroFrac = retMax>0 ? Math.min(100,Math.max(0,Math.round((retMax/retRange)*100))) : 0;
+  const allPositive = retMin>=0, allNegative = retMax<=0;
+  const realisedColor = allNegative ? c.red : c.green;
+  const eqColorStops = allPositive
+    ? [[{offset:0,color:c.green,opacity:0.45},{offset:100,color:c.green,opacity:0.02}]]
+    : allNegative
+      ? [[{offset:0,color:c.red,opacity:0.02},{offset:100,color:c.red,opacity:0.45}]]
+      : [[{offset:0,color:c.green,opacity:0.45},{offset:zeroFrac,color:c.green,opacity:0.05},{offset:zeroFrac,color:c.red,opacity:0.05},{offset:100,color:c.red,opacity:0.4}]];
+
+  if (window._dashEqInst)  { try { window._dashEqInst.destroy();   } catch(e){} }
+  if (window._dashDDInst)  { try { window._dashDDInst.destroy();   } catch(e){} }
+
+  const eqEl = document.getElementById('dash-equity-mini');
+  const ddEl = document.getElementById('dash-eq-drawdown');
+  if (!eqEl) return;
+
+  const series = [{ name:'Realised', data: retData }];
+  if (hasTodaySeries) series.push({ name:'Combined (incl. open MTM)', data: todayData });
+
+  window._dashEqInst = new ApexCharts(eqEl, {
+    chart: { type:'area', height:260, toolbar:{show:false}, background:'transparent', animations:{enabled:false}, zoom:{enabled:false} },
+    series,
+    xaxis: { categories: sparseLabels, labels:{ style:{colors:c.text,fontSize:'11px'}, rotate:0, hideOverlappingLabels:true }, axisBorder:{show:false}, axisTicks:{show:false} },
+    yaxis: { labels:{ style:{colors:c.text,fontSize:'11px'}, formatter: v => v!=null ? (isAbsMode ? '₹'+Math.round(v).toLocaleString('en-IN') : (v>=0?'+':'')+v.toFixed(1)+'%') : '' } },
+    colors: hasTodaySeries ? [realisedColor, amberColor] : [realisedColor],
+    fill:   { type:'gradient', gradient:{ type:'vertical', colorStops: hasTodaySeries ? [...eqColorStops,[{offset:0,color:amberColor,opacity:0.3},{offset:100,color:amberColor,opacity:0.02}]] : eqColorStops } },
+    stroke: { curve:'smooth', width: hasTodaySeries?[2.5,2.5]:[2.5], dashArray: hasTodaySeries?[0,6]:[0] },
+    dataLabels: { enabled:false }, markers:{ size:0, hover:{size:5} },
+    annotations: { yaxis:[{ y: isAbsMode ? cap : 0, borderColor:c.text, strokeDashArray:2, label:{text:'Break-even',style:{color:c.text,fontSize:'10px',background:'transparent'}} }] },
+    tooltip: { theme: document.documentElement.getAttribute('data-theme')==='dark'?'dark':'light', custom:({seriesIndex,dataPointIndex}) => {
+      const isToday = seriesIndex===1;
+      const val = isToday ? todayData[dataPointIndex] : retData[dataPointIndex];
+      if (val==null) return '';
+      const label = isToday ? todayTooltipLabel : (tradeLabels[dataPointIndex]||'');
+      const col = isToday ? amberColor : (val>=0?'var(--green)':'var(--red)');
+      const cumLine = isAbsMode
+        ? '₹'+Math.round(val).toLocaleString('en-IN')+' <span style="opacity:.7">('+((cap>0?(val-cap)/cap*100:0)>=0?'+':'')+(cap>0?((val-cap)/cap*100).toFixed(2):0)+'%)</span>'
+        : (val>=0?'+':'')+val.toFixed(2)+'% <span style="opacity:.7">(₹'+(cap>0?Math.round(cap+val/100*cap).toLocaleString('en-IN'):0)+')</span>';
+      return `<div style="padding:8px 12px;font-size:12px;font-weight:600;color:${col};background:var(--surface);border:1px solid var(--border);border-radius:8px">${label}<br><span style="font-size:11px;color:var(--text-muted)">Capital: ${cumLine}</span></div>`;
+    }},
+    legend: { show: hasTodaySeries, labels:{colors:c.text}, markers:{fillColors:[allNegative?c.red:c.green, amberColor]} },
+  });
+  window._dashEqInst.render();
+
+  if (ddOn && ddEl && ddData.length) {
+    ddEl.style.height = '140px'; ddEl.style.marginTop = '8px';
+    const maxDD = Math.min(...ddData);
+    window._dashDDInst = new ApexCharts(ddEl, {
+      chart:{ type:'area', height:140, toolbar:{show:false}, background:'transparent', animations:{enabled:false} },
+      series:[{name:'Drawdown %', data:ddData}],
+      xaxis:{ categories:sparseLabels, labels:{style:{colors:c.text,fontSize:'10px'},rotate:0,hideOverlappingLabels:true}, axisBorder:{show:false}, axisTicks:{show:false} },
+      yaxis:{ labels:{style:{colors:c.text,fontSize:'10px'}, formatter: v=>v.toFixed(1)+'%'}, max:0 },
+      colors:[c.red], fill:{type:'gradient',gradient:{shadeIntensity:1,opacityFrom:0.5,opacityTo:0.05}},
+      stroke:{curve:'smooth',width:1.5}, dataLabels:{enabled:false}, markers:{size:0},
+      annotations:{yaxis:[{y:maxDD,borderColor:c.red,strokeDashArray:3,label:{text:'Max DD '+maxDD.toFixed(1)+'%',style:{color:c.red,fontSize:'10px',background:'transparent'}}}]},
+    });
+    window._dashDDInst.render();
+  } else if (ddEl) { ddEl.style.height='0'; ddEl.style.marginTop='0'; }
+}
+
+function filterDashEqMonth(btn, month) {
+  window._dashEqMonth = month;
+  document.querySelectorAll('#dash-eq-month-pills .eq-pill').forEach(b => b.classList.remove('active'));
+  if (btn) btn.classList.add('active');
+  _renderDashEqChart();
+}
+function toggleDashEqMode() {
+  window._dashEqMode = window._dashEqMode === '%' ? '₹' : '%';
+  const btn = document.getElementById('dash-eq-mode-toggle');
+  const isAbs = window._dashEqMode === '₹';
+  if (btn) { btn.textContent = isAbs?'₹ Absolute':'% Return'; btn.style.background=isAbs?'rgba(99,102,241,0.15)':''; btn.style.borderColor=isAbs?'var(--accent)':''; btn.style.color=isAbs?'var(--accent)':''; }
+  _renderDashEqChart();
+}
+function toggleDashEqDD() {
+  window._dashEqDDOn = !window._dashEqDDOn;
+  const btn = document.getElementById('dash-eq-dd-toggle');
+  if (btn) { btn.textContent = window._dashEqDDOn?'■ DD ON':'▶ DD OFF'; btn.style.background=window._dashEqDDOn?'rgba(239,68,68,0.12)':''; btn.style.borderColor=window._dashEqDDOn?'var(--red)':''; btn.style.color=window._dashEqDDOn?'var(--red)':''; }
+  _renderDashEqChart();
+}
+
 // ── DASHBOARD CHARTS ─────────────────────────────────────────────────────────
 const _dashCharts = {};
 function renderDashCharts(open, closed, cfg, portfolioValue, initialCapital) {
@@ -3636,96 +3819,8 @@ function renderDashCharts(open, closed, cfg, portfolioValue, initialCapital) {
   const targetPct = cfg.targetPct || 7;
   const lockInPct = cfg.lockInPct || 6;
 
-  // ── Mini Equity Curve ─────────────────────────────────────────────────────
-  try {
-    if (_dashCharts.equity) { _dashCharts.equity.destroy(); delete _dashCharts.equity; }
-    const miniEl = document.getElementById('dash-equity-mini');
-    if (miniEl && closed.length > 0) {
-      // Build cumulative realised P&L series from sorted closed trades
-      const sortedClosed = [...closed].filter(t => t.closeDate).sort((a,b) => parseDate(a.closeDate)-parseDate(b.closeDate));
-      let cumPl = 0;
-      const equitySeries = sortedClosed.map(t => { cumPl += (t.finalPl||0); return cumPl; });
-      const equityDates  = sortedClosed.map(t => t.closeDate);
-      // Today point — extend to combined (realised + open MTM)
-      const totalMTM     = open.reduce((s,t) => s + (t.notionalPl||0), 0);
-      const combinedNow  = cumPl + totalMTM;
-      const isProfit     = combinedNow >= 0;
-      const accentColor  = isProfit ? '#22C55E' : '#F43F5E';
-      const fillGradient = isProfit
-        ? [{ offset:0, color:'#22C55E', opacity:0.28 }, { offset:100, color:'#22C55E', opacity:0 }]
-        : [{ offset:0, color:'#F43F5E', opacity:0.18 }, { offset:100, color:'#F43F5E', opacity:0 }];
-      // Null series for "today" dashed amber — aligns with the last closed date + a today point
-      const nullPad  = equitySeries.map(() => null);
-      const amberSeries = [...nullPad];
-      amberSeries[amberSeries.length - 1] = cumPl; // connect from last close
-      amberSeries.push(combinedNow);
-      const allDates = [...equityDates, 'Today'];
-      const paddedEquity = [...equitySeries, null]; // closed series: null at "Today" so it doesn't connect
-
-      _dashCharts.equity = new ApexCharts(miniEl, {
-        chart: { type:'area', height:160, toolbar:{show:false}, background:'transparent',
-          sparkline:{enabled:false}, animations:{enabled:false}, zoom:{enabled:false} },
-        series: [
-          { name:'Realised', data: paddedEquity },
-          { name:'Combined (inc. open)', data: amberSeries },
-        ],
-        xaxis: {
-          categories: allDates,
-          labels: {
-            show: true,
-            rotate: 0,
-            style: { fontSize:'9px', colors: isDark?'#94A3B8':'#64748B' },
-            formatter: v => {
-              if (v === 'Today') return 'Today';
-              try {
-                const d = parseDate(v);
-                return d && d.getFullYear() > 2000
-                  ? ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()] + ' ' + d.getFullYear().toString().slice(2)
-                  : '';
-              } catch(e) { return ''; }
-            },
-            // show ~6 labels evenly spaced
-            hideOverlappingLabels: true,
-            showDuplicates: false,
-          },
-          tickAmount: 6,
-          axisBorder: { show:false },
-          axisTicks: { show:false },
-        },
-        yaxis: {
-          labels: {
-            show: true,
-            style: { fontSize:'9px', colors: isDark?'#94A3B8':'#64748B' },
-            formatter: v => {
-              if (v == null) return '';
-              const abs = Math.abs(v);
-              const sign = v < 0 ? '-' : '+';
-              if (abs >= 100000) return sign + '₹' + (abs/100000).toFixed(1) + 'L';
-              if (abs >= 1000)   return sign + '₹' + (abs/1000).toFixed(0) + 'K';
-              return sign + '₹' + abs.toFixed(0);
-            },
-          },
-          tickAmount: 4,
-        },
-        stroke: { curve:'smooth', width:[2,2], dashArray:[0,5] },
-        colors: [accentColor, '#F59E0B'],
-        fill: {
-          type:['gradient','solid'],
-          gradient:{ type:'vertical', gradientToColors:[accentColor], colorStops:[fillGradient,[{offset:0,color:'transparent',opacity:0}]] },
-          opacity:[1,0],
-        },
-        dataLabels: { enabled:false },
-        legend: { show:false },
-        grid: { borderColor:gridClr, strokeDashArray:3, padding:{top:0,bottom:0,left:4,right:4} },
-        tooltip: { theme:isDark?'dark':'light', shared:true, intersect:false,
-          x:{ formatter:(_,{dataPointIndex}) => allDates[dataPointIndex] || '' },
-          y:{ formatter: v => v != null ? (v>=0?'+':'')+'₹'+Math.abs(Math.round(v)).toLocaleString('en-IN') : '' } },
-        annotations: { yaxis:[{ y:0, borderColor: isDark?'#475569':'#94A3B8', strokeDashArray:2, borderWidth:1 }] },
-        theme: { mode:isDark?'dark':'light' },
-      });
-      _dashCharts.equity.render();
-    }
-  } catch(e) { console.warn('dash mini equity failed', e); }
+  // ── Dashboard Equity Curve (full, mirrors Performance tab) ──────────────
+  renderDashEquity(closed, initialCapital, open);
 
   // ── Chart 1: P&L Distribution Histogram (open unrealised + closed final) ─
   try {
