@@ -1540,9 +1540,45 @@ tbody tr:hover { filter: brightness(0.97); }
     <a href="#asec-edge"     onclick="document.getElementById('asec-edge').scrollIntoView({behavior:'smooth'});return false;" class="analysis-jump-btn">Edge Diagnostics</a>
   </div>
 
-  <!-- Closed-trade bias note -->
-  <div style="margin-bottom:16px;padding:10px 14px;background:rgba(255,159,10,0.08);border-left:3px solid var(--amber);border-radius:6px;font-size:12.5px;color:var(--text-secondary);line-height:1.6">
-    ⚡ <strong>Momentum system note:</strong> Closed trades skew negative (stops taken fast). Open positions hold the unrealised gains. All insights below are closed-only patterns — cross-reference with the Positions tab for the full picture.
+  <!-- SST Analysis Health Banner -->
+  <div id="analysis-health-banner" style="margin-bottom:16px;border-radius:12px;border:1px solid var(--border);overflow:hidden">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 14px;background:var(--surface2);border-bottom:1px solid var(--border)">
+      <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted)">SST Analysis Health</div>
+      <div style="font-size:11px;color:var(--text-muted)" id="ah-score-label">Loading…</div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:0">
+      <div id="ah-c1" class="sst-health-cell" style="padding:10px 14px;border-right:1px solid var(--border);border-bottom:1px solid var(--border)">
+        <div style="font-size:18px;font-weight:800" id="ah-c1-val">—</div>
+        <div style="font-size:10px;font-weight:700;color:var(--text-muted);margin-top:2px">EXIT SPEED</div>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:1px" id="ah-c1-sub">Avg days to exit losses</div>
+      </div>
+      <div id="ah-c2" class="sst-health-cell" style="padding:10px 14px;border-right:1px solid var(--border);border-bottom:1px solid var(--border)">
+        <div style="font-size:18px;font-weight:800" id="ah-c2-val">—</div>
+        <div style="font-size:10px;font-weight:700;color:var(--text-muted);margin-top:2px">PROFIT CAPTURE</div>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:1px" id="ah-c2-sub">Avg winner P&L% (closed)</div>
+      </div>
+      <div id="ah-c3" class="sst-health-cell" style="padding:10px 14px;border-right:1px solid var(--border);border-bottom:1px solid var(--border)">
+        <div style="font-size:18px;font-weight:800" id="ah-c3-val">—</div>
+        <div style="font-size:10px;font-weight:700;color:var(--text-muted);margin-top:2px">PARTIAL EXITS</div>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:1px" id="ah-c3-sub">Taken when eligible</div>
+      </div>
+      <div id="ah-c4" class="sst-health-cell" style="padding:10px 14px;border-right:1px solid var(--border);border-bottom:1px solid var(--border)">
+        <div style="font-size:18px;font-weight:800" id="ah-c4-val">—</div>
+        <div style="font-size:10px;font-weight:700;color:var(--text-muted);margin-top:2px">OPEN RUNNERS</div>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:1px" id="ah-c4-sub">Positions 30d+ (big wins brewing)</div>
+      </div>
+      <div id="ah-c5" class="sst-health-cell" style="padding:10px 14px;border-bottom:1px solid var(--border)">
+        <div style="font-size:18px;font-weight:800" id="ah-c5-val">—</div>
+        <div style="font-size:10px;font-weight:700;color:var(--text-muted);margin-top:2px">PORTFOLIO HEALTH</div>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:1px" id="ah-c5-sub">Open positions profitable</div>
+      </div>
+    </div>
+    <div style="padding:8px 14px;font-size:11px;line-height:1.5;color:var(--text-muted)" id="ah-verdict">—</div>
+  </div>
+
+  <!-- SST strategy note -->
+  <div style="margin-bottom:16px;padding:10px 14px;background:rgba(99,179,237,0.07);border-left:3px solid var(--accent);border-radius:6px;font-size:12px;color:var(--text-secondary);line-height:1.6">
+    📊 <strong>SST strategy:</strong> Risk is managed through position count and quick profit taking — not fixed stop losses. Closed trades skew negative (positions exited on profit signals or manual review). Real gains sit in open positions accumulating via GTT trailing. Read this tab in that context.
   </div>
 
   <!-- 1. Projections & Outlook — top of page for immediate visibility -->
@@ -1559,30 +1595,30 @@ tbody tr:hover { filter: brightness(0.97); }
         <div class="stat-sub" id="proj-annual-sub">at current edge per trade</div>
       </div>
       <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
-        <div style="font-size:11px;color:var(--amber);font-weight:600;margin-bottom:4px">⚡ IF TRADING AT FULL 0.8% RISK CAP</div>
+        <div style="font-size:11px;color:var(--amber);font-weight:600;margin-bottom:4px">⚡ IF WIN RATE IMPROVES TO 40%</div>
         <div style="font-size:18px;font-weight:700;color:var(--amber)" id="proj-full-risk-pl">—</div>
-        <div class="stat-sub" id="proj-full-risk-sub">same edge, scaled to max position size</div>
+        <div class="stat-sub" id="proj-full-risk-sub">same sizing, better selectivity</div>
         <div style="font-size:11px;color:var(--text-muted);margin-top:4px" id="proj-full-risk-note">—</div>
       </div>
     </div>
     <div class="card card-sm" id="proj-partial-card">
-      <div class="stat-label">🟡 At Lock-In / Target</div>
+      <div class="stat-label">🟡 Profit Locked In</div>
       <div style="font-size:22px;font-weight:700;color:var(--green);margin-top:6px" id="proj-partial-rs">—</div>
-      <div class="stat-sub" id="proj-partial-sub">unrealised MTM in positions at or above lock-in</div>
+      <div class="stat-sub" id="proj-partial-sub">unrealised MTM in positions at or above partial trigger</div>
       <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
-        <div style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:4px">POSITIONS AT TARGET</div>
+        <div style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:4px">POSITIONS AT TRIGGER</div>
         <div style="font-size:18px;font-weight:700" id="proj-partial-count">—</div>
-        <div class="stat-sub" id="proj-partial-detail">trailing SL active</div>
+        <div class="stat-sub" id="proj-partial-detail">at or above partial trigger</div>
       </div>
     </div>
     <div class="card card-sm" id="proj-tier-card">
-      <div class="stat-label">⚡ Risk Tier Progression</div>
+      <div class="stat-label">📊 Open Portfolio Quality</div>
       <div style="font-size:22px;font-weight:700;margin-top:6px" id="proj-tier-current">—</div>
-      <div class="stat-sub">current risk per trade</div>
+      <div class="stat-sub">profitable open positions</div>
       <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
-        <div style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:4px">NEXT TIER</div>
+        <div style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:4px">TOTAL OPEN MTM</div>
         <div style="font-size:15px;font-weight:700" id="proj-tier-next">—</div>
-        <div class="stat-sub" id="proj-tier-sub">—</div>
+        <div class="stat-sub" id="proj-tier-sub">unrealised gains across all open</div>
       </div>
     </div>
   </div>
@@ -1659,30 +1695,30 @@ tbody tr:hover { filter: brightness(0.97); }
   <div class="section-title" id="asec-trade" style="margin-top:24px">Trade Management</div>
   <div class="grid-4" style="margin-bottom:14px">
     <div class="card card-sm">
-      <div class="stat-label">Avg Init Risk</div>
+      <div class="stat-label">Avg Position Size</div>
       <div class="stat-value" id="tm-avg-risk">—</div>
-      <div class="stat-sub" id="tm-avg-risk-sub">per closed trade</div>
+      <div class="stat-sub" id="tm-avg-risk-sub">avg invested ₹ per trade</div>
     </div>
     <div class="card card-sm">
-      <div class="stat-label">Avg Actual Loss</div>
+      <div class="stat-label">Avg Loss on Exit</div>
       <div class="stat-value" id="tm-avg-loss">—</div>
-      <div class="stat-sub" id="tm-avg-loss-sub">stopped-out trades</div>
+      <div class="stat-sub" id="tm-avg-loss-sub">losing closed trades</div>
     </div>
     <div class="card card-sm">
-      <div class="stat-label">Stop Slippage</div>
+      <div class="stat-label">Loss vs Winner Ratio</div>
       <div class="stat-value" id="tm-slippage">—</div>
-      <div class="stat-sub" id="tm-slippage-sub">vs planned risk</div>
+      <div class="stat-sub" id="tm-slippage-sub">Avg loss% ÷ avg win% (target &lt;0.5)</div>
     </div>
     <div class="card card-sm">
       <div class="stat-label">Median Winner</div>
       <div class="stat-value" id="tm-median-win">—</div>
-      <div class="stat-sub" id="tm-median-win-sub">50th pct of winning trades</div>
+      <div class="stat-sub" id="tm-median-win-sub">50th percentile closed win</div>
     </div>
   </div>
   <div class="card" style="margin-bottom:14px;border-left:3px solid var(--accent);padding:0">
     <details>
       <summary style="padding:14px 20px;cursor:pointer;display:flex;align-items:center;justify-content:space-between;list-style:none;user-select:none">
-        <span style="font-size:12px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.06em">Breakeven Stop Insight</span>
+        <span style="font-size:12px;font-weight:700;color:var(--accent);text-transform:uppercase;letter-spacing:.06em">Profit Taking Analysis</span>
         <span class="toggle-hint" style="font-size:11px;color:var(--text-muted)"></span>
       </summary>
       <div style="padding:0 20px 14px;border-top:1px solid var(--border)">
@@ -1692,15 +1728,15 @@ tbody tr:hover { filter: brightness(0.97); }
   </div>
   <div class="grid-2" style="margin-bottom:14px">
     <div class="card">
-      <div class="chart-title">₹ Risk per Trade Distribution</div>
-      <div class="chart-sub">Are you consistently risking ~₹1,000 or is your sizing drifting?</div>
+      <div class="chart-title">Position Size Distribution (₹ Invested)</div>
+      <div class="chart-sub">Consistency of capital deployed per trade — are you sizing uniformly across entries?</div>
       <div id="chart-tm-risk-dist" style="height:220px"></div>
       <details style="margin-top:10px">
-        <summary style="font-size:12px;font-weight:600;color:var(--text-muted);cursor:pointer;padding:4px 0;user-select:none">What to look for &amp; action ▸</summary>
+        <summary style="font-size:12px;font-weight:600;color:var(--text-muted);cursor:pointer;padding:4px 0;user-select:none">What to look for ▸</summary>
         <div style="padding:10px 12px;background:var(--surface2);border-radius:8px;font-size:12px;line-height:1.7;color:var(--text-secondary);margin-top:6px">
-          Your rule is ₹1,000 risk per trade. The bulk of bars should sit in <strong>₹500–1.5K</strong>.<br>
-          <strong>Oversized (&gt;₹2K):</strong> you broke your own rule — likely on a high-conviction trade. Fine occasionally, dangerous as a habit.<br>
-          <strong>Undersized (&lt;₹500):</strong> lost conviction after losses? Sizing down when fearful then missing recoveries is a common trap.
+          In SST, risk is distributed across many positions — so sizing consistency matters. Uniform bars = disciplined allocation. A spike at one extreme suggests emotional sizing (oversizing on conviction or undersizing after losses).<br>
+          <strong>Undersizing after losses:</strong> fear trap — you miss the recovery that pays for all the stops.<br>
+          <strong>Oversizing outliers:</strong> these positions disproportionately affect your P&L — make sure they're your highest-quality setups.
         </div>
       </details>
     </div>
@@ -1724,9 +1760,9 @@ tbody tr:hover { filter: brightness(0.97); }
       <details style="margin-top:10px">
         <summary style="font-size:12px;font-weight:600;color:var(--text-muted);cursor:pointer;padding:4px 0;user-select:none">What to look for &amp; action ▸</summary>
         <div style="padding:10px 12px;background:var(--surface2);border-radius:8px;font-size:12px;line-height:1.7;color:var(--text-secondary);margin-top:6px">
-          Markers show your two key triggers: <strong>+5% (move stop to breakeven)</strong> and <strong>+10% (take 50% partial)</strong>.<br>
-          In a trailing-stop system, most closed winners will look small — that's normal. Your big wins are still open, trailing via the 7-day low.<br>
-          <strong>Watch for:</strong> many winners clustered in 0–2% means exits are too early or setups are not running at all.
+          SST closed winners typically look small — your big runners are still open, accumulating via GTT trailing. Marker shows your partial-exit trigger.<br>
+          <strong>Watch for:</strong> most winners in 0–2% = positions closed too early before the GTT fires. Let the GTT do its job — only exit manually on genuine reversal signals.<br>
+          <strong>Healthy pattern:</strong> exits spread across trigger levels with some big outliers (&gt;15%). The outliers are what this system lives on.
         </div>
       </details>
     </div>
@@ -1738,15 +1774,16 @@ tbody tr:hover { filter: brightness(0.97); }
       <details style="margin-top:10px">
         <summary style="font-size:12px;font-weight:600;color:var(--text-muted);cursor:pointer;padding:4px 0;user-select:none">What to look for &amp; action ▸</summary>
         <div style="padding:10px 12px;background:var(--surface2);border-radius:8px;font-size:12px;line-height:1.7;color:var(--text-secondary);margin-top:6px">
-          Amber line = your average actual loss. Most losses should fall in <strong>0–3%</strong> (clean, near stop). A long tail into <strong>5–8% or &gt;8%</strong> = stops overrun or not taken — a process failure.<br>
-          <strong>Action:</strong> If &gt;10% of losses are in the 5%+ buckets, that's your biggest lever to pull. Compare avg actual loss ₹ vs avg init risk ₹ in the KPI cards above.
+          Amber line = your average actual loss. In SST, most exits come from profit signals not firing — losses reflect positions closed on review or reversal signals.<br>
+          <strong>Healthy pattern:</strong> Most losses in 0–5% (small, quick). A tail into 8%+ = position held too long after reversal signal or added size on the wrong setup.<br>
+          <strong>Action:</strong> If &gt;15% of losses exceed 8%, you're letting losers run or adding to losing positions — review those specific trades.
         </div>
       </details>
     </div>
     <!-- Entry Precision proxy -->
     <div class="card card-sm" style="grid-column:span 2">
-      <div class="stat-label">Entry Precision — Risk% as Stop Proximity Proxy</div>
-      <div style="font-size:11px;color:var(--text-muted);margin-bottom:10px">O'Neil rule: enter within 5% of pivot. Init Risk% ≤ 5% = tight entry near pivot. Comparing WR and avg P&L by risk tier.</div>
+      <div class="stat-label">Entry Timing — Quick vs Slow Exits</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-bottom:10px">Positions exited within 10 days (fast exit = profit signal hit or not working) vs held longer (GTT trailing active). Comparing outcomes by hold speed.</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px" id="entry-precision-grid">
         <div style="padding:10px;background:var(--surface2);border-radius:8px">
           <div style="font-size:11px;color:var(--text-muted)">Tight entry (Risk% ≤ 5%)</div>
@@ -1818,19 +1855,19 @@ tbody tr:hover { filter: brightness(0.97); }
       <div style="font-size:12px;font-weight:600;margin-top:8px;line-height:1.6" id="consec-loss-verdict">—</div>
     </div>
     <div class="card">
-      <div class="stat-label">Risk per Trade vs Recommended Tier</div>
+      <div class="stat-label">Position Sizing Consistency</div>
       <div style="display:flex;align-items:baseline;gap:12px;margin-top:6px">
         <div>
           <div style="font-size:22px;font-weight:700" id="sizing-actual">—</div>
-          <div class="stat-sub">Avg actual risk ₹</div>
+          <div class="stat-sub">Avg invested ₹</div>
         </div>
         <div style="color:var(--text-muted);font-size:18px">vs</div>
         <div>
           <div style="font-size:22px;font-weight:700" id="sizing-recommended">—</div>
-          <div class="stat-sub">Recommended tier</div>
+          <div class="stat-sub">Median invested ₹</div>
         </div>
       </div>
-      <div style="font-size:13px;margin-top:10px;color:var(--text-muted)" id="sizing-tier-info">—</div>
+      <div style="font-size:13px;margin-top:10px;color:var(--text-muted)" id="sizing-tier-info">Spread of invested capital per trade — consistent sizing = disciplined allocation</div>
       <div class="stat-badge" style="margin-top:8px" id="sizing-badge">—</div>
     </div>
   </div>
@@ -1951,9 +1988,9 @@ tbody tr:hover { filter: brightness(0.97); }
       <details style="margin-top:6px">
         <summary style="font-size:12px;font-weight:600;color:var(--text-muted);cursor:pointer;padding:4px 0;user-select:none">How to read this chart ▸</summary>
         <div style="padding:10px 12px;background:var(--surface2);border-radius:8px;font-size:12px;line-height:1.7;color:var(--text-secondary);margin-top:6px">
-          <strong>Ideal SST pattern:</strong> Red dots cluster bottom-left (small losses, cut quickly). Green/amber stretch up and right (big gains, held long).<br>
-          <strong>Warning signs:</strong> Red dots spread far right = holding losses too long. Green dots all cramped left = exiting winners too early.<br>
-          <strong>Amber note:</strong> Open positions show their gain <em>so far</em> — not their final outcome. They will move right as they age. These are typically your biggest winners.
+          <strong>Ideal SST pattern:</strong> Red dots cluster bottom-left (small losses, exited quickly via profit signal or review). Green/amber stretch up and right (big gains, held long via GTT trailing).<br>
+          <strong>Warning signs:</strong> Red dots spread far right = you held a losing position far too long. Green dots all cramped left = GTT fired too early or you exited manually before it should.<br>
+          <strong>Amber note:</strong> Open positions show their gain so far — not final. They move right as they age. These are typically your biggest upcoming winners.
         </div>
       </details>
     </div>
@@ -6821,6 +6858,104 @@ function initAnalysisCharts(open, closed) {
     }
   }
 
+  // ── SST Analysis Health Banner ──
+  try {
+    const ahSet = (id, valHtml, subTxt, status) => {
+      const cell = document.getElementById(id);
+      if (cell) cell.className = 'sst-health-cell ' + status;
+      const ve = document.getElementById(id+'-val'); if (ve) ve.innerHTML = valHtml;
+      const se = document.getElementById(id+'-sub'); if (se) se.textContent = subTxt;
+    };
+    const ahIcon = s => s === 'pass' ? '✓ ' : s === 'warn' ? '~ ' : '⚠ ';
+    let ahPass = 0;
+
+    // C1: Exit speed — avg days to exit losing closed trades (fast is good for SST)
+    const closedLossesWithAge = closed.filter(t => (t.finalPlPct||0) < 0 && parseInt(t.age||0) > 0);
+    const avgLossDays = closedLossesWithAge.length > 0
+      ? closedLossesWithAge.reduce((s,t) => s + parseInt(t.age||0), 0) / closedLossesWithAge.length : 0;
+    const c1ok = avgLossDays > 0 && avgLossDays <= 10;
+    const c1part = avgLossDays > 0 && avgLossDays <= 20;
+    const c1s = c1ok ? 'pass' : c1part ? 'warn' : (avgLossDays === 0 ? 'warn' : 'fail');
+    if (c1ok) ahPass++;
+    const c1col = c1ok ? 'green' : c1part ? 'amber' : 'red';
+    ahSet('ah-c1',
+      avgLossDays > 0 ? `<span style="color:var(--${c1col})">${ahIcon(c1s)}${avgLossDays.toFixed(0)}d</span>` : '<span style="color:var(--text-muted)">—</span>',
+      c1ok ? 'Losses exited quickly ✓' : c1part ? 'Borderline — aim for ≤10 days' : 'Holding losses too long',
+      c1s);
+
+    // C2: Avg winner % (profit capture quality)
+    const closedWins = closed.filter(t => (t.finalPlPct||0) > 0);
+    const avgWinPctA = closedWins.length > 0 ? closedWins.reduce((s,t) => s + (t.finalPlPct||0), 0) / closedWins.length : 0;
+    const c2ok = avgWinPctA >= 10;
+    const c2part = avgWinPctA >= 5;
+    const c2s = c2ok ? 'pass' : c2part ? 'warn' : (closedWins.length > 0 ? 'fail' : 'warn');
+    if (c2ok) ahPass++;
+    const c2col = c2ok ? 'green' : c2part ? 'amber' : 'red';
+    ahSet('ah-c2',
+      closedWins.length > 0 ? `<span style="color:var(--${c2col})">${ahIcon(c2s)}+${avgWinPctA.toFixed(1)}%</span>` : '<span style="color:var(--text-muted)">—</span>',
+      c2ok ? 'Strong profit capture ✓' : c2part ? 'Moderate — let winners run' : 'Winners closing too small',
+      c2s);
+
+    // C3: Partial exit discipline (partials taken when eligible)
+    const partialEligible = closed.filter(t => (t.finalPlPct||0) >= (_cfg.targetPct||7) || (t.partialQty||0) > 0);
+    const partialTaken = partialEligible.filter(t => (t.partialQty||0) > 0);
+    const partialPct = partialEligible.length > 0 ? partialTaken.length / partialEligible.length * 100 : null;
+    const c3ok = partialPct !== null && partialPct >= 70;
+    const c3part = partialPct !== null && partialPct >= 40;
+    const c3s = partialPct === null ? 'warn' : c3ok ? 'pass' : c3part ? 'warn' : 'fail';
+    if (c3ok) ahPass++;
+    const c3col = c3ok ? 'green' : c3part ? 'amber' : 'red';
+    ahSet('ah-c3',
+      partialPct !== null ? `<span style="color:var(--${c3col})">${ahIcon(c3s)}${partialPct.toFixed(0)}%</span>` : '<span style="color:var(--text-muted)">N/A</span>',
+      c3ok ? `${partialTaken.length}/${partialEligible.length} eligible ✓` : partialPct !== null ? `${partialTaken.length}/${partialEligible.length} eligible` : 'No eligible trades yet',
+      c3s);
+
+    // C4: Open runners (30d+ positions — signs of big winners brewing)
+    const openRunners30 = open.filter(t => parseInt(t.age||0) >= 30);
+    const openRunnersProfitable = openRunners30.filter(t => (t.plPct||0) > 0);
+    const c4ok = openRunners30.length >= 2;
+    const c4s = c4ok ? 'pass' : openRunners30.length >= 1 ? 'warn' : 'warn';
+    if (c4ok) ahPass++;
+    ahSet('ah-c4',
+      `<span style="color:var(--${c4ok ? 'green' : 'amber'})">${ahIcon(c4s)}${openRunners30.length}</span>`,
+      `${openRunnersProfitable.length}/${openRunners30.length} profitable runners`,
+      c4s);
+
+    // C5: Open portfolio health — % profitable
+    const openProfA = open.filter(t => (t.plPct||0) > 0).length;
+    const openProfPctA = open.length > 0 ? openProfA / open.length * 100 : 0;
+    const c5ok = open.length > 0 && openProfPctA >= 50;
+    const c5part = open.length > 0 && openProfPctA >= 30;
+    const c5s = open.length === 0 ? 'warn' : c5ok ? 'pass' : c5part ? 'warn' : 'fail';
+    if (c5ok) ahPass++;
+    const c5col = c5ok ? 'green' : c5part ? 'amber' : 'red';
+    ahSet('ah-c5',
+      open.length > 0 ? `<span style="color:var(--${c5col})">${ahIcon(c5s)}${openProfA}/${open.length}</span>` : '<span style="color:var(--text-muted)">No open</span>',
+      open.length > 0 ? `${openProfPctA.toFixed(0)}% green · ${c5ok ? 'portfolio healthy ✓' : 'review laggards'}` : 'No positions',
+      c5s);
+
+    const ahScoreEl = document.getElementById('ah-score-label');
+    const ahVerdictEl = document.getElementById('ah-verdict');
+    const ahTotal = 5;
+    const ahCol = ahPass >= 4 ? 'var(--green)' : ahPass >= 3 ? 'var(--amber)' : 'var(--red)';
+    if (ahScoreEl) ahScoreEl.innerHTML = `<span style="font-weight:700;color:${ahCol}">${ahPass}/${ahTotal} checks passing</span>`;
+    if (ahVerdictEl) {
+      if (ahPass === 5) {
+        ahVerdictEl.innerHTML = '<span style="color:var(--green)">✓ <strong>All analysis checks green.</strong> Losses exited fast, winners captured well, partials taken, runners brewing, portfolio healthy.</span>';
+      } else if (ahPass >= 3) {
+        const fixes = [];
+        if (!c1ok) fixes.push(`exit losses faster (currently avg ${avgLossDays.toFixed(0)}d — target ≤10d)`);
+        if (!c2ok) fixes.push(`let winners run longer (avg win ${avgWinPctA.toFixed(1)}% — target ≥10%)`);
+        if (!c3ok && partialPct !== null) fixes.push(`take partials more consistently (${partialPct.toFixed(0)}% — target ≥70%)`);
+        if (!c4ok) fixes.push('build more 30d+ open runners');
+        if (!c5ok && open.length > 0) fixes.push('review underperforming open positions');
+        ahVerdictEl.innerHTML = `<span style="color:var(--amber)">⚡ Focus areas: ${fixes.join(' · ')}</span>`;
+      } else {
+        ahVerdictEl.innerHTML = '<span style="color:var(--red)">⚠ Multiple checks failing. Review exit discipline, partial taking, and open portfolio health.</span>';
+      }
+    }
+  } catch(e) { console.error('Analysis health banner error:', e); }
+
   // Open positions by hold age
   const openByAgeEl = document.getElementById('open-by-age-body');
   if (openByAgeEl && open.length > 0) {
@@ -7721,21 +7856,30 @@ function initAnalysisCharts(open, closed) {
   const medianWin = sortedWinPct.length > 0 ? sortedWinPct[Math.floor(sortedWinPct.length / 2)] : 0;
 
   const fmtRs2 = v => '₹' + Math.round(Math.abs(v)).toLocaleString('en-IN');
-  tmSet('tm-avg-risk', avgInitRiskRs > 0 ? fmtRs2(avgInitRiskRs) : '—');
-  tmSet('tm-avg-risk-sub', 'avg planned ₹ risk per trade');
+  // Avg invested ₹ per closed trade (position size, not risk ₹)
+  const withInvested = tmClosed.filter(t => t.entryPrice && t.qty);
+  const avgInvested = withInvested.length > 0
+    ? withInvested.reduce((s,t) => s + (t.entryPrice||0) * (t.qty||0), 0) / withInvested.length : 0;
+  tmSet('tm-avg-risk', avgInvested > 0 ? fmtRs2(avgInvested) : (avgInitRiskRs > 0 ? fmtRs2(avgInitRiskRs) : '—'));
+  tmSet('tm-avg-risk-sub', avgInvested > 0 ? 'avg capital per trade (entry × qty)' : 'avg init risk ₹ per trade');
   tmSet('tm-avg-loss', avgActualLossRs > 0 ? fmtRs2(avgActualLossRs) : '—');
-  tmSet('tm-avg-loss-sub', 'avg ₹ lost on stopped-out trades');
+  tmSet('tm-avg-loss-sub', `avg ₹ lost · ${tmLosers.length} losing trades`);
 
+  // Loss vs winner ratio (avg loss% / avg win%) — SST target < 0.5
+  const avgWinPctTm  = tmWinners.length > 0 ? tmWinners.reduce((s,t) => s + (t.finalPlPct||0), 0) / tmWinners.length : 0;
+  const avgLossPctTm = avgActualLoss;
+  const lossWinRatio = avgWinPctTm > 0 ? avgLossPctTm / avgWinPctTm : 0;
   const slippageEl = document.getElementById('tm-slippage');
   if (slippageEl) {
-    // negative slippage = you lose LESS than planned = green
-    slippageEl.textContent = (slippageRs >= 0 ? '+' : '−') + fmtRs2(Math.abs(slippageRs));
-    slippageEl.style.color = slippageRs <= 0 ? 'var(--green)' : slippageRs <= 300 ? 'var(--amber)' : 'var(--red)';
+    slippageEl.textContent = lossWinRatio > 0 ? lossWinRatio.toFixed(2) + '×' : '—';
+    slippageEl.style.color = lossWinRatio <= 0.5 ? 'var(--green)' : lossWinRatio <= 0.8 ? 'var(--amber)' : 'var(--red)';
   }
-  tmSet('tm-slippage-sub', slippageRs <= 0 ? 'avg ₹ saved vs planned stop' : 'avg ₹ over planned per stop');
+  tmSet('tm-slippage-sub', lossWinRatio > 0
+    ? `${avgLossPctTm.toFixed(1)}% avg loss ÷ ${avgWinPctTm.toFixed(1)}% avg win${lossWinRatio <= 0.5 ? ' ✓' : ''}`
+    : 'Need both wins and losses');
   tmSet('tm-median-win', medianWin > 0 ? '+' + medianWin.toFixed(2) + '%' : '—');
 
-  // ── Breakeven stop insight — uses BE_TRIGGER and PARTIAL_TRIGGER from Config ──
+  // ── Profit Taking Analysis — uses BE_TRIGGER and PARTIAL_TRIGGER from Config ──
   const beInsightEl = document.getElementById('tm-be-insight');
   if (beInsightEl && tmWinners.length > 0) {
     const above5  = tmWinners.filter(t => t.finalPlPct >= BE_TRIGGER).length;
@@ -8564,25 +8708,25 @@ function renderProjections(open, closed) {
     ? `Need 30+ closed trades for reliable projection (${closed.length} so far)`
     : `${effectiveRate} trades/mo × ₹${Math.round(Math.abs(avgCombinedRsPerTrade)).toLocaleString('en-IN')} avg edge = annual run rate`);
 
-  // ── Full 0.8% risk projection ──
-  // Scale factor = riskCap / currentTier. Same R-expectancy, bigger position size.
-  const riskCapRsProj = _ic * 0.008;
-  const currentTierProj = Math.min(1000 + Math.floor(closed.length / 100) * 500, riskCapRsProj);
-  const scaleFactor = currentTierProj > 0 ? riskCapRsProj / currentTierProj : 1;
-  const fullRiskEdge = avgCombinedRsPerTrade * scaleFactor;
-  const projFullRisk = effectiveRate * 12 * fullRiskEdge;
-  // Max drawdown estimate: scale current realised max DD in ₹ by same factor
-  const currentRiskedTotal = closed.filter(t => (t.initRiskRs||0) > 0).reduce((s,t) => s + t.initRiskRs, 0);
-  const avgRiskPerTrade = closed.length > 0 ? currentRiskedTotal / closed.length : currentTierProj;
+  // ── "If WR improves to 40%" projection ──
+  // Same trade velocity and avg win/loss size, but WR raised to 40%
+  const closedWinsCount = closed.filter(t => (t.finalPlPct||0) > 0).length;
+  const closedLossCount = closed.filter(t => (t.finalPlPct||0) < 0).length;
+  const avgWinRsProj  = closedWinsCount > 0 ? closed.filter(t=>(t.finalPlPct||0)>0).reduce((s,t)=>s+(t.finalPl||0),0)/closedWinsCount : 0;
+  const avgLossRsProj = closedLossCount > 0 ? Math.abs(closed.filter(t=>(t.finalPlPct||0)<0).reduce((s,t)=>s+(t.finalPl||0),0)/closedLossCount) : 0;
+  const improvedWR = 0.40;
+  const improvedEdge = (improvedWR * avgWinRsProj) - ((1 - improvedWR) * avgLossRsProj);
+  const projFullRisk = effectiveRate * 12 * improvedEdge;
+  const currentActualWR = closed.length > 0 ? closedWinsCount / closed.length : 0;
+  const wrGap = (improvedWR - currentActualWR) * 100;
   set('proj-full-risk-pl', smallSampleProj ? '⚠ Too early' : fmtRs(projFullRisk));
   setCol('proj-full-risk-pl', smallSampleProj ? 'var(--amber)' : projFullRisk >= 0 ? 'var(--amber)' : 'var(--red)');
-  const scaleStr = scaleFactor > 1 ? `${scaleFactor.toFixed(1)}× current size` : 'already at cap';
   set('proj-full-risk-sub', smallSampleProj
-    ? `Only ${closed.length} closed trades — projection unreliable. Re-check at 30+ trades.`
-    : `${effectiveRate} trades/mo × ₹${Math.round(Math.abs(fullRiskEdge)).toLocaleString('en-IN')} edge (${scaleStr})`);
+    ? `Only ${closed.length} closed trades — projection unreliable`
+    : `At 40% WR (currently ${(currentActualWR*100).toFixed(0)}% — need ${wrGap.toFixed(0)}pp improvement)`);
   set('proj-full-risk-note', smallSampleProj
-    ? `Cap: ₹${Math.round(riskCapRsProj).toLocaleString('en-IN')}/trade (0.8% of ₹${Math.round(_ic/100000)}L) — will project when sample is adequate`
-    : `Current risk: ₹${Math.round(currentTierProj).toLocaleString('en-IN')}/trade · Cap: ₹${Math.round(riskCapRsProj).toLocaleString('en-IN')}/trade · Max drawdown also scales ~${scaleFactor.toFixed(1)}×`);
+    ? 'Re-check at 30+ trades'
+    : `Same velocity + position size · only improved selectivity · avg win ₹${Math.round(avgWinRsProj).toLocaleString('en-IN')} · avg loss ₹${Math.round(avgLossRsProj).toLocaleString('en-IN')}`);
 
   // ── 2. At Lock-In / Target (SST) ──
   const atTarget = open.filter(t => (t.plPct||0) >= PARTIAL_TRIGGER);
@@ -8591,36 +8735,17 @@ function renderProjections(open, closed) {
   set('proj-partial-count', atTarget.length + ' positions');
   set('proj-partial-detail', `≥${PARTIAL_TRIGGER}% gain — trailing SL active, profit protected`);
 
-  // ── 3. Risk Per Trade (SST) ──
-  // Use actual avg initRiskRs from closed trades if available; otherwise from open
-  const riskCapRs = _ic * 0.008;
-  const closedWithRisk = closed.filter(t => (t.initRiskRs||0) > 0);
-  const openWithRisk   = open.filter(t => (t.initRiskRs||0) > 0);
-  const actualAvgRisk  = closedWithRisk.length > 0
-    ? closedWithRisk.reduce((s,t) => s+t.initRiskRs, 0) / closedWithRisk.length
-    : openWithRisk.length > 0
-      ? openWithRisk.reduce((s,t) => s+t.initRiskRs, 0) / openWithRisk.length
-      : 0;
-  const currentTier = actualAvgRisk > 0 ? actualAvgRisk : Math.min(1000 + Math.floor(closed.length/100)*500, riskCapRs);
-  const riskAsCapPct = _ic > 0 ? currentTier / _ic * 100 : 0;
-  const atCap = currentTier >= riskCapRs;
-  // Next milestone: when does 0.8% cap kick in?
-  const nextTierAt = Math.ceil((closed.length + 1) / 100) * 100;
-  const tradesToNext = nextTierAt - closed.length;
-  const nextTier = Math.min(1000 + Math.floor(nextTierAt / 100) * 500, riskCapRs);
-
-  set('proj-tier-current', '₹' + Math.round(currentTier).toLocaleString('en-IN'));
-  if (atCap) {
-    set('proj-tier-next', 'At cap');
-    set('proj-tier-sub', `Max = 0.8% of ₹${Math.round(_ic/100000)}L capital`);
-    setCol('proj-tier-next', 'var(--green)');
-  } else {
-    set('proj-tier-next', '₹' + Math.round(nextTier).toLocaleString('en-IN'));
-    set('proj-tier-sub', actualAvgRisk > 0
-      ? `Avg actual risk · cap = ₹${Math.round(riskCapRs).toLocaleString('en-IN')} (0.8%)`
-      : `${tradesToNext} more closed trades to unlock`);
-    setCol('proj-tier-next', 'var(--amber)');
-  }
+  // ── 3. Open Portfolio Quality (SST) ──
+  const openProfCount = open.filter(t => (t.plPct||0) > 0).length;
+  const openProfPct = open.length > 0 ? openProfCount / open.length * 100 : 0;
+  const openTotalMTM = open.reduce((s,t) => s + (t.notionalPl||0), 0);
+  set('proj-tier-current', `${openProfCount}/${open.length}`);
+  const tierCol = openProfPct >= 60 ? 'var(--green)' : openProfPct >= 40 ? 'var(--amber)' : 'var(--red)';
+  const tierEl = document.getElementById('proj-tier-current');
+  if (tierEl) tierEl.style.color = tierCol;
+  set('proj-tier-next', fmtRs(openTotalMTM));
+  setCol('proj-tier-next', openTotalMTM >= 0 ? 'var(--green)' : 'var(--red)');
+  set('proj-tier-sub', `${openProfPct.toFixed(0)}% positions profitable · combined MTM`);
 
   // ── 4. Open Portfolio Scenarios ──
   // Bear: trailing stop at lockInPct% below CMP (6% trailing stop rule)
