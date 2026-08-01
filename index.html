@@ -819,6 +819,14 @@ tbody tr:hover { filter: brightness(0.97); }
       </div>
       <div style="font-size:11px;color:var(--text-muted);margin-top:4px" id="dash-realised-breakdown">—</div>
       <div class="stat-badge badge-green" id="dash-pv-badge" style="margin-top:8px">—</div>
+      <div id="dash-projection" style="display:none;margin-top:10px;padding:8px 10px;border-radius:8px;background:var(--surface2);border:1px solid var(--border)">
+        <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-bottom:4px">📈 12-Month Projection</div>
+        <div style="display:flex;align-items:baseline;gap:6px;flex-wrap:wrap">
+          <span style="font-size:18px;font-weight:800;color:var(--accent)" id="dash-proj-value">—</span>
+          <span style="font-size:11px;color:var(--text-muted)" id="dash-proj-return">—</span>
+        </div>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:3px" id="dash-proj-basis">—</div>
+      </div>
     </div>
 
     <!-- Open Positions -->
@@ -2835,6 +2843,65 @@ function renderDashboard(data, cfg) {
       ? '★ New Equity High · ' + fmt(portfolioValue)
       : (totalCombinedPl >= 0 ? '▲ +' : '▼ ') + fmt(Math.abs(totalCombinedPl)) + ' combined';
   }
+
+  // 12-Month Projection — based on annualised growth rate of combined equity curve
+  (function() {
+    const projEl = document.getElementById('dash-projection');
+    if (!projEl) return;
+    try {
+      // Build combined equity timeline: closed P&L by date + open MTM at end
+      const sortedCl = [...closed].filter(t => t.closeDate).sort((a,b) => parseDate(a.closeDate)-parseDate(b.closeDate));
+      if (sortedCl.length < 3) { projEl.style.display = 'none'; return; }
+
+      // Use last 90 days of equity curve to estimate recent run rate (more responsive than all-time)
+      const now = new Date();
+      const cutoff90 = new Date(now); cutoff90.setDate(cutoff90.getDate() - 90);
+      const recent = sortedCl.filter(t => parseDate(t.closeDate) >= cutoff90);
+
+      // Fall back to all-time if fewer than 5 trades in last 90 days
+      const sample = recent.length >= 5 ? recent : sortedCl;
+      const firstDate = parseDate(sample[0].closeDate);
+      const lastDate  = parseDate(sample[sample.length - 1].closeDate);
+      const spanDays  = Math.max((lastDate - firstDate) / 86400000, 1);
+
+      // Cumulative P&L at start and end of sample window
+      let runningPl = 0;
+      let plAtStart = 0, plAtEnd = 0;
+      sortedCl.forEach(t => {
+        const td = parseDate(t.closeDate);
+        if (td < firstDate) runningPl += (t.finalPl||0);
+      });
+      plAtStart = runningPl;
+      sample.forEach(t => { runningPl += (t.finalPl||0); });
+      plAtEnd = runningPl;
+
+      // Open MTM at end
+      const openMTM = open.reduce((s,t) => s + (t.notionalPl||0), 0);
+      const combinedAtEnd   = initialCapital + plAtEnd + openMTM;
+      const combinedAtStart = initialCapital + plAtStart;
+
+      if (combinedAtStart <= 0) { projEl.style.display = 'none'; return; }
+
+      // Daily growth rate → annualise → project 12 months from current portfolio value
+      const dailyRate = Math.pow(combinedAtEnd / combinedAtStart, 1 / spanDays) - 1;
+      const annualRate = Math.pow(1 + dailyRate, 365) - 1;
+      const projectedValue = portfolioValue * (1 + annualRate);
+      const projectedGain  = projectedValue - portfolioValue;
+
+      const fmtV = v => '₹' + Math.round(v).toLocaleString('en-IN');
+      const fmtP = v => (v >= 0 ? '+' : '') + (v * 100).toFixed(1) + '%';
+      const isPos = annualRate >= 0;
+      const label = recent.length >= 5 ? 'based on last 90 days' : 'based on all-time CAGR';
+
+      const projValEl = document.getElementById('dash-proj-value');
+      const projRetEl = document.getElementById('dash-proj-return');
+      const projBasisEl = document.getElementById('dash-proj-basis');
+      if (projValEl) { projValEl.textContent = fmtV(projectedValue); projValEl.style.color = isPos ? 'var(--green)' : 'var(--red)'; }
+      if (projRetEl) projRetEl.textContent = fmtP(annualRate) + ' annualised · ' + fmtV(projectedGain) + ' gain';
+      if (projBasisEl) projBasisEl.textContent = label + ' · if current pace continues';
+      projEl.style.display = 'block';
+    } catch(e) { const projEl2 = document.getElementById('dash-projection'); if (projEl2) projEl2.style.display = 'none'; }
+  })();
 
   // Card 2: Combined P&L (moved to prime position)
   const dashPlEl2 = document.getElementById('dash-realised-pl');
