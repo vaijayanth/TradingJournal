@@ -665,7 +665,8 @@ tbody tr:hover { filter: brightness(0.97); }
   #dash-open, #dash-at-target { font-size: 22px !important; }
   /* Dashboard: Top Movers grid — stack on mobile */
   .dash-movers-grid { grid-template-columns: 1fr !important; }
-  /* Dashboard: calendar already stacks vertically — no override needed */
+  /* Dashboard: 3-month calendar — single column on mobile */
+  #dash-cal-mini { grid-template-columns: 1fr !important; }
   /* Dashboard: Open positions inner grid — let 28px numbers shrink */
   #dash-open, #dash-at-target { font-size: 22px !important; }
 }
@@ -925,7 +926,7 @@ tbody tr:hover { filter: brightness(0.97); }
       <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em">Recent P&amp;L Calendar</div>
       <span onclick="showPage('performance',document.querySelectorAll('.nav-tab')[1]);setTimeout(()=>document.getElementById('cal-grid')&&document.getElementById('cal-grid').scrollIntoView({behavior:'smooth'}),300)" style="font-size:11px;color:var(--text-muted);cursor:pointer">Full year ▸</span>
     </div>
-    <div id="dash-cal-mini" style="display:flex;flex-direction:column;gap:20px"></div>
+    <div id="dash-cal-mini" style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px"></div>
     <div id="dash-cal-legend" style="display:flex;align-items:center;gap:10px;margin-top:8px;flex-wrap:wrap">
       <span style="font-size:10px;color:var(--text-muted)">Less</span>
       <span style="display:inline-block;width:12px;height:12px;border-radius:2px;background:#BBF7D0"></span>
@@ -5306,9 +5307,8 @@ function renderDashCalendar(closed) {
     const plFmt = (monthPl >= 0 ? '+₹' : '-₹') + Math.abs(Math.round(monthPl)).toLocaleString('en-IN');
     const plColor = monthPl >= 0 ? 'var(--green)' : 'var(--red)';
 
-    let cellsHtml = dayHeaders.map(d => `<div style="font-size:9px;color:var(--text-muted);text-align:center;font-weight:600;padding-bottom:3px">${d}</div>`).join('');
+    let cellsHtml = dayHeaders.map(d => `<div style="font-size:7px;color:var(--text-muted);text-align:center;font-weight:600;padding-bottom:2px">${d}</div>`).join('');
     for (let e = 0; e < firstDay; e++) cellsHtml += `<div></div>`;
-    const isDark2 = document.documentElement.getAttribute('data-theme') === 'dark' || (!document.documentElement.getAttribute('data-theme') && window.matchMedia('(prefers-color-scheme:dark)').matches);
     for (let day = 1; day <= totalDays; day++) {
       const entry = dayMap[`${year}-${month}-${day}`];
       if (entry) {
@@ -5316,20 +5316,24 @@ function renderDashCalendar(closed) {
         let bg;
         if (entry.pl >= 0) bg = ratio > 0.66 ? '#10B981' : ratio > 0.33 ? '#6EE7B7' : '#BBF7D0';
         else               bg = ratio > 0.66 ? '#EF4444' : ratio > 0.33 ? '#FCA5A5' : '#FECACA';
+        const isDark2 = document.documentElement.getAttribute('data-theme') === 'dark' || (!document.documentElement.getAttribute('data-theme') && window.matchMedia('(prefers-color-scheme:dark)').matches);
         if (isDark2 && entry.pl >= 0) bg = ratio > 0.66 ? '#047857' : ratio > 0.33 ? '#065F46' : '#064E3B';
         if (isDark2 && entry.pl < 0)  bg = ratio > 0.66 ? '#991B1B' : ratio > 0.33 ? '#7F1D1D' : '#450A0A';
+        const plCompact = (entry.pl >= 0 ? '+' : '-') + (Math.abs(entry.pl) >= 100000 ? (Math.abs(entry.pl)/1000).toFixed(0)+'k' : Math.abs(entry.pl) >= 10000 ? (Math.abs(entry.pl)/1000).toFixed(1)+'k' : Math.round(Math.abs(entry.pl)));
         const tip = `${months[month]} ${day}: ${entry.pl>=0?'+':''}₹${Math.round(Math.abs(entry.pl)).toLocaleString('en-IN')} · ${entry.count} trade${entry.count>1?'s':''}`;
-        cellsHtml += `<div title="${tip}" style="aspect-ratio:1;min-height:28px;border-radius:4px;background:${bg};cursor:default"></div>`;
+        cellsHtml += `<div title="${tip}" style="aspect-ratio:1;border-radius:2px;background:${bg};display:flex;align-items:center;justify-content:center;cursor:default;position:relative">
+          <span style="font-size:6px;font-weight:800;color:rgba(0,0,0,0.55);line-height:1">${plCompact}</span>
+        </div>`;
       } else {
-        cellsHtml += `<div style="aspect-ratio:1;min-height:28px;border-radius:4px;background:var(--surface2)"></div>`;
+        cellsHtml += `<div style="aspect-ratio:1;border-radius:2px;background:var(--surface2)"></div>`;
       }
     }
     return `<div>
-      <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:6px">
-        <span style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.04em;color:var(--text-secondary)">${months[month]} ${year}</span>
-        <span style="font-size:16px;font-weight:800;color:${plColor}">${plFmt}</span>
+      <div style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:4px">
+        <span style="font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-secondary)">${months[month]} ${year}</span>
+        <span style="font-size:11px;font-weight:700;color:${plColor}">${plFmt}</span>
       </div>
-      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:5px">${cellsHtml}</div>
+      <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:2px">${cellsHtml}</div>
     </div>`;
   }).join('');
 }
