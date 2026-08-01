@@ -2844,8 +2844,8 @@ function renderDashboard(data, cfg) {
       : (totalCombinedPl >= 0 ? '▲ +' : '▼ ') + fmt(Math.abs(totalCombinedPl)) + ' combined';
   }
 
-  // 12-Month Projection — average monthly combined P&L × 12
-  // Uses calendar months with ≥1 closed trade. Falls back to fewer months if data is sparse.
+  // 12-Month Projection — rolling monthly simulation with risk-tier step-ups
+  // Every 100 closed trades the risk per trade increases by ₹5,000, scaling P&L proportionally.
   (function() {
     const projEl = document.getElementById('dash-projection');
     if (!projEl) return;
@@ -2853,44 +2853,88 @@ function renderDashboard(data, cfg) {
       const sortedCl = [...closed].filter(t => t.closeDate).sort((a,b) => parseDate(a.closeDate)-parseDate(b.closeDate));
       if (sortedCl.length < 3) { projEl.style.display = 'none'; return; }
 
-      // Bucket closed P&L by YYYY-MM
-      const monthMap = {};
+      // ── Step 1: bucket by calendar month ──────────────────────────────────
+      const monthMap = {}; // key → { pl, count }
       sortedCl.forEach(t => {
         const d = parseDate(t.closeDate);
         if (!d || d.getFullYear() < 2000) return;
         const key = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
-        monthMap[key] = (monthMap[key] || 0) + (t.finalPl || 0);
+        if (!monthMap[key]) monthMap[key] = { pl: 0, count: 0 };
+        monthMap[key].pl    += (t.finalPl || 0);
+        monthMap[key].count += 1;
       });
 
-      const monthKeys = Object.keys(monthMap).sort();
-      // Skip the current (incomplete) calendar month so it doesn't deflate the average
       const nowKey = new Date().getFullYear() + '-' + String(new Date().getMonth()+1).padStart(2,'0');
-      const completeMonths = monthKeys.filter(k => k < nowKey);
-
-      // Use last 6 complete months if available, else whatever we have (min 1)
+      const completeMonths = Object.keys(monthMap).sort().filter(k => k < nowKey);
       const useMonths = completeMonths.slice(-6);
       if (useMonths.length === 0) { projEl.style.display = 'none'; return; }
 
-      const avgMonthlyClosedPl = useMonths.reduce((s,k) => s + monthMap[k], 0) / useMonths.length;
+      // ── Step 2: baseline averages from the rolling 6-month window ─────────
+      const totalPl    = useMonths.reduce((s,k) => s + monthMap[k].pl,    0);
+      const totalTrades = useMonths.reduce((s,k) => s + monthMap[k].count, 0);
+      const avgTradesPerMonth = totalTrades / useMonths.length;        // e.g. 8.5 trades/month
+      const avgPlPerTrade     = totalTrades > 0 ? totalPl / totalTrades : 0; // avg ₹ P&L per closed trade
 
-      // Open MTM is a one-time unrealised stock — don't extrapolate it monthly.
-      // Projection = closed monthly run rate × 12 added to current combined portfolio value.
-      const projectedGain  = avgMonthlyClosedPl * 12;
-      const projectedValue = portfolioValue + projectedGain;
+      // ── Step 3: current risk tier ─────────────────────────────────────────
+      // Risk tier: ₹1,000 base + ₹5,000 per 100 closed trades (user's progression rule)
+      const RISK_STEP = 5000;
+      const RISK_BASE = 1000;
+      const riskTier = n => RISK_BASE + Math.floor(n / 100) * RISK_STEP;
+      const currentRisk = riskTier(closed.length);
+
+      // ── Step 4: simulate 12 months forward ────────────────────────────────
+      // Each month: trades close at avg rate, cumulative count grows,
+      // risk tier may step up → scale P&L proportionally at the new tier.
+      let simTradeCount = closed.length;
+      let projectedGain = 0;
+      let tierStepMonths = []; // months where a tier upgrade happens
+
+      for (let m = 0; m < 12; m++) {
+        // Trades this month — use fractional running count to detect tier crossings mid-month
+        const tradesThisMonth = avgTradesPerMonth;
+        let remaining = tradesThisMonth;
+        let monthPl = 0;
+
+        // Check if a 100-trade milestone is crossed within this month
+        while (remaining > 0) {
+          const nextMilestone = Math.ceil((simTradeCount + 0.001) / 100) * 100;
+          const tradesToMilestone = nextMilestone - simTradeCount;
+
+          if (tradesToMilestone >= remaining) {
+            // No tier change this slice
+            const tierMultiplier = riskTier(simTradeCount) / currentRisk;
+            monthPl += remaining * avgPlPerTrade * tierMultiplier;
+            simTradeCount += remaining;
+            remaining = 0;
+          } else {
+            // Complete trades up to milestone at current tier
+            const tierMultiplier = riskTier(simTradeCount) / currentRisk;
+            monthPl += tradesToMilestone * avgPlPerTrade * tierMultiplier;
+            simTradeCount += tradesToMilestone;
+            remaining -= tradesToMilestone;
+            tierStepMonths.push(m + 1); // 1-indexed month
+          }
+        }
+        projectedGain += monthPl;
+      }
+
+      const projectedValue  = portfolioValue + projectedGain;
       const projectedRetPct = initialCapital > 0 ? projectedGain / initialCapital * 100 : 0;
+      const tierUpsCount    = tierStepMonths.length;
+      const isPos = projectedGain >= 0;
 
       const fmtV = v => '₹' + Math.round(Math.abs(v)).toLocaleString('en-IN');
       const fmtP = v => (v >= 0 ? '+' : '-') + Math.abs(v).toFixed(1) + '%';
-      const isPos = projectedGain >= 0;
-      const nMonths = useMonths.length;
-      const label = 'avg ' + (isPos ? '+' : '-') + fmtV(avgMonthlyClosedPl) + '/mo closed P&L · last ' + nMonths + ' month' + (nMonths > 1 ? 's' : '');
 
-      const projValEl  = document.getElementById('dash-proj-value');
-      const projRetEl  = document.getElementById('dash-proj-return');
+      const projValEl   = document.getElementById('dash-proj-value');
+      const projRetEl   = document.getElementById('dash-proj-return');
       const projBasisEl = document.getElementById('dash-proj-basis');
       if (projValEl)  { projValEl.textContent = fmtV(projectedValue); projValEl.style.color = isPos ? 'var(--green)' : 'var(--red)'; }
-      if (projRetEl)  projRetEl.textContent = fmtP(projectedRetPct) + ' on capital · ' + (isPos ? '+' : '-') + fmtV(projectedGain) + ' gain';
-      if (projBasisEl) projBasisEl.textContent = label;
+      if (projRetEl)  projRetEl.textContent = fmtP(projectedRetPct) + ' on capital · ' + (isPos?'+':'-') + fmtV(projectedGain) + ' gain';
+      if (projBasisEl) projBasisEl.textContent =
+        Math.round(avgTradesPerMonth) + ' trades/mo · ' + (isPos?'+':'-') + fmtV(avgPlPerTrade) + '/trade avg · '
+        + useMonths.length + '-mo base'
+        + (tierUpsCount > 0 ? ' · ' + tierUpsCount + ' tier-up' + (tierUpsCount>1?'s':'') + ' included' : '');
       projEl.style.display = 'block';
     } catch(e) { const projEl2 = document.getElementById('dash-projection'); if (projEl2) projEl2.style.display = 'none'; }
   })();
