@@ -6,20 +6,24 @@ Connected to a Google Sheet via Apps Script as a JSON middleware.
 
 ## SYSTEM DESIGN — READ BEFORE SUGGESTING ANYTHING
 
-This is a **Minervini/Bonde/Zanger momentum breakout system** with a deliberate asymmetric outcome structure:
+This is an **SST (Sharegenius Swing Trading) momentum system** — NOT a Minervini fixed-stop system. Key distinction confirmed by user:
 
-- **Losses are taken FAST and SMALL** — stops are mechanical and hit frequently. The closed trade log is dominated by small losses. This is by design, not a problem.
-- **Winners are held OPEN and RUN** — profitable trades stay open for weeks/months, trailing the 7-day low. The real gains sit in `notionalPl` (col Y), not in closed P&L.
+- **NO fixed stop loss per trade** — risk is managed through position count (spreading across many positions) and quick profit taking. Do NOT suggest stop-loss slippage metrics or "did you take your stop?" analysis.
+- **GTT (Good Till Triggered) trailing orders** are used to trail and exit positions — not manual stops. Winners are held via GTT trailing; exits happen when GTT fires or on manual review for reversal signals.
+- **Losses = positions closed via profit signal not firing, reversal, or manual review** — not a stop being hit.
+- **Winners are held OPEN and RUN** — profitable trades stay open for weeks/months accumulating via GTT trailing. The real gains sit in `notionalPl` (col Y), not in closed P&L.
 - **True performance = realised + unrealised combined** — closed-only P&L always looks negative. Never judge system health from closed trades alone.
 - **A "loss streak" on closed trades is NORMAL and MEANINGLESS** — do not suggest loss streak banners or closed-trade streak alerts. They will always be red and tell the user nothing.
 - **The right health checks for this system are:**
-  1. Are open positions profitable / risk-free? (open portfolio health)
+  1. Are open positions profitable? (open portfolio health — % profitable)
   2. Is avg closed loss size staying small (< 7%)?
-  3. Are stops being taken at the stop, not past it? (slippage)
-  4. Are winners still running (HA green, above 21 EMA)?
-  5. Days since last closed winner (system producing winners at all?)
+  3. Are winners held long enough (30+ days)?  
+  4. Is the loss:winner ratio < 0.5 (avg loss% ÷ avg win%)?
+  5. Are partials being taken when eligible?
+  6. Are there 30d+ open runners accumulating gains?
 - **Never suggest metrics calibrated for balanced win/loss systems** (e.g., "your win rate is only 30% — this is bad"). For this system 30-40% WR with large winners is healthy.
-- **Profit Factor and R-Multiple are the correct system quality gauges**, not win rate alone.
+- **Profit Factor and Win:Loss ratio are the correct system quality gauges**, not win rate alone.
+- **"Init Risk ₹" (col K) / "Init Risk %" (col L)** — these columns may be partially populated or irrelevant for SST. Never assume every trade has initRiskRs. Position size metric = `entryPrice × qty`, not initRiskRs.
 
 ## Repo & Branch
 - Repo: `vaijayanth/TradingJournal`
@@ -76,28 +80,39 @@ This is a **Minervini/Bonde/Zanger momentum breakout system** with a deliberate 
 - **portfolioValue (AK26)**: realised only — does NOT include open position unrealized P&L. True combined P&L = `(portfolioValue - initialCapital) + sum(notionalPl)` = `totalFinalPl + totalUnrealisedPl`.
 - **Date format from Apps Script**: `dd-MMM-yyyy` (e.g., `21-Apr-2026`) — NOT parseable by `new Date()`. Use `parseDate()` helper everywhere.
 
-## Trading Strategy (IMPORTANT — Minervini momentum style)
+## Trading Strategy (IMPORTANT — SST momentum style)
 - **Entry (4 setup types)**:
   1. Smooth breakout of 52-week high → `"Breakout"`
   2. Generic pullback entry → `"Pullback"`
   3. Clear pullback to 21 EMA on an existing breakout stock → `"21 EMA Pullback"`
   4. Tight pullback to 10 EMA on a strongly trending stock → `"10 EMA Pullback"`
-- **Stop Loss — Two-Phase System:**
-  - **Phase 1 (profit < +7%)**: Hold initial stop loss exactly as defined at entry (col J = initial risk stop from col K/L). Do NOT trail via 7-day low in Phase 1 — the stop stays fixed at the original risk-defined level until the 7% threshold is hit.
-  - **Phase 2 (profit ≥ +7%)**: Move col J ONE TIME to entry price (breakeven). Stop does not move again automatically. After breakeven, watch for stock to find support near 21 EMA — trail manually and exit when 21 EMA support breaks.
-  - **No rolling 7-day low stop** — 7DL (col I) is informational only. The mechanical stop is col J (initial risk stop → then breakeven floor).
-  - **Effective stop = col J** (not MAX(J,I) anymore — 7DL is not a mechanical stop in this system).
-- **Profit taking**: 50% partial exit at +10%, remainder trailed via 21 EMA support watching until exit
-- **Risk sizing progression**:
-  - Start: ₹1,000 risk per trade
-  - Increase: +₹500 every 100 closed trades
-  - Cap: 0.8% of portfolio (at ₹50L initial = ₹40,000 max)
-  - Formula in code: `Math.min(1000 + Math.floor(closed.length / 100) * 500, initialCapital * 0.008)`
+- **NO fixed stop loss** — risk is spread across many positions + quick profit-taking discipline. Col J may exist but is not a hard mechanical stop in the traditional sense.
+- **GTT Trailing** — positions are held and exited via GTT (Good Till Triggered) trailing orders placed ~6% below CMP. Winners accumulate via GTT trailing for weeks/months.
+- **Exits**: when GTT fires OR manual review detects reversal signal (HA red, below 21 EMA on a winner, etc.)
+- **Profit taking**: 50% partial exit when a position reaches the partial trigger (configurable, default 7%). Remainder held via GTT trailing.
+- **Position sizing**: consistent allocation per position (not ₹ risk-based). Risk is managed through portfolio diversification across many concurrent positions.
 - **Initial capital**: ₹50,00,000 (₹50L)
-- **Cut losses fast, run profits**: stops are taken quickly → closed trades are mostly small losses
+- **Cut losses fast, run profits**: positions not working are exited quickly (avg <10 days). Winners are held 30+ days via GTT trailing.
 - **Winners held open for a long time** → unrealized MTM (col Y) is where real gains sit
 - **True performance picture = realized + unrealized combined**
 - Notional P&L = open trade unrealized P&L (col Y sum), NOT a "what-if held longer" calculation on closed trades
+
+## SST Health Metrics (what to show and track)
+| Metric | Target | Note |
+|---|---|---|
+| Avg closed loss size | < 7% | Keeps losses small even without hard stop |
+| Avg winner % (closed) | ≥ 10% | Winners should run before GTT fires |
+| Loss:Winner ratio | < 0.5 | avg loss% ÷ avg win% — key asymmetry |
+| Hold asymmetry | Winners 2× longer | Days held: winners vs losers |
+| Open runners (30d+) | ≥ 2 | Big wins in progress |
+| Open portfolio profitable | ≥ 50% | Portfolio breadth health |
+| Partial exits taken | ≥ 70% | Discipline at trigger |
+| Combined profit factor | ≥ 1.5 | closed wins + open MTM ÷ closed losses |
+| Win:Loss ₹ ratio | ≥ 2× | avg win ₹ ÷ avg loss ₹ |
+
+## UI Changes Made (2026-08-03 session)
+- **Performance tab**: SST System Health Banner (5 checks), renamed R-Multiple → Win:Loss Ratio, removed "planned risk" language, added avg win/loss ₹, Copy Summary button
+- **Analysis tab**: SST Analysis Health Banner (5 checks), replaced all stop-loss/risk-tier language with SST framing, Loss:Winner Ratio replaces Stop Slippage, "If WR improves to 40%" projection replaces "full risk cap" projection, Open Portfolio Quality replaces Risk Tier card
 
 ## Key Helpers in index.html
 ```javascript
