@@ -946,24 +946,36 @@ tbody tr:hover { filter: brightness(0.97); }
   <!-- ④ ALERT STRIP — actions needed today -->
   <div id="dash-alert-strip" style="margin-top:10px;display:none"></div>
 
-  <!-- ④b QUICK RE-ENTRY TRACKER -->
+  <!-- ④b RE-ENTRY WATCHLIST -->
   <div id="dash-reentry-card" style="margin-top:14px">
-    <div class="card" style="border-left:3px solid var(--amber);padding:0">
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;cursor:pointer" onclick="toggleReentryList()">
-        <div style="display:flex;align-items:center;gap:10px">
-          <span style="font-size:16px">⚡</span>
-          <div>
-            <div style="font-size:12px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.06em">Quick Re-entry Watch</div>
-            <div style="font-size:11px;color:var(--text-muted);margin-top:1px" id="dash-reentry-summary">—</div>
-          </div>
+    <div class="card" style="padding:0">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;cursor:pointer;border-bottom:1px solid var(--border)" onclick="toggleReentryList()">
+        <div>
+          <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text-secondary)">🔁 Re-entry Watchlist</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px" id="dash-reentry-summary">—</div>
         </div>
-        <span id="dash-reentry-toggle-icon" style="font-size:12px;color:var(--text-muted)">▶ Show</span>
+        <span id="dash-reentry-toggle-icon" style="font-size:11px;color:var(--text-muted)">▼</span>
       </div>
-      <div id="dash-reentry-list" style="display:none;border-top:1px solid var(--border);padding:0 16px 14px">
-        <div style="font-size:11px;color:var(--text-muted);padding:10px 0 8px;line-height:1.5">
-          Stocks where you re-entered within 6 days of closing a previous trade on the same stock. Watch for pattern — are these working out or revenge trades?
+      <div id="dash-reentry-list" style="overflow-x:auto">
+        <div style="font-size:11px;color:var(--text-muted);padding:10px 16px 6px;line-height:1.5">
+          Closed trades where the 6-day wait has passed and stock is not currently in your portfolio. These are eligible for re-entry consideration.
         </div>
-        <div id="dash-reentry-tbody"></div>
+        <table style="width:100%;border-collapse:collapse;font-size:13px">
+          <thead>
+            <tr style="background:var(--surface2)">
+              <th style="padding:7px 14px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)">#</th>
+              <th style="padding:7px 14px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)">Stock</th>
+              <th style="padding:7px 14px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)">Last Closed</th>
+              <th style="padding:7px 14px;text-align:right;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)">Days Since</th>
+              <th style="padding:7px 14px;text-align:right;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)">Last P&amp;L%</th>
+              <th style="padding:7px 14px;text-align:right;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)">Times Traded</th>
+              <th style="padding:7px 14px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)">History</th>
+            </tr>
+          </thead>
+          <tbody id="dash-reentry-tbody">
+            <tr><td colspan="7" style="padding:20px;text-align:center;color:var(--text-muted)">Loading…</td></tr>
+          </tbody>
+        </table>
       </div>
     </div>
   </div>
@@ -3740,88 +3752,52 @@ function renderDashboard(data, cfg) {
     </div>`;
   })();
 
-  // ── Quick Re-entry Tracker ──
-  // Find stocks where a new trade was opened within 6 days of a previous close on the same stock.
-  // Only show re-entries where the follow-on trade is NOT currently open (flag = YES means open,
-  // so "not in open list" means the re-entry has already closed or is a watchlist row).
+  // ── Re-entry Watchlist ──
+  // Show stocks eligible for re-entry: closed > 6 days ago AND not currently open.
+  // Groups all closed trades by stock, picks the most recent close per stock,
+  // excludes stocks still held open, keeps only those where the cooldown has passed.
   (function() {
     try {
-      const openStocks = new Set(open.map(t => (t.stock||'').toUpperCase()));
-      const reentries = [];
+      const today = new Date();
+      const sixDaysAgo = new Date(today.getTime() - 6 * 24 * 3600 * 1000);
+      const openStocks = new Set(open.map(t => (t.stock||'').toUpperCase().trim()));
 
-      // Build a map: stock → sorted list of all trades (both open+closed) with their open dates
-      const allTrades = [
-        ...closed.map(t => ({ stock: t.stock, openDate: t.openDate || t.closeDate, closeDate: t.closeDate, finalPlPct: t.finalPlPct, finalPl: t.finalPl, isOpen: false })),
-        ...open.map(t => ({ stock: t.stock, openDate: t.openDate, closeDate: null, plPct: t.plPct, isOpen: true }))
-      ];
-
-      // For each closed trade, check if any other trade on same stock opened within 6 days after its close
-      closed.forEach(t1 => {
-        if (!t1.closeDate || !t1.stock) return;
-        const closeD = parseDate(t1.closeDate);
-        if (!closeD || isNaN(closeD)) return;
-        const sixDaysAfter = new Date(closeD.getTime() + 6 * 24 * 3600 * 1000);
-
-        // Check closed trades (re-entries that have since closed)
-        closed.forEach(t2 => {
-          if (t2 === t1) return;
-          if ((t2.stock||'').toUpperCase() !== (t1.stock||'').toUpperCase()) return;
-          if (!t2.openDate) return;
-          const openD2 = parseDate(t2.openDate);
-          if (!openD2 || isNaN(openD2)) return;
-          // t2 must have opened AFTER t1 closed and within 6 days
-          if (openD2 > closeD && openD2 <= sixDaysAfter) {
-            const dayGap = Math.round((openD2 - closeD) / (24 * 3600 * 1000));
-            // Avoid duplicate pairs (only add when t1.closeDate < t2.openDate to prevent reverse)
-            reentries.push({
-              stock: t1.stock,
-              closedDate: t1.closeDate,
-              closedPl: t1.finalPlPct,
-              closedPlRs: t1.finalPl,
-              reentryDate: t2.openDate,
-              dayGap,
-              reentryStatus: t2.closeDate ? 'Closed' : 'Open',
-              reentryPl: t2.finalPlPct,
-              reentryPlRs: t2.finalPl,
-              reentryIsOpen: !t2.closeDate
-            });
-          }
-        });
-
-        // Check open trades (re-entries still running)
-        open.forEach(t2 => {
-          if ((t2.stock||'').toUpperCase() !== (t1.stock||'').toUpperCase()) return;
-          if (!t2.openDate) return;
-          const openD2 = parseDate(t2.openDate);
-          if (!openD2 || isNaN(openD2)) return;
-          if (openD2 > closeD && openD2 <= sixDaysAfter) {
-            const dayGap = Math.round((openD2 - closeD) / (24 * 3600 * 1000));
-            reentries.push({
-              stock: t1.stock,
-              closedDate: t1.closeDate,
-              closedPl: t1.finalPlPct,
-              closedPlRs: t1.finalPl,
-              reentryDate: t2.openDate,
-              dayGap,
-              reentryStatus: 'Open',
-              reentryPl: t2.plPct,
-              reentryPlRs: t2.notionalPl,
-              reentryIsOpen: true
-            });
-          }
-        });
+      // Group closed trades by stock
+      const byStock = {};
+      closed.forEach(t => {
+        const s = (t.stock||'').toUpperCase().trim();
+        if (!s) return;
+        if (!byStock[s]) byStock[s] = [];
+        byStock[s].push(t);
       });
 
-      // Deduplicate: key on stock+closedDate+reentryDate
-      const seen = new Set();
-      const unique = reentries.filter(r => {
-        const key = r.stock + '|' + r.closedDate + '|' + r.reentryDate;
-        if (seen.has(key)) return false;
-        seen.add(key); return true;
-      });
-
-      // Sort by closedDate descending (most recent first)
-      unique.sort((a,b) => parseDate(b.closedDate) - parseDate(a.closedDate));
+      // Build watchlist: one row per stock
+      const watchlist = Object.entries(byStock)
+        .filter(([stock]) => !openStocks.has(stock))
+        .map(([stock, trades]) => {
+          const withClose = trades.filter(t => t.closeDate);
+          if (!withClose.length) return null;
+          const sorted = [...withClose].sort((a,b) => parseDate(b.closeDate) - parseDate(a.closeDate));
+          const last = sorted[0];
+          const lastCloseD = parseDate(last.closeDate);
+          if (isNaN(lastCloseD) || lastCloseD >= sixDaysAgo) return null;
+          const daysSince = Math.floor((today - lastCloseD) / (24 * 3600 * 1000));
+          const wins = trades.filter(t => (t.finalPlPct||0) > 0).length;
+          const losses = trades.filter(t => (t.finalPlPct||0) < 0).length;
+          const totalPl = trades.reduce((s,t) => s + (t.finalPl||0), 0);
+          return {
+            stock: last.stock || stock,
+            lastClose: last.closeDate,
+            lastPlPct: last.finalPlPct,
+            daysSince,
+            count: trades.length,
+            wins,
+            losses,
+            totalPl
+          };
+        })
+        .filter(Boolean)
+        .sort((a,b) => a.daysSince - b.daysSince);
 
       const card = document.getElementById('dash-reentry-card');
       const summary = document.getElementById('dash-reentry-summary');
@@ -3829,52 +3805,35 @@ function renderDashboard(data, cfg) {
 
       if (card) card.style.display = 'block';
 
-      if (unique.length === 0) {
-        if (summary) summary.textContent = `No re-entries within 6 days found across ${closed.length} closed trades`;
-        if (tbody) tbody.innerHTML = '<div style="padding:12px 0;font-size:12px;color:var(--text-muted)">✓ No stocks re-entered within 6 days of a previous close.</div>';
-        const icon = document.getElementById('dash-reentry-toggle-icon');
-        const list = document.getElementById('dash-reentry-list');
-        if (list) list.style.display = 'block';
-        if (icon) icon.textContent = '▼ Hide';
-        return;
-      }
-      const openReentries = unique.filter(r => r.reentryIsOpen).length;
-      const closedReentries = unique.filter(r => !r.reentryIsOpen);
-      const wins = closedReentries.filter(r => (r.reentryPl||0) > 0).length;
-      if (summary) summary.textContent = `${unique.length} re-entr${unique.length===1?'y':'ies'} within 6 days — ${openReentries} still open · ${wins}/${closedReentries.length} closed ones were winners`;
+      if (summary) summary.textContent = watchlist.length
+        ? `${watchlist.length} stock${watchlist.length===1?'':'s'} eligible for re-entry`
+        : 'None — all stocks either open or within 6-day cooldown';
 
-      const fmtD = s => { if (!s) return '—'; const d = parseDate(s); if (isNaN(d)) return s; return d.getDate()+' '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]; };
-      const plPill = (pct, rs) => {
-        if (pct === undefined || pct === null) return '<span style="color:var(--text-muted)">—</span>';
-        const col = pct >= 0 ? 'var(--green)' : 'var(--red)';
-        const rsStr = rs !== undefined && rs !== null ? ' (₹'+Math.abs(Math.round(rs)).toLocaleString('en-IN')+')' : '';
-        return `<span style="color:${col};font-weight:700">${pct>=0?'+':''}${pct.toFixed(1)}%${rsStr}</span>`;
+      const fmtD = s => {
+        if (!s) return '—';
+        const d = parseDate(s);
+        if (isNaN(d)) return s;
+        return d.getDate()+' '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()];
       };
+      const plClr = pct => pct > 0 ? 'var(--green)' : pct < 0 ? 'var(--red)' : 'var(--text-muted)';
 
-      if (tbody) tbody.innerHTML = unique.map(r => `
-        <div style="display:grid;grid-template-columns:auto 1fr 1fr 1fr auto;gap:6px 12px;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px">
-          <div style="font-weight:700;font-size:13px;color:var(--text-primary)">${r.stock}</div>
-          <div>
-            <div style="color:var(--text-muted);font-size:10px;text-transform:uppercase;letter-spacing:.05em">Closed</div>
-            <div>${fmtD(r.closedDate)}</div>
-            <div>${plPill(r.closedPl, r.closedPlRs)}</div>
-          </div>
-          <div style="text-align:center">
-            <div style="font-size:18px">→</div>
-            <div style="background:var(--amber);color:#000;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;white-space:nowrap">${r.dayGap}d later</div>
-          </div>
-          <div>
-            <div style="color:var(--text-muted);font-size:10px;text-transform:uppercase;letter-spacing:.05em">Re-entered</div>
-            <div>${fmtD(r.reentryDate)}</div>
-            <div>${r.reentryIsOpen ? '<span style="color:var(--accent);font-weight:700">Open now</span>' : plPill(r.reentryPl, r.reentryPlRs)}</div>
-          </div>
-          <div style="text-align:right">
-            <div style="font-size:10px;padding:2px 7px;border-radius:8px;font-weight:700;${r.reentryIsOpen ? 'background:rgba(99,179,237,0.12);color:var(--accent)' : (r.reentryPl||0)>=0 ? 'background:rgba(52,199,89,0.12);color:var(--green)' : 'background:rgba(255,69,58,0.08);color:var(--red)'}">
-              ${r.reentryIsOpen ? 'Running' : (r.reentryPl||0)>=0 ? 'Winner ✓' : 'Loss'}
-            </div>
-          </div>
-        </div>`).join('');
-    } catch(e) { console.error('Re-entry tracker error:', e); }
+      if (tbody) {
+        if (watchlist.length === 0) {
+          tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:14px;color:var(--text-muted);font-size:12px">No stocks eligible yet — all closed within last 6 days or currently open</td></tr>`;
+        } else {
+          tbody.innerHTML = watchlist.map((r,i) => `
+            <tr style="border-bottom:1px solid var(--border)">
+              <td style="padding:8px 10px;font-size:12px;color:var(--text-muted)">${i+1}</td>
+              <td style="padding:8px 10px;font-weight:700;font-size:13px">${r.stock}</td>
+              <td style="padding:8px 10px;font-size:12px">${fmtD(r.lastClose)}</td>
+              <td style="padding:8px 10px;font-size:12px;color:${r.daysSince <= 10 ? 'var(--green)' : 'var(--text-muted)'}">${r.daysSince}d ago</td>
+              <td style="padding:8px 10px;font-size:12px;color:${plClr(r.lastPlPct||0)};font-weight:600">${r.lastPlPct!=null?(r.lastPlPct>=0?'+':'')+r.lastPlPct.toFixed(1)+'%':'—'}</td>
+              <td style="padding:8px 10px;font-size:12px">${r.count}</td>
+              <td style="padding:8px 10px;font-size:12px"><span style="color:var(--green)">${r.wins}W</span> / <span style="color:var(--red)">${r.losses}L</span></td>
+            </tr>`).join('');
+        }
+      }
+    } catch(e) { console.error('Re-entry watchlist error:', e); }
   })();
 
   renderDashCalendar(closed);
