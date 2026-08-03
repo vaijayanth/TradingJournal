@@ -3759,7 +3759,14 @@ function renderDashboard(data, cfg) {
   (function() {
     try {
       const today = new Date();
-      const sixDaysAgo = new Date(today.getTime() - 6 * 24 * 3600 * 1000);
+      // Count trading days (Mon–Fri) between two dates
+      const tradingDaysBetween = (from, to) => {
+        let count = 0, d = new Date(from);
+        d.setHours(0,0,0,0);
+        const end = new Date(to); end.setHours(0,0,0,0);
+        while (d < end) { d.setDate(d.getDate()+1); const w = d.getDay(); if (w!==0 && w!==6) count++; }
+        return count;
+      };
       const openStocks = new Set(open.map(t => (t.stock||'').toUpperCase().trim()));
 
       // Group closed trades by stock
@@ -3780,8 +3787,10 @@ function renderDashboard(data, cfg) {
           const sorted = [...withClose].sort((a,b) => parseDate(b.closeDate) - parseDate(a.closeDate));
           const last = sorted[0];
           const lastCloseD = parseDate(last.closeDate);
-          if (isNaN(lastCloseD) || lastCloseD >= sixDaysAgo) return null;
-          const daysSince = Math.floor((today - lastCloseD) / (24 * 3600 * 1000));
+          if (isNaN(lastCloseD)) return null;
+          const tradingDaysSince = tradingDaysBetween(lastCloseD, today);
+          if (tradingDaysSince < 6) return null;
+          const daysSince = tradingDaysSince;
           const wins = trades.filter(t => (t.finalPlPct||0) > 0).length;
           const losses = trades.filter(t => (t.finalPlPct||0) < 0).length;
           const totalPl = trades.reduce((s,t) => s + (t.finalPl||0), 0);
@@ -3826,7 +3835,7 @@ function renderDashboard(data, cfg) {
               <td style="padding:8px 10px;font-size:12px;color:var(--text-muted)">${i+1}</td>
               <td style="padding:8px 10px;font-weight:700;font-size:13px">${r.stock}</td>
               <td style="padding:8px 10px;font-size:12px">${fmtD(r.lastClose)}</td>
-              <td style="padding:8px 10px;font-size:12px;color:${r.daysSince <= 10 ? 'var(--green)' : 'var(--text-muted)'}">${r.daysSince}d ago</td>
+              <td style="padding:8px 10px;font-size:12px;color:${r.daysSince <= 10 ? 'var(--green)' : 'var(--text-muted)'}">${r.daysSince} trading days</td>
               <td style="padding:8px 10px;font-size:12px;color:${plClr(r.lastPlPct||0)};font-weight:600">${r.lastPlPct!=null?(r.lastPlPct>=0?'+':'')+r.lastPlPct.toFixed(1)+'%':'—'}</td>
               <td style="padding:8px 10px;font-size:12px">${r.count}</td>
               <td style="padding:8px 10px;font-size:12px"><span style="color:var(--green)">${r.wins}W</span> / <span style="color:var(--red)">${r.losses}L</span></td>
