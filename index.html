@@ -947,7 +947,7 @@ tbody tr:hover { filter: brightness(0.97); }
   <div id="dash-alert-strip" style="margin-top:10px;display:none"></div>
 
   <!-- ④b QUICK RE-ENTRY TRACKER -->
-  <div id="dash-reentry-card" style="display:none;margin-top:14px">
+  <div id="dash-reentry-card" style="margin-top:14px">
     <div class="card" style="border-left:3px solid var(--amber);padding:0">
       <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;cursor:pointer" onclick="toggleReentryList()">
         <div style="display:flex;align-items:center;gap:10px">
@@ -3827,12 +3827,17 @@ function renderDashboard(data, cfg) {
       const summary = document.getElementById('dash-reentry-summary');
       const tbody = document.getElementById('dash-reentry-tbody');
 
+      if (card) card.style.display = 'block';
+
       if (unique.length === 0) {
-        if (card) card.style.display = 'none';
+        if (summary) summary.textContent = `No re-entries within 6 days found across ${closed.length} closed trades`;
+        if (tbody) tbody.innerHTML = '<div style="padding:12px 0;font-size:12px;color:var(--text-muted)">✓ No stocks re-entered within 6 days of a previous close.</div>';
+        const icon = document.getElementById('dash-reentry-toggle-icon');
+        const list = document.getElementById('dash-reentry-list');
+        if (list) list.style.display = 'block';
+        if (icon) icon.textContent = '▼ Hide';
         return;
       }
-
-      if (card) card.style.display = 'block';
       const openReentries = unique.filter(r => r.reentryIsOpen).length;
       const closedReentries = unique.filter(r => !r.reentryIsOpen);
       const wins = closedReentries.filter(r => (r.reentryPl||0) > 0).length;
