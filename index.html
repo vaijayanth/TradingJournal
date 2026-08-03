@@ -946,6 +946,28 @@ tbody tr:hover { filter: brightness(0.97); }
   <!-- ④ ALERT STRIP — actions needed today -->
   <div id="dash-alert-strip" style="margin-top:10px;display:none"></div>
 
+  <!-- ④b QUICK RE-ENTRY TRACKER -->
+  <div id="dash-reentry-card" style="display:none;margin-top:14px">
+    <div class="card" style="border-left:3px solid var(--amber);padding:0">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;cursor:pointer" onclick="toggleReentryList()">
+        <div style="display:flex;align-items:center;gap:10px">
+          <span style="font-size:16px">⚡</span>
+          <div>
+            <div style="font-size:12px;font-weight:700;color:var(--amber);text-transform:uppercase;letter-spacing:.06em">Quick Re-entry Watch</div>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:1px" id="dash-reentry-summary">—</div>
+          </div>
+        </div>
+        <span id="dash-reentry-toggle-icon" style="font-size:12px;color:var(--text-muted)">▶ Show</span>
+      </div>
+      <div id="dash-reentry-list" style="display:none;border-top:1px solid var(--border);padding:0 16px 14px">
+        <div style="font-size:11px;color:var(--text-muted);padding:10px 0 8px;line-height:1.5">
+          Stocks where you re-entered within 6 days of closing a previous trade on the same stock. Watch for pattern — are these working out or revenge trades?
+        </div>
+        <div id="dash-reentry-tbody"></div>
+      </div>
+    </div>
+  </div>
+
   <!-- ⑤ P&L Distribution — full width -->
   <div class="card" style="padding:16px;margin-top:14px">
     <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">📊 P&amp;L Distribution — <span id="dash-legend-target">7</span>% target · positions in each zone</div>
@@ -3718,6 +3740,138 @@ function renderDashboard(data, cfg) {
     </div>`;
   })();
 
+  // ── Quick Re-entry Tracker ──
+  // Find stocks where a new trade was opened within 6 days of a previous close on the same stock.
+  // Only show re-entries where the follow-on trade is NOT currently open (flag = YES means open,
+  // so "not in open list" means the re-entry has already closed or is a watchlist row).
+  (function() {
+    try {
+      const openStocks = new Set(open.map(t => (t.stock||'').toUpperCase()));
+      const reentries = [];
+
+      // Build a map: stock → sorted list of all trades (both open+closed) with their open dates
+      const allTrades = [
+        ...closed.map(t => ({ stock: t.stock, openDate: t.openDate || t.closeDate, closeDate: t.closeDate, finalPlPct: t.finalPlPct, finalPl: t.finalPl, isOpen: false })),
+        ...open.map(t => ({ stock: t.stock, openDate: t.openDate, closeDate: null, plPct: t.plPct, isOpen: true }))
+      ];
+
+      // For each closed trade, check if any other trade on same stock opened within 6 days after its close
+      closed.forEach(t1 => {
+        if (!t1.closeDate || !t1.stock) return;
+        const closeD = parseDate(t1.closeDate);
+        if (!closeD || isNaN(closeD)) return;
+        const sixDaysAfter = new Date(closeD.getTime() + 6 * 24 * 3600 * 1000);
+
+        // Check closed trades (re-entries that have since closed)
+        closed.forEach(t2 => {
+          if (t2 === t1) return;
+          if ((t2.stock||'').toUpperCase() !== (t1.stock||'').toUpperCase()) return;
+          if (!t2.openDate) return;
+          const openD2 = parseDate(t2.openDate);
+          if (!openD2 || isNaN(openD2)) return;
+          // t2 must have opened AFTER t1 closed and within 6 days
+          if (openD2 > closeD && openD2 <= sixDaysAfter) {
+            const dayGap = Math.round((openD2 - closeD) / (24 * 3600 * 1000));
+            // Avoid duplicate pairs (only add when t1.closeDate < t2.openDate to prevent reverse)
+            reentries.push({
+              stock: t1.stock,
+              closedDate: t1.closeDate,
+              closedPl: t1.finalPlPct,
+              closedPlRs: t1.finalPl,
+              reentryDate: t2.openDate,
+              dayGap,
+              reentryStatus: t2.closeDate ? 'Closed' : 'Open',
+              reentryPl: t2.finalPlPct,
+              reentryPlRs: t2.finalPl,
+              reentryIsOpen: !t2.closeDate
+            });
+          }
+        });
+
+        // Check open trades (re-entries still running)
+        open.forEach(t2 => {
+          if ((t2.stock||'').toUpperCase() !== (t1.stock||'').toUpperCase()) return;
+          if (!t2.openDate) return;
+          const openD2 = parseDate(t2.openDate);
+          if (!openD2 || isNaN(openD2)) return;
+          if (openD2 > closeD && openD2 <= sixDaysAfter) {
+            const dayGap = Math.round((openD2 - closeD) / (24 * 3600 * 1000));
+            reentries.push({
+              stock: t1.stock,
+              closedDate: t1.closeDate,
+              closedPl: t1.finalPlPct,
+              closedPlRs: t1.finalPl,
+              reentryDate: t2.openDate,
+              dayGap,
+              reentryStatus: 'Open',
+              reentryPl: t2.plPct,
+              reentryPlRs: t2.notionalPl,
+              reentryIsOpen: true
+            });
+          }
+        });
+      });
+
+      // Deduplicate: key on stock+closedDate+reentryDate
+      const seen = new Set();
+      const unique = reentries.filter(r => {
+        const key = r.stock + '|' + r.closedDate + '|' + r.reentryDate;
+        if (seen.has(key)) return false;
+        seen.add(key); return true;
+      });
+
+      // Sort by closedDate descending (most recent first)
+      unique.sort((a,b) => parseDate(b.closedDate) - parseDate(a.closedDate));
+
+      const card = document.getElementById('dash-reentry-card');
+      const summary = document.getElementById('dash-reentry-summary');
+      const tbody = document.getElementById('dash-reentry-tbody');
+
+      if (unique.length === 0) {
+        if (card) card.style.display = 'none';
+        return;
+      }
+
+      if (card) card.style.display = 'block';
+      const openReentries = unique.filter(r => r.reentryIsOpen).length;
+      const closedReentries = unique.filter(r => !r.reentryIsOpen);
+      const wins = closedReentries.filter(r => (r.reentryPl||0) > 0).length;
+      if (summary) summary.textContent = `${unique.length} re-entr${unique.length===1?'y':'ies'} within 6 days — ${openReentries} still open · ${wins}/${closedReentries.length} closed ones were winners`;
+
+      const fmtD = s => { if (!s) return '—'; const d = parseDate(s); if (isNaN(d)) return s; return d.getDate()+' '+['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()]; };
+      const plPill = (pct, rs) => {
+        if (pct === undefined || pct === null) return '<span style="color:var(--text-muted)">—</span>';
+        const col = pct >= 0 ? 'var(--green)' : 'var(--red)';
+        const rsStr = rs !== undefined && rs !== null ? ' (₹'+Math.abs(Math.round(rs)).toLocaleString('en-IN')+')' : '';
+        return `<span style="color:${col};font-weight:700">${pct>=0?'+':''}${pct.toFixed(1)}%${rsStr}</span>`;
+      };
+
+      if (tbody) tbody.innerHTML = unique.map(r => `
+        <div style="display:grid;grid-template-columns:auto 1fr 1fr 1fr auto;gap:6px 12px;align-items:center;padding:8px 0;border-bottom:1px solid var(--border);font-size:12px">
+          <div style="font-weight:700;font-size:13px;color:var(--text-primary)">${r.stock}</div>
+          <div>
+            <div style="color:var(--text-muted);font-size:10px;text-transform:uppercase;letter-spacing:.05em">Closed</div>
+            <div>${fmtD(r.closedDate)}</div>
+            <div>${plPill(r.closedPl, r.closedPlRs)}</div>
+          </div>
+          <div style="text-align:center">
+            <div style="font-size:18px">→</div>
+            <div style="background:var(--amber);color:#000;font-size:10px;font-weight:700;padding:1px 6px;border-radius:10px;white-space:nowrap">${r.dayGap}d later</div>
+          </div>
+          <div>
+            <div style="color:var(--text-muted);font-size:10px;text-transform:uppercase;letter-spacing:.05em">Re-entered</div>
+            <div>${fmtD(r.reentryDate)}</div>
+            <div>${r.reentryIsOpen ? '<span style="color:var(--accent);font-weight:700">Open now</span>' : plPill(r.reentryPl, r.reentryPlRs)}</div>
+          </div>
+          <div style="text-align:right">
+            <div style="font-size:10px;padding:2px 7px;border-radius:8px;font-weight:700;${r.reentryIsOpen ? 'background:rgba(99,179,237,0.12);color:var(--accent)' : (r.reentryPl||0)>=0 ? 'background:rgba(52,199,89,0.12);color:var(--green)' : 'background:rgba(255,69,58,0.08);color:var(--red)'}">
+              ${r.reentryIsOpen ? 'Running' : (r.reentryPl||0)>=0 ? 'Winner ✓' : 'Loss'}
+            </div>
+          </div>
+        </div>`).join('');
+    } catch(e) { console.error('Re-entry tracker error:', e); }
+  })();
+
   renderDashCalendar(closed);
   renderDashCharts(open, closed, cfg, portfolioValue, initialCapital);
 }
@@ -3886,6 +4040,14 @@ function filterDashEqMonth(btn, month) {
   document.querySelectorAll('#dash-eq-month-pills .eq-pill').forEach(b => b.classList.remove('active'));
   if (btn) btn.classList.add('active');
   _renderDashEqChart();
+}
+function toggleReentryList() {
+  const list = document.getElementById('dash-reentry-list');
+  const icon = document.getElementById('dash-reentry-toggle-icon');
+  if (!list) return;
+  const open = list.style.display === 'none';
+  list.style.display = open ? 'block' : 'none';
+  if (icon) icon.textContent = open ? '▼ Hide' : '▶ Show';
 }
 function toggleDashEqMode() {
   window._dashEqMode = window._dashEqMode === '%' ? '₹' : '%';
