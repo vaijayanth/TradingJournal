@@ -3910,15 +3910,23 @@ function _renderDashEqChart() {
     displayTrades = allTrades.filter(t => { const d = parseDate(t.closeDate); return d.getFullYear() === fy && d.getMonth()+1 === fm; });
   }
 
+  // Aggregate trades by date — one point per unique close date
   let runEq = startEq, peak = month === 'all' ? cap : startEq;
-  const retData = [], ddData = [], labels = [], tradeLabels = [];
+  const byDate = {};
   displayTrades.forEach(t => {
-    runEq += t.finalPl; if (runEq > peak) peak = runEq;
+    const d = t.closeDate || 'Unknown';
+    if (!byDate[d]) byDate[d] = { pl: 0, stocks: [] };
+    byDate[d].pl += t.finalPl || 0;
+    byDate[d].stocks.push(t.stock + (t.finalPl>=0?' +':' -') + '₹' + Math.abs(Math.round(t.finalPl||0)).toLocaleString('en-IN'));
+  });
+  const retData = [], ddData = [], labels = [], tradeLabels = [];
+  Object.keys(byDate).sort((a,b) => parseDate(a)-parseDate(b)).forEach(date => {
+    runEq += byDate[date].pl; if (runEq > peak) peak = runEq;
     const ret = cap > 0 ? (runEq - cap) / cap * 100 : 0;
-    retData.push(isAbsMode ? parseFloat(runEq.toFixed(0)) : parseFloat(ret.toFixed(2)));
-    ddData.push(parseFloat(((runEq - peak) / peak * 100).toFixed(2)));
-    labels.push(t.closeDate);
-    tradeLabels.push(t.stock + ' · ' + (t.finalPl>=0?'+':'-') + '₹' + Math.abs(Math.round(t.finalPl)).toLocaleString('en-IN') + ' · ' + t.closeDate);
+    retData.push(isAbsMode ? parseFloat(runEq.toFixed(0)) : parseFloat(ret.toFixed(4)));
+    ddData.push(parseFloat(((runEq - peak) / peak * 100).toFixed(4)));
+    labels.push(date);
+    tradeLabels.push(byDate[date].stocks.join(', ') + ' · ' + date);
   });
 
   // Today dashed amber series
@@ -3928,23 +3936,15 @@ function _renderDashEqChart() {
   if (month === 'all' && totalUnrealised !== 0) {
     todayData[todayData.length-1] = retData[retData.length-1];
     const combinedEq = runEq + totalUnrealised;
-    todayData.push(isAbsMode ? parseFloat(combinedEq.toFixed(0)) : parseFloat(((combinedEq-cap)/cap*100).toFixed(2)));
+    todayData.push(isAbsMode ? parseFloat(combinedEq.toFixed(0)) : parseFloat(((combinedEq-cap)/cap*100).toFixed(4)));
     retData.push(null); labels.push('Today');
     todayTooltipLabel = 'Open MTM · ' + (totalUnrealised>=0?'+':'-') + '₹' + Math.abs(Math.round(totalUnrealised)).toLocaleString('en-IN');
     tradeLabels.push(todayTooltipLabel);
   }
   const hasTodaySeries = todayData.some(v => v !== null);
 
-  // Show at most 6 x-axis labels, suppress duplicates
-  const maxTicks = Math.min(6, labels.length);
-  const step = Math.max(1, Math.ceil(labels.length / maxTicks));
-  const sparseLabels = new Array(labels.length).fill('');
-  let lastShown = '';
-  labels.forEach((l, i) => {
-    if (i % step === 0 || i === labels.length - 1) {
-      if (l !== lastShown) { sparseLabels[i] = l; lastShown = l; }
-    }
-  });
+  // Use all unique dates as x-axis labels (already deduplicated by aggregation)
+  const sparseLabels = labels.slice();
 
   const validRet = retData.filter(v=>v!=null);
   const retMin = validRet.length ? Math.min(...validRet) : 0;
@@ -3974,7 +3974,12 @@ function _renderDashEqChart() {
     series,
     grid: { borderColor: 'transparent', yaxis: { lines: { show: false } } },
     xaxis: { categories: sparseLabels, labels:{ style:{colors:c.text,fontSize:'11px'}, rotate:0, hideOverlappingLabels:true }, axisBorder:{show:false}, axisTicks:{show:false} },
-    yaxis: { tickAmount: 5, forceNiceScale: true, labels:{ style:{colors:c.text,fontSize:'11px'}, formatter: v => v!=null ? (isAbsMode ? '₹'+Math.round(v).toLocaleString('en-IN') : (v>=0?'+':'')+v.toFixed(2)+'%') : '' } },
+    yaxis: { tickAmount: 5, forceNiceScale: true, labels:{ style:{colors:c.text,fontSize:'11px'}, formatter: v => {
+      if (v==null) return '';
+      if (isAbsMode) return '₹'+Math.round(v).toLocaleString('en-IN');
+      const decimals = retRange < 0.5 ? 3 : retRange < 5 ? 2 : 1;
+      return (v>=0?'+':'')+v.toFixed(decimals)+'%';
+    } } },
     colors: hasTodaySeries ? [realisedColor, amberColor] : [realisedColor],
     fill:   { type:'gradient', gradient:{ type:'vertical', colorStops: hasTodaySeries ? [...eqColorStops,[{offset:0,color:amberColor,opacity:0.3},{offset:100,color:amberColor,opacity:0.02}]] : eqColorStops } },
     stroke: { curve:'smooth', width: hasTodaySeries?[2.5,2.5]:[2.5], dashArray: hasTodaySeries?[0,6]:[0] },
