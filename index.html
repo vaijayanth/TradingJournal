@@ -3950,53 +3950,85 @@ function _renderDashEqChart() {
   const retMin = validRet.length ? Math.min(...validRet) : 0;
   const retMax = validRet.length ? Math.max(...validRet) : 1;
   const retRange = (retMax-retMin)||1;
-  const zeroFrac = retMax>0 ? Math.min(100,Math.max(0,Math.round((retMax/retRange)*100))) : 0;
-  const allPositive = retMin>=0, allNegative = retMax<=0;
-  const realisedColor = allNegative ? c.red : c.green;
-  const eqColorStops = allPositive
-    ? [[{offset:0,color:c.green,opacity:0.45},{offset:100,color:c.green,opacity:0.02}]]
-    : allNegative
-      ? [[{offset:0,color:c.red,opacity:0.02},{offset:100,color:c.red,opacity:0.45}]]
-      : [[{offset:0,color:c.green,opacity:0.45},{offset:zeroFrac,color:c.green,opacity:0.05},{offset:zeroFrac,color:c.red,opacity:0.05},{offset:100,color:c.red,opacity:0.4}]];
+  const allNegative = retMax<=0;
+  const lineColor = allNegative ? c.red : c.green;
 
-  if (window._dashEqInst)  { try { window._dashEqInst.destroy();   } catch(e){} }
-  if (window._dashDDInst)  { try { window._dashDDInst.destroy();   } catch(e){} }
+  if (window._dashEqInst) { try { window._dashEqInst.destroy(); } catch(e){} }
+  if (window._dashDDInst) { try { window._dashDDInst.destroy(); } catch(e){} }
 
   const eqEl = document.getElementById('dash-equity-mini');
   const ddEl = document.getElementById('dash-eq-drawdown');
   if (!eqEl) return;
 
-  const series = [{ name:'Realised', data: retData }];
-  if (hasTodaySeries) series.push({ name:'Combined (incl. open MTM)', data: todayData });
+  // Y-axis formatter — compact and readable
+  const yFmt = v => {
+    if (v==null) return '';
+    if (isAbsMode) {
+      const lac = 100000;
+      if (Math.abs(v) >= lac) return '₹'+(v/lac).toFixed(1)+'L';
+      if (Math.abs(v) >= 1000) return '₹'+(v/1000).toFixed(0)+'k';
+      return '₹'+Math.round(v);
+    }
+    const decimals = retRange < 0.5 ? 3 : retRange < 5 ? 2 : 1;
+    return (v>=0?'+':'')+v.toFixed(decimals)+'%';
+  };
+
+  const series = [{ name:'Portfolio', data: retData }];
+  if (hasTodaySeries) series.push({ name:'With open positions', data: todayData });
+
+  // Sparse x-axis: show at most 8 labels spread evenly
+  const xLabels = sparseLabels.map((l,i) => {
+    if (!l) return '';
+    // Format: "Aug 26" style
+    const d = parseDate(l);
+    if (isNaN(d) || l==='Today') return l;
+    const MN = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+    return MN[d.getMonth()]+' '+String(d.getFullYear()).slice(2);
+  });
+  // Keep at most 8 visible labels spread evenly
+  const visibleCount = xLabels.filter(Boolean).length;
+  if (visibleCount > 8) {
+    const idxs = xLabels.map((l,i)=>l?i:-1).filter(i=>i>=0);
+    const keep = new Set(idxs.filter((_,i)=>i%(Math.ceil(idxs.length/8))===0||i===idxs.length-1));
+    xLabels.forEach((l,i)=>{ if(l && !keep.has(i)) xLabels[i]=''; });
+  }
 
   window._dashEqInst = new ApexCharts(eqEl, {
-    chart: { type:'area', height:260, toolbar:{show:false}, background:'transparent', animations:{enabled:false}, zoom:{enabled:false} },
+    chart: { type:'area', height:260, toolbar:{show:false}, background:'transparent', animations:{enabled:false}, zoom:{enabled:false}, sparkline:{enabled:false} },
     series,
-    grid: { borderColor: 'transparent', yaxis: { lines: { show: false } } },
-    xaxis: { categories: sparseLabels, labels:{ style:{colors:c.text,fontSize:'11px'}, rotate:0, hideOverlappingLabels:true }, axisBorder:{show:false}, axisTicks:{show:false} },
-    yaxis: { tickAmount: 5, forceNiceScale: true, labels:{ style:{colors:c.text,fontSize:'11px'}, formatter: v => {
-      if (v==null) return '';
-      if (isAbsMode) return '₹'+Math.round(v).toLocaleString('en-IN');
-      const decimals = retRange < 0.5 ? 3 : retRange < 5 ? 2 : 1;
-      return (v>=0?'+':'')+v.toFixed(decimals)+'%';
-    } } },
-    colors: hasTodaySeries ? [realisedColor, amberColor] : [realisedColor],
-    fill:   { type:'gradient', gradient:{ type:'vertical', colorStops: hasTodaySeries ? [...eqColorStops,[{offset:0,color:amberColor,opacity:0.3},{offset:100,color:amberColor,opacity:0.02}]] : eqColorStops } },
-    stroke: { curve:'smooth', width: hasTodaySeries?[2.5,2.5]:[2.5], dashArray: hasTodaySeries?[0,6]:[0] },
-    dataLabels: { enabled:false }, markers:{ size:0, hover:{size:5} },
-    annotations: { yaxis:[{ y: isAbsMode ? cap : 0, borderColor:c.text, strokeDashArray:2, label:{text:'Break-even',style:{color:c.text,fontSize:'10px',background:'transparent'}} }] },
-    tooltip: { theme: document.documentElement.getAttribute('data-theme')==='dark'?'dark':'light', custom:({seriesIndex,dataPointIndex}) => {
-      const isToday = seriesIndex===1;
-      const val = isToday ? todayData[dataPointIndex] : retData[dataPointIndex];
-      if (val==null) return '';
-      const label = isToday ? todayTooltipLabel : (tradeLabels[dataPointIndex]||'');
-      const col = isToday ? amberColor : (val>=0?'var(--green)':'var(--red)');
-      const cumLine = isAbsMode
-        ? '₹'+Math.round(val).toLocaleString('en-IN')+' <span style="opacity:.7">('+((cap>0?(val-cap)/cap*100:0)>=0?'+':'')+(cap>0?((val-cap)/cap*100).toFixed(2):0)+'%)</span>'
-        : (val>=0?'+':'')+val.toFixed(2)+'% <span style="opacity:.7">(₹'+(cap>0?Math.round(cap+val/100*cap).toLocaleString('en-IN'):0)+')</span>';
-      return `<div style="padding:8px 12px;font-size:12px;font-weight:600;color:${col};background:var(--surface);border:1px solid var(--border);border-radius:8px">${label}<br><span style="font-size:11px;color:var(--text-muted)">Capital: ${cumLine}</span></div>`;
-    }},
-    legend: { show: hasTodaySeries, labels:{colors:c.text}, markers:{fillColors:[allNegative?c.red:c.green, amberColor]} },
+    grid: { borderColor: c.border||'rgba(255,255,255,0.06)', strokeDashArray:3, yaxis:{lines:{show:true}}, xaxis:{lines:{show:false}}, padding:{left:0,right:4} },
+    xaxis: {
+      categories: xLabels,
+      labels:{ style:{colors:c.text,fontSize:'11px'}, rotate:0, hideOverlappingLabels:true },
+      axisBorder:{show:false}, axisTicks:{show:false}
+    },
+    yaxis: { tickAmount:5, forceNiceScale:true, labels:{ style:{colors:c.text,fontSize:'11px'}, formatter: yFmt }, opposite:false },
+    colors: hasTodaySeries ? [lineColor, amberColor] : [lineColor],
+    fill: {
+      type:'gradient',
+      gradient:{ type:'vertical', opacityFrom:0.2, opacityTo:0.01, stops:[0,100] }
+    },
+    stroke: { curve:'smooth', width: hasTodaySeries?[2,1.5]:[2], dashArray: hasTodaySeries?[0,5]:[0] },
+    dataLabels: { enabled:false },
+    markers: { size:0, hover:{size:4} },
+    tooltip: {
+      theme: document.documentElement.getAttribute('data-theme')==='dark'?'dark':'light',
+      custom:({seriesIndex,dataPointIndex}) => {
+        const isToday = seriesIndex===1;
+        const val = isToday ? todayData[dataPointIndex] : retData[dataPointIndex];
+        if (val==null) return '';
+        const label = isToday ? todayTooltipLabel : (tradeLabels[dataPointIndex]||'');
+        const col = isToday ? amberColor : (val>=0?'var(--green)':'var(--red)');
+        const valStr = isAbsMode
+          ? '₹'+Math.round(val).toLocaleString('en-IN')+' ('+(cap>0?((val-cap)/cap*100).toFixed(2):0)+'%)'
+          : (val>=0?'+':'')+val.toFixed(2)+'%';
+        return `<div style="padding:8px 12px;font-size:12px;background:var(--surface);border:1px solid var(--border);border-radius:8px">
+          <div style="color:${col};font-weight:700;font-size:13px">${valStr}</div>
+          <div style="color:var(--text-muted);font-size:11px;margin-top:2px">${label}</div>
+        </div>`;
+      }
+    },
+    legend: { show: hasTodaySeries, position:'top', horizontalAlign:'right', labels:{colors:c.text}, markers:{fillColors:[lineColor, amberColor]} },
   });
   window._dashEqInst.render();
 
