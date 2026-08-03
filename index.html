@@ -3935,7 +3935,16 @@ function _renderDashEqChart() {
   }
   const hasTodaySeries = todayData.some(v => v !== null);
 
-  const sparseLabels = labels.map((l,i) => { const step = Math.ceil(labels.length/7); return (i%step===0||i===labels.length-1)?l:''; });
+  // Show at most 6 x-axis labels, suppress duplicates
+  const maxTicks = Math.min(6, labels.length);
+  const step = Math.max(1, Math.ceil(labels.length / maxTicks));
+  const sparseLabels = new Array(labels.length).fill('');
+  let lastShown = '';
+  labels.forEach((l, i) => {
+    if (i % step === 0 || i === labels.length - 1) {
+      if (l !== lastShown) { sparseLabels[i] = l; lastShown = l; }
+    }
+  });
 
   const validRet = retData.filter(v=>v!=null);
   const retMin = validRet.length ? Math.min(...validRet) : 0;
@@ -3965,7 +3974,7 @@ function _renderDashEqChart() {
     series,
     grid: { borderColor: 'transparent', yaxis: { lines: { show: false } } },
     xaxis: { categories: sparseLabels, labels:{ style:{colors:c.text,fontSize:'11px'}, rotate:0, hideOverlappingLabels:true }, axisBorder:{show:false}, axisTicks:{show:false} },
-    yaxis: { labels:{ style:{colors:c.text,fontSize:'11px'}, formatter: v => v!=null ? (isAbsMode ? '₹'+Math.round(v).toLocaleString('en-IN') : (v>=0?'+':'')+v.toFixed(1)+'%') : '' } },
+    yaxis: { tickAmount: 5, forceNiceScale: true, labels:{ style:{colors:c.text,fontSize:'11px'}, formatter: v => v!=null ? (isAbsMode ? '₹'+Math.round(v).toLocaleString('en-IN') : (v>=0?'+':'')+v.toFixed(2)+'%') : '' } },
     colors: hasTodaySeries ? [realisedColor, amberColor] : [realisedColor],
     fill:   { type:'gradient', gradient:{ type:'vertical', colorStops: hasTodaySeries ? [...eqColorStops,[{offset:0,color:amberColor,opacity:0.3},{offset:100,color:amberColor,opacity:0.02}]] : eqColorStops } },
     stroke: { curve:'smooth', width: hasTodaySeries?[2.5,2.5]:[2.5], dashArray: hasTodaySeries?[0,6]:[0] },
