@@ -1015,12 +1015,12 @@ tbody tr:hover { filter: brightness(0.97); }
   <div style="display:none"><div id="dash-capital-chart"></div></div>
 
   <!-- ⑧ PORTFOLIO HEAT MAP -->
-  <div class="card" style="margin-top:14px;padding:16px" id="dash-heatmap-card">
+  <div class="card" style="margin-top:14px;padding:14px 16px" id="dash-heatmap-card">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
-      <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em">🗺 Portfolio Heat Map</div>
-      <span style="font-size:11px;color:var(--text-muted)">tile size = position value · colour = P&amp;L%</span>
+      <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em">📊 Open Positions at a Glance</div>
+      <div id="dash-heatmap-legend" style="display:flex;gap:10px;font-size:10px;color:var(--text-muted);align-items:center"></div>
     </div>
-    <div id="dash-heatmap-canvas" style="height:180px;position:relative;overflow:hidden;border-radius:8px;background:var(--surface2)"></div>
+    <div id="dash-heatmap-canvas" style="display:flex;flex-wrap:wrap;gap:8px"></div>
   </div>
 
   <!-- ⑦ PERFORMANCE SUMMARY TABLE -->
@@ -10252,63 +10252,54 @@ function switchStrategy(mode) {
 function renderPortfolioHeatMap(open) {
   try {
     const el = document.getElementById('dash-heatmap-canvas');
+    const legendEl = document.getElementById('dash-heatmap-legend');
     const card = document.getElementById('dash-heatmap-card');
     if (!el) return;
     if (!open || open.length === 0) { if(card) card.style.display='none'; return; }
     if(card) card.style.display='';
 
     const items = open.map(t => ({
-      stock: t.stock,
-      value: (t.entryPrice > 0 && t.qty > 0) ? t.entryPrice * t.qty : 1,
+      stock: (t.stock||'').replace(/^(NSE|BSE):/i,''),
       plPct: t.plPct || 0,
-      notionalPl: t.notionalPl || 0
-    })).sort((a,b) => b.value - a.value);
+      notionalPl: t.notionalPl || 0,
+      age: parseInt(t.age||0),
+      haColour: (t.haColour||'').toLowerCase(),
+      haWarn: t.haWarn
+    })).sort((a,b) => b.plPct - a.plPct);
 
-    const totalVal = items.reduce((s,t) => s + t.value, 0);
-    const W = el.offsetWidth || 600, H = 180;
-
-    function layoutRow(items, x, y, w, h, totalItemValue) {
-      let xOff = x;
-      items.forEach(item => {
-        const iw = totalItemValue > 0 ? (item.value / totalItemValue) * w : w / items.length;
-        item._x = xOff; item._y = y; item._w = iw; item._h = h;
-        xOff += iw;
-      });
+    function tileStyle(plPct) {
+      if (plPct >= 15) return { bg: 'rgba(0,201,100,0.18)', border: '#00c964', text: '#00c964' };
+      if (plPct >= 8)  return { bg: 'rgba(0,201,100,0.12)', border: '#00c964', text: '#00c964' };
+      if (plPct >= 3)  return { bg: 'rgba(0,201,100,0.08)', border: 'rgba(0,201,100,0.4)', text: '#4ade80' };
+      if (plPct >= 0)  return { bg: 'rgba(0,201,100,0.04)', border: 'rgba(0,201,100,0.2)', text: 'var(--text-secondary)' };
+      if (plPct >= -3) return { bg: 'rgba(239,68,68,0.06)', border: 'rgba(239,68,68,0.25)', text: '#f87171' };
+      if (plPct >= -8) return { bg: 'rgba(239,68,68,0.12)', border: 'rgba(239,68,68,0.5)', text: '#ef4444' };
+      return { bg: 'rgba(239,68,68,0.18)', border: '#ef4444', text: '#ef4444' };
     }
 
-    function tileColor(plPct) {
-      if (plPct >= 15) return 'rgba(0,201,100,0.90)';
-      if (plPct >= 8)  return 'rgba(0,201,100,0.65)';
-      if (plPct >= 3)  return 'rgba(0,201,100,0.40)';
-      if (plPct >= 0)  return 'rgba(0,201,100,0.18)';
-      if (plPct >= -3) return 'rgba(239,68,68,0.25)';
-      if (plPct >= -8) return 'rgba(239,68,68,0.55)';
-      return 'rgba(239,68,68,0.80)';
+    const wins = items.filter(t => t.plPct > 0).length;
+    const losses = items.filter(t => t.plPct < 0).length;
+    const totalMTM = items.reduce((s,t) => s + t.notionalPl, 0);
+    if (legendEl) {
+      const mtmSign = totalMTM >= 0 ? '+' : '';
+      const mtmColor = totalMTM >= 0 ? '#00c964' : '#ef4444';
+      legendEl.innerHTML = `
+        <span style="color:#00c964">▲ ${wins} up</span>
+        <span style="color:#ef4444">▼ ${losses} down</span>
+        <span style="color:${mtmColor}">MTM ${mtmSign}₹${Math.abs(Math.round(totalMTM/1000))}k</span>`;
     }
 
-    const split = Math.ceil(items.length * 0.6);
-    const topItems = items.slice(0, split);
-    const botItems = items.slice(split);
-    const topVal = topItems.reduce((s,t) => s+t.value,0);
-    const botVal = botItems.reduce((s,t) => s+t.value,0);
-    const topH = botItems.length > 0 ? H * (topVal / totalVal) : H;
-    const botH = H - topH;
-
-    layoutRow(topItems, 0, 0, W, topH, topVal);
-    if (botItems.length > 0) layoutRow(botItems, 0, topH, W, botH, botVal);
-
-    const PAD = 2;
     el.innerHTML = items.map(item => {
-      const bg = tileColor(item.plPct);
-      const textColor = Math.abs(item.plPct) > 5 ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.75)';
+      const s = tileStyle(item.plPct);
       const sign = item.plPct >= 0 ? '+' : '';
-      const rsStr = item.notionalPl ? (' · ' + (item.notionalPl>=0?'+':'-') + '₹' + Math.abs(Math.round(item.notionalPl/1000)) + 'k') : '';
-      const w = (item._w||0) - PAD*2, h = (item._h||0) - PAD*2;
-      if (w < 8 || h < 8) return '';
-      const fontSize = Math.max(9, Math.min(13, w / 6));
-      return `<div title="${item.stock}: ${sign}${item.plPct.toFixed(1)}%${rsStr}" style="position:absolute;left:${(item._x||0)+PAD}px;top:${(item._y||0)+PAD}px;width:${w}px;height:${h}px;background:${bg};border-radius:4px;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;cursor:default">
-        <div style="font-size:${Math.min(fontSize,11)}px;font-weight:700;color:${textColor};text-align:center;padding:0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;text-align:center">${item.stock}</div>
-        ${h > 30 ? `<div style="font-size:${Math.min(fontSize,10)}px;color:${textColor};opacity:0.9">${sign}${item.plPct.toFixed(1)}%</div>` : ''}
+      const plRs = item.notionalPl ? `${item.notionalPl>=0?'+':'-'}₹${Math.abs(Math.round(item.notionalPl/1000))}k` : '—';
+      const ageStr = item.age > 0 ? `${item.age}d` : '';
+      const warn = item.haWarn ? ' ⚠' : '';
+      return `<div style="background:${s.bg};border:1.5px solid ${s.border};border-radius:8px;padding:8px 12px;min-width:90px;cursor:default;flex:1 1 90px;max-width:160px" title="${item.stock}: ${sign}${item.plPct.toFixed(1)}% · ${plRs} · ${ageStr}">
+        <div style="font-size:12px;font-weight:700;color:var(--text-primary);white-space:nowrap;overflow:hidden;text-overflow:ellipsis">${item.stock}${warn}</div>
+        <div style="font-size:15px;font-weight:800;color:${s.text};margin-top:2px">${sign}${item.plPct.toFixed(1)}%</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:1px">${plRs}</div>
+        ${ageStr ? `<div style="font-size:10px;color:var(--text-muted);margin-top:2px">${ageStr}</div>` : ''}
       </div>`;
     }).join('');
   } catch(e) { console.error('Portfolio heat map error:', e); }
