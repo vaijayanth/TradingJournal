@@ -949,12 +949,15 @@ tbody tr:hover { filter: brightness(0.97); }
   <!-- ④b RE-ENTRY WATCHLIST -->
   <div id="dash-reentry-card" style="margin-top:14px">
     <div class="card" style="padding:0">
-      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;cursor:pointer;border-bottom:1px solid var(--border)" onclick="toggleReentryList()">
-        <div>
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border)">
+        <div style="cursor:pointer;flex:1" onclick="toggleReentryList()">
           <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text-secondary)">🔁 Re-entry Watchlist</div>
           <div style="font-size:11px;color:var(--text-muted);margin-top:2px" id="dash-reentry-summary">—</div>
         </div>
-        <span id="dash-reentry-toggle-icon" style="font-size:11px;color:var(--text-muted)">▼</span>
+        <div style="display:flex;align-items:center;gap:10px">
+          <span onclick="clearReentryTracked()" title="Restore all tracked stocks to watchlist" style="font-size:10px;color:var(--text-muted);cursor:pointer;text-decoration:underline;text-underline-offset:2px">Reset tracked</span>
+          <span id="dash-reentry-toggle-icon" style="font-size:11px;color:var(--text-muted);cursor:pointer" onclick="toggleReentryList()">▼</span>
+        </div>
       </div>
       <div id="dash-reentry-list" style="overflow-x:auto">
         <div style="font-size:11px;color:var(--text-muted);padding:10px 16px 6px;line-height:1.5">
@@ -970,6 +973,7 @@ tbody tr:hover { filter: brightness(0.97); }
               <th style="padding:7px 14px;text-align:right;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)">Last P&amp;L%</th>
               <th style="padding:7px 14px;text-align:right;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)">Times Traded</th>
               <th style="padding:7px 14px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)">History</th>
+              <th style="padding:7px 14px;text-align:center;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)">Action</th>
             </tr>
           </thead>
           <tbody id="dash-reentry-tbody">
@@ -3758,6 +3762,9 @@ function renderDashboard(data, cfg) {
   // excludes stocks still held open, keeps only those where the cooldown has passed.
   (function() {
     try {
+      const TRACKED_KEY = 'tj_reentry_tracked';
+      const trackedStocks = new Set(JSON.parse(localStorage.getItem(TRACKED_KEY) || '[]'));
+
       const today = new Date();
       // Count trading days (Mon–Fri) between two dates
       const tradingDaysBetween = (from, to) => {
@@ -3778,9 +3785,9 @@ function renderDashboard(data, cfg) {
         byStock[s].push(t);
       });
 
-      // Build watchlist: one row per stock
+      // Build watchlist: one row per stock (exclude open positions AND already-tracked stocks)
       const watchlist = Object.entries(byStock)
-        .filter(([stock]) => !openStocks.has(stock))
+        .filter(([stock]) => !openStocks.has(stock) && !trackedStocks.has(stock))
         .map(([stock, trades]) => {
           const withClose = trades.filter(t => t.closeDate);
           if (!withClose.length) return null;
@@ -3828,7 +3835,7 @@ function renderDashboard(data, cfg) {
 
       if (tbody) {
         if (watchlist.length === 0) {
-          tbody.innerHTML = `<tr><td colspan="7" style="text-align:center;padding:14px;color:var(--text-muted);font-size:12px">No stocks eligible yet — all closed within last 6 days or currently open</td></tr>`;
+          tbody.innerHTML = `<tr><td colspan="8" style="text-align:center;padding:14px;color:var(--text-muted);font-size:12px">No stocks eligible yet — all closed within last 6 days, currently open, or already tracked</td></tr>`;
         } else {
           tbody.innerHTML = watchlist.map((r,i) => `
             <tr style="border-bottom:1px solid var(--border)">
@@ -3839,6 +3846,12 @@ function renderDashboard(data, cfg) {
               <td style="padding:8px 10px;font-size:12px;color:${plClr(r.lastPlPct||0)};font-weight:600">${r.lastPlPct!=null?(r.lastPlPct>=0?'+':'')+r.lastPlPct.toFixed(1)+'%':'—'}</td>
               <td style="padding:8px 10px;font-size:12px">${r.count}</td>
               <td style="padding:8px 10px;font-size:12px"><span style="color:var(--green)">${r.wins}W</span> / <span style="color:var(--red)">${r.losses}L</span></td>
+              <td style="padding:8px 10px;text-align:center">
+                <button onclick="markReentryTracked('${r.stock.replace(/'/g,"\\'")}',this)"
+                  style="font-size:10px;padding:3px 8px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;white-space:nowrap">
+                  ✓ Track
+                </button>
+              </td>
             </tr>`).join('');
         }
       }
@@ -4060,6 +4073,23 @@ function filterDashEqMonth(btn, month) {
   if (btn) btn.classList.add('active');
   _renderDashEqChart();
 }
+function markReentryTracked(stock, btn) {
+  const TRACKED_KEY = 'tj_reentry_tracked';
+  const tracked = new Set(JSON.parse(localStorage.getItem(TRACKED_KEY) || '[]'));
+  tracked.add(stock.toUpperCase().trim());
+  localStorage.setItem(TRACKED_KEY, JSON.stringify([...tracked]));
+  // Remove the row immediately
+  const row = btn.closest('tr');
+  if (row) row.style.transition='opacity .3s', row.style.opacity='0', setTimeout(()=>{ row.remove(); }, 300);
+  showToast(stock + ' marked as tracked — removed from watchlist', 'green');
+}
+
+function clearReentryTracked() {
+  localStorage.removeItem('tj_reentry_tracked');
+  if (window._data) renderDashboard(window._data.open, window._data.closed, window._data.portfolioValue, window._data.initialCapital, loadConfig());
+  showToast('Tracked list cleared — all stocks restored to watchlist', 'amber');
+}
+
 function toggleReentryList() {
   const list = document.getElementById('dash-reentry-list');
   const icon = document.getElementById('dash-reentry-toggle-icon');
