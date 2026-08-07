@@ -114,6 +114,25 @@ This is an **SST (Sharegenius Swing Trading) momentum system** — NOT a Minervi
 - **Performance tab**: SST System Health Banner (5 checks), renamed R-Multiple → Win:Loss Ratio, removed "planned risk" language, added avg win/loss ₹, Copy Summary button
 - **Analysis tab**: SST Analysis Health Banner (5 checks), replaced all stop-loss/risk-tier language with SST framing, Loss:Winner Ratio replaces Stop Slippage, "If WR improves to 40%" projection replaces "full risk cap" projection, Open Portfolio Quality replaces Risk Tier card
 
+## UI Changes Made (2026-08-07 session)
+
+### Re-entry Watchlist (Dashboard)
+- Card `#dash-reentry-card` shows stocks eligible for re-entry consideration
+- **Logic**: group all closed trades by stock → exclude any stock currently in open positions → keep only stocks where most recent close was **≥ 6 trading days ago** (Mon–Fri only, not calendar days)
+- Shows one row per stock: #, Stock, Last Closed, Days Since (trading days), Last P&L%, Times Traded, W/L history
+- Sorted by days since close (ascending — most recently eligible first)
+- If a stock has been traded multiple times, uses the MOST RECENT close date to check eligibility
+- JS: IIFE inside `renderDashboard`, uses `tradingDaysBetween(from, to)` helper (counts Mon–Fri only)
+- Collapsed by default, toggled via `toggleReentryList()`
+
+### Equity Curve (Dashboard) — `_renderDashEqChart()`
+- **Default mode changed**: `window._dashEqMode = '₹'` (absolute portfolio value, not % return)
+- **Aggregated by date**: trades grouped by close date before plotting — one data point per unique date. Multiple trades closing same day merge into one point. Tooltip lists all stocks for that date.
+- **X-axis**: sparse labels formatted as "Aug 26" style, max 8 labels, duplicates suppressed
+- **Y-axis**: compact format — ₹50.2L, ₹1.5k etc. Dynamic decimals for % mode (3dp if range <0.5%, 2dp if <5%, 1dp otherwise)
+- **Simplified style**: thin line (2px), very light fill (opacity 0.01–0.2), subtle horizontal grid lines, no Break-even annotation, legend top-right only when combined series visible
+- Toggle button still available to switch to % Return mode
+
 ## Key Helpers in index.html
 ```javascript
 // Date parsing — MUST use this everywhere, not new Date()
