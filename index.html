@@ -1581,6 +1581,24 @@ tbody tr:hover { filter: brightness(0.97); }
     </div>
   </div>
 
+  <!-- Capital Deployment Chart -->
+  <div class="card" style="margin-top:14px;padding:16px" id="perf-deploy-card">
+    <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">💰 Capital Deployment Over Time</div>
+    <div style="font-size:11px;color:var(--text-muted);margin-bottom:10px">Deployed capital vs idle cash by month — are you putting money to work in uptrends?</div>
+    <div id="chart-capital-deploy" style="height:220px"></div>
+  </div>
+
+  <!-- Alpha vs NIFTY -->
+  <div class="card" style="margin-top:14px;padding:16px" id="perf-alpha-card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:4px">
+      <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em">📊 Alpha vs NIFTY 50</div>
+      <span id="perf-alpha-value" style="font-size:14px;font-weight:700">—</span>
+    </div>
+    <div style="font-size:11px;color:var(--text-muted);margin-bottom:10px">Your cumulative return vs NIFTY 50 — shaded gap is your alpha</div>
+    <div id="chart-alpha-nifty" style="height:200px"></div>
+    <div id="perf-alpha-note" style="font-size:10px;color:var(--text-muted);margin-top:6px">NIFTY levels are approximate monthly reference points. For precise alpha, update the NIFTY table in Config.</div>
+  </div>
+
   <!-- Collapsible trade table -->
   <button class="collapsible-toggle" id="closed-toggle" onclick="toggleCollapsible('closed-trades-body', this)">
     <span>▶</span> Show all closed trades (—)
@@ -1614,6 +1632,7 @@ tbody tr:hover { filter: brightness(0.97); }
     <a href="#asec-pattern"  onclick="document.getElementById('asec-pattern').scrollIntoView({behavior:'smooth'});return false;" class="analysis-jump-btn">Patterns</a>
     <a href="#asec-maemfe"   onclick="document.getElementById('asec-maemfe').scrollIntoView({behavior:'smooth'});return false;" class="analysis-jump-btn">MAE/MFE</a>
     <a href="#asec-edge"     onclick="document.getElementById('asec-edge').scrollIntoView({behavior:'smooth'});return false;" class="analysis-jump-btn">Edge Diagnostics</a>
+    <a href="#asec-tilt"     onclick="document.getElementById('asec-tilt').scrollIntoView({behavior:'smooth'});return false;" class="analysis-jump-btn">Tilt Analysis</a>
   </div>
 
   <!-- SST Analysis Health Banner -->
@@ -2202,6 +2221,39 @@ tbody tr:hover { filter: brightness(0.97); }
       <div id="stock-leaderboard-table"></div>
     </div>
   </details>
+
+  <!-- 8b. Tilt Analysis -->
+  <div class="section-title" id="asec-tilt" style="margin-top:20px">Behavioural Tilt Analysis</div>
+  <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-top:12px">
+    <div class="card card-sm">
+      <div class="stat-label">After-Loss Trade Size</div>
+      <div style="font-size:28px;font-weight:800;margin-top:6px" id="tilt-size-change">—</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:4px" id="tilt-size-sub">vs normal entry size</div>
+      <div class="stat-badge" id="tilt-size-badge" style="margin-top:8px">—</div>
+    </div>
+    <div class="card card-sm">
+      <div class="stat-label">WR After 2+ Losses</div>
+      <div style="font-size:28px;font-weight:800;margin-top:6px" id="tilt-wr-after">—</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:4px" id="tilt-wr-sub">vs overall closed WR</div>
+      <div class="stat-badge" id="tilt-wr-badge" style="margin-top:8px">—</div>
+    </div>
+    <div class="card card-sm">
+      <div class="stat-label">Tilt Cost (Est. Annual)</div>
+      <div style="font-size:28px;font-weight:800;margin-top:6px" id="tilt-cost">—</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:4px">₹ lost from post-loss WR drop</div>
+      <div class="stat-badge" id="tilt-cost-badge" style="margin-top:8px">—</div>
+    </div>
+    <div class="card card-sm">
+      <div class="stat-label">Best Day to Enter</div>
+      <div style="font-size:28px;font-weight:800;margin-top:6px" id="tilt-best-day">—</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:4px" id="tilt-best-day-sub">by win rate · Mon–Fri</div>
+      <div class="stat-badge" id="tilt-best-day-badge" style="margin-top:8px">—</div>
+    </div>
+  </div>
+  <div class="card" style="margin-top:12px;padding:14px 16px">
+    <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">Win Rate by Day of Week</div>
+    <div id="chart-tilt-dayofweek" style="height:180px"></div>
+  </div>
 
   <!-- 8. Unlock Advanced Analytics (collapsible) -->
   <details style="margin-top:20px" id="unlock-analytics">
@@ -3900,6 +3952,8 @@ function renderDashboard(data, cfg) {
   })();
 
   renderDashCalendar(closed);
+  renderPortfolioHeatMap(open);
+  renderMomentumStrip(closed);
   renderDashCharts(open, closed, cfg, portfolioValue, initialCapital);
 }
 
@@ -5475,6 +5529,31 @@ function renderPerfStats(closed, open, portfolioValue, initialCapital) {
       else verdictEl.innerHTML = `<span style="color:var(--red)">🚨 Negative skew</span> — you have more large losses than large wins. This is the wrong shape for a momentum system. Review stop discipline — are losers running past plan?`;
     }
   })();
+
+  // ── SQN Score (Van Tharp) ──
+  try {
+    const closedWithPl = closed.filter(t => t.finalPlPct !== 0);
+    if (closedWithPl.length >= 5) {
+      const expR = closedWithPl.reduce((s,t) => s + t.finalPlPct, 0) / closedWithPl.length;
+      const variance = closedWithPl.reduce((s,t) => s + Math.pow(t.finalPlPct - expR, 2), 0) / closedWithPl.length;
+      const stdR = Math.sqrt(variance);
+      const sqn = stdR > 0 ? (expR / stdR) * Math.sqrt(closedWithPl.length) : 0;
+      const sqnEl = document.getElementById('perf-sqn-score');
+      const ratingEl = document.getElementById('perf-sqn-rating');
+      const badgeEl = document.getElementById('perf-sqn-badge');
+      const markerEl = document.getElementById('perf-sqn-you-marker');
+      if (sqnEl) { sqnEl.textContent = sqn.toFixed(2); sqnEl.style.color = sqn >= 3 ? 'var(--green)' : sqn >= 2 ? 'var(--accent)' : sqn >= 1.6 ? 'var(--amber)' : 'var(--red)'; }
+      let rating = '', badgeCls = '', advice = '';
+      if (sqn >= 5) { rating = 'Super System'; badgeCls = 'badge-green'; advice = 'Exceptional edge — scale with confidence'; }
+      else if (sqn >= 3) { rating = 'Excellent'; badgeCls = 'badge-green'; advice = 'Strong system quality — maintain discipline'; }
+      else if (sqn >= 2) { rating = 'Good'; badgeCls = 'badge-blue'; advice = 'Tradeable edge — continue refining entry quality'; }
+      else if (sqn >= 1.6) { rating = 'Average'; badgeCls = 'badge-amber'; advice = 'Marginal edge — focus on A-grade setups only'; }
+      else { rating = 'Below threshold'; badgeCls = 'badge-red'; advice = 'System needs improvement — review setup criteria'; }
+      if (ratingEl) ratingEl.textContent = rating;
+      if (badgeEl) { badgeEl.className = 'stat-badge ' + badgeCls; badgeEl.textContent = advice; }
+      if (markerEl) markerEl.innerHTML = `Your score: <strong style="color:var(--accent)">${sqn.toFixed(2)}</strong> (${rating}) · based on ${closedWithPl.length} closed trades`;
+    }
+  } catch(e) { console.error('SQN error:', e); }
 }
 
 // ── CLOSED TRADES TABLE ───────────────────────────────
@@ -6985,6 +7064,10 @@ function initPerfCharts(closed, initialCapital, open) {
       }
     }
   } catch(e) { console.warn('chart-rolling-wr failed', e); }
+
+  // ── Capital Deployment + Alpha charts ──
+  renderCapitalDeployChart(closed, open, initialCapital);
+  renderAlphaNifty(closed, initialCapital);
 }
 
 // ── EQUITY CURVE GLOBALS (pill + DD toggle, safe before init) ──
@@ -8763,6 +8846,9 @@ function initAnalysisCharts(open, closed) {
 
   // ── Projections & Outlook ──
   try { renderProjections(open, closed); } catch(e) { console.warn('renderProjections failed', e); }
+
+  // ── Tilt Analysis ──
+  try { renderTiltAnalysis(closed); } catch(e) { console.warn('renderTiltAnalysis failed', e); }
 }
 
 function buildStockLeaderData(open, closed) {
@@ -10161,6 +10247,469 @@ function switchStrategy(mode) {
     }
   }
 }
+
+// ── FEATURE 1: PORTFOLIO HEAT MAP ─────────────────────────────────────────────
+function renderPortfolioHeatMap(open) {
+  try {
+    const el = document.getElementById('dash-heatmap-canvas');
+    const card = document.getElementById('dash-heatmap-card');
+    if (!el) return;
+    if (!open || open.length === 0) { if(card) card.style.display='none'; return; }
+    if(card) card.style.display='';
+
+    const items = open.map(t => ({
+      stock: t.stock,
+      value: (t.entryPrice > 0 && t.qty > 0) ? t.entryPrice * t.qty : 1,
+      plPct: t.plPct || 0,
+      notionalPl: t.notionalPl || 0
+    })).sort((a,b) => b.value - a.value);
+
+    const totalVal = items.reduce((s,t) => s + t.value, 0);
+    const W = el.offsetWidth || 600, H = 180;
+
+    function layoutRow(items, x, y, w, h, totalItemValue) {
+      let xOff = x;
+      items.forEach(item => {
+        const iw = totalItemValue > 0 ? (item.value / totalItemValue) * w : w / items.length;
+        item._x = xOff; item._y = y; item._w = iw; item._h = h;
+        xOff += iw;
+      });
+    }
+
+    function tileColor(plPct) {
+      if (plPct >= 15) return 'rgba(0,201,100,0.90)';
+      if (plPct >= 8)  return 'rgba(0,201,100,0.65)';
+      if (plPct >= 3)  return 'rgba(0,201,100,0.40)';
+      if (plPct >= 0)  return 'rgba(0,201,100,0.18)';
+      if (plPct >= -3) return 'rgba(239,68,68,0.25)';
+      if (plPct >= -8) return 'rgba(239,68,68,0.55)';
+      return 'rgba(239,68,68,0.80)';
+    }
+
+    const split = Math.ceil(items.length * 0.6);
+    const topItems = items.slice(0, split);
+    const botItems = items.slice(split);
+    const topVal = topItems.reduce((s,t) => s+t.value,0);
+    const botVal = botItems.reduce((s,t) => s+t.value,0);
+    const topH = botItems.length > 0 ? H * (topVal / totalVal) : H;
+    const botH = H - topH;
+
+    layoutRow(topItems, 0, 0, W, topH, topVal);
+    if (botItems.length > 0) layoutRow(botItems, 0, topH, W, botH, botVal);
+
+    const PAD = 2;
+    el.innerHTML = items.map(item => {
+      const bg = tileColor(item.plPct);
+      const textColor = Math.abs(item.plPct) > 5 ? 'rgba(255,255,255,0.95)' : 'rgba(255,255,255,0.75)';
+      const sign = item.plPct >= 0 ? '+' : '';
+      const rsStr = item.notionalPl ? (' · ' + (item.notionalPl>=0?'+':'-') + '₹' + Math.abs(Math.round(item.notionalPl/1000)) + 'k') : '';
+      const w = (item._w||0) - PAD*2, h = (item._h||0) - PAD*2;
+      if (w < 8 || h < 8) return '';
+      const fontSize = Math.max(9, Math.min(13, w / 6));
+      return `<div title="${item.stock}: ${sign}${item.plPct.toFixed(1)}%${rsStr}" style="position:absolute;left:${(item._x||0)+PAD}px;top:${(item._y||0)+PAD}px;width:${w}px;height:${h}px;background:${bg};border-radius:4px;display:flex;flex-direction:column;align-items:center;justify-content:center;overflow:hidden;cursor:default">
+        <div style="font-size:${Math.min(fontSize,11)}px;font-weight:700;color:${textColor};text-align:center;padding:0 4px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;width:100%;text-align:center">${item.stock}</div>
+        ${h > 30 ? `<div style="font-size:${Math.min(fontSize,10)}px;color:${textColor};opacity:0.9">${sign}${item.plPct.toFixed(1)}%</div>` : ''}
+      </div>`;
+    }).join('');
+  } catch(e) { console.error('Portfolio heat map error:', e); }
+}
+
+// ── FEATURE 2: SYSTEM MOMENTUM STRIP ──────────────────────────────────────────
+function renderMomentumStrip(closed) {
+  try {
+    const dotsEl = document.getElementById('dash-momentum-dots');
+    const verdictEl = document.getElementById('dash-momentum-verdict');
+    const card = document.getElementById('dash-momentum-card');
+    if (!dotsEl || !verdictEl) return;
+    if (!closed || closed.length === 0) { if(card) card.style.display='none'; return; }
+    if(card) card.style.display='';
+
+    const last10 = [...closed].sort((a,b) => parseDate(b.closeDate) - parseDate(a.closeDate)).slice(0, 10).reverse();
+    const wins = last10.filter(t => t.finalPlPct > 0);
+
+    let streak = 0, streakType = '';
+    for (let i = last10.length - 1; i >= 0; i--) {
+      const isWin = last10[i].finalPlPct > 0;
+      if (i === last10.length - 1) { streakType = isWin ? 'W' : 'L'; streak = 1; }
+      else if ((isWin && streakType === 'W') || (!isWin && streakType === 'L')) { streak++; }
+      else break;
+    }
+
+    const recentWR = last10.length > 0 ? wins.length / last10.length * 100 : 0;
+    const avgWin = wins.length > 0 ? wins.reduce((s,t) => s + t.finalPlPct, 0) / wins.length : 0;
+
+    dotsEl.innerHTML = last10.map((t, i) => {
+      const isWin = t.finalPlPct > 0;
+      const isLast = i === last10.length - 1;
+      const bg = isWin ? 'rgba(0,201,100,0.85)' : 'rgba(239,68,68,0.75)';
+      const border = isLast ? '2px solid var(--text-primary)' : '2px solid transparent';
+      const sign = isWin ? 'W' : 'L';
+      const tip = `${t.stock}: ${(t.finalPlPct>=0?'+':'')}${t.finalPlPct.toFixed(1)}%`;
+      return `<div title="${tip}" style="width:34px;height:34px;border-radius:50%;background:${bg};border:${border};display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:700;color:white;cursor:default;flex-shrink:0">${sign}</div>`;
+    }).join('') + '<div style="font-family:monospace;font-size:10px;color:var(--text-muted);margin-left:4px">← latest</div>';
+
+    let msg = '', color = 'var(--text-secondary)';
+    if (streakType === 'W' && streak >= 4) {
+      msg = `🔥 ${streak}-win streak — system firing. Maintain position size, don't chase extended setups.`;
+      color = 'var(--green)';
+    } else if (streakType === 'W' && streak >= 2) {
+      msg = `✅ ${streak} consecutive wins · Recent WR ${recentWR.toFixed(0)}% · avg winner +${avgWin.toFixed(1)}% — system working well.`;
+      color = 'var(--green)';
+    } else if (streakType === 'L' && streak >= 3) {
+      msg = `🚨 ${streak} consecutive exits not working. Review your last 3 entries for setup quality. Wait for an A-grade setup before next entry.`;
+      color = 'var(--red)';
+    } else if (streakType === 'L' && streak === 2) {
+      msg = `⚠ 2 exits in a row not working. Next setup must be high conviction only. Recent WR: ${recentWR.toFixed(0)}%.`;
+      color = 'var(--amber)';
+    } else {
+      msg = `Recent WR: ${recentWR.toFixed(0)}% (last ${last10.length} exits) · avg winner +${avgWin.toFixed(1)}% — normal variance.`;
+    }
+    verdictEl.innerHTML = `<span style="color:${color}">${msg}</span>`;
+  } catch(e) { console.error('Momentum strip error:', e); }
+}
+
+// ── FEATURE 4: TILT ANALYSIS ──────────────────────────────────────────────────
+function renderTiltAnalysis(closed) {
+  try {
+    const sorted = [...closed].sort((a,b) => parseDate(a.openDate) - parseDate(b.openDate));
+
+    // After-loss WR
+    let afterLossWins = 0, afterLossTrades = 0;
+    let consecutiveLosses = 0;
+    for (let i = 0; i < sorted.length - 1; i++) {
+      const isLoss = sorted[i].finalPlPct <= 0;
+      if (isLoss) consecutiveLosses++;
+      else consecutiveLosses = 0;
+      if (consecutiveLosses >= 2) {
+        afterLossTrades++;
+        if (sorted[i+1].finalPlPct > 0) afterLossWins++;
+      }
+    }
+    const overallWR = closed.length > 0 ? closed.filter(t=>t.finalPlPct>0).length / closed.length * 100 : 0;
+    const afterLossWR = afterLossTrades > 0 ? afterLossWins / afterLossTrades * 100 : null;
+
+    if (afterLossWR !== null) {
+      const drop = overallWR - afterLossWR;
+      const el = document.getElementById('tilt-wr-after');
+      const sub = document.getElementById('tilt-wr-sub');
+      const badge = document.getElementById('tilt-wr-badge');
+      if (el) { el.textContent = afterLossWR.toFixed(0) + '%'; el.style.color = drop > 10 ? 'var(--red)' : drop > 5 ? 'var(--amber)' : 'var(--green)'; }
+      if (sub) sub.textContent = `vs overall ${overallWR.toFixed(0)}% · ${afterLossTrades} trades analysed`;
+      if (badge) { badge.className = 'stat-badge ' + (drop > 10 ? 'badge-red' : drop > 5 ? 'badge-amber' : 'badge-green'); badge.textContent = drop > 5 ? `⚠ WR drops ${drop.toFixed(0)}pp after loss run — tilt signal` : '✓ Consistent after losses'; }
+
+      const avgTrade = closed.length > 0 ? closed.reduce((s,t)=>s+Math.abs(t.finalPl||0),0)/closed.length : 0;
+      const tiltCostPerTrade = drop/100 * avgTrade;
+      const annualTrades = closed.length > 0 ? closed.length / 2 : 20;
+      const annualCost = tiltCostPerTrade * afterLossTrades / closed.length * annualTrades;
+      const costEl = document.getElementById('tilt-cost');
+      const costBadge = document.getElementById('tilt-cost-badge');
+      if (costEl) { costEl.textContent = '₹' + Math.round(Math.abs(annualCost)/1000) + 'k'; costEl.style.color = annualCost > 50000 ? 'var(--red)' : 'var(--amber)'; }
+      if (costBadge) { costBadge.className = 'stat-badge ' + (annualCost > 50000 ? 'badge-red' : 'badge-amber'); costBadge.textContent = 'Estimated annual drag from post-loss decisions'; }
+    }
+
+    const withQty = sorted.filter(t => t.qty > 0 && t.entryPrice > 0);
+    if (withQty.length >= 5) {
+      let afterLossSum = 0, afterLossCount = 0, normalSum = 0, normalCount = 0;
+      let prevWasLoss = false;
+      for (let i = 1; i < withQty.length; i++) {
+        const s = withQty[i].entryPrice * withQty[i].qty;
+        if (prevWasLoss) { afterLossSum += s; afterLossCount++; }
+        else { normalSum += s; normalCount++; }
+        prevWasLoss = withQty[i-1].finalPlPct <= 0;
+      }
+      if (afterLossCount > 0 && normalCount > 0) {
+        const afterLossAvg = afterLossSum / afterLossCount;
+        const normalAvg = normalSum / normalCount;
+        const pctChange = (afterLossAvg - normalAvg) / normalAvg * 100;
+        const sizeEl = document.getElementById('tilt-size-change');
+        const sizeSub = document.getElementById('tilt-size-sub');
+        const sizeBadge = document.getElementById('tilt-size-badge');
+        if (sizeEl) { sizeEl.textContent = (pctChange >= 0 ? '+' : '') + pctChange.toFixed(0) + '%'; sizeEl.style.color = Math.abs(pctChange) > 15 ? 'var(--red)' : 'var(--amber)'; }
+        if (sizeSub) sizeSub.textContent = `after a loss vs normal entry`;
+        if (sizeBadge) { sizeBadge.className = 'stat-badge ' + (Math.abs(pctChange)>15 ? 'badge-red' : Math.abs(pctChange)>5 ? 'badge-amber' : 'badge-green'); sizeBadge.textContent = Math.abs(pctChange)>10 ? '⚠ Size changes after losses — revenge trading signal' : '✓ Consistent sizing'; }
+      }
+    }
+
+    const byDay = {1:[], 2:[], 3:[], 4:[], 5:[]};
+    closed.forEach(t => {
+      if (!t.openDate) return;
+      const d = parseDate(t.openDate);
+      const day = d.getDay();
+      if (day >= 1 && day <= 5) byDay[day].push(t.finalPlPct > 0);
+    });
+    const dayLabels = ['Mon','Tue','Wed','Thu','Fri'];
+    const dayWRs = [1,2,3,4,5].map(d => {
+      const trades = byDay[d];
+      return trades.length >= 2 ? (trades.filter(Boolean).length / trades.length * 100) : null;
+    });
+    const bestDayIdx = dayWRs.reduce((best, wr, i) => (wr !== null && (best === -1 || wr > dayWRs[best])) ? i : best, -1);
+    if (bestDayIdx >= 0) {
+      const bd = document.getElementById('tilt-best-day');
+      const bdSub = document.getElementById('tilt-best-day-sub');
+      const bdBadge = document.getElementById('tilt-best-day-badge');
+      if (bd) { bd.textContent = dayLabels[bestDayIdx]; bd.style.color = 'var(--green)'; }
+      if (bdSub) bdSub.textContent = `WR: ${dayWRs[bestDayIdx].toFixed(0)}% on ${dayLabels[bestDayIdx]} entries`;
+      if (bdBadge) { bdBadge.className = 'stat-badge badge-green'; bdBadge.textContent = `Prefer ${dayLabels[bestDayIdx]} entries when market is in sync`; }
+    }
+
+    const chartEl = document.getElementById('chart-tilt-dayofweek');
+    if (chartEl && typeof ApexCharts !== 'undefined') {
+      const isDarkMode = document.documentElement.getAttribute('data-theme') === 'dark' || (!document.documentElement.getAttribute('data-theme') && window.matchMedia('(prefers-color-scheme:dark)').matches);
+      const textCol = isDarkMode ? '#8da3be' : '#5a6b7d';
+      const validWRs = dayWRs.map(v => v !== null ? parseFloat(v.toFixed(1)) : 0);
+      const colors = validWRs.map(v => v >= 50 ? '#00c96b' : v >= 35 ? '#f5a623' : '#ef4444');
+      if (window._tiltDayChart) { try { window._tiltDayChart.destroy(); } catch(e){} }
+      window._tiltDayChart = new ApexCharts(chartEl, {
+        chart: { type: 'bar', height: 180, toolbar: { show: false }, background: 'transparent', animations: { enabled: false } },
+        series: [{ name: 'Win Rate %', data: validWRs }],
+        xaxis: { categories: dayLabels, labels: { style: { colors: textCol, fontSize: '11px' } } },
+        yaxis: { max: 100, labels: { style: { colors: textCol, fontSize: '10px' }, formatter: v => v + '%' } },
+        colors: colors,
+        plotOptions: { bar: { distributed: true, borderRadius: 4, columnWidth: '60%' } },
+        annotations: { yaxis: [{ y: 50, borderColor: '#7a96b4', strokeDashArray: 4, label: { text: '50%', style: { color: textCol, fontSize: '10px', background: 'transparent' } } }] },
+        legend: { show: false },
+        tooltip: { y: { formatter: v => v + '%' } },
+        theme: { mode: isDarkMode ? 'dark' : 'light' },
+        grid: { borderColor: isDarkMode ? '#1e3352' : '#e0e8f0', strokeDashArray: 3 }
+      });
+      window._tiltDayChart.render();
+    }
+  } catch(e) { console.error('Tilt analysis error:', e); }
+}
+
+// ── FEATURE 5: CAPITAL DEPLOYMENT CHART ───────────────────────────────────────
+function renderCapitalDeployChart(closed, open, initialCapital) {
+  try {
+    const el = document.getElementById('chart-capital-deploy');
+    if (!el || typeof ApexCharts === 'undefined') return;
+
+    const ic = initialCapital || 5000000;
+    const isDarkMode = document.documentElement.getAttribute('data-theme') === 'dark' || (!document.documentElement.getAttribute('data-theme') && window.matchMedia('(prefers-color-scheme:dark)').matches);
+    const textCol = isDarkMode ? '#8da3be' : '#5a6b7d';
+
+    const monthMap = {};
+    const allTrades = [...(closed||[]), ...(open||[])];
+    allTrades.forEach(t => {
+      if (!t.openDate || !t.entryPrice) return;
+      const d = parseDate(t.openDate);
+      if (isNaN(d)) return;
+      const key = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+      if (!monthMap[key]) monthMap[key] = { deployed: 0, count: 0 };
+      const posVal = t.entryPrice * (t.qty || 10);
+      monthMap[key].deployed += posVal;
+      monthMap[key].count++;
+    });
+
+    const months = Object.keys(monthMap).sort();
+    if (months.length < 2) { const card = document.getElementById('perf-deploy-card'); if(card) card.style.display='none'; return; }
+
+    const deployedPcts = months.map(m => {
+      const pct = Math.min(100, (monthMap[m].deployed / ic) * 100);
+      return parseFloat(pct.toFixed(1));
+    });
+    const idlePcts = deployedPcts.map(v => parseFloat(Math.max(0, 100 - v).toFixed(1)));
+    const labels = months.map(m => {
+      const [y, mo] = m.split('-');
+      return ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][parseInt(mo)-1] + ' ' + y.slice(2);
+    });
+
+    if (window._deployChart) { try { window._deployChart.destroy(); } catch(e){} }
+    window._deployChart = new ApexCharts(el, {
+      chart: { type: 'bar', height: 220, stacked: true, toolbar: { show: false }, background: 'transparent', animations: { enabled: false } },
+      series: [
+        { name: 'Deployed', data: deployedPcts },
+        { name: 'Idle Cash', data: idlePcts }
+      ],
+      colors: ['rgba(0,201,100,0.75)', 'rgba(239,68,68,0.20)'],
+      xaxis: { categories: labels, labels: { style: { colors: textCol, fontSize: '10px' }, rotate: -30 } },
+      yaxis: { max: 100, labels: { style: { colors: textCol, fontSize: '10px' }, formatter: v => v + '%' } },
+      plotOptions: { bar: { columnWidth: '80%' } },
+      legend: { labels: { colors: textCol } },
+      tooltip: { y: { formatter: v => v + '%' } },
+      theme: { mode: isDarkMode ? 'dark' : 'light' },
+      grid: { borderColor: isDarkMode ? '#1e3352' : '#e0e8f0', strokeDashArray: 3 }
+    });
+    window._deployChart.render();
+  } catch(e) { console.error('Capital deploy chart error:', e); }
+}
+
+// ── FEATURE 7: ALPHA vs NIFTY ─────────────────────────────────────────────────
+function renderAlphaNifty(closed, initialCapital) {
+  try {
+    const el = document.getElementById('chart-alpha-nifty');
+    const card = document.getElementById('perf-alpha-card');
+    if (!el || typeof ApexCharts === 'undefined') return;
+    if (!closed || closed.length < 3) { if(card) card.style.display='none'; return; }
+    if(card) card.style.display='';
+
+    const isDarkMode = document.documentElement.getAttribute('data-theme') === 'dark' || (!document.documentElement.getAttribute('data-theme') && window.matchMedia('(prefers-color-scheme:dark)').matches);
+    const textCol = isDarkMode ? '#8da3be' : '#5a6b7d';
+    const ic = initialCapital || 5000000;
+
+    const NIFTY_REF = {
+      '2024-01': 21725, '2024-02': 22493, '2024-03': 22327, '2024-04': 22604,
+      '2024-05': 22530, '2024-06': 24010, '2024-07': 24857, '2024-08': 25235,
+      '2024-09': 25810, '2024-10': 24206, '2024-11': 23644, '2024-12': 23644,
+      '2025-01': 23163, '2025-02': 22124, '2025-03': 23519, '2025-04': 24339,
+      '2025-05': 24971, '2025-06': 25021, '2025-07': 25518, '2025-08': 25235,
+      '2025-09': 26178, '2025-10': 25815, '2025-11': 23908, '2025-12': 23647,
+      '2026-01': 23163, '2026-02': 22414, '2026-03': 23350, '2026-04': 24039,
+      '2026-05': 24500, '2026-06': 25100, '2026-07': 25620, '2026-08': 26000,
+    };
+
+    const byMonth = {};
+    closed.forEach(t => {
+      if (!t.closeDate) return;
+      const d = parseDate(t.closeDate);
+      if (isNaN(d)) return;
+      const key = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
+      if (!byMonth[key]) byMonth[key] = 0;
+      byMonth[key] += t.finalPl || 0;
+    });
+
+    const months = Object.keys(byMonth).sort();
+    if (months.length < 2) { if(card) card.style.display='none'; return; }
+
+    let cumPl = 0;
+    const myReturns = [0];
+    const niftyReturns = [0];
+    const labels = [months[0].replace('-', ' ')];
+
+    const firstNifty = NIFTY_REF[months[0]];
+    months.slice(1).forEach(m => {
+      cumPl += byMonth[m] || 0;
+      myReturns.push(parseFloat((cumPl / ic * 100).toFixed(2)));
+      const niftyLevel = NIFTY_REF[m];
+      if (niftyLevel && firstNifty) {
+        niftyReturns.push(parseFloat(((niftyLevel - firstNifty) / firstNifty * 100).toFixed(2)));
+      } else {
+        niftyReturns.push(niftyReturns[niftyReturns.length - 1] || 0);
+      }
+      const [y, mo] = m.split('-');
+      labels.push(['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][parseInt(mo)-1] + ' ' + y.slice(2));
+    });
+
+    const latestAlpha = myReturns[myReturns.length-1] - niftyReturns[niftyReturns.length-1];
+    const alphaEl = document.getElementById('perf-alpha-value');
+    if (alphaEl) { alphaEl.textContent = (latestAlpha >= 0 ? '+' : '') + latestAlpha.toFixed(1) + '% alpha'; alphaEl.style.color = latestAlpha >= 0 ? 'var(--green)' : 'var(--red)'; }
+
+    if (window._alphaChart) { try { window._alphaChart.destroy(); } catch(e){} }
+    window._alphaChart = new ApexCharts(el, {
+      chart: { type: 'area', height: 200, toolbar: { show: false }, background: 'transparent', animations: { enabled: false } },
+      series: [
+        { name: 'Your Return', data: myReturns },
+        { name: 'NIFTY 50', data: niftyReturns }
+      ],
+      colors: ['#00c96b', '#7a96b4'],
+      stroke: { width: [2, 1.5], dashArray: [0, 5] },
+      fill: { type: ['gradient', 'solid'], opacity: [0.15, 0], gradient: { shadeIntensity: 0.5, opacityFrom: 0.3, opacityTo: 0.02 } },
+      xaxis: { categories: labels, labels: { style: { colors: textCol, fontSize: '10px' }, rotate: -30 }, tickAmount: Math.min(labels.length, 8) },
+      yaxis: { labels: { style: { colors: textCol, fontSize: '10px' }, formatter: v => v.toFixed(1) + '%' } },
+      legend: { labels: { colors: textCol } },
+      tooltip: { y: { formatter: v => v.toFixed(2) + '%' } },
+      theme: { mode: isDarkMode ? 'dark' : 'light' },
+      grid: { borderColor: isDarkMode ? '#1e3352' : '#e0e8f0', strokeDashArray: 3 }
+    });
+    window._alphaChart.render();
+  } catch(e) { console.error('Alpha vs NIFTY error:', e); }
+}
+
+// ── FEATURE 6: PRE-TRADE CHECKLIST MODAL ──────────────────────────────────────
+function openPreTradeModal() {
+  const modal = document.getElementById('pretrade-modal');
+  if (!modal) return;
+  modal.style.display = 'flex';
+
+  const cfg = loadConfig();
+  const mktDir = localStorage.getItem('tj_mkt_direction') || '';
+  const data = window._data || {};
+  const open = data.open || [];
+  const closed = data.closed || [];
+  const ic = data.initialCapital || 5000000;
+
+  const mktOk = mktDir === 'uptrend';
+  const mktLabel = mktDir === 'uptrend' ? '📈 Confirmed Uptrend' : mktDir === 'pressure' ? '⚠ Under Pressure' : mktDir === 'correction' ? '📉 In Correction' : 'Not set';
+  const mktAdvice = mktOk ? 'Full size OK' : mktDir === 'pressure' ? '50% size max, no new breakouts' : mktDir === 'correction' ? 'No new entries' : 'Set Market Direction in Today tab first';
+
+  const lastClosed = [...closed].sort((a,b) => parseDate(b.closeDate)-parseDate(a.closeDate)).slice(0,3);
+  const recentLosses = lastClosed.filter(t => t.finalPlPct <= 0).length;
+  const streakOk = recentLosses < 3;
+  const streakLabel = recentLosses >= 3 ? `🚨 3 losses in last 3 exits` : recentLosses === 2 ? '⚠ 2 of last 3 exits negative' : '✅ No concerning loss run';
+  const streakAdvice = recentLosses >= 3 ? 'Wait 1 day. Review your entries.' : recentLosses === 2 ? 'Next setup must be high conviction only' : 'Normal variance';
+
+  const totalDeployed = open.reduce((s,t) => s + (t.entryPrice||0)*(t.qty||0), 0);
+  const deployedPct = ic > 0 ? totalDeployed / ic * 100 : 0;
+  const riskCapOk = deployedPct < 90;
+  const riskLabel = deployedPct > 90 ? `⚠ ${deployedPct.toFixed(0)}% of capital deployed` : `✅ ${deployedPct.toFixed(0)}% deployed`;
+  const riskAdvice = riskCapOk ? 'Capital available for entry' : 'Consider closing underperformers first';
+
+  const last20 = [...closed].sort((a,b) => parseDate(b.closeDate)-parseDate(a.closeDate)).slice(0,20);
+  const recentWR = last20.length > 0 ? last20.filter(t=>t.finalPlPct>0).length / last20.length * 100 : 50;
+  const sysOk = recentWR >= 20;
+  const sysLabel = `${recentWR.toFixed(0)}% win rate (last ${last20.length} exits)`;
+  const sysAdvice = recentWR >= 30 ? 'System producing — trade normally' : recentWR >= 20 ? 'WR below target — A-grade only' : 'System struggling — review criteria';
+
+  const openCount = open.length;
+  const posOk = openCount < 20;
+  const posLabel = `${openCount} open positions`;
+  const posAdvice = openCount >= 20 ? 'Portfolio full — wait for exit before entering' : openCount >= 15 ? 'Near capacity — highest conviction only' : 'Room for new position';
+
+  const checks = [
+    { label: 'Market Direction', val: mktLabel, advice: mktAdvice, ok: mktOk },
+    { label: 'Recent Loss Streak', val: streakLabel, advice: streakAdvice, ok: streakOk },
+    { label: 'Capital Available', val: riskLabel, advice: riskAdvice, ok: riskCapOk },
+    { label: 'System Health', val: sysLabel, advice: sysAdvice, ok: sysOk },
+    { label: 'Position Count', val: posLabel, advice: posAdvice, ok: posOk },
+  ];
+
+  const score = checks.filter(c => c.ok).length;
+  const checksEl = document.getElementById('pretrade-checks');
+  const scoreEl = document.getElementById('pretrade-score');
+  const verdictEl = document.getElementById('pretrade-verdict');
+
+  if (checksEl) {
+    checksEl.innerHTML = checks.map(c => `
+      <div style="padding:10px 12px;border-radius:8px;border:1px solid ${c.ok ? 'var(--green)' : 'var(--red)'};background:${c.ok ? 'rgba(0,201,100,0.06)' : 'rgba(239,68,68,0.06)'}">
+        <div style="display:flex;align-items:center;gap:8px">
+          <span style="font-size:16px">${c.ok ? '✅' : '❌'}</span>
+          <div>
+            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted)">${c.label}</div>
+            <div style="font-size:13px;font-weight:600;margin-top:1px">${c.val}</div>
+            <div style="font-size:11px;color:var(--text-muted);margin-top:2px">${c.advice}</div>
+          </div>
+        </div>
+      </div>`).join('');
+  }
+
+  if (scoreEl) { scoreEl.textContent = score + '/5'; scoreEl.style.color = score >= 4 ? 'var(--green)' : score >= 3 ? 'var(--amber)' : 'var(--red)'; }
+  if (verdictEl) {
+    verdictEl.textContent = score >= 4 ? '✅ Clear to enter — conditions met' : score === 3 ? '⚠ Borderline — A-grade setup only' : '🚫 Do not enter — conditions not met';
+    verdictEl.style.color = score >= 4 ? 'var(--green)' : score === 3 ? 'var(--amber)' : 'var(--red)';
+  }
+}
+
+function closePreTradeModal() {
+  const modal = document.getElementById('pretrade-modal');
+  if (modal) modal.style.display = 'none';
+}
 </script>
+
+<!-- PRE-TRADE CHECKLIST MODAL -->
+<div id="pretrade-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9999;align-items:center;justify-content:center">
+  <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;max-width:480px;width:90%;max-height:90vh;overflow-y:auto">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
+      <div style="font-size:15px;font-weight:800">📋 Pre-Trade Entry Checklist</div>
+      <button onclick="closePreTradeModal()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--text-muted)">✕</button>
+    </div>
+    <div style="font-size:12px;color:var(--text-muted);margin-bottom:16px">Score ≥4/5 required to enter. Be honest — this gate protects capital.</div>
+    <div id="pretrade-checks" style="display:flex;flex-direction:column;gap:10px"></div>
+    <div style="margin-top:16px;padding:12px 16px;border-radius:8px;background:var(--surface2);text-align:center">
+      <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">Score</div>
+      <div style="font-size:36px;font-weight:800" id="pretrade-score">0/5</div>
+      <div style="font-size:13px;font-weight:600;margin-top:4px" id="pretrade-verdict">—</div>
+    </div>
+    <button onclick="closePreTradeModal()" style="width:100%;margin-top:12px;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text-secondary);font-size:13px;font-weight:600;cursor:pointer">Close</button>
+  </div>
+</div>
 </body>
 </html>
