@@ -810,6 +810,10 @@ tbody tr:hover { filter: brightness(0.97); }
     <span id="dash-sys-hold-sub"></span><span id="dash-sys-pf-sub"></span>
   </div>
 
+  <div style="display:flex;justify-content:flex-end;margin-bottom:10px">
+    <button onclick="openPreTradeModal()" style="font-size:12px;font-weight:700;padding:6px 16px;border-radius:20px;border:1.5px solid var(--accent);background:var(--surface);color:var(--accent);cursor:pointer">📋 Pre-Trade Check</button>
+  </div>
+
   <!-- ① KPI ROW -->
   <div class="grid-3" style="gap:14px">
 
@@ -946,6 +950,13 @@ tbody tr:hover { filter: brightness(0.97); }
   <!-- ④ ALERT STRIP — actions needed today -->
   <div id="dash-alert-strip" style="margin-top:10px;display:none"></div>
 
+  <!-- MOMENTUM STRIP -->
+  <div class="card" style="margin-top:14px;padding:14px 16px" id="dash-momentum-card">
+    <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:10px">⚡ System Momentum — Last 10 Exits</div>
+    <div id="dash-momentum-dots" style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;margin-bottom:10px"></div>
+    <div id="dash-momentum-verdict" style="font-size:12px;padding:8px 12px;border-radius:6px;background:var(--surface2);color:var(--text-secondary)"></div>
+  </div>
+
   <!-- ④b RE-ENTRY WATCHLIST -->
   <div id="dash-reentry-card" style="margin-top:14px">
     <div class="card" style="padding:0">
@@ -1002,6 +1013,15 @@ tbody tr:hover { filter: brightness(0.97); }
 
   <!-- hidden chart div kept for JS compat -->
   <div style="display:none"><div id="dash-capital-chart"></div></div>
+
+  <!-- ⑧ PORTFOLIO HEAT MAP -->
+  <div class="card" style="margin-top:14px;padding:16px" id="dash-heatmap-card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:10px">
+      <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em">🗺 Portfolio Heat Map</div>
+      <span style="font-size:11px;color:var(--text-muted)">tile size = position value · colour = P&amp;L%</span>
+    </div>
+    <div id="dash-heatmap-canvas" style="height:180px;position:relative;overflow:hidden;border-radius:8px;background:var(--surface2)"></div>
+  </div>
 
   <!-- ⑦ PERFORMANCE SUMMARY TABLE -->
   <div class="card" style="margin-top:14px;padding:16px">
@@ -1132,6 +1152,28 @@ tbody tr:hover { filter: brightness(0.97); }
       </div>
     </div>
     <div style="padding:8px 14px;font-size:11px;line-height:1.5;color:var(--text-muted)" id="sst-health-verdict">—</div>
+  </div>
+
+  <!-- SQN Score card -->
+  <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+    <div class="card card-sm" style="flex:1;min-width:160px">
+      <div class="stat-label">Van Tharp SQN Score</div>
+      <div style="font-size:36px;font-weight:800;line-height:1.1;margin-top:4px" id="perf-sqn-score">—</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:4px" id="perf-sqn-rating">—</div>
+      <div style="font-size:10px;color:var(--text-muted);margin-top:8px">= Expectancy ÷ σ(R) × √n · measures system consistency</div>
+      <div class="stat-badge" id="perf-sqn-badge" style="margin-top:8px">—</div>
+    </div>
+    <div class="card card-sm" style="flex:2;min-width:220px">
+      <div class="stat-label">SQN Rating Scale</div>
+      <div style="margin-top:10px;display:flex;flex-direction:column;gap:5px;font-size:11px" id="perf-sqn-bands">
+        <div style="display:flex;gap:8px;align-items:center"><div style="width:80px;height:8px;border-radius:4px;background:rgba(239,68,68,0.4)"></div><span style="color:var(--text-muted)">&lt;1.6 — Poor / do not trade</span></div>
+        <div style="display:flex;gap:8px;align-items:center"><div style="width:80px;height:8px;border-radius:4px;background:rgba(245,166,35,0.5)"></div><span style="color:var(--text-muted)">1.6–2.0 — Average</span></div>
+        <div style="display:flex;gap:8px;align-items:center"><div style="width:80px;height:8px;border-radius:4px;background:rgba(0,201,100,0.5)"></div><span style="color:var(--text-muted)">2.0–3.0 — Good</span></div>
+        <div style="display:flex;gap:8px;align-items:center"><div style="width:80px;height:8px;border-radius:4px;background:rgba(0,201,100,0.8)"></div><span style="color:var(--text-muted)">3.0–5.0 — Excellent</span></div>
+        <div style="display:flex;gap:8px;align-items:center"><div style="width:80px;height:8px;border-radius:4px;background:rgba(160,130,220,0.7)"></div><span style="color:var(--text-muted)">&gt;5.0 — Super system</span></div>
+      </div>
+      <div id="perf-sqn-you-marker" style="margin-top:8px;font-size:11px;color:var(--text-muted)"></div>
+    </div>
   </div>
 
   <!-- Group 1: P&L Summary -->
