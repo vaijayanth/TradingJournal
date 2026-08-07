@@ -912,7 +912,7 @@ tbody tr:hover { filter: brightness(0.97); }
         <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.07em;color:var(--text-secondary)">Equity Curve</div>
       </div>
       <div style="display:flex;gap:6px;align-items:center">
-        <button id="dash-eq-mode-toggle" onclick="toggleDashEqMode()" style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s">% Return</button>
+        <button id="dash-eq-mode-toggle" onclick="toggleDashEqMode()" style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s">₹ Absolute</button>
         <button id="dash-eq-dd-toggle" onclick="toggleDashEqDD()" style="font-size:11px;font-weight:700;padding:3px 10px;border-radius:20px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;transition:all .15s">▶ DD OFF</button>
       </div>
     </div>
@@ -3911,7 +3911,11 @@ function _renderDashEqChart() {
   const ddOn      = window._dashEqDDOn;
   const amberColor = '#F6AD55';
 
-  if (!allTrades.length) return;
+  if (!allTrades.length) {
+    const eqEl = document.getElementById('dash-equity-mini');
+    if (eqEl) eqEl.innerHTML = '<div style="height:260px;display:flex;align-items:center;justify-content:center;color:var(--text-muted);font-size:13px">No closed trades yet — equity curve will appear after your first exit</div>';
+    return;
+  }
 
   let displayTrades, startEq;
   if (month === 'all') {
