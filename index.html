@@ -834,6 +834,11 @@ tbody tr:hover { filter: brightness(0.97); }
           <span style="font-size:11px;color:var(--text-muted)" id="dash-proj-return">—</span>
         </div>
         <div style="font-size:10px;color:var(--text-muted);margin-top:3px" id="dash-proj-basis">—</div>
+        <!-- Full Scale Potential -->
+        <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border)">
+          <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-bottom:5px">🚀 Full Scale Potential (same WR &amp; pace)</div>
+          <div style="display:flex;flex-direction:column;gap:4px" id="dash-proj-scale"></div>
+        </div>
       </div>
     </div>
 
@@ -3249,6 +3254,31 @@ function renderDashboard(data, cfg) {
         'Open winners ' + fmtV(comp1) + ' · losers ' + fmtV(comp2) + ' · new trades ' + fmtV(comp3)
         + ' · avg exit ' + (avgExitPct * 100).toFixed(1) + '% · WR ' + (wr * 100).toFixed(0) + '%'
         + (tierChanges > 0 ? ' · ' + tierChanges + ' tier upgrade' + (tierChanges > 1 ? 's' : '') + ' → ' + fmtL(finalTier) + '/trade' : '');
+
+      // ── Full Scale Potential ──
+      // Show what same WR + pace produces at ₹25k, ₹50k, ₹1L per trade with 200 positions
+      const scaleEl = document.getElementById('dash-proj-scale');
+      if (scaleEl) {
+        const evRatio = wr * avgExitPct - (1 - wr) * avgLossPct; // EV as fraction of position size
+        const scales = [
+          { label: '₹25k/trade · 200 pos', size: 25000, pos: 200 },
+          { label: '₹50k/trade · 200 pos', size: 50000, pos: 200 },
+          { label: '₹1L/trade · 200 pos',  size: 100000, pos: 200 },
+        ];
+        const tradesPerYr = Math.round(avgTradesPerMonth) * 12;
+        scaleEl.innerHTML = scales.map(s => {
+          const openGain = s.pos * s.size * evRatio;        // open book contribution
+          const newGain  = tradesPerYr * s.size * evRatio;  // new trades contribution
+          const totalGain = openGain + newGain;
+          const retPct = initialCapital > 0 ? totalGain / initialCapital * 100 : 0;
+          const color = retPct >= 20 ? 'var(--green)' : retPct >= 10 ? 'var(--amber)' : 'var(--text-secondary)';
+          return `<div style="display:flex;justify-content:space-between;align-items:center;font-size:11px">
+            <span style="color:var(--text-muted)">${s.label}</span>
+            <span style="font-weight:700;color:${color}">${retPct >= 0 ? '+' : ''}${retPct.toFixed(1)}% · ${retPct >= 0 ? '+' : ''}${fmtL(totalGain)}</span>
+          </div>`;
+        }).join('');
+      }
+
       projEl.style.display = 'block';
     } catch(e) { const projEl2 = document.getElementById('dash-projection'); if (projEl2) projEl2.style.display = 'none'; }
   })();
