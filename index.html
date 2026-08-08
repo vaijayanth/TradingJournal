@@ -3172,31 +3172,30 @@ function renderDashboard(data, cfg) {
       const avgLossPct = losses30.length > 0
         ? Math.abs(losses30.reduce((s,t) => s + t.finalPl / posSize(t), 0) / losses30.length) : 0.04;
 
+      // Base = portfolioValue (AK26, realised-only — open MTM NOT included).
+      // So comp1 + comp2 must capture the FULL expected final P&L of open positions,
+      // not just the delta above current notionalPl.
+
       // ── Component 1: Open winners ──
-      // Each profitable open position will close at some point.
-      // Expected final P&L = max(current plPct, avgWinPct) × position size.
-      // Additional gain = expected final − already accrued notionalPl.
+      // Expected to close at max(current plPct, avgWinPct) — at least where they are now,
+      // potentially higher if still below the historical avg winner.
       const openWinners = (open || []).filter(t => (t.plPct || 0) > 0);
       let comp1 = 0;
       openWinners.forEach(t => {
-        const size      = posSize(t);
-        const accrued   = t.notionalPl || 0;
+        const size       = posSize(t);
         const currentPct = (t.plPct || 0) / 100;
-        const expectedPct = Math.max(currentPct, avgWinPct); // at least current, could run more
-        const expectedFinal = size * expectedPct;
-        comp1 += Math.max(0, expectedFinal - accrued); // additional gain above current MTM
+        const expectedPct = Math.max(currentPct, avgWinPct);
+        comp1 += size * expectedPct; // full expected final P&L (base has no open MTM)
       });
 
       // ── Component 2: Open losers resolving ──
-      // SST holds losers. Over 12 months, WR% will recover and close as winners,
-      // (1-WR)% will remain open or close at avg loss.
+      // WR% recover and close as winners, (1-WR)% close at avg loss.
+      // Expected value can be negative — that's the real cost of holding losers.
       const openLosers = (open || []).filter(t => (t.plPct || 0) <= 0);
       let comp2 = 0;
       openLosers.forEach(t => {
-        const size        = posSize(t);
-        const accrued     = t.notionalPl || 0; // negative for losers
-        const expectedVal = size * (wr * avgWinPct - (1 - wr) * avgLossPct);
-        comp2 += Math.max(0, expectedVal - accrued); // additional gain vs current negative MTM
+        const size = posSize(t);
+        comp2 += size * (wr * avgWinPct - (1 - wr) * avgLossPct);
       });
 
       // ── Component 3: New trades over next 12 months with tier step-ups ──
