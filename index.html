@@ -3231,7 +3231,7 @@ function renderDashboard(data, cfg) {
           tradeCount++;
           const tier = sizeForCount(tradeCount);
           if (tier > prev) tierChanges++;
-          comp3 += tier * (wr * avgWinPct - (1 - wr) * avgLossPct);
+          comp3 += tier * (wr * avgExitPct - (1 - wr) * avgLossPct);
         }
       }
 
