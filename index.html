@@ -3142,40 +3142,78 @@ function renderDashboard(data, cfg) {
       : (totalCombinedPl >= 0 ? '▲ +' : '▼ ') + fmt(Math.abs(totalCombinedPl)) + ' combined';
   }
 
-  // 12-Month Projection — rolling 6-month avg monthly closed P&L × 12
+  // 12-Month Projection — SST hybrid: run-rate WR/pace + sizing tier step-ups
   (function() {
     const projEl = document.getElementById('dash-projection');
     if (!projEl) return;
     try {
-      const sortedCl = [...closed].filter(t => t.closeDate).sort((a,b) => parseDate(a.closeDate)-parseDate(b.closeDate));
-      if (sortedCl.length < 3) { projEl.style.display = 'none'; return; }
+      const sortedCl = [...closed].filter(t => t.closeDate && t.finalPl !== undefined)
+        .sort((a,b) => parseDate(a.closeDate) - parseDate(b.closeDate));
+      if (sortedCl.length < 5) { projEl.style.display = 'none'; return; }
 
-      // Bucket closed P&L by calendar month
+      // SST position sizing tier: ₹20k base, +₹5k per 100 closed trades, cap ₹1L
+      const sizeForCount = n => Math.min(20000 + Math.floor(n / 100) * 5000, 100000);
+
+      // Avg trades per month from last 3 complete months
+      const nowKey = new Date().getFullYear() + '-' + String(new Date().getMonth()+1).padStart(2,'0');
       const monthMap = {};
       sortedCl.forEach(t => {
         const d = parseDate(t.closeDate);
         if (!d || d.getFullYear() < 2000) return;
         const key = d.getFullYear() + '-' + String(d.getMonth()+1).padStart(2,'0');
-        if (!monthMap[key]) monthMap[key] = { pl: 0, count: 0 };
-        monthMap[key].pl    += (t.finalPl || 0);
-        monthMap[key].count += 1;
+        if (!monthMap[key]) monthMap[key] = { wins: 0, losses: 0, count: 0 };
+        monthMap[key].count++;
+        if ((t.finalPl || 0) > 0) monthMap[key].wins++;
+        else monthMap[key].losses++;
       });
+      const recentMonths = Object.keys(monthMap).sort().filter(k => k < nowKey).slice(-3);
+      if (recentMonths.length === 0) { projEl.style.display = 'none'; return; }
+      const avgTradesPerMonth = recentMonths.reduce((s,k) => s + monthMap[k].count, 0) / recentMonths.length;
 
-      // Exclude current incomplete month; use last 6 complete months
-      const nowKey = new Date().getFullYear() + '-' + String(new Date().getMonth()+1).padStart(2,'0');
-      const useMonths = Object.keys(monthMap).sort().filter(k => k < nowKey).slice(-6);
-      if (useMonths.length === 0) { projEl.style.display = 'none'; return; }
+      // WR and avg win/loss ₹ from last 30 closed trades (recent form)
+      const recent30 = sortedCl.slice(-30);
+      const wins30   = recent30.filter(t => (t.finalPl || 0) > 0);
+      const losses30 = recent30.filter(t => (t.finalPl || 0) <= 0);
+      const wr       = wins30.length / recent30.length;
+      // Normalise avg win/loss to current position size so tier scaling works cleanly
+      const currentSize = sizeForCount(sortedCl.length);
+      const avgWinPct   = wins30.length > 0
+        ? wins30.reduce((s,t) => s + (t.finalPl / (t.entryPrice > 0 && t.qty > 0 ? t.entryPrice * t.qty : currentSize)), 0) / wins30.length
+        : 0.08;
+      const avgLossPct  = losses30.length > 0
+        ? Math.abs(losses30.reduce((s,t) => s + (t.finalPl / (t.entryPrice > 0 && t.qty > 0 ? t.entryPrice * t.qty : currentSize)), 0) / losses30.length)
+        : 0.04;
 
-      const avgMonthlyPl    = useMonths.reduce((s,k) => s + monthMap[k].pl, 0) / useMonths.length;
-      const avgTradesPerMonth = useMonths.reduce((s,k) => s + monthMap[k].count, 0) / useMonths.length;
+      // Simulate 12 months month-by-month, tracking trade count and tier upgrades
+      let tradeCount  = sortedCl.length;
+      let totalGain   = 0;
+      let tierChanges = 0;
+      for (let m = 0; m < 12; m++) {
+        const tradesThisMonth = Math.round(avgTradesPerMonth);
+        for (let i = 0; i < tradesThisMonth; i++) {
+          const prevTier = sizeForCount(tradeCount);
+          tradeCount++;
+          const tier = sizeForCount(tradeCount);
+          if (tier > prevTier) tierChanges++;
+          const isWin = Math.random() < wr; // deterministic approximation below
+          // Use expected value per trade instead of random — deterministic projection
+          const ev = tier * (wr * avgWinPct - (1 - wr) * avgLossPct);
+          totalGain += ev;
+        }
+      }
 
-      const projectedGain   = avgMonthlyPl * 12;
-      const projectedValue  = portfolioValue + projectedGain;
+      // Also include open MTM growth expectation: assume open book grows proportionally
+      const openMtmContrib = totalUnrealisedPl > 0 ? totalUnrealisedPl * 0.3 : 0; // conservative 30% growth on existing open winners
+
+      const projectedGain  = totalGain + openMtmContrib;
+      const projectedValue = portfolioValue + projectedGain;
       const projectedRetPct = initialCapital > 0 ? projectedGain / initialCapital * 100 : 0;
       const isPos = projectedGain >= 0;
+      const finalTier = sizeForCount(tradeCount);
 
       const fmtV = v => '₹' + Math.round(Math.abs(v)).toLocaleString('en-IN');
       const fmtP = v => (v >= 0 ? '+' : '-') + Math.abs(v).toFixed(1) + '%';
+      const fmtL = v => v >= 100000 ? '₹' + (v/100000).toFixed(1) + 'L' : '₹' + (v/1000).toFixed(0) + 'k';
 
       const projValEl   = document.getElementById('dash-proj-value');
       const projRetEl   = document.getElementById('dash-proj-return');
@@ -3183,8 +3221,8 @@ function renderDashboard(data, cfg) {
       if (projValEl)  { projValEl.textContent = fmtV(projectedValue); projValEl.style.color = isPos ? 'var(--green)' : 'var(--red)'; }
       if (projRetEl)  projRetEl.textContent = fmtP(projectedRetPct) + ' on capital · ' + (isPos?'+':'-') + fmtV(projectedGain) + ' gain';
       if (projBasisEl) projBasisEl.textContent =
-        'avg ' + (isPos?'+':'-') + fmtV(avgMonthlyPl) + '/mo · '
-        + Math.round(avgTradesPerMonth) + ' trades/mo · last ' + useMonths.length + ' months';
+        Math.round(avgTradesPerMonth) + ' trades/mo · WR ' + (wr*100).toFixed(0) + '% (last 30) · '
+        + (tierChanges > 0 ? tierChanges + ' tier upgrade' + (tierChanges>1?'s':'') + ' → ' + fmtL(finalTier) + '/trade' : 'size ' + fmtL(currentSize) + '/trade');
       projEl.style.display = 'block';
     } catch(e) { const projEl2 = document.getElementById('dash-projection'); if (projEl2) projEl2.style.display = 'none'; }
   })();
