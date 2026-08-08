@@ -6,24 +6,73 @@ Connected to a Google Sheet via Apps Script as a JSON middleware.
 
 ## SYSTEM DESIGN — READ BEFORE SUGGESTING ANYTHING
 
-This is an **SST (Sharegenius Swing Trading) momentum system** — NOT a Minervini fixed-stop system. Key distinction confirmed by user:
+This is an **SST (Sharegenius Swing Trading) high-WR momentum system**. It is fundamentally different from Minervini/O'Neil fixed-stop systems. Read every point below before making any suggestion.
 
-- **NO fixed stop loss per trade** — risk is managed through position count (spreading across many positions) and quick profit taking. Do NOT suggest stop-loss slippage metrics or "did you take your stop?" analysis.
-- **GTT (Good Till Triggered) trailing orders** are used to trail and exit positions — not manual stops. Winners are held via GTT trailing; exits happen when GTT fires or on manual review for reversal signals.
-- **Losses = positions closed via profit signal not firing, reversal, or manual review** — not a stop being hit.
-- **Winners are held OPEN and RUN** — profitable trades stay open for weeks/months accumulating via GTT trailing. The real gains sit in `notionalPl` (col Y), not in closed P&L.
-- **True performance = realised + unrealised combined** — closed-only P&L always looks negative. Never judge system health from closed trades alone.
-- **A "loss streak" on closed trades is NORMAL and MEANINGLESS** — do not suggest loss streak banners or closed-trade streak alerts. They will always be red and tell the user nothing.
-- **The right health checks for this system are:**
-  1. Are open positions profitable? (open portfolio health — % profitable)
-  2. Is avg closed loss size staying small (< 7%)?
-  3. Are winners held long enough (30+ days)?  
-  4. Is the loss:winner ratio < 0.5 (avg loss% ÷ avg win%)?
-  5. Are partials being taken when eligible?
-  6. Are there 30d+ open runners accumulating gains?
-- **Never suggest metrics calibrated for balanced win/loss systems** (e.g., "your win rate is only 30% — this is bad"). For this system 30-40% WR with large winners is healthy.
-- **Profit Factor and Win:Loss ratio are the correct system quality gauges**, not win rate alone.
-- **"Init Risk ₹" (col K) / "Init Risk %" (col L)** — these columns may be partially populated or irrelevant for SST. Never assume every trade has initRiskRs. Position size metric = `entryPrice × qty`, not initRiskRs.
+### Core System Philosophy
+- **Target ≥70% win rate** — this is a HIGH win rate system, not a low-WR large-winner system. A 30-40% WR would be a sign something is wrong.
+- **NO hard stop loss** — losses are held, not cut. Risk is managed via diversification (up to 200 positions) and the add-on rule (below).
+- **GTT (Good Till Triggered) orders** handle both entries and exits — fully automated, no screen-watching needed.
+- **Losers are HELD until recovery** — this is intentional system design, not a mistake. Do NOT suggest cutting losses fast.
+- **Winners are HELD indefinitely** via GTT trailing — as long as the trend and fundamentals are intact.
+- **True performance = realised + unrealised combined** — closed-only P&L looks misleadingly bad because losses sit open. Never judge system health from closed trades alone.
+
+### Entry Rules
+- **Universe**: Fundamentally strong stocks above 200 EMA AND 50 EMA
+- **Signal**: Stock touches 21-Day High (21DH) — breakout candidate
+- **Action**: Place GTT order at the 21DH price — entry triggers automatically when price breaks out
+- **Setup types** (col S): Breakout, Pullback, 21 EMA Pullback, 10 EMA Pullback
+- **Never chase** — if GTT misses the breakout, wait for the next 21DH signal
+
+### Stop / Hold Rules (TWO STATES — no fixed stop)
+**In Profit (P&L > 0):**
+- Hold — do nothing unless at lock-in or target zone
+- At 6% profit: trailing SL activates — verify GTT is set 6% below CMP
+- At 7%+: raise GTT further to lock in more profit
+- Hold indefinitely while fundamentals are intact
+
+**In Loss (P&L < 0):**
+- If stock is **above 200 EMA AND 50 EMA**: place a NEW GTT at 21DH for **50% add-on qty** — average into the position, the stock is still fundamentally intact
+- If stock drops **below 50 EMA**: HOLD, do nothing — wait for structure to return. No exit.
+- **Never exit on a loss** unless there is genuine fundamental deterioration (earnings collapse, fraud, sector disruption)
+
+### Profit Taking
+- Lock-in at **6%**: trailing SL activates, minimum 6% profit protected
+- At **7%+**: raise trailing SL higher to capture more of the move
+- Continue trailing as long as stock holds above support
+- **No fixed profit target** — let the trailing GTT SL do the exiting
+- Hold for weeks or months if the trend is intact
+
+### Position Sizing
+- Base position: **₹20,000 per trade**
+- Increases: +₹1,000 every 100 closed trades
+- Hard cap: **0.8% of portfolio**
+- Add-on size: **50% of current position size** (when averaging into a losing trade above 200+50 EMA)
+- Max open positions: **200**
+
+### Exit Rules
+- Exit ONLY when trailing GTT SL is hit (fires automatically)
+- In profit: GTT trailing SL at 6%+ handles exit
+- In loss above 200+50 EMA: wait, consider adding — SST expects recovery on fundamentally strong stocks
+- In loss below 50 EMA: hold indefinitely, no exit
+- Full exit only on fundamental company issue
+
+### What NOT to suggest for this system
+- ❌ Do NOT suggest "cut losses fast" — losses are held by design
+- ❌ Do NOT flag a 30-40% WR as bad — target is ≥70%, anything below signals a problem
+- ❌ Do NOT suggest stop-loss slippage metrics
+- ❌ Do NOT suggest position count limits — 200 is the intended max
+- ❌ Do NOT suggest loss streak alerts — losers held open don't count as a streak
+- ❌ Do NOT suggest R-multiple analysis — this system doesn't use fixed risk per trade
+
+### The right health checks for this system
+1. Win rate on closed trades ≥ 70%?
+2. Are losses being held (not cut) — avg loss hold time should be long?
+3. Are add-ons being taken correctly (above 200+50 EMA only)?
+4. Is the combined P&L (realised + open MTM) positive?
+5. Are GTT trailing SLs set on all profitable positions?
+
+### "Init Risk ₹" (col K) / "Init Risk %" (col L)
+These columns may be partially populated or irrelevant for SST. Never assume every trade has initRiskRs. Position size metric = `entryPrice × qty`, not initRiskRs.
 
 ## Repo & Branch
 - Repo: `vaijayanth/TradingJournal`
@@ -80,35 +129,29 @@ This is an **SST (Sharegenius Swing Trading) momentum system** — NOT a Minervi
 - **portfolioValue (AK26)**: realised only — does NOT include open position unrealized P&L. True combined P&L = `(portfolioValue - initialCapital) + sum(notionalPl)` = `totalFinalPl + totalUnrealisedPl`.
 - **Date format from Apps Script**: `dd-MMM-yyyy` (e.g., `21-Apr-2026`) — NOT parseable by `new Date()`. Use `parseDate()` helper everywhere.
 
-## Trading Strategy (IMPORTANT — SST momentum style)
-- **Entry (4 setup types)**:
-  1. Smooth breakout of 52-week high → `"Breakout"`
-  2. Generic pullback entry → `"Pullback"`
-  3. Clear pullback to 21 EMA on an existing breakout stock → `"21 EMA Pullback"`
-  4. Tight pullback to 10 EMA on a strongly trending stock → `"10 EMA Pullback"`
-- **NO fixed stop loss** — risk is spread across many positions + quick profit-taking discipline. Col J may exist but is not a hard mechanical stop in the traditional sense.
-- **GTT Trailing** — positions are held and exited via GTT (Good Till Triggered) trailing orders placed ~6% below CMP. Winners accumulate via GTT trailing for weeks/months.
-- **Exits**: when GTT fires OR manual review detects reversal signal (HA red, below 21 EMA on a winner, etc.)
-- **Profit taking**: 50% partial exit when a position reaches the partial trigger (configurable, default 7%). Remainder held via GTT trailing.
-- **Position sizing**: consistent allocation per position (not ₹ risk-based). Risk is managed through portfolio diversification across many concurrent positions.
+## Trading Strategy (IMPORTANT — read SYSTEM DESIGN section above first)
+
+The canonical strategy is stored in `STRAT_DEFAULT_RULES` in index.html (around line 9209). That is the source of truth. Summary:
+
+- **Entry**: GTT at 21-Day High — auto-triggers on breakout. Universe = above 200 EMA + 50 EMA.
+- **In profit**: Trail via GTT. Lock-in at 6%, raise at 7%+. Hold indefinitely.
+- **In loss, above 200+50 EMA**: Hold + add 50% qty via new GTT at 21DH.
+- **In loss, below 50 EMA**: Hold. Do nothing. Wait for structure.
+- **Exit**: Only when GTT trailing SL fires, or fundamental collapse.
+- **Sizing**: ₹20,000 base, +₹1k per 100 trades, hard cap 0.8% portfolio, max 200 positions.
 - **Initial capital**: ₹50,00,000 (₹50L)
-- **Cut losses fast, run profits**: positions not working are exited quickly (avg <10 days). Winners are held 30+ days via GTT trailing.
-- **Winners held open for a long time** → unrealized MTM (col Y) is where real gains sit
-- **True performance picture = realized + unrealized combined**
-- Notional P&L = open trade unrealized P&L (col Y sum), NOT a "what-if held longer" calculation on closed trades
+- **Notional P&L** = open trade unrealized MTM from col Y — NOT a what-if on closed trades.
+- **True performance** = realised + unrealised combined.
 
 ## SST Health Metrics (what to show and track)
 | Metric | Target | Note |
 |---|---|---|
-| Avg closed loss size | < 7% | Keeps losses small even without hard stop |
-| Avg winner % (closed) | ≥ 10% | Winners should run before GTT fires |
-| Loss:Winner ratio | < 0.5 | avg loss% ÷ avg win% — key asymmetry |
-| Hold asymmetry | Winners 2× longer | Days held: winners vs losers |
-| Open runners (30d+) | ≥ 2 | Big wins in progress |
-| Open portfolio profitable | ≥ 50% | Portfolio breadth health |
-| Partial exits taken | ≥ 70% | Discipline at trigger |
-| Combined profit factor | ≥ 1.5 | closed wins + open MTM ÷ closed losses |
-| Win:Loss ₹ ratio | ≥ 2× | avg win ₹ ÷ avg loss ₹ |
+| Win rate (closed) | ≥ 70% | High-WR system — below 60% signals a problem |
+| Combined P&L (realised + MTM) | Positive | Closed-only always looks bad — don't use alone |
+| Open portfolio profitable | ≥ 60% | Portfolio breadth health |
+| GTT coverage | 100% of profitable positions | Every in-profit trade should have active GTT |
+| Add-ons executed | When eligible | Loss above 200+50 EMA → 50% add-on should be placed |
+| Combined profit factor | ≥ 2.0 | High WR system should have high PF |
 
 ## UI Changes Made (2026-08-03 session)
 - **Performance tab**: SST System Health Banner (5 checks), renamed R-Multiple → Win:Loss Ratio, removed "planned risk" language, added avg win/loss ₹, Copy Summary button
@@ -256,27 +299,7 @@ const effPct = (t.cmp && effStop) ? ((t.cmp - effStop) / t.cmp * 100) : t.pctFro
 - **Setup type SIMPLIFIED** (2026-07-25): `parseSetupType(code)` now does direct passthrough — label = raw col S value. Sheet values changed to plain "Breakout" / "Pullback". All old compound-code parsing removed (no SETUP_PATTERN_LABELS, patternMap etc.). Analysis setup breakdown now shows Breakout vs Pullback head-to-head.
 - Position count limit alert REMOVED — system scales by 0.8% portfolio risk cap (not a fixed 15-position limit). Do NOT add a position count alert.
 
-## Changes — 2026-07-04 Session (Two-Phase Trailing Stop System)
-
-### Strategic Decision: Conditional Trailing Stop
-User confirmed: breakout consolidation above 7-day low is normal after large moves. Exiting on 7DL breach in phase 2 shakes out runners prematurely. New rule:
-- **Phase 1 (profit < +7%)**: 7-day low is primary stop — exits failed breakouts fast
-- **Phase 2 (profit ≥ +7%)**: Move col J to entry price (BE floor), trail via 21 EMA ONLY. 7-day low dips are normal consolidation — DO NOT exit on 7DL alone.
-
-### BE Trigger Changed: 2% → 7%
-`DEFAULT_CONFIG.beTrigger = 7` — raised from 2% to allow room for breakout consolidation.
-
-### Dashboard Alert Logic (line ~3427) — `isProfitPhase`
-```javascript
-const isProfitPhase = (t.plPct || 0) >= cfg.beTrigger;
-```
-- **7DL breach in profit phase** → 🟡 amber warning only: "may be normal consolidation — watch 21 EMA"
-- **21 EMA breach in profit phase** → 🔴 red, labelled "PRIMARY EXIT SIGNAL — exit at market"
-- **Manual stop hit** → always 🔴 red regardless of profit phase
-- **Pre-profit phase** → all exit signals remain 🔴 red as before
-
-### Strategy Tab — `STRAT_DEFAULT_RULES.stop` (line ~8160)
-Updated to document two-phase system clearly. Phase 1 / Phase 2 sections with rationale: "breakouts consolidate above the 7-day low before the next leg."
+## Changes — 2026-07-04 Session
 
 ### Edge Diagnostics (Analysis tab) — Key Bug Fixes
 - **R-Multiple**: was using `finalPlPct / initRiskPct` (different denominators). Fixed to `finalPl / initRiskRs` (₹ ÷ ₹ = true R).
