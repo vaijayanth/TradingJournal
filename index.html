@@ -3158,7 +3158,7 @@ function renderDashboard(data, cfg) {
     const projEl = document.getElementById('dash-projection');
     if (!projEl) return;
     try {
-      const sortedCl = [...closed].filter(t => t.closeDate && t.finalPl !== undefined)
+      const sortedCl = [...closed].filter(t => t.closeDate)
         .sort((a,b) => parseDate(a.closeDate) - parseDate(b.closeDate));
       if (sortedCl.length < 5) { projEl.style.display = 'none'; return; }
 
@@ -3218,9 +3218,11 @@ function renderDashboard(data, cfg) {
         if (!monthMap[key]) monthMap[key] = 0;
         monthMap[key]++;
       });
-      const recentMonths = Object.keys(monthMap).sort().filter(k => k < nowKey).slice(-3);
-      const avgTradesPerMonth = recentMonths.length > 0
-        ? recentMonths.reduce((s,k) => s + monthMap[k], 0) / recentMonths.length : 5;
+      const allMonthKeys = Object.keys(monthMap).sort();
+      const recentMonths = allMonthKeys.filter(k => k < nowKey).slice(-3);
+      const useMonths = recentMonths.length > 0 ? recentMonths : allMonthKeys.slice(-3);
+      const avgTradesPerMonth = useMonths.length > 0
+        ? useMonths.reduce((s,k) => s + monthMap[k], 0) / useMonths.length : 5;
 
       let tradeCount = sortedCl.length;
       let comp3 = 0, tierChanges = 0;
