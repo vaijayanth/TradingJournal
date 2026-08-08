@@ -3161,41 +3161,54 @@ function renderDashboard(data, cfg) {
       const sizeForCount = n => Math.min(20000 + Math.floor(n / 100) * 5000, 100000);
       const currentSize  = sizeForCount(sortedCl.length);
 
-      // ── Edge metrics from last 30 closed trades (recent form) ──
-      const recent30  = sortedCl.slice(-30);
-      const wins30    = recent30.filter(t => (t.finalPl || 0) > 0);
-      const losses30  = recent30.filter(t => (t.finalPl || 0) <= 0);
-      const wr        = recent30.length > 0 ? wins30.length / recent30.length : 0.7;
-      const posSize   = t => (t.entryPrice > 0 && t.qty > 0 ? t.entryPrice * t.qty : currentSize);
-      const avgWinPct = wins30.length > 0
-        ? wins30.reduce((s,t) => s + t.finalPl / posSize(t), 0) / wins30.length : 0.08;
-      const avgLossPct = losses30.length > 0
-        ? Math.abs(losses30.reduce((s,t) => s + t.finalPl / posSize(t), 0) / losses30.length) : 0.04;
+      // ── Edge metrics from all closed trades ──
+      const posSize    = t => (t.entryPrice > 0 && t.qty > 0 ? t.entryPrice * t.qty : currentSize);
+      const allWins    = sortedCl.filter(t => (t.finalPl || 0) > 0);
+      const allLosses  = sortedCl.filter(t => (t.finalPl || 0) <= 0);
+      const recent30   = sortedCl.slice(-30);
+      const wins30     = recent30.filter(t => (t.finalPl || 0) > 0);
+      const losses30   = recent30.filter(t => (t.finalPl || 0) <= 0);
+      const wr         = recent30.length > 0 ? wins30.length / recent30.length : 0.7;
+
+      // Avg exit % from closed winners (what GTT captured)
+      const avgExitPct = allWins.length > 0
+        ? allWins.reduce((s,t) => s + t.finalPl / posSize(t), 0) / allWins.length : 0.08;
+
+      // Avg MFE% from closed winners — the true peak potential before GTT fired
+      // MFE is stored as a % value (e.g. 12.5 means 12.5%), divide by 100 for ratio
+      const mfeWins = allWins.filter(t => (t.mfe || 0) > 0);
+      const avgMfePct = mfeWins.length >= 5
+        ? mfeWins.reduce((s,t) => s + t.mfe / 100, 0) / mfeWins.length
+        : avgExitPct * 1.5; // fallback: 50% above exit if not enough MFE data
+
+      const avgLossPct = allLosses.length > 0
+        ? Math.abs(allLosses.reduce((s,t) => s + t.finalPl / posSize(t), 0) / allLosses.length) : 0.04;
 
       // Base = portfolioValue (AK26, realised-only — open MTM NOT included).
-      // So comp1 + comp2 must capture the FULL expected final P&L of open positions,
-      // not just the delta above current notionalPl.
+      // comp1 + comp2 must capture the FULL expected final P&L of open positions.
 
       // ── Component 1: Open winners ──
-      // Expected to close at max(current plPct, avgWinPct) — at least where they are now,
-      // potentially higher if still below the historical avg winner.
+      // Use MFE-based potential: each winner expected to close at
+      // max(current plPct, avgMfePct) — peak potential, not the early-exit average.
+      // This corrects for the fact that closed winners are biased toward early exits;
+      // open winners are still running and likely heading toward MFE territory.
       const openWinners = (open || []).filter(t => (t.plPct || 0) > 0);
       let comp1 = 0;
       openWinners.forEach(t => {
         const size       = posSize(t);
         const currentPct = (t.plPct || 0) / 100;
-        const expectedPct = Math.max(currentPct, avgWinPct);
-        comp1 += size * expectedPct; // full expected final P&L (base has no open MTM)
+        const expectedPct = Math.max(currentPct, avgMfePct);
+        comp1 += size * expectedPct;
       });
 
       // ── Component 2: Open losers resolving ──
-      // WR% recover and close as winners, (1-WR)% close at avg loss.
-      // Expected value can be negative — that's the real cost of holding losers.
+      // WR% recover and close as winners at avg MFE potential,
+      // (1-WR)% close at avg loss.
       const openLosers = (open || []).filter(t => (t.plPct || 0) <= 0);
       let comp2 = 0;
       openLosers.forEach(t => {
         const size = posSize(t);
-        comp2 += size * (wr * avgWinPct - (1 - wr) * avgLossPct);
+        comp2 += size * (wr * avgMfePct - (1 - wr) * avgLossPct);
       });
 
       // ── Component 3: New trades over next 12 months with tier step-ups ──
@@ -3242,6 +3255,7 @@ function renderDashboard(data, cfg) {
       if (projRetEl)  projRetEl.textContent = fmtP(projectedRetPct) + ' on capital · ' + (isPos?'+':'-') + fmtV(projectedGain) + ' gain';
       if (projBasisEl) projBasisEl.textContent =
         'Open winners ' + fmtV(comp1) + ' · losers ' + fmtV(comp2) + ' · new trades ' + fmtV(comp3)
+        + ' · avg MFE ' + (avgMfePct * 100).toFixed(1) + '%'
         + (tierChanges > 0 ? ' · ' + tierChanges + ' tier upgrade' + (tierChanges > 1 ? 's' : '') + ' → ' + fmtL(finalTier) + '/trade' : '');
       projEl.style.display = 'block';
     } catch(e) { const projEl2 = document.getElementById('dash-projection'); if (projEl2) projEl2.style.display = 'none'; }
