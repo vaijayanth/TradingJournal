@@ -1023,6 +1023,39 @@ tbody tr:hover { filter: brightness(0.97); }
     <div id="dash-heatmap-canvas" style="display:flex;flex-wrap:wrap;gap:8px"></div>
   </div>
 
+  <!-- ⑨ STUCK POSITIONS CARD -->
+  <div class="card" style="margin-top:14px;padding:14px 16px;display:none" id="dash-stuck-card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em">🔒 Stuck Positions — In Loss</div>
+      <span id="dash-stuck-summary" style="font-size:11px;color:var(--text-muted)"></span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:12px">
+      <div class="card card-sm" style="background:var(--surface2)">
+        <div class="stat-label">Positions in Loss</div>
+        <div id="dash-stuck-count" style="font-size:22px;font-weight:800;color:var(--text-primary)">—</div>
+        <div id="dash-stuck-count-sub" style="font-size:11px;color:var(--text-muted);margin-top:2px"></div>
+      </div>
+      <div class="card card-sm" style="background:var(--surface2)">
+        <div class="stat-label">Capital Frozen</div>
+        <div id="dash-stuck-capital" style="font-size:22px;font-weight:800;color:var(--text-primary)">—</div>
+        <div id="dash-stuck-capital-sub" style="font-size:11px;color:var(--text-muted);margin-top:2px"></div>
+      </div>
+      <div class="card card-sm" style="background:var(--surface2)">
+        <div class="stat-label">Longest Held</div>
+        <div id="dash-stuck-longest" style="font-size:22px;font-weight:800;color:var(--text-primary)">—</div>
+        <div id="dash-stuck-longest-sub" style="font-size:11px;color:var(--text-muted);margin-top:2px"></div>
+      </div>
+      <div class="card card-sm" style="background:var(--surface2)">
+        <div class="stat-label">% of Deployed</div>
+        <div id="dash-stuck-pct" style="font-size:22px;font-weight:800;color:var(--text-primary)">—</div>
+        <div id="dash-stuck-pct-sub" style="font-size:11px;color:var(--text-muted);margin-top:2px"></div>
+      </div>
+    </div>
+    <!-- Breakdown by duration bucket -->
+    <div id="dash-stuck-buckets" style="display:flex;flex-direction:column;gap:6px"></div>
+    <div style="font-size:11px;color:var(--text-muted);margin-top:10px">Positions held in loss — capital is waiting for structure to return per SST rules</div>
+  </div>
+
   <!-- ⑦ PERFORMANCE SUMMARY TABLE -->
   <div class="card" style="margin-top:14px;padding:16px">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
@@ -3954,6 +3987,7 @@ function renderDashboard(data, cfg) {
   renderDashCalendar(closed);
   renderPortfolioHeatMap(open);
   renderMomentumStrip(closed);
+  renderStuckPositions(open, initialCapital);
   renderDashCharts(open, closed, cfg, portfolioValue, initialCapital);
 }
 
@@ -10357,6 +10391,76 @@ function renderMomentumStrip(closed) {
     }
     verdictEl.innerHTML = `<span style="color:${color}">${msg}</span>`;
   } catch(e) { console.error('Momentum strip error:', e); }
+}
+
+// ── STUCK POSITIONS CARD ───────────────────────────────────────────────────────
+function renderStuckPositions(open, initialCapital) {
+  try {
+    const card = document.getElementById('dash-stuck-card');
+    if (!card) return;
+    if (!open || open.length === 0) { card.style.display = 'none'; return; }
+
+    const losing = open.filter(t => (t.plPct || 0) < 0);
+    if (losing.length === 0) { card.style.display = 'none'; return; }
+    card.style.display = '';
+
+    const totalDeployed = open.reduce((s, t) => s + (t.entryPrice > 0 && t.qty > 0 ? t.entryPrice * t.qty : 0), 0);
+    const stuckCapital = losing.reduce((s, t) => s + (t.entryPrice > 0 && t.qty > 0 ? t.entryPrice * t.qty : 0), 0);
+    const stuckPct = totalDeployed > 0 ? stuckCapital / totalDeployed * 100 : 0;
+
+    const ages = losing.map(t => parseInt(t.age || 0)).filter(a => a > 0);
+    const longest = ages.length > 0 ? Math.max(...ages) : 0;
+    const longestStock = losing.find(t => parseInt(t.age || 0) === longest);
+
+    // Duration buckets
+    const buckets = [
+      { label: '< 30 days',    min: 0,   max: 29,  items: [] },
+      { label: '30–90 days',   min: 30,  max: 90,  items: [] },
+      { label: '91–180 days',  min: 91,  max: 180, items: [] },
+      { label: '> 180 days',   min: 181, max: Infinity, items: [] },
+    ];
+    losing.forEach(t => {
+      const age = parseInt(t.age || 0);
+      const b = buckets.find(b => age >= b.min && age <= b.max);
+      if (b) b.items.push(t);
+    });
+
+    const fmtRs = v => v >= 100000 ? `₹${(v/100000).toFixed(1)}L` : v >= 1000 ? `₹${(v/1000).toFixed(0)}k` : `₹${Math.round(v)}`;
+    const colorForBucket = (i) => ['var(--text-muted)', 'var(--amber)', '#f97316', 'var(--red)'][i];
+
+    document.getElementById('dash-stuck-count').textContent = losing.length;
+    document.getElementById('dash-stuck-count-sub').textContent = `of ${open.length} open positions`;
+    document.getElementById('dash-stuck-capital').textContent = fmtRs(stuckCapital);
+    document.getElementById('dash-stuck-capital-sub').textContent = `notional cost basis`;
+    document.getElementById('dash-stuck-longest').textContent = longest > 0 ? `${longest}d` : '—';
+    document.getElementById('dash-stuck-longest-sub').textContent = longestStock ? longestStock.stock : '';
+    document.getElementById('dash-stuck-pct').textContent = `${stuckPct.toFixed(1)}%`;
+
+    const pctColor = stuckPct >= 30 ? 'var(--red)' : stuckPct >= 15 ? 'var(--amber)' : 'var(--green)';
+    document.getElementById('dash-stuck-pct').style.color = pctColor;
+    document.getElementById('dash-stuck-summary').textContent =
+      stuckPct < 10 ? 'Healthy — minimal capital frozen' :
+      stuckPct < 20 ? 'Moderate — monitor oldest positions' :
+      'High — review fundamental health of losing positions';
+
+    const bucketsEl = document.getElementById('dash-stuck-buckets');
+    bucketsEl.innerHTML = buckets.map((b, i) => {
+      if (b.items.length === 0) return '';
+      const bCapital = b.items.reduce((s, t) => s + (t.entryPrice > 0 && t.qty > 0 ? t.entryPrice * t.qty : 0), 0);
+      const bPct = stuckCapital > 0 ? bCapital / stuckCapital * 100 : 0;
+      const color = colorForBucket(i);
+      const stocks = b.items.sort((a,b) => parseInt(b.age||0) - parseInt(a.age||0))
+        .map(t => `<span title="${parseInt(t.age||0)}d · ${(t.plPct||0).toFixed(1)}%" style="font-size:11px;padding:2px 7px;border-radius:10px;background:var(--surface2);color:var(--text-secondary)">${t.stock}</span>`).join('');
+      return `<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+        <div style="min-width:90px;font-size:11px;color:${color};font-weight:600">${b.label}</div>
+        <div style="width:80px;height:6px;border-radius:3px;background:var(--surface2);overflow:hidden">
+          <div style="width:${bPct.toFixed(0)}%;height:100%;background:${color};border-radius:3px"></div>
+        </div>
+        <div style="font-size:11px;color:var(--text-muted);min-width:60px">${b.items.length} pos · ${fmtRs(bCapital)}</div>
+        <div style="display:flex;flex-wrap:wrap;gap:4px">${stocks}</div>
+      </div>`;
+    }).join('');
+  } catch(e) { console.error('Stuck positions error:', e); }
 }
 
 // ── FEATURE 4: TILT ANALYSIS ──────────────────────────────────────────────────
