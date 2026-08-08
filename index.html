@@ -1084,8 +1084,11 @@ tbody tr:hover { filter: brightness(0.97); }
         <div style="font-size:11px;color:var(--text-muted);margin-top:2px">profitable, GTT current</div>
       </div>
     </div>
-    <div id="dash-gtt-list" style="display:flex;flex-direction:column;gap:6px"></div>
-    <div style="font-size:11px;color:var(--text-muted);margin-top:10px">GTT trailing SL should be ≥6% below CMP on all profitable positions</div>
+    <div style="margin-top:4px">
+      <button onclick="this.nextElementSibling.style.display=this.nextElementSibling.style.display==='none'?'flex':'none';this.textContent=this.nextElementSibling.style.display==='none'?'▼ Show positions':'▲ Hide positions'" style="font-size:11px;color:var(--accent);background:none;border:none;cursor:pointer;padding:0">▼ Show positions</button>
+      <div id="dash-gtt-list" style="display:none;flex-direction:column;gap:6px;margin-top:8px"></div>
+    </div>
+    <div style="font-size:11px;color:var(--text-muted);margin-top:8px">GTT trailing SL should be ≥6% below CMP on all profitable positions</div>
   </div>
 
   <!-- ⑦ PERFORMANCE SUMMARY TABLE -->
