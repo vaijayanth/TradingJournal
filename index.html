@@ -1056,6 +1056,38 @@ tbody tr:hover { filter: brightness(0.97); }
     <div style="font-size:11px;color:var(--text-muted);margin-top:10px">Positions held in loss — capital is waiting for structure to return per SST rules</div>
   </div>
 
+  <!-- ⑩ GTT MAINTENANCE CARD -->
+  <div class="card" style="margin-top:14px;padding:14px 16px;display:none" id="dash-gtt-card">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em">⚙️ GTT Maintenance Due</div>
+      <span id="dash-gtt-summary" style="font-size:11px;color:var(--text-muted)"></span>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-bottom:12px">
+      <div class="card card-sm" style="background:var(--surface2)">
+        <div class="stat-label">Raise to Breakeven</div>
+        <div id="dash-gtt-be-count" style="font-size:22px;font-weight:800;color:var(--amber)">—</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px">profit ≥6%, GTT below entry</div>
+      </div>
+      <div class="card card-sm" style="background:var(--surface2)">
+        <div class="stat-label">Raise Further</div>
+        <div id="dash-gtt-trail-count" style="font-size:22px;font-weight:800;color:var(--amber)">—</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px">profit ≥10%, GTT protection &lt;6%</div>
+      </div>
+      <div class="card card-sm" style="background:var(--surface2)">
+        <div class="stat-label">No GTT Set</div>
+        <div id="dash-gtt-missing-count" style="font-size:22px;font-weight:800;color:var(--red)">—</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px">profitable, GTT price = 0</div>
+      </div>
+      <div class="card card-sm" style="background:var(--surface2)">
+        <div class="stat-label">GTT OK</div>
+        <div id="dash-gtt-ok-count" style="font-size:22px;font-weight:800;color:var(--green)">—</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px">profitable, GTT current</div>
+      </div>
+    </div>
+    <div id="dash-gtt-list" style="display:flex;flex-direction:column;gap:6px"></div>
+    <div style="font-size:11px;color:var(--text-muted);margin-top:10px">GTT trailing SL should be ≥6% below CMP on all profitable positions</div>
+  </div>
+
   <!-- ⑦ PERFORMANCE SUMMARY TABLE -->
   <div class="card" style="margin-top:14px;padding:16px">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
@@ -3988,6 +4020,7 @@ function renderDashboard(data, cfg) {
   renderPortfolioHeatMap(open);
   renderMomentumStrip(closed);
   renderStuckPositions(open, initialCapital);
+  renderGttMaintenance(open);
   renderDashCharts(open, closed, cfg, portfolioValue, initialCapital);
 }
 
@@ -10391,6 +10424,82 @@ function renderMomentumStrip(closed) {
     }
     verdictEl.innerHTML = `<span style="color:${color}">${msg}</span>`;
   } catch(e) { console.error('Momentum strip error:', e); }
+}
+
+// ── GTT MAINTENANCE CARD ───────────────────────────────────────────────────────
+function renderGttMaintenance(open) {
+  try {
+    const card = document.getElementById('dash-gtt-card');
+    if (!card) return;
+    if (!open || open.length === 0) { card.style.display = 'none'; return; }
+
+    const profitable = open.filter(t => (t.plPct || 0) > 0);
+    if (profitable.length === 0) { card.style.display = 'none'; return; }
+    card.style.display = '';
+
+    const missing  = [];  // profitable, no GTT set
+    const raiseBE  = [];  // profit ≥6%, GTT still below entry
+    const raiseMore = []; // profit ≥10%, GTT within 6% of entry (not keeping up)
+    const ok       = [];  // GTT looks current
+
+    profitable.forEach(t => {
+      const plPct   = t.plPct || 0;
+      const gtt     = t.stopLoss || t.gttPlaced || 0;
+      const entry   = t.entryPrice || 0;
+      const cmp     = t.cmp || 0;
+      const gttPctBelowCmp = cmp > 0 && gtt > 0 ? (cmp - gtt) / cmp * 100 : null;
+
+      if (!gtt || gtt === 0) {
+        missing.push(t);
+      } else if (plPct >= 6 && gtt < entry) {
+        raiseBE.push({ ...t, gtt, gttPctBelowCmp });
+      } else if (plPct >= 10 && gttPctBelowCmp !== null && gttPctBelowCmp > 8) {
+        raiseMore.push({ ...t, gtt, gttPctBelowCmp });
+      } else {
+        ok.push(t);
+      }
+    });
+
+    document.getElementById('dash-gtt-be-count').textContent = raiseBE.length;
+    document.getElementById('dash-gtt-trail-count').textContent = raiseMore.length;
+    document.getElementById('dash-gtt-missing-count').textContent = missing.length;
+    document.getElementById('dash-gtt-ok-count').textContent = ok.length;
+
+    const total = raiseBE.length + raiseMore.length + missing.length;
+    document.getElementById('dash-gtt-summary').textContent =
+      total === 0 ? '✅ All GTTs current' :
+      `${total} position${total === 1 ? '' : 's'} need attention`;
+
+    const fmtRs = v => v >= 1000 ? `₹${(v/1000).toFixed(1)}k` : `₹${Math.round(v)}`;
+
+    const rows = [
+      ...missing.map(t => ({
+        stock: t.stock, plPct: t.plPct, action: 'Set GTT now',
+        detail: `No GTT placed — profit of +${t.plPct.toFixed(1)}% is unprotected`,
+        color: 'var(--red)', priority: 1
+      })),
+      ...raiseBE.map(t => ({
+        stock: t.stock, plPct: t.plPct, action: 'Raise to BE',
+        detail: `GTT at ${fmtRs(t.gtt)} (below entry ${fmtRs(t.entryPrice)}) — raise to entry price`,
+        color: 'var(--amber)', priority: 2
+      })),
+      ...raiseMore.map(t => ({
+        stock: t.stock, plPct: t.plPct, action: 'Trail higher',
+        detail: `GTT is ${t.gttPctBelowCmp.toFixed(1)}% below CMP — tighten to 6% below CMP`,
+        color: 'var(--amber)', priority: 3
+      })),
+    ].sort((a, b) => a.priority - b.priority);
+
+    document.getElementById('dash-gtt-list').innerHTML = rows.map(r =>
+      `<div style="display:flex;align-items:center;gap:10px;padding:8px 10px;border-radius:6px;background:var(--surface2)">
+        <div style="min-width:90px;font-weight:700;font-size:13px;color:var(--text-primary)">${r.stock}</div>
+        <div style="min-width:50px;font-size:12px;color:var(--green)">+${r.plPct.toFixed(1)}%</div>
+        <div style="font-size:11px;padding:2px 8px;border-radius:10px;background:${r.color};color:#fff;font-weight:600;white-space:nowrap">${r.action}</div>
+        <div style="font-size:11px;color:var(--text-muted);flex:1">${r.detail}</div>
+      </div>`
+    ).join('');
+
+  } catch(e) { console.error('GTT maintenance error:', e); }
 }
 
 // ── STUCK POSITIONS CARD ───────────────────────────────────────────────────────
