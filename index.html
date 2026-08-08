@@ -3269,14 +3269,17 @@ function renderDashboard(data, cfg) {
         ];
         const tradesPerYr = Math.round(avgTradesPerMonth) * 12;
         scaleEl.innerHTML = scales.map(s => {
-          const openGain = s.pos * s.size * evRatio;        // open book contribution
-          const newGain  = tradesPerYr * s.size * evRatio;  // new trades contribution
+          const deployedCapital = s.pos * s.size;           // true capital base at this tier
+          const openGain  = s.pos * s.size * evRatio;       // open book contribution
+          const newGain   = tradesPerYr * s.size * evRatio; // new trades contribution
           const totalGain = openGain + newGain;
-          const retPct = initialCapital > 0 ? totalGain / initialCapital * 100 : 0;
+          const retPct    = deployedCapital > 0 ? totalGain / deployedCapital * 100 : 0;
           const color = retPct >= 20 ? 'var(--green)' : retPct >= 10 ? 'var(--amber)' : 'var(--text-secondary)';
+          const capLabel = deployedCapital >= 10000000 ? '₹' + (deployedCapital/10000000).toFixed(1) + 'Cr base'
+                         : deployedCapital >= 100000  ? '₹' + (deployedCapital/100000).toFixed(0) + 'L base' : '';
           return `<div style="display:flex;justify-content:space-between;align-items:center;font-size:11px">
-            <span style="color:var(--text-muted)">${s.label}</span>
-            <span style="font-weight:700;color:${color}">${retPct >= 0 ? '+' : ''}${retPct.toFixed(1)}% · ${retPct >= 0 ? '+' : ''}${fmtL(totalGain)}</span>
+            <span style="color:var(--text-muted)">${s.label} <span style="opacity:0.6">(${capLabel})</span></span>
+            <span style="font-weight:700;color:${color}">${retPct >= 0 ? '+' : ''}${retPct.toFixed(1)}% · +${fmtL(totalGain)}/yr</span>
           </div>`;
         }).join('');
       }
