@@ -866,6 +866,11 @@ tbody tr:hover { filter: brightness(0.97); }
           <div style="font-size:18px;font-weight:700;line-height:1.1" id="dash-dd-from-peak">—</div>
           <div style="font-size:11px;color:var(--text-muted);margin-top:1px" id="dash-dd-from-peak-sub">combined equity</div>
         </div>
+        <div>
+          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Avg Hold (Open)</div>
+          <div style="font-size:18px;font-weight:700;line-height:1.1" id="dash-open-avg-hold">—</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:1px">days · all open positions</div>
+        </div>
       </div>
       <div style="margin-top:10px;height:4px;border-radius:3px;background:var(--surface2);overflow:hidden">
         <div id="dash-health-bar" style="height:100%;border-radius:3px;transition:width 0.4s"></div>
@@ -908,6 +913,11 @@ tbody tr:hover { filter: brightness(0.97); }
         <div>
           <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Unrealised MTM</div>
           <div style="font-size:18px;font-weight:700" id="dash-sys-exp">—</div>
+        </div>
+        <div>
+          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Avg Hold (Closed)</div>
+          <div style="font-size:18px;font-weight:700" id="dash-closed-avg-hold">—</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:1px"><span id="dash-closed-hold-split"></span></div>
         </div>
       </div>
     </div>
@@ -4114,6 +4124,28 @@ function renderDashboard(data, cfg) {
       }
     } catch(e) { console.error('Re-entry watchlist error:', e); }
   })();
+
+  // Avg holding period — open positions
+  try {
+    const openAges = open.filter(t => parseInt(t.age||0) > 0).map(t => parseInt(t.age));
+    const avgOpenHold = openAges.length > 0 ? Math.round(openAges.reduce((s,a)=>s+a,0)/openAges.length) : 0;
+    const el1 = document.getElementById('dash-open-avg-hold');
+    if (el1) el1.textContent = avgOpenHold > 0 ? avgOpenHold + 'd' : '—';
+  } catch(e) {}
+
+  // Avg holding period — closed positions (winners vs losers split)
+  try {
+    const cwAge = closed.filter(t => parseInt(t.age||0) > 0);
+    const avgClosed = cwAge.length > 0 ? Math.round(cwAge.reduce((s,t)=>s+parseInt(t.age||0),0)/cwAge.length) : 0;
+    const winH = cwAge.filter(t => (t.finalPl||0) > 0);
+    const lossH = cwAge.filter(t => (t.finalPl||0) <= 0);
+    const avgWH = winH.length > 0 ? Math.round(winH.reduce((s,t)=>s+parseInt(t.age||0),0)/winH.length) : 0;
+    const avgLH = lossH.length > 0 ? Math.round(lossH.reduce((s,t)=>s+parseInt(t.age||0),0)/lossH.length) : 0;
+    const el2 = document.getElementById('dash-closed-avg-hold');
+    if (el2) el2.textContent = avgClosed > 0 ? avgClosed + 'd' : '—';
+    const el3 = document.getElementById('dash-closed-hold-split');
+    if (el3) el3.textContent = avgWH > 0 ? `W: ${avgWH}d · L: ${avgLH}d` : '';
+  } catch(e) {}
 
   renderDashCalendar(closed);
   renderPortfolioHeatMap(open);
