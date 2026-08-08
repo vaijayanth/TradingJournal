@@ -44,8 +44,8 @@ This is an **SST (Sharegenius Swing Trading) high-WR momentum system**. It is fu
 
 ### Position Sizing
 - Base position: **₹20,000 per trade**
-- Increases: +₹1,000 every 100 closed trades
-- Hard cap: **0.8% of portfolio**
+- Increases: **+₹5,000 every 100 closed trades** → ₹20k → ₹25k → ₹30k → ... → ₹1,00,000 cap
+- Hard cap: **₹1,00,000 per trade** (16 tiers of 100 trades each)
 - Add-on size: **50% of current position size** (when averaging into a losing trade above 200+50 EMA)
 - Max open positions: **200**
 
@@ -138,7 +138,7 @@ The canonical strategy is stored in `STRAT_DEFAULT_RULES` in index.html (around 
 - **In loss, above 200+50 EMA**: Hold + add 50% qty via new GTT at 21DH.
 - **In loss, below 50 EMA**: Hold. Do nothing. Wait for structure.
 - **Exit**: Only when GTT trailing SL fires, or fundamental collapse.
-- **Sizing**: ₹20,000 base, +₹1k per 100 trades, hard cap 0.8% portfolio, max 200 positions.
+- **Sizing**: ₹20,000 base, +₹5k per 100 closed trades (₹25k → ₹30k → ... → ₹1L cap), max 200 positions.
 - **Initial capital**: ₹50,00,000 (₹50L)
 - **Notional P&L** = open trade unrealized MTM from col Y — NOT a what-if on closed trades.
 - **True performance** = realised + unrealised combined.
