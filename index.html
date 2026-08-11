@@ -841,9 +841,9 @@ tbody tr:hover { filter: brightness(0.97); }
       </div>
     </div>
 
-    <!-- Open Positions -->
+    <!-- Open Book -->
     <div class="card card-sm">
-      <div class="stat-label">Open Positions</div>
+      <div class="stat-label">Open Book</div>
       <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;margin-top:10px">
         <div>
           <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Total Open</div>
@@ -856,14 +856,14 @@ tbody tr:hover { filter: brightness(0.97); }
           <div style="font-size:11px;color:var(--text-muted);margin-top:1px">trail GTT up now</div>
         </div>
         <div>
-          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Lock-in Zone</div>
-          <div style="font-size:18px;font-weight:700;line-height:1.1;color:var(--amber)" id="dash-in-lockin">—</div>
-          <div style="font-size:11px;color:var(--text-muted);margin-top:1px">6–<span class="dash-tgt-ref">7</span>% · verify GTT</div>
+          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Book Health</div>
+          <div style="font-size:18px;font-weight:700;line-height:1.1" id="dash-open-pct-profitable">—</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:1px">in profit · target ≥60%</div>
         </div>
         <div>
-          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">DD from Peak</div>
-          <div style="font-size:18px;font-weight:700;line-height:1.1" id="dash-dd-from-peak">—</div>
-          <div style="font-size:11px;color:var(--text-muted);margin-top:1px" id="dash-dd-from-peak-sub">combined equity</div>
+          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Unrealised MTM</div>
+          <div style="font-size:18px;font-weight:700;line-height:1.1" id="dash-sys-exp">—</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:1px" id="dash-sys-exp-sub">total open book</div>
         </div>
         <div>
           <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Avg Hold (Open)</div>
@@ -877,47 +877,43 @@ tbody tr:hover { filter: brightness(0.97); }
       <div class="stat-badge" id="dash-health-badge" style="margin-top:7px">—</div>
     </div>
 
-    <!-- System stats -->
+    <!-- System Edge -->
     <div class="card card-sm">
-      <div class="stat-label">System · Closed Trades</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px 16px;margin-top:10px">
-        <div>
-          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Closed</div>
-          <div style="font-size:24px;font-weight:700" id="dash-closed">—</div>
-        </div>
+      <div class="stat-label">System Edge</div>
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;margin-top:10px">
         <div>
           <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Win Rate</div>
-          <div style="font-size:24px;font-weight:700" id="dash-sys-wr">—</div>
+          <div style="font-size:28px;font-weight:800;line-height:1.05" id="dash-sys-wr">—</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:1px" id="dash-sys-wr-recent">closed · target ≥70%</div>
         </div>
         <div>
-          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Wins</div>
-          <div style="font-size:18px;font-weight:700;color:var(--green)" id="dash-win-count">—</div>
-        </div>
-        <div>
-          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Losses</div>
-          <div style="font-size:18px;font-weight:700;color:var(--red)" id="dash-loss-count">—</div>
+          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Profit Factor</div>
+          <div style="font-size:28px;font-weight:800;line-height:1.05" id="dash-sys-pf">—</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:1px" id="dash-sys-pf-sub">combined · target ≥2.0</div>
         </div>
         <div>
           <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Avg Win</div>
           <div style="font-size:18px;font-weight:700;color:var(--green)" id="dash-avg-win">—</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:1px"><span id="dash-win-count">—</span> wins</div>
         </div>
         <div>
           <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Avg Loss</div>
           <div style="font-size:18px;font-weight:700" id="dash-sys-avgloss">—</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:1px"><span id="dash-loss-count">—</span> losses held open</div>
         </div>
         <div>
-          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Profit Factor</div>
-          <div style="font-size:18px;font-weight:700" id="dash-sys-pf">—</div>
-        </div>
-        <div>
-          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Unrealised MTM</div>
-          <div style="font-size:18px;font-weight:700" id="dash-sys-exp">—</div>
+          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Win:Loss ₹ Ratio</div>
+          <div style="font-size:18px;font-weight:700" id="dash-win-loss-rs-ratio">—</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:1px" id="dash-win-loss-rs-sub">avg win ₹ ÷ avg loss ₹</div>
         </div>
         <div>
           <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Avg Hold (Closed)</div>
           <div style="font-size:18px;font-weight:700" id="dash-closed-avg-hold">—</div>
           <div style="font-size:11px;color:var(--text-muted);margin-top:1px"><span id="dash-closed-hold-split"></span></div>
         </div>
+      </div>
+      <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-size:10px;color:var(--text-muted)">
+        <span id="dash-closed">—</span> closed trades &nbsp;·&nbsp; <span id="dash-win-count-foot"></span>W / <span id="dash-loss-count-foot"></span>L
       </div>
     </div>
   </div>
@@ -3340,6 +3336,8 @@ function renderDashboard(data, cfg) {
   // Win/loss counts + avg win for new clean strip
   set('dash-win-count', dWins.length);
   set('dash-loss-count', dLosses.length);
+  set('dash-win-count-foot', dWins.length);
+  set('dash-loss-count-foot', dLosses.length);
   const avgWinPct = dWins.length > 0 ? dWins.reduce((s,t) => s + t.finalPlPct, 0) / dWins.length : 0;
   const avgWinEl = document.getElementById('dash-avg-win');
   if (avgWinEl) { avgWinEl.textContent = dWins.length > 0 ? '+' + avgWinPct.toFixed(1) + '%' : '—'; avgWinEl.style.color = 'var(--green)'; }
@@ -3355,11 +3353,13 @@ function renderDashboard(data, cfg) {
   const dWREl = document.getElementById('dash-sys-wr');
   // For this style, 25-40% exit WR is healthy — don't show amber just because WR < 40
   set('dash-sys-wr', dWR.toFixed(1) + '%');
-  if (dWREl) dWREl.style.color = dWR >= 40 ? 'var(--green)' : dWR >= 20 ? 'var(--amber)' : 'var(--red)';
+  if (dWREl) dWREl.style.color = dWR >= 70 ? 'var(--green)' : dWR >= 50 ? 'var(--amber)' : 'var(--red)';
   const recentWREl = document.getElementById('dash-sys-wr-recent');
   if (recentWREl) {
-    recentWREl.textContent = 'closed only · 25-40% normal';
-    recentWREl.style.color = 'var(--text-muted)';
+    const recent30wr = closed.slice(-30);
+    const wr30 = recent30wr.length > 0 ? recent30wr.filter(t => t.finalPlPct > 0).length / recent30wr.length * 100 : 0;
+    recentWREl.textContent = `last 30: ${wr30.toFixed(0)}% · target ≥70%`;
+    recentWREl.style.color = dWR >= 70 ? 'var(--green)' : dWR >= 50 ? 'var(--amber)' : 'var(--red)';
   }
 
   // 2. Avg loss size — calibrated: ≤5% great, ≤7% ok, >7% problem
@@ -3369,13 +3369,7 @@ function renderDashboard(data, cfg) {
     avgLossEl.textContent = dLosses.length > 0 ? avgLossSz.toFixed(1) + '%' : '—';
     avgLossEl.style.color = avgLossSz <= 5 ? 'var(--green)' : avgLossSz <= 7 ? 'var(--amber)' : 'var(--red)';
   }
-  const avgLossSubEl = document.getElementById('dash-sys-avgloss-sub');
-  if (avgLossSubEl) {
-    if (avgLossSz === 0) { avgLossSubEl.textContent = '—'; avgLossSubEl.style.color = 'var(--text-muted)'; }
-    else if (avgLossSz <= 5) { avgLossSubEl.textContent = '✓ cutting losses fast'; avgLossSubEl.style.color = 'var(--green)'; }
-    else if (avgLossSz <= 7) { avgLossSubEl.textContent = '⚠ near 7% limit — watch exits'; avgLossSubEl.style.color = 'var(--amber)'; }
-    else { avgLossSubEl.textContent = '🚨 holding losers too long'; avgLossSubEl.style.color = 'var(--red)'; }
-  }
+  // avg loss sub: just show context, no hostile "cut fast" language — SST holds losers by design
 
   // 3. Combined Profit Factor = (closed wins ₹ + open MTM ₹) / closed losses ₹
   // This is the TRUE system quality measure — includes running winners
@@ -3386,12 +3380,28 @@ function renderDashboard(data, cfg) {
   const dPFEl    = document.getElementById('dash-sys-pf');
   const dPFSubEl = document.getElementById('dash-sys-pf-sub');
   set('dash-sys-pf', isFinite(combinedPF) ? combinedPF.toFixed(2) : '∞');
-  if (dPFEl) dPFEl.style.color = combinedPF >= 1.5 ? 'var(--green)' : combinedPF >= 1 ? 'var(--amber)' : 'var(--red)';
+  if (dPFEl) dPFEl.style.color = combinedPF >= 2 ? 'var(--green)' : combinedPF >= 1 ? 'var(--amber)' : 'var(--red)';
   if (dPFSubEl) {
     if (!isFinite(combinedPF) || combinedPF >= 2)      { dPFSubEl.textContent = '✓ strong edge'; dPFSubEl.style.color = 'var(--green)'; }
     else if (combinedPF >= 1.3)                         { dPFSubEl.textContent = '✓ system profitable'; dPFSubEl.style.color = 'var(--green)'; }
-    else if (combinedPF >= 1)                           { dPFSubEl.textContent = '⚠ marginal — need bigger winners'; dPFSubEl.style.color = 'var(--amber)'; }
+    else if (combinedPF >= 1)                           { dPFSubEl.textContent = '⚠ marginal'; dPFSubEl.style.color = 'var(--amber)'; }
     else                                                { dPFSubEl.textContent = '🚨 open gains not covering losses yet'; dPFSubEl.style.color = 'var(--red)'; }
+  }
+
+  // Win:Loss ₹ Ratio
+  const avgWinRs  = dWins.length > 0 ? dGrossWins / dWins.length : 0;
+  const avgLossRs = dLosses.length > 0 ? dGrossLoss / dLosses.length : 0;
+  const wlRsEl    = document.getElementById('dash-win-loss-rs-ratio');
+  const wlRsSubEl = document.getElementById('dash-win-loss-rs-sub');
+  if (wlRsEl) {
+    if (avgWinRs > 0 && avgLossRs > 0) {
+      const ratio = avgWinRs / avgLossRs;
+      wlRsEl.textContent = ratio.toFixed(2) + '×';
+      wlRsEl.style.color = ratio >= 2 ? 'var(--green)' : ratio >= 1 ? 'var(--amber)' : 'var(--red)';
+      if (wlRsSubEl) wlRsSubEl.textContent = `₹${Math.round(avgWinRs).toLocaleString('en-IN')} ÷ ₹${Math.round(avgLossRs).toLocaleString('en-IN')}`;
+    } else {
+      wlRsEl.textContent = '—';
+    }
   }
 
   // 4. Hold Ratio: avg winner hold (closed winners + open profitable) vs avg loser hold (closed losers only)
@@ -3453,6 +3463,14 @@ function renderDashboard(data, cfg) {
     set('dash-open-losing', lossCount);
     set('dash-at-target', atTarget);
     set('dash-in-lockin', inLockin);
+
+    // Book Health %
+    const bkEl = document.getElementById('dash-open-pct-profitable');
+    if (bkEl && open.length > 0) {
+      const healthPct2 = Math.round(profitCount / open.length * 100);
+      bkEl.textContent = healthPct2 + '%';
+      bkEl.style.color = healthPct2 >= 60 ? 'var(--green)' : healthPct2 >= 40 ? 'var(--amber)' : 'var(--red)';
+    } else if (bkEl) { bkEl.textContent = '—'; }
 
     // Update label references
     document.querySelectorAll('.dash-tgt-ref').forEach(el => { el.textContent = targetPct2; });
