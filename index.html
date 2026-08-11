@@ -6115,8 +6115,8 @@ function renderDashCalendar(closed) {
           : sign + Math.round(absVal).toLocaleString('en-IN');
         const tip = `${months[month]} ${day}: ${entry.pl>=0?'+':''}₹${Math.round(absVal).toLocaleString('en-IN')} · ${entry.count} trade${entry.count>1?'s':''}`;
         cellsHtml += `<div title="${tip}" style="border-radius:8px;background:${bg};padding:8px 4px 6px;display:flex;flex-direction:column;align-items:center;justify-content:center;cursor:default;min-height:56px;box-sizing:border-box">
-          <span style="font-size:16px;font-weight:700;color:${textColor};line-height:1">${day}</span>
-          <span style="font-size:10px;font-weight:700;color:${plColor2};margin-top:4px;line-height:1;white-space:nowrap">${plFmt}</span>
+          <span style="font-size:10px;font-weight:500;color:${textColor};opacity:.7;line-height:1">${day}</span>
+          <span style="font-size:14px;font-weight:800;color:${plColor2};margin-top:3px;line-height:1;white-space:nowrap">${plFmt}</span>
         </div>`;
       } else {
         const bg2 = isDark2 ? '#1a2236' : '#f3f4f6';
