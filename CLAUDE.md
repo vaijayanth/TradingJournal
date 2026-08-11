@@ -153,6 +153,19 @@ The canonical strategy is stored in `STRAT_DEFAULT_RULES` in index.html (around 
 | Add-ons executed | When eligible | Loss above 200+50 EMA → 50% add-on should be placed |
 | Combined profit factor | ≥ 2.0 | High WR system should have high PF |
 
+## UI Changes Made (2026-08-11 session)
+
+### Dashboard — Avg Holding Period
+- **Avg Hold (Open)**: `#dash-open-avg-hold` — average `t.age` across all open positions (e.g. `42d`). In Open Positions card, last slot in bottom row.
+- **Avg Hold (Closed)**: `#dash-closed-avg-hold` — average age across all closed trades. Sub-label `#dash-closed-hold-split` shows `W: Xd · L: Yd` split. In System · Closed Trades card.
+- JS wired in `renderDashboard` just before `renderDashCalendar(closed)` call — two try-catch blocks computing from `t.age` (col AF).
+
+### Dashboard — Portfolio Heatmap Collapsed by Default
+- Heatmap card (`#dash-heatmap-card`) now collapsed on load — click header to expand/collapse.
+- Body wrapped in `#dash-heatmap-body` (hidden by default). Chevron `#dash-heatmap-chevron` shows ▼/▲.
+- Toggle: `toggleHeatmap()` function.
+- `renderPortfolioHeatMap` sets `el.style.cssText` to apply flex layout since inline style moved to body wrapper.
+
 ## UI Changes Made (2026-08-03 session)
 - **Performance tab**: SST System Health Banner (5 checks), renamed R-Multiple → Win:Loss Ratio, removed "planned risk" language, added avg win/loss ₹, Copy Summary button
 - **Analysis tab**: SST Analysis Health Banner (5 checks), replaced all stop-loss/risk-tier language with SST framing, Loss:Winner Ratio replaces Stop Slippage, "If WR improves to 40%" projection replaces "full risk cap" projection, Open Portfolio Quality replaces Risk Tier card
