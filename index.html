@@ -756,7 +756,6 @@ tbody tr:hover { filter: brightness(0.97); }
     <button class="nav-tab" onclick="showPage('performance', this)"><span class="nav-label-full">Performance</span><span class="nav-label-short">Perf</span></button>
     <button class="nav-tab" onclick="showPage('analysis', this)"><span class="nav-label-full">Analysis</span><span class="nav-label-short">Analysis</span></button>
     <button class="nav-tab" onclick="showPage('positions', this)"><span class="nav-label-full">Positions</span><span class="nav-label-short">Pos</span></button>
-    <button class="nav-tab active" id="nav-today" onclick="showPage('today', this)">⚡ Today</button>
     <button class="nav-tab" onclick="showPage('strategy', this)"><span class="nav-label-full">Strategy</span><span class="nav-label-short">Strat</span></button>
     <button class="nav-tab" onclick="showPage('config', this)">Config</button>
   </div>
@@ -1137,7 +1136,7 @@ tbody tr:hover { filter: brightness(0.97); }
 </div>
 
 <!-- ════ TODAY'S ACTIONS ════ -->
-<div id="page-today" class="page">
+<div id="page-today" class="page" style="display:none">
   <div style="display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;margin-bottom:20px">
     <div>
       <div style="font-size:16px;font-weight:800">⚡ Today's Action Board</div>
@@ -4012,7 +4011,7 @@ function renderDashboard(data, cfg) {
     }
     strip.style.display = 'block';
     const pill = (emoji, label, n, bg, color) =>
-      `<span style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;background:${bg};border:1px solid ${color}40;font-size:12px;font-weight:700;color:${color};cursor:pointer;white-space:nowrap" onclick="showPage('today',document.getElementById('nav-today'))">${emoji} ${n} ${label}</span>`;
+      `<span style="display:inline-flex;align-items:center;gap:5px;padding:5px 12px;border-radius:20px;background:${bg};border:1px solid ${color}40;font-size:12px;font-weight:700;color:${color};white-space:nowrap">${emoji} ${n} ${label}</span>`;
     const chips = [
       trailUp.length ? pill('🚀', 'Trail SL Up', trailUp.length, 'rgba(34,197,94,0.10)', 'var(--green)') : '',
       lockin.length  ? pill('🟡', 'Lock-In Zone', lockin.length, 'rgba(245,158,11,0.10)', 'var(--amber)') : '',
@@ -4026,7 +4025,6 @@ function renderDashboard(data, cfg) {
       <div style="display:flex;align-items:center;gap:6px;flex-wrap:wrap">
         <span style="font-size:10px;font-weight:700;letter-spacing:.1em;text-transform:uppercase;color:var(--text-muted);margin-right:4px">Actions Today</span>
         ${chips}
-        <span style="margin-left:auto;font-size:11px;color:var(--text-muted);cursor:pointer" onclick="showPage('today',document.getElementById('nav-today'))">Full action board ▸</span>
       </div>
       ${urgentStocks ? `<div style="display:flex;gap:6px;flex-wrap:wrap;margin-top:8px">${urgentStocks}</div>` : ''}
     </div>`;
