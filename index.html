@@ -1207,13 +1207,13 @@ tbody tr:hover { filter: brightness(0.97); }
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:0">
       <div id="sst-h1" class="sst-health-cell" style="padding:10px 14px;border-right:1px solid var(--border);border-bottom:1px solid var(--border)">
         <div style="font-size:18px;font-weight:800" id="sst-h1-val">—</div>
-        <div style="font-size:10px;font-weight:700;color:var(--text-muted);margin-top:2px">HOLD ASYMMETRY</div>
-        <div style="font-size:10px;color:var(--text-muted);margin-top:1px" id="sst-h1-sub">Winners held longer than losers?</div>
+        <div style="font-size:10px;font-weight:700;color:var(--text-muted);margin-top:2px">WIN RATE (CLOSED)</div>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:1px" id="sst-h1-sub">Target: ≥70% for SST edge</div>
       </div>
       <div id="sst-h2" class="sst-health-cell" style="padding:10px 14px;border-right:1px solid var(--border);border-bottom:1px solid var(--border)">
         <div style="font-size:18px;font-weight:800" id="sst-h2-val">—</div>
-        <div style="font-size:10px;font-weight:700;color:var(--text-muted);margin-top:2px">AVG LOSS SIZE</div>
-        <div style="font-size:10px;color:var(--text-muted);margin-top:1px" id="sst-h2-sub">Target: &lt;7%</div>
+        <div style="font-size:10px;font-weight:700;color:var(--text-muted);margin-top:2px">AVG LOSS AT EXIT</div>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:1px" id="sst-h2-sub">Closed losses — hold open per SST</div>
       </div>
       <div id="sst-h3" class="sst-health-cell" style="padding:10px 14px;border-right:1px solid var(--border);border-bottom:1px solid var(--border)">
         <div style="font-size:18px;font-weight:800" id="sst-h3-val">—</div>
@@ -1236,23 +1236,46 @@ tbody tr:hover { filter: brightness(0.97); }
 
   <!-- SQN Score card -->
   <div style="display:flex;gap:10px;margin-bottom:16px;flex-wrap:wrap">
+    <!-- Position Sizing Tier -->
     <div class="card card-sm" style="flex:1;min-width:160px">
-      <div class="stat-label">Van Tharp SQN Score</div>
-      <div style="font-size:36px;font-weight:800;line-height:1.1;margin-top:4px" id="perf-sqn-score">—</div>
-      <div style="font-size:11px;color:var(--text-muted);margin-top:4px" id="perf-sqn-rating">—</div>
-      <div style="font-size:10px;color:var(--text-muted);margin-top:8px">= Expectancy ÷ σ(R) × √n · measures system consistency</div>
-      <div class="stat-badge" id="perf-sqn-badge" style="margin-top:8px">—</div>
-    </div>
-    <div class="card card-sm" style="flex:2;min-width:220px">
-      <div class="stat-label">SQN Rating Scale</div>
-      <div style="margin-top:10px;display:flex;flex-direction:column;gap:5px;font-size:11px" id="perf-sqn-bands">
-        <div style="display:flex;gap:8px;align-items:center"><div style="width:80px;height:8px;border-radius:4px;background:rgba(239,68,68,0.4)"></div><span style="color:var(--text-muted)">&lt;1.6 — Poor / do not trade</span></div>
-        <div style="display:flex;gap:8px;align-items:center"><div style="width:80px;height:8px;border-radius:4px;background:rgba(245,166,35,0.5)"></div><span style="color:var(--text-muted)">1.6–2.0 — Average</span></div>
-        <div style="display:flex;gap:8px;align-items:center"><div style="width:80px;height:8px;border-radius:4px;background:rgba(0,201,100,0.5)"></div><span style="color:var(--text-muted)">2.0–3.0 — Good</span></div>
-        <div style="display:flex;gap:8px;align-items:center"><div style="width:80px;height:8px;border-radius:4px;background:rgba(0,201,100,0.8)"></div><span style="color:var(--text-muted)">3.0–5.0 — Excellent</span></div>
-        <div style="display:flex;gap:8px;align-items:center"><div style="width:80px;height:8px;border-radius:4px;background:rgba(160,130,220,0.7)"></div><span style="color:var(--text-muted)">&gt;5.0 — Super system</span></div>
+      <div class="stat-label">Position Sizing Tier</div>
+      <div style="font-size:36px;font-weight:800;line-height:1.1;margin-top:4px;color:var(--accent)" id="perf-tier-size">—</div>
+      <div style="font-size:11px;color:var(--text-muted);margin-top:4px" id="perf-tier-label">per trade</div>
+      <div class="stat-badge" id="perf-tier-badge" style="margin-top:8px">—</div>
+      <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
+        <div style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:4px">NEXT TIER</div>
+        <div style="font-size:13px;font-weight:700" id="perf-tier-next-size">—</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px" id="perf-tier-next-label">—</div>
+        <div style="margin-top:6px;height:5px;border-radius:3px;background:var(--surface2);overflow:hidden">
+          <div id="perf-tier-bar" style="height:100%;border-radius:3px;background:var(--accent);transition:width .4s"></div>
+        </div>
       </div>
-      <div id="perf-sqn-you-marker" style="margin-top:8px;font-size:11px;color:var(--text-muted)"></div>
+    </div>
+    <!-- Capital Efficiency -->
+    <div class="card card-sm" style="flex:2;min-width:220px">
+      <div class="stat-label">Capital Efficiency (per winning trade)</div>
+      <div style="display:flex;gap:16px;align-items:flex-end;margin-top:8px">
+        <div>
+          <div style="font-size:28px;font-weight:800;color:var(--green)" id="perf-cap-eff-pct">—</div>
+          <div class="stat-sub">avg return on deployed</div>
+        </div>
+        <div>
+          <div style="font-size:20px;font-weight:700;color:var(--green)" id="perf-cap-eff-rs">—</div>
+          <div class="stat-sub">avg win ₹</div>
+        </div>
+      </div>
+      <div class="stat-badge" id="perf-cap-eff-badge" style="margin-top:8px">—</div>
+      <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px;display:flex;gap:16px">
+        <div>
+          <div style="font-size:14px;font-weight:700" id="perf-cap-avg-pos">—</div>
+          <div class="stat-sub">avg position size</div>
+        </div>
+        <div>
+          <div style="font-size:14px;font-weight:700;color:var(--red)" id="perf-cap-loss-pct">—</div>
+          <div class="stat-sub">avg loss on deployed</div>
+        </div>
+      </div>
+      <div style="margin-top:6px;font-size:11px;color:var(--text-muted);line-height:1.5">How much of your deployed ₹ you capture per winning trade. At 70%+ WR this compounds quickly.</div>
     </div>
   </div>
 
@@ -1316,10 +1339,9 @@ tbody tr:hover { filter: brightness(0.97); }
   <div class="grid-4" style="margin-bottom:14px">
     <!-- Expectancy -->
     <div class="card card-sm">
-      <div class="stat-label">Closed Avg P&amp;L% <span style="font-size:10px;font-weight:400;color:var(--text-muted)">(expected −ve)</span></div>
+      <div class="stat-label">Avg P&L per Trade</div>
       <div class="stat-value" style="font-size:26px; margin-top:4px" id="perf-expectancy">—</div>
-      <div class="stat-sub" style="font-size:12px" id="perf-expectancy-sub">Realised · closed stops dominate — expected negative</div>
-      <div style="margin-top:8px;font-size:11px;color:var(--text-muted);line-height:1.5;font-style:italic">Closed-only avg is structurally negative in SST — winners are still running open. The combined figure below is the true performance picture.</div>
+      <div class="stat-sub" style="font-size:12px" id="perf-expectancy-sub">Closed trades avg P&L%</div>
       <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
         <div style="font-size:15px;font-weight:700" id="perf-expectancy-open">—</div>
         <div class="stat-sub" style="font-size:11px" id="perf-expectancy-open-sub">Avg unrealised ₹ (open positions)</div>
@@ -1328,6 +1350,7 @@ tbody tr:hover { filter: brightness(0.97); }
         <div style="font-size:15px;font-weight:700" id="perf-expectancy-combined">—</div>
         <div class="stat-sub" style="font-size:11px">Combined ₹/trade (all trades incl. open)</div>
       </div>
+      <div style="margin-top:6px;font-size:11px;color:var(--text-muted);line-height:1.5">True picture = combined. Open winners still running; combined ₹/trade is what matters.</div>
     </div>
     <!-- Win Rate -->
     <div class="card card-sm">
@@ -1359,7 +1382,7 @@ tbody tr:hover { filter: brightness(0.97); }
       <div class="stat-label">Win:Loss Ratio (Avg Win ÷ Avg Loss)</div>
       <div class="stat-value" style="font-size:30px; margin-top:4px" id="perf-rmultiple">—</div>
       <div class="stat-badge badge-green" style="margin-top:6px" id="perf-rmultiple-badge">—</div>
-      <div style="margin-top:8px;font-size:12px;color:var(--text-muted);line-height:1.5;font-style:italic">Your average closed winner vs average closed loser — the core of your asymmetry. At 30% WR you need ≥2.3× just to break even. Higher ratio = more edge at the same win rate. SST target: ≥2×.</div>
+      <div style="margin-top:8px;font-size:12px;color:var(--text-muted);line-height:1.5;font-style:italic">Your average closed winner vs average closed loser in ₹. At 70%+ WR, even a 1× ratio is profitable. SST target: ≥1.5× — the high WR does the heavy lifting.</div>
       <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
         <div style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:6px">AVG WIN vs LOSS (P&L%)</div>
         <div style="display:flex;gap:12px">
@@ -1374,16 +1397,24 @@ tbody tr:hover { filter: brightness(0.97); }
         </div>
       </div>
     </div>
-    <!-- R-Expectancy -->
+    <!-- Breakeven WR -->
     <div class="card card-sm">
-      <div class="stat-label">R-Expectancy (per trade)</div>
-      <div class="stat-value" style="font-size:30px; margin-top:4px" id="perf-r-expectancy">—</div>
-      <div class="stat-badge badge-green" style="margin-top:6px" id="perf-r-expectancy-badge">—</div>
-      <div style="margin-top:8px;font-size:12px;color:var(--text-muted);line-height:1.5;font-style:italic">On average, each trade you place is expected to make +XR or lose −XR in risk units. Positive = your system has mathematical edge. Even at 30% win rate, +0.2R per trade compounds.</div>
+      <div class="stat-label">Win Rate Health</div>
+      <div style="display:flex;gap:14px;margin-top:8px;align-items:flex-end">
+        <div>
+          <div style="font-size:26px;font-weight:700" id="perf-r-expectancy">—</div>
+          <div class="stat-sub">Breakeven WR needed</div>
+        </div>
+        <div style="color:var(--border);font-size:14px;line-height:1;padding-bottom:6px">vs</div>
+        <div>
+          <div style="font-size:26px;font-weight:700;color:var(--green)" id="perf-r-expectancy-badge" style="font-size:14px">—</div>
+          <div class="stat-sub">Your actual WR</div>
+        </div>
+      </div>
+      <div style="margin-top:8px;font-size:11px;color:var(--text-muted);line-height:1.5" id="perf-r-expectancy-closed">—</div>
       <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
         <div style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:4px">HOW TO READ</div>
-        <div class="stat-sub" style="line-height:1.5">Combined WR × AvgWinR − (1−CombWR) × 1R<br>Uses combined WR (closed + open profitable)<br>because winners stay open for months</div>
-        <div class="stat-sub" style="margin-top:6px;font-style:italic" id="perf-r-expectancy-closed">—</div>
+        <div class="stat-sub" style="line-height:1.5">Breakeven WR = Avg Loss ÷ (Avg Win + Avg Loss)<br>Your WR must stay above this line for the system to be profitable. The bigger the gap, the more cushion you have.</div>
       </div>
     </div>
     <!-- Hold Time Asymmetry -->
@@ -1401,10 +1432,10 @@ tbody tr:hover { filter: brightness(0.97); }
         </div>
       </div>
       <div class="stat-badge badge-green" style="margin-top:8px" id="perf-hold-badge">—</div>
-      <div style="margin-top:8px;font-size:12px;color:var(--text-muted);line-height:1.5;font-style:italic">Are you letting winners run and cutting losers fast? Winners held much longer than losers = correct behaviour. If losers are held longer, you're hoping instead of following your stop.</div>
+      <div style="margin-top:8px;font-size:12px;color:var(--text-muted);line-height:1.5;font-style:italic">SST design: losers are held until recovery, winners trail via GTT. Losers held longer than winners = system working correctly — the open book is doing the waiting.</div>
       <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
         <div style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:4px">SST RULE</div>
-        <div class="stat-sub" style="line-height:1.5">Winners held longer than losers = discipline. SST target: winners 30+ days. Your GTT trailing stop should be doing the heavy lifting — do not exit manually before it triggers.</div>
+        <div class="stat-sub" style="line-height:1.5">Losers: hold until stock recovers above 200+50 EMA, or add 50% qty at 21DH. Winners: GTT trails at 6%+, let the stop do the exiting. Never exit a winner manually before GTT fires.</div>
       </div>
     </div>
     <!-- Monthly Consistency -->
@@ -1449,7 +1480,7 @@ tbody tr:hover { filter: brightness(0.97); }
       </div>
       <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
         <div style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:4px">BENCHMARKS</div>
-        <div class="stat-sub" style="line-height:1.6">Profit Factor &gt;1.5 = edge · &gt;2.0 = strong<br>Consistency &gt;0 = positive closed trades · negative = expected (winners still open)</div>
+        <div class="stat-sub" style="line-height:1.6">SST target: Profit Factor ≥2.0 (combined)<br>Consistency &gt;0 = closed trades net positive</div>
       </div>
     </div>
   </div>
@@ -1596,7 +1627,7 @@ tbody tr:hover { filter: brightness(0.97); }
     </div>
     <div class="card">
       <div class="chart-title">Rolling 3-Month Win Rate</div>
-      <div class="chart-sub">Win rate for each rolling 3-month window (entry date, combined open+closed) · target ≥20%</div>
+      <div class="chart-sub">Win rate for each rolling 3-month window (entry date, combined open+closed) · target ≥70%</div>
       <div id="chart-rolling-wr" style="height:220px;"></div>
       <div id="insight-rolling-wr" class="chart-insight"></div>
     </div>
@@ -1914,7 +1945,7 @@ tbody tr:hover { filter: brightness(0.97); }
     </div>
     <div class="card">
       <div class="chart-title">Winner vs Loser Hold Duration</div>
-      <div class="chart-sub">Are you holding winners longer than losers? — the key asymmetry check</div>
+      <div class="chart-sub">SST: losers are held until recovery — longer loser hold time is normal and expected</div>
       <div id="chart-tm-wr-by-risk" style="height:220px"></div>
       <details style="margin-top:10px">
         <summary style="font-size:12px;font-weight:600;color:var(--text-muted);cursor:pointer;padding:4px 0;user-select:none">What to look for &amp; action ▸</summary>
@@ -4678,8 +4709,8 @@ function copyPerfSummary() {
       'Hold: Winners ' + g('perf-hold-win') + ' · Losers ' + g('perf-hold-loss'),
       '',
       '── SST Health ──',
-      'Hold Asymmetry: ' + g('sst-h1-val').replace(/[✓~⚠ ]/g,'').trim(),
-      'Avg Loss Size: ' + g('sst-h2-val').replace(/[✓~⚠ ]/g,'').trim() + ' (target <7%)',
+      'Win Rate: ' + g('sst-h1-val').replace(/[✓~⚠ ]/g,'').trim() + ' (target ≥70%)',
+      'Avg Loss at Exit: ' + g('sst-h2-val').replace(/[✓~⚠ ]/g,'').trim(),
       'Win:Loss ₹ Ratio: ' + g('sst-h3-val').replace(/[✓~⚠ ]/g,'').trim(),
       'Open Positions: ' + g('sst-h5-val').replace(/[✓~⚠ ]/g,'').trim() + ' profitable',
     ];
@@ -5282,28 +5313,26 @@ function renderPerfStats(closed, open, portfolioValue, initialCapital) {
   const rmBadge = document.getElementById('perf-rmultiple-badge');
   if (rmBadge) rmBadge.className = 'stat-badge ' + (smallSample ? 'badge-amber' : rMultiple >= 1.3 ? 'badge-green' : rMultiple >= 1 ? 'badge-amber' : 'badge-red');
 
-  // ── R-Expectancy ──
-  // Uses COMBINED win rate (closed + open profitable) because in this trailing-stop system
-  // winners stay open for months — closed WR alone (~25%) is not the true win rate.
-  // AvgWin R is still from closed winners (only realised wins have a final %).
-  const combinedWRFrac = totalTrades > 0 ? combinedWins / totalTrades : 0;
-  const rExpectancy = avgFinalLoss !== 0 ? (combinedWRFrac * rMultiple) - ((1 - combinedWRFrac) * 1) : 0;
-  const closedWRFrac = closed.length > 0 ? wins.length / closed.length : 0;
-  const rExpClosed = avgFinalLoss !== 0 ? (closedWRFrac * rMultiple) - ((1 - closedWRFrac) * 1) : 0;
-  set('perf-r-expectancy', rExpectancy.toFixed(2) + 'R');
-  const rExpEl = document.getElementById('perf-r-expectancy');
-  if (rExpEl) rExpEl.style.color = rExpectancy > 0 ? 'var(--green)' : 'var(--red)';
-  const rExpBadge = document.getElementById('perf-r-expectancy-badge');
-  if (rExpBadge) {
-    const label = rExpectancy >= 0.5 ? '✓ Strong edge' : rExpectancy > 0 ? 'Positive — keep at it' : '⚠ Negative — review exits';
-    rExpBadge.textContent = label;
-    rExpBadge.className = 'stat-badge ' + (rExpectancy >= 0.5 ? 'badge-green' : rExpectancy > 0 ? 'badge-amber' : 'badge-red');
+  // ── Win Rate Health: Breakeven WR vs Actual WR ──
+  // Breakeven WR = avgLoss / (avgWin + avgLoss) — the minimum WR to not lose money
+  const closedWRPct = closed.length > 0 ? wins.length / closed.length * 100 : 0;
+  const beWR = (avgFinalLoss > 0 && avgFinalWin > 0)
+    ? avgFinalLoss / (avgFinalWin + avgFinalLoss) * 100 : 0;
+  const wrGap = closedWRPct - beWR;
+  const beEl = document.getElementById('perf-r-expectancy');
+  const actualEl = document.getElementById('perf-r-expectancy-badge');
+  const contextEl = document.getElementById('perf-r-expectancy-closed');
+  if (beEl) { beEl.textContent = beWR > 0 ? beWR.toFixed(1) + '%' : '—'; beEl.style.color = closedWRPct > beWR ? 'var(--green)' : 'var(--red)'; }
+  if (actualEl) { actualEl.textContent = closedWRPct > 0 ? closedWRPct.toFixed(1) + '%' : '—'; actualEl.style.color = closedWRPct >= 70 ? 'var(--green)' : closedWRPct >= 50 ? 'var(--amber)' : 'var(--red)'; }
+  if (contextEl) {
+    if (wrGap > 0) contextEl.textContent = `✓ ${wrGap.toFixed(1)}% cushion above breakeven — system has edge`;
+    else if (beWR > 0) contextEl.textContent = `⚠ Below breakeven WR — exits need review`;
+    else contextEl.textContent = 'Not enough data';
+    contextEl.style.color = wrGap > 10 ? 'var(--green)' : wrGap > 0 ? 'var(--amber)' : 'var(--red)';
   }
-  // Show closed-only R-Expectancy as context footnote
-  const rExpClosedEl = document.getElementById('perf-r-expectancy-closed');
-  if (rExpClosedEl) rExpClosedEl.textContent = 'Closed-only WR gives ' + rExpClosed.toFixed(2) + 'R (expected negative — winners still running)';
 
-  // ── Hold Time Asymmetry ──
+  // ── Hold Time: Winners vs Losers (SST framing) ──
+  // In SST, losers are held until recovery — losers being held longer than winners is CORRECT.
   const winnersWithAge = wins.filter(t => parseInt(t.age||0) > 0);
   const losersWithAge = losses.filter(t => parseInt(t.age||0) > 0);
   const avgHoldWin = winnersWithAge.length > 0 ? winnersWithAge.reduce((s,t) => s + parseInt(t.age), 0) / winnersWithAge.length : 0;
@@ -5312,16 +5341,13 @@ function renderPerfStats(closed, open, portfolioValue, initialCapital) {
   set('perf-hold-loss', avgHoldLoss > 0 ? Math.round(avgHoldLoss) + 'd' : '—');
   const holdBadge = document.getElementById('perf-hold-badge');
   if (holdBadge && avgHoldWin > 0 && avgHoldLoss > 0) {
-    const ratio = avgHoldWin / avgHoldLoss;
-    if (ratio >= 1.5) {
+    const ratio = avgHoldLoss / avgHoldWin; // losers / winners — for SST higher is normal
+    if (avgHoldLoss >= avgHoldWin) {
       holdBadge.className = 'stat-badge badge-green';
-      holdBadge.textContent = `✓ Winners held ${ratio.toFixed(1)}× longer — excellent discipline`;
-    } else if (ratio >= 1.0) {
-      holdBadge.className = 'stat-badge badge-amber';
-      holdBadge.textContent = `⚡ Winners held ${ratio.toFixed(1)}× longer — good, push to 2×`;
+      holdBadge.textContent = `✓ Losers held ${ratio.toFixed(1)}× longer than winners — SST system holding correctly`;
     } else {
-      holdBadge.className = 'stat-badge badge-red';
-      holdBadge.textContent = `⚠ Losers held ${(1/ratio).toFixed(1)}× longer than winners — reverse this`;
+      holdBadge.className = 'stat-badge badge-amber';
+      holdBadge.textContent = `⚡ Winners held longer than losers — check if losses are being exited prematurely`;
     }
   }
 
@@ -5398,6 +5424,76 @@ function renderPerfStats(closed, open, portfolioValue, initialCapital) {
     } catch(e) { console.error('Monthly consistency error:', e); }
   })();
 
+  // ── Position Sizing Tier ──
+  (function() {
+    try {
+      const n = closed.length;
+      const sizeForCount = c => Math.min(20000 + Math.floor(c / 100) * 5000, 100000);
+      const currentSize = sizeForCount(n);
+      const nextTierAt = Math.ceil((n + 1) / 100) * 100;
+      const tradesInTier = n % 100;
+      const tierPct = tradesInTier / 100;
+      const tierEl = document.getElementById('perf-tier-size');
+      if (tierEl) {
+        tierEl.textContent = currentSize >= 100000
+          ? '₹1L' : currentSize >= 10000
+          ? '₹' + (currentSize / 1000).toFixed(0) + 'k' : '₹' + currentSize.toLocaleString('en-IN');
+      }
+      const labelEl = document.getElementById('perf-tier-label');
+      if (labelEl) labelEl.textContent = 'per trade · base position size';
+      const badgeEl = document.getElementById('perf-tier-badge');
+      if (badgeEl) {
+        if (currentSize >= 100000) { badgeEl.className = 'stat-badge badge-green'; badgeEl.textContent = '🏆 At maximum ₹1L tier'; }
+        else { badgeEl.className = 'stat-badge badge-amber'; badgeEl.textContent = `Tier ${Math.floor(n/100)+1} of 16 — next: ₹${(sizeForCount(nextTierAt)/1000).toFixed(0)}k`; }
+      }
+      const nextSzEl = document.getElementById('perf-tier-next-size');
+      const nextLbEl = document.getElementById('perf-tier-next-label');
+      const barEl    = document.getElementById('perf-tier-bar');
+      if (nextSzEl) nextSzEl.textContent = currentSize >= 100000 ? 'At cap' : `₹${(sizeForCount(nextTierAt)/1000).toFixed(0)}k`;
+      if (nextLbEl) nextLbEl.textContent = currentSize >= 100000 ? 'Maximum tier reached' : `next tier in ${100 - tradesInTier} trades`;
+      if (barEl) barEl.style.width = (tierPct * 100).toFixed(0) + '%';
+    } catch(e) {}
+  })();
+
+  // ── Capital Efficiency ──
+  (function() {
+    try {
+      const winsForCap = wins.filter(t => t.entryPrice > 0 && t.qty > 0);
+      const avgDeployed = winsForCap.length > 0
+        ? winsForCap.reduce((s,t) => s + t.entryPrice * t.qty, 0) / winsForCap.length : 0;
+      const avgWinPl = winsForCap.length > 0
+        ? winsForCap.reduce((s,t) => s + t.finalPl, 0) / winsForCap.length : 0;
+      const avgWinPct = avgDeployed > 0 ? avgWinPl / avgDeployed * 100 : (avgFinalWin || 0);
+      const lossesForCap = losses.filter(t => t.entryPrice > 0 && t.qty > 0);
+      const avgLossDeployed = lossesForCap.length > 0
+        ? lossesForCap.reduce((s,t) => s + t.entryPrice * t.qty, 0) / lossesForCap.length : 0;
+      const avgLossPl = lossesForCap.length > 0
+        ? lossesForCap.reduce((s,t) => s + t.finalPl, 0) / lossesForCap.length : 0;
+      const avgLossPct = avgLossDeployed > 0 ? avgLossPl / avgLossDeployed * 100 : (avgFinalLoss || 0);
+      const fmtRs = v => (v >= 0 ? '+' : '') + '₹' + Math.abs(Math.round(v)).toLocaleString('en-IN');
+      const effEl = document.getElementById('perf-cap-eff-pct');
+      if (effEl) {
+        effEl.textContent = (avgWinPct > 0 ? '+' : '') + avgWinPct.toFixed(1) + '%';
+        effEl.style.color = avgWinPct >= 10 ? 'var(--green)' : avgWinPct >= 6 ? 'var(--amber)' : 'var(--red)';
+      }
+      const rsEl = document.getElementById('perf-cap-eff-rs');
+      if (rsEl) { rsEl.textContent = avgWinPl > 0 ? fmtRs(avgWinPl) : '—'; rsEl.style.color = 'var(--green)'; }
+      const bEl = document.getElementById('perf-cap-eff-badge');
+      if (bEl) {
+        if (avgWinPct >= 10) { bEl.className = 'stat-badge badge-green'; bEl.textContent = '✓ Excellent — >10% return on capital'; }
+        else if (avgWinPct >= 6) { bEl.className = 'stat-badge badge-amber'; bEl.textContent = '⚡ Good — holding at 6%+ lock-in'; }
+        else { bEl.className = 'stat-badge badge-red'; bEl.textContent = '⚠ Low efficiency — exits may be too early'; }
+      }
+      const posEl = document.getElementById('perf-cap-avg-pos');
+      if (posEl) posEl.textContent = avgDeployed > 0 ? '₹' + Math.round(avgDeployed).toLocaleString('en-IN') : '—';
+      const lEl = document.getElementById('perf-cap-loss-pct');
+      if (lEl) {
+        lEl.textContent = 'Avg loss: ' + (avgLossPct < 0 ? '' : '+') + avgLossPct.toFixed(1) + '%';
+        lEl.style.color = Math.abs(avgLossPct) < 7 ? 'var(--green)' : Math.abs(avgLossPct) < 12 ? 'var(--amber)' : 'var(--red)';
+      }
+    } catch(e) {}
+  })();
+
   // ── Profit Factor (Combined) ──
   // Closed wins + open unrealised MTM (col Y) as numerator — winners are still running open.
   // Closed losses only as denominator — the actual cost incurred.
@@ -5472,15 +5568,16 @@ function renderPerfStats(closed, open, portfolioValue, initialCapital) {
     const icon = s => s === 'pass' ? '✓ ' : s === 'warn' ? '~ ' : '⚠ ';
     let passCount = 0;
 
-    // H1: Hold asymmetry — winners held longer than losers
-    const h1ok   = avgHoldWin > 0 && avgHoldLoss > 0 && avgHoldWin >= avgHoldLoss;
-    const h1part = avgHoldWin > 0 && avgHoldLoss > 0 && avgHoldWin >= avgHoldLoss * 0.8;
+    // H1: Win Rate ≥70% (SST target — high WR system)
+    const h1ok   = closedWRPct >= 70;
+    const h1part = closedWRPct >= 50;
     const h1s    = h1ok ? 'pass' : h1part ? 'warn' : 'fail';
     if (h1ok) passCount++;
-    const h1txt  = avgHoldWin > 0 && avgHoldLoss > 0
-      ? `<span style="color:var(--${h1ok?'green':h1part?'amber':'red'})">${icon(h1s)}${Math.round(avgHoldWin)}d win · ${Math.round(avgHoldLoss)}d loss</span>`
+    const h1wrCol = h1ok ? 'green' : h1part ? 'amber' : 'red';
+    const h1txt  = closed.length > 0
+      ? `<span style="color:var(--${h1wrCol})">${icon(h1s)}${closedWRPct.toFixed(1)}%</span>`
       : '<span style="color:var(--text-muted)">—</span>';
-    setCell('sst-h1', h1txt, h1ok ? 'Winners held longer ✓' : 'Winners should be held longer', h1s);
+    setCell('sst-h1', h1txt, h1ok ? 'Win rate on target ✓' : h1part ? 'WR improving — target ≥70%' : 'Below 50% — review entry signals', h1s);
 
     // H2: Avg loss size < 7%
     const absAvgLoss = Math.abs(avgFinalLoss);
@@ -5492,7 +5589,7 @@ function renderPerfStats(closed, open, portfolioValue, initialCapital) {
     const h2txt  = losses.length > 0
       ? `<span style="color:var(--${h2col})">${icon(h2s)}${absAvgLoss.toFixed(1)}%</span>`
       : '<span style="color:var(--text-muted)">—</span>';
-    setCell('sst-h2', h2txt, h2ok ? 'Stops taken tight ✓' : absAvgLoss < 10 ? 'Slightly extended — review' : 'Losses too large — tighten stops', h2s);
+    setCell('sst-h2', h2txt, h2ok ? 'Losses contained ✓' : absAvgLoss < 10 ? 'Slightly large — hold open per SST rules' : 'Large losses — hold, do not cut', h2s);
 
     // H3: Win:Loss ₹ ratio ≥ 2×
     const h3ok   = winLossRsRatio >= 2;
@@ -5543,7 +5640,7 @@ function renderPerfStats(closed, open, portfolioValue, initialCapital) {
         verdictEl.innerHTML = '<span style="color:var(--green)">✓ <strong>System operating well.</strong> All 5 SST health checks green — discipline, loss size, edge, and portfolio health are all in order. Keep following the rules.</span>';
       } else if (passCount >= 3) {
         const fails = [];
-        if (!h1ok) fails.push(!h1part ? 'cut losses faster' : 'let winners run longer');
+        if (!h1ok) fails.push(!h1part ? 'win rate well below 70% — review entry signals and market conditions' : 'win rate below target 70% — tighten entry criteria');
         if (!h2ok) fails.push('tighten stops (avg loss ' + absAvgLoss.toFixed(1) + '% — target <7%)');
         if (!h3ok) fails.push('hold winners longer for better win:loss ratio');
         if (!h4ok) fails.push('profit factor needs more winners to close');
@@ -6914,7 +7011,7 @@ function initPerfCharts(closed, initialCapital, open) {
       xaxis: { ...baseOpts().xaxis, categories: mWRKeys.map(k => { const [y,m]=k.split('-'); return MNAMES3[parseInt(m)-1]+' '+y.slice(2); }), labels: { ...baseOpts().xaxis.labels, rotate: 0 } },
       yaxis: { labels: { style:{colors:c.text,fontSize:'11px'}, formatter: v => v+'%' }, min: 0, max: 100 },
       colors: [c.accent], stroke: { curve: 'smooth', width: 2 }, markers: { size: 5 },
-      annotations: { yaxis: [{ y: 30, borderColor: c.amber, strokeDashArray: 3, label: { text: '~30% expected', style:{color:c.amber,fontSize:'10px',background:'transparent'} } }] },
+      annotations: { yaxis: [{ y: 70, borderColor: c.amber, strokeDashArray: 3, label: { text: '70% SST target', style:{color:c.amber,fontSize:'10px',background:'transparent'} } }] },
       dataLabels: { enabled: true, formatter: v => v+'%', style:{fontSize:'10px'} },
     });
     wrTrendChart.render(); perfCharts.push(wrTrendChart);
@@ -7010,11 +7107,11 @@ function initPerfCharts(closed, initialCapital, open) {
     series: [{ name: 'Win Rate %', data: dowWR }],
     xaxis: { ...baseOpts().xaxis, categories: dowN.map((n,i) => (['Mon','Tue','Wed','Thu','Fri'][i]) + ' (n='+n+')') },
     yaxis: { labels: { style: { colors: c.text, fontSize:'11px' }, formatter: v => v != null ? v+'%' : '' }, min: 0, max: 100 },
-    colors: dowWR.map(v => v === null ? c.amber : v >= 40 ? c.green : v >= 20 ? c.amber : c.red),
+    colors: dowWR.map(v => v === null ? c.amber : v >= 70 ? c.green : v >= 50 ? c.amber : c.red),
     plotOptions: { bar: { columnWidth:'55%', distributed:true, borderRadius:4 } },
     legend: { show: false },
     dataLabels: { enabled: true, formatter: v => v != null ? v+'%' : 'No data', style: { fontSize:'11px' } },
-    annotations: { yaxis: [{ y: 30, borderColor: c.amber, strokeDashArray: 3, label: { text: '~30% expected', style:{color:c.amber,fontSize:'10px',background:'transparent'} } }] },
+    annotations: { yaxis: [{ y: 70, borderColor: c.amber, strokeDashArray: 3, label: { text: '70% SST target', style:{color:c.amber,fontSize:'10px',background:'transparent'} } }] },
     tooltip: { ...baseOpts().tooltip, y: { formatter: (v, {dataPointIndex}) => v != null ? v+'% win rate ('+dowBuckets[dataPointIndex].w+' of '+dowN[dataPointIndex]+' trades)' : 'No trades' } },
   });
   dowChart.render(); perfCharts.push(dowChart);
@@ -7295,10 +7392,11 @@ function initPerfCharts(closed, initialCapital, open) {
           const prev3 = monthWRs.slice(-6,-3);
           const prev3Avg = prev3.length > 0 ? prev3.reduce((s,v)=>s+v,0)/prev3.length : last3Avg;
           const trend = last3Avg - prev3Avg;
-          if (last3Avg < 20) rollingInsEl.innerHTML = `<span class="chart-insight red">🚨 Rolling WR below 20% for recent windows (avg ${last3Avg.toFixed(0)}%). Review setup selection — are you entering in choppy market conditions?</span>`;
-          else if (trend > 5) rollingInsEl.innerHTML = `<span class="chart-insight green">✓ Rolling WR improving — last 3 windows avg ${last3Avg.toFixed(0)}% vs prior ${prev3Avg.toFixed(0)}%. Setup quality rising.</span>`;
-          else if (trend < -8) rollingInsEl.innerHTML = `<span class="chart-insight amber">⚠ Rolling WR declining — last 3 windows avg ${last3Avg.toFixed(0)}% vs prior ${prev3Avg.toFixed(0)}%. Review market conditions and setup filters.</span>`;
-          else rollingInsEl.innerHTML = `<span class="chart-insight green">✓ Rolling WR stable at ${last3Avg.toFixed(0)}%. Consistent execution.</span>`;
+          if (last3Avg >= 70) rollingInsEl.innerHTML = `<span class="chart-insight green">✓ Rolling WR on target — last 3 windows avg ${last3Avg.toFixed(0)}%. SST system firing well.</span>`;
+          else if (trend > 5) rollingInsEl.innerHTML = `<span class="chart-insight green">✓ Rolling WR improving — last 3 windows avg ${last3Avg.toFixed(0)}% vs prior ${prev3Avg.toFixed(0)}%. Moving toward 70% target.</span>`;
+          else if (last3Avg < 50) rollingInsEl.innerHTML = `<span class="chart-insight red">🚨 Rolling WR below 50% (avg ${last3Avg.toFixed(0)}%). SST target is ≥70% — review entry signals and market conditions.</span>`;
+          else if (trend < -8) rollingInsEl.innerHTML = `<span class="chart-insight amber">⚠ Rolling WR declining — last 3 windows avg ${last3Avg.toFixed(0)}% vs prior ${prev3Avg.toFixed(0)}%. Review setup selection.</span>`;
+          else rollingInsEl.innerHTML = `<span class="chart-insight amber">⚡ Rolling WR at ${last3Avg.toFixed(0)}% — below 70% SST target. Tighten entry criteria.</span>`;
         }
       }
     }
@@ -8645,7 +8743,7 @@ function initAnalysisCharts(open, closed) {
 
   // ── Win Rate by Risk Bucket ──
   // ── Winner vs Loser Hold Duration (grouped bar) ──
-  // Key asymmetry check: winners should be held MUCH longer than losers in a momentum system.
+  // SST: losers are held until recovery — longer loser hold time is normal and expected.
   // Low WR on short holds just means stops triggered fast — correct behaviour, not a problem.
   const holdBkts = ['1–7d','8–14d','15–30d','31–60d','60d+'];
   const holdBktFn = age => age <= 7 ? '1–7d' : age <= 14 ? '8–14d' : age <= 30 ? '15–30d' : age <= 60 ? '31–60d' : '60d+';
