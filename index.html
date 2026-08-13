@@ -1752,8 +1752,8 @@ tbody tr:hover { filter: brightness(0.97); }
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(150px,1fr));gap:0">
       <div id="ah-c1" class="sst-health-cell" style="padding:10px 14px;border-right:1px solid var(--border);border-bottom:1px solid var(--border)">
         <div style="font-size:18px;font-weight:800" id="ah-c1-val">—</div>
-        <div style="font-size:10px;font-weight:700;color:var(--text-muted);margin-top:2px">EXIT SPEED</div>
-        <div style="font-size:10px;color:var(--text-muted);margin-top:1px" id="ah-c1-sub">Avg days to exit losses</div>
+        <div style="font-size:10px;font-weight:700;color:var(--text-muted);margin-top:2px">LOSS HOLD DURATION</div>
+        <div style="font-size:10px;color:var(--text-muted);margin-top:1px" id="ah-c1-sub">Avg days losses held — SST: longer = correct</div>
       </div>
       <div id="ah-c2" class="sst-health-cell" style="padding:10px 14px;border-right:1px solid var(--border);border-bottom:1px solid var(--border)">
         <div style="font-size:18px;font-weight:800" id="ah-c2-val">—</div>
@@ -1950,9 +1950,9 @@ tbody tr:hover { filter: brightness(0.97); }
       <details style="margin-top:10px">
         <summary style="font-size:12px;font-weight:600;color:var(--text-muted);cursor:pointer;padding:4px 0;user-select:none">What to look for &amp; action ▸</summary>
         <div style="padding:10px 12px;background:var(--surface2);border-radius:8px;font-size:12px;line-height:1.7;color:var(--text-secondary);margin-top:6px">
-          In a momentum system, <strong>losers should exit fast (stop triggered), winners should run long</strong>. You want a big gap between the two bars.<br>
-          <strong>If winners and losers have similar hold times:</strong> you're either exiting winners too early or holding losers too long — both hurt the system.<br>
-          <strong>If losers are held longer than winners:</strong> serious discipline issue — you're letting losses run and cutting winners short.
+          In SST, <strong>losers are held until recovery — longer loser hold time is correct and expected</strong>. Winners exit when GTT trailing SL fires after hitting 6%+ profit.<br>
+          <strong>If losers are held shorter than winners:</strong> losses may be exiting prematurely — check if forced exits are happening before recovery.<br>
+          <strong>If losers are held longer than winners:</strong> this is SST working correctly — patience with fundamentally strong stocks is the rule.
         </div>
       </details>
     </div>
@@ -2164,7 +2164,7 @@ tbody tr:hover { filter: brightness(0.97); }
   <div class="grid-2" style="margin-bottom:14px">
     <div class="card">
       <div class="chart-title">Win Rate by Sector</div>
-      <div class="chart-sub">Closed trades · green ≥40% · amber ≥20% · red below · 30% reference line</div>
+      <div class="chart-sub">Closed trades · green ≥70% · amber ≥50% · red below · 70% SST target line</div>
       <div id="chart-sector-wr" style="height:240px;display:none"></div>
       <div id="chart-sector-wr-ph" style="color:var(--text-muted);font-size:12px;padding:20px">Need sector data in column AN — check Apps Script returns <code>sector</code> field</div>
     </div>
@@ -2184,8 +2184,8 @@ tbody tr:hover { filter: brightness(0.97); }
   <div class="section-title" id="asec-pattern">Pattern Analysis</div>
   <div class="grid-2" style="margin-bottom:14px">
     <div class="card">
-      <div class="chart-title">Cut Fast, Run Long?</div>
-      <div class="chart-sub">Red = closed losses · Green = closed wins · Amber = open positions (still running, not final)</div>
+      <div class="chart-title">Hold Duration vs P&L% (All Trades)</div>
+      <div class="chart-sub">Red = closed losses (held per SST) · Green = closed wins · Amber = open positions (still running)</div>
       <div id="chart-scatter" style="height:240px;"></div>
       <div id="scatter-insight" style="margin-top:8px;font-size:12px;color:var(--text-muted);line-height:1.8"></div>
       <details style="margin-top:6px">
@@ -5641,13 +5641,13 @@ function renderPerfStats(closed, open, portfolioValue, initialCapital) {
       } else if (passCount >= 3) {
         const fails = [];
         if (!h1ok) fails.push(!h1part ? 'win rate well below 70% — review entry signals and market conditions' : 'win rate below target 70% — tighten entry criteria');
-        if (!h2ok) fails.push('tighten stops (avg loss ' + absAvgLoss.toFixed(1) + '% — target <7%)');
+        if (!h2ok) fails.push('review closed losses (' + absAvgLoss.toFixed(1) + '% avg) — hold open per SST, only exit on fundamental collapse');
         if (!h3ok) fails.push('hold winners longer for better win:loss ratio');
         if (!h4ok) fails.push('profit factor needs more winners to close');
         if (!h5ok && open.length > 0) fails.push('review underperforming open positions');
         verdictEl.innerHTML = `<span style="color:var(--amber)">⚡ <strong>System mostly healthy — focus areas:</strong> ${fails.join(' · ')}</span>`;
       } else {
-        verdictEl.innerHTML = '<span style="color:var(--red)">⚠ <strong>Multiple checks failing.</strong> Review stop discipline, ensure winners are being held through the GTT trailing mechanism, and avoid exiting profitable positions early.</span>';
+        verdictEl.innerHTML = '<span style="color:var(--red)">⚠ <strong>Multiple checks failing.</strong> Review entry quality (WR target ≥70%), ensure GTT trailing SLs are active on all profitable positions, and avoid exiting wins early. Losses should be held per SST rules.</span>';
       }
     }
   })();
@@ -5658,8 +5658,8 @@ function renderPerfStats(closed, open, portfolioValue, initialCapital) {
   // ── Hold Duration → Win Rate table (populated here so it works before chart init) ──
   const sortedByClose = [...closed].filter(t => t.closeDate).sort((a,b) => parseDate(a.closeDate)-parseDate(b.closeDate));
   const holdBucketDefs2 = [
-    {label:'Same day exit',min:0,max:0,note:'Gap-down / immediate stop'},
-    {label:'1–5 days',min:1,max:5,note:'Fast stop — expected'},
+    {label:'Same day exit',min:0,max:0,note:'Gap-down / GTT triggered same day'},
+    {label:'1–5 days',min:1,max:5,note:'Very fast exit — GTT or early reversal'},
     {label:'6–15 days',min:6,max:15,note:'Early resolution'},
     {label:'16–30 days',min:16,max:30,note:'Developing winner'},
     {label:'31–60 days',min:31,max:60,note:'Running winner ✓'},
@@ -5679,7 +5679,7 @@ function renderPerfStats(closed, open, portfolioValue, initialCapital) {
     });
     holdTbody2.innerHTML = bd2.map((b,idx) => {
       if (b.trades.length===0) return '';
-      const wrColor = b.wr>=40?'var(--green)':b.wr>=20?'var(--amber)':'var(--red)';
+      const wrColor = b.wr>=70?'var(--green)':b.wr>=50?'var(--amber)':'var(--red)';
       const avgColor = b.avg>=0?'var(--green)':'var(--red)';
       const isBest = idx===bestIdx2;
       return `<tr style="border-bottom:1px solid var(--border)${isBest?';background:var(--green-soft)':''}">
@@ -7137,23 +7137,23 @@ function initPerfCharts(closed, initialCapital, open) {
   const realRet = initialCapital > 0 ? (finalEq - initialCapital) / initialCapital * 100 : 0;
   const todayRet = todayEq && initialCapital > 0 ? (todayEq - initialCapital) / initialCapital * 100 : null;
   if (maxDD < -20) {
-    ins('insight-equity','red',`⚠ <strong>Max drawdown ${maxDD.toFixed(1)}%</strong> — exceeds the 20% danger zone. Review position sizing and stop discipline. Are you cutting losses fast enough?<br>→ <strong>Action:</strong> Audit your 5 largest losses. Were stops taken promptly or were they held hoping for recovery?`);
+    ins('insight-equity','red',`⚠ <strong>Realised drawdown ${maxDD.toFixed(1)}%</strong> — significant. In SST this is expected (losses are held open, not realised); check if closed losses are genuinely large or if wins have been small.<br>→ <strong>Action:</strong> Review win rate trend — if WR has dropped below 50%, tighten entry criteria. Ensure GTT trailing SLs are set on all profitable positions.`);
   } else if (maxDD < -10) {
-    ins('insight-equity','amber',`⚡ Max drawdown ${maxDD.toFixed(1)}% — moderate. Realised return ${fmtPct(realRet)}${todayRet !== null ? ` · Combined incl. open positions: ${fmtPct(todayRet)}` : ''}.<br>→ <strong>Action:</strong> If drawdown periods correlate with overtrading, reduce new entries during losing streaks.`);
+    ins('insight-equity','amber',`⚡ Realised drawdown ${maxDD.toFixed(1)}% — moderate. Realised return ${fmtPct(realRet)}${todayRet !== null ? ` · Combined incl. open positions: ${fmtPct(todayRet)}` : ''}.<br>→ <strong>Action:</strong> Confirm GTT trailing SLs are active on all positions at 6%+ profit. Patience with open book — losses held per SST rules will recover with fundamentally strong stocks.`);
   } else {
-    ins('insight-equity','green',`✓ Max drawdown ${maxDD.toFixed(1)}% — well controlled. Realised return ${fmtPct(realRet)}${todayRet !== null ? ` · Combined incl. open positions: ${fmtPct(todayRet)}` : ''}.<br>→ <strong>Keep doing:</strong> Tight stops, fast cuts. Stay consistent with the same discipline on every trade.`);
+    ins('insight-equity','green',`✓ Realised drawdown ${maxDD.toFixed(1)}% — controlled. Realised return ${fmtPct(realRet)}${todayRet !== null ? ` · Combined incl. open positions: ${fmtPct(todayRet)}` : ''}.<br>→ <strong>Keep doing:</strong> Stick to the SST rules — GTT entries at 21DH, hold losses patiently, trail winners via GTT. Consistency compounds.`);
   }
 
   // 2. P&L Distribution
   const rightTail = wins2.filter(t => t.finalPlPct > 10).length;
   const rightTailPct = wins2.length > 0 ? rightTail / wins2.length * 100 : 0;
   const lossOver5 = losses2.filter(t => t.initRiskRs > 0 ? Math.abs(t.finalPl) > t.initRiskRs * 1.5 : t.finalPlPct < -5).length;
-  if (lossOver5 > 0) {
-    ins('insight-distribution','red',`⚠ <strong>${lossOver5} loss${lossOver5>1?'es':''} exceeded 1.5× planned risk</strong> — these are stops that weren't taken on time. Every loss beyond your plan costs 2–3 good trades.<br>→ <strong>Action:</strong> Identify these trades in Closed Trades tab. Were you below the 7-day low and held? Enforce the rule — no exceptions.`);
-  } else if (rightTailPct < 20 && wins2.length >= 5) {
-    ins('insight-distribution','amber',`⚡ Only ${rightTailPct.toFixed(0)}% of winners exceed +10% — you may be exiting too early. Avg win: ${fmtPct(avgWin2)} vs avg loss: −${avgLoss2.toFixed(1)}%.<br>→ <strong>Action:</strong> Check Hold Duration table. If winners are exited before 7-day low triggers, let the trail do its job.`);
+  if (rightTailPct < 20 && wins2.length >= 5) {
+    ins('insight-distribution','amber',`⚡ Only ${rightTailPct.toFixed(0)}% of winners exceed +10% — GTT trailing may be triggering too early. Avg win: ${fmtPct(avgWin2)} vs avg loss: −${avgLoss2.toFixed(1)}%.<br>→ <strong>Action:</strong> Check Hold Duration table. Ensure GTT trailing SL is set ≥6% below CMP on all profitable positions. Don't raise the GTT manually — let the trail do its job.`);
+  } else if (lossOver5 > 0 && losses2.some(t => t.initRiskRs > 0)) {
+    ins('insight-distribution','amber',`⚡ <strong>${lossOver5} closed loss${lossOver5>1?'es':''} are larger than expected</strong> — avg win ${fmtPct(avgWin2)} vs avg loss −${avgLoss2.toFixed(1)}%. Large losses at exit are acceptable in SST if the stock eventually recovered partially before the GTT fired.<br>→ <strong>Action:</strong> Review if these were genuine fundamental collapses (correct to exit) or volatility shakeouts (should have held longer).`);
   } else {
-    ins('insight-distribution','green',`✓ Loss discipline solid — no runaway losses. ${rightTailPct.toFixed(0)}% of winners exceed +10%, avg win ${fmtPct(avgWin2)} vs avg loss −${avgLoss2.toFixed(1)}%.<br>→ <strong>Keep doing:</strong> This asymmetry is the edge. Protect it by never moving stops wider on losers.`);
+    ins('insight-distribution','green',`✓ P&L distribution healthy — ${rightTailPct.toFixed(0)}% of winners exceed +10%, avg win ${fmtPct(avgWin2)} vs avg loss −${avgLoss2.toFixed(1)}%.<br>→ <strong>Keep doing:</strong> GTT trailing is capturing the big moves. Hold open positions patiently — the losers that recover will add to this picture.`);
   }
 
   // 3. Streak — by ENTRY DATE (open+closed combined net P&L per day)
@@ -7204,17 +7204,17 @@ function initPerfCharts(closed, initialCapital, open) {
   const bestOpenR    = openWithRisk.length > 0 ? Math.max(...openWithRisk.map(t => t.notionalPl/t.initRiskRs)) : 0;
   const openNote = openWithRisk.length > 0 ? (() => {
     const trend = avgOpenWinR >= 2 ? 'running well into multi-R territory' : avgOpenWinR >= 1 ? 'in positive R but not yet extended' : 'still early stage';
-    const lossWarning = openLosersR.length > 0 ? ` ⚠ ${openLosersR.length} open position${openLosersR.length>1?'s are':' is'} currently at −${avgOpenLossR.toFixed(2)}R — monitor stops.` : '';
+    const lossWarning = openLosersR.length > 0 ? ` 📌 ${openLosersR.length} open position${openLosersR.length>1?'s are':' is'} currently below entry (−${avgOpenLossR.toFixed(2)}R) — hold per SST; check if above 200+50 EMA for potential add-on.` : '';
     const bigRunners = openOver3R > 0 ? ` ${openOver3R} position${openOver3R>1?'s are':' is'} running at 3R+ (best: +${bestOpenR.toFixed(1)}R) — let the trail do its job, don't exit early.` : openOver2R > 0 ? ` ${openOver2R} position${openOver2R>1?'s':''} at 2R+ (best: +${bestOpenR.toFixed(1)}R).` : '';
     return `<br><br><strong>📊 Live open book (blue bars):</strong> ${openWinnersR.length} winner${openWinnersR.length!==1?'s':''} averaging +${avgOpenWinR.toFixed(2)}R · ${openFlatR.length} near entry · ${openLosersR.length} below entry. Open winners are <em>${trend}</em>.${bigRunners}${lossWarning}<br>→ <strong>Open action:</strong> ${openOver3R > 0 ? `Your ${openOver3R} biggest runner${openOver3R>1?'s are':' is'} carrying the book. Trail via 7-day low — do not take profits early.` : openLosersR.length > openWinnersR.length ? 'More open positions are below entry than above — check if setups are still valid or if market regime has changed.' : 'Open book is healthy. Stay patient, let positions trail to their stops.'}`;
   })() : '';
-  const lossNote = lossesOver1R > 0 ? ` <strong>${lossesOver1R} loss${lossesOver1R>1?'es':''} exceeded −1.2R</strong> — stops not taken cleanly.` : ' Losses are tight (all within ~1R).';
+  const lossNote = lossesOver1R > 0 ? ` ${lossesOver1R} loss${lossesOver1R>1?'es':''} exceeded −1.2R — larger exits at closure (acceptable in SST if stock held through recovery).` : ' Closed losses contained (all within ~1R at exit).';
   if (displayR < 1) {
-    ins('insight-rmultiple','red',`⚠ <strong>R-Multiple ${displayR.toFixed(2)} — below 1R</strong>. Avg win: +${avgTrueWinR.toFixed(2)}R, avg loss: −${avgTrueLossR.toFixed(2)}R.${lossNote}<br>→ <strong>Action:</strong> (1) Cut losses faster — stop = 7-day low, no exceptions. (2) Hold winners longer — ${winsOver2R} trade${winsOver2R!==1?'s':''} reached 2R+, lean on those patterns.${openNote}`);
+    ins('insight-rmultiple','red',`⚠ <strong>Win:Loss ratio ${displayR.toFixed(2)} — below 1×</strong>. Avg win: +${avgTrueWinR.toFixed(2)}R, avg loss: −${avgTrueLossR.toFixed(2)}R.${lossNote}<br>→ <strong>Action:</strong> (1) Focus on entry quality — only enter setups with ≥70% WR history. (2) Ensure GTT trailing SLs are active on all profitable positions so winners compound. ${winsOver2R} trade${winsOver2R!==1?'s':''} reached 2R+ — study those setups.${openNote}`);
   } else if (displayR < 1.5) {
     ins('insight-rmultiple','amber',`⚡ <strong>R-Multiple ${displayR.toFixed(2)}</strong> — positive edge, room to grow. ${winsOver2R} trade${winsOver2R!==1?'s':''} reached 2R+, ${winsOver3R} reached 3R+.${lossNote}<br>→ <strong>Action:</strong> Study your 2R+ trades — setup type, hold time, market phase. Replicate. Target is avg win ≥ 1.5R.${openNote}`);
   } else {
-    ins('insight-rmultiple','green',`✓ <strong>R-Multiple ${displayR.toFixed(2)} — strong asymmetry</strong>. Avg win +${avgTrueWinR.toFixed(2)}R vs avg loss −${avgTrueLossR.toFixed(2)}R. ${winsOver3R} trade${winsOver3R!==1?'s':''} hit 3R+.${lossNote}<br>→ <strong>Keep doing:</strong> This is professional-grade edge. Scale position size at next tier — don't trade more frequently, trade bigger on A+ setups.${openNote}`);
+    ins('insight-rmultiple','green',`✓ <strong>Win:Loss ratio ${displayR.toFixed(2)} — strong edge</strong>. Avg win +${avgTrueWinR.toFixed(2)}R vs avg loss −${avgTrueLossR.toFixed(2)}R. ${winsOver3R} trade${winsOver3R!==1?'s':''} hit 3R+.${lossNote}<br>→ <strong>Keep doing:</strong> SST system firing well. At next closed-trade milestone, move to higher position size tier. Stay patient with open book.${openNote}`);
   }
 
   // 5. Win Rate by Entry Day
@@ -7481,7 +7481,7 @@ function initAnalysisCharts(open, closed) {
         if (b.n === 0) return `<tr style="border-bottom:1px solid var(--border)">
           <td style="padding:8px 10px;color:var(--text-muted)">${b.label}</td>
           <td colspan="6" style="padding:8px 10px;color:var(--text-muted);font-size:12px">No trades</td></tr>`;
-        const wrColor  = b.wr >= 40 ? 'var(--green)' : b.wr >= 20 ? 'var(--amber)' : 'var(--red)';
+        const wrColor  = b.wr >= 70 ? 'var(--green)' : b.wr >= 50 ? 'var(--amber)' : 'var(--red)';
         const avgColor = b.avg >= 0 ? 'var(--green)' : 'var(--red)';
         const plColor  = b.totalPl >= 0 ? 'var(--green)' : 'var(--red)';
         return `<tr style="border-bottom:1px solid var(--border)">
@@ -7528,18 +7528,22 @@ function initAnalysisCharts(open, closed) {
     const ahIcon = s => s === 'pass' ? '✓ ' : s === 'warn' ? '~ ' : '⚠ ';
     let ahPass = 0;
 
-    // C1: Exit speed — avg days to exit losing closed trades (fast is good for SST)
+    // C1: Loss hold duration — SST holds losses until recovery; longer hold = system working correctly
     const closedLossesWithAge = closed.filter(t => (t.finalPlPct||0) < 0 && parseInt(t.age||0) > 0);
     const avgLossDays = closedLossesWithAge.length > 0
       ? closedLossesWithAge.reduce((s,t) => s + parseInt(t.age||0), 0) / closedLossesWithAge.length : 0;
-    const c1ok = avgLossDays > 0 && avgLossDays <= 10;
-    const c1part = avgLossDays > 0 && avgLossDays <= 20;
-    const c1s = c1ok ? 'pass' : c1part ? 'warn' : (avgLossDays === 0 ? 'warn' : 'fail');
+    const closedWinsWithAge = closed.filter(t => (t.finalPlPct||0) > 0 && parseInt(t.age||0) > 0);
+    const avgWinDays2 = closedWinsWithAge.length > 0
+      ? closedWinsWithAge.reduce((s,t) => s + parseInt(t.age||0), 0) / closedWinsWithAge.length : 0;
+    // SST: loss hold ≥ win hold = losses being patiently held per rules
+    const c1ok = avgLossDays > 0 && avgWinDays2 > 0 && avgLossDays >= avgWinDays2;
+    const c1part = avgLossDays > 0 && avgLossDays >= 20;
+    const c1s = closedLossesWithAge.length === 0 ? 'warn' : c1ok ? 'pass' : c1part ? 'warn' : 'fail';
     if (c1ok) ahPass++;
     const c1col = c1ok ? 'green' : c1part ? 'amber' : 'red';
     ahSet('ah-c1',
       avgLossDays > 0 ? `<span style="color:var(--${c1col})">${ahIcon(c1s)}${avgLossDays.toFixed(0)}d</span>` : '<span style="color:var(--text-muted)">—</span>',
-      c1ok ? 'Losses exited quickly ✓' : c1part ? 'Borderline — aim for ≤10 days' : 'Holding losses too long',
+      c1ok ? 'Losses held until recovery ✓' : c1part ? 'Holding per SST rules' : 'Losses closed too fast — check if forced',
       c1s);
 
     // C2: Avg winner % (profit capture quality)
@@ -7600,17 +7604,17 @@ function initAnalysisCharts(open, closed) {
     if (ahScoreEl) ahScoreEl.innerHTML = `<span style="font-weight:700;color:${ahCol}">${ahPass}/${ahTotal} checks passing</span>`;
     if (ahVerdictEl) {
       if (ahPass === 5) {
-        ahVerdictEl.innerHTML = '<span style="color:var(--green)">✓ <strong>All analysis checks green.</strong> Losses exited fast, winners captured well, partials taken, runners brewing, portfolio healthy.</span>';
+        ahVerdictEl.innerHTML = '<span style="color:var(--green)">✓ <strong>All analysis checks green.</strong> Losses held per SST rules, winners captured well, partials taken, runners brewing, portfolio healthy.</span>';
       } else if (ahPass >= 3) {
         const fixes = [];
-        if (!c1ok) fixes.push(`exit losses faster (currently avg ${avgLossDays.toFixed(0)}d — target ≤10d)`);
+        if (!c1ok) fixes.push(`hold losses longer per SST rules (currently avg ${avgLossDays.toFixed(0)}d — losses should be held until recovery)`);
         if (!c2ok) fixes.push(`let winners run longer (avg win ${avgWinPctA.toFixed(1)}% — target ≥10%)`);
         if (!c3ok && partialPct !== null) fixes.push(`take partials more consistently (${partialPct.toFixed(0)}% — target ≥70%)`);
         if (!c4ok) fixes.push('build more 30d+ open runners');
         if (!c5ok && open.length > 0) fixes.push('review underperforming open positions');
         ahVerdictEl.innerHTML = `<span style="color:var(--amber)">⚡ Focus areas: ${fixes.join(' · ')}</span>`;
       } else {
-        ahVerdictEl.innerHTML = '<span style="color:var(--red)">⚠ Multiple checks failing. Review exit discipline, partial taking, and open portfolio health.</span>';
+        ahVerdictEl.innerHTML = '<span style="color:var(--red)">⚠ Multiple checks failing. Review entry quality (target ≥70% WR), partial taking, and open portfolio health. Ensure losses are being held per SST rules, not cut early.</span>';
       }
     }
   } catch(e) { console.error('Analysis health banner error:', e); }
@@ -7705,10 +7709,6 @@ function initAnalysisCharts(open, closed) {
     const oversized = closed.filter(t => (t.initRiskRs||0) > currentTierD * 1.2).length;
     const oversizedPct = closed.length > 0 ? oversized / closed.length * 100 : null;
 
-    // 5. Stop slippage — avg (actual loss - planned risk) / planned risk
-    const slipTrades = lossTrades.filter(t => Math.abs(t.finalPl) > t.initRiskRs * 1.1);
-    const avgSlipRs = slipTrades.length > 0 ? slipTrades.reduce((s,t) => s + (Math.abs(t.finalPl) - t.initRiskRs),0) / slipTrades.length : 0;
-
     const metric = (label, value, subtext, color, icon) => `
       <div style="border:1px solid var(--border);border-radius:8px;padding:14px">
         <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em;margin-bottom:6px">${label}</div>
@@ -7719,30 +7719,38 @@ function initAnalysisCharts(open, closed) {
     let html = '';
     const scoreItems = [];
 
-    if (stopPct !== null) {
-      const col = stopPct >= 80 ? 'var(--green)' : stopPct >= 60 ? 'var(--amber)' : 'var(--red)';
-      const ic = stopPct >= 80 ? '✓' : '⚠';
-      html += metric('Stop Discipline', stopPct.toFixed(0) + '%', `of ${lossTrades.length} losses taken within planned risk ₹ (±10%)`, col, ic);
-      scoreItems.push({ label: 'Stop discipline', ok: stopPct >= 80, msg: stopPct < 80 ? `Only ${stopPct.toFixed(0)}% of losses taken within planned ₹ risk — exits are running past the stop` : '' });
+    // 1. Win Rate — SST primary metric (target ≥70%)
+    const wrPctD = closed.length > 0 ? lossTrades.length < closed.length ? (closed.length - lossTrades.length) / closed.length * 100 : 0 : null;
+    if (wrPctD !== null) {
+      const col = wrPctD >= 70 ? 'var(--green)' : wrPctD >= 50 ? 'var(--amber)' : 'var(--red)';
+      const ic = wrPctD >= 70 ? '✓' : '⚠';
+      html += metric('Win Rate', wrPctD.toFixed(1) + '%', `${closed.length - lossTrades.length}W / ${lossTrades.length}L of ${closed.length} closed — target ≥70%`, col, ic);
+      scoreItems.push({ label: 'Win rate', ok: wrPctD >= 70, msg: wrPctD < 50 ? `${wrPctD.toFixed(0)}% WR — well below 70% target. Review entry signals and market conditions` : wrPctD < 70 ? `${wrPctD.toFixed(0)}% WR — below 70% target. Tighten entry criteria` : '' });
     }
-    // SST: no partial exit tracking — skipped
+
+    // 2. Loss hold discipline — SST holds losses (longer = system working)
     if (avgWinDays !== null && avgLossDays !== null) {
-      const ratio = avgLossDays > 0 ? avgWinDays / avgLossDays : 0;
-      const col = ratio >= 2 ? 'var(--green)' : ratio >= 1.2 ? 'var(--amber)' : 'var(--red)';
-      const ic = ratio >= 2 ? '✓' : '⚠';
-      html += metric('Hold Asymmetry', ratio.toFixed(1) + 'x', `Winners held ${avgWinDays.toFixed(0)}d avg · Losers cut in ${avgLossDays.toFixed(0)}d avg`, col, ic);
-      scoreItems.push({ label: 'Hold asymmetry', ok: ratio >= 1.5, msg: ratio < 1.2 ? `Winners held ${avgWinDays.toFixed(0)}d, losers held ${avgLossDays.toFixed(0)}d — you may be cutting winners too early or holding losers too long` : '' });
+      const lossLonger = avgLossDays >= avgWinDays;
+      const col = lossLonger ? 'var(--green)' : avgLossDays >= 20 ? 'var(--amber)' : 'var(--red)';
+      const ic = lossLonger ? '✓' : '⚠';
+      html += metric('Loss Hold', avgLossDays.toFixed(0) + 'd', `Avg days losses held · winners: ${avgWinDays.toFixed(0)}d · SST: hold losses until recovery`, col, ic);
+      scoreItems.push({ label: 'Loss hold', ok: lossLonger, msg: !lossLonger ? `Losses held ${avgLossDays.toFixed(0)}d vs winners ${avgWinDays.toFixed(0)}d — losses may be exiting before recovery` : '' });
     }
+
+    // 3. Position sizing within tier
     if (oversizedPct !== null) {
       const col = oversizedPct < 10 ? 'var(--green)' : oversizedPct < 20 ? 'var(--amber)' : 'var(--red)';
       const ic = oversizedPct < 10 ? '✓' : '⚠';
-      html += metric('Position Sizing', oversizedPct.toFixed(0) + '%', `of ${closed.length} trades were oversized vs risk tier ₹${Math.round(currentTierD).toLocaleString('en-IN')}`, col, ic);
-      scoreItems.push({ label: 'Position sizing', ok: oversizedPct < 10, msg: oversizedPct >= 20 ? `${oversizedPct.toFixed(0)}% of your trades were oversized — risking more than your tier allows accelerates drawdowns` : '' });
+      html += metric('Position Sizing', oversizedPct.toFixed(0) + '%', `oversized vs current tier ₹${Math.round(currentTierD).toLocaleString('en-IN')} per trade`, col, ic);
+      scoreItems.push({ label: 'Position sizing', ok: oversizedPct < 10, msg: oversizedPct >= 20 ? `${oversizedPct.toFixed(0)}% of trades exceed tier — size to ₹${Math.round(currentTierD).toLocaleString('en-IN')} consistently` : '' });
     }
-    if (slipTrades.length > 0) {
-      const col = avgSlipRs < 500 ? 'var(--green)' : avgSlipRs < 1500 ? 'var(--amber)' : 'var(--red)';
-      const ic = avgSlipRs < 500 ? '✓' : '⚠';
-      html += metric('Avg Stop Overrun', '₹' + Math.round(avgSlipRs).toLocaleString('en-IN'), `across ${slipTrades.length} trades that ran past planned risk`, col, ic);
+
+    // 4. Winner hold duration — longer winners = GTT trailing working
+    if (avgWinDays !== null) {
+      const col = avgWinDays >= 20 ? 'var(--green)' : avgWinDays >= 10 ? 'var(--amber)' : 'var(--red)';
+      const ic = avgWinDays >= 20 ? '✓' : '⚠';
+      html += metric('Winner Hold', avgWinDays.toFixed(0) + 'd', `Avg hold before GTT trail SL fires — target ≥20d for compound move`, col, ic);
+      scoreItems.push({ label: 'Winner hold', ok: avgWinDays >= 20, msg: avgWinDays < 10 ? `Winners exiting in avg ${avgWinDays.toFixed(0)}d — GTT trailing may be set too tight` : avgWinDays < 20 ? `Winners avg ${avgWinDays.toFixed(0)}d — can let more runway with wider trail` : '' });
     }
 
     dsBody.innerHTML = html || '<div style="color:var(--text-muted);padding:8px">Not enough closed trade data yet.</div>';
@@ -8240,11 +8248,11 @@ function initAnalysisCharts(open, closed) {
           series: [{ name: 'Win Rate %', data: wrData }],
           xaxis: { ...baseOpts().xaxis, categories: sectors, labels: { ...baseOpts().xaxis.labels, rotate: -20 } },
           yaxis: { labels: { style:{colors:c.text,fontSize:'11px'}, formatter: v => v+'%' }, max: 100 },
-          colors: wrData.map(v => v >= 40 ? c.green : v >= 20 ? c.amber : c.red),
+          colors: wrData.map(v => v >= 70 ? c.green : v >= 50 ? c.amber : c.red),
           plotOptions: { bar: { columnWidth: '55%', distributed: true, borderRadius: 4 } },
           legend: { show: false },
           dataLabels: { enabled: true, formatter: v => v+'%', style:{fontSize:'11px'} },
-          annotations: { yaxis: [{ y: 30, borderColor: c.amber, strokeDashArray: 3, label:{text:'30%',style:{color:c.amber,fontSize:'10px'}} }] },
+          annotations: { yaxis: [{ y: 70, borderColor: c.amber, strokeDashArray: 3, label:{text:'70% target',style:{color:c.amber,fontSize:'10px'}} }] },
         });
         sWrChart.render(); analysisCharts.push(sWrChart);
       }
@@ -8744,7 +8752,7 @@ function initAnalysisCharts(open, closed) {
   // ── Win Rate by Risk Bucket ──
   // ── Winner vs Loser Hold Duration (grouped bar) ──
   // SST: losers are held until recovery — longer loser hold time is normal and expected.
-  // Low WR on short holds just means stops triggered fast — correct behaviour, not a problem.
+  // Low WR on short holds may mean early GTT SL triggered before move developed — review.
   const holdBkts = ['1–7d','8–14d','15–30d','31–60d','60d+'];
   const holdBktFn = age => age <= 7 ? '1–7d' : age <= 14 ? '8–14d' : age <= 30 ? '15–30d' : age <= 60 ? '31–60d' : '60d+';
   const holdWinCounts = Object.fromEntries(holdBkts.map(k=>[k,0]));
@@ -9051,7 +9059,7 @@ function initAnalysisCharts(open, closed) {
         plotOptions: { bar: { columnWidth: '60%', distributed: true, borderRadius: 4 } },
         legend: { show: false },
         dataLabels: { enabled: true, formatter: v => v.toFixed(0) + '%', style: { fontSize: '11px', colors: ['#fff'] } },
-        annotations: { yaxis: [{ y: 30, borderColor: c.amber, strokeDashArray: 4, label: { text: '30% ref', style: { color: c.amber, fontSize: '10px', background: 'transparent' } } }] },
+        annotations: { yaxis: [{ y: 70, borderColor: c.amber, strokeDashArray: 4, label: { text: '70% target', style: { color: c.amber, fontSize: '10px', background: 'transparent' } } }] },
         tooltip: { ...baseOpts().tooltip, y: { formatter: (v, { dataPointIndex }) => v + '% (' + holdCounts[dataPointIndex] + ' trades)' } },
       }); wrHold.render(); analysisCharts.push(wrHold); } catch(e) { console.warn('chart-wr-hold failed', e); } });
 
