@@ -155,9 +155,21 @@ The canonical strategy is stored in `STRAT_DEFAULT_RULES` in index.html (around 
 
 ## UI Changes Made (2026-08-11 session)
 
+### Tabs removed
+- **Today tab** removed — `#page-today` hidden, nav button deleted, momentum strip links cleaned up
+- **Positions tab** removed — `#page-positions` hidden, nav button deleted
+- Nav now: Dashboard · Performance · Analysis · Strategy · Config
+
+### Dashboard — KPI Cards Redesigned for SST
+- **Open Book card** (was "Open Positions"): Total Open, At Target ≥7%, Book Health % (`#dash-open-pct-profitable`, ≥60% = green), Unrealised MTM (`#dash-sys-exp`), Avg Hold (Open)
+- **System Edge card** (was "System · Closed Trades"): Win Rate LARGE (`#dash-sys-wr`, ≥70% = green, last-30 in sub `#dash-sys-wr-recent`), Profit Factor LARGE (`#dash-sys-pf`, ≥2.0 = green), Avg Win % / Avg Loss %, Win:Loss ₹ Ratio (`#dash-win-loss-rs-ratio`), Avg Hold Closed W/L split
+- Removed: Calmar/DD from peak, Lock-in Zone, raw win/loss counts as headline KPIs
+- Fixed: WR threshold ≥70% green (was 40%), removed SST-hostile "cut losses fast" language
+- Win:Loss ₹ ratio JS: `avgWinRs / avgLossRs` — shows e.g. `2.4× · ₹9,100 ÷ ₹3,800`
+
 ### Dashboard — Avg Holding Period
-- **Avg Hold (Open)**: `#dash-open-avg-hold` — average `t.age` across all open positions (e.g. `42d`). In Open Positions card, last slot in bottom row.
-- **Avg Hold (Closed)**: `#dash-closed-avg-hold` — average age across all closed trades. Sub-label `#dash-closed-hold-split` shows `W: Xd · L: Yd` split. In System · Closed Trades card.
+- **Avg Hold (Open)**: `#dash-open-avg-hold` — average `t.age` across all open positions (e.g. `42d`). In Open Book card, last slot.
+- **Avg Hold (Closed)**: `#dash-closed-avg-hold` — average age across all closed trades. Sub-label `#dash-closed-hold-split` shows `W: Xd · L: Yd` split. In System Edge card.
 - JS wired in `renderDashboard` just before `renderDashCalendar(closed)` call — two try-catch blocks computing from `t.age` (col AF).
 
 ### Dashboard — Portfolio Heatmap Collapsed by Default
@@ -165,6 +177,12 @@ The canonical strategy is stored in `STRAT_DEFAULT_RULES` in index.html (around 
 - Body wrapped in `#dash-heatmap-body` (hidden by default). Chevron `#dash-heatmap-chevron` shows ▼/▲.
 - Toggle: `toggleHeatmap()` function.
 - `renderPortfolioHeatMap` sets `el.style.cssText` to apply flex layout since inline style moved to body wrapper.
+
+### Dashboard — P&L Calendar Redesigned
+- One month at a time (‹ › prev/next via `dashCalNav(dir)`, `window._dashCalOffset`)
+- Large P&L value per cell (14px bold), small day number (10px faded)
+- Rounded cells (8px), dark green/red backgrounds
+- Empty days show faint day number on grey background
 
 ## UI Changes Made (2026-08-03 session)
 - **Performance tab**: SST System Health Banner (5 checks), renamed R-Multiple → Win:Loss Ratio, removed "planned risk" language, added avg win/loss ₹, Copy Summary button
