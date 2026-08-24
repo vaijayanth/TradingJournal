@@ -153,6 +153,63 @@ The canonical strategy is stored in `STRAT_DEFAULT_RULES` in index.html (around 
 | Add-ons executed | When eligible | Loss above 200+50 EMA → 50% add-on should be placed |
 | Combined profit factor | ≥ 2.0 | High WR system should have high PF |
 
+## UI Changes Made (2026-08-24 session)
+
+### Performance Tab — SST Recalibration (full pass)
+
+#### New JS wired (HTML already existed from prior session):
+- **Position Sizing Tier card**: `sizeForCount = n => Math.min(20000 + Math.floor(n/100)*5000, 100000)` — shows current tier ₹ size, progress bar to next tier, badge with tier number. Elements: `#perf-tier-size`, `#perf-tier-label`, `#perf-tier-badge`, `#perf-tier-next-size`, `#perf-tier-next-label`, `#perf-tier-bar`
+- **Capital Efficiency card**: avg return % on deployed capital per winning trade (entryPrice × qty). Falls back to `avgFinalWin` if qty missing. Elements: `#perf-cap-eff-pct`, `#perf-cap-eff-rs`, `#perf-cap-eff-badge`, `#perf-cap-avg-pos`, `#perf-cap-loss-pct`
+- **Win Rate Health card** (replaced R-Expectancy): Breakeven WR = avgLoss/(avgWin+avgLoss). Shows gap cushion above breakeven. Elements: `#perf-r-expectancy`, `#perf-r-expectancy-badge`, `#perf-r-expectancy-closed`
+
+#### SST Health Banner fixes:
+- **H1** changed from "HOLD ASYMMETRY (winners longer = good)" → **"WIN RATE (CLOSED) ≥70%"** — the actual SST metric
+- **H2** label: "AVG LOSS SIZE" → "AVG LOSS AT EXIT", sub: removed "Target: <7%", replaced with "Closed losses — hold open per SST"
+- **H2 sub text**: "Stops taken tight ✓" → "Losses contained ✓"; "tighten stops" → "hold, do not cut"
+- **H1 verdict fallback**: removed "cut losses faster", replaced with "win rate below target — review entry signals"
+- **Multi-fail verdict**: removed "stop discipline", replaced with GTT/entry-quality framing
+
+#### Hold Time badge (Performance tab):
+- Old: `⚠ Losers held Nx longer than winners — reverse this` (hostile for SST)
+- New: `✓ Losers held Nx longer than winners — SST system holding correctly`
+
+#### Rolling WR and chart thresholds:
+- Rolling WR annotation: 30% → 70% SST target
+- Win Rate by Day of Week: bar colors 40%/20% → 70%/50%; annotation 30% → 70%
+- Rolling WR insight thresholds: alert at <50% (not <20%), green at ≥70%
+- Rolling WR sub: "target ≥20%" → "target ≥70%"
+- Winner vs Loser Hold Duration chart: reframed as SST expected behavior
+
+### Analysis Tab — SST Recalibration (full pass)
+
+#### Analysis Health Banner C1:
+- Old: "EXIT SPEED" — passes when losses exit in ≤10 days (hostile — SST holds losses)
+- New: "LOSS HOLD DURATION" — passes when `avgLossDays ≥ avgWinDays` (losers held longer = system working correctly per SST)
+
+#### Discipline Scorecard — completely rewritten:
+| Old (hostile) | New (SST) |
+|---|---|
+| Stop Discipline % | Win Rate (target ≥70%) |
+| Hold Asymmetry winners/losers ratio | Loss Hold Duration (losers longer = correct) |
+| Position Sizing | Position Sizing (kept — tier-based, still relevant) |
+| Avg Stop Overrun | Winner Hold (target ≥20d — GTT trailing active) |
+
+#### Insight text SST-calibrated:
+- Equity curve: removed "cutting losses fast enough?" / "tight stops, fast cuts" → GTT trailing language
+- P&L distribution: removed "planned risk" / "stops not taken on time" → SST framing
+- R-Multiple: removed "Cut losses faster — stop = 7-day low" → "focus on entry quality"
+- Open losers note: "monitor stops" → "hold per SST; check for add-on eligibility (above 200+50 EMA)"
+- "losses are tight (all within ~1R)" → "Closed losses contained (all within ~1R at exit)"
+
+#### Chart annotations:
+- Win Rate by Sector: 30% → 70% reference line, bar colors 40%/20% → 70%/50%
+- Hold Duration tables (both): green ≥40% → ≥70%, amber ≥20% → ≥50%
+- Same day exit note: "immediate stop" → "GTT triggered same day"
+- "Cut Fast, Run Long?" chart → "Hold Duration vs P&L% (All Trades)"
+- Winner vs Loser chart detail: "serious discipline issue if losers held longer" → "SST: losers held longer = working correctly"
+
+---
+
 ## UI Changes Made (2026-08-11 session)
 
 ### Tabs removed
