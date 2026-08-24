@@ -1142,23 +1142,83 @@ tbody tr:hover { filter: brightness(0.97); }
     <div style="font-size:11px;color:var(--text-muted);margin-top:8px">GTT trailing SL should be ≥6% below CMP on all profitable positions</div>
   </div>
 
-  <!-- ⑦ PERFORMANCE SUMMARY TABLE -->
-  <div class="card" style="margin-top:14px;padding:16px">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
-      <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em">📈 Performance Summary</div>
-      <button onclick="copyDashStats()" style="font-size:11px;font-weight:600;padding:4px 12px;border-radius:14px;border:1px solid var(--border);background:var(--surface2);color:var(--text-secondary);cursor:pointer">📋 Copy</button>
+  <!-- ⑦ PERFORMANCE SUMMARY -->
+  <div class="card" style="margin-top:14px;padding:0;overflow:hidden">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border);background:var(--surface2)">
+      <div style="font-size:11px;font-weight:800;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.08em">📈 Performance Summary</div>
+      <button onclick="copyDashStats()" style="font-size:11px;font-weight:600;padding:4px 12px;border-radius:14px;border:1px solid var(--border);background:var(--surface);color:var(--text-secondary);cursor:pointer">📋 Copy</button>
     </div>
-    <div style="overflow-x:auto">
-      <table id="dash-summary-table" style="width:100%;border-collapse:collapse;font-size:13px">
-        <thead>
-          <tr style="border-bottom:1px solid var(--border)">
-            <th style="text-align:left;padding:7px 12px;color:var(--text-muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.05em">Metric</th>
-            <th style="text-align:right;padding:7px 12px;color:var(--text-muted);font-weight:600;font-size:11px;text-transform:uppercase;letter-spacing:.05em">Value</th>
-          </tr>
-        </thead>
-        <tbody id="dash-summary-tbody"></tbody>
-      </table>
+    <!-- Row 1: Capital & Returns -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));border-bottom:1px solid var(--border)">
+      <div style="padding:14px 16px;border-right:1px solid var(--border)">
+        <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em">INITIAL CAPITAL</div>
+        <div id="ds-initial-cap" style="font-size:22px;font-weight:800;margin-top:4px;color:var(--text-primary)">—</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px">Starting portfolio</div>
+      </div>
+      <div style="padding:14px 16px;border-right:1px solid var(--border)">
+        <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em">CURRENT VALUE</div>
+        <div id="ds-current-val" style="font-size:22px;font-weight:800;margin-top:4px;color:var(--text-primary)">—</div>
+        <div id="ds-current-sub" style="font-size:11px;color:var(--text-muted);margin-top:2px">Realised only</div>
+      </div>
+      <div style="padding:14px 16px;border-right:1px solid var(--border)">
+        <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em">TOTAL RETURN</div>
+        <div id="ds-total-return" style="font-size:22px;font-weight:800;margin-top:4px">—</div>
+        <div id="ds-total-return-sub" style="font-size:11px;color:var(--text-muted);margin-top:2px">Realised P&amp;L on capital</div>
+      </div>
+      <div style="padding:14px 16px">
+        <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em">CAGR</div>
+        <div id="ds-cagr" style="font-size:22px;font-weight:800;margin-top:4px">—</div>
+        <div id="ds-cagr-sub" style="font-size:11px;color:var(--text-muted);margin-top:2px">Annualised return</div>
+      </div>
     </div>
+    <!-- Row 2: Edge metrics -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));border-bottom:1px solid var(--border)">
+      <div style="padding:14px 16px;border-right:1px solid var(--border)">
+        <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em">WIN RATE</div>
+        <div id="ds-wr" style="font-size:22px;font-weight:800;margin-top:4px">—</div>
+        <div id="ds-wr-sub" style="font-size:11px;color:var(--text-muted);margin-top:2px">closed · target ≥70%</div>
+      </div>
+      <div style="padding:14px 16px;border-right:1px solid var(--border)">
+        <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em">PROFIT FACTOR</div>
+        <div id="ds-pf" style="font-size:22px;font-weight:800;margin-top:4px">—</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px">combined · target ≥2.0</div>
+      </div>
+      <div style="padding:14px 16px;border-right:1px solid var(--border)">
+        <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em">AVG WIN</div>
+        <div id="ds-avg-win" style="font-size:22px;font-weight:800;margin-top:4px;color:var(--green)">—</div>
+        <div id="ds-avg-win-sub" style="font-size:11px;color:var(--text-muted);margin-top:2px">—</div>
+      </div>
+      <div style="padding:14px 16px">
+        <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em">AVG LOSS</div>
+        <div id="ds-avg-loss" style="font-size:22px;font-weight:800;margin-top:4px;color:var(--amber)">—</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px">losses held open per SST</div>
+      </div>
+    </div>
+    <!-- Row 3: Trade counts & risk -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));border-bottom:1px solid var(--border)">
+      <div style="padding:14px 16px;border-right:1px solid var(--border)">
+        <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em">WIN:LOSS ₹ RATIO</div>
+        <div id="ds-wl-ratio" style="font-size:22px;font-weight:800;margin-top:4px;color:var(--text-primary)">—</div>
+        <div id="ds-wl-ratio-sub" style="font-size:11px;color:var(--text-muted);margin-top:2px">avg win ÷ avg loss</div>
+      </div>
+      <div style="padding:14px 16px;border-right:1px solid var(--border)">
+        <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em">MAX DRAWDOWN</div>
+        <div id="ds-max-dd" style="font-size:22px;font-weight:800;margin-top:4px">—</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px">closed equity peak-to-trough</div>
+      </div>
+      <div style="padding:14px 16px;border-right:1px solid var(--border)">
+        <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em">CALMAR RATIO</div>
+        <div id="ds-calmar" style="font-size:22px;font-weight:800;margin-top:4px">—</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px">CAGR ÷ max drawdown</div>
+      </div>
+      <div style="padding:14px 16px">
+        <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em">AVG HOLD</div>
+        <div id="ds-avg-hold" style="font-size:22px;font-weight:800;margin-top:4px;color:var(--text-primary)">—</div>
+        <div id="ds-avg-hold-sub" style="font-size:11px;color:var(--text-muted);margin-top:2px">all trades</div>
+      </div>
+    </div>
+    <!-- Row 4: Trade counts footer -->
+    <div id="ds-footer" style="padding:10px 16px;font-size:11px;color:var(--text-muted)">—</div>
   </div>
 
   <!-- System quality — hidden, values still set by JS -->
@@ -4775,94 +4835,83 @@ function renderDashCharts(open, closed, cfg, portfolioValue, initialCapital) {
     if (lEl) lEl.innerHTML = bot5.length ? bot5.map(moversRow).join('') : '<div style="color:var(--text-muted);font-size:12px">No data</div>';
   } catch(e) { console.warn('top-movers error', e); }
 
-  // ── Performance Summary Table ─────────────────────────────────────────────
+  // ── Performance Summary Cards ─────────────────────────────────────────────
   try {
-    const tbody = document.getElementById('dash-summary-tbody');
-    if (tbody) {
-      const allTrades = [...open, ...closed];
-      const wins = closed.filter(t => (t.finalPl||0) > 0);
-      const losses = closed.filter(t => (t.finalPl||0) < 0);
-      const profitOpen = open.filter(t => (t.plPct||0) > 0);
-      const totalWinPl = wins.reduce((s,t) => s+(t.finalPl||0), 0);
-      const totalLossPl = Math.abs(losses.reduce((s,t) => s+(t.finalPl||0), 0));
-      const pf = totalLossPl > 0 ? totalWinPl / totalLossPl : Infinity;
-      const avgWin = wins.length > 0 ? totalWinPl / wins.length : 0;
-      const avgLoss = losses.length > 0 ? totalLossPl / losses.length : 0;
-      const avgDur = allTrades.length > 0 ? allTrades.reduce((s,t)=>s+parseInt(t.age||0),0)/allTrades.length : 0;
-      const accuracy = allTrades.length > 0 ? (wins.length + profitOpen.length) / allTrades.length * 100 : 0;
-      // CAGR from first trade date
-      const dates = allTrades.map(t=>parseDate(t.openDate)).filter(d=>d&&d.getFullYear()>2000).sort((a,b)=>a-b);
-      const numYears = dates.length > 0 ? (new Date() - dates[0]) / (365.25*24*3600*1000) : 1;
-      const totalReturn = initialCapital > 0 ? (portfolioValue - initialCapital) / initialCapital : 0;
-      const cagr = numYears > 0 ? (Math.pow(1 + totalReturn, 1/numYears) - 1) * 100 : 0;
-      // Max drawdown from closed equity curve
-      let eq = 0, peak = 0, maxDD = 0;
-      [...closed].sort((a,b)=>parseDate(a.closeDate)-parseDate(b.closeDate)).forEach(t => {
-        eq += t.finalPl||0;
-        if (eq > peak) peak = eq;
-        const dd = peak > 0 ? (peak - eq) / peak * 100 : 0;
-        if (dd > maxDD) maxDD = dd;
-      });
-      const calmar = maxDD > 0 ? cagr / maxDD : 0;
+    const allTrades = [...open, ...closed];
+    const wins = closed.filter(t => (t.finalPl||0) > 0);
+    const losses = closed.filter(t => (t.finalPl||0) < 0);
+    const profitOpen = open.filter(t => (t.plPct||0) > 0);
+    const totalWinPl = wins.reduce((s,t) => s+(t.finalPl||0), 0);
+    const totalLossPl = Math.abs(losses.reduce((s,t) => s+(t.finalPl||0), 0));
+    const totalOpenMTM = open.reduce((s,t) => s+(t.notionalPl||0), 0);
+    const combinedWinPl = totalWinPl + Math.max(0, totalOpenMTM);
+    const pf = totalLossPl > 0 ? combinedWinPl / totalLossPl : Infinity;
+    const avgWin = wins.length > 0 ? totalWinPl / wins.length : 0;
+    const avgLoss = losses.length > 0 ? totalLossPl / losses.length : 0;
+    const avgWinPct = wins.length > 0 ? wins.reduce((s,t)=>s+(t.finalPlPct||0),0)/wins.length : 0;
+    const avgLossPct = losses.length > 0 ? losses.reduce((s,t)=>s+Math.abs(t.finalPlPct||0),0)/losses.length : 0;
+    const avgDur = allTrades.length > 0 ? allTrades.reduce((s,t)=>s+parseInt(t.age||0),0)/allTrades.length : 0;
+    const closedWR = closed.length > 0 ? wins.length / closed.length * 100 : 0;
+    // CAGR from first trade date
+    const dates = allTrades.map(t=>parseDate(t.openDate)).filter(d=>d&&d.getFullYear()>2000).sort((a,b)=>a-b);
+    const numYears = dates.length > 0 ? (new Date() - dates[0]) / (365.25*24*3600*1000) : 1;
+    const totalReturn = initialCapital > 0 ? (portfolioValue - initialCapital) / initialCapital : 0;
+    const cagr = numYears > 0 ? (Math.pow(1 + totalReturn, 1/numYears) - 1) * 100 : 0;
+    // Max drawdown from closed equity curve
+    let eq = 0, peak = 0, maxDD = 0;
+    [...closed].sort((a,b)=>parseDate(a.closeDate)-parseDate(b.closeDate)).forEach(t => {
+      eq += t.finalPl||0;
+      if (eq > peak) peak = eq;
+      const dd = peak > 0 ? (peak - eq) / peak * 100 : 0;
+      if (dd > maxDD) maxDD = dd;
+    });
+    const calmar = maxDD > 0 ? cagr / maxDD : 0;
 
-      // Avg return on deployed capital — per trade: P&L / capital deployed
-      const openWithInvested = open.filter(t => (t.totalInvested||0) > 0 || (t.qty&&t.entryPrice));
-      const closedWithInvested = closed.filter(t => (t.qty&&t.entryPrice) || (t.finalPl!==0));
-      const openRoDC = openWithInvested.map(t => {
-        const deployed = t.totalInvested || (t.qty * t.entryPrice) || 0;
-        return deployed > 0 ? (t.notionalPl||0) / deployed * 100 : null;
-      }).filter(v => v !== null);
-      const closedRoDC = closedWithInvested.map(t => {
-        const deployed = (t.qty||0) * (t.entryPrice||0);
-        return deployed > 0 ? (t.finalPl||0) / deployed * 100 : null;
-      }).filter(v => v !== null);
-      const allRoDC = [...openRoDC, ...closedRoDC];
-      const avgRoDC = allRoDC.length > 0 ? allRoDC.reduce((s,v)=>s+v,0) / allRoDC.length : 0;
-      // Total deployed capital (open positions)
-      const totalDeployed = open.reduce((s,t) => s + (t.totalInvested || (t.qty&&t.entryPrice ? t.qty*t.entryPrice : 0)), 0);
-      const totalRoDC = totalDeployed > 0 ? (portfolioValue - initialCapital) / totalDeployed * 100 : 0;
+    const fmtL = v => {
+      const abs = Math.abs(v);
+      if (abs >= 100000) return (v<0?'-':'') + '₹' + (abs/100000).toFixed(2) + 'L';
+      if (abs >= 1000) return (v<0?'-':'') + '₹' + (abs/1000).toFixed(1) + 'k';
+      return (v<0?'-':'') + '₹' + Math.round(abs).toLocaleString('en-IN');
+    };
+    const G = 'var(--green)', R = 'var(--red)', A = 'var(--amber)', N = 'var(--text-primary)';
 
-      const fmtRs = v => '₹' + Math.round(v).toLocaleString('en-IN');
-      const fmtPct = v => v.toFixed(2) + '%';
-      const rows = [
-        ['Initial Capital',   fmtRs(initialCapital)],
-        ['Current Portfolio', fmtRs(portfolioValue)],
-        ['Total Return',      (totalReturn*100>=0?'+':'')+fmtPct(totalReturn*100)],
-        ['Total Trades',      allTrades.length],
-        ['Open Positions',    open.length],
-        ['Closed Trades',     closed.length],
-        ['Winning Trades',    wins.length + profitOpen.length],
-        ['Losing Trades',     losses.length + open.filter(t=>(t.plPct||0)<0).length],
-        ['Accuracy',          fmtPct(accuracy)],
-        ['Avg Hold (days)',   Math.round(avgDur)],
-        ['Avg Win ₹',         fmtRs(avgWin)],
-        ['Avg Loss ₹',        fmtRs(avgLoss)],
-        ['Profit Factor',     pf === Infinity ? '∞' : pf.toFixed(2)],
-        ['Avg Return / Trade (on deployed)', (avgRoDC>=0?'+':'')+fmtPct(avgRoDC)],
-        ['Total Return on Deployed Capital', (totalRoDC>=0?'+':'')+fmtPct(totalRoDC)],
-        ['Max Drawdown',      fmtPct(maxDD)],
-        ['CAGR',              fmtPct(cagr)],
-        ['Calmar Ratio',      calmar.toFixed(2)],
-        ['Years Active',      numYears.toFixed(2)],
-      ];
-      const green = 'var(--green)', red = 'var(--red)', neutral = 'var(--text-primary)';
-      const valueColor = (label, val) => {
-        if (label === 'Total Return' || label === 'CAGR') return totalReturn >= 0 ? green : red;
-        if (label === 'Profit Factor') return pf >= 1.5 ? green : pf >= 1 ? 'var(--amber)' : red;
-        if (label === 'Accuracy') return accuracy >= 50 ? green : accuracy >= 30 ? 'var(--amber)' : red;
-        if (label === 'Max Drawdown') return maxDD < 15 ? green : maxDD < 30 ? 'var(--amber)' : red;
-        if (label === 'Calmar Ratio') return calmar >= 0.5 ? green : 'var(--amber)';
-        if (label.includes('Return on Deployed') || label.includes('Return / Trade')) return avgRoDC >= 0 ? green : red;
-        return neutral;
-      };
-      tbody.innerHTML = rows.map(([label, val], i) =>
-        `<tr style="border-bottom:1px solid var(--border);${i%2===0?'background:var(--surface-alt,rgba(255,255,255,0.02))':''}">
-          <td style="padding:10px 14px;color:var(--text-primary);font-size:15px;font-weight:700">${label}</td>
-          <td style="padding:10px 14px;text-align:right;font-weight:800;font-size:16px;color:${valueColor(label,val)}">${val}</td>
-        </tr>`
-      ).join('');
-    }
-  } catch(e) { console.warn('summary-table error', e); }
+    const sc = (id, val, color) => { const el=document.getElementById(id); if(el){el.textContent=val;if(color)el.style.color=color;} };
+
+    sc('ds-initial-cap', fmtL(initialCapital));
+    sc('ds-current-val', fmtL(portfolioValue));
+    document.getElementById('ds-current-sub') && (document.getElementById('ds-current-sub').textContent = `${totalReturn>=0?'+':''}${(totalReturn*100).toFixed(1)}% vs initial`);
+
+    const retStr = (totalReturn>=0?'+':'') + (totalReturn*100).toFixed(2) + '%';
+    sc('ds-total-return', retStr, totalReturn >= 0 ? G : R);
+    document.getElementById('ds-total-return-sub') && (document.getElementById('ds-total-return-sub').textContent = `${numYears.toFixed(1)}y active · realised`);
+
+    sc('ds-cagr', (cagr>=0?'+':'') + cagr.toFixed(1) + '%', cagr >= 15 ? G : cagr >= 0 ? A : R);
+    document.getElementById('ds-cagr-sub') && (document.getElementById('ds-cagr-sub').textContent = `${numYears.toFixed(1)}y compound annual`);
+
+    sc('ds-wr', closedWR.toFixed(1) + '%', closedWR >= 70 ? G : closedWR >= 50 ? A : R);
+    document.getElementById('ds-wr-sub') && (document.getElementById('ds-wr-sub').textContent = `${wins.length}W · ${losses.length}L · target ≥70%`);
+
+    sc('ds-pf', pf === Infinity ? '∞' : pf.toFixed(2), pf >= 2 ? G : pf >= 1 ? A : R);
+
+    sc('ds-avg-win', '+' + avgWinPct.toFixed(1) + '%');
+    document.getElementById('ds-avg-win-sub') && (document.getElementById('ds-avg-win-sub').textContent = `${wins.length} wins · ${fmtL(avgWin)} avg ₹`);
+
+    sc('ds-avg-loss', avgLossPct.toFixed(1) + '%');
+
+    const wlRatio = avgLoss > 0 ? avgWin / avgLoss : 0;
+    sc('ds-wl-ratio', wlRatio.toFixed(2) + '×', wlRatio >= 1.5 ? G : wlRatio >= 1 ? A : R);
+    document.getElementById('ds-wl-ratio-sub') && (document.getElementById('ds-wl-ratio-sub').textContent = `${fmtL(avgWin)} ÷ ${fmtL(avgLoss)}`);
+
+    sc('ds-max-dd', maxDD.toFixed(1) + '%', maxDD < 15 ? G : maxDD < 30 ? A : R);
+
+    sc('ds-calmar', calmar.toFixed(2), calmar >= 0.5 ? G : A);
+
+    sc('ds-avg-hold', Math.round(avgDur) + 'd');
+    document.getElementById('ds-avg-hold-sub') && (document.getElementById('ds-avg-hold-sub').textContent = `${allTrades.length} trades total`);
+
+    const dsFooter = document.getElementById('ds-footer');
+    if (dsFooter) dsFooter.textContent = `${closed.length} closed trades · ${open.length} open · ${wins.length}W / ${losses.length}L · years active: ${numYears.toFixed(1)}`;
+  } catch(e) { console.warn('summary-cards error', e); }
 }
 
 // ── COPY DASHBOARD STATS ──────────────────────────────
