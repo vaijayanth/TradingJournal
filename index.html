@@ -951,7 +951,7 @@ tbody tr:hover { filter: brightness(0.97); }
         </div>
         <div>
           <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Avg Hold (Open)</div>
-          <div style="font-size:18px;font-weight:700" id="dash-open-avg-hold">—</div>
+          <div style="font-size:18px;font-weight:700" id="dash-open-avg-hold-sys">—</div>
           <div style="font-size:11px;color:var(--text-muted);margin-top:1px">open positions</div>
         </div>
       </div>
@@ -4424,6 +4424,8 @@ function renderDashboard(data, cfg) {
     const avgOpenHold = openAges.length > 0 ? Math.round(openAges.reduce((s,a)=>s+a,0)/openAges.length) : 0;
     const el1 = document.getElementById('dash-open-avg-hold');
     if (el1) el1.textContent = avgOpenHold > 0 ? avgOpenHold + 'd' : '—';
+    const el1b = document.getElementById('dash-open-avg-hold-sys');
+    if (el1b) el1b.textContent = avgOpenHold > 0 ? avgOpenHold + 'd' : '—';
   } catch(e) {}
 
   // Avg holding period — closed positions (winners vs losers split)
