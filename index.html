@@ -812,6 +812,45 @@ tbody tr:hover { filter: brightness(0.97); }
     <button onclick="openPreTradeModal()" style="font-size:12px;font-weight:700;padding:6px 16px;border-radius:20px;border:1.5px solid var(--accent);background:var(--surface);color:var(--accent);cursor:pointer">📋 Pre-Trade Check</button>
   </div>
 
+  <!-- ── FY Summary Card ── -->
+  <div id="dash-fy-card" style="border-radius:12px;border:1px solid var(--border);background:var(--surface);overflow:hidden;margin-bottom:14px">
+    <!-- Month chips -->
+    <div id="dash-fy-months" style="display:flex;gap:6px;padding:12px 14px;overflow-x:auto;scrollbar-width:none;border-bottom:1px solid var(--border);flex-wrap:nowrap"></div>
+    <!-- Stats row -->
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:0">
+      <div style="padding:12px 16px;border-right:1px solid var(--border)">
+        <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:4px">Starting Capital</div>
+        <div style="font-size:18px;font-weight:800;color:var(--text-primary)" id="dash-fy-capital">—</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px" id="dash-fy-capital-sub">—</div>
+      </div>
+      <div style="padding:12px 16px;border-right:1px solid var(--border)">
+        <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:4px" id="dash-fy-label">FY P&amp;L</div>
+        <div style="font-size:18px;font-weight:800" id="dash-fy-pl">—</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px" id="dash-fy-pl-sub">—</div>
+      </div>
+      <div style="padding:12px 16px;border-right:1px solid var(--border)">
+        <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:4px" id="dash-curmon-label">This Month P&amp;L</div>
+        <div style="font-size:18px;font-weight:800" id="dash-curmon-pl">—</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px" id="dash-curmon-sub">—</div>
+      </div>
+      <div style="padding:12px 16px;border-right:1px solid var(--border)">
+        <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:4px">FY Return</div>
+        <div style="font-size:18px;font-weight:800" id="dash-fy-return">—</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px" id="dash-fy-return-sub">on capital at FY open</div>
+      </div>
+      <div style="padding:12px 16px;border-right:1px solid var(--border)">
+        <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:4px">Win Rate</div>
+        <div style="font-size:18px;font-weight:800;color:var(--green)" id="dash-fy-wr">—</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px" id="dash-fy-wr-sub">—</div>
+      </div>
+      <div style="padding:12px 16px">
+        <div style="font-size:9px;font-weight:800;text-transform:uppercase;letter-spacing:.08em;color:var(--text-muted);margin-bottom:4px" id="dash-qtr-label">Q1 P&amp;L</div>
+        <div style="font-size:18px;font-weight:800" id="dash-qtr-pl">—</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px" id="dash-qtr-sub">—</div>
+      </div>
+    </div>
+  </div>
+
   <!-- ① KPI ROW -->
   <div class="grid-3" style="gap:14px">
 
@@ -3166,6 +3205,149 @@ function renderDashboard(data, cfg) {
   const fmtSigned = v => (v >= 0 ? '+' : '-') + fmt(v);
 
   const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+
+  // ── FY Summary Card ──
+  (function() {
+    try {
+      const today = new Date();
+      const MNAMES = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      const fmtPl = v => (v >= 0 ? '+' : '') + '₹' + Math.abs(Math.round(v)).toLocaleString('en-IN');
+      const fmtK  = v => {
+        const a = Math.abs(v);
+        const s = v < 0 ? '-' : '+';
+        if (a >= 10000000) return s + '₹' + (a/10000000).toFixed(2) + 'Cr';
+        if (a >= 100000)   return s + '₹' + (a/100000).toFixed(2) + 'L';
+        if (a >= 1000)     return s + '₹' + (a/1000).toFixed(1) + 'k';
+        return s + '₹' + Math.round(a);
+      };
+
+      // Indian FY: Apr–Mar
+      const fyStartMonth = 3; // April = month index 3
+      const curMonth = today.getMonth(); // 0-based
+      const curYear  = today.getFullYear();
+      // FY year: if current month < April, FY started last year
+      const fyYear = curMonth >= fyStartMonth ? curYear : curYear - 1;
+      const fyStart = new Date(fyYear, fyStartMonth, 1); // April 1
+      const fyEnd   = new Date(fyYear + 1, fyStartMonth, 0); // March 31 next year
+
+      // All 12 months of this FY
+      const fyMonths = [];
+      for (let i = 0; i < 12; i++) {
+        const mo = (fyStartMonth + i) % 12;
+        const yr = fyYear + (fyStartMonth + i >= 12 ? 1 : 0);
+        fyMonths.push({ mo, yr, key: yr + '-' + String(mo + 1).padStart(2, '0'), label: MNAMES[mo] + ' ' + yr });
+      }
+
+      // Build month → P&L map from closed trades
+      const monthMap = {};
+      const monthCount = {}; // wins/losses per month
+      closed.forEach(t => {
+        if (!t.closeDate) return;
+        const d = parseDate(t.closeDate);
+        if (isNaN(d)) return;
+        const key = d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0');
+        monthMap[key] = (monthMap[key] || 0) + (t.finalPl || 0);
+        if (!monthCount[key]) monthCount[key] = { w: 0, l: 0 };
+        if ((t.finalPl || 0) > 0) monthCount[key].w++; else monthCount[key].l++;
+      });
+
+      // FY stats
+      const fyTrades = closed.filter(t => {
+        if (!t.closeDate) return false;
+        const d = parseDate(t.closeDate);
+        return !isNaN(d) && d >= fyStart && d <= fyEnd;
+      });
+      const fyPl    = fyTrades.reduce((s, t) => s + (t.finalPl || 0), 0);
+      const fyWins  = fyTrades.filter(t => (t.finalPl || 0) > 0).length;
+      const fyLoss  = fyTrades.filter(t => (t.finalPl || 0) < 0).length;
+      const fyWR    = fyTrades.length > 0 ? fyWins / fyTrades.length * 100 : 0;
+      const fyRet   = initialCapital > 0 ? fyPl / initialCapital * 100 : 0;
+
+      // Current quarter
+      const qtrDef = [
+        { name: 'Q1', months: [3,4,5] }, // Apr-Jun
+        { name: 'Q2', months: [6,7,8] }, // Jul-Sep
+        { name: 'Q3', months: [9,10,11] }, // Oct-Dec
+        { name: 'Q4', months: [0,1,2] }, // Jan-Mar
+      ];
+      const qtr = qtrDef.find(q => q.months.includes(curMonth)) || qtrDef[0];
+      // Q1 of FY: Apr-Jun of fyYear; Q4: Jan-Mar of fyYear+1
+      const qtrIsNextYear = qtr.name === 'Q4';
+      const qtrYr = qtrIsNextYear ? fyYear + 1 : fyYear;
+      const qtrTrades = closed.filter(t => {
+        if (!t.closeDate) return false;
+        const d = parseDate(t.closeDate);
+        if (isNaN(d)) return false;
+        return qtr.months.includes(d.getMonth()) && d.getFullYear() === qtrYr;
+      });
+      const qtrPl    = qtrTrades.reduce((s, t) => s + (t.finalPl || 0), 0);
+      const qtrWins  = qtrTrades.filter(t => (t.finalPl || 0) > 0).length;
+      const qtrLoss  = qtrTrades.filter(t => (t.finalPl || 0) < 0).length;
+      const qtrStart = new Date(qtrYr, qtr.months[0], 1);
+      const qtrDays  = Math.round((today - qtrStart) / 86400000);
+
+      // Current month
+      const curMonKey = curYear + '-' + String(curMonth + 1).padStart(2, '0');
+      const curMonPl  = monthMap[curMonKey] || 0;
+      const curMonC   = monthCount[curMonKey] || { w: 0, l: 0 };
+      const curMonDays = today.getDate();
+
+      // Populate: month chips
+      const chipsEl = document.getElementById('dash-fy-months');
+      if (chipsEl) {
+        chipsEl.innerHTML = fyMonths.map(m => {
+          const pl = monthMap[m.key];
+          const isActive = m.mo === curMonth && m.yr === curYear;
+          const hasTrades = pl !== undefined;
+          const isPos = hasTrades && pl >= 0;
+          const bg = isActive ? (isPos ? 'var(--green)' : 'var(--red)') : hasTrades ? (isPos ? 'rgba(0,200,80,.12)' : 'rgba(255,80,80,.12)') : 'var(--surface2)';
+          const textColor = isActive ? '#fff' : hasTrades ? (isPos ? 'var(--green)' : 'var(--red)') : 'var(--text-muted)';
+          const border = isActive ? 'none' : '1px solid var(--border)';
+          return `<div style="flex-shrink:0;min-width:90px;padding:8px 10px;border-radius:8px;background:${bg};border:${border};cursor:default">
+            <div style="font-size:10px;font-weight:700;color:${isActive?'rgba(255,255,255,.8)':textColor};margin-bottom:3px">${m.label}</div>
+            <div style="font-size:12px;font-weight:800;color:${textColor};white-space:nowrap">${hasTrades ? fmtK(pl) : '—'}</div>
+          </div>`;
+        }).join('');
+      }
+
+      // Capital
+      const icFmt = v => { const a = Math.abs(v); if (a >= 10000000) return '₹' + (a/10000000).toFixed(2) + 'Cr'; if (a >= 100000) return '₹' + (a/100000).toFixed(2) + 'L'; return '₹' + Math.round(a).toLocaleString('en-IN'); };
+      set('dash-fy-capital', icFmt(initialCapital));
+      set('dash-fy-capital-sub', 'Current: ' + icFmt(portfolioValue));
+
+      // FY P&L
+      const fyPlEl = document.getElementById('dash-fy-pl');
+      if (fyPlEl) { fyPlEl.textContent = fyTrades.length > 0 ? fmtPl(fyPl) : '—'; fyPlEl.style.color = fyPl >= 0 ? 'var(--green)' : 'var(--red)'; }
+      const fyLabelEl = document.getElementById('dash-fy-label');
+      if (fyLabelEl) fyLabelEl.textContent = `FY ${fyYear}-${String(fyYear+1).slice(2)} P&L`;
+      set('dash-fy-pl-sub', fyTrades.length > 0 ? `${fyTrades.length} trades · ${fyWins}W / ${fyLoss}L` : 'No closed trades this FY');
+
+      // Current month
+      const curMonEl = document.getElementById('dash-curmon-pl');
+      if (curMonEl) { curMonEl.textContent = curMonC.w + curMonC.l > 0 ? fmtPl(curMonPl) : '—'; curMonEl.style.color = curMonPl >= 0 ? 'var(--green)' : 'var(--red)'; }
+      const curMonLabelEl = document.getElementById('dash-curmon-label');
+      if (curMonLabelEl) curMonLabelEl.textContent = MNAMES[curMonth] + ' ' + curYear + ' P&L';
+      set('dash-curmon-sub', curMonC.w + curMonC.l > 0 ? `${curMonDays} days · ${curMonC.w}W / ${curMonC.l}L` : 'No trades this month');
+
+      // FY Return
+      const fyRetEl = document.getElementById('dash-fy-return');
+      if (fyRetEl) { fyRetEl.textContent = fyTrades.length > 0 ? (fyRet >= 0 ? '+' : '') + fyRet.toFixed(2) + '%' : '—'; fyRetEl.style.color = fyRet >= 0 ? 'var(--green)' : 'var(--red)'; }
+
+      // Win Rate
+      const fyWREl = document.getElementById('dash-fy-wr');
+      if (fyWREl) { fyWREl.textContent = fyTrades.length > 0 ? fyWR.toFixed(1) + '%' : '—'; fyWREl.style.color = fyWR >= 70 ? 'var(--green)' : fyWR >= 50 ? 'var(--amber)' : 'var(--red)'; }
+      set('dash-fy-wr-sub', fyTrades.length > 0 ? `Trading days · ${fyWins}W / ${fyLoss}L` : '—');
+
+      // Current quarter
+      const qtrPlEl = document.getElementById('dash-qtr-pl');
+      if (qtrPlEl) { qtrPlEl.textContent = qtrTrades.length > 0 ? fmtPl(qtrPl) : '—'; qtrPlEl.style.color = qtrPl >= 0 ? 'var(--green)' : 'var(--red)'; }
+      const qtrLabelEl = document.getElementById('dash-qtr-label');
+      if (qtrLabelEl) qtrLabelEl.textContent = qtr.name + ' P&L';
+      const qtrStartLabel = MNAMES[qtr.months[0]] + ' ' + String(qtrYr).slice(2);
+      const qtrEndLabel   = MNAMES[qtr.months[2]];
+      set('dash-qtr-sub', qtrTrades.length > 0 ? `${qtrStartLabel} – ${qtrEndLabel} · ${qtrDays}d · ${qtrWins}W/${qtrLoss}L` : 'No trades this quarter');
+    } catch(e) { console.error('FY summary error:', e); }
+  })();
 
   // Card 1: Portfolio Value — AH3 is the single source of truth (includes unrealised MTM)
   set('dash-pv', fmt(portfolioValue));
