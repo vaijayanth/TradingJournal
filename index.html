@@ -1025,6 +1025,41 @@ tbody tr:hover { filter: brightness(0.97); }
     </div>
   </div>
 
+  <!-- AVERAGE DOWN WATCHLIST -->
+  <div id="dash-avgdown-card" style="margin-top:14px">
+    <div class="card" style="padding:0;border:1px solid var(--amber);border-radius:12px;overflow:hidden">
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:rgba(251,191,36,0.08);border-bottom:1px solid var(--border);cursor:pointer" onclick="toggleAvgDown()">
+        <div>
+          <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--amber)">📉 Average Down — Action Required</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px" id="dash-avgdown-summary">Loss &gt;−7% · above 200 &amp; 50 SMA → add 1/10 position</div>
+        </div>
+        <span id="dash-avgdown-toggle-icon" style="font-size:11px;color:var(--text-muted)">▼</span>
+      </div>
+      <div id="dash-avgdown-body">
+        <table style="width:100%;border-collapse:collapse;font-size:13px">
+          <thead>
+            <tr style="background:var(--surface2)">
+              <th style="padding:7px 14px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)">#</th>
+              <th style="padding:7px 14px;text-align:left;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)">Stock</th>
+              <th style="padding:7px 14px;text-align:right;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)">P&amp;L%</th>
+              <th style="padding:7px 14px;text-align:right;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)">Loss ₹</th>
+              <th style="padding:7px 14px;text-align:right;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)">Invested</th>
+              <th style="padding:7px 14px;text-align:right;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)">Add Qty (1/10)</th>
+              <th style="padding:7px 14px;text-align:right;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)">200 SMA</th>
+              <th style="padding:7px 14px;text-align:right;font-size:10px;font-weight:700;letter-spacing:.06em;text-transform:uppercase;color:var(--text-muted)">50 SMA</th>
+            </tr>
+          </thead>
+          <tbody id="dash-avgdown-tbody">
+            <tr><td colspan="8" style="padding:20px;text-align:center;color:var(--text-muted)">Loading…</td></tr>
+          </tbody>
+        </table>
+        <div style="padding:10px 16px;font-size:11px;color:var(--text-muted);border-top:1px solid var(--border)">
+          ℹ️ Only positions &gt;−7% loss AND above both 200 &amp; 50 SMA qualify. Add 1/10 of current qty at market open via GTT at 21-day high.
+        </div>
+      </div>
+    </div>
+  </div>
+
   <!-- ③ P&L CALENDAR -->
   <div class="card" style="padding:14px 16px;margin-top:14px">
     <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
@@ -3034,6 +3069,8 @@ const DEFAULT_CONFIG = {
   stockCol: 'E',       // col E: Stock name (NSE:TICKER)
   openDateCol: 'C',    // col C: Open Date
   closeDateCol: 'D',   // col D: Close Date
+  ema200Col: 'F',      // col F: Above 200 SMA (TRUE/FALSE)
+  ema50Col: 'G',       // col G: Above 50 SMA (TRUE/FALSE)
   cmpCol: 'J',         // col J: CMP (Current Market Price)
   sevenDayLowCol: 'K', // col K: 21-Day High (aliased as twentyOneDayHigh in sstProcess)
   stopLossCol: 'L',    // col L: GTT Placed price (aliased as gttPlaced)
@@ -3134,6 +3171,7 @@ async function fetchData() {
     sheet: cfg.sheet, headerRows: cfg.headerRows,
     flagCol: cfg.flagCol, stockCol: cfg.stockCol,
     openDateCol: cfg.openDateCol, closeDateCol: cfg.closeDateCol,
+    ema200Col: cfg.ema200Col, ema50Col: cfg.ema50Col,
     cmpCol: cfg.cmpCol,
     sevenDayLowCol: cfg.sevenDayLowCol, stopLossCol: cfg.stopLossCol,
     initRiskRsCol: cfg.initRiskRsCol, initRiskPctCol: cfg.initRiskPctCol,
@@ -3182,6 +3220,10 @@ async function refreshData() {
     t.positionSize     = t.initRiskRs  || 0;  // col M → position size ₹
     t.totalInvested    = parseFloat(t.setupType) || 0; // col S → total invested ₹
     t.sixPctTargetCmp  = t.plPct || 0;        // col X → 6% target CMP price
+    // Normalise EMA status (Apps Script may return TRUE/FALSE string or boolean)
+    const toBool = v => v === true || String(v||'').trim().toLowerCase() === 'true';
+    t.ema200 = toBool(t.ema200);
+    t.ema50  = toBool(t.ema50);
     // Compute actual P&L% from CMP and entry price
     t.plPct = (t.cmp && t.entryPrice) ? (t.cmp - t.entryPrice) / t.entryPrice * 100 : 0;
     // Compute unrealised P&L ₹ if col Y is empty
@@ -4418,6 +4460,52 @@ function renderDashboard(data, cfg) {
     } catch(e) { console.error('Re-entry watchlist error:', e); }
   })();
 
+  // ── Average Down Watchlist ────────────────────────────────────────────────
+  (function() {
+    try {
+      const fmtL = v => { const a=Math.abs(v); return (v<0?'-':'')+(a>=100000?'₹'+(a/100000).toFixed(2)+'L':a>=1000?'₹'+(a/1000).toFixed(1)+'k':'₹'+Math.round(a).toLocaleString('en-IN')); };
+      const eligible = open.filter(t => {
+        const pl = t.plPct || 0;
+        return pl < -7 && t.ema200 === true && t.ema50 === true;
+      }).sort((a, b) => (a.plPct||0) - (b.plPct||0)); // worst first
+
+      const tbody = document.getElementById('dash-avgdown-tbody');
+      const summary = document.getElementById('dash-avgdown-summary');
+      const card = document.getElementById('dash-avgdown-card');
+
+      if (summary) {
+        summary.textContent = eligible.length > 0
+          ? `${eligible.length} position${eligible.length>1?'s':''} eligible — loss >−7% · above 200 & 50 SMA → add 1/10 qty`
+          : 'No positions currently eligible for averaging down';
+      }
+      // Dim card border if no eligible positions
+      if (card) card.querySelector('.card').style.borderColor = eligible.length > 0 ? 'var(--amber)' : 'var(--border)';
+
+      if (!tbody) return;
+      if (!eligible.length) {
+        tbody.innerHTML = '<tr><td colspan="8" style="padding:20px;text-align:center;color:var(--text-muted)">✓ No positions qualify — either loss is within −7% or stock is below a key SMA</td></tr>';
+        return;
+      }
+
+      tbody.innerHTML = eligible.map((t, i) => {
+        const pl = t.plPct || 0;
+        const invested = t.totalInvested || (t.qty && t.entryPrice ? t.qty * t.entryPrice : 0);
+        const lossRs = t.notionalPl || (invested ? pl/100*invested : 0);
+        const addQty = t.qty ? Math.ceil(t.qty / 10) : '—';
+        return `<tr style="border-bottom:1px solid var(--border);${i%2===0?'background:rgba(251,191,36,0.03)':''}">
+          <td style="padding:9px 14px;color:var(--text-muted);font-size:12px">${i+1}</td>
+          <td style="padding:9px 14px;font-weight:700;font-size:13px">${t.stock}</td>
+          <td style="padding:9px 14px;text-align:right;font-weight:800;color:var(--red)">${pl.toFixed(2)}%</td>
+          <td style="padding:9px 14px;text-align:right;color:var(--red)">${lossRs ? fmtL(lossRs) : '—'}</td>
+          <td style="padding:9px 14px;text-align:right;color:var(--text-muted)">${invested ? fmtL(invested) : '—'}</td>
+          <td style="padding:9px 14px;text-align:right;font-weight:700;color:var(--amber)">${addQty} shares</td>
+          <td style="padding:9px 14px;text-align:right"><span style="color:var(--green);font-weight:700">✓ Above</span></td>
+          <td style="padding:9px 14px;text-align:right"><span style="color:var(--green);font-weight:700">✓ Above</span></td>
+        </tr>`;
+      }).join('');
+    } catch(e) { console.error('Average down watchlist error:', e); }
+  })();
+
   // Avg holding period — open positions
   try {
     const openAges = open.filter(t => parseInt(t.age||0) > 0).map(t => parseInt(t.age));
@@ -4672,6 +4760,14 @@ function toggleHeatmap() {
   const open = body.style.display === 'none';
   body.style.display = open ? '' : 'none';
   if (chevron) chevron.textContent = open ? '▲' : '▼';
+}
+function toggleAvgDown() {
+  const body = document.getElementById('dash-avgdown-body');
+  const icon = document.getElementById('dash-avgdown-toggle-icon');
+  if (!body) return;
+  const open = body.style.display === 'none';
+  body.style.display = open ? '' : 'none';
+  if (icon) icon.textContent = open ? '▼' : '▶';
 }
 function toggleReentryList() {
   const list = document.getElementById('dash-reentry-list');
