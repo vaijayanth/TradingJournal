@@ -714,3 +714,35 @@ These were identified in a guru-perspective audit and deferred. Implement when r
 10. **Peak MTM "gave back" metric** — requires MFE column (see item 2)
 11. **Sector rotation view** — requires sector column in sheet
 12. **Psychology / discipline log** — free-text note per trade; *needs notes column in sheet*
+
+## UI Changes Made (2026-08-25 session)
+
+### Performance Summary Card Redesigned (Dashboard)
+- Replaced old 2-column table (`#dash-summary-tbody`) with a 3-row metric card grid matching the System Edge card style
+- **Row 1** (capital & returns): Initial Capital · Current Value · Total Return · CAGR
+- **Row 2** (edge metrics): Win Rate · Profit Factor · Avg Win · Avg Loss
+- **Row 3** (risk & hold): Win:Loss ₹ Ratio · Max Drawdown · Calmar Ratio · Avg Hold
+- **Footer** (`#ds-footer`): trade count summary line
+- All values large bold (22px), color-coded: WR green ≥70%, PF green ≥2.0, Max DD green <15%, Calmar green ≥0.5
+- Combined Profit Factor (open MTM included in numerator) — consistent with SST true-performance view
+- New element IDs: `ds-initial-cap`, `ds-current-val`, `ds-total-return`, `ds-cagr`, `ds-wr`, `ds-pf`, `ds-avg-win`, `ds-avg-loss`, `ds-wl-ratio`, `ds-max-dd`, `ds-calmar`, `ds-avg-hold`, `ds-footer`
+
+### Avg Hold (Open) Added to System Edge Card (Dashboard)
+- New cell added to the System Edge 2-column grid as 8th item (below Avg Hold Closed)
+- HTML element: `#dash-open-avg-hold-sys` (NOT `#dash-open-avg-hold` — that ID already exists in Open Book card)
+- JS: populated in same try-catch block as `dash-open-avg-hold`, immediately after line setting `el1`
+- **Bug fixed**: duplicate ID `dash-open-avg-hold` existed at lines 908 (Open Book) and 954 (System Edge) — `getElementById` only sets the first match, leaving System Edge blank. Renamed System Edge element to `dash-open-avg-hold-sys` to resolve.
+
+### Dashboard Section Order (confirmed)
+Final order on Dashboard page:
+1. FY Summary Card
+2. KPI Row (Portfolio Value · Open Book · System Edge)
+3. Equity Curve
+4. Alert Strip
+5. System Momentum (`#dash-momentum-card`)
+6. Re-entry Watchlist (`#dash-reentry-card`)
+7. P&L Calendar
+8. P&L Distribution
+9. Top Gainers / Biggest Losers
+10. Portfolio Heatmap (collapsed by default)
+11. Performance Summary Card (redesigned grid)
