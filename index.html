@@ -3221,7 +3221,7 @@ async function refreshData() {
     t.totalInvested    = parseFloat(t.setupType) || 0; // col S → total invested ₹
     t.sixPctTargetCmp  = t.plPct || 0;        // col X → 6% target CMP price
     // Normalise EMA status (Apps Script may return TRUE/FALSE string or boolean)
-    const toBool = v => v === true || String(v||'').trim().toLowerCase() === 'true';
+    const toBool = v => v === true || ['true','yes','above'].includes(String(v||'').trim().toLowerCase());
     t.ema200 = toBool(t.ema200);
     t.ema50  = toBool(t.ema50);
     // Compute actual P&L% from CMP and entry price
