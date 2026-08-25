@@ -4464,10 +4464,18 @@ function renderDashboard(data, cfg) {
   (function() {
     try {
       const fmtL = v => { const a=Math.abs(v); return (v<0?'-':'')+(a>=100000?'₹'+(a/100000).toFixed(2)+'L':a>=1000?'₹'+(a/1000).toFixed(1)+'k':'₹'+Math.round(a).toLocaleString('en-IN')); };
-      const eligible = open.filter(t => {
-        const pl = t.plPct || 0;
-        return pl < -7 && t.ema200 === true && t.ema50 === true;
-      }).sort((a, b) => (a.plPct||0) - (b.plPct||0)); // worst first
+      // Show all positions with loss > -7%, mark SMA status (✓/✗/?) from data
+      const candidates = open.filter(t => (t.plPct || 0) < -7)
+        .sort((a, b) => (a.plPct||0) - (b.plPct||0)); // worst first
+
+      const smaBool = v => v === true ? true : v === false ? false : null; // true/false/null(unknown)
+      const eligible = candidates.filter(t => {
+        const a200 = smaBool(t.ema200);
+        const a50  = smaBool(t.ema50);
+        // If SMA data exists, only show those above both. If unknown, show all.
+        if (a200 !== null && a50 !== null) return a200 && a50;
+        return true; // SMA data not yet available — show all and let user decide
+      });
 
       const tbody = document.getElementById('dash-avgdown-tbody');
       const summary = document.getElementById('dash-avgdown-summary');
@@ -4475,32 +4483,40 @@ function renderDashboard(data, cfg) {
 
       if (summary) {
         summary.textContent = eligible.length > 0
-          ? `${eligible.length} position${eligible.length>1?'s':''} eligible — loss >−7% · above 200 & 50 SMA → add 1/10 qty`
-          : 'No positions currently eligible for averaging down';
+          ? `${eligible.length} position${eligible.length>1?'s':''} with loss >−7% · verify 200 & 50 SMA → add 1/10 qty`
+          : 'No positions currently with loss >−7%';
       }
-      // Dim card border if no eligible positions
       if (card) card.querySelector('.card').style.borderColor = eligible.length > 0 ? 'var(--amber)' : 'var(--border)';
 
       if (!tbody) return;
       if (!eligible.length) {
-        tbody.innerHTML = '<tr><td colspan="8" style="padding:20px;text-align:center;color:var(--text-muted)">✓ No positions qualify — either loss is within −7% or stock is below a key SMA</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" style="padding:20px;text-align:center;color:var(--text-muted)">✓ No open positions with loss greater than −7%</td></tr>';
         return;
       }
+
+      const smaCell = v => {
+        const b = smaBool(v);
+        if (b === true)  return `<span style="color:var(--green);font-weight:700">✓ Above</span>`;
+        if (b === false) return `<span style="color:var(--red);font-weight:700">✗ Below</span>`;
+        return `<span style="color:var(--text-muted)">? Check</span>`;
+      };
 
       tbody.innerHTML = eligible.map((t, i) => {
         const pl = t.plPct || 0;
         const invested = t.totalInvested || (t.qty && t.entryPrice ? t.qty * t.entryPrice : 0);
         const lossRs = t.notionalPl || (invested ? pl/100*invested : 0);
         const addQty = t.qty ? Math.ceil(t.qty / 10) : '—';
-        return `<tr style="border-bottom:1px solid var(--border);${i%2===0?'background:rgba(251,191,36,0.03)':''}">
+        const a200 = smaBool(t.ema200), a50 = smaBool(t.ema50);
+        const bothAbove = a200 === true && a50 === true;
+        return `<tr style="border-bottom:1px solid var(--border);${bothAbove?'background:rgba(251,191,36,0.05)':i%2===0?'':''}">
           <td style="padding:9px 14px;color:var(--text-muted);font-size:12px">${i+1}</td>
           <td style="padding:9px 14px;font-weight:700;font-size:13px">${t.stock}</td>
           <td style="padding:9px 14px;text-align:right;font-weight:800;color:var(--red)">${pl.toFixed(2)}%</td>
           <td style="padding:9px 14px;text-align:right;color:var(--red)">${lossRs ? fmtL(lossRs) : '—'}</td>
           <td style="padding:9px 14px;text-align:right;color:var(--text-muted)">${invested ? fmtL(invested) : '—'}</td>
           <td style="padding:9px 14px;text-align:right;font-weight:700;color:var(--amber)">${addQty} shares</td>
-          <td style="padding:9px 14px;text-align:right"><span style="color:var(--green);font-weight:700">✓ Above</span></td>
-          <td style="padding:9px 14px;text-align:right"><span style="color:var(--green);font-weight:700">✓ Above</span></td>
+          <td style="padding:9px 14px;text-align:right">${smaCell(t.ema200)}</td>
+          <td style="padding:9px 14px;text-align:right">${smaCell(t.ema50)}</td>
         </tr>`;
       }).join('');
     } catch(e) { console.error('Average down watchlist error:', e); }
