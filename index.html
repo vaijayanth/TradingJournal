@@ -1766,7 +1766,7 @@ tbody tr:hover { filter: brightness(0.97); }
     </div>
     <div class="card">
       <div class="chart-title">Rolling 3-Month Win Rate</div>
-      <div class="chart-sub">Win rate for each rolling 3-month window (entry date, combined open+closed) · target ≥70%</div>
+      <div class="chart-sub">Win rate for each rolling 3-month window (closed trades only, by exit date) · target ≥70%</div>
       <div id="chart-rolling-wr" style="height:220px;"></div>
       <div id="insight-rolling-wr" class="chart-insight"></div>
     </div>
@@ -7694,10 +7694,10 @@ function initPerfCharts(closed, initialCapital, open) {
     const rollingEl = document.getElementById('chart-rolling-wr');
     const rollingInsEl = document.getElementById('insight-rolling-wr');
     if (rollingEl && sorted.length >= 10) {
-      // Use ALL trades (open + closed) by entry date, combined outcome
-      const allByEntry = [...(closed||[]), ...(open||[])].filter(t => t.openDate)
-        .sort((a,b) => parseDate(a.openDate) - parseDate(b.openDate));
-      // Build rolling 3-month windows: for each month, look back 3 months
+      // Closed trades only — by close date, matching System Edge WR
+      const closedByDate = (closed||[]).filter(t => t.closeDate)
+        .sort((a,b) => parseDate(a.closeDate) - parseDate(b.closeDate));
+      // Build rolling 3-month windows by close date
       const monthKeys = [];
       const monthWRs = [];
       const monthSizes = [];
@@ -7705,12 +7705,12 @@ function initPerfCharts(closed, initialCapital, open) {
       for (let m = 11; m >= 0; m--) {
         const endDate = new Date(now.getFullYear(), now.getMonth() - m + 1, 0);
         const startDate = new Date(now.getFullYear(), now.getMonth() - m - 2, 1);
-        const window3m = allByEntry.filter(t => {
-          const d = parseDate(t.openDate);
+        const window3m = closedByDate.filter(t => {
+          const d = parseDate(t.closeDate);
           return d >= startDate && d <= endDate;
         });
         if (window3m.length < 3) continue;
-        const wins = window3m.filter(t => t.closeDate ? t.finalPlPct > 0 : (t.notionalPl||0) > 0).length;
+        const wins = window3m.filter(t => (t.finalPl||0) > 0).length;
         const wr = wins / window3m.length * 100;
         const label = endDate.toLocaleString('default', { month: 'short', year: '2-digit' });
         monthKeys.push(label);
