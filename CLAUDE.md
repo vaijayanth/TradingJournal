@@ -746,3 +746,29 @@ Final order on Dashboard page:
 9. Top Gainers / Biggest Losers
 10. Portfolio Heatmap (collapsed by default)
 11. Performance Summary Card (redesigned grid)
+
+## UI Changes Made (2026-08-29 session)
+
+### Average Down Watchlist Card (Dashboard)
+- New card between Re-entry Watchlist and P&L Calendar
+- Amber-bordered collapsible card (`#dash-avgdown-card`)
+- **Logic**: show all open positions with `plPct < -7%`, sorted worst first
+- **SMA filter**: if `t.ema200` and `t.ema50` are available from Apps Script, only show those above both; if unknown (Apps Script not yet returning these), show all and display "? Check"
+- **Columns**: # · Stock · P&L% · Loss ₹ · Invested · Add Qty (1/10 of current qty) · 200 SMA · 50 SMA
+- **Add qty rule**: `Math.ceil(t.qty / 10)` shares
+- Toggle: `toggleAvgDown()` function
+- If no positions qualify: shows "✓ No open positions with loss greater than −7%", border dims to grey
+
+### EMA 200/50 Column Mapping (TRADES sheet)
+- `ema200Col: 'F'` and `ema50Col: 'G'` added to `DEFAULT_CONFIG`
+- Passed in `fetchData()` params to Apps Script
+- `sstProcess()` normalises: `toBool = v => v === true || ['true','yes','above'].includes(String(v||'').trim().toLowerCase())`
+- Apps Script updated: reads col F as `ema200` and col G as `ema50` (YES/NO values from sheet)
+- Apps Script change: added `ema200: colToIndex(p.ema200Col || 'F')` and `ema50: colToIndex(p.ema50Col || 'G')` to `c = {}` block; added boolean fields to trade object
+
+### Rolling 3-Month Win Rate Chart (Performance tab)
+- Fixed to use **closed trades only** (was incorrectly using combined open+closed)
+- Groups by **exit date** (closeDate), not entry date
+- Win defined as `finalPl > 0` — now matches System Edge card's 89.1% WR
+- Subtitle updated: "closed trades only, by exit date"
+- Annotations: 50% floor (amber) · 70% SST target (green) — fixed from wrong 20%/40% values
