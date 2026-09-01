@@ -926,6 +926,11 @@ tbody tr:hover { filter: brightness(0.97); }
           <div style="font-size:18px;font-weight:700;line-height:1.1" id="dash-open-avg-hold">—</div>
           <div style="font-size:11px;color:var(--text-muted);margin-top:1px">days · all open positions</div>
         </div>
+        <div>
+          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Deployed Capital</div>
+          <div style="font-size:18px;font-weight:700;line-height:1.1" id="dash-deployed-capital">—</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:1px" id="dash-deployed-capital-sub">active positions</div>
+        </div>
       </div>
       <div style="margin-top:10px;height:4px;border-radius:3px;background:var(--surface2);overflow:hidden">
         <div id="dash-health-bar" style="height:100%;border-radius:3px;transition:width 0.4s"></div>
@@ -4668,6 +4673,24 @@ function renderDashboard(data, cfg) {
     if (el1) el1.textContent = avgOpenHold > 0 ? avgOpenHold + 'd' : '—';
     const el1b = document.getElementById('dash-open-avg-hold-sys');
     if (el1b) el1b.textContent = avgOpenHold > 0 ? avgOpenHold + 'd' : '—';
+  } catch(e) {}
+
+  // Active deployed capital — sum of (entryPrice × qty) for all open positions
+  try {
+    const deployedRs = open.reduce((s, t) => {
+      const ep = parseFloat(t.entryPrice || 0);
+      const qty = parseFloat(t.qty || 0);
+      return s + (ep * qty);
+    }, 0);
+    const dcEl = document.getElementById('dash-deployed-capital');
+    const dcSub = document.getElementById('dash-deployed-capital-sub');
+    if (dcEl) {
+      if (deployedRs >= 1e7) dcEl.textContent = '₹' + (deployedRs/1e7).toFixed(2) + 'Cr';
+      else if (deployedRs >= 1e5) dcEl.textContent = '₹' + (deployedRs/1e5).toFixed(1) + 'L';
+      else if (deployedRs >= 1e3) dcEl.textContent = '₹' + (deployedRs/1e3).toFixed(1) + 'k';
+      else dcEl.textContent = deployedRs > 0 ? '₹' + Math.round(deployedRs).toLocaleString('en-IN') : '—';
+    }
+    if (dcSub && open.length > 0) dcSub.textContent = open.length + ' positions';
   } catch(e) {}
 
   // Avg holding period — closed positions (winners vs losers split)
