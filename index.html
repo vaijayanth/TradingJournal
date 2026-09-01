@@ -818,10 +818,6 @@ tbody tr:hover { filter: brightness(0.97); }
     <span id="dash-sys-hold-sub"></span><span id="dash-sys-pf-sub"></span>
   </div>
 
-  <div style="display:flex;justify-content:flex-end;margin-bottom:10px">
-    <button onclick="openPreTradeModal()" style="font-size:12px;font-weight:700;padding:6px 16px;border-radius:20px;border:1.5px solid var(--accent);background:var(--surface);color:var(--accent);cursor:pointer">📋 Pre-Trade Check</button>
-  </div>
-
   <!-- ── FY Summary Card ── -->
   <div id="dash-fy-card" style="border-radius:12px;border:1px solid var(--border);background:var(--surface);overflow:hidden;margin-bottom:14px">
     <!-- Month chips -->
@@ -11654,102 +11650,6 @@ function renderAlphaNifty(closed, initialCapital) {
   } catch(e) { console.error('Alpha vs NIFTY error:', e); }
 }
 
-// ── FEATURE 6: PRE-TRADE CHECKLIST MODAL ──────────────────────────────────────
-function openPreTradeModal() {
-  const modal = document.getElementById('pretrade-modal');
-  if (!modal) return;
-  modal.style.display = 'flex';
-
-  const cfg = loadConfig();
-  const mktDir = localStorage.getItem('tj_mkt_direction') || '';
-  const data = window._data || {};
-  const open = data.open || [];
-  const closed = data.closed || [];
-  const ic = data.initialCapital || 5000000;
-
-  const mktOk = mktDir === 'uptrend';
-  const mktLabel = mktDir === 'uptrend' ? '📈 Confirmed Uptrend' : mktDir === 'pressure' ? '⚠ Under Pressure' : mktDir === 'correction' ? '📉 In Correction' : 'Not set';
-  const mktAdvice = mktOk ? 'Full size OK' : mktDir === 'pressure' ? '50% size max, no new breakouts' : mktDir === 'correction' ? 'No new entries' : 'Set Market Direction in Today tab first';
-
-  const lastClosed = [...closed].sort((a,b) => parseDate(b.closeDate)-parseDate(a.closeDate)).slice(0,3);
-  const recentLosses = lastClosed.filter(t => t.finalPlPct <= 0).length;
-  const streakOk = recentLosses < 3;
-  const streakLabel = recentLosses >= 3 ? `🚨 3 losses in last 3 exits` : recentLosses === 2 ? '⚠ 2 of last 3 exits negative' : '✅ No concerning loss run';
-  const streakAdvice = recentLosses >= 3 ? 'Wait 1 day. Review your entries.' : recentLosses === 2 ? 'Next setup must be high conviction only' : 'Normal variance';
-
-  const totalDeployed = open.reduce((s,t) => s + (t.entryPrice||0)*(t.qty||0), 0);
-  const deployedPct = ic > 0 ? totalDeployed / ic * 100 : 0;
-  const riskCapOk = deployedPct < 90;
-  const riskLabel = deployedPct > 90 ? `⚠ ${deployedPct.toFixed(0)}% of capital deployed` : `✅ ${deployedPct.toFixed(0)}% deployed`;
-  const riskAdvice = riskCapOk ? 'Capital available for entry' : 'Consider closing underperformers first';
-
-  const last20 = [...closed].sort((a,b) => parseDate(b.closeDate)-parseDate(a.closeDate)).slice(0,20);
-  const recentWR = last20.length > 0 ? last20.filter(t=>t.finalPlPct>0).length / last20.length * 100 : 50;
-  const sysOk = recentWR >= 20;
-  const sysLabel = `${recentWR.toFixed(0)}% win rate (last ${last20.length} exits)`;
-  const sysAdvice = recentWR >= 30 ? 'System producing — trade normally' : recentWR >= 20 ? 'WR below target — A-grade only' : 'System struggling — review criteria';
-
-  const openCount = open.length;
-  const posOk = openCount < 20;
-  const posLabel = `${openCount} open positions`;
-  const posAdvice = openCount >= 20 ? 'Portfolio full — wait for exit before entering' : openCount >= 15 ? 'Near capacity — highest conviction only' : 'Room for new position';
-
-  const checks = [
-    { label: 'Market Direction', val: mktLabel, advice: mktAdvice, ok: mktOk },
-    { label: 'Recent Loss Streak', val: streakLabel, advice: streakAdvice, ok: streakOk },
-    { label: 'Capital Available', val: riskLabel, advice: riskAdvice, ok: riskCapOk },
-    { label: 'System Health', val: sysLabel, advice: sysAdvice, ok: sysOk },
-    { label: 'Position Count', val: posLabel, advice: posAdvice, ok: posOk },
-  ];
-
-  const score = checks.filter(c => c.ok).length;
-  const checksEl = document.getElementById('pretrade-checks');
-  const scoreEl = document.getElementById('pretrade-score');
-  const verdictEl = document.getElementById('pretrade-verdict');
-
-  if (checksEl) {
-    checksEl.innerHTML = checks.map(c => `
-      <div style="padding:10px 12px;border-radius:8px;border:1px solid ${c.ok ? 'var(--green)' : 'var(--red)'};background:${c.ok ? 'rgba(0,201,100,0.06)' : 'rgba(239,68,68,0.06)'}">
-        <div style="display:flex;align-items:center;gap:8px">
-          <span style="font-size:16px">${c.ok ? '✅' : '❌'}</span>
-          <div>
-            <div style="font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted)">${c.label}</div>
-            <div style="font-size:13px;font-weight:600;margin-top:1px">${c.val}</div>
-            <div style="font-size:11px;color:var(--text-muted);margin-top:2px">${c.advice}</div>
-          </div>
-        </div>
-      </div>`).join('');
-  }
-
-  if (scoreEl) { scoreEl.textContent = score + '/5'; scoreEl.style.color = score >= 4 ? 'var(--green)' : score >= 3 ? 'var(--amber)' : 'var(--red)'; }
-  if (verdictEl) {
-    verdictEl.textContent = score >= 4 ? '✅ Clear to enter — conditions met' : score === 3 ? '⚠ Borderline — A-grade setup only' : '🚫 Do not enter — conditions not met';
-    verdictEl.style.color = score >= 4 ? 'var(--green)' : score === 3 ? 'var(--amber)' : 'var(--red)';
-  }
-}
-
-function closePreTradeModal() {
-  const modal = document.getElementById('pretrade-modal');
-  if (modal) modal.style.display = 'none';
-}
 </script>
-
-<!-- PRE-TRADE CHECKLIST MODAL -->
-<div id="pretrade-modal" style="display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:9999;align-items:center;justify-content:center">
-  <div style="background:var(--surface);border:1px solid var(--border);border-radius:14px;padding:24px;max-width:480px;width:90%;max-height:90vh;overflow-y:auto">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px">
-      <div style="font-size:15px;font-weight:800">📋 Pre-Trade Entry Checklist</div>
-      <button onclick="closePreTradeModal()" style="background:none;border:none;font-size:18px;cursor:pointer;color:var(--text-muted)">✕</button>
-    </div>
-    <div style="font-size:12px;color:var(--text-muted);margin-bottom:16px">Score ≥4/5 required to enter. Be honest — this gate protects capital.</div>
-    <div id="pretrade-checks" style="display:flex;flex-direction:column;gap:10px"></div>
-    <div style="margin-top:16px;padding:12px 16px;border-radius:8px;background:var(--surface2);text-align:center">
-      <div style="font-size:11px;color:var(--text-muted);margin-bottom:4px">Score</div>
-      <div style="font-size:36px;font-weight:800" id="pretrade-score">0/5</div>
-      <div style="font-size:13px;font-weight:600;margin-top:4px" id="pretrade-verdict">—</div>
-    </div>
-    <button onclick="closePreTradeModal()" style="width:100%;margin-top:12px;padding:10px;border-radius:8px;border:1px solid var(--border);background:var(--surface2);color:var(--text-secondary);font-size:13px;font-weight:600;cursor:pointer">Close</button>
-  </div>
-</div>
 </body>
 </html>
