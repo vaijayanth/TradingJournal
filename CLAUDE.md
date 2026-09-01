@@ -772,3 +772,42 @@ Final order on Dashboard page:
 - Win defined as `finalPl > 0` — now matches System Edge card's 89.1% WR
 - Subtitle updated: "closed trades only, by exit date"
 - Annotations: 50% floor (amber) · 70% SST target (green) — fixed from wrong 20%/40% values
+
+## UI Changes Made (2026-09-01 session)
+
+### 5 Dashboard Improvements
+
+#### 1. Q1–Q4 Breakdown Row (FY Summary Card)
+- New `#dash-qtr-row` div at bottom of FY Summary card (`#dash-fy-card`)
+- 4-column grid showing Q1 (Apr–Jun) · Q2 (Jul–Sep) · Q3 (Oct–Dec) · Q4 (Jan–Mar)
+- Current quarter highlighted with accent top border and ← arrow
+- Each cell: quarter name · P&L (fmtK) · W/L count
+- JS: computed inside FY IIFE, after existing quarter block
+- Mobile: wraps to 2×2 grid at ≤640px
+
+#### 2. Long-Held Losers Alert (`#dash-long-loss-card`)
+- Red-bordered card between Alert Strip and Momentum Strip
+- Shows all open positions: `age > 90 days AND plPct < 0`
+- Sorted by age ascending (oldest first)
+- Each chip: Stock name · P&L% (red) · age in days
+- Hidden (`display:none`) when no positions qualify
+- JS: try-catch IIFE after tier progress bar block
+
+#### 3. Next Position Size Tier Progress Bar (System Edge Card)
+- Added below the footer line in System Edge card
+- Element IDs: `#dash-tier-progress-wrap`, `#dash-tier-bar`, `#dash-tier-label`, `#dash-tier-next-label`
+- Logic: `sizeForCount = c => Math.min(20000 + Math.floor(c/100)*5000, 100000)`
+- Shows: "Size: ₹20k / trade · 8 trades → ₹25k" + progress bar (% through current tier)
+- At cap (₹1L): shows "🎯 Max tier reached" and bar at 100%
+
+#### 4. Mobile Layout Polish (≤640px CSS)
+- `#dash-pv` font-size 26px (was 38px)
+- `#dash-return` font-size 16px
+- `#dash-qtr-row` 2×2 grid on mobile
+- `#dash-refresh-bar` stacks vertically on mobile
+
+#### 5. Last Refreshed Timestamp (`#dash-refresh-bar`)
+- Sits between FY Summary card and KPI row
+- Left: `#dash-refresh-ts` — "Last refreshed: 9:32 am · 4 min ago" (reads from `localStorage 'tj_last_refresh'`)
+- Right: `#dash-stale-warn` — amber "⚠ Data may be stale — tap ↻ to refresh" shown when >30 min since last refresh
+- Hidden on mobile (stacks under timestamp)
