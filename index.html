@@ -1010,6 +1010,17 @@ tbody tr:hover { filter: brightness(0.97); }
     <div id="dash-eq-insight" class="chart-insight"></div>
   </div>
 
+  <!-- 🚨 MAX POSITIONS BREACH ALERT -->
+  <div id="dash-maxpos-alert" style="display:none;margin-top:10px;padding:12px 16px;border-radius:10px;border:1.5px solid var(--red);background:rgba(239,68,68,0.08)">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-size:20px">🚨</span>
+      <div>
+        <div style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--red)">Position Limit Breached — No New Entries</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:2px"><span id="dash-maxpos-count" style="font-weight:700;color:var(--red)"></span> open positions — SST max is 200. Do not place any new GTT entries until positions are closed.</div>
+      </div>
+    </div>
+  </div>
+
   <!-- ④ ALERT STRIP — actions needed today -->
   <div id="dash-alert-strip" style="margin-top:10px;display:none"></div>
 
@@ -3623,6 +3634,14 @@ function renderDashboard(data, cfg) {
         </div>`
       ).join('');
     }
+  } catch(e) {}
+
+  // Max positions breach alert
+  try {
+    const maxPosCard = document.getElementById('dash-maxpos-alert');
+    const maxPosCount = document.getElementById('dash-maxpos-count');
+    if (maxPosCard) maxPosCard.style.display = open.length > 200 ? '' : 'none';
+    if (maxPosCount) maxPosCount.textContent = open.length;
   } catch(e) {}
 
   // Card 1: Portfolio Value — AH3 is the single source of truth (includes unrealised MTM)
