@@ -937,6 +937,16 @@ tbody tr:hover { filter: brightness(0.97); }
           <div style="font-size:18px;font-weight:700;line-height:1.1;color:var(--red)" id="dash-open-avg-loss">—</div>
           <div style="font-size:11px;color:var(--text-muted);margin-top:1px" id="dash-open-avg-loss-sub">losing positions</div>
         </div>
+        <div>
+          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Best Open</div>
+          <div style="font-size:18px;font-weight:700;line-height:1.1;color:var(--green)" id="dash-open-best-pct">—</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:1px;font-weight:600" id="dash-open-best-stock"></div>
+        </div>
+        <div>
+          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Worst Open</div>
+          <div style="font-size:18px;font-weight:700;line-height:1.1;color:var(--red)" id="dash-open-worst-pct">—</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:1px;font-weight:600" id="dash-open-worst-stock"></div>
+        </div>
       </div>
       <div style="margin-top:10px;height:4px;border-radius:3px;background:var(--surface2);overflow:hidden">
         <div id="dash-health-bar" style="height:100%;border-radius:3px;transition:width 0.4s"></div>
@@ -4764,6 +4774,19 @@ function renderDashboard(data, cfg) {
     if (gainSubEl) gainSubEl.textContent = openProfitable.length + ' profitable position' + (openProfitable.length !== 1 ? 's' : '');
     if (lossEl) lossEl.textContent = avgLoss !== null ? avgLoss.toFixed(1) + '%' : '—';
     if (lossSubEl) lossSubEl.textContent = openLosing.length + ' losing position' + (openLosing.length !== 1 ? 's' : '');
+
+    // Best and worst single open position by plPct
+    const sorted = [...open].filter(t => t.plPct != null).sort((a,b) => (b.plPct||0) - (a.plPct||0));
+    const best  = sorted[0];
+    const worst = sorted[sorted.length - 1];
+    const bestEl  = document.getElementById('dash-open-best-pct');
+    const bestSt  = document.getElementById('dash-open-best-stock');
+    const worstEl = document.getElementById('dash-open-worst-pct');
+    const worstSt = document.getElementById('dash-open-worst-stock');
+    if (bestEl)  bestEl.textContent  = best  ? '+' + (best.plPct||0).toFixed(1)  + '%' : '—';
+    if (bestSt)  bestSt.textContent  = best  ? best.stock  : '';
+    if (worstEl) worstEl.textContent = worst ? (worst.plPct||0).toFixed(1) + '%' : '—';
+    if (worstSt) worstSt.textContent = worst ? worst.stock : '';
   } catch(e) {}
 
   // Avg holding period — closed positions (winners vs losers split)
