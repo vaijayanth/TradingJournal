@@ -1294,11 +1294,58 @@ tbody tr:hover { filter: brightness(0.97); }
     <div style="font-size:11px;color:var(--text-muted);margin-top:8px">GTT trailing SL should be ≥6% below CMP on all profitable positions</div>
   </div>
 
+  <!-- 🎯 GTT PRICE CALCULATOR -->
+  <div class="card" style="margin-top:14px;padding:0;overflow:hidden" id="dash-gtt-calc-card">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:var(--surface2);border-bottom:1px solid var(--border);cursor:pointer" onclick="toggleGttCalc()">
+      <div>
+        <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--text-secondary)">🎯 GTT Price Calculator</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:1px">Exact GTT prices to set for all trail-up positions</div>
+      </div>
+      <span id="dash-gtt-calc-chevron" style="font-size:12px;color:var(--text-muted)">▼</span>
+    </div>
+    <div id="dash-gtt-calc-body" style="display:none">
+      <table style="width:100%;border-collapse:collapse;font-size:13px">
+        <thead>
+          <tr style="background:var(--surface2)">
+            <th style="padding:7px 14px;text-align:left;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted)">Stock</th>
+            <th style="padding:7px 14px;text-align:right;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted)">P&amp;L%</th>
+            <th style="padding:7px 14px;text-align:right;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted)">CMP ₹</th>
+            <th style="padding:7px 14px;text-align:right;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted)">Entry ₹</th>
+            <th style="padding:7px 14px;text-align:right;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted)">Set GTT At ₹</th>
+            <th style="padding:7px 14px;text-align:right;font-size:10px;font-weight:700;text-transform:uppercase;letter-spacing:.05em;color:var(--text-muted)">Protects</th>
+          </tr>
+        </thead>
+        <tbody id="dash-gtt-calc-tbody">
+          <tr><td colspan="6" style="padding:16px;text-align:center;color:var(--text-muted)">No positions at trail-up level</td></tr>
+        </tbody>
+      </table>
+      <div style="padding:8px 14px;font-size:11px;color:var(--text-muted);border-top:1px solid var(--border)">GTT = CMP × (1 − 6%) for ≥7% profit · GTT = Entry Price for 6–7% zone</div>
+    </div>
+  </div>
+
+  <!-- 📊 CAPITAL CONCENTRATION -->
+  <div class="card" style="margin-top:14px;padding:0;overflow:hidden" id="dash-concentration-card">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:11px 16px;background:var(--surface2);border-bottom:1px solid var(--border);cursor:pointer" onclick="toggleConcentration()">
+      <div>
+        <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--text-secondary)">📊 Capital Concentration — Top Positions</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:1px">Largest open positions by deployed capital</div>
+      </div>
+      <span id="dash-concentration-chevron" style="font-size:12px;color:var(--text-muted)">▼</span>
+    </div>
+    <div id="dash-concentration-body" style="display:none;padding:14px 16px">
+      <div id="dash-concentration-list" style="display:flex;flex-direction:column;gap:8px"></div>
+    </div>
+  </div>
+
   <!-- ⑦ PERFORMANCE SUMMARY -->
   <div class="card" style="margin-top:14px;padding:0;overflow:hidden">
     <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--border);background:var(--surface2)">
       <div style="font-size:11px;font-weight:800;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.08em">📈 Performance Summary</div>
-      <button onclick="copyDashStats()" style="font-size:11px;font-weight:600;padding:4px 12px;border-radius:14px;border:1px solid var(--border);background:var(--surface);color:var(--text-secondary);cursor:pointer">📋 Copy</button>
+      <div style="display:flex;gap:6px;align-items:center">
+        <button onclick="exportCsv('open')" style="font-size:11px;font-weight:600;padding:4px 10px;border-radius:14px;border:1px solid var(--border);background:var(--surface);color:var(--text-secondary);cursor:pointer" title="Export open positions to CSV">⬇ Open CSV</button>
+        <button onclick="exportCsv('closed')" style="font-size:11px;font-weight:600;padding:4px 10px;border-radius:14px;border:1px solid var(--border);background:var(--surface);color:var(--text-secondary);cursor:pointer" title="Export closed trades to CSV">⬇ Closed CSV</button>
+        <button onclick="copyDashStats()" style="font-size:11px;font-weight:600;padding:4px 12px;border-radius:14px;border:1px solid var(--border);background:var(--surface);color:var(--text-secondary);cursor:pointer">📋 Copy</button>
+      </div>
     </div>
     <!-- Row 1: Capital & Returns -->
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));border-bottom:1px solid var(--border)">
@@ -4849,6 +4896,83 @@ function renderDashboard(data, cfg) {
     }
   } catch(e) { console.warn('top10 error', e); }
 
+  // ── GTT Price Calculator ───────────────────────────────────────────────────
+  try {
+    const lockIn = cfg.lockInPct || 6;
+    const trail  = cfg.targetPct || 7;
+    const gttStocks = open
+      .filter(t => (t.plPct||0) >= lockIn && t.cmp > 0 && t.entryPrice > 0)
+      .sort((a,b) => (b.plPct||0) - (a.plPct||0));
+    const calcTbody = document.getElementById('dash-gtt-calc-tbody');
+    const calcCard  = document.getElementById('dash-gtt-calc-card');
+    if (calcCard) calcCard.style.display = gttStocks.length > 0 ? '' : 'none';
+    if (calcTbody) {
+      if (gttStocks.length === 0) {
+        calcTbody.innerHTML = '<tr><td colspan="6" style="padding:16px;text-align:center;color:var(--text-muted)">No positions at trail-up level</td></tr>';
+      } else {
+        calcTbody.innerHTML = gttStocks.map(t => {
+          const atTarget = (t.plPct||0) >= trail;
+          // At target (≥7%): trail at 6% below CMP to lock in profit above entry
+          // At lock-in (6–7%): set GTT at entry price (breakeven protection)
+          const gttPrice = atTarget
+            ? Math.round(t.cmp * (1 - lockIn/100) * 100) / 100
+            : Math.round(t.entryPrice * 100) / 100;
+          const protectsPct = atTarget
+            ? ((gttPrice - t.entryPrice) / t.entryPrice * 100).toFixed(1)
+            : '0.0';
+          const protectsColor = parseFloat(protectsPct) > 0 ? 'var(--green)' : 'var(--text-muted)';
+          const badge = atTarget
+            ? `<span style="font-size:10px;padding:1px 6px;border-radius:8px;background:rgba(34,197,94,0.15);color:var(--green);font-weight:700">Trail</span>`
+            : `<span style="font-size:10px;padding:1px 6px;border-radius:8px;background:rgba(245,158,11,0.15);color:var(--amber);font-weight:700">BE</span>`;
+          return `<tr style="border-bottom:1px solid var(--border)">
+            <td style="padding:9px 14px;font-weight:700">${t.stock} ${badge}</td>
+            <td style="padding:9px 14px;text-align:right;color:var(--green);font-weight:700">+${(t.plPct||0).toFixed(1)}%</td>
+            <td style="padding:9px 14px;text-align:right">₹${t.cmp.toLocaleString('en-IN',{maximumFractionDigits:1})}</td>
+            <td style="padding:9px 14px;text-align:right;color:var(--text-muted)">₹${t.entryPrice.toLocaleString('en-IN',{maximumFractionDigits:1})}</td>
+            <td style="padding:9px 14px;text-align:right;font-weight:800;font-size:14px;color:var(--accent)">₹${gttPrice.toLocaleString('en-IN',{maximumFractionDigits:2})}</td>
+            <td style="padding:9px 14px;text-align:right;font-weight:700;color:${protectsColor}">+${protectsPct}%</td>
+          </tr>`;
+        }).join('');
+      }
+    }
+  } catch(e) { console.warn('gtt-calc error', e); }
+
+  // ── Capital Concentration ──────────────────────────────────────────────────
+  try {
+    const totalDeployed = open.reduce((s,t) => s + (t.entryPrice||0)*(t.qty||0), 0);
+    const ranked = [...open]
+      .filter(t => t.entryPrice > 0 && t.qty > 0)
+      .map(t => ({ stock: t.stock, capital: t.entryPrice * t.qty, plPct: t.plPct||0 }))
+      .sort((a,b) => b.capital - a.capital)
+      .slice(0, 10);
+    const concList = document.getElementById('dash-concentration-list');
+    if (concList && ranked.length > 0) {
+      const maxCap = ranked[0].capital;
+      concList.innerHTML = ranked.map((r, i) => {
+        const pct = totalDeployed > 0 ? (r.capital / totalDeployed * 100) : 0;
+        const barW = maxCap > 0 ? (r.capital / maxCap * 100) : 0;
+        const plColor = r.plPct >= 0 ? 'var(--green)' : 'var(--red)';
+        const barColor = r.plPct >= 0 ? 'var(--green)' : 'var(--red)';
+        const capFmt = r.capital >= 1e5 ? '₹'+(r.capital/1e5).toFixed(1)+'L' : '₹'+(r.capital/1e3).toFixed(1)+'k';
+        return `<div style="display:grid;grid-template-columns:16px 90px 1fr 60px 55px;align-items:center;gap:8px">
+          <span style="font-size:10px;color:var(--text-muted);font-weight:600">${i+1}</span>
+          <span style="font-weight:700;font-size:12px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap">${r.stock}</span>
+          <div style="height:6px;background:var(--surface2);border-radius:3px;overflow:hidden">
+            <div style="width:${barW.toFixed(0)}%;height:100%;background:${barColor};border-radius:3px;opacity:0.7"></div>
+          </div>
+          <span style="font-size:11px;color:var(--text-muted);text-align:right">${capFmt}</span>
+          <span style="font-size:11px;font-weight:700;color:${plColor};text-align:right">${r.plPct>=0?'+':''}${r.plPct.toFixed(1)}%</span>
+        </div>`;
+      }).join('');
+      // Summary line
+      const top3pct = ranked.slice(0,3).reduce((s,r) => s + (totalDeployed>0 ? r.capital/totalDeployed*100 : 0), 0);
+      const summary = document.createElement('div');
+      summary.style.cssText = 'margin-top:10px;padding-top:8px;border-top:1px solid var(--border);font-size:11px;color:var(--text-muted)';
+      summary.textContent = `Top 3 positions = ${top3pct.toFixed(1)}% of deployed capital · ${ranked.length} shown of ${open.length} total`;
+      concList.appendChild(summary);
+    }
+  } catch(e) { console.warn('concentration error', e); }
+
   renderDashCalendar(closed);
   renderPortfolioHeatMap(open);
   renderMomentumStrip(closed);
@@ -5110,6 +5234,53 @@ function toggleBelow200() {
   const open = body.style.display === 'none';
   body.style.display = open ? '' : 'none';
   if (chevron) chevron.textContent = open ? '▲' : '▼';
+}
+function toggleGttCalc() {
+  const body = document.getElementById('dash-gtt-calc-body');
+  const chevron = document.getElementById('dash-gtt-calc-chevron');
+  if (!body) return;
+  const opening = body.style.display === 'none';
+  body.style.display = opening ? '' : 'none';
+  if (chevron) chevron.textContent = opening ? '▲' : '▼';
+}
+function toggleConcentration() {
+  const body = document.getElementById('dash-concentration-body');
+  const chevron = document.getElementById('dash-concentration-chevron');
+  if (!body) return;
+  const opening = body.style.display === 'none';
+  body.style.display = opening ? '' : 'none';
+  if (chevron) chevron.textContent = opening ? '▲' : '▼';
+}
+function exportCsv(type) {
+  const data = window._data;
+  if (!data) { alert('No data loaded yet — refresh first.'); return; }
+  let rows, filename, headers;
+  if (type === 'open') {
+    headers = ['Stock','Entry Date','Entry Price','Qty','CMP','P&L%','P&L ₹','Age (days)','Stop Loss','Setup','EMA200','EMA50'];
+    rows = (data.open||[]).map(t => [
+      t.stock||'', t.openDate||'', t.entryPrice||'', t.qty||'',
+      t.cmp||'', (t.plPct||0).toFixed(2), (t.notionalPl||0).toFixed(0),
+      t.age||'', t.stopLoss||'', t.setupType||'',
+      t.ema200===true?'YES':t.ema200===false?'NO':'',
+      t.ema50===true?'YES':t.ema50===false?'NO':''
+    ]);
+    filename = 'open_positions_' + new Date().toISOString().slice(0,10) + '.csv';
+  } else {
+    headers = ['Stock','Open Date','Close Date','Entry Price','Qty','Final P&L ₹','Final P&L%','Age (days)','Setup'];
+    rows = (data.closed||[]).map(t => [
+      t.stock||'', t.openDate||'', t.closeDate||'', t.entryPrice||'', t.qty||'',
+      (t.finalPl||0).toFixed(0), (t.finalPlPct||0).toFixed(2),
+      t.age||'', t.setupType||''
+    ]);
+    filename = 'closed_trades_' + new Date().toISOString().slice(0,10) + '.csv';
+  }
+  const escape = v => { const s = String(v); return s.includes(',') || s.includes('"') || s.includes('\n') ? '"' + s.replace(/"/g,'""') + '"' : s; };
+  const csv = [headers, ...rows].map(r => r.map(escape).join(',')).join('\n');
+  const blob = new Blob(['﻿' + csv], { type: 'text/csv;charset=utf-8;' });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement('a');
+  a.href = url; a.download = filename; a.click();
+  setTimeout(() => URL.revokeObjectURL(url), 1000);
 }
 function toggleReentryList() {
   const list = document.getElementById('dash-reentry-list');
