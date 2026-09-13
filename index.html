@@ -1251,9 +1251,12 @@ tbody tr:hover { filter: brightness(0.97); }
         <div id="dash-stuck-pct-sub" style="font-size:11px;color:var(--text-muted);margin-top:2px"></div>
       </div>
     </div>
-    <!-- Breakdown by duration bucket -->
-    <div id="dash-stuck-buckets" style="display:flex;flex-direction:column;gap:6px"></div>
-    <div style="font-size:11px;color:var(--text-muted);margin-top:10px">Positions held in loss — capital is waiting for structure to return per SST rules</div>
+    <!-- Breakdown by duration bucket — collapsible -->
+    <div style="margin-top:10px">
+      <button onclick="toggleStuckList(this)" style="font-size:11px;color:var(--accent);background:none;border:none;cursor:pointer;padding:0;font-weight:600">▼ Show positions by bucket</button>
+      <div id="dash-stuck-buckets" style="display:none;flex-direction:column;gap:6px;margin-top:8px"></div>
+    </div>
+    <div style="font-size:11px;color:var(--text-muted);margin-top:8px">Positions held in loss — capital is waiting for structure to return per SST rules</div>
   </div>
 
   <!-- ⑩ GTT MAINTENANCE CARD -->
@@ -5092,6 +5095,13 @@ function toggleAvgDown() {
   const open = body.style.display === 'none';
   body.style.display = open ? '' : 'none';
   if (icon) icon.textContent = open ? '▼' : '▶';
+}
+function toggleStuckList(btn) {
+  const body = document.getElementById('dash-stuck-buckets');
+  if (!body) return;
+  const opening = body.style.display === 'none';
+  body.style.display = opening ? 'flex' : 'none';
+  if (btn) btn.textContent = opening ? '▲ Hide positions' : '▼ Show positions by bucket';
 }
 function toggleBelow200() {
   const body = document.getElementById('dash-below200-body');
@@ -11505,7 +11515,7 @@ function renderStuckPositions(open, initialCapital) {
       const color = colorForBucket(i);
       const stocks = b.items.sort((a,b) => parseInt(b.age||0) - parseInt(a.age||0))
         .map(t => `<span title="${parseInt(t.age||0)}d · ${(t.plPct||0).toFixed(1)}%" style="font-size:11px;padding:2px 7px;border-radius:10px;background:var(--surface2);color:var(--text-secondary)">${t.stock}</span>`).join('');
-      return `<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+      return `<div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-bottom:2px">
         <div style="min-width:90px;font-size:11px;color:${color};font-weight:600">${b.label}</div>
         <div style="width:80px;height:6px;border-radius:3px;background:var(--surface2);overflow:hidden">
           <div style="width:${bPct.toFixed(0)}%;height:100%;background:${color};border-radius:3px"></div>
