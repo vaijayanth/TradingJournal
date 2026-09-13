@@ -927,6 +927,16 @@ tbody tr:hover { filter: brightness(0.97); }
           <div style="font-size:18px;font-weight:700;line-height:1.1" id="dash-deployed-capital">—</div>
           <div style="font-size:11px;color:var(--text-muted);margin-top:1px" id="dash-deployed-capital-sub">active positions</div>
         </div>
+        <div>
+          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Avg Gain (Open)</div>
+          <div style="font-size:18px;font-weight:700;line-height:1.1;color:var(--green)" id="dash-open-avg-gain">—</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:1px" id="dash-open-avg-gain-sub">profitable positions</div>
+        </div>
+        <div>
+          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Avg Loss (Open)</div>
+          <div style="font-size:18px;font-weight:700;line-height:1.1;color:var(--red)" id="dash-open-avg-loss">—</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:1px" id="dash-open-avg-loss-sub">losing positions</div>
+        </div>
       </div>
       <div style="margin-top:10px;height:4px;border-radius:3px;background:var(--surface2);overflow:hidden">
         <div id="dash-health-bar" style="height:100%;border-radius:3px;transition:width 0.4s"></div>
@@ -4736,6 +4746,24 @@ function renderDashboard(data, cfg) {
       else dcEl.textContent = deployedRs > 0 ? '₹' + Math.round(deployedRs).toLocaleString('en-IN') : '—';
     }
     if (dcSub && open.length > 0) dcSub.textContent = open.length + ' positions';
+  } catch(e) {}
+
+  // Avg gain % of profitable open positions & avg loss % of losing open positions
+  try {
+    const openProfitable = open.filter(t => (t.plPct || 0) > 0);
+    const openLosing     = open.filter(t => (t.plPct || 0) < 0);
+    const avgGain = openProfitable.length > 0
+      ? openProfitable.reduce((s,t) => s + (t.plPct||0), 0) / openProfitable.length : null;
+    const avgLoss = openLosing.length > 0
+      ? openLosing.reduce((s,t) => s + (t.plPct||0), 0) / openLosing.length : null;
+    const gainEl    = document.getElementById('dash-open-avg-gain');
+    const gainSubEl = document.getElementById('dash-open-avg-gain-sub');
+    const lossEl    = document.getElementById('dash-open-avg-loss');
+    const lossSubEl = document.getElementById('dash-open-avg-loss-sub');
+    if (gainEl) gainEl.textContent = avgGain !== null ? '+' + avgGain.toFixed(1) + '%' : '—';
+    if (gainSubEl) gainSubEl.textContent = openProfitable.length + ' profitable position' + (openProfitable.length !== 1 ? 's' : '');
+    if (lossEl) lossEl.textContent = avgLoss !== null ? avgLoss.toFixed(1) + '%' : '—';
+    if (lossSubEl) lossSubEl.textContent = openLosing.length + ' losing position' + (openLosing.length !== 1 ? 's' : '');
   } catch(e) {}
 
   // Avg holding period — closed positions (winners vs losers split)
