@@ -1045,13 +1045,18 @@ tbody tr:hover { filter: brightness(0.97); }
   <div id="dash-alert-strip" style="margin-top:10px;display:none"></div>
 
   <!-- BELOW 200 SMA ALERT — NO GTT, HOLD ONLY -->
-  <div id="dash-below200-card" style="display:none;margin-top:10px;padding:12px 16px;border-radius:10px;border:1px solid var(--amber);background:rgba(245,158,11,0.06)">
-    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:6px">
-      <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--amber)">⚠ Below 200 SMA — Hold Only · No GTT</div>
-      <span id="dash-below200-count" style="font-size:11px;font-weight:700;color:var(--amber)"></span>
+  <div id="dash-below200-card" style="display:none;margin-top:10px;border-radius:10px;border:1px solid var(--amber);overflow:hidden">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:10px 16px;background:rgba(245,158,11,0.08);cursor:pointer" onclick="toggleBelow200()">
+      <div style="display:flex;align-items:center;gap:8px">
+        <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--amber)">⚠ Below 200 SMA — Hold Only · No GTT</div>
+        <span id="dash-below200-count" style="font-size:11px;font-weight:700;color:var(--amber)"></span>
+      </div>
+      <span id="dash-below200-chevron" style="font-size:11px;color:var(--text-muted)">▼</span>
     </div>
-    <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px">These positions have broken below 200 SMA. SST rule: <strong>do not place any GTT</strong> — just hold and wait for structure to return. No add-on, no stop, no action.</div>
-    <div id="dash-below200-list" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+    <div id="dash-below200-body" style="display:none;padding:12px 16px">
+      <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px">These positions have broken below 200 SMA. SST rule: <strong>do not place any GTT</strong> — just hold and wait for structure to return. No add-on, no stop, no action.</div>
+      <div id="dash-below200-list" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+    </div>
   </div>
 
   <!-- LONG-HELD LOSERS ALERT -->
@@ -1112,7 +1117,7 @@ tbody tr:hover { filter: brightness(0.97); }
         </div>
         <span id="dash-avgdown-toggle-icon" style="font-size:11px;color:var(--text-muted)">▼</span>
       </div>
-      <div id="dash-avgdown-body">
+      <div id="dash-avgdown-body" style="display:none">
         <table style="width:100%;border-collapse:collapse;font-size:13px">
           <thead>
             <tr style="background:var(--surface2)">
@@ -5087,6 +5092,14 @@ function toggleAvgDown() {
   const open = body.style.display === 'none';
   body.style.display = open ? '' : 'none';
   if (icon) icon.textContent = open ? '▼' : '▶';
+}
+function toggleBelow200() {
+  const body = document.getElementById('dash-below200-body');
+  const chevron = document.getElementById('dash-below200-chevron');
+  if (!body) return;
+  const open = body.style.display === 'none';
+  body.style.display = open ? '' : 'none';
+  if (chevron) chevron.textContent = open ? '▲' : '▼';
 }
 function toggleReentryList() {
   const list = document.getElementById('dash-reentry-list');
