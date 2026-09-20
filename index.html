@@ -7008,7 +7008,8 @@ function renderStreakReal(closed, open) {
 function renderStreak() { /* data loaded on refresh */ }
 
 // ── CALENDAR (REAL DATA) ─────────────────────────────
-window._dashCalOffset = 0; // 0 = current month, -1 = prev, etc.
+window._dashCalOffset = null; // null = auto (latest trade month), then user nav shifts from there
+window._dashCalOffsetInit = false;
 function dashCalNav(dir) {
   window._dashCalOffset = (window._dashCalOffset || 0) + dir;
   if (window._data) renderDashCalendar(window._data.closed);
@@ -7032,9 +7033,24 @@ function renderDashCalendar(closed) {
     dayMap[key].count++;
   });
 
+  // On first render, default to latest month that has trades
+  const now = new Date();
+  if (window._dashCalOffset === null) {
+    let latestDate = null;
+    closed.forEach(t => {
+      if (!t.closeDate) return;
+      const d = parseDate(t.closeDate);
+      if (!isNaN(d) && (!latestDate || d > latestDate)) latestDate = d;
+    });
+    if (latestDate) {
+      window._dashCalOffset = (latestDate.getFullYear() - now.getFullYear()) * 12 + (latestDate.getMonth() - now.getMonth());
+    } else {
+      window._dashCalOffset = 0;
+    }
+  }
+
   // Show one month based on offset
   const offset = window._dashCalOffset || 0;
-  const now = new Date();
   const targetDate = new Date(now.getFullYear(), now.getMonth() + offset, 1);
   const calMonths = [{ year: targetDate.getFullYear(), month: targetDate.getMonth() }];
 
