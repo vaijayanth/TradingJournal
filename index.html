@@ -3583,11 +3583,11 @@ function renderDashboard(data, cfg) {
           const isActive = m.mo === curMonth && m.yr === curYear;
           const hasTrades = pl !== undefined;
           const isPos = hasTrades && pl >= 0;
-          const bg = isActive ? (isPos ? 'var(--green)' : 'var(--red)') : hasTrades ? (isPos ? 'rgba(0,200,80,.12)' : 'rgba(255,80,80,.12)') : 'var(--surface2)';
-          const textColor = isActive ? '#fff' : hasTrades ? (isPos ? 'var(--green)' : 'var(--red)') : 'var(--text-muted)';
-          const border = isActive ? 'none' : '1px solid var(--border)';
+          const bg = hasTrades ? (isPos ? 'rgba(0,200,80,.12)' : 'rgba(255,80,80,.12)') : 'var(--surface2)';
+          const textColor = hasTrades ? (isPos ? 'var(--green)' : 'var(--red)') : 'var(--text-muted)';
+          const border = isActive ? `2px solid ${isPos ? 'var(--green)' : 'var(--red)'}` : '1px solid var(--border)';
           return `<div style="flex-shrink:0;min-width:90px;padding:8px 10px;border-radius:8px;background:${bg};border:${border};cursor:default">
-            <div style="font-size:10px;font-weight:700;color:${isActive?'rgba(255,255,255,.8)':textColor};margin-bottom:3px">${m.label}</div>
+            <div style="font-size:10px;font-weight:700;color:${textColor};margin-bottom:3px">${m.label}</div>
             <div style="font-size:12px;font-weight:800;color:${textColor};white-space:nowrap">${hasTrades ? fmtK(pl) : '—'}</div>
           </div>`;
         }).join('');
