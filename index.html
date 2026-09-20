@@ -4609,8 +4609,9 @@ function renderDashboard(data, cfg) {
   const legEl = document.getElementById('dash-legend-target');
   if (legEl) legEl.textContent = cfg.targetPct || 7;
 
-  // ── Dashboard Alert Strip ─────────────────────────────────────────────────
+  // ── Dashboard Alert Strip (hidden per user preference) ───────────────────
   (function() {
+    return; // hidden
     const strip = document.getElementById('dash-alert-strip');
     if (!strip || !open.length) return;
     const targetPct2 = cfg.targetPct || 7;
