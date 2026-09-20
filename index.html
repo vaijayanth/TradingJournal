@@ -1176,10 +1176,10 @@ tbody tr:hover { filter: brightness(0.97); }
     </div>
   </div>
 
-  <!-- ⑤ P&L Distribution — full width -->
-  <div class="card" style="padding:16px;margin-top:14px">
-    <div style="font-size:11px;font-weight:700;color:var(--text-secondary);text-transform:uppercase;letter-spacing:.06em;margin-bottom:4px">📊 P&amp;L Distribution — <span id="dash-legend-target">7</span>% target · positions in each zone</div>
-    <div id="dash-pl-chart" style="min-height:240px"></div>
+  <!-- ⑤ P&L Distribution — hidden -->
+  <div id="dash-pl-dist-card" style="display:none">
+    <div id="dash-legend-target" style="display:none">7</div>
+    <div id="dash-pl-chart"></div>
   </div>
   <!-- hidden IDs for JS compat -->
   <div style="display:none"><div id="dash-zone-chart"></div><span id="dash-zone-target-lbl"></span><span id="dash-zone-lockin-lbl"></span><span id="dash-zone-profit-lbl"></span><span id="dash-zone-loss-lbl"></span></div>
