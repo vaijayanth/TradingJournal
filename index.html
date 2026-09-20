@@ -286,7 +286,7 @@ details[open] > summary .toggle-hint::before { content: '▼ collapse'; }
   border: none; background: none; transition: all 0.15s;
 }
 .period-btn.active {
-  background: var(--accent); color: #fff; font-weight: 600;
+  background: var(--accent-soft); border: 1px solid var(--accent); color: var(--accent); font-weight: 700;
 }
 /* ── BIG METRIC ── */
 .big-metric-wrap {
@@ -601,7 +601,7 @@ tbody tr:hover { filter: brightness(0.97); }
   color: var(--text-secondary); cursor: pointer; transition: all .15s;
 }
 .eq-pill:hover { border-color: var(--accent); color: var(--accent); }
-.eq-pill.active { background: var(--green); border-color: var(--green); color: #fff; }
+.eq-pill.active { background: var(--green-soft); border-color: var(--green); color: var(--green); font-weight: 700; }
 /* ── SKELETON PULSE ── */
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 .skeleton { animation: pulse 1.5s ease-in-out infinite; background: var(--border); border-radius: 4px; display: inline-block; }
@@ -3583,7 +3583,7 @@ function renderDashboard(data, cfg) {
           const isActive = m.mo === curMonth && m.yr === curYear;
           const hasTrades = pl !== undefined;
           const isPos = hasTrades && pl >= 0;
-          const bg = hasTrades ? (isPos ? 'rgba(0,200,80,.12)' : 'rgba(255,80,80,.12)') : 'var(--surface2)';
+          const bg = hasTrades ? (isPos ? 'var(--green-soft)' : 'var(--red-soft)') : 'var(--surface2)';
           const textColor = hasTrades ? (isPos ? 'var(--green)' : 'var(--red)') : 'var(--text-muted)';
           const border = isActive ? `2px solid ${isPos ? 'var(--green)' : 'var(--red)'}` : '1px solid var(--border)';
           return `<div style="flex-shrink:0;min-width:90px;padding:8px 10px;border-radius:8px;background:${bg};border:${border};cursor:default">
