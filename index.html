@@ -952,6 +952,23 @@ tbody tr:hover { filter: brightness(0.97); }
         <div id="dash-health-bar" style="height:100%;border-radius:3px;transition:width 0.4s"></div>
       </div>
       <div class="stat-badge" id="dash-health-badge" style="margin-top:7px">—</div>
+      <!-- Loss distribution table -->
+      <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
+        <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-bottom:6px">Open Positions — Loss Buckets</div>
+        <table style="width:100%;border-collapse:collapse;font-size:11px" id="dash-loss-buckets-table">
+          <thead>
+            <tr>
+              <th style="text-align:left;padding:3px 6px 3px 0;color:var(--text-muted);font-weight:600">Range</th>
+              <th style="text-align:right;padding:3px 0;color:var(--text-muted);font-weight:600">Count</th>
+              <th style="text-align:right;padding:3px 0;color:var(--text-muted);font-weight:600">Capital</th>
+              <th style="text-align:right;padding:3px 0;color:var(--text-muted);font-weight:600">MTM Loss</th>
+            </tr>
+          </thead>
+          <tbody id="dash-loss-buckets-tbody">
+            <tr><td colspan="4" style="color:var(--text-muted);padding:4px 0">—</td></tr>
+          </tbody>
+        </table>
+      </div>
     </div>
 
     <!-- System Edge -->
@@ -4842,6 +4859,38 @@ function renderDashboard(data, cfg) {
     if (bestSt)  bestSt.textContent  = best  ? best.stock  : '';
     if (worstEl) worstEl.textContent = worst ? (worst.plPct||0).toFixed(1) + '%' : '—';
     if (worstSt) worstSt.textContent = worst ? worst.stock : '';
+  } catch(e) {}
+
+  // Loss distribution buckets
+  try {
+    const buckets = [
+      { label: '0% to −1%',   min: -1,   max: 0   },
+      { label: '−1% to −5%',  min: -5,   max: -1  },
+      { label: '−5% to −10%', min: -10,  max: -5  },
+      { label: '−10% to −20%',min: -20,  max: -10 },
+      { label: '−20% to −30%',min: -30,  max: -20 },
+      { label: 'Below −30%',  min: -Infinity, max: -30 },
+    ];
+    const fmtRsShort = v => v >= 1e5 ? '₹'+(v/1e5).toFixed(1)+'L' : v >= 1e3 ? '₹'+(v/1e3).toFixed(1)+'k' : '₹'+Math.round(v);
+    const losers = open.filter(t => (t.plPct||0) < 0);
+    const tbody = document.getElementById('dash-loss-buckets-tbody');
+    if (tbody) {
+      const rows = buckets.map(b => {
+        const group = losers.filter(t => (t.plPct||0) > b.min && (t.plPct||0) <= b.max);
+        if (group.length === 0) return '';
+        const capital = group.reduce((s,t) => s + (t.entryPrice||0)*(t.qty||0), 0);
+        const mtmLoss = group.reduce((s,t) => s + (t.notionalPl||0), 0);
+        const intensity = Math.min(Math.abs(b.max||30) / 30, 1);
+        const redOpacity = (0.08 + intensity * 0.22).toFixed(2);
+        return `<tr style="border-top:1px solid var(--border)">
+          <td style="padding:4px 6px 4px 0;font-weight:600;color:var(--red)">${b.label}</td>
+          <td style="padding:4px 0;text-align:right;font-weight:700">${group.length}</td>
+          <td style="padding:4px 0;text-align:right;color:var(--text-muted)">${capital > 0 ? fmtRsShort(capital) : '—'}</td>
+          <td style="padding:4px 0;text-align:right;color:var(--red);font-weight:700">${mtmLoss < 0 ? fmtRsShort(Math.abs(mtmLoss)) : '—'}</td>
+        </tr>`;
+      }).filter(Boolean).join('');
+      tbody.innerHTML = rows || '<tr><td colspan="4" style="padding:4px 0;color:var(--green);font-weight:600">✓ No positions in loss</td></tr>';
+    }
   } catch(e) {}
 
   // Avg holding period — closed positions (winners vs losers split)
