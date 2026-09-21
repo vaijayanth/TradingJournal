@@ -1130,7 +1130,7 @@ tbody tr:hover { filter: brightness(0.97); }
       <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:rgba(251,191,36,0.08);border-bottom:1px solid var(--border);cursor:pointer" onclick="toggleAvgDown()">
         <div>
           <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--amber)">📶 Add-On Watchlist — Signal Pending</div>
-          <div style="font-size:11px;color:var(--text-muted);margin-top:2px" id="dash-avgdown-summary">In loss · above 200 &amp; 50 EMA → 1/10 qty on signal · max 1 add/week</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px" id="dash-avgdown-summary">Loss &gt;−7% · above 200 &amp; 50 EMA → add 1/10 qty · max 1 add per stock per week</div>
         </div>
         <span id="dash-avgdown-toggle-icon" style="font-size:11px;color:var(--text-muted)">▼</span>
       </div>
@@ -2329,7 +2329,7 @@ tbody tr:hover { filter: brightness(0.97); }
 
   <!-- 4. Add Signal Tracker (SST) -->
   <div class="section-title" id="asec-partial" style="margin-top:20px">Add Signal Tracker</div>
-  <div style="font-size:12px;color:var(--text-muted);margin-bottom:10px">SST add rule: when a position is in loss and still above 200+50 EMA, add 1/10 of current qty on signal (stock back above both EMAs) — max 1 add-on per week. Tracks how many current positions qualify.</div>
+  <div style="font-size:12px;color:var(--text-muted);margin-bottom:10px">SST add rule: loss &gt;−7% AND above 200+50 EMA → add 1/10 of that position's qty. All eligible stocks get an add-on. Max 1 add-on per stock per week.</div>
   <div class="grid-3" style="margin-bottom:14px">
     <div class="card card-sm">
       <div class="stat-label">🔵 Add Eligible Now</div>
@@ -4745,11 +4745,11 @@ function renderDashboard(data, cfg) {
   (function() {
     try {
       const fmtL = v => { const a=Math.abs(v); return (v<0?'-':'')+(a>=100000?'₹'+(a/100000).toFixed(2)+'L':a>=1000?'₹'+(a/1000).toFixed(1)+'k':'₹'+Math.round(a).toLocaleString('en-IN')); };
-      // Add-On Watchlist: positions in loss AND above both 200 EMA + 50 EMA (signal condition)
-      // Rule: 1/10 of current qty, only when stock back above 200+50 EMA, max 1 add-on per week
+      // Add-On Watchlist: loss > -7% AND above both 200 EMA + 50 EMA
+      // Rule: add 1/10 of that stock's qty — all eligible stocks get add-on, max 1 per stock per week
       const smaBool = v => v === true ? true : v === false ? false : null;
       const eligible = open
-        .filter(t => (t.plPct || 0) < 0) // any loss
+        .filter(t => (t.plPct || 0) < -7) // loss greater than -7%
         .filter(t => {
           const a200 = smaBool(t.ema200);
           const a50  = smaBool(t.ema50);
@@ -4764,14 +4764,14 @@ function renderDashboard(data, cfg) {
 
       if (summary) {
         summary.textContent = eligible.length > 0
-          ? `${eligible.length} position${eligible.length>1?'s':''} in loss · above 200 & 50 EMA · add 1/10 qty on signal`
-          : 'No losing positions currently above 200 & 50 EMA';
+          ? `${eligible.length} position${eligible.length>1?'s':''} with loss >−7% · above 200 & 50 EMA · add 1/10 qty each`
+          : 'No positions with loss >−7% above 200 & 50 EMA';
       }
       if (card) card.querySelector('.card').style.borderColor = eligible.length > 0 ? 'var(--amber)' : 'var(--border)';
 
       if (!tbody) return;
       if (!eligible.length) {
-        tbody.innerHTML = '<tr><td colspan="8" style="padding:20px;text-align:center;color:var(--text-muted)">✓ No losing positions above 200 & 50 EMA — no add-on signal</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" style="padding:20px;text-align:center;color:var(--text-muted)">✓ No positions with loss >−7% above 200 & 50 EMA — no add-on signal</td></tr>';
         return;
       }
 
@@ -5839,7 +5839,7 @@ function renderTodayActions(open, cfg) {
         verbBg: canAdd ? 'rgba(96,165,250,0.18)' : 'rgba(100,116,139,0.12)',
         verbColor: canAdd ? '#60A5FA' : 'var(--text-muted)',
         directive: canAdd
-          ? 'Above 200+50 EMA — signal eligible · add 1/10 qty (max 1 add/week)'
+          ? 'Loss >−7% · above 200+50 EMA — add 1/10 qty (max 1 add per stock/week)'
           : 'Below 50 EMA — hold, do nothing. Wait for structure to return.',
         detail: canAdd
           ? `${plPct.toFixed(1)}% — above 200+50 EMA. Add 1/10 qty on next signal (max 1/week). Hold current position.`

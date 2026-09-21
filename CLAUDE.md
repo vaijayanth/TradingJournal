@@ -34,7 +34,7 @@ This is an **SST (Sharegenius Swing Trading) high-WR momentum system**. It is fu
 - If stock is **above 200 EMA AND 50 EMA**: place a NEW GTT at 21DH for **50% add-on qty** — average into the position, the stock is still fundamentally intact
 - If stock drops **below 50 EMA**: HOLD, do nothing — wait for structure to return. No exit.
 - **Never exit on a loss** unless there is genuine fundamental deterioration (earnings collapse, fraud, sector disruption)
-- **Add-on rule**: 1/10 of current position size, only when stock is back above BOTH 200 EMA AND 50 EMA (signal condition), maximum 1 add-on per week across all positions
+- **Add-on rule**: when open position loss > −7% AND stock is above BOTH 200 EMA AND 50 EMA → add 1/10 of that position's qty. All stocks meeting this signal get an add-on. Max 1 add-on per week **per stock** (not 1 total across portfolio).
 
 ### Profit Taking
 - Lock-in at **6%**: trailing SL activates, minimum 6% profit protected
