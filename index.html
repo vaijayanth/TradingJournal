@@ -1129,8 +1129,8 @@ tbody tr:hover { filter: brightness(0.97); }
     <div class="card" style="padding:0;border:1px solid var(--amber);border-radius:12px;overflow:hidden">
       <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;background:rgba(251,191,36,0.08);border-bottom:1px solid var(--border);cursor:pointer" onclick="toggleAvgDown()">
         <div>
-          <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--amber)">📉 Average Down — Action Required</div>
-          <div style="font-size:11px;color:var(--text-muted);margin-top:2px" id="dash-avgdown-summary">Loss &gt;−7% · above 200 &amp; 50 SMA → add 1/10 position</div>
+          <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--amber)">📶 Add-On Watchlist — Signal Pending</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:2px" id="dash-avgdown-summary">In loss · above 200 &amp; 50 EMA → 1/10 qty on signal · max 1 add/week</div>
         </div>
         <span id="dash-avgdown-toggle-icon" style="font-size:11px;color:var(--text-muted)">▼</span>
       </div>
@@ -1750,7 +1750,7 @@ tbody tr:hover { filter: brightness(0.97); }
       <div style="margin-top:8px;font-size:12px;color:var(--text-muted);line-height:1.5;font-style:italic">SST design: losers are held until recovery, winners trail via GTT. Losers held longer than winners = system working correctly — the open book is doing the waiting.</div>
       <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
         <div style="font-size:11px;color:var(--text-muted);font-weight:600;margin-bottom:4px">SST RULE</div>
-        <div class="stat-sub" style="line-height:1.5">Losers: hold until stock recovers above 200+50 EMA, or add 50% qty at 21DH. Winners: GTT trails at 6%+, let the stop do the exiting. Never exit a winner manually before GTT fires.</div>
+        <div class="stat-sub" style="line-height:1.5">Losers: hold until stock recovers above 200+50 EMA — add 1/10 qty on signal (max 1 add/week). Winners: GTT trails at 6%+, let the stop do the exiting. Never exit a winner manually before GTT fires.</div>
       </div>
     </div>
     <!-- Monthly Consistency -->
@@ -2329,7 +2329,7 @@ tbody tr:hover { filter: brightness(0.97); }
 
   <!-- 4. Add Signal Tracker (SST) -->
   <div class="section-title" id="asec-partial" style="margin-top:20px">Add Signal Tracker</div>
-  <div style="font-size:12px;color:var(--text-muted);margin-bottom:10px">SST add rule: when a position is in loss and still above 200+50 EMA, place a GTT at 21-day high for 50% add-on qty. Tracks how many current positions qualify.</div>
+  <div style="font-size:12px;color:var(--text-muted);margin-bottom:10px">SST add rule: when a position is in loss and still above 200+50 EMA, add 1/10 of current qty on signal (stock back above both EMAs) — max 1 add-on per week. Tracks how many current positions qualify.</div>
   <div class="grid-3" style="margin-bottom:14px">
     <div class="card card-sm">
       <div class="stat-label">🔵 Add Eligible Now</div>
@@ -4745,18 +4745,18 @@ function renderDashboard(data, cfg) {
   (function() {
     try {
       const fmtL = v => { const a=Math.abs(v); return (v<0?'-':'')+(a>=100000?'₹'+(a/100000).toFixed(2)+'L':a>=1000?'₹'+(a/1000).toFixed(1)+'k':'₹'+Math.round(a).toLocaleString('en-IN')); };
-      // Show all positions with loss > -7%, mark SMA status (✓/✗/?) from data
-      const candidates = open.filter(t => (t.plPct || 0) < -7)
+      // Add-On Watchlist: positions in loss AND above both 200 EMA + 50 EMA (signal condition)
+      // Rule: 1/10 of current qty, only when stock back above 200+50 EMA, max 1 add-on per week
+      const smaBool = v => v === true ? true : v === false ? false : null;
+      const eligible = open
+        .filter(t => (t.plPct || 0) < 0) // any loss
+        .filter(t => {
+          const a200 = smaBool(t.ema200);
+          const a50  = smaBool(t.ema50);
+          if (a200 !== null && a50 !== null) return a200 && a50; // must be above both
+          return true; // SMA unknown — show and let user check
+        })
         .sort((a, b) => (a.plPct||0) - (b.plPct||0)); // worst first
-
-      const smaBool = v => v === true ? true : v === false ? false : null; // true/false/null(unknown)
-      const eligible = candidates.filter(t => {
-        const a200 = smaBool(t.ema200);
-        const a50  = smaBool(t.ema50);
-        // If SMA data exists, only show those above both. If unknown, show all.
-        if (a200 !== null && a50 !== null) return a200 && a50;
-        return true; // SMA data not yet available — show all and let user decide
-      });
 
       const tbody = document.getElementById('dash-avgdown-tbody');
       const summary = document.getElementById('dash-avgdown-summary');
@@ -4764,14 +4764,14 @@ function renderDashboard(data, cfg) {
 
       if (summary) {
         summary.textContent = eligible.length > 0
-          ? `${eligible.length} position${eligible.length>1?'s':''} with loss >−7% · verify 200 & 50 SMA → add 1/10 qty`
-          : 'No positions currently with loss >−7%';
+          ? `${eligible.length} position${eligible.length>1?'s':''} in loss · above 200 & 50 EMA · add 1/10 qty on signal`
+          : 'No losing positions currently above 200 & 50 EMA';
       }
       if (card) card.querySelector('.card').style.borderColor = eligible.length > 0 ? 'var(--amber)' : 'var(--border)';
 
       if (!tbody) return;
       if (!eligible.length) {
-        tbody.innerHTML = '<tr><td colspan="8" style="padding:20px;text-align:center;color:var(--text-muted)">✓ No open positions with loss greater than −7%</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="8" style="padding:20px;text-align:center;color:var(--text-muted)">✓ No losing positions above 200 & 50 EMA — no add-on signal</td></tr>';
         return;
       }
 
@@ -5839,10 +5839,10 @@ function renderTodayActions(open, cfg) {
         verbBg: canAdd ? 'rgba(96,165,250,0.18)' : 'rgba(100,116,139,0.12)',
         verbColor: canAdd ? '#60A5FA' : 'var(--text-muted)',
         directive: canAdd
-          ? 'Above 200+50 EMA — place GTT at 21-day high for add (50% qty)'
+          ? 'Above 200+50 EMA — signal eligible · add 1/10 qty (max 1 add/week)'
           : 'Below 50 EMA — hold, do nothing. Wait for structure to return.',
         detail: canAdd
-          ? `${plPct.toFixed(1)}% — still above 200+50 EMA. Place GTT at 21-day high (${fmtRs(t.twentyOneDayHigh||0)}) for 50% add-on. Hold current position.`
+          ? `${plPct.toFixed(1)}% — above 200+50 EMA. Add 1/10 qty on next signal (max 1/week). Hold current position.`
           : `${plPct.toFixed(1)}% and below 50 EMA. SST rule: hold indefinitely unless company fundamentals deteriorate.` });
     }
   });
