@@ -7,8 +7,8 @@
 <title>Trading Journal</title>
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
 <link rel="preconnect" href="https://unpkg.com">
-<script defer src="https://cdn.jsdelivr.net/npm/apexcharts@3.44.0/dist/apexcharts.min.js"></script>
-<script defer src="https://unpkg.com/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js"></script>
+<script defer src="https://cdn.jsdelivr.net/npm/apexcharts@3.44.0/dist/apexcharts.min.js" onerror="var s=document.createElement('script');s.src='https://unpkg.com/apexcharts@3.44.0/dist/apexcharts.min.js';document.head.appendChild(s);"></script>
+<script defer src="https://unpkg.com/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js" onerror="var s=document.createElement('script');s.src='https://cdn.jsdelivr.net/npm/lightweight-charts@4.1.1/dist/lightweight-charts.standalone.production.js';document.head.appendChild(s);"></script>
 <style>
 :root {
   --bg: #F1F5F9;
@@ -602,6 +602,10 @@ tbody tr:hover { filter: brightness(0.97); }
 }
 .eq-pill:hover { border-color: var(--accent); color: var(--accent); }
 .eq-pill.active { background: var(--green-soft); border-color: var(--green); color: var(--green); font-weight: 700; }
+/* ── KEYBOARD ACCESSIBILITY ── */
+[role="button"]:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; border-radius: 4px; }
+.card [onclick]:not(button):not(a):not(input) { border-radius: 4px; }
+.card [onclick]:not(button):not(a):not(input):focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
 /* ── SKELETON PULSE ── */
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
 .skeleton { animation: pulse 1.5s ease-in-out infinite; background: var(--border); border-radius: 4px; display: inline-block; }
@@ -3340,6 +3344,20 @@ function parseDate(s) {
 }
 
 // ── FETCH ────────────────────────────────────────────
+const TJ_CACHE_KEY = 'tj_data_cache';
+
+function saveDataCache(data) {
+  try { localStorage.setItem(TJ_CACHE_KEY, JSON.stringify({ ts: Date.now(), data })); } catch(e) {}
+}
+function loadDataCache() {
+  try {
+    const raw = localStorage.getItem(TJ_CACHE_KEY);
+    if (!raw) return null;
+    const { ts, data } = JSON.parse(raw);
+    return { ts, data };
+  } catch(e) { return null; }
+}
+
 async function fetchData() {
   const cfg = loadConfig();
   if (!cfg.url) { showToast('No Apps Script URL configured. Go to Config tab.', 'amber'); return null; }
@@ -3359,15 +3377,34 @@ async function fetchData() {
     ageCol: cfg.ageCol,
     portfolioCell: cfg.portfolioCell, initialCapCell: cfg.initialCapCell,
   });
-  try {
-    params.append('_t', Date.now());
-    const res = await fetch(cfg.url + '?' + params.toString(), { redirect: 'follow', cache: 'no-store' });
-    const data = await res.json();
-    if (!data.success) throw new Error(data.error || 'Unknown error');
-    return data;
-  } catch(e) {
-    showToast('Fetch error: ' + e.message, 'red');
-    return null;
+
+  // Retry up to 3 times with exponential backoff
+  const MAX_RETRIES = 3;
+  for (let attempt = 1; attempt <= MAX_RETRIES; attempt++) {
+    try {
+      params.set('_t', Date.now());
+      const res = await fetch(cfg.url + '?' + params.toString(), { redirect: 'follow', cache: 'no-store' });
+      const data = await res.json();
+      if (!data.success) throw new Error(data.error || 'Unknown error');
+      saveDataCache(data); // cache on success
+      return data;
+    } catch(e) {
+      if (attempt < MAX_RETRIES) {
+        const delay = Math.pow(2, attempt) * 1000; // 2s, 4s
+        showToast(`Fetch attempt ${attempt} failed — retrying in ${delay/1000}s…`, 'amber');
+        await new Promise(r => setTimeout(r, delay));
+      } else {
+        // All retries exhausted — try cached data
+        const cached = loadDataCache();
+        if (cached) {
+          const minsAgo = Math.round((Date.now() - cached.ts) / 60000);
+          showToast(`Network error — showing cached data from ${minsAgo} min ago`, 'amber');
+          return cached.data;
+        }
+        showToast('Could not load data. Check your internet connection and try again.', 'red');
+        return null;
+      }
+    }
   }
 }
 
@@ -3385,7 +3422,22 @@ async function refreshData() {
     return;
   }
   document.body.classList.remove('loading');
-  if (!data) { if (btn) { btn.textContent = '↻'; btn.disabled = false; } return; }
+  if (!data) {
+    if (btn) { btn.textContent = '↻'; btn.disabled = false; }
+    // Show error state on dashboard
+    const strip = document.getElementById('dash-alert-strip');
+    if (strip) {
+      strip.style.display = '';
+      strip.innerHTML = `<div style="background:var(--red-soft);border:1px solid var(--red);border-radius:8px;padding:12px 16px;display:flex;align-items:center;gap:10px">
+        <span style="font-size:18px">⚠️</span>
+        <div>
+          <div style="font-weight:700;color:var(--red);font-size:13px">Could not load data from Google Sheet</div>
+          <div style="font-size:12px;color:var(--text-muted);margin-top:2px">Check your internet connection or Apps Script URL in Config. <span style="cursor:pointer;text-decoration:underline" onclick="refreshData()">Tap to retry ↻</span></div>
+        </div>
+      </div>`;
+    }
+    return;
+  }
   // ── SST post-processing: semantic aliases + computed fields ──────────────
   function sstProcess(t) {
     // Strip "NSE:" / "BSE:" prefix from stock name
@@ -10421,6 +10473,7 @@ async function checkPassword() {
   const hash = await sha256(pw);
   if (hash === stored) {
     sessionStorage.setItem(AUTH_SESSION, '1');
+    sessionStorage.setItem(AUTH_SESSION_EXPIRY, Date.now().toString());
     document.getElementById('auth-overlay').style.display = 'none';
   } else {
     document.getElementById('auth-error').style.display = 'block';
@@ -10446,17 +10499,20 @@ async function setJournalPassword() {
   document.getElementById('cfg-new-password').value = '';
 }
 
+const AUTH_SESSION_EXPIRY = 'tj_authed_at';
+const SESSION_TIMEOUT_MS = 8 * 60 * 60 * 1000; // 8 hours
+
 function initAuth() {
-  const hash = localStorage.getItem(AUTH_KEY) || AUTH_HASH;
   const stateEl = document.getElementById('cfg-password-state');
   if (stateEl) stateEl.textContent = 'Password is set ✓';
-  // AUTH TEMPORARILY DISABLED — re-enable by removing the next two lines
-  sessionStorage.setItem(AUTH_SESSION, '1');
-  return;
-  if (sessionStorage.getItem(AUTH_SESSION)) return; // already authenticated this session
+  // Check session expiry
+  const authedAt = parseInt(sessionStorage.getItem(AUTH_SESSION_EXPIRY) || '0');
+  if (sessionStorage.getItem(AUTH_SESSION) && authedAt && (Date.now() - authedAt) < SESSION_TIMEOUT_MS) return;
+  // Session expired or not set — clear and show auth
+  sessionStorage.removeItem(AUTH_SESSION);
+  sessionStorage.removeItem(AUTH_SESSION_EXPIRY);
   const overlay = document.getElementById('auth-overlay');
-  overlay.style.display = 'flex';
-  setTimeout(() => document.getElementById('auth-password').focus(), 100);
+  if (overlay) { overlay.style.display = 'flex'; setTimeout(() => { const p = document.getElementById('auth-password'); if(p) p.focus(); }, 100); }
 }
 
 // ── STRATEGY PAGE ─────────────────────────────────────────────────────────
@@ -10685,6 +10741,16 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btn) btn.textContent = savedTheme === 'dark' ? '☀️' : '🌙';
   }
   initAuth();
+
+  // ── Keyboard accessibility: make onclick divs navigable via Tab + Enter/Space ──
+  document.querySelectorAll('.card [onclick]:not(button):not(a):not(input):not(select):not(textarea)').forEach(el => {
+    if (!el.getAttribute('tabindex')) el.setAttribute('tabindex', '0');
+    if (!el.getAttribute('role')) el.setAttribute('role', 'button');
+    el.addEventListener('keydown', e => {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); el.click(); }
+    });
+  });
+
   const lastRefresh = localStorage.getItem('tj_last_refresh');
   if (lastRefresh && Date.now() - parseInt(lastRefresh) > 4 * 60 * 60 * 1000) {
     const ri = document.querySelector('.refresh-info');
