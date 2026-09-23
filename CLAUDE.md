@@ -812,3 +812,28 @@ Final order on Dashboard page:
 - Left: `#dash-refresh-ts` — "Last refreshed: 9:32 am · 4 min ago" (reads from `localStorage 'tj_last_refresh'`)
 - Right: `#dash-stale-warn` — amber "⚠ Data may be stale — tap ↻ to refresh" shown when >30 min since last refresh
 - Hidden on mobile (stacks under timestamp)
+
+## UI Changes Made (2026-09-23 session)
+
+### Strike Rate Metric (Dashboard — System Edge Card)
+- New metric added to System Edge card grid, right after Win Rate
+- **Definition**: (open positions with `notionalPl > 0`) + (closed wins with `finalPl > 0`) ÷ (all open + all closed trades)
+- Answers "how often am I picking correctly across everything I've ever entered"
+- **Element IDs**: `#dash-strike-rate` (value), `#dash-strike-rate-sub` (count breakdown)
+- Sub-label shows exact counts: e.g. "195 open + 34 closed / 251 total"
+- Colour: green ≥60%, amber ≥45%, red <45%
+- JS: uses pre-computed `entryHitPct`, `openWinning`, `dWins.length`, `allEntries` — no new computation needed
+- System Edge card now has 8 cells (1fr 1fr grid stays balanced)
+
+### Deferred — Dhan API Integration
+- Dhan HQ API can provide: live CMP, NIFTY 50 price, option chain, GTT status, Greeks
+- Integration path: Apps Script calls Dhan REST API → updates sheet → index.html reads as normal
+- Will unlock: live NIFTY for alpha calculation, auto-updated CMPs, auto-flag when spread premium doubles
+- Needs: Dhan API client ID + access token (from DhanHQ developer portal)
+- **Deferred** — user to come back when ready
+
+### App Assessment Notes (2026-09-23)
+- Swing trading goal: ~85% complete — core loop done, gaps are market context (live Nifty) and CDN fallback for ApexCharts in offline env
+- Wealth scaling goal: tier tracker live, math correct, discipline framework in place
+- F&O goal: ~20% — fine-tune strategy first, then build journal
+- Biggest single improvement available: wire Dhan API for live Nifty + CMPs
