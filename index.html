@@ -985,6 +985,11 @@ tbody tr:hover { filter: brightness(0.97); }
           <div style="font-size:11px;color:var(--text-muted);margin-top:1px" id="dash-sys-wr-recent">closed · target ≥70%</div>
         </div>
         <div>
+          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Strike Rate</div>
+          <div style="font-size:28px;font-weight:800;line-height:1.05" id="dash-strike-rate">—</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:1px" id="dash-strike-rate-sub">open + closed · all trades</div>
+        </div>
+        <div>
           <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Profit Factor</div>
           <div style="font-size:28px;font-weight:800;line-height:1.05" id="dash-sys-pf">—</div>
           <div style="font-size:11px;color:var(--text-muted);margin-top:1px" id="dash-sys-pf-sub">combined · target ≥2.0</div>
@@ -4002,6 +4007,14 @@ function renderDashboard(data, cfg) {
   // For this style, 25-40% exit WR is healthy — don't show amber just because WR < 40
   set('dash-sys-wr', dWR.toFixed(1) + '%');
   if (dWREl) dWREl.style.color = dWR >= 70 ? 'var(--green)' : dWR >= 50 ? 'var(--amber)' : 'var(--red)';
+
+  // Strike Rate: all positive trades (open profitable + closed wins) / all trades ever
+  const srEl = document.getElementById('dash-strike-rate');
+  const srSubEl = document.getElementById('dash-strike-rate-sub');
+  set('dash-strike-rate', entryHitPct.toFixed(1) + '%');
+  if (srEl) srEl.style.color = entryHitPct >= 60 ? 'var(--green)' : entryHitPct >= 45 ? 'var(--amber)' : 'var(--red)';
+  if (srSubEl) srSubEl.textContent = `${openWinning} open + ${dWins.length} closed / ${allEntries} total`;
+
   const recentWREl = document.getElementById('dash-sys-wr-recent');
   if (recentWREl) {
     const recent30wr = closed.slice(-30);
