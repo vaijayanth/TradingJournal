@@ -788,6 +788,17 @@ tbody tr:hover { filter: brightness(0.97); }
 <!-- ════ DASHBOARD ════ -->
 <div id="page-dashboard" class="page active">
 
+  <!-- 🚨 MAX POSITIONS BREACH ALERT — pinned top of dashboard -->
+  <div id="dash-maxpos-alert" style="display:none;margin-bottom:10px;padding:14px 16px;border-radius:10px;border:2px solid var(--red);background:rgba(239,68,68,0.10)">
+    <div style="display:flex;align-items:center;gap:10px">
+      <span style="font-size:22px">🚨</span>
+      <div>
+        <div style="font-size:13px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--red)">200 Position Cap Reached — No New GTT Orders</div>
+        <div style="font-size:12px;color:var(--text-muted);margin-top:2px"><span id="dash-maxpos-count" style="font-weight:700;color:var(--red)"></span> open positions — cap is 200. Wait for existing positions to close before placing new GTT entries.</div>
+      </div>
+    </div>
+  </div>
+
   <!-- Hidden IDs kept for JS compatibility -->
   <div style="display:none">
     <span id="dash-urgent-banner"></span><span id="dash-urgent-icon"></span><span id="dash-urgent-text"></span>
@@ -1054,17 +1065,6 @@ tbody tr:hover { filter: brightness(0.97); }
     <div id="dash-equity-mini" style="height:260px"></div>
     <div id="dash-eq-drawdown" style="height:0;overflow:hidden;transition:height .3s;margin-top:0"></div>
     <div id="dash-eq-insight" class="chart-insight"></div>
-  </div>
-
-  <!-- 🚨 MAX POSITIONS BREACH ALERT -->
-  <div id="dash-maxpos-alert" style="display:none;margin-top:10px;padding:12px 16px;border-radius:10px;border:1.5px solid var(--red);background:rgba(239,68,68,0.08)">
-    <div style="display:flex;align-items:center;gap:10px">
-      <span style="font-size:20px">🚨</span>
-      <div>
-        <div style="font-size:12px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--red)">200 Position Cap Reached — No New GTT Orders</div>
-        <div style="font-size:12px;color:var(--text-muted);margin-top:2px"><span id="dash-maxpos-count" style="font-weight:700;color:var(--red)"></span> open positions — cap is 200. Wait for existing positions to close before placing new GTT entries.</div>
-      </div>
-    </div>
   </div>
 
   <!-- ④ ALERT STRIP — actions needed today -->
