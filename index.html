@@ -978,22 +978,15 @@ tbody tr:hover { filter: brightness(0.97); }
         <div id="dash-health-bar" style="height:100%;border-radius:3px;transition:width 0.4s"></div>
       </div>
       <div class="stat-badge" id="dash-health-badge" style="margin-top:7px">—</div>
-      <!-- Loss distribution table -->
+      <!-- Loss distribution — visual bars -->
       <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
-        <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-bottom:6px">Open Positions — Loss Buckets</div>
-        <table style="width:100%;border-collapse:collapse;font-size:11px" id="dash-loss-buckets-table">
-          <thead>
-            <tr>
-              <th style="text-align:left;padding:3px 6px 3px 0;color:var(--text-muted);font-weight:600">Range</th>
-              <th style="text-align:right;padding:3px 0;color:var(--text-muted);font-weight:600">Count</th>
-              <th style="text-align:right;padding:3px 0;color:var(--text-muted);font-weight:600">Capital</th>
-              <th style="text-align:right;padding:3px 0;color:var(--text-muted);font-weight:600">MTM Loss</th>
-            </tr>
-          </thead>
-          <tbody id="dash-loss-buckets-tbody">
-            <tr><td colspan="4" style="color:var(--text-muted);padding:4px 0">—</td></tr>
-          </tbody>
-        </table>
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
+          <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted)">Open Positions — Loss Buckets</div>
+          <div style="font-size:10px;color:var(--text-muted)">bar = capital at risk</div>
+        </div>
+        <div id="dash-loss-buckets-tbody" style="display:flex;flex-direction:column;gap:5px">
+          <div style="color:var(--text-muted);font-size:11px">—</div>
+        </div>
       </div>
     </div>
 
@@ -4985,23 +4978,47 @@ function renderDashboard(data, cfg) {
     ];
     const fmtRsShort = v => v >= 1e5 ? '₹'+(v/1e5).toFixed(1)+'L' : v >= 1e3 ? '₹'+(v/1e3).toFixed(1)+'k' : '₹'+Math.round(v);
     const losers = open.filter(t => (t.plPct||0) < 0);
-    const tbody = document.getElementById('dash-loss-buckets-tbody');
-    if (tbody) {
-      const rows = buckets.map(b => {
+    const container = document.getElementById('dash-loss-buckets-tbody');
+    if (container) {
+      const bucketData = buckets.map(b => {
         const group = losers.filter(t => (t.plPct||0) > b.min && (t.plPct||0) <= b.max);
-        if (group.length === 0) return '';
         const capital = group.reduce((s,t) => s + (t.entryPrice||0)*(t.qty||0), 0);
         const mtmLoss = group.reduce((s,t) => s + (t.notionalPl||0), 0);
-        const intensity = Math.min(Math.abs(b.max||30) / 30, 1);
-        const redOpacity = (0.08 + intensity * 0.22).toFixed(2);
-        return `<tr style="border-top:1px solid var(--border)">
-          <td style="padding:4px 6px 4px 0;font-weight:600;color:var(--red)">${b.label}</td>
-          <td style="padding:4px 0;text-align:right;font-weight:700">${group.length}</td>
-          <td style="padding:4px 0;text-align:right;color:var(--text-muted)">${capital > 0 ? fmtRsShort(capital) : '—'}</td>
-          <td style="padding:4px 0;text-align:right;color:var(--red);font-weight:700">${mtmLoss < 0 ? fmtRsShort(Math.abs(mtmLoss)) : '—'}</td>
-        </tr>`;
-      }).filter(Boolean).join('');
-      tbody.innerHTML = rows || '<tr><td colspan="4" style="padding:4px 0;color:var(--green);font-weight:600">✓ No positions in loss</td></tr>';
+        return { ...b, count: group.length, capital, mtmLoss };
+      }).filter(b => b.count > 0);
+
+      if (bucketData.length === 0) {
+        container.innerHTML = '<div style="color:var(--green);font-size:12px;font-weight:600;padding:4px 0">✓ No positions in loss</div>';
+      } else {
+        const maxCapital = Math.max(...bucketData.map(b => b.capital), 1);
+        const totalLoss  = bucketData.reduce((s,b) => s + Math.abs(b.mtmLoss), 0);
+        // depth colours: mild amber → deeper red
+        const depthColors = ['#f59e0b','#ef8c34','#ef6534','#ef4444','#dc2626','#991b1b'];
+        container.innerHTML = bucketData.map((b, i) => {
+          const barPct  = Math.round(b.capital / maxCapital * 100);
+          const lossPct = totalLoss > 0 ? (Math.abs(b.mtmLoss) / totalLoss * 100).toFixed(0) : 0;
+          const color   = depthColors[Math.min(i, depthColors.length - 1)];
+          return `<div style="font-size:11px">
+            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2px">
+              <span style="font-weight:700;color:${color}">${b.label}</span>
+              <span style="display:flex;gap:10px;align-items:baseline">
+                <span style="color:var(--text-muted)">${b.count} pos · ${b.capital > 0 ? fmtRsShort(b.capital) : '—'}</span>
+                <span style="font-weight:800;color:${color}">−${b.mtmLoss < 0 ? fmtRsShort(Math.abs(b.mtmLoss)) : '—'}</span>
+                <span style="font-size:10px;color:var(--text-muted)">${lossPct}% of loss</span>
+              </span>
+            </div>
+            <div style="position:relative;height:6px;background:var(--surface2);border-radius:3px;overflow:hidden">
+              <div style="position:absolute;left:0;top:0;height:100%;width:${barPct}%;background:${color};border-radius:3px;opacity:0.85;transition:width .4s"></div>
+            </div>
+          </div>`;
+        }).join('');
+        // Summary footer
+        const totalCapital = bucketData.reduce((s,b) => s + b.capital, 0);
+        container.innerHTML += `<div style="margin-top:6px;padding-top:6px;border-top:1px solid var(--border);display:flex;justify-content:space-between;font-size:10px;color:var(--text-muted)">
+          <span>${losers.length} positions in loss · ${fmtRsShort(totalCapital)} deployed</span>
+          <span style="font-weight:700;color:var(--red)">Total MTM −${fmtRsShort(totalLoss)}</span>
+        </div>`;
+      }
     }
   } catch(e) {}
 
