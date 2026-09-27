@@ -837,3 +837,16 @@ Final order on Dashboard page:
 - Wealth scaling goal: tier tracker live, math correct, discipline framework in place
 - F&O goal: ~20% — fine-tune strategy first, then build journal
 - Biggest single improvement available: wire Dhan API for live Nifty + CMPs
+
+## UI Changes Made (2026-09-27 session)
+
+### Max Positions Alert — Moved to Top of Dashboard
+- Alert `#dash-maxpos-alert` moved from after equity curve → very first element inside `#page-dashboard`
+- Slightly larger styling: border 2px (was 1.5px), icon 22px (was 20px), title 13px (was 12px)
+- Fires at `open.length >= 200` (unchanged), hides when < 200
+
+### Open Trade Count Discrepancy — Diagnosed (not fixed in code)
+- App showed 199 when user had 200 open trades in sheet
+- Root cause: Apps Script silently skips rows where col E (Stock) or col R (Entry Price) is blank
+- Fix: in Google Sheet, filter col B = "YES" + col R = blank → find and fill the missing entry price row
+- No code change needed in index.html — the app count is always correct per what Apps Script returns
