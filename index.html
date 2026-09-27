@@ -10591,16 +10591,9 @@ const AUTH_SESSION_EXPIRY = 'tj_authed_at';
 const SESSION_TIMEOUT_MS = 8 * 60 * 60 * 1000; // 8 hours
 
 function initAuth() {
+  // AUTH TEMPORARILY DISABLED
   const stateEl = document.getElementById('cfg-password-state');
   if (stateEl) stateEl.textContent = 'Password is set ✓';
-  // Check session expiry
-  const authedAt = parseInt(sessionStorage.getItem(AUTH_SESSION_EXPIRY) || '0');
-  if (sessionStorage.getItem(AUTH_SESSION) && authedAt && (Date.now() - authedAt) < SESSION_TIMEOUT_MS) return;
-  // Session expired or not set — clear and show auth
-  sessionStorage.removeItem(AUTH_SESSION);
-  sessionStorage.removeItem(AUTH_SESSION_EXPIRY);
-  const overlay = document.getElementById('auth-overlay');
-  if (overlay) { overlay.style.display = 'flex'; setTimeout(() => { const p = document.getElementById('auth-password'); if(p) p.focus(); }, 100); }
 }
 
 // ── STRATEGY PAGE ─────────────────────────────────────────────────────────
