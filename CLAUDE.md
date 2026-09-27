@@ -977,3 +977,73 @@ Decision framework: "Do I believe the stock will reverse, and do I have margin t
 - Phase 7: Live broker API layer
 
 #### Status: PLANNING ONLY — no code written yet
+
+---
+
+## Options Terminal — Stock Watchlist (5 Core Sectors)
+
+Portfolio rule: minimum 4 of these 5 sectors active per expiry cycle. Typical: 5-10 stocks.
+
+### Steel
+| Tier | Stock |
+|---|---|
+| Core | JSW Steel |
+| Core | Tata Steel |
+| Core | NMDC |
+| Secondary | Hindalco |
+| Secondary | Vedanta |
+
+### Pharma
+| Tier | Stock |
+|---|---|
+| Core | Sun Pharma |
+| Core | Cipla |
+| Core | Divislab |
+| Secondary | Dr Reddy's |
+| Situational | Aurobindo (earnings plays only) |
+
+### NBFC
+| Tier | Stock |
+|---|---|
+| Core | Bajaj Finserv |
+| Core | Bajaj Finance |
+| Secondary | ICICI Prudential Life |
+| Secondary | HDFC AMC |
+| Secondary | Muthoot Finance |
+
+### Hospitals
+| Tier | Stock |
+|---|---|
+| Core | Apollo Hospitals |
+| Secondary | Max Healthcare |
+
+Note: Hospitals is thin — only 2 liquid F&O stocks. Skip this sector and run other 4 when both look unfavourable.
+
+### Auto
+| Tier | Stock |
+|---|---|
+| Core | Tata Motors |
+| Core | Bajaj Auto |
+| Core | M&M |
+| Secondary | Maruti |
+| Secondary | Hero MotoCorp |
+
+### Outside Core Sectors — Situational Only
+| Stock | Sector | When to trade |
+|---|---|---|
+| ITC | FMCG | High IVP, non-results months |
+| SBI | PSU Bank | User confirmed SBI is acceptable |
+| Infosys | IT | Non-results months only |
+| HUL | FMCG | Very stable, low beta, high IVP only |
+
+### Stocks to Avoid
+| Stock | Reason |
+|---|---|
+| Adani group | Regulatory/news risk — unpredictable wild swings |
+| Zomato / Nykaa | High beta, insufficient earnings history |
+| ONGC / IOC | PSU + crude oil policy risk |
+| Yes Bank | Too volatile, thin options |
+| Any stock < ₹20k crore mcap | Liquidity too thin for safe selling |
+| Reliance | Too many moving factors, expensive options |
+
+Total watchlist: 19 stocks across 5 sectors + 4 situational
