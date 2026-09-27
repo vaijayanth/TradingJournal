@@ -4999,18 +4999,19 @@ function renderDashboard(data, cfg) {
           const barPct  = Math.round(b.capital / maxCapital * 100);
           const lossPct = totalLoss > 0 ? (Math.abs(b.mtmLoss) / totalLoss * 100).toFixed(0) : 0;
           const color   = depthColors[Math.min(i, depthColors.length - 1)];
-          return `<div style="font-size:11px">
-            <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:2px">
-              <span style="font-weight:700;color:${color}">${b.label}</span>
-              <span style="display:flex;gap:10px;align-items:baseline">
-                <span style="color:var(--text-muted)">${b.count} pos · ${b.capital > 0 ? fmtRsShort(b.capital) : '—'}</span>
-                ${b.avgAge > 0 ? `<span style="color:var(--text-muted)">avg ${b.avgAge}d</span>` : ''}
-                <span style="font-weight:800;color:${color}">−${b.mtmLoss < 0 ? fmtRsShort(Math.abs(b.mtmLoss)) : '—'}</span>
-                <span style="font-size:10px;color:var(--text-muted)">${lossPct}% of loss</span>
-              </span>
+          return `<div style="padding:8px 10px;border-radius:8px;background:var(--surface2);border-left:3px solid ${color}">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:5px">
+              <span style="font-size:11px;font-weight:700;color:${color}">${b.label}</span>
+              <span style="font-size:16px;font-weight:900;color:${color}">−${b.mtmLoss < 0 ? fmtRsShort(Math.abs(b.mtmLoss)) : '—'}</span>
             </div>
-            <div style="position:relative;height:6px;background:var(--surface2);border-radius:3px;overflow:hidden">
-              <div style="position:absolute;left:0;top:0;height:100%;width:${barPct}%;background:${color};border-radius:3px;opacity:0.85;transition:width .4s"></div>
+            <div style="display:flex;gap:12px;margin-bottom:5px;font-size:10px;color:var(--text-muted)">
+              <span><b style="color:var(--text-secondary)">${b.count}</b> positions</span>
+              <span><b style="color:var(--text-secondary)">${b.capital > 0 ? fmtRsShort(b.capital) : '—'}</b> deployed</span>
+              ${b.avgAge > 0 ? `<span><b style="color:var(--text-secondary)">${b.avgAge}d</b> avg hold</span>` : ''}
+              <span style="margin-left:auto;color:var(--text-muted)">${lossPct}% of total loss</span>
+            </div>
+            <div style="position:relative;height:4px;background:var(--border);border-radius:2px;overflow:hidden">
+              <div style="position:absolute;left:0;top:0;height:100%;width:${barPct}%;background:${color};border-radius:2px;opacity:0.9"></div>
             </div>
           </div>`;
         }).join('');
