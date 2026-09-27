@@ -3866,15 +3866,23 @@ function renderDashboard(data, cfg) {
       });
 
       // ── Component 2: Open losers resolving ──
-      // WR% recover → exit at avg exit%, (1-WR)% close at avg loss.
+      // Only include losers likely to resolve within 12 months:
+      //   age < 180 days (not deeply stale) OR loss < 15% (not deeply underwater).
+      // Deep old losers (age ≥ 180d AND plPct ≤ −15%) are SST long-holds — unlikely to close in 12m.
       const openLosers = (open || []).filter(t => (t.plPct || 0) <= 0);
+      const resolvableLosers = openLosers.filter(t => {
+        const age = parseInt(t.age || 0);
+        const lossDepth = Math.abs(t.plPct || 0);
+        return age < 180 || lossDepth < 15;
+      });
       let comp2 = 0;
-      openLosers.forEach(t => {
+      resolvableLosers.forEach(t => {
         const size = posSize(t);
         comp2 += size * (wr * avgExitPct - (1 - wr) * avgLossPct);
       });
 
       // ── Component 3: New trades over next 12 months with tier step-ups ──
+      // Use 6-month trailing average for trade frequency (more stable than 3-month).
       const nowKey = new Date().getFullYear() + '-' + String(new Date().getMonth()+1).padStart(2,'0');
       const monthMap = {};
       sortedCl.forEach(t => {
@@ -3885,8 +3893,8 @@ function renderDashboard(data, cfg) {
         monthMap[key]++;
       });
       const allMonthKeys = Object.keys(monthMap).sort();
-      const recentMonths = allMonthKeys.filter(k => k < nowKey).slice(-3);
-      const useMonths = recentMonths.length > 0 ? recentMonths : allMonthKeys.slice(-3);
+      const recentMonths = allMonthKeys.filter(k => k < nowKey).slice(-6);
+      const useMonths = recentMonths.length > 0 ? recentMonths : allMonthKeys.slice(-6);
       const avgTradesPerMonth = useMonths.length > 0
         ? useMonths.reduce((s,k) => s + monthMap[k], 0) / useMonths.length : 5;
 
@@ -3918,9 +3926,11 @@ function renderDashboard(data, cfg) {
       const projBasisEl = document.getElementById('dash-proj-basis');
       if (projValEl)  { projValEl.textContent = fmtV(projectedValue); projValEl.style.color = isPos ? 'var(--green)' : 'var(--red)'; }
       if (projRetEl)  projRetEl.textContent = fmtP(projectedRetPct) + ' on capital · ' + (isPos?'+':'-') + fmtV(projectedGain) + ' gain';
+      const excludedLosers = openLosers.length - resolvableLosers.length;
       if (projBasisEl) projBasisEl.textContent =
         'Open winners ' + fmtV(comp1) + ' · losers ' + fmtV(comp2) + ' · new trades ' + fmtV(comp3)
         + ' · avg exit ' + (avgExitPct * 100).toFixed(1) + '% · WR ' + (wr * 100).toFixed(0) + '%'
+        + (excludedLosers > 0 ? ' · ' + excludedLosers + ' deep loser' + (excludedLosers > 1 ? 's' : '') + ' held (excl.)' : '')
         + (tierChanges > 0 ? ' · ' + tierChanges + ' tier upgrade' + (tierChanges > 1 ? 's' : '') + ' → ' + fmtL(finalTier) + '/trade' : '');
 
       // ── Full Scale Potential ──
