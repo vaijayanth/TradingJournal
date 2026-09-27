@@ -838,6 +838,13 @@ Final order on Dashboard page:
 - F&O goal: ~20% — fine-tune strategy first, then build journal
 - Biggest single improvement available: wire Dhan API for live Nifty + CMPs
 
+## Architecture Note — Modularity (2026-09-27)
+- App is a single 735 KB / 12,117-line HTML file — zero modularity, no imports
+- This is intentional: GitHub Pages static hosting, no build step, works on mobile
+- **Flag for refactor when**: a bug fix breaks unrelated code, file crosses ~900 KB, or renderDashboard/initAnalysisCharts become too large to edit safely
+- Natural split when needed: css/styles.css · js/config.js · js/data.js · js/dashboard.js · js/performance.js · js/analysis.js · js/fno.js · index.html (thin shell)
+- **Do NOT suggest refactor until one of the above triggers is hit**
+
 ## UI Changes Made (2026-09-27 session)
 
 ### Max Positions Alert — Moved to Top of Dashboard
