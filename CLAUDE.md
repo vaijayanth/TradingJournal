@@ -857,3 +857,123 @@ Final order on Dashboard page:
 - Root cause: Apps Script silently skips rows where col E (Stock) or col R (Entry Price) is blank
 - Fix: in Google Sheet, filter col B = "YES" + col R = blank → find and fill the missing entry price row
 - No code change needed in index.html — the app count is always correct per what Apps Script returns
+
+---
+
+## Options Terminal — Separate Project (planned, not started)
+
+### Decision: Build completely separate site
+- Separate repo, separate GitHub Pages URL, separate Google Sheet
+- Current F&O tab in TradingJournal stays as lightweight watchlist only
+- Options terminal is a decision-support tool, NOT another Sensibull/Zerodha
+
+### User's Options Strategy (SST Options — Volatility Selling)
+
+#### Core Identity
+- **Pure option seller** — all trades viewed from selling POV
+- **Probabilistic mindset** — not prediction, not hope. Probability game.
+- **"Profit is inversely proportional to ego"** — nimble adjustments, no fixation
+
+#### Default Trade Structure: Protected Strangle
+- **CE side**: naked sell (call premiums richer, primary income engine)
+- **PE side**: Bull Put Spread — sell PE + buy lower PE (defined downside, margin benefit)
+- **CE/PE ratio**: always ≥1:1, usually CE-heavy (e.g. 5CE:4PE, 3CE:2PE)
+- **Breakeven range target**: >10% on each side
+- **Profit target on margin**: ~10-15% per expiry cycle
+
+#### Entry Rules
+- **Primary signal**: IVP > 70% (fat premium — market overpaying for fear)
+- **RSI modifier**:
+  - RSI > 70 → increase CE lots, sell CE further OTM (stock extended)
+  - RSI < 30 → widen PE spread protection, move toward equal ratio
+  - RSI 40-60 → standard strangle, default CE bias
+- **Timing**: mid-month entry for next month expiry
+- **Never enter expiry week** (gamma risk not worth residual premium)
+- **Strike selection**: OI concentration = support/resistance. Sell CE above max CE OI, sell PE below max PE OI
+- **Consolidation rule**: for ATH/breakout stocks, wait 4-5 days of sideways before entering
+
+#### Preferred Universe
+- **Preferred sectors**: Steel, Pharma, NBFC, Hospitals, Auto
+- **Less preferred**: IT, Banks (SBI ok), Oil & Gas, PSUs, wild midcaps
+- **Preferred stocks**: JSW Steel, Tata Motors, Bajaj Auto, M&M, Bajaj Finserv, Sun Pharma, Cipla, Divislab, Apollo Hospitals, Tata Steel, ICICI PRULI, HDFCAMC, NMDC
+- **Liquidity**: mostly Nifty50, rarely beyond
+- **"Boring" stocks**: stable stocks with temporarily elevated IV. Avoid flashy/wild movers.
+
+#### Portfolio Rules
+- Minimum 4 different setups from 4 different sectors per expiry
+- Typical: 5-10 stocks per expiry cycle
+- Neutral is default — directional bias needs strong conviction
+- Diversification IS the risk management
+
+#### Exit Rules
+- **Profit exit**: 60-70% of max premium collected (lower for infrequent/volatile, higher for stable/frequently traded)
+- **Expiry week**: strictly exit or don't enter — experienced 25% of annual profit wiped in 2 sessions
+- **Loss exit**: see adjustment strategies below
+
+#### Earnings Season — Volatility Crush Trades
+- Enter a few days BEFORE quarterly results
+- Stock movement mostly happens before announcement; IV crush happens after
+- Entry timing: if results before 15th → current expiry; if after 15th → next month expiry
+- RSI > 70 + earnings in 5 days → single CE leg only (pure vega/theta play, not directional)
+- RSI < 30 + strong support + earnings → single PE leg, short duration
+
+#### 4 Adjustment Strategies (when breakeven breached or approached)
+Decision framework: "Do I believe the stock will reverse, and do I have margin to wait?"
+
+**A1 — Strike Roll** (Yes to reversal, constrained margin)
+- Close ITM strike at loss, open 2× new OTM lots to recover premium
+- Cost: near-zero net premium, but margin increases
+- Works when: stock consolidating at new level
+
+**A2 — New Strangle** (Yes to reversal, margin available)
+- Keep original position, add fresh strangle with wider strikes around new CMP
+- Cost: significant additional margin blocked
+- Works when: stock reverses back into original range (HDFCAMC example)
+
+**A3 — Book Loss and Exit** (No to reversal)
+- Close all legs, accept the loss, free the margin
+- No revenge trades, no re-entry in same stock same expiry
+- Works when: strong trend, no reversal signal
+
+**A4 — Second Platform Hedge** (No to reversal but want to offset)
+- Keep original on Platform A (Zerodha), open directional trade on Platform B (Angel/Upstox)
+- Track as single consolidated P&L
+- Margin benefit: two separate margin pools
+- Works when: stock is trending — Platform B profits offset Platform A loss
+
+**A5 — Convert CE to Bear Call Spread** (new, enabled by protected strangle structure)
+- When CE is threatened: buy a higher CE to cap upside loss
+- Converts naked CE to defined-risk spread
+- Frees margin for recovery trades elsewhere
+
+**Adjustment trigger**: CMP approaches/breaches BREAKEVEN RANGE — not individual strike going ITM
+
+#### What the Terminal Must Do (4 decisions only)
+1. **Morning Scan**: which stocks have high IVP + right sector + not expiry week + no imminent earnings conflict
+2. **Trade Setup**: OI levels → breakeven calculator → CE/PE ratio → margin estimate
+3. **Position Monitor**: live breakeven range health per strangle, MTM across platforms consolidated, exit alert at 60-70% profit, breach alert
+4. **Expiry Close**: total premium collected, realized P&L, return on margin, what went wrong
+
+#### What the Terminal Must NOT do
+- Replicate full options chain (broker terminal handles this)
+- Show Greeks dashboard (user doesn't trade Greeks)
+- Algo execution (manual order placement)
+- Backtesting engine
+
+#### Data Sources (planned)
+- **IVP**: NSE Bhavcopy nightly via Apps Script → Google Sheet IV history → computed IVP
+- **Earnings calendar**: NSE event calendar weekly via Apps Script
+- **OI levels**: NSE options chain via Apps Script proxy (on demand)
+- **Live chain/Greeks**: Broker API (Dhan or Upstox) — Phase 2
+- **NIFTY price**: Broker API — Phase 2
+
+#### Build Phases (when started)
+- Phase 1: Google Sheet structure (6 tabs: WATCHLIST, IV_HISTORY, IVP, EARNINGS, POSITIONS, CONFIG)
+- Phase 2: Apps Script — IVP builder (NSE Bhavcopy nightly)
+- Phase 3: Apps Script — Earnings calendar (NSE event calendar weekly)
+- Phase 4: Scanner page (IVP table, sector filter, earnings flag, RSI modifier)
+- Phase 5: Position logger (strangles as units, adjustments, multi-platform P&L)
+- Phase 6: Expiry summary
+- Phase 7: Live broker API layer
+
+#### Status: PLANNING ONLY — no code written yet
