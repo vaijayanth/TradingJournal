@@ -4984,7 +4984,8 @@ function renderDashboard(data, cfg) {
         const group = losers.filter(t => (t.plPct||0) > b.min && (t.plPct||0) <= b.max);
         const capital = group.reduce((s,t) => s + (t.entryPrice||0)*(t.qty||0), 0);
         const mtmLoss = group.reduce((s,t) => s + (t.notionalPl||0), 0);
-        return { ...b, count: group.length, capital, mtmLoss };
+        const avgAge = group.length > 0 ? Math.round(group.reduce((s,t) => s + parseInt(t.age||0), 0) / group.length) : 0;
+        return { ...b, count: group.length, capital, mtmLoss, avgAge };
       }).filter(b => b.count > 0);
 
       if (bucketData.length === 0) {
@@ -5003,6 +5004,7 @@ function renderDashboard(data, cfg) {
               <span style="font-weight:700;color:${color}">${b.label}</span>
               <span style="display:flex;gap:10px;align-items:baseline">
                 <span style="color:var(--text-muted)">${b.count} pos · ${b.capital > 0 ? fmtRsShort(b.capital) : '—'}</span>
+                ${b.avgAge > 0 ? `<span style="color:var(--text-muted)">avg ${b.avgAge}d</span>` : ''}
                 <span style="font-weight:800;color:${color}">−${b.mtmLoss < 0 ? fmtRsShort(Math.abs(b.mtmLoss)) : '—'}</span>
                 <span style="font-size:10px;color:var(--text-muted)">${lossPct}% of loss</span>
               </span>
