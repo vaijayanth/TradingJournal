@@ -1031,8 +1031,13 @@ tbody tr:hover { filter: brightness(0.97); }
           <div style="font-size:11px;color:var(--text-muted);margin-top:1px">open positions</div>
         </div>
       </div>
-      <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-size:10px;color:var(--text-muted)">
-        <span id="dash-closed">—</span> closed trades &nbsp;·&nbsp; <span id="dash-win-count-foot"></span>W / <span id="dash-loss-count-foot"></span>L
+      <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border);font-size:10px;color:var(--text-muted);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:4px">
+        <span><span id="dash-closed">—</span> closed trades &nbsp;·&nbsp; <span id="dash-win-count-foot"></span>W / <span id="dash-loss-count-foot"></span>L</span>
+        <span style="display:flex;align-items:baseline;gap:4px">
+          <span style="text-transform:uppercase;letter-spacing:.05em;font-weight:700">Avg/Month:</span>
+          <span id="dash-avg-trades-month" style="font-size:13px;font-weight:800;color:var(--accent)">—</span>
+          <span>trades</span>
+        </span>
       </div>
       <!-- Next tier progress -->
       <div style="margin-top:8px" id="dash-tier-progress-wrap">
@@ -3991,6 +3996,20 @@ function renderDashboard(data, cfg) {
   set('dash-loss-count', dLosses.length);
   set('dash-win-count-foot', dWins.length);
   set('dash-loss-count-foot', dLosses.length);
+
+  // Avg closed trades per month
+  try {
+    if (closed.length > 0) {
+      const tradeDates = closed.map(t => parseDate(t.closeDate)).filter(d => !isNaN(d));
+      if (tradeDates.length > 0) {
+        const minD = new Date(Math.min(...tradeDates));
+        const maxD = new Date(Math.max(...tradeDates));
+        const monthSpan = (maxD.getFullYear() - minD.getFullYear()) * 12 + (maxD.getMonth() - minD.getMonth()) + 1;
+        const avgPerMonth = (closed.length / monthSpan).toFixed(1);
+        set('dash-avg-trades-month', avgPerMonth);
+      }
+    }
+  } catch(e) {}
   const avgWinPct = dWins.length > 0 ? dWins.reduce((s,t) => s + t.finalPlPct, 0) / dWins.length : 0;
   const avgWinEl = document.getElementById('dash-avg-win');
   if (avgWinEl) { avgWinEl.textContent = dWins.length > 0 ? '+' + avgWinPct.toFixed(1) + '%' : '—'; avgWinEl.style.color = 'var(--green)'; }
@@ -7149,6 +7168,7 @@ function renderDashCalendar(closed) {
 
     const mKey = `${year}-${month}`;
     const mTrades = (monthTradeMap[mKey] || []).sort((a,b) => parseDate(a.date)-parseDate(b.date));
+    const mTradeCount = mTrades.length;
     const tradeJson = JSON.stringify(mTrades).replace(/"/g, '&quot;');
 
     const isDark2 = document.documentElement.getAttribute('data-theme') === 'dark' ||
@@ -7207,7 +7227,10 @@ function renderDashCalendar(closed) {
            onmouseenter="showCalMonthPopup(this,event)" onmouseleave="hideCalMonthPopup()"
            style="display:flex;align-items:baseline;justify-content:space-between;margin-bottom:8px;cursor:pointer;padding:2px 0">
         <span style="font-size:13px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-secondary)">${months[month]} ${year}</span>
-        <span style="font-size:16px;font-weight:800;color:${plColor}">${plShort}</span>
+        <span style="display:flex;align-items:baseline;gap:8px">
+          ${mTradeCount > 0 ? `<span style="font-size:11px;font-weight:600;color:var(--text-muted)">${mTradeCount} trade${mTradeCount>1?'s':''}</span>` : ''}
+          <span style="font-size:16px;font-weight:800;color:${plColor}">${plShort}</span>
+        </span>
       </div>
       <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:5px">${cellsHtml}</div>
     </div>`;
