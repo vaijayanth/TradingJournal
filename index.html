@@ -893,17 +893,28 @@ tbody tr:hover { filter: brightness(0.97); }
       </div>
       <div style="font-size:11px;color:var(--text-muted);margin-top:4px" id="dash-realised-breakdown">—</div>
       <div class="stat-badge badge-green" id="dash-pv-badge" style="margin-top:8px">—</div>
-      <div id="dash-projection" style="display:none;margin-top:10px;padding:8px 10px;border-radius:8px;background:var(--surface2);border:1px solid var(--border)">
-        <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-bottom:4px">📈 12-Month Projection</div>
-        <div style="display:flex;align-items:baseline;gap:6px;flex-wrap:wrap">
-          <span style="font-size:18px;font-weight:800;color:var(--accent)" id="dash-proj-value">—</span>
-          <span style="font-size:11px;color:var(--text-muted)" id="dash-proj-return">—</span>
+      <div id="dash-projection" style="display:none;margin-top:12px">
+        <!-- Top row: projection value (half) + gain breakdown (half) -->
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:8px">
+          <div style="padding:12px 14px;border-radius:10px;background:var(--surface2);border:1px solid var(--accent);border-left:3px solid var(--accent)">
+            <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--accent);margin-bottom:6px">📈 12-Month Projection</div>
+            <div style="font-size:26px;font-weight:900;line-height:1;letter-spacing:-.01em" id="dash-proj-value">—</div>
+            <div style="font-size:11px;font-weight:600;margin-top:5px" id="dash-proj-return">—</div>
+          </div>
+          <div style="padding:12px 14px;border-radius:10px;background:var(--surface2);border:1px solid var(--border)">
+            <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-bottom:8px">Gain Breakdown</div>
+            <div style="display:flex;flex-direction:column;gap:5px" id="dash-proj-breakdown">
+              <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text-muted)">Open winners</span><span id="dash-pb-winners" style="font-weight:700;color:var(--green)">—</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text-muted)">Open losers</span><span id="dash-pb-losers" style="font-weight:700">—</span></div>
+              <div style="display:flex;justify-content:space-between;font-size:11px"><span style="color:var(--text-muted)">New trades</span><span id="dash-pb-new" style="font-weight:700;color:var(--accent)">—</span></div>
+            </div>
+            <div style="font-size:10px;color:var(--text-muted);margin-top:7px;padding-top:6px;border-top:1px solid var(--border)" id="dash-proj-basis">—</div>
+          </div>
         </div>
-        <div style="font-size:10px;color:var(--text-muted);margin-top:3px" id="dash-proj-basis">—</div>
         <!-- Full Scale Potential -->
-        <div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border)">
-          <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-bottom:5px">🚀 Full Scale Potential (same WR &amp; pace)</div>
-          <div style="display:flex;flex-direction:column;gap:4px" id="dash-proj-scale"></div>
+        <div style="padding:10px 14px;border-radius:10px;background:var(--surface2);border:1px solid var(--border)">
+          <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-bottom:7px">🚀 Full Scale Potential (same WR &amp; pace)</div>
+          <div style="display:flex;flex-direction:column;gap:5px" id="dash-proj-scale"></div>
         </div>
       </div>
     </div>
@@ -3924,13 +3935,19 @@ function renderDashboard(data, cfg) {
       const projValEl   = document.getElementById('dash-proj-value');
       const projRetEl   = document.getElementById('dash-proj-return');
       const projBasisEl = document.getElementById('dash-proj-basis');
-      if (projValEl)  { projValEl.textContent = fmtV(projectedValue); projValEl.style.color = isPos ? 'var(--green)' : 'var(--red)'; }
-      if (projRetEl)  projRetEl.textContent = fmtP(projectedRetPct) + ' on capital · ' + (isPos?'+':'-') + fmtV(projectedGain) + ' gain';
+      const pbWin = document.getElementById('dash-pb-winners');
+      const pbLos = document.getElementById('dash-pb-losers');
+      const pbNew = document.getElementById('dash-pb-new');
       const excludedLosers = openLosers.length - resolvableLosers.length;
+
+      if (projValEl)  { projValEl.textContent = fmtV(projectedValue); projValEl.style.color = isPos ? 'var(--green)' : 'var(--red)'; }
+      if (projRetEl)  { projRetEl.textContent = fmtP(projectedRetPct) + ' on capital · ' + (isPos?'+':'-') + fmtV(projectedGain) + ' gain'; projRetEl.style.color = isPos ? 'var(--green)' : 'var(--red)'; }
+      if (pbWin) pbWin.textContent = '+' + fmtV(comp1);
+      if (pbLos) { pbLos.textContent = (comp2 >= 0 ? '+' : '-') + fmtV(comp2); pbLos.style.color = comp2 >= 0 ? 'var(--green)' : 'var(--amber)'; }
+      if (pbNew) pbNew.textContent = '+' + fmtV(comp3);
       if (projBasisEl) projBasisEl.textContent =
-        'Open winners ' + fmtV(comp1) + ' · losers ' + fmtV(comp2) + ' · new trades ' + fmtV(comp3)
-        + ' · avg exit ' + (avgExitPct * 100).toFixed(1) + '% · WR ' + (wr * 100).toFixed(0) + '%'
-        + (excludedLosers > 0 ? ' · ' + excludedLosers + ' deep loser' + (excludedLosers > 1 ? 's' : '') + ' held (excl.)' : '')
+        'Avg exit ' + (avgExitPct * 100).toFixed(1) + '% · WR ' + (wr * 100).toFixed(0) + '%'
+        + (excludedLosers > 0 ? ' · ' + excludedLosers + ' deep loser' + (excludedLosers > 1 ? 's' : '') + ' held (SST)' : '')
         + (tierChanges > 0 ? ' · ' + tierChanges + ' tier upgrade' + (tierChanges > 1 ? 's' : '') + ' → ' + fmtL(finalTier) + '/trade' : '');
 
       // ── Full Scale Potential ──
