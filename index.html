@@ -881,7 +881,7 @@ tbody tr:hover { filter: brightness(0.97); }
   </div>
 
   <!-- ① KPI ROW -->
-  <div class="grid-3" style="gap:14px">
+  <div class="grid-2" style="gap:14px">
 
     <!-- Portfolio Value — HERO card -->
     <div class="card card-sm" style="border-left:3px solid var(--accent)">
@@ -915,77 +915,6 @@ tbody tr:hover { filter: brightness(0.97); }
         <div style="padding:10px 14px;border-radius:10px;background:var(--surface2);border:1px solid var(--border)">
           <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted);margin-bottom:7px">🚀 Full Scale Potential (same WR &amp; pace)</div>
           <div style="display:flex;flex-direction:column;gap:5px" id="dash-proj-scale"></div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Open Book -->
-    <div class="card card-sm">
-      <div class="stat-label">Open Book</div>
-      <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px 14px;margin-top:10px">
-        <div>
-          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Total Open</div>
-          <div style="font-size:28px;font-weight:800;line-height:1.05" id="dash-open">—</div>
-          <div style="font-size:11px;color:var(--text-muted);margin-top:1px"><span style="color:var(--green);font-weight:600" id="dash-open-profitable">—</span> profit · <span style="color:var(--red);font-weight:600" id="dash-open-losing">—</span> loss</div>
-        </div>
-        <div>
-          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">At Target ≥<span id="dash-target-pct-lbl">7</span>%</div>
-          <div style="font-size:28px;font-weight:800;line-height:1.05;color:var(--green)" id="dash-at-target">—</div>
-          <div style="font-size:11px;color:var(--text-muted);margin-top:1px">trail GTT up now</div>
-        </div>
-        <div>
-          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Book Health</div>
-          <div style="font-size:18px;font-weight:700;line-height:1.1" id="dash-open-pct-profitable">—</div>
-          <div style="font-size:11px;color:var(--text-muted);margin-top:1px">in profit · target ≥60%</div>
-        </div>
-        <div>
-          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Unrealised MTM</div>
-          <div style="font-size:18px;font-weight:700;line-height:1.1" id="dash-sys-exp">—</div>
-          <div style="font-size:11px;color:var(--text-muted);margin-top:1px" id="dash-sys-exp-sub">total open book</div>
-        </div>
-        <div>
-          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Avg Hold (Open)</div>
-          <div style="font-size:18px;font-weight:700;line-height:1.1" id="dash-open-avg-hold">—</div>
-          <div style="font-size:11px;color:var(--text-muted);margin-top:1px">days · all open positions</div>
-        </div>
-        <div>
-          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Deployed Capital</div>
-          <div style="font-size:18px;font-weight:700;line-height:1.1" id="dash-deployed-capital">—</div>
-          <div style="font-size:11px;color:var(--text-muted);margin-top:1px" id="dash-deployed-capital-sub">active positions</div>
-        </div>
-        <div>
-          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Avg Gain (Open)</div>
-          <div style="font-size:18px;font-weight:700;line-height:1.1;color:var(--green)" id="dash-open-avg-gain">—</div>
-          <div style="font-size:11px;color:var(--text-muted);margin-top:1px" id="dash-open-avg-gain-sub">profitable positions</div>
-        </div>
-        <div>
-          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Avg Loss (Open)</div>
-          <div style="font-size:18px;font-weight:700;line-height:1.1;color:var(--red)" id="dash-open-avg-loss">—</div>
-          <div style="font-size:11px;color:var(--text-muted);margin-top:1px" id="dash-open-avg-loss-sub">losing positions</div>
-        </div>
-        <div>
-          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Best Open</div>
-          <div style="font-size:18px;font-weight:700;line-height:1.1;color:var(--green)" id="dash-open-best-pct">—</div>
-          <div style="font-size:11px;color:var(--text-muted);margin-top:1px;font-weight:600" id="dash-open-best-stock"></div>
-        </div>
-        <div>
-          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Worst Open</div>
-          <div style="font-size:18px;font-weight:700;line-height:1.1;color:var(--red)" id="dash-open-worst-pct">—</div>
-          <div style="font-size:11px;color:var(--text-muted);margin-top:1px;font-weight:600" id="dash-open-worst-stock"></div>
-        </div>
-      </div>
-      <div style="margin-top:10px;height:4px;border-radius:3px;background:var(--surface2);overflow:hidden">
-        <div id="dash-health-bar" style="height:100%;border-radius:3px;transition:width 0.4s"></div>
-      </div>
-      <div class="stat-badge" id="dash-health-badge" style="margin-top:7px">—</div>
-      <!-- Loss distribution — visual bars -->
-      <div style="margin-top:10px;border-top:1px solid var(--border);padding-top:8px">
-        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
-          <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted)">Open Positions — Loss Buckets</div>
-          <div style="font-size:10px;color:var(--text-muted)">bar = capital at risk</div>
-        </div>
-        <div id="dash-loss-buckets-tbody" style="display:flex;flex-direction:column;gap:5px">
-          <div style="color:var(--text-muted);font-size:11px">—</div>
         </div>
       </div>
     </div>
@@ -1051,6 +980,82 @@ tbody tr:hover { filter: brightness(0.97); }
         </div>
         <div style="height:4px;background:var(--surface2);border-radius:2px;overflow:hidden">
           <div id="dash-tier-bar" style="height:100%;background:var(--accent);border-radius:2px;transition:width .4s;width:0%"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- OPEN BOOK — full-width card below KPI row -->
+  <div class="card card-sm" style="margin-top:14px">
+    <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px">
+      <div class="stat-label" style="margin:0">Open Book</div>
+      <div style="height:4px;flex:1;max-width:180px;margin-left:12px;border-radius:3px;background:var(--surface2);overflow:hidden">
+        <div id="dash-health-bar" style="height:100%;border-radius:3px;transition:width 0.4s"></div>
+      </div>
+      <div class="stat-badge" id="dash-health-badge" style="margin-left:10px">—</div>
+    </div>
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:14px">
+      <!-- Left: stats grid -->
+      <div style="display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px 14px">
+        <div>
+          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Total Open</div>
+          <div style="font-size:28px;font-weight:800;line-height:1.05" id="dash-open">—</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:1px"><span style="color:var(--green);font-weight:600" id="dash-open-profitable">—</span> profit · <span style="color:var(--red);font-weight:600" id="dash-open-losing">—</span> loss</div>
+        </div>
+        <div>
+          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">At Target ≥<span id="dash-target-pct-lbl">7</span>%</div>
+          <div style="font-size:28px;font-weight:800;line-height:1.05;color:var(--green)" id="dash-at-target">—</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:1px">trail GTT up now</div>
+        </div>
+        <div>
+          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Book Health</div>
+          <div style="font-size:28px;font-weight:800;line-height:1.05" id="dash-open-pct-profitable">—</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:1px">in profit · target ≥60%</div>
+        </div>
+        <div>
+          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Unrealised MTM</div>
+          <div style="font-size:18px;font-weight:700;line-height:1.1" id="dash-sys-exp">—</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:1px" id="dash-sys-exp-sub">total open book</div>
+        </div>
+        <div>
+          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Avg Hold (Open)</div>
+          <div style="font-size:18px;font-weight:700;line-height:1.1" id="dash-open-avg-hold">—</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:1px">days · all open positions</div>
+        </div>
+        <div>
+          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Deployed Capital</div>
+          <div style="font-size:18px;font-weight:700;line-height:1.1" id="dash-deployed-capital">—</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:1px" id="dash-deployed-capital-sub">active positions</div>
+        </div>
+        <div>
+          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Avg Gain (Open)</div>
+          <div style="font-size:18px;font-weight:700;line-height:1.1;color:var(--green)" id="dash-open-avg-gain">—</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:1px" id="dash-open-avg-gain-sub">profitable positions</div>
+        </div>
+        <div>
+          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Avg Loss (Open)</div>
+          <div style="font-size:18px;font-weight:700;line-height:1.1;color:var(--red)" id="dash-open-avg-loss">—</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:1px" id="dash-open-avg-loss-sub">losing positions</div>
+        </div>
+        <div>
+          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Best Open</div>
+          <div style="font-size:18px;font-weight:700;line-height:1.1;color:var(--green)" id="dash-open-best-pct">—</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:1px;font-weight:600" id="dash-open-best-stock"></div>
+        </div>
+        <div style="grid-column:span 2">
+          <div style="font-size:9px;color:var(--text-muted);font-weight:700;text-transform:uppercase;letter-spacing:.05em">Worst Open</div>
+          <div style="font-size:18px;font-weight:700;line-height:1.1;color:var(--red)" id="dash-open-worst-pct">—</div>
+          <div style="font-size:11px;color:var(--text-muted);margin-top:1px;font-weight:600" id="dash-open-worst-stock"></div>
+        </div>
+      </div>
+      <!-- Right: loss buckets -->
+      <div style="border-left:1px solid var(--border);padding-left:14px">
+        <div style="display:flex;justify-content:space-between;align-items:baseline;margin-bottom:8px">
+          <div style="font-size:9px;font-weight:700;text-transform:uppercase;letter-spacing:.06em;color:var(--text-muted)">Loss Buckets</div>
+          <div style="font-size:10px;color:var(--text-muted)">bar = capital at risk</div>
+        </div>
+        <div id="dash-loss-buckets-tbody" style="display:flex;flex-direction:column;gap:5px">
+          <div style="color:var(--text-muted);font-size:11px">—</div>
         </div>
       </div>
     </div>
