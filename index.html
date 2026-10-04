@@ -1443,12 +1443,12 @@ tbody tr:hover { filter: brightness(0.97); }
       <div style="padding:14px 16px;border-right:1px solid var(--border)">
         <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em">MAX DRAWDOWN</div>
         <div id="ds-max-dd" style="font-size:22px;font-weight:800;margin-top:4px">—</div>
-        <div style="font-size:11px;color:var(--text-muted);margin-top:2px">closed equity peak-to-trough</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px">Realised · <span id="ds-max-dd-combined" style="color:var(--text-muted)">—</span> combined</div>
       </div>
       <div style="padding:14px 16px;border-right:1px solid var(--border)">
         <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em">CALMAR RATIO</div>
         <div id="ds-calmar" style="font-size:22px;font-weight:800;margin-top:4px">—</div>
-        <div style="font-size:11px;color:var(--text-muted);margin-top:2px">CAGR ÷ max drawdown</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px">Realised · <span id="ds-calmar-combined" style="color:var(--text-muted)">—</span> combined</div>
       </div>
       <div style="padding:14px 16px">
         <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em">AVG HOLD</div>
@@ -5654,20 +5654,43 @@ function renderDashCharts(open, closed, cfg, portfolioValue, initialCapital) {
     const avgLossPct = losses.length > 0 ? losses.reduce((s,t)=>s+Math.abs(t.finalPlPct||0),0)/losses.length : 0;
     const avgDur = allTrades.length > 0 ? allTrades.reduce((s,t)=>s+parseInt(t.age||0),0)/allTrades.length : 0;
     const closedWR = closed.length > 0 ? wins.length / closed.length * 100 : 0;
-    // CAGR from first trade date
+    // CAGR — two versions: realised-only and combined (realised + open MTM)
     const dates = allTrades.map(t=>parseDate(t.openDate)).filter(d=>d&&d.getFullYear()>2000).sort((a,b)=>a-b);
     const numYears = dates.length > 0 ? (new Date() - dates[0]) / (365.25*24*3600*1000) : 1;
-    const totalReturn = initialCapital > 0 ? (portfolioValue - initialCapital) / initialCapital : 0;
-    const cagr = numYears > 0 ? (Math.pow(1 + totalReturn, 1/numYears) - 1) * 100 : 0;
-    // Max drawdown from closed equity curve
-    let eq = 0, peak = 0, maxDD = 0;
+    // Realised only
+    const totalReturnR = initialCapital > 0 ? (portfolioValue - initialCapital) / initialCapital : 0;
+    const cagrR = numYears > 0 ? (Math.pow(1 + totalReturnR, 1/numYears) - 1) * 100 : 0;
+    // Combined (realised + open MTM)
+    const combinedValue = portfolioValue + totalOpenMTM;
+    const totalReturnC = initialCapital > 0 ? (combinedValue - initialCapital) / initialCapital : 0;
+    const cagrC = numYears > 0 ? (Math.pow(1 + totalReturnC, 1/numYears) - 1) * 100 : 0;
+    // Max drawdown — two versions
+    // Realised-only DD (closed equity path)
+    let eq = 0, peak = 0, maxDDR = 0;
     [...closed].sort((a,b)=>parseDate(a.closeDate)-parseDate(b.closeDate)).forEach(t => {
       eq += t.finalPl||0;
       if (eq > peak) peak = eq;
       const dd = peak > 0 ? (peak - eq) / peak * 100 : 0;
-      if (dd > maxDD) maxDD = dd;
+      if (dd > maxDDR) maxDDR = dd;
     });
-    const calmar = maxDD > 0 ? cagr / maxDD : 0;
+    // Combined DD (closed equity path extended by current open MTM)
+    let eqC = 0, peakC = 0, maxDDC = 0;
+    [...closed].sort((a,b)=>parseDate(a.closeDate)-parseDate(b.closeDate)).forEach(t => {
+      eqC += t.finalPl||0;
+      if (eqC > peakC) peakC = eqC;
+      const dd = peakC > 0 ? (peakC - eqC) / peakC * 100 : 0;
+      if (dd > maxDDC) maxDDC = dd;
+    });
+    // Extend combined path with current open MTM
+    const eqCFinal = eqC + totalOpenMTM;
+    if (eqCFinal < eqC && peakC > 0) {
+      const dd = (peakC - eqCFinal) / peakC * 100;
+      if (dd > maxDDC) maxDDC = dd;
+    }
+    const maxDD = maxDDR; // keep for legacy compatibility
+    const calmarR = maxDDR > 0 ? cagrR / maxDDR : 0;
+    const calmarC = maxDDC > 0 ? cagrC / maxDDC : 0;
+    const cagr = cagrR; // keep for legacy compatibility
 
     const fmtL = v => {
       const abs = Math.abs(v);
@@ -5681,14 +5704,14 @@ function renderDashCharts(open, closed, cfg, portfolioValue, initialCapital) {
 
     sc('ds-initial-cap', fmtL(initialCapital));
     sc('ds-current-val', fmtL(portfolioValue));
-    document.getElementById('ds-current-sub') && (document.getElementById('ds-current-sub').textContent = `${totalReturn>=0?'+':''}${(totalReturn*100).toFixed(1)}% vs initial`);
+    document.getElementById('ds-current-sub') && (document.getElementById('ds-current-sub').textContent = `${totalReturnR>=0?'+':''}${(totalReturnR*100).toFixed(1)}% realised vs initial`);
 
-    const retStr = (totalReturn>=0?'+':'') + (totalReturn*100).toFixed(2) + '%';
-    sc('ds-total-return', retStr, totalReturn >= 0 ? G : R);
-    document.getElementById('ds-total-return-sub') && (document.getElementById('ds-total-return-sub').textContent = `${numYears.toFixed(1)}y active · realised`);
+    const retStr = (totalReturnR>=0?'+':'') + (totalReturnR*100).toFixed(2) + '%';
+    sc('ds-total-return', retStr, totalReturnR >= 0 ? G : R);
+    document.getElementById('ds-total-return-sub') && (document.getElementById('ds-total-return-sub').textContent = `${numYears.toFixed(1)}y active · realised only`);
 
-    sc('ds-cagr', (cagr>=0?'+':'') + cagr.toFixed(1) + '%', cagr >= 15 ? G : cagr >= 0 ? A : R);
-    document.getElementById('ds-cagr-sub') && (document.getElementById('ds-cagr-sub').textContent = `${numYears.toFixed(1)}y compound annual`);
+    sc('ds-cagr', (cagrR>=0?'+':'') + cagrR.toFixed(1) + '%', cagrR >= 15 ? G : cagrR >= 0 ? A : R);
+    document.getElementById('ds-cagr-sub') && (document.getElementById('ds-cagr-sub').textContent = `${numYears.toFixed(1)}y · realised · ${(cagrC>=0?'+':'')+cagrC.toFixed(1)}% combined`);
 
     sc('ds-wr', closedWR.toFixed(1) + '%', closedWR >= 70 ? G : closedWR >= 50 ? A : R);
     document.getElementById('ds-wr-sub') && (document.getElementById('ds-wr-sub').textContent = `${wins.length}W · ${losses.length}L · target ≥70%`);
@@ -5704,9 +5727,13 @@ function renderDashCharts(open, closed, cfg, portfolioValue, initialCapital) {
     sc('ds-wl-ratio', wlRatio.toFixed(2) + '×', wlRatio >= 1.5 ? G : wlRatio >= 1 ? A : R);
     document.getElementById('ds-wl-ratio-sub') && (document.getElementById('ds-wl-ratio-sub').textContent = `${fmtL(avgWin)} ÷ ${fmtL(avgLoss)}`);
 
-    sc('ds-max-dd', maxDD.toFixed(1) + '%', maxDD < 15 ? G : maxDD < 30 ? A : R);
+    sc('ds-max-dd', maxDDR.toFixed(1) + '%', maxDDR < 15 ? G : maxDDR < 30 ? A : R);
+    const ddCEl = document.getElementById('ds-max-dd-combined');
+    if (ddCEl) { ddCEl.textContent = maxDDC.toFixed(1) + '%'; ddCEl.style.color = maxDDC < 15 ? G : maxDDC < 30 ? A : R; }
 
-    sc('ds-calmar', calmar.toFixed(2), calmar >= 0.5 ? G : A);
+    sc('ds-calmar', calmarR.toFixed(2), calmarR >= 0.5 ? G : A);
+    const calmarCEl = document.getElementById('ds-calmar-combined');
+    if (calmarCEl) { calmarCEl.textContent = calmarC.toFixed(2); calmarCEl.style.color = calmarC >= 0.5 ? G : A; }
 
     sc('ds-avg-hold', Math.round(avgDur) + 'd');
     document.getElementById('ds-avg-hold-sub') && (document.getElementById('ds-avg-hold-sub').textContent = `${allTrades.length} trades total`);
