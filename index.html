@@ -1433,7 +1433,7 @@ tbody tr:hover { filter: brightness(0.97); }
         <div style="font-size:11px;color:var(--text-muted);margin-top:2px">losses held open per SST</div>
       </div>
     </div>
-    <!-- Row 3: Trade counts & risk -->
+    <!-- Row 3: Risk & hold -->
     <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));border-bottom:1px solid var(--border)">
       <div style="padding:14px 16px;border-right:1px solid var(--border)">
         <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em">WIN:LOSS ₹ RATIO</div>
@@ -1443,17 +1443,17 @@ tbody tr:hover { filter: brightness(0.97); }
       <div style="padding:14px 16px;border-right:1px solid var(--border)">
         <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em">MAX DRAWDOWN</div>
         <div id="ds-max-dd" style="font-size:22px;font-weight:800;margin-top:4px">—</div>
-        <div style="font-size:11px;color:var(--text-muted);margin-top:2px">Realised · <span id="ds-max-dd-combined" style="color:var(--text-muted)">—</span> combined</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px">Realised · <span id="ds-max-dd-combined">—</span> combined · Calmar <span id="ds-calmar" style="font-weight:700">—</span></div>
       </div>
       <div style="padding:14px 16px;border-right:1px solid var(--border)">
-        <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em">CALMAR RATIO</div>
-        <div id="ds-calmar" style="font-size:22px;font-weight:800;margin-top:4px">—</div>
-        <div style="font-size:11px;color:var(--text-muted);margin-top:2px">Realised · <span id="ds-calmar-combined" style="color:var(--text-muted)">—</span> combined</div>
+        <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em">AVG LOSER HOLD</div>
+        <div id="ds-avg-loss-hold" style="font-size:22px;font-weight:800;margin-top:4px;color:var(--text-primary)">—</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px">days · SST: losers held long = ✓</div>
       </div>
       <div style="padding:14px 16px">
-        <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em">AVG HOLD</div>
-        <div id="ds-avg-hold" style="font-size:22px;font-weight:800;margin-top:4px;color:var(--text-primary)">—</div>
-        <div id="ds-avg-hold-sub" style="font-size:11px;color:var(--text-muted);margin-top:2px">all trades</div>
+        <div style="font-size:10px;font-weight:700;color:var(--text-muted);text-transform:uppercase;letter-spacing:.06em">AVG WINNER HOLD</div>
+        <div id="ds-avg-win-hold" style="font-size:22px;font-weight:800;margin-top:4px;color:var(--text-primary)">—</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px">days · GTT trailing active</div>
       </div>
     </div>
     <!-- Row 4: Trade counts footer -->
@@ -5730,10 +5730,14 @@ function renderDashCharts(open, closed, cfg, portfolioValue, initialCapital) {
     sc('ds-max-dd', maxDDR.toFixed(1) + '%', maxDDR < 15 ? G : maxDDR < 30 ? A : R);
     const ddCEl = document.getElementById('ds-max-dd-combined');
     if (ddCEl) { ddCEl.textContent = maxDDC.toFixed(1) + '%'; ddCEl.style.color = maxDDC < 15 ? G : maxDDC < 30 ? A : R; }
-
     sc('ds-calmar', calmarR.toFixed(2), calmarR >= 0.5 ? G : A);
-    const calmarCEl = document.getElementById('ds-calmar-combined');
-    if (calmarCEl) { calmarCEl.textContent = calmarC.toFixed(2); calmarCEl.style.color = calmarC >= 0.5 ? G : A; }
+
+    // Avg loser hold / avg winner hold
+    const closedLosses = closed.filter(t => (t.finalPl||0) < 0);
+    const avgLossHold = closedLosses.length > 0 ? Math.round(closedLosses.reduce((s,t)=>s+parseInt(t.age||0),0)/closedLosses.length) : 0;
+    const avgWinHold  = wins.length > 0 ? Math.round(wins.reduce((s,t)=>s+parseInt(t.age||0),0)/wins.length) : 0;
+    sc('ds-avg-loss-hold', avgLossHold > 0 ? avgLossHold + 'd' : '—', avgLossHold >= avgWinHold ? G : A);
+    sc('ds-avg-win-hold',  avgWinHold  > 0 ? avgWinHold  + 'd' : '—');
 
     sc('ds-avg-hold', Math.round(avgDur) + 'd');
     document.getElementById('ds-avg-hold-sub') && (document.getElementById('ds-avg-hold-sub').textContent = `${allTrades.length} trades total`);
