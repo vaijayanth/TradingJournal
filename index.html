@@ -3847,7 +3847,10 @@ function renderDashboard(data, cfg) {
       const allLosses = sortedCl.filter(t => (t.finalPl || 0) <= 0);
       const recent30  = sortedCl.slice(-30);
       const wins30    = recent30.filter(t => (t.finalPl || 0) > 0);
-      const wr        = recent30.length > 0 ? wins30.length / recent30.length : 0.7;
+      const wrAllTime = allWins.length / sortedCl.length;
+      const wrLast30  = recent30.length > 0 ? wins30.length / recent30.length : wrAllTime;
+      // Use all-time WR as primary — last 30 can be on a hot/cold streak and distort projections
+      const wr        = wrAllTime;
 
       // Strategy: winners exit at minimum 6% (GTT trail from 7% profit locks 6% floor).
       // Avg exit% from closed winners reflects the true distribution — floor 6%, some trail much higher.
@@ -3944,7 +3947,8 @@ function renderDashboard(data, cfg) {
       if (pbLos) { pbLos.textContent = (comp2 >= 0 ? '+' : '-') + fmtV(comp2); pbLos.style.color = comp2 >= 0 ? 'var(--green)' : 'var(--amber)'; }
       if (pbNew) pbNew.textContent = '+' + fmtV(comp3);
       if (projBasisEl) projBasisEl.textContent =
-        'Avg exit ' + (avgExitPct * 100).toFixed(1) + '% · WR ' + (wr * 100).toFixed(0) + '%'
+        'Avg exit ' + (avgExitPct * 100).toFixed(1) + '% · WR ' + (wrAllTime * 100).toFixed(0) + '% all-time'
+        + ' (' + (wrLast30 * 100).toFixed(0) + '% last 30)'
         + (excludedLosers > 0 ? ' · ' + excludedLosers + ' deep loser' + (excludedLosers > 1 ? 's' : '') + ' held (SST)' : '')
         + (tierChanges > 0 ? ' · ' + tierChanges + ' tier upgrade' + (tierChanges > 1 ? 's' : '') + ' → ' + fmtL(finalTier) + '/trade' : '');
 
