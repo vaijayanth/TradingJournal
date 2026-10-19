@@ -870,27 +870,38 @@ Final order on Dashboard page:
 ### User's Options Strategy (SST Options — Volatility Selling)
 
 #### Core Identity
-- **Pure option seller** — all trades viewed from selling POV
+- **Pure option seller** — all trades viewed from selling POV. Option writing is a probability game, not a prediction game; the "predict then pray/hope" cycle is for option buyers.
 - **Probabilistic mindset** — not prediction, not hope. Probability game.
-- **"Profit is inversely proportional to ego"** — nimble adjustments, no fixation
+- **"Profit is inversely proportional to ego"** — nimble adjustments, no fixation. Biggest losses come from unyielding/unbending responses to a specific trade — but constant churning/flipping isn't the fix either; adjustments are driven by revised risk assessment, not emotion.
+- **Avoid fixation with a particular stock/trade.**
+- **Consistent low-return simple setups > high-return "bets."** Focus on higher probability of winning over winning big. Diversification (sector + strategy) is the mechanism that makes this work.
+- **Avoid revenge trades and overtrading.**
+- **Continuous learner** — "always a student of the markets... even if you're a profitable trader," but mastery is useless without returns to show for it.
+- **Riding profits is the hard part** — especially when a trade turns from a big loss back to green. Needs a fresh assessment each time: keep riding, or book the (possibly small/zero) profit and move on.
 
-#### Default Trade Structure: Protected Strangle
-- **CE side**: naked sell (call premiums richer, primary income engine)
-- **PE side**: Bull Put Spread — sell PE + buy lower PE (defined downside, margin benefit)
-- **CE/PE ratio**: always ≥1:1, usually CE-heavy (e.g. 5CE:4PE, 3CE:2PE)
-- **Breakeven range target**: >10% on each side
-- **Profit target on margin**: ~10-15% per expiry cycle
+#### Default Trade Structure: Bidirectional Strangle (naked both legs — NOT a defined-risk spread)
+**Correction (2026-09-27): earlier notes here described the PE side as a Bull Put Spread with a bought hedge leg. The source strategy document does not describe a hedge leg anywhere — both CE and PE legs are sold naked, and downside protection comes from adjustment technique (strike rolling, new strangles, multi-platform hedging — see below), not a pre-built spread. Corrected below; flag if this doesn't match actual practice.**
+- **Bias**: sell CE first, then sell PE lots based on subsequent stock movement/premium/breakeven — not always simultaneous.
+- **CE side**: naked sell — call premiums are generally richer for a given breakeven range, so CE is the primary/first leg.
+- **PE side**: naked sell — added based on movement after the CE leg, or as part of the same setup when conditions are already clear.
+- **Bidirectional (both legs on) ~80% of the time.** Pure single-side (naked CE only, or naked PE only) is the other ~20%.
+- **CE/PE ratio**: majority of trades run CE-heavy (ratio > 1, e.g. 5CE:4PE, 3CE:2PE) since call premiums support it; occasionally 1:1.
+- **PE-first / PE-only trades are rare** — reserved for a stock with a clear, strong support level and a news-driven downside break already priced in. Only done on stocks with trading history (never a new or infrequently-traded name).
+- **Breakeven range target**: >10% on each side.
+- **Profit target on margin**: ~10-15% per expiry cycle.
+- **Other variants used**: naked CE/PE selling on breakout stocks (single leg, not a strangle); straddle trades specifically to capture IV/premium crush (typically earnings-related, see below) — distinct from the default strangle.
 
 #### Entry Rules
-- **Primary signal**: IVP > 70% (fat premium — market overpaying for fear)
+- **Primary signal**: IVP > 70% (fat premium — market overpaying for fear). Sensibull Screener used to screen for high-IV candidates; IVP tracked in real time — higher IVP, better premium.
 - **RSI modifier**:
   - RSI > 70 → increase CE lots, sell CE further OTM (stock extended)
   - RSI < 30 → widen PE spread protection, move toward equal ratio
   - RSI 40-60 → standard strangle, default CE bias
-- **Timing**: mid-month entry for next month expiry
-- **Never enter expiry week** (gamma risk not worth residual premium)
-- **Strike selection**: OI concentration = support/resistance. Sell CE above max CE OI, sell PE below max PE OI
-- **Consolidation rule**: for ATH/breakout stocks, wait 4-5 days of sideways before entering
+- **Timing**: mid-month entry for next month expiry, subject to liquidity.
+- **Never enter expiry week** (gamma risk not worth residual premium).
+- **Strike selection**: OI concentration = support/resistance. Sell CE above max CE OI, sell PE below max PE OI. Ichimoku indicator used alongside OI for a higher-level support/resistance read (harder to apply when the stock is at ATH in a bull market — no overhead resistance to read).
+- **Sharp-movement signal**: stocks with elevated IV and sharp/gamma-heavy movement are the ideal premium-capture candidates. Breakout candidates carry more risk, so strikes there are sold farther OTM.
+- **Consolidation rule**: for ATH/breakout stocks, wait 4-5 days of sideways before entering (selling calls into a fresh breakout without consolidation is a trap risk, though also higher reward).
 
 #### Preferred Universe
 - **Preferred sectors**: Steel, Pharma, NBFC, Hospitals, Auto
@@ -903,7 +914,8 @@ Final order on Dashboard page:
 - Minimum 4 different setups from 4 different sectors per expiry
 - Typical: 5-10 stocks per expiry cycle
 - Neutral is default — directional bias needs strong conviction
-- Diversification IS the risk management
+- Diversify across both sectors AND strategy type (strangle / naked single-leg / straddle) as much as possible — diversification is the primary risk management, not stop-losses or defined-risk spreads.
+- Consider liquidity, volatility, and stock movement character before entry, not just sector/IVP.
 
 #### Exit Rules
 - **Profit exit**: 60-70% of max premium collected (lower for infrequent/volatile, higher for stable/frequently traded)
@@ -911,42 +923,45 @@ Final order on Dashboard page:
 - **Loss exit**: see adjustment strategies below
 
 #### Earnings Season — Volatility Crush Trades
-- Enter a few days BEFORE quarterly results
-- Stock movement mostly happens before announcement; IV crush happens after
-- Entry timing: if results before 15th → current expiry; if after 15th → next month expiry
+- Enter a few days BEFORE quarterly results (volatility-crush trade, not directional).
+- Stock movement mostly happens before the announcement; IV crush happens after. Premiums stay lower even when the stock moves sharply post-results.
+- Some stocks are far more earnings-sensitive than others (e.g. Infosys vs TCS) — factor that into which stock, not just which sector.
+- Benefit beyond premium: a spread-out results calendar across stocks helps margin circulation (capital freed from one expiring/closed trade funds the next).
+- Track record: 1-2 individual trades may go wrong each season, but the approach has worked out overall — this is a probabilistic bet across several names, not a guaranteed per-trade win.
+- Entry timing: if results before 15th → current expiry; if after 15th → next month expiry.
 - RSI > 70 + earnings in 5 days → single CE leg only (pure vega/theta play, not directional)
 - RSI < 30 + strong support + earnings → single PE leg, short duration
 
 #### 4 Adjustment Strategies (when breakeven breached or approached)
-Decision framework: "Do I believe the stock will reverse, and do I have margin to wait?"
+Decision framework: "Do I believe the stock will reverse, and do I have margin to wait?" Each strategy comes at a cost — there is no single/simple answer, and managing a loss-making trade is explicitly called out as the hardest part of this approach.
 
 **A1 — Strike Roll** (Yes to reversal, constrained margin)
-- Close ITM strike at loss, open 2× new OTM lots to recover premium
-- Cost: near-zero net premium, but margin increases
-- Works when: stock consolidating at new level
+- Close the ITM strike at a loss. Open 2 lots of new OTM strikes to match/recover the ITM strike's premium, and add a counter lot on the other side (CE roll adds a PE lot, or vice versa) to keep the setup bidirectional.
+- Cost: near-zero net premium on the roll itself, but margin requirement goes up.
+- Works when: stock is consolidating at the new level.
 
 **A2 — New Strangle** (Yes to reversal, margin available)
-- Keep original position, add fresh strangle with wider strikes around new CMP
-- Cost: significant additional margin blocked
-- Works when: stock reverses back into original range (HDFCAMC example)
+- Keep the original position as-is, add a fresh strangle/bidirectional trade with wider strikes around the new CMP, aiming for a wider breakeven range.
+- Cost: significant additional margin blocked.
+- Works when: stock reverses back into the original range. Real example — HDFCAMC broke out past its breakeven high (5090) around its ex-dividend date in late May, M2M loss hit −₹2.75L by 9-Jun as the stock ran to 5217. A new strangle was opened on a separate platform (Angel) on 9-Jun with a higher CE-side breakeven (5432 vs the original 5138), based on an OI-concentration read (heaviest OI at 5000 despite spot at 5200) plus Ichimoku, judging the move as overextended vs its 9-day/26-day averages. The stock retraced; by 13-Jun the original position had recovered from −₹2.75L to a loss of only −₹7.5K, and the new-platform position was up ₹22.4K — net small profit of ~₹14K across both legs of the adjustment.
 
 **A3 — Book Loss and Exit** (No to reversal)
-- Close all legs, accept the loss, free the margin
-- No revenge trades, no re-entry in same stock same expiry
-- Works when: strong trend, no reversal signal
+- Close all legs, accept the loss, free the margin. Cut losses and move on.
+- No revenge trades, no re-entry in same stock same expiry.
+- Works when: strong trend, no reversal signal.
 
 **A4 — Second Platform Hedge** (No to reversal but want to offset)
-- Keep original on Platform A (Zerodha), open directional trade on Platform B (Angel/Upstox)
-- Track as single consolidated P&L
-- Margin benefit: two separate margin pools
-- Works when: stock is trending — Platform B profits offset Platform A loss
+- Keep original on Platform A (Zerodha), open a new trade biased toward the stock's actual direction on Platform B (Angel/Upstox) — simpler to manage than trying to unwind or flip the original.
+- Track as single consolidated P&L across both platforms.
+- Margin benefit: two separate margin pools.
+- Works when: stock is trending — Platform B profits offset Platform A loss (see HDFCAMC example under A2, which combined A2 + A4).
 
-**A5 — Convert CE to Bear Call Spread** (new, enabled by protected strangle structure)
-- When CE is threatened: buy a higher CE to cap upside loss
-- Converts naked CE to defined-risk spread
-- Frees margin for recovery trades elsewhere
+**A5 — Convert CE to Bear Call Spread** (supplementary idea, not confirmed in live practice — verify before building)
+- When CE is threatened: buy a higher CE to cap upside loss, converting the naked CE to a defined-risk spread.
+- Frees margin for recovery trades elsewhere.
+- Note: unlike A1-A4, this isn't described in the source strategy document — it was added as a hypothetical extra. Confirm with the user before treating it as a real, used strategy in the terminal.
 
-**Adjustment trigger**: CMP approaches/breaches BREAKEVEN RANGE — not individual strike going ITM
+**Adjustment trigger**: CMP approaches/breaches BREAKEVEN RANGE — not individual strike going ITM. Every case is different; sometimes the only real options left are booking the loss or flipping the position (CE↔PE) rather than any of the above cleanly applying.
 
 #### What the Terminal Must Do (4 decisions only)
 1. **Morning Scan**: which stocks have high IVP + right sector + not expiry week + no imminent earnings conflict
