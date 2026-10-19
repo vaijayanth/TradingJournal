@@ -3617,7 +3617,10 @@ async function eqFetchSupertrend() {
     if (!res.ok) return null;
     const data = await res.json();
     const bySymbol = {};
-    (data.entries || []).forEach(e => { bySymbol[e.symbol] = e; });
+    // backtester's feed uses Yahoo Finance tickers (e.g. "THYROCARE.NS");
+    // Zerodha Tradebook fills use plain NSE symbols ("THYROCARE") — strip
+    // the suffix so the two line up.
+    (data.entries || []).forEach(e => { bySymbol[e.symbol.replace(/\.NS$/, '')] = e; });
     return bySymbol;
   } catch (e) {
     return null; // signals degrade to "—" rather than block the page
