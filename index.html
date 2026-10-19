@@ -107,6 +107,8 @@ nav {
    since its tables grow columns over time and should never need
    horizontal scroll on desktop. */
 #page-journal { max-width: none; }
+.eq-spinner { display:inline-block; width:12px; height:12px; border:2px solid var(--border); border-top-color: var(--accent, #3b82f6); border-radius:50%; animation: eq-spin 0.7s linear infinite; }
+@keyframes eq-spin { to { transform: rotate(360deg); } }
 .section-title {
   font-size: 11px; font-weight: 700; letter-spacing: 0.08em;
   color: var(--text-muted); text-transform: uppercase;
@@ -2836,6 +2838,7 @@ tbody tr:hover { filter: brightness(0.97); }
       <div style="font-size:15px; font-weight:700">Equity Trading Journal</div>
       <div style="font-size:12px; color:var(--text-muted); margin-top:2px">Zerodha Tradebook → FIFO positions → Supertrend exit/add-on signals</div>
     </div>
+    <div id="eq-sync-status" style="font-size:12px;color:var(--text-muted);display:flex;align-items:center;gap:6px"></div>
   </div>
 
   <!-- Upload -->
@@ -3771,8 +3774,31 @@ function eqComputeSignal(pos, stEntry) {
 function eqFmtRs(v) { return '₹' + Math.round(v).toLocaleString('en-IN'); }
 function eqFmtPct(v) { return (v >= 0 ? '+' : '') + v.toFixed(2) + '%'; }
 
+function eqFmtTime(ms) {
+  const d = new Date(ms);
+  let h = d.getHours(), m = String(d.getMinutes()).padStart(2, '0');
+  const ap = h >= 12 ? 'pm' : 'am';
+  h = h % 12 || 12;
+  return `${h}:${m}${ap}`;
+}
+
+function eqSetSyncStatus(html) {
+  const el = document.getElementById('eq-sync-status');
+  if (el) el.innerHTML = html;
+}
+
+function eqShowLastSync() {
+  const raw = localStorage.getItem('tj_eq_last_sync');
+  if (!raw) return;
+  try {
+    const { ts, fillCount, openCount, closedCount } = JSON.parse(raw);
+    eqSetSyncStatus(`${fillCount} fills · ${openCount} open · ${closedCount} closed — last updated ${eqFmtTime(ts)}`);
+  } catch (e) {}
+}
+
 async function eqRefresh() {
   document.getElementById('eq-open-count-text').textContent = 'Loading…';
+  eqSetSyncStatus('<span class="eq-spinner"></span> Fetching fills from sheet…');
   // allSettled, not all — a failed sheet fetch shouldn't discard a
   // successful Supertrend fetch (or vice versa); each degrades on its own.
   const [fillsResult, stResult] = await Promise.allSettled([eqFetchAllFills(), eqFetchSupertrend()]);
@@ -3780,15 +3806,20 @@ async function eqRefresh() {
   window._eqSupertrend = stMap;
   if (fillsResult.status !== 'fulfilled') {
     document.getElementById('eq-open-count-text').textContent = 'Failed to load: ' + fillsResult.reason.message;
+    eqSetSyncStatus(`<span style="color:var(--red)">Failed to load fills</span>`);
     return;
   }
   const fills = fillsResult.value;
   window._eqFills = fills;
+  eqSetSyncStatus(`<span class="eq-spinner"></span> ${fills.length} fills loaded — building positions…`);
   const { open, closed } = eqBuildPositions(fills);
   window._eqOpen = open;
   window._eqClosed = closed;
   eqRenderOpen(open, stMap);
   eqRenderClosed(closed);
+  const now = Date.now();
+  localStorage.setItem('tj_eq_last_sync', JSON.stringify({ ts: now, fillCount: fills.length, openCount: open.length, closedCount: closed.length }));
+  eqSetSyncStatus(`${fills.length} fills · ${open.length} open · ${closed.length} closed — last updated ${eqFmtTime(now)}`);
 }
 
 function eqRenderOpen(open, stMap) {
@@ -7427,6 +7458,7 @@ function showPage(id, btn) {
     renderStrategyPage();
   }
   if (id === 'journal' && !window._eqInit) {
+    eqShowLastSync();
     eqRefresh();
     window._eqInit = true;
   }
