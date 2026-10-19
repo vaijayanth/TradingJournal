@@ -1062,3 +1062,16 @@ Note: Hospitals is thin — only 2 liquid F&O stocks. Skip this sector and run o
 | Reliance | Too many moving factors, expensive options |
 
 Total watchlist: 19 stocks across 5 sectors + 4 situational
+
+---
+
+## Equity Trading Journal — Reconciliation Rule (CRITICAL)
+
+**On any mismatch between FIFO (computed from Tradebook fills) and the uploaded Holdings snapshot, Holdings is always the final reference.** Holdings reflects what Zerodha actually shows the user holds right now; FIFO is a derived computation from fill history and can be wrong for reasons the Tradebook alone can never reveal (splits/demergers/mergers not yet modeled, off-market transfers, gifts, pledge invocations, fractional-share cash settlements, stale/incomplete Tradebook export). When they disagree, treat Holdings' qty and avg price as ground truth and adjust the code (not the user's real position) to explain the gap:
+
+- A clean integer/near-integer qty ratio (2.00×, 0.50×, 4.00×, 0.25×...) → likely an unadjusted stock split/bonus/demerger. Research the actual corporate action (record date, ratio) and add it to `EQ_SPLIT_ADJUSTMENTS` in index.html. Demerger/scheme cost basis is NOT simply price÷ratio (fair-value apportionment, not proportional) — see the `costApportionPct` adjustment shape, back-solved from Holdings' own reported avg cost when the official apportionment % isn't published.
+- A non-clean ratio with no public corporate action found → likely an off-market transfer/gift/pledge the Tradebook can't capture. **Ask the user to confirm** which number (FIFO's or Holdings') is real before touching anything — never guess. Once confirmed Holdings is real, add a same-cost manual "sell" to `EQ_MANUAL_FILLS` (zero artificial realized P&L) rather than guessing a cause.
+- A stock in FIFO but **not in Holdings** (fully exited in reality) → the sell fill is very likely missing from the uploaded Tradebook (export date-range gap). Ask the user to confirm they've actually exited, then have them re-export a longer Tradebook history and re-upload (client-side dedup makes re-uploading overlapping history safe).
+- A full merger (company A delisted, becomes company B at a swap ratio) → **never** do a blanket per-fill symbol rewrite keyed only on the old symbol — that silently relabels any of that stock's OWN earlier, already-closed trades (that closed out before the merger) as the new company's trades, corrupting real realized P&L that has nothing to do with the merger. Instead add a manual close-then-open pair to `EQ_MANUAL_FILLS`: close the surviving open lot in the old symbol at cost (zero P&L), open the converted quantity in the new symbol at the equivalent per-share cost (price ÷ ratio). Floor fractional share counts (real corporate actions round down with cash for the fraction) — verify the floor is right against the user's own subsequent real trading in the new symbol if there is any (e.g. a sell with no matching real buy is strong evidence of the true post-merger share count).
+
+This rule and the `EQ_SPLIT_ADJUSTMENTS` / `EQ_MANUAL_FILLS` structures live in `index.html`'s Equity Trading Journal section (search for `EQ_LONGTERM_EXCLUDE` to find the whole block). The same fixes must be mirrored into `vaijayanth/backtester`'s `index.html`, which hosts a synced copy of the same Equity Trading Journal feature.
