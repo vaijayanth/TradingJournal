@@ -872,9 +872,9 @@ Final order on Dashboard page:
 
 ---
 
-## Options Terminal — moved to backtester's platform plan
+## Options Terminal — moved to backtester
 
-The Options Terminal concept (volatility-selling decision support, separate from this journal) is now tracked as a platform-level ambition in `vaijayanth/backtester`'s `PLATFORM.md` (status: planning only, no code). Do not re-plan or build it here — this repo is frozen (see banner at top of this file).
+The full options-selling strategy (bidirectional strangles, entry rules, A1-A4 adjustment playbook, stock watchlist) that used to live in this section is now at `vaijayanth/backtester`'s `docs/STRATEGY_OPTIONS.md` — read it there, it is the canonical copy, not duplicated here. The dedicated Options Terminal tool itself remains unbuilt (tracked as a platform ambition in `backtester`'s `PLATFORM.md`). Do not re-plan, re-document, or build either here — this repo is frozen (see banner at top of this file).
 
 ## Equity Trading Journal — Data Model (CRITICAL)
 
