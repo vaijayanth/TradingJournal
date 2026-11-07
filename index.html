@@ -5,6 +5,7 @@
 <script>try{if(location.search.includes('reset=1')){localStorage.removeItem('tj_auth_hash');localStorage.removeItem('tj_config_v1');localStorage.removeItem('tj_config_v2');localStorage.removeItem('tj_config_v3');localStorage.removeItem('tj_config_v4');sessionStorage.removeItem('tj_authed');history.replaceState(null,'',location.pathname);}var t=localStorage.getItem('tj_theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>VJ TradeIQ</title>
+<link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Crect width='24' height='24' fill='%230C0F16'/%3E%3Cpolyline points='2,10 11,13 18.5,3' fill='none' stroke='%234C86FF' stroke-width='2.2' stroke-linecap='square' stroke-linejoin='miter'/%3E%3Cline x1='11.5' y1='8' x2='18' y2='8' stroke='%234C86FF' stroke-width='1.6'/%3E%3C/svg%3E">
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
 <link rel="preconnect" href="https://unpkg.com">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -83,6 +84,7 @@ nav {
   margin-right: 28px; white-space: nowrap;
 }
 .nav-logo span { color: var(--accent); }
+.nav-logo-mark { color: var(--accent); flex-shrink: 0; }
 .nav-tabs { display: flex; align-items: center; gap: 2px; flex: 1; }
 .nav-tab {
   padding: 6px 16px; border-radius: var(--radius-sm);
@@ -636,7 +638,7 @@ tbody tr:hover { filter: brightness(0.97); }
   /* Nav: compact logo, scrollable tabs */
   nav { padding: 0 10px; gap: 4px; height: 52px; }
   .nav-logo { margin-right: 8px; font-size: 13px; }
-  .nav-logo span { display: none; }
+  .nav-logo-text { display: none; }
   .nav-tabs { gap: 1px; overflow-x: auto; -webkit-overflow-scrolling: touch; flex-wrap: nowrap; scrollbar-width: none; }
   .nav-tabs::-webkit-scrollbar { display: none; }
   .nav-tab { font-size: 11px; padding: 5px 8px; white-space: nowrap; flex-shrink: 0; }
@@ -798,7 +800,13 @@ tbody tr:hover { filter: brightness(0.97); }
 
 <!-- ════ NAVBAR ════ -->
 <nav>
-  <div class="nav-logo">📈 <span>VJ</span> TradeIQ</div>
+  <div class="nav-logo">
+    <svg class="nav-logo-mark" width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+      <polyline points="2,10 11,13 18.5,3" stroke="currentColor" stroke-width="2.2" stroke-linecap="square" stroke-linejoin="miter"/>
+      <line x1="11.5" y1="8" x2="18" y2="8" stroke="currentColor" stroke-width="1.6"/>
+    </svg>
+    <span class="nav-logo-text"><span>VJ</span> TradeIQ</span>
+  </div>
   <div class="nav-tabs">
     <button class="nav-tab active" id="nav-dashboard" onclick="showPage('dashboard', this)"><span class="nav-label-full">Dashboard</span><span class="nav-label-short">Dash</span></button>
     <button class="nav-tab" onclick="showPage('performance', this)"><span class="nav-label-full">Performance</span><span class="nav-label-short">Perf</span></button>
