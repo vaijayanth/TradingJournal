@@ -1235,7 +1235,7 @@ tbody tr:hover { filter: brightness(0.97); }
           <button onclick="dashCalNav(1)" style="font-size:13px;padding:2px 8px;border-radius:6px;border:1px solid var(--border);background:var(--surface2);color:var(--text-muted);cursor:pointer;line-height:1.4">›</button>
         </div>
       </div>
-      <span onclick="showPage('performance',document.querySelectorAll('.nav-tab')[1]);setTimeout(()=>document.getElementById('cal-grid')&&document.getElementById('cal-grid').scrollIntoView({behavior:'smooth'}),300)" style="font-size:11px;color:var(--text-muted);cursor:pointer">Full year ▸</span>
+      <span onclick="showPage('performance',document.querySelectorAll('.nav-tab')[1]);setTimeout(()=>{const b=document.getElementById('cal-body'),t=document.getElementById('cal-toggle');if(b&&t&&!b.classList.contains('open'))toggleCollapsible('cal-body',t);document.getElementById('cal-grid')&&document.getElementById('cal-grid').scrollIntoView({behavior:'smooth'});},300)" style="font-size:11px;color:var(--text-muted);cursor:pointer">Full year ▸</span>
     </div>
     <div id="dash-cal-mini" style="display:block"></div>
     <div style="display:none" id="dash-cal-legend">
@@ -2059,14 +2059,19 @@ tbody tr:hover { filter: brightness(0.97); }
       </div>
       <div id="cal-year-btns" style="display:flex;gap:4px;flex-wrap:wrap"></div>
     </div>
-    <div id="cal-annual-summary" style="margin:8px 0 4px;font-size:12px;color:var(--text-muted)"></div>
-    <div class="cal-grid" id="cal-grid"></div>
-    <div class="flex-row" style="margin-top:14px; gap:20px; font-size:11px; color:var(--text-muted)">
-      <div class="flex-row" style="gap:4px"><div class="cal-cell profit-3" style="width:12px;height:12px;border-radius:2px;aspect-ratio:unset"></div> Strong profit</div>
-      <div class="flex-row" style="gap:4px"><div class="cal-cell profit-1" style="width:12px;height:12px;border-radius:2px;aspect-ratio:unset"></div> Small profit</div>
-      <div class="flex-row" style="gap:4px"><div class="cal-cell loss-3" style="width:12px;height:12px;border-radius:2px;aspect-ratio:unset"></div> Strong loss</div>
-      <div class="flex-row" style="gap:4px"><div class="cal-cell loss-1" style="width:12px;height:12px;border-radius:2px;aspect-ratio:unset"></div> Small loss</div>
-      <div class="flex-row" style="gap:4px"><div style="width:12px;height:12px;border-radius:2px;background:var(--surface2);border:1px solid var(--border)"></div> No trade</div>
+    <button class="collapsible-toggle" id="cal-toggle" onclick="toggleCollapsible('cal-body', this)">
+      <span>▶</span> Show full-year calendar
+    </button>
+    <div class="collapsible-body" id="cal-body">
+      <div id="cal-annual-summary" style="margin:8px 0 4px;font-size:12px;color:var(--text-muted)"></div>
+      <div class="cal-grid" id="cal-grid"></div>
+      <div class="flex-row" style="margin-top:14px; gap:20px; font-size:11px; color:var(--text-muted)">
+        <div class="flex-row" style="gap:4px"><div class="cal-cell profit-3" style="width:12px;height:12px;border-radius:2px;aspect-ratio:unset"></div> Strong profit</div>
+        <div class="flex-row" style="gap:4px"><div class="cal-cell profit-1" style="width:12px;height:12px;border-radius:2px;aspect-ratio:unset"></div> Small profit</div>
+        <div class="flex-row" style="gap:4px"><div class="cal-cell loss-3" style="width:12px;height:12px;border-radius:2px;aspect-ratio:unset"></div> Strong loss</div>
+        <div class="flex-row" style="gap:4px"><div class="cal-cell loss-1" style="width:12px;height:12px;border-radius:2px;aspect-ratio:unset"></div> Small loss</div>
+        <div class="flex-row" style="gap:4px"><div style="width:12px;height:12px;border-radius:2px;background:var(--surface2);border:1px solid var(--border)"></div> No trade</div>
+      </div>
     </div>
   </div>
 
