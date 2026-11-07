@@ -1135,10 +1135,18 @@ tbody tr:hover { filter: brightness(0.97); }
   </div>
 
   <!-- LONG-HELD LOSERS ALERT -->
-  <div id="dash-long-loss-card" style="display:none;margin-top:10px;padding:12px 16px;border-radius:10px;border:1px solid var(--red);background:rgba(239,68,68,0.06)">
-    <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--red);margin-bottom:8px">🕐 Long-Held Losers — Fundamental Review Due</div>
-    <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px">Open positions in loss for &gt;90 days. SST holds losses by design — but these warrant a fundamental check (earnings, sector, 200 EMA status).</div>
-    <div id="dash-long-loss-list" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+  <div id="dash-long-loss-card" style="display:none;margin-top:10px;border-radius:10px;border:1px solid var(--red);background:rgba(239,68,68,0.06);overflow:hidden">
+    <div style="display:flex;align-items:center;justify-content:space-between;padding:12px 16px;cursor:pointer" onclick="toggleLongLoss()">
+      <div>
+        <div style="font-size:11px;font-weight:800;text-transform:uppercase;letter-spacing:.07em;color:var(--red)">🕐 Long-Held Losers — Fundamental Review Due</div>
+        <div style="font-size:11px;color:var(--text-muted);margin-top:2px" id="dash-long-loss-summary">—</div>
+      </div>
+      <span id="dash-long-loss-chevron" style="font-size:11px;color:var(--text-muted)">▶</span>
+    </div>
+    <div id="dash-long-loss-body" style="display:none;padding:0 16px 12px">
+      <div style="font-size:11px;color:var(--text-muted);margin-bottom:8px">SST holds losses by design — but these warrant a fundamental check (earnings, sector, 200 EMA status).</div>
+      <div id="dash-long-loss-list" style="display:flex;flex-wrap:wrap;gap:6px"></div>
+    </div>
   </div>
 
   <!-- MOMENTUM STRIP -->
@@ -4839,7 +4847,9 @@ function renderDashboard(data, cfg) {
       .sort((a,b) => parseInt(a.age||0) - parseInt(b.age||0));
     const card = document.getElementById('dash-long-loss-card');
     const list = document.getElementById('dash-long-loss-list');
+    const summary = document.getElementById('dash-long-loss-summary');
     if (card) card.style.display = longLoss.length > 0 ? '' : 'none';
+    if (summary) summary.textContent = longLoss.length > 0 ? `${longLoss.length} position${longLoss.length > 1 ? 's' : ''} > 90 days in loss` : '';
     if (list && longLoss.length > 0) {
       list.innerHTML = longLoss.map(t =>
         `<div style="padding:5px 10px;border-radius:6px;background:var(--surface2);border:1px solid var(--border);font-size:12px">
@@ -6489,6 +6499,14 @@ function toggleAvgDown() {
   const open = body.style.display === 'none';
   body.style.display = open ? '' : 'none';
   if (icon) icon.textContent = open ? '▼' : '▶';
+}
+function toggleLongLoss() {
+  const body = document.getElementById('dash-long-loss-body');
+  const chevron = document.getElementById('dash-long-loss-chevron');
+  if (!body) return;
+  const open = body.style.display === 'none';
+  body.style.display = open ? '' : 'none';
+  if (chevron) chevron.textContent = open ? '▼' : '▶';
 }
 function toggleStuckList(btn) {
   const body = document.getElementById('dash-stuck-buckets');
