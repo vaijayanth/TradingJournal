@@ -4,7 +4,7 @@
 <meta charset="UTF-8">
 <script>try{if(location.search.includes('reset=1')){localStorage.removeItem('tj_auth_hash');localStorage.removeItem('tj_config_v1');localStorage.removeItem('tj_config_v2');localStorage.removeItem('tj_config_v3');localStorage.removeItem('tj_config_v4');sessionStorage.removeItem('tj_authed');history.replaceState(null,'',location.pathname);}var t=localStorage.getItem('tj_theme');if(t)document.documentElement.setAttribute('data-theme',t);}catch(e){}</script>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Trading Journal</title>
+<title>VJ TradeIQ</title>
 <link rel="preconnect" href="https://cdn.jsdelivr.net">
 <link rel="preconnect" href="https://unpkg.com">
 <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -781,7 +781,7 @@ tbody tr:hover { filter: brightness(0.97); }
 <div id="auth-overlay" style="display:none;position:fixed;inset:0;z-index:9999;background:var(--bg);align-items:center;justify-content:center">
   <div style="background:var(--surface);border:1px solid var(--border);border-radius:16px;padding:40px;width:340px;text-align:center;box-shadow:0 8px 40px rgba(0,0,0,0.15)">
     <div style="font-size:32px;margin-bottom:8px">🔒</div>
-    <div style="font-size:20px;font-weight:700;margin-bottom:4px;color:var(--text-primary)">Trading Journal</div>
+    <div style="font-size:20px;font-weight:700;margin-bottom:4px;color:var(--text-primary)">VJ TradeIQ</div>
     <div style="font-size:13px;color:var(--text-secondary);margin-bottom:24px">Enter your password to continue</div>
     <input type="password" id="auth-password" class="config-input" placeholder="Password" style="text-align:center;font-size:16px;letter-spacing:2px" onkeydown="if(event.key==='Enter')checkPassword()">
     <button class="btn-primary" style="width:100%;margin-top:12px;padding:10px" onclick="checkPassword()">Unlock</button>
@@ -798,7 +798,7 @@ tbody tr:hover { filter: brightness(0.97); }
 
 <!-- ════ NAVBAR ════ -->
 <nav>
-  <div class="nav-logo">📈 <span>Trading</span>Journal</div>
+  <div class="nav-logo">📈 <span>VJ</span> TradeIQ</div>
   <div class="nav-tabs">
     <button class="nav-tab active" id="nav-dashboard" onclick="showPage('dashboard', this)"><span class="nav-label-full">Dashboard</span><span class="nav-label-short">Dash</span></button>
     <button class="nav-tab" onclick="showPage('performance', this)"><span class="nav-label-full">Performance</span><span class="nav-label-short">Perf</span></button>
@@ -6898,7 +6898,7 @@ function copyDashStats() {
     const rows = Array.from(tbody.querySelectorAll('tr'));
     const d = new Date();
     const dateStr = d.getDate() + ' ' + ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][d.getMonth()] + ' ' + d.getFullYear();
-    const lines = ['📊 Trading Journal — ' + dateStr, ''];
+    const lines = ['📊 VJ TradeIQ — ' + dateStr, ''];
     rows.forEach(tr => {
       const cells = tr.querySelectorAll('td');
       if (cells.length >= 2) lines.push(cells[0].textContent.trim() + ': ' + cells[1].textContent.trim());
