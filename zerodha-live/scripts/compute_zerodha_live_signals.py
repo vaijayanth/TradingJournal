@@ -83,8 +83,8 @@ def build(holdings, uni, week52, stmap, rsimap, baseline, trades, today, market_
         unrealised += pl_rs
         invested += qty * avg
         colour = st["color"].lower()
-        entry_date = trades.get("entry_dates", {}).get(sym) or baseline["open_dates"].get(sym)
-        last_buy = trades.get("last_buy", {}).get(sym) or baseline["last_buy"].get(sym)
+        entry_date = trades.get("entry_dates", {}).get(sym) or moved.get("entry_dates", {}).get(sym) or baseline["open_dates"].get(sym)
+        last_buy = trades.get("last_buy", {}).get(sym) or moved.get("last_buy", {}).get(sym) or baseline["last_buy"].get(sym)
         streak_start = st.get("current_streak_start_date")
         row = {"entry_date": entry_date, "symbol": sym, "qty": qty, "avg_cost": avg, "cmp": cmp_, "pl_pct": pl_pct,
                "notional_pl_rs": pl_rs, "supertrend_color": colour, "flip_label": flip_label(st), "flip_date": streak_start,
@@ -137,7 +137,7 @@ def build(holdings, uni, week52, stmap, rsimap, baseline, trades, today, market_
     tier_note = f"{trade_count} trades (open + closed) · next +{POSITION_INCREMENT_RS:,} at {nxt}"
 
     reco = {}
-    sq = baseline.get("sheet_open_qty", {})
+    sq = {**baseline.get("sheet_open_qty", {}), **moved.get("sheet_qty", {})}
     for sym in sorted(held):                       # in-scope positions only (the rest are not this dashboard's)
         hq, sh = held[sym]["qty"] if sym in held else 0, sq.get(sym, 0)
         if hq != sh:
