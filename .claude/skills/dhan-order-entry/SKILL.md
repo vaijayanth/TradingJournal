@@ -1,0 +1,32 @@
+---
+name: dhan-order-entry
+description: Place Dhan AFTER-MARKET (next trading day) BUY orders for dh252 STOCK signals (entry signals and add-on signals) after showing an order ticket and getting an explicit yes. Stocks only, never options. Use only when the user explicitly asks to place/execute entry or add-on orders ("/dhan-order-entry", "place entry orders for X", "buy the add-ons").
+disable-model-invocation: true
+---
+
+# dhan-order-entry — real-money after-market BUY orders for dh252 signals
+
+This skill places REAL orders on the user's Dhan account through the Dhan MCP. The user's routine: signals are computed after the close and orders go in as after-market orders (AMO) for the NEXT trading day. Zerodha will get its own `zerodha-order-entry` with different logic; keep Dhan specifics here.
+
+## Scope (hard limits)
+- Stocks only. Never options, futures, ETFs, or the option-hedge / investment portfolio.
+- Only symbols that appear in the current signal file (`dhan-live/dhan_live_signals.json`) as `entries` (kind `entry`) or `addons` (kind `addon`). Quantity is whatever `build_order_ticket.py` says - never a number the user or you make up. If the user names a stock with no signal, refuse.
+- AFTER-MARKET (AMO) LIMIT orders only, CNC (delivery). Never market orders. Never during market hours (see step 3).
+- One explicit user confirmation for the exact batch shown. Any change (symbol, qty, price) = show the ticket again and re-confirm. Never place anything on an implied or earlier "yes".
+- Never retry a rejected/failed order, never modify or cancel without being asked, never place orders while a refresh is running.
+
+## Steps
+1. **Which kind / which stocks.** `entry` for entry signals, `addon` for add-on signals. If the user did not name stocks, show the list and ask which (do not default to "all 24").
+2. **Fresh data - after the close.** Signals must be the day's final ones. The backtester's "Daily OHLC Update" publishes after the close (around 16:00 IST; run it manually from GitHub Actions if needed), then run `/refresh-dhan`. `build_order_ticket.py` refuses data older than 3 days, but you must also check `market_data_date` is the session that just ended.
+3. **Market must be closed.** NSE equity trades Mon-Fri 09:15-15:30 IST (plus announced special sessions). If the market is OPEN now, stop: tell the user to run this after the close. (If it is a weekend/holiday or after 15:30 IST, continue in AMO mode.)
+4. **Tickets.** `python dhan-live/scripts/build_order_ticket.py <entry|addon> [--symbols A,B]` -> read the `TICKETS_JSON=` line.
+5. **Reference price + guard.** For each ticket call `market_data_agent_tool` action `ltp` payload `{"NSE_EQ": [<securityId>]}` (after the close this returns the closing price). Get `securityId` from `search_agent_tool` action `search` payload `{"query": "<SYMBOL>-EQ"}` (the NSE `EQUITY` row). If it differs from the ticket's `ref_price` by more than 3%, stop and ask.
+6. **Limit price.** BUY: reference price x 1.005, rounded UP to the 0.05 tick (a 0.5% buffer for tomorrow's opening gap). Show it and say plainly that a bigger gap-up than that means the order will not fill. The user may override the price.
+7. **Funds.** `margin_agent_tool` action `single` with `{"exchangeSegment":"NSE_EQ","transactionType":"BUY","quantity":<q>,"productType":"CNC","securityId":"<id>","price":<limit>}`; compare Total Margin with Available Balance for the whole batch. (Its "Insufficient Balance" line has shown nonsense - trust Available Balance vs Total Margin.) Stop if funds are short.
+8. **Ticket + confirmation.** Show a table: symbol, side, qty, limit, est. value, reason, total, and the line "AFTER-MARKET order for the next trading day". Ask the user to reply "yes, place these" and wait. Nothing is placed before that.
+9. **Place.** For each ticket in order, `trading_agent_tool` action `place` with the margin call's field names plus `"orderType":"LIMIT"`, `"validity":"DAY"`, `"afterMarketOrder":true`, `"amoTime":"OPEN"` (Dhan's AMO options are PRE_OPEN / OPEN / OPEN_30 / OPEN_60; use OPEN unless the user says otherwise). These field names follow Dhan's API and have not yet been confirmed through this MCP: if the tool reports a validation error, STOP and report it verbatim - do not guess other fields. Stop at the first rejection and report which orders did and did not go through.
+10. **Verify the order is accepted.** `orderbook_agent_tool` to read each order's status (AMO orders sit as pending/"after market" until the next session). Report order id and status per stock. Nothing has filled yet - do not say it has.
+11. **Record the fills NEXT trading day.** The MCP tradebook is today-only, so on the next trading day (after the open) run `/refresh-dhan`: its tradebook step records the fills with `append_fills.py`. Orders that did not fill (limit not reached) stay out of the trade log. Remind the user of this at the end of the placement.
+
+## Reporting
+Be plain: what was placed (as AMO), its status, what is still pending, what failed. Never describe a pending AMO as filled.
