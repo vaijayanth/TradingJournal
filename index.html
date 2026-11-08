@@ -884,6 +884,35 @@ tbody tr:hover { filter: brightness(0.97); }
 .p2-day.we { opacity: .5; }
 @media (max-width: 900px) { .p2-grid3 { grid-template-columns: 1fr; } }
 @media (max-width: 600px) { .p2-day small { font-size: 9px; white-space: nowrap; } .p2-day { padding: 6px 1px; } .p2-table td:not(:first-child) { white-space: nowrap; } .p2-cal { gap: 3px; } }
+/* ── ANALYSIS 2.0 ── */
+#page-analysis2 { max-width: 1600px; }
+.a2-view { display: none; } .a2-view.active { display: block; }
+.a2-grid { display: grid; gap: 13px; margin-top: 13px; }
+.a2-g3 { grid-template-columns: 1.15fr 1fr 1fr; } .a2-g2 { grid-template-columns: 1fr 1fr; } .a2-g3e { grid-template-columns: repeat(3, 1fr); }
+.a2-kpis { grid-template-columns: repeat(5, 1fr); margin-bottom: 0; }
+.a2-insight { border-left: 3px solid var(--amber); background: var(--amber-soft); padding: 11px 14px; border-radius: 7px; font-size: 12.5px; color: var(--text-secondary); margin-top: 13px; line-height: 1.55; }
+.a2-insight strong { color: var(--amber); }
+.a2-row { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12.5px; }
+.a2-row:last-child { border-bottom: 0; } .a2-row > span { color: var(--text-secondary); } .a2-row b { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 600; text-align: right; }
+.a2-t td:not(:first-child), .a2-t th:not(:first-child) { text-align: right; font-family: var(--font-mono); }
+.a2-t th:not(:first-child) { font-family: var(--font-ui); }
+.a2-t td:first-child { font-family: var(--font-ui); }
+.a2-note { font-size: 11px; color: var(--text-muted); line-height: 1.55; margin-top: 8px; }
+.a2-callout { padding: 10px 13px; background: var(--accent-soft); border: 1px solid var(--accent); border-radius: 8px; font-size: 12px; color: var(--text-secondary); margin-top: 10px; line-height: 1.5; }
+.a2-callout b { color: var(--accent); }
+.a2-items { display: grid; gap: 8px; padding: 13px 15px; }
+.a2-item { display: flex; gap: 10px; padding: 10px 12px; background: var(--surface2); border: 1px solid var(--border); border-radius: 8px; font-size: 12.5px; line-height: 1.5; }
+.a2-item .dot { width: 7px; height: 7px; border-radius: 50%; background: var(--amber); margin-top: 6px; flex: none; }
+.a2-item .dot.good { background: var(--green); } .a2-item .dot.bad { background: var(--red); }
+.a2-item .d { color: var(--text-muted); font-size: 11.5px; }
+.a2-pending { padding: 22px 18px; color: var(--text-muted); font-size: 12.5px; line-height: 1.6; }
+.a2-pending b { color: var(--text-secondary); }
+.a2-bars { display: flex; align-items: flex-end; gap: 10px; height: 150px; padding: 8px 14px 0; }
+.a2-bar { flex: 1; display: flex; flex-direction: column; justify-content: flex-end; align-items: center; height: 100%; font-size: 10px; color: var(--text-muted); text-align: center; }
+.a2-bar i { display: block; width: 70%; border-radius: 4px 4px 0 0; min-height: 3px; background: var(--green); } .a2-bar i.neg { background: var(--red); } .a2-bar i.mid { background: var(--amber); }
+.a2-bar b { font-family: var(--font-mono); font-size: 11px; color: var(--text-primary); margin-bottom: 4px; }
+.a2-meter { height: 6px; background: var(--surface2); border-radius: 8px; overflow: hidden; min-width: 70px; } .a2-meter i { display: block; height: 100%; background: var(--accent); border-radius: 8px; }
+@media (max-width: 1000px) { .a2-g3, .a2-g2, .a2-g3e { grid-template-columns: 1fr; } .a2-kpis { grid-template-columns: repeat(2, 1fr); } .a2-kpis .d2-kpi:nth-child(odd) { border-right: 1px solid var(--border); } .a2-kpis .d2-kpi:nth-child(even) { border-right: 0; } .a2-kpis .d2-kpi:nth-child(n+3) { border-top: 1px solid var(--border); } }
 /* ── APP HEADER 2.0 — brand · broker workspaces · status / page nav ── */
 .app-header { position: sticky; top: 0; z-index: 100; background: var(--nav-bg); }
 .app-header .topbar { height: 54px; padding: 0 20px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; border-bottom: 1px solid var(--border); gap: 12px; }
@@ -1015,6 +1044,44 @@ tbody tr:hover { filter: brightness(0.97); }
 
 <!-- ════ SWING PAGES WRAPPER ════ -->
 <div id="swing-pages">
+
+<!-- ════ ANALYSIS 2.0 (contract-driven; used by workspaces whose pages.analysis === 'v2') ════ -->
+<div id="page-analysis2" class="page page-alt" style="display:none">
+
+  <div class="d2-head">
+    <div>
+      <div class="d2-eyebrow">Diagnostics · system edge</div>
+      <h1>Analysis</h1>
+      <div class="d2-sub">Find capital leakage, understand position behaviour and improve system edge.</div>
+    </div>
+    <div class="d2-filters">
+      <span class="d2-chip" id="a2-fy">FY 2026–27</span>
+      <span class="d2-chip" id="a2-strat">dh252 strategy</span>
+      <span class="d2-chip d2-chip-soft" id="a2-asof">—</span>
+      <button class="d2-chip d2-chip-btn" onclick="wsRefresh()">↻ Refresh</button>
+    </div>
+  </div>
+
+  <div class="dhm-tabs" id="a2-tabs" role="tablist">
+    <button class="dhm-tab" data-tab="overview" onclick="a2Tab('overview')">Overview</button>
+    <button class="dhm-tab" data-tab="risk" onclick="a2Tab('risk')">Risk &amp; Capital</button>
+    <button class="dhm-tab" data-tab="loss" onclick="a2Tab('loss')">Loss Analysis</button>
+    <button class="dhm-tab" data-tab="trend" onclick="a2Tab('trend')">Trend &amp; Technical</button>
+    <button class="dhm-tab" data-tab="behaviour" onclick="a2Tab('behaviour')">Trade Behaviour</button>
+    <button class="dhm-tab" data-tab="attribution" onclick="a2Tab('attribution')">P&amp;L Attribution</button>
+    <button class="dhm-tab" data-tab="opportunities" onclick="a2Tab('opportunities')">Opportunities</button>
+  </div>
+
+  <section class="a2-view" id="a2-v-overview"></section>
+  <section class="a2-view" id="a2-v-risk"></section>
+  <section class="a2-view" id="a2-v-loss"></section>
+  <section class="a2-view" id="a2-v-trend"></section>
+  <section class="a2-view" id="a2-v-behaviour"></section>
+  <section class="a2-view" id="a2-v-attribution"></section>
+  <section class="a2-view" id="a2-v-opportunities"></section>
+
+  <div class="d2-foot" id="a2-foot">—</div>
+</div>
 
 <!-- ════ PERFORMANCE 2.0 (contract-driven; used by workspaces whose pages.performance === 'v2') ════ -->
 <div id="page-performance2" class="page page-alt" style="display:none">
@@ -8566,7 +8633,7 @@ const WORKSPACES = {
              snapshotUrl: 'dhan-live/dhan_live_signals.json',
              cfg: { staleDays: 3, addTriggerPct: -6, addCooldownDays: 7, addFraction: 0.1, // fallbacks; engine output wins
                     ref: { label: 'dh252 10-yr backtest', winRate: 42.05, avgPlPct: 8.45, trades: 5203 } },
-             pages: { live: true, dashboard: 'v2', performance: 'v2' } },   // 'v2' = contract-driven page-dashboard2
+             pages: { live: true, dashboard: 'v2', performance: 'v2', analysis: 'v2' } },   // 'v2' = contract-driven page-dashboard2
   zerodha: { id: 'zerodha', label: 'Zerodha', strategy: 'SST',   source: 'Google Sheet',  status: 'live',
              pages: { dashboard: true, performance: true, analysis: true, strategy: true, journal: true } },
   icici:   { id: 'icici',   label: 'ICICI',   strategy: null,    source: 'not connected', status: 'pending',
@@ -8577,6 +8644,7 @@ const WS = { id: 'dhan' }; // default workspace (a saved choice in localStorage 
 const WS_ALT = { // pages whose DOM differs per workspace version: legacy page id -> { v2 element, ensure fn }
   dashboard:   { el: 'page-dashboard2',   fn: 'd2Ensure' },
   performance: { el: 'page-performance2', fn: 'p2Ensure' },
+  analysis:    { el: 'page-analysis2',    fn: 'a2Ensure' },
 };
 
 function wsPageKey(id) { return id === 'dhanlive' ? 'live' : id; }
@@ -8669,12 +8737,12 @@ function showPage(id, btn) {
   document.getElementById('page-' + id).classList.add('active');
   btn.classList.add('active');
   if (typeof wsGate === 'function' && document.getElementById('page-' + id).closest('#swing-pages')) wsGate(id);
-  if (id === 'performance' && !window._perfChartsInit) {
+  if (id === 'performance' && !window._perfChartsInit && WORKSPACES[WS.id].pages.performance !== 'v2') {
     const d = window._data;
     initPerfCharts(d ? d.closed : [], d ? d.initialCapital : 0, d ? d.open : []);
     window._perfChartsInit = true;
   }
-  if (id === 'analysis' && !window._analysisChartsInit) {
+  if (id === 'analysis' && !window._analysisChartsInit && WORKSPACES[WS.id].pages.analysis !== 'v2') {
     const d = window._data;
     initAnalysisCharts(d ? d.open : [], d ? d.closed : []);
     window._analysisChartsInit = true;
@@ -9194,7 +9262,7 @@ async function wsRefresh() {
   if (WS_ADAPTERS[WS.id] && cur && cur !== 'config' && ws.pages[wsPageKey(cur)]) {
     try {
       await wsLoad(WS.id, true);
-      if (cur === 'dashboard') d2Ensure(); else if (cur === 'performance') p2Ensure(); else if (cur === 'dhanlive') dhLiveEnsure();
+      if (cur === 'dashboard') d2Ensure(); else if (cur === 'performance') p2Ensure(); else if (cur === 'analysis') a2Ensure(); else if (cur === 'dhanlive') dhLiveEnsure();
       if (typeof showToast === 'function') showToast('Refreshed ' + ws.label + ' data', 'green');
     } catch (e) { if (typeof showToast === 'function') showToast('Refresh failed: ' + e.message, 'red'); }
   } else {
@@ -9352,6 +9420,240 @@ function p2Ensure() {
   if (WS.data[id]) { p2Render(WS.data[id]); return; }
   if (!WS_ADAPTERS[id]) return;
   wsLoad(id).then(p2Render).catch(e => console.error('Performance load error:', e));
+}
+
+// ── ANALYSIS 2.0 (renders the active workspace's contract data) ──────────────
+// Built only from what the contract really has (open positions, entry signals, equity series).
+// Sections that need closed-trade history say so instead of showing invented numbers, and all
+// copy follows the workspace strategy's own rules (dh252: single exit = Supertrend red, add-on rule,
+// no stops / partials) — not stop-loss / R-multiple language.
+const A2_TABS = ['overview', 'risk', 'loss', 'trend', 'behaviour', 'attribution', 'opportunities'];
+const A2_TAB_KEY = 'tj_a2_tab';
+const A2_AGE = [['≤ 7 days', 7], ['7–30 days', 30], ['30–60 days', 60], ['60–90 days', 90], ['> 90 days', Infinity]];
+const a2Cost = p => (p.qty || 0) * (p.avgCost || 0);
+const a2Share = (a, b) => b ? (a / b * 100) : 0;
+const a2Avg = (arr, f) => arr.length ? arr.reduce((s, x) => s + f(x), 0) / arr.length : null;
+const a2Dash = '<span style="color:var(--text-muted)">—</span>';
+const a2Pct = v => v == null ? a2Dash : dhFmtPct(v).replace('-', '−');
+
+function a2Tab(name) {
+  if (!A2_TABS.includes(name)) name = 'overview';
+  A2_TABS.forEach(t => {
+    const v = document.getElementById('a2-v-' + t); if (v) v.classList.toggle('active', t === name);
+    const b = document.querySelector('#a2-tabs .dhm-tab[data-tab="' + t + '"]'); if (b) b.classList.toggle('active', t === name);
+  });
+  try { localStorage.setItem(A2_TAB_KEY, name); } catch (e) {}
+}
+
+function a2Panel(title, small, body) {
+  return `<div class="d2-panel"><div class="d2-panel-head"><div><div class="d2-title">${title}</div>${small ? `<div class="d2-hint">${small}</div>` : ''}</div></div>${body}</div>`;
+}
+const a2Rows = rows => '<div class="p2-body">' + rows.map(([l, v, c]) => `<div class="a2-row"><span>${l}</span><b class="${c || ''}">${v}</b></div>`).join('') + '</div>';
+const a2Table = (heads, rows) => `<table class="p2-table a2-t"><thead><tr>${heads.map(h => `<th>${h}</th>`).join('')}</tr></thead><tbody>${rows.join('')}</tbody></table>`;
+const a2Metrics = items => '<section class="d2-kpis a2-kpis">' + items.map(([l, v, desc, c]) => `<div class="d2-kpi"><div class="d2-label">${l}</div><div class="d2-value ${c || ''}">${v}</div><div class="d2-note">${desc}</div></div>`).join('') + '</section>';
+const a2Items = items => '<div class="a2-items">' + items.map(([dot, t, desc]) => `<div class="a2-item"><i class="dot ${dot || ''}"></i><div><b>${t}</b><div class="d">${desc}</div></div></div>`).join('') + '</div>';
+const a2Pending = (what, why) => `<div class="a2-pending"><b>${what}</b><br>${why}</div>`;
+const a2Bars = items => {
+  const max = Math.max(...items.map(i => i.n), 1);
+  return '<div class="a2-bars">' + items.map(i => `<div class="a2-bar"><b>${i.n}</b><i class="${i.cls || ''}" style="height:${Math.max(3, i.n / max * 100).toFixed(0)}px"></i>${i.label}</div>`).join('') + '</div>';
+};
+const a2Grid = (cls, ...panels) => `<div class="a2-grid ${cls}">${panels.join('')}</div>`;
+
+function a2Stats(d) {
+  const P = d.positions, n = P.length, rules = d.rules || {};
+  const cost = P.reduce((s, p) => s + a2Cost(p), 0), mtm = P.reduce((s, p) => s + (p.plRs || 0), 0);
+  const ages = P.map(p => p.ageDays || 0).sort((a, b) => a - b);
+  let lo = -1;
+  const buckets = A2_AGE.map(([label, hi]) => {
+    const g = P.filter(p => (p.ageDays || 0) > lo && (p.ageDays || 0) <= hi); lo = hi;
+    return { label, n: g.length, prof: g.filter(p => p.plPct > 0).length, avg: a2Avg(g, p => p.plPct), mtm: g.reduce((s, p) => s + (p.plRs || 0), 0) };
+  });
+  const sec = {};
+  P.forEach(p => { const k = p.sector || 'Unclassified'; const o = sec[k] = sec[k] || { k, n: 0, cost: 0, mtm: 0, pls: [] }; o.n++; o.cost += a2Cost(p); o.mtm += p.plRs || 0; o.pls.push(p.plPct); });
+  const sectors = Object.values(sec).sort((a, b) => b.cost - a.cost);
+  const ent = d.signals.entry;
+  return {
+    P, n, rules, cost, mtm, ent,
+    prof: P.filter(p => p.plPct > 0).length, loss: P.filter(p => p.plPct < 0).length,
+    green: P.filter(p => (p.supertrend || '').toLowerCase() === 'green').length,
+    ageAvg: n ? ages.reduce((s, x) => s + x, 0) / n : 0, ageMed: n ? ages[Math.floor(n / 2)] : 0, ageMax: n ? ages[n - 1] : 0,
+    buckets, sectors, byCost: P.slice().sort((a, b) => a2Cost(b) - a2Cost(a)),
+    exits: P.filter(p => p.signal === 'EXIT'), addons: P.filter(p => p.signal === 'ADD-ON'), added: P.filter(p => p.adds > 0),
+    hasSma: P.some(p => p.sma200 != null),
+    entCapital: ent.reduce((s, e) => s + (e.qtyToBuy || 0) * (e.cmp || 0), 0),
+    hotEnt: ent.filter(e => e.hot52wh || e.hotTurn),
+    tier: d.capital.tierSize, trigger: rules.addTriggerPct,
+  };
+}
+
+function a2Overview(d, S) {
+  const profPct = a2Share(S.prof, S.n), greenPct = a2Share(S.green, S.n);
+  const metrics = a2Metrics([
+    ['Open book in profit', `${S.prof} / ${S.n}`, `${profPct.toFixed(0)}% of positions`, profPct >= 60 ? 'pos' : 'neg'],
+    ['Supertrend green', `${S.green} / ${S.n}`, 'Trend intact — exit only on a red flip', greenPct >= 80 ? 'pos' : ''],
+    ['Average holding', Math.round(S.ageAvg) + ' days', `Median ${S.ageMed}d · longest ${S.ageMax}d`, ''],
+    ['Add-ons', `${S.addons.length} eligible`, `${S.added.length} position${S.added.length === 1 ? '' : 's'} already added to`, S.addons.length ? 'pos' : ''],
+    ['Open MTM', d2Signed(S.mtm), `${dhFmtPct(a2Share(S.mtm, S.cost))} on deployed capital`, d2Cls(S.mtm)],
+  ]);
+  const insight = `<div class="a2-insight"><strong>Primary diagnostic:</strong> ${S.green} of ${S.n} positions are Supertrend-green. The strategy's only exit is a red flip, so ${S.exits.length ? `${S.exits.length} position${S.exits.length === 1 ? ' is' : 's are'} due for exit (${S.exits.map(p => dhEsc(p.symbol)).join(', ')})` : 'no position is due for exit'}; `
+    + `${S.addons.length} ${S.addons.length === 1 ? 'is' : 'are'} eligible for the ${String(S.trigger).replace('-', '−')}% add-on. The book is ${S.prof} / ${S.n} in profit, with an average hold of ${Math.round(S.ageAvg)} days.</div>`;
+  const risk = a2Panel('Capital at risk', 'Open portfolio snapshot', a2Rows([
+    ['Open portfolio MTM', d2Signed(S.mtm), d2Cls(S.mtm)],
+    ['Profitable open positions', `${S.prof} / ${S.n} <span class="${profPct >= 60 ? 'pos' : 'neg'}">(${profPct.toFixed(0)}%)</span>`],
+    ['Deployed capital', dhFmtRs(S.cost)],
+    ['Largest sector', S.sectors[0] ? `${dhEsc(S.sectors[0].k)} · ${a2Share(S.sectors[0].cost, S.cost).toFixed(0)}%` : '—'],
+  ]));
+  const book = a2Panel("Today's action book", 'What the rules ask for right now', a2Rows([
+    ['Exit signals (Supertrend red)', `${S.exits.length} · realises ${d2Signed(S.exits.reduce((s, p) => s + (p.plRs || 0), 0))}`],
+    ['Add-on candidates', `${S.addons.length} · ${dhFmtRs(S.addons.reduce((s, p) => s + (p.addQty || 0) * (p.cmp || 0), 0))} to add`],
+    ['Entry candidates', `${S.ent.length} · ${dhFmtRs(S.entCapital)} if all taken`],
+    ['…in hot sectors', `${S.hotEnt.length} of ${S.ent.length}`],
+  ]) + '<div class="p2-body" style="padding-top:0"><div class="a2-note">Entry capital uses the tier size with a one-share minimum, so expensive stocks exceed the tier.</div></div>');
+  const sizing = a2Panel('Position sizing', 'Against the current tier', a2Rows([
+    ['Tier size', dhFmtRs(S.tier)],
+    ['Average position (cost)', S.n ? dhFmtRs(S.cost / S.n) : '—'],
+    ['Positions above tier', `${S.P.filter(p => a2Cost(p) > S.tier * 1.05).length} of ${S.n}`],
+    ['Largest position', S.byCost[0] ? `${dhEsc(S.byCost[0].symbol)} · ${dhFmtRs(a2Cost(S.byCost[0]))}` : '—'],
+  ]) + '<div class="p2-body" style="padding-top:0"><div class="a2-callout">Quantity is floored to <b>one share</b>, so high-priced stocks naturally exceed the ₹ tier — the system never skips a signal for price.</div></div>');
+  const age = a2Panel('Open positions by age', 'Capital by holding duration', a2Table(['Age bucket', 'Positions', 'Profitable', 'Avg P&L', 'Total MTM'],
+    S.buckets.map(b => `<tr><td>${b.label}</td><td>${b.n}</td><td>${b.prof} / ${b.n}</td><td class="${d2Cls(b.avg)}">${a2Pct(b.avg)}</td><td class="${d2Cls(b.mtm)}">${b.n ? d2Signed(b.mtm) : '—'}</td></tr>`)));
+  const attn = a2Panel('What deserves attention', 'Evidence-led review queue', a2Items([
+    [S.exits.length ? 'bad' : 'good', 'Exit signals', S.exits.length ? `${S.exits.length} position(s) flipped Supertrend red — the strategy exits unconditionally, regardless of P&L.` : 'No position has a red Supertrend right now.'],
+    [S.addons.length ? '' : 'good', 'Add-on discipline', S.addons.length ? `${S.addons.length} position(s) meet the ${String(S.trigger).replace('-', '−')}% add-on rule with the cooldown satisfied.` : 'No position currently meets the add-on rule.'],
+    [a2Share(S.sectors[0] ? S.sectors[0].cost : 0, S.cost) > 35 ? '' : 'good', 'Sector concentration', S.sectors[0] ? `${dhEsc(S.sectors[0].k)} holds ${a2Share(S.sectors[0].cost, S.cost).toFixed(0)}% of deployed capital across ${S.sectors[0].n} positions.` : 'No sector data.'],
+  ]));
+  return metrics + insight + a2Grid('a2-g3', risk, book, sizing) + a2Grid('a2-g2', age, attn);
+}
+
+function a2Risk(d, S) {
+  const age = a2Panel('Capital leakage by age', 'Open positions by holding duration', a2Table(['Age', 'Positions', 'Profitable', 'Avg P&L', 'Total MTM'],
+    S.buckets.map(b => `<tr><td>${b.label}</td><td>${b.n}</td><td>${b.prof} / ${b.n}</td><td class="${d2Cls(b.avg)}">${a2Pct(b.avg)}</td><td class="${d2Cls(b.mtm)}">${b.n ? d2Signed(b.mtm) : '—'}</td></tr>`)));
+  const conc = a2Panel('Concentration by sector', 'Share of deployed capital', a2Table(['Sector', 'Positions', 'Invested', 'Share', 'MTM'],
+    S.sectors.map(s => `<tr><td>${dhEsc(s.k)}</td><td>${s.n}</td><td>${dhFmtRs(s.cost)}</td><td><div class="a2-meter" style="display:inline-block;width:46px;vertical-align:middle;margin-right:6px"><i style="width:${a2Share(s.cost, S.cost).toFixed(0)}%"></i></div>${a2Share(s.cost, S.cost).toFixed(0)}%</td><td class="${d2Cls(s.mtm)}">${d2Signed(s.mtm)}</td></tr>`)));
+  const top = a2Panel('Largest holdings', 'Top 8 by capital invested', a2Table(['Stock', 'Invested', 'Share', 'P&L %', 'Signal'],
+    S.byCost.slice(0, 8).map(p => `<tr><td>${dhEsc(p.symbol)}</td><td>${dhFmtRs(a2Cost(p))}</td><td>${a2Share(a2Cost(p), S.cost).toFixed(1)}%</td><td class="${dhPnlCls(p.plPct)}">${a2Pct(p.plPct)}</td><td>${p.signal}</td></tr>`)));
+  const redMtm = S.exits.reduce((s, p) => s + (p.plRs || 0), 0);
+  const act = a2Panel('Pending actions & capital', 'Sensitivity of the open book to the rules', a2Rows([
+    ['Base — current open MTM', d2Signed(S.mtm), d2Cls(S.mtm)],
+    ['If red-flip exits execute at today\'s close', `${d2Signed(redMtm)} realised`, d2Cls(redMtm)],
+    ['Cash to add on eligible positions', dhFmtRs(S.addons.reduce((s, p) => s + (p.addQty || 0) * (p.cmp || 0), 0))],
+    ['Cash for all entry candidates', dhFmtRs(S.entCapital)],
+  ]) + '<div class="p2-body" style="padding-top:0"><div class="a2-note">Sensitivity views of today\'s rules — not forecasts.</div></div>');
+  return a2Grid('a2-g2', age, conc) + a2Grid('a2-g2', top, act);
+}
+
+function a2Loss(d, S) {
+  const P = S.P;
+  const edges = [['< −10%', -Infinity, -10], ['−10 to −6%', -10, -6], ['−6 to −3%', -6, -3], ['−3 to 0%', -3, 0], ['0 to 5%', 0, 5], ['5 to 10%', 5, 10], ['> 10%', 10, Infinity]];
+  const bars = edges.map(([label, lo, hi]) => ({ label, n: P.filter(p => p.plPct >= lo && p.plPct < hi).length, cls: hi <= 0 ? 'neg' : '' }));
+  const dist = a2Panel('Open P&L distribution', 'Where the open book sits today', a2Bars(bars));
+  const trig = S.trigger;
+  const inLoss = P.filter(p => p.plPct <= trig).sort((a, b) => a.plPct - b.plPct);
+  const trigPanel = a2Panel(`Positions beyond the ${String(trig).replace('-', '−')}% add-on trigger`, 'Held until recovery by design — add when eligible', inLoss.length
+    ? a2Table(['Stock', 'P&L %', 'Age', 'Supertrend', 'Add-on'], inLoss.map(p => `<tr><td>${dhEsc(p.symbol)}</td><td class="neg">${a2Pct(p.plPct)}</td><td>${p.ageDays}d</td><td>${dhTrendPill(p.supertrend)}</td><td>${p.signal === 'ADD-ON' ? '<span class="pos">Eligible</span>' : (p.supertrend || '').toLowerCase() === 'red' ? 'Exit rule' : 'Cooldown'}</td></tr>`))
+    : a2Pending('No position is beyond the add-on trigger.', 'Every open position is above ' + String(trig).replace('-', '−') + '%.'));
+  const closed = a2Panel('Closed-trade loss analysis', 'Size, duration, setup and exit reason', a2Pending('Builds as exits are recorded.', 'Closed winner / loser size distributions, loss by hold duration and loss by setup need closed trades, which the Dhan MCP tradebook can\'t supply historically (today\'s trades only). dh252 has one exit rule — Supertrend red — so exit-reason splits will be a single bucket.'));
+  return a2Grid('a2-g2', dist, trigPanel) + a2Grid('a2-g2', closed, a2Panel('How dh252 treats losses', 'Strategy rules, not stop-losses', a2Items([
+    ['', 'No stop-loss', 'A loss is held. The only exit is the Supertrend turning red, regardless of P&L.'],
+    ['', 'Add on weakness', `At ${String(trig).replace('-', '−')}% or worse vs WAC with Supertrend still green and the ${(d.rules || {}).addCooldownDays || 7}-day cooldown met, add ${Math.round(((d.rules || {}).addFraction || 0.1) * 100)}% of the quantity.`],
+    ['good', 'Backtest reference', 'dh252 10-year backtest: 42.05% win rate and +8.45% average P&L per trade — a low-win-rate, large-winner profile.'],
+  ])));
+}
+
+function a2Trend(d, S) {
+  const P = S.P, n = S.n;
+  const row = (label, k, goodWhenTrue = true) => `<tr><td>${label}</td><td>${k}</td><td>${a2Share(k, n).toFixed(1)}%</td></tr>`;
+  const a200 = P.filter(p => p.sma200 != null && p.cmp >= p.sma200).length, b200 = P.filter(p => p.sma200 != null && p.cmp < p.sma200).length;
+  const a50 = P.filter(p => p.sma50 != null && p.cmp >= p.sma50).length, b50 = P.filter(p => p.sma50 != null && p.cmp < p.sma50).length;
+  const sma = S.hasSma ? a2Table(['Trend state', 'Positions', '% of total'], [row('Supertrend green', S.green), row('Supertrend red', n - S.green), row('Above 200 SMA', a200), row('Below 200 SMA', b200), row('Above 50 SMA', a50), row('Below 50 SMA', b50)])
+    : a2Table(['Trend state', 'Positions', '% of total'], [row('Supertrend green', S.green), row('Supertrend red', n - S.green)]);
+  const smaAsOf = (P.find(p => p.smaAsOf) || {}).smaAsOf;
+  const trendPanel = a2Panel('Trend health', 'Supertrend and moving averages', sma + (smaAsOf ? `<div class="d2-edge-foot">Moving averages use price history through ${dhFmtDate(smaAsOf)}.</div>` : ''));
+  const dist = [['≤ 2% below high', 0, 2], ['2–5%', 2, 5], ['5–10%', 5, 10], ['> 10% below', 10, Infinity]];
+  const away = a2Panel('Distance from 52-week high', 'How far open positions sit below their highs', a2Table(['Bucket', 'Positions', 'Avg P&L'], dist.map(([l, lo, hi]) => {
+    const g = P.filter(p => p.pctFromHigh != null && -p.pctFromHigh >= lo && -p.pctFromHigh < hi); return `<tr><td>${l}</td><td>${g.length}</td><td class="${d2Cls(a2Avg(g, p => p.plPct))}">${a2Pct(a2Avg(g, p => p.plPct))}</td></tr>`; })));
+  const rsi = [['RSI > 70', 70, 101], ['50–70', 50, 70], ['30–50', 30, 50], ['< 30', 0, 30]];
+  const rsiPanel = a2Panel('RSI(14) of open positions', 'Momentum read', a2Table(['RSI bucket', 'Positions', 'Avg P&L'], rsi.map(([l, lo, hi]) => {
+    const g = P.filter(p => p.rsi != null && p.rsi >= lo && p.rsi < hi); return `<tr><td>${l}</td><td>${g.length}</td><td class="${d2Cls(a2Avg(g, p => p.plPct))}">${a2Pct(a2Avg(g, p => p.plPct))}</td></tr>`; })));
+  const flips = P.filter(p => /Flipped/.test(p.flip || '')).sort((a, b) => (a.flip || '').localeCompare(b.flip || ''));
+  const flipPanel = a2Panel('Recent Supertrend flips', 'Positions whose trend turned recently', flips.length
+    ? a2Table(['Stock', 'Flip', 'P&L %'], flips.map(p => `<tr><td>${dhEsc(p.symbol)}</td><td>${dhFmtFlip(p.flip)}</td><td class="${dhPnlCls(p.plPct)}">${a2Pct(p.plPct)}</td></tr>`))
+    : a2Pending('No recent flips.', 'No open position has flipped Supertrend colour in the recent window.'));
+  return a2Grid('a2-g2', trendPanel, away) + a2Grid('a2-g2', rsiPanel, flipPanel);
+}
+
+function a2Behaviour(d, S) {
+  const metrics = a2Metrics([
+    ['Average position', S.n ? dhFmtRs(S.cost / S.n) : '—', `Tier ${dhFmtRs(S.tier)}`, ''],
+    ['Positions with add-ons', S.added.length, 'Averaged down so far', ''],
+    ['Add-ons eligible now', S.addons.length, 'Rule met, cooldown satisfied', S.addons.length ? 'pos' : ''],
+    ['Exit signals open', S.exits.length, 'Red Supertrend, still held', S.exits.length ? 'neg' : 'pos'],
+    ['Average holding', Math.round(S.ageAvg) + ' days', 'Open positions', ''],
+  ]);
+  const rule = (name, status, cls, detail) => `<tr><td>${name}</td><td class="${cls}">${status}</td><td style="font-family:var(--font-ui);color:var(--text-muted);font-size:11.5px">${detail}</td></tr>`;
+  const adherence = a2Panel('Rule adherence', 'Is the book following the dh252 rules?', a2Table(['Rule', 'Status', 'Detail'], [
+    rule('Exit when Supertrend turns red', S.exits.length ? `${S.exits.length} open` : 'Clear', S.exits.length ? 'neg' : 'pos', S.exits.length ? S.exits.map(p => dhEsc(p.symbol) + ' (' + (p.flip || 'red') + ')').join(', ') : 'No red position is still held'),
+    rule('Add 10% when ≤ ' + String(S.trigger).replace('-', '−') + '%', `${S.addons.length} eligible`, S.addons.length ? 'pos' : '', `${S.added.length} position(s) already added to`),
+    rule('Quantity floor of one share', `${S.P.filter(p => a2Cost(p) > S.tier * 1.05).length} above tier`, '', 'High-priced stocks exceed the tier by design'),
+    rule('Enter only on a fresh 52-week high', `${S.ent.length} candidates`, '', `${S.hotEnt.length} in hot sectors`),
+  ]));
+  const hold = a2Panel('Holding period of open positions', 'Distribution of time in trade', a2Rows([
+    ['Average', Math.round(S.ageAvg) + ' days'], ['Median', S.ageMed + ' days'], ['Longest', S.ageMax + ' days'],
+    ['Entered in the last 7 days', S.P.filter(p => p.ageDays <= 7).length + ' positions'],
+  ]));
+  const closed = a2Panel('Closed-trade behaviour modules', 'Need recorded exits', a2Table(['Diagnostic', 'Why it matters', 'Status'], [
+    '<tr><td>Winner vs loser holding period</td><td style="font-family:var(--font-ui)">Losers are held by design; compare to winners</td><td>Needs closed trades</td></tr>',
+    '<tr><td>MAE / MFE</td><td style="font-family:var(--font-ui)">How deep losers go before recovering</td><td>Needs closed trades</td></tr>',
+    '<tr><td>Win rate vs 42% reference</td><td style="font-family:var(--font-ui)">Is realised edge near the backtest?</td><td>Needs closed trades</td></tr>',
+  ]) + '<div class="d2-edge-foot">dh252 has no partial exits or break-even trigger — a single Supertrend-red exit — so those diagnostics don\'t apply.</div>');
+  return metrics + a2Grid('a2-g2', adherence, hold) + a2Grid('a2-g2', closed, '<div></div>');
+}
+
+function a2Attribution(d, S) {
+  const total = S.mtm;
+  const secP = a2Panel('P&L by sector', 'Open-position MTM contribution', a2Table(['Sector', 'Positions', 'MTM', 'Share of P&L', 'Avg P&L %'],
+    S.sectors.slice().sort((a, b) => b.mtm - a.mtm).map(s => `<tr><td>${dhEsc(s.k)}</td><td>${s.n}</td><td class="${d2Cls(s.mtm)}">${d2Signed(s.mtm)}</td><td>${total ? a2Share(s.mtm, total).toFixed(0) + '%' : '—'}</td><td class="${d2Cls(a2Avg(s.pls, x => x))}">${a2Pct(a2Avg(s.pls, x => x))}</td></tr>`)));
+  const wk = {};
+  S.P.forEach(p => { if (!p.entryDate) return; const dt = new Date(p.entryDate + 'T00:00:00'); dt.setDate(dt.getDate() - ((dt.getDay() + 6) % 7)); const k = dt.toISOString().slice(0, 10); (wk[k] = wk[k] || []).push(p); });
+  const cohorts = a2Panel('P&L by entry week', 'Cohorts of positions by when they were opened', a2Table(['Week of', 'Positions', 'Invested', 'MTM', 'Avg P&L %'],
+    Object.keys(wk).sort().map(k => { const g = wk[k]; return `<tr><td>${dhFmtDate(k)}</td><td>${g.length}</td><td>${dhFmtRs(g.reduce((s, p) => s + a2Cost(p), 0))}</td><td class="${d2Cls(g.reduce((s, p) => s + p.plRs, 0))}">${d2Signed(g.reduce((s, p) => s + p.plRs, 0))}</td><td class="${d2Cls(a2Avg(g, p => p.plPct))}">${a2Pct(a2Avg(g, p => p.plPct))}</td></tr>`; })));
+  const age = a2Panel('P&L by holding period', 'MTM by age bucket', a2Table(['Age', 'Positions', 'MTM', 'Avg P&L'], S.buckets.map(b => `<tr><td>${b.label}</td><td>${b.n}</td><td class="${d2Cls(b.mtm)}">${b.n ? d2Signed(b.mtm) : '—'}</td><td class="${d2Cls(b.avg)}">${a2Pct(b.avg)}</td></tr>`)));
+  const pend = a2Panel('Realised attribution', 'By stock, sector and holding period', a2Pending('Builds as exits are recorded.', 'Realised profit attribution and profit capture vs peak excursion need closed trades. Until then everything above is open-position (unrealised) P&L.'));
+  return a2Grid('a2-g2', secP, cohorts) + a2Grid('a2-g2', age, pend);
+}
+
+function a2Opportunities(d, S) {
+  const hotNames = d.hotSectors ? [...new Set([...(d.hotSectors.by_52wh_entries || []), ...(d.hotSectors.by_supertrend_turns || [])])] : [];
+  const freshHot = S.ent.filter(e => (e.hot52wh || e.hotTurn) && /Flipped/.test(e.flip || ''));
+  const top = S.sectors[0], topShare = top ? a2Share(top.cost, S.cost) : 0;
+  const q = a2Panel('Improvement queue', 'Hypotheses to validate — not automated trade instructions', a2Items([
+    [S.addons.length ? 'bad' : 'good', 'Act on add-on candidates', S.addons.length ? `${S.addons.map(p => dhEsc(p.symbol) + ' (' + a2Pct(p.plPct) + ')').join(', ')} meet the rule. Confirm Supertrend is still green before adding.` : 'No add-on candidates today.'],
+    [S.hotEnt.length ? '' : 'good', 'Prefer entries in hot sectors', S.hotEnt.length ? `${S.hotEnt.length} of ${S.ent.length} entry candidates sit in hot sectors (${hotNames.map(dhEsc).join(', ')}) — several stocks breaking out together is a stronger signal than one alone.` : 'No entry candidate is in a hot sector.'],
+    [freshHot.length ? 'good' : '', 'Fresh flips in hot sectors', freshHot.length ? `${freshHot.length} candidates flipped Supertrend green recently AND sit in a hot sector: ${freshHot.slice(0, 6).map(e => dhEsc(e.symbol)).join(', ')}${freshHot.length > 6 ? '…' : ''}.` : 'No candidate combines a fresh flip with a hot sector today.'],
+    [topShare > 35 ? 'bad' : '', 'Watch sector concentration', top ? `${dhEsc(top.k)} is ${topShare.toFixed(0)}% of deployed capital. Compare with how the backtest spreads across sectors before adding more there.` : 'No sector data.'],
+    ['good', 'Unlock realised analytics', 'Recording exits (rather than only today\'s trades) unlocks win rate vs the 42% reference, loss/hold analysis and attribution.'],
+  ]));
+  return q;
+}
+
+function a2Render(d) {
+  const ws = WORKSPACES[WS.id], S = a2Stats(d);
+  const set = (id, v) => { const el = document.getElementById(id); if (el) el.innerHTML = v; };
+  set('a2-fy', d2FyBounds(new Date()).label); set('a2-strat', dhEsc(ws.strategy || '') + ' strategy');
+  set('a2-asof', d.meta.marketDate ? 'Market data · ' + dhFmtDate(d.meta.marketDate) : 'Market data date unknown');
+  set('a2-v-overview', a2Overview(d, S)); set('a2-v-risk', a2Risk(d, S)); set('a2-v-loss', a2Loss(d, S));
+  set('a2-v-trend', a2Trend(d, S)); set('a2-v-behaviour', a2Behaviour(d, S)); set('a2-v-attribution', a2Attribution(d, S));
+  set('a2-v-opportunities', a2Opportunities(d, S));
+  set('a2-foot', `${dhEsc(ws.label)} workspace · ${dhEsc(ws.strategy)} · analytics use open positions and today's signals; sections needing closed-trade history say so and fill in as exits are recorded. Hot sectors follow the backtester's top-3 rule.`);
+  let saved = 'overview'; try { saved = localStorage.getItem(A2_TAB_KEY) || 'overview'; } catch (e) {}
+  a2Tab(saved);
+}
+
+function a2Ensure() {
+  const id = WS.id;
+  if (WS.data[id]) { a2Render(WS.data[id]); return; }
+  if (!WS_ADAPTERS[id]) return;
+  wsLoad(id).then(a2Render).catch(e => console.error('Analysis load error:', e));
 }
 
 // ── THEME ───────────────────────────────────────────
