@@ -850,6 +850,40 @@ tbody tr:hover { filter: brightness(0.97); }
   .d2-edge-m:nth-child(2) { border-right:0; } .d2-edge-m:nth-child(n+3) { border-top:1px solid var(--border); }
   .d2-recent-s:nth-child(2) { border-right:0; } .d2-recent-s:nth-child(3) { padding-left:0; }
 }
+/* ── PERFORMANCE 2.0 ── */
+#page-performance2 { max-width: 1600px; }
+.p2-body { padding: 14px 16px; }
+.p2-grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; margin-top: 13px; }
+.p2-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+.p2-table th { font-size: 9.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted); text-align: left; font-weight: 650; padding: 9px 15px; border-bottom: 1px solid var(--border); }
+.p2-table td { padding: 9px 15px; border-bottom: 1px solid var(--border); }
+.p2-table tr:last-child td { border-bottom: 0; }
+.p2-table td:last-child, .p2-table th:last-child { text-align: right; }
+.p2-table td.mono, .p2-table td:last-child { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
+.p2-table .p2-sub { color: var(--text-muted); font-size: 11px; }
+.p2-table td:first-child { font-family: var(--font-ui); }
+.p2-table td[colspan] { text-align: left; font-family: var(--font-ui); }
+.p2-table .p2-muted td { color: var(--text-muted); }
+.p2-table .p2-total td { font-weight: 700; }
+.p2-bars { display: flex; align-items: flex-end; gap: 14px; height: 170px; padding: 6px 4px 0; border-bottom: 1px solid var(--border); }
+.p2-bar { flex: 1; text-align: center; font-size: 10px; color: var(--text-muted); display: flex; flex-direction: column; justify-content: flex-end; height: 100%; max-width: 90px; margin: 0 auto; }
+.p2-bar i { display: block; width: 62%; margin: 0 auto 6px; border-radius: 5px 5px 0 0; background: var(--green); min-height: 3px; }
+.p2-bar i.neg { background: var(--red); }
+.p2-bar b { font-family: var(--font-mono); font-size: 10.5px; font-weight: 600; margin-bottom: 4px; color: var(--text-primary); }
+.p2-bars .d2-empty-s { margin: auto; color: var(--text-muted); font-size: 12px; }
+.p2-calnav { display: flex; align-items: center; gap: 8px; font-size: 11px; color: var(--text-secondary); }
+.p2-calnav button { background: var(--surface2); border: 1px solid var(--border); color: var(--text-secondary); border-radius: 5px; width: 24px; height: 24px; cursor: pointer; font-size: 14px; line-height: 1; }
+.p2-calnav button:hover:not(:disabled) { border-color: var(--accent); color: var(--accent); } .p2-calnav button:disabled { opacity: .35; cursor: default; }
+.p2-cal { display: grid; grid-template-columns: repeat(7, 1fr); gap: 5px; }
+.p2-cal .h { text-align: center; font-size: 9.5px; letter-spacing: .08em; text-transform: uppercase; color: var(--text-muted); padding-bottom: 2px; }
+.p2-day { background: var(--surface2); border: 1px solid var(--border); border-radius: 6px; padding: 7px 4px; min-height: 52px; text-align: center; font-size: 10px; color: var(--text-muted); }
+.p2-day small { display: block; font-family: var(--font-mono); font-size: 10.5px; font-weight: 700; margin-top: 4px; }
+.p2-day.pos { background: var(--green-soft); border-color: transparent; } .p2-day.pos small { color: var(--green); }
+.p2-day.neg { background: var(--red-soft); border-color: transparent; } .p2-day.neg small { color: var(--red); }
+.p2-day.blank { background: transparent; border-color: transparent; }
+.p2-day.we { opacity: .5; }
+@media (max-width: 900px) { .p2-grid3 { grid-template-columns: 1fr; } }
+@media (max-width: 600px) { .p2-day small { font-size: 9px; white-space: nowrap; } .p2-day { padding: 6px 1px; } .p2-table td:not(:first-child) { white-space: nowrap; } .p2-cal { gap: 3px; } }
 /* ── APP HEADER 2.0 — brand · broker workspaces · status / page nav ── */
 .app-header { position: sticky; top: 0; z-index: 100; background: var(--nav-bg); }
 .app-header .topbar { height: 54px; padding: 0 20px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; border-bottom: 1px solid var(--border); gap: 12px; }
@@ -981,6 +1015,78 @@ tbody tr:hover { filter: brightness(0.97); }
 
 <!-- ════ SWING PAGES WRAPPER ════ -->
 <div id="swing-pages">
+
+<!-- ════ PERFORMANCE 2.0 (contract-driven; used by workspaces whose pages.performance === 'v2') ════ -->
+<div id="page-performance2" class="page page-alt" style="display:none">
+
+  <div class="d2-head">
+    <div>
+      <div class="d2-eyebrow">Historical returns · profitability</div>
+      <h1>Performance</h1>
+      <div class="d2-sub">Measure consistency, returns, trade quality and the sources of profit over time.</div>
+    </div>
+    <div class="d2-filters">
+      <span class="d2-chip" id="p2-fy">FY 2026–27</span>
+      <span class="d2-chip" id="p2-ws">Dhan workspace</span>
+      <span class="d2-chip d2-chip-soft" id="p2-asof">—</span>
+      <button class="d2-chip d2-chip-btn" onclick="wsRefresh()">↻ Refresh</button>
+    </div>
+  </div>
+
+  <section class="d2-kpis" aria-label="Performance snapshot">
+    <div class="d2-kpi"><div class="d2-label">Net P&amp;L · FY</div><div class="d2-value" id="p2-k-pl">—</div><div class="d2-note">Realised + open-book MTM</div></div>
+    <div class="d2-kpi"><div class="d2-label">Return · FY</div><div class="d2-value" id="p2-k-ret">—</div><div class="d2-note" id="p2-k-ret-n">On starting capital</div></div>
+    <div class="d2-kpi"><div class="d2-label">Realised P&amp;L</div><div class="d2-value" id="p2-k-real">—</div><div class="d2-note" id="p2-k-real-n">Closed positions only</div></div>
+    <div class="d2-kpi"><div class="d2-label">Max drawdown</div><div class="d2-value" id="p2-k-dd">—</div><div class="d2-note">Peak-to-trough, on equity</div></div>
+    <div class="d2-kpi"><div class="d2-label">Closed trades</div><div class="d2-value" id="p2-k-closed">—</div><div class="d2-note">FY to date</div></div>
+  </section>
+
+  <div class="d2-layout">
+    <section class="d2-panel">
+      <div class="d2-panel-head">
+        <div><div class="d2-title">Equity curve</div><div class="d2-hint">Starting capital + cumulative P&amp;L (realised + unrealised) · unaffected by deposits</div></div>
+        <div class="d2-legend"><span><i class="d2-dot" id="p2-leg-dot"></i>Equity</span><span><i class="d2-dot amber"></i>Starting capital</span></div>
+      </div>
+      <div class="d2-chart" id="p2-chart"></div>
+    </section>
+    <section class="d2-panel">
+      <div class="d2-panel-head"><div><div class="d2-title">Monthly returns</div><div class="d2-hint">Month-by-month P&amp;L (realised + open-book)</div></div></div>
+      <div class="p2-body"><div class="p2-bars" id="p2-bars"></div><div class="d2-note" id="p2-best" style="margin-top:12px">—</div></div>
+    </section>
+  </div>
+
+  <div class="p2-grid3">
+    <section class="d2-panel">
+      <div class="d2-panel-head"><div><div class="d2-title">Trade quality</div><div class="d2-hint">Closed-trade statistics · not live positions</div></div></div>
+      <table class="p2-table" id="p2-quality"></table>
+    </section>
+    <section class="d2-panel">
+      <div class="d2-panel-head"><div><div class="d2-title">Workspace comparison</div><div class="d2-hint">Compare broker workspaces without mixing live open-book values</div></div></div>
+      <table class="p2-table" id="p2-compare"></table>
+      <div class="d2-edge-foot">Combined totals need deduplication and a common capital basis — enabled once a second workspace is connected.</div>
+    </section>
+    <section class="d2-panel">
+      <div class="d2-panel-head"><div><div class="d2-title">Top contributors &amp; detractors</div><div class="d2-hint" id="p2-movers-hint">Largest stock-level P&amp;L</div></div></div>
+      <table class="p2-table" id="p2-movers"></table>
+    </section>
+  </div>
+
+  <div class="d2-layout" style="margin-top:13px">
+    <section class="d2-panel">
+      <div class="d2-panel-head">
+        <div><div class="d2-title">P&amp;L calendar</div><div class="d2-hint">Daily change in total P&amp;L (realised + open-book)</div></div>
+        <div class="p2-calnav"><button onclick="p2CalNav(-1)" aria-label="Previous month">‹</button><span id="p2-cal-label">—</span><button onclick="p2CalNav(1)" aria-label="Next month">›</button></div>
+      </div>
+      <div class="p2-body"><div class="p2-cal" id="p2-cal"></div></div>
+    </section>
+    <section class="d2-panel">
+      <div class="d2-panel-head"><div><div class="d2-title">Quarterly &amp; annual summary</div><div class="d2-hint">Longer-horizon consistency</div></div></div>
+      <table class="p2-table" id="p2-quarters"></table>
+    </section>
+  </div>
+
+  <div class="d2-foot" id="p2-foot">—</div>
+</div>
 
 <!-- ════ DASHBOARD 2.0 (contract-driven; used by workspaces whose pages.dashboard === 'v2') ════ -->
 <div id="page-dashboard2" class="page page-alt" style="display:none">
@@ -8460,7 +8566,7 @@ const WORKSPACES = {
              snapshotUrl: 'dhan-live/dhan_live_signals.json',
              cfg: { staleDays: 3, addTriggerPct: -6, addCooldownDays: 7, addFraction: 0.1, // fallbacks; engine output wins
                     ref: { label: 'dh252 10-yr backtest', winRate: 42.05, avgPlPct: 8.45, trades: 5203 } },
-             pages: { live: true, dashboard: 'v2' } },   // 'v2' = contract-driven page-dashboard2
+             pages: { live: true, dashboard: 'v2', performance: 'v2' } },   // 'v2' = contract-driven page-dashboard2
   zerodha: { id: 'zerodha', label: 'Zerodha', strategy: 'SST',   source: 'Google Sheet',  status: 'live',
              pages: { dashboard: true, performance: true, analysis: true, strategy: true, journal: true } },
   icici:   { id: 'icici',   label: 'ICICI',   strategy: null,    source: 'not connected', status: 'pending',
@@ -8468,7 +8574,10 @@ const WORKSPACES = {
 };
 const WS_PAGE_ORDER = ['dashboard', 'performance', 'analysis', 'strategy', 'journal', 'dhanlive'];
 const WS = { id: 'dhan' }; // default workspace (a saved choice in localStorage overrides it)
-const WS_ALT = { dashboard: 'page-dashboard2' }; // pages whose DOM differs per workspace version
+const WS_ALT = { // pages whose DOM differs per workspace version: legacy page id -> { v2 element, ensure fn }
+  dashboard:   { el: 'page-dashboard2',   fn: 'd2Ensure' },
+  performance: { el: 'page-performance2', fn: 'p2Ensure' },
+};
 
 function wsPageKey(id) { return id === 'dhanlive' ? 'live' : id; }
 function wsHasPage(wsId, pageId) {
@@ -8484,11 +8593,11 @@ function wsGate(pageId) {
   const page = document.getElementById('page-' + pageId);
   if (!swing || !page) return;
   const ok = wsHasPage(WS.id, pageId);
-  const altEl = WS_ALT[pageId] && document.getElementById(WS_ALT[pageId]);
+  const alt = WS_ALT[pageId], altEl = alt && document.getElementById(alt.el);
   const useAlt = !!altEl && WORKSPACES[WS.id].pages[wsPageKey(pageId)] === 'v2';
   page.style.display = (ok && !useAlt) ? '' : 'none';
   if (altEl) altEl.style.display = (ok && useAlt) ? 'block' : 'none';
-  if (ok && useAlt && typeof d2Ensure === 'function') d2Ensure();
+  if (ok && useAlt && typeof window[alt.fn] === 'function') window[alt.fn]();
   let ph = document.getElementById('ws-empty');
   if (!ph) { ph = document.createElement('div'); ph.id = 'ws-empty'; swing.prepend(ph); }
   if (ok) { ph.style.display = 'none'; return; }
@@ -8908,7 +9017,8 @@ function d2FyBounds(now) {
 
 // Equity = fixed starting capital + realised + unrealised P&L, day by day (engine-built from daily closes).
 // Deposits are ignored by design, so adding capital never moves the line.
-function d2CurveSvg(d) {
+function d2CurveSvg(d, uid) {
+  uid = uid || 'd2';
   const eq = d.equity || [], base = d.capital.initial;
   if (eq.length < 2 || !base) return '<div class="d2-empty">Equity curve needs daily price history — run build_dh252_daily_closes.py, then the signal engine.</div>';
   const ser = eq.map(r => ({ t: new Date(r.date + 'T00:00:00').getTime(), y: r.equity, pnl: r.pnl }));
@@ -8933,10 +9043,10 @@ function d2CurveSvg(d) {
     const t = t0 + (t1 - t0) * i / n;
     ticks += `<text x="${X(t).toFixed(1)}" y="${H - 8}" text-anchor="${i === 0 ? 'start' : i === n ? 'end' : 'middle'}" fill="var(--text-muted)" font-size="10">${new Date(t).toLocaleDateString('en-IN', { day: '2-digit', month: 'short' })}</text>`;
   }
-  const dot = document.getElementById('d2-leg-dot'); if (dot) dot.style.background = col;
+  const dot = document.getElementById(uid + '-leg-dot'); if (dot) dot.style.background = col;
   return `<svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none" role="img" aria-label="Equity curve: starting capital plus cumulative P&L">
-    <defs><linearGradient id="d2area" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="${col}" stop-opacity=".22"/><stop offset="1" stop-color="${col}" stop-opacity="0"/></linearGradient></defs>
-    ${g}<path d="${area}" fill="url(#d2area)"/>
+    <defs><linearGradient id="${uid}area" x1="0" x2="0" y1="0" y2="1"><stop offset="0" stop-color="${col}" stop-opacity=".22"/><stop offset="1" stop-color="${col}" stop-opacity="0"/></linearGradient></defs>
+    ${g}<path d="${area}" fill="url(#${uid}area)"/>
     <path d="M${L} ${Y(base).toFixed(1)}H${W - R}" stroke="var(--amber)" stroke-width="1.5" stroke-dasharray="5 5"/>
     <path d="${line}" fill="none" stroke="${col}" stroke-width="2.6"/>
     <circle cx="${X(last.t).toFixed(1)}" cy="${Y(last.y).toFixed(1)}" r="3.8" fill="${col}"/>${ticks}</svg>`;
@@ -9084,12 +9194,164 @@ async function wsRefresh() {
   if (WS_ADAPTERS[WS.id] && cur && cur !== 'config' && ws.pages[wsPageKey(cur)]) {
     try {
       await wsLoad(WS.id, true);
-      if (cur === 'dashboard') d2Ensure(); else if (cur === 'dhanlive') dhLiveEnsure();
+      if (cur === 'dashboard') d2Ensure(); else if (cur === 'performance') p2Ensure(); else if (cur === 'dhanlive') dhLiveEnsure();
       if (typeof showToast === 'function') showToast('Refreshed ' + ws.label + ' data', 'green');
     } catch (e) { if (typeof showToast === 'function') showToast('Refresh failed: ' + e.message, 'red'); }
   } else {
     refreshData();
   }
+}
+
+// ── PERFORMANCE 2.0 (renders the active workspace's contract data) ───────────
+const P2_MONTHS = ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'];
+function p2SignedK(v) {
+  if (v == null) return '';
+  const a = Math.abs(v), s = v >= 0 ? '+' : '−';
+  return s + '₹' + (a >= 1000 ? (a / 1000).toFixed(a >= 10000 ? 0 : 1) + 'k' : Math.round(a));
+}
+// Daily series from the engine's equity curve: delta = day-over-day change in total P&L
+function p2Series(d) {
+  let prev = 0;
+  return (d.equity || []).map(r => { const delta = r.pnl - prev; prev = r.pnl; return { date: r.date, pnl: r.pnl, equity: r.equity, delta }; });
+}
+function p2MaxDd(series, base) {
+  let peak = base, dd = 0;
+  series.forEach(s => { if (s.equity > peak) peak = s.equity; const x = (s.equity - peak) / peak * 100; if (x < dd) dd = x; });
+  return dd;
+}
+function p2MonthSums(series) { // 'YYYY-MM' -> summed daily deltas
+  const m = {};
+  series.forEach(s => { const k = s.date.slice(0, 7); m[k] = (m[k] || 0) + s.delta; });
+  return m;
+}
+
+function p2RenderCal(d) {
+  const ser = p2Series(d), el = document.getElementById('p2-cal');
+  if (!ser.length) { el.innerHTML = '<div style="grid-column:1/-1;color:var(--text-muted);font-size:12px;padding:10px 0">Daily P&amp;L appears once price history is available.</div>'; return; }
+  const first = ser[0].date.slice(0, 7), lastK = ser[ser.length - 1].date.slice(0, 7);
+  if (!window._p2Cal || window._p2Cal.ws !== WS.id) window._p2Cal = { ws: WS.id, key: lastK };
+  const key = window._p2Cal.key, [y, m] = key.split('-').map(Number);
+  const byDate = {}; ser.forEach(s => { byDate[s.date] = s.delta; });
+  const offset = (new Date(y, m - 1, 1).getDay() + 6) % 7, days = new Date(y, m, 0).getDate();
+  let html = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(h => `<div class="h">${h}</div>`).join('') + '<div class="p2-day blank"></div>'.repeat(offset);
+  for (let day = 1; day <= days; day++) {
+    const iso = `${y}-${String(m).padStart(2, '0')}-${String(day).padStart(2, '0')}`, v = byDate[iso];
+    const wd = (offset + day - 1) % 7, we = wd >= 5;
+    html += `<div class="p2-day ${v == null ? '' : v >= 0 ? 'pos' : 'neg'}${we ? ' we' : ''}">${day}<small>${v == null ? '&nbsp;' : p2SignedK(v)}</small></div>`;
+  }
+  el.innerHTML = html;
+  document.getElementById('p2-cal-label').textContent = `${P2_MONTHS[m - 1]} ${y}`;
+  const nav = document.querySelectorAll('.p2-calnav button');
+  nav[0].disabled = key <= first; nav[1].disabled = key >= lastK;
+}
+function p2CalNav(dir) {
+  const d = WS.data[WS.id]; if (!d || !window._p2Cal) return;
+  let [y, m] = window._p2Cal.key.split('-').map(Number); m += dir;
+  if (m < 1) { m = 12; y--; } else if (m > 12) { m = 1; y++; }
+  window._p2Cal.key = `${y}-${String(m).padStart(2, '0')}`;
+  p2RenderCal(d);
+}
+
+function p2Render(d) {
+  const set = (id, v, cls) => { const el = document.getElementById(id); if (!el) return; el.innerHTML = v; if (cls !== undefined) el.className = el.className.replace(/\b(pos|neg)\b/g, '').trim() + (cls ? ' ' + cls : ''); };
+  const ws = WORKSPACES[WS.id], P = d.positions, closed = d.closed || [], base = d.capital.initial || 0;
+  const fy = d2FyBounds(new Date()), ser = p2Series(d);
+  set('p2-ws', dhEsc(ws.label) + ' workspace'); set('p2-fy', fy.label);
+  set('p2-asof', d.meta.marketDate ? 'Market data · ' + dhFmtDate(d.meta.marketDate) : 'Market data date unknown');
+
+  const mtm = P.reduce((s, p) => s + (p.plRs || 0), 0);
+  const closedFy = closed.filter(c => c.exitDate && new Date(c.exitDate + 'T00:00:00') >= fy.start);
+  const realised = closedFy.reduce((s, c) => s + (c.plRs || 0), 0);
+  const total = realised + mtm, ret = base ? total / base * 100 : null;
+  const dd = ser.length && base ? p2MaxDd(ser, base) : null;
+
+  set('p2-k-pl', d2Signed(total), d2Cls(total));
+  set('p2-k-ret', ret == null ? '—' : dhFmtPct(ret), d2Cls(ret));
+  set('p2-k-ret-n', base ? 'On ' + dhFmtRs(base) + ' starting capital' : 'On starting capital');
+  set('p2-k-real', closedFy.length ? d2Signed(realised) : '—', closedFy.length ? d2Cls(realised) : '');
+  set('p2-k-real-n', closedFy.length ? 'Closed positions only' : 'No closed trades yet');
+  set('p2-k-dd', dd == null ? '—' : dd === 0 ? '0.00%' : dd.toFixed(2).replace('-', '−') + '%', dd ? 'neg' : '');
+  set('p2-k-closed', closedFy.length);
+
+  document.getElementById('p2-chart').innerHTML = d2CurveSvg(d, 'p2');
+
+  // Monthly returns
+  const ms = p2MonthSums(ser), keys = Object.keys(ms).sort();
+  const barsEl = document.getElementById('p2-bars');
+  if (!keys.length) barsEl.innerHTML = '<div class="d2-empty-s">Monthly returns appear once price history is available.</div>';
+  else {
+    const maxAbs = Math.max(...keys.map(k => Math.abs(ms[k])), 1);
+    barsEl.innerHTML = keys.map(k => {
+      const v = ms[k], h = Math.max(3, Math.abs(v) / maxAbs * 110), mo = P2_MONTHS[+k.slice(5) - 1];
+      return `<div class="p2-bar"><b class="${v >= 0 ? 'pos' : 'neg'}">${p2SignedK(v)}</b><i class="${v < 0 ? 'neg' : ''}" style="height:${h.toFixed(0)}px"></i>${mo}</div>`;
+    }).join('');
+  }
+  if (keys.length >= 2) {
+    const best = keys.reduce((a, b) => ms[b] > ms[a] ? b : a), worst = keys.reduce((a, b) => ms[b] < ms[a] ? b : a);
+    set('p2-best', `Best month <b class="pos">${P2_MONTHS[+best.slice(5) - 1]}</b> · Weakest month <b class="neg">${P2_MONTHS[+worst.slice(5) - 1]}</b>`);
+  } else set('p2-best', keys.length ? 'Needs at least two months of history for best / weakest.' : '—');
+
+  // Trade quality — closed trades only
+  const wins = closed.filter(c => c.plRs > 0), losses = closed.filter(c => c.plRs < 0);
+  const avg = (a, f) => a.length ? a.reduce((s, x) => s + f(x), 0) / a.length : null;
+  const sumW = wins.reduce((s, c) => s + c.plRs, 0), sumL = Math.abs(losses.reduce((s, c) => s + c.plRs, 0));
+  const dash = '<span class="p2-sub">—</span>';
+  const q = (label, val, cls) => `<tr><td>${label}</td><td class="${cls || ''}">${val}</td></tr>`;
+  const prof = P.filter(p => p.plPct > 0).length;
+  document.getElementById('p2-quality').innerHTML = [
+    q('Win rate', closed.length ? (wins.length / closed.length * 100).toFixed(1) + '%' : dash),
+    q('Profit factor', closed.length && sumL ? (sumW / sumL).toFixed(2) : dash),
+    q('Expectancy / trade', closed.length ? d2Signed(avg(closed, c => c.plRs)) : dash),
+    q('Average winning trade', wins.length ? dhFmtPct(avg(wins, c => c.plPct)) : dash, wins.length ? 'pos' : ''),
+    q('Average losing trade', losses.length ? dhFmtPct(avg(losses, c => c.plPct)) : dash, losses.length ? 'neg' : ''),
+    q('Average holding period', closed.length ? Math.round(avg(closed, c => c.holdDays)) + ' days' : dash),
+    `<tr class="p2-muted"><td colspan="2" style="font-size:11px">${closed.length ? '' : 'No closed trades yet — these fill in as exits are recorded. '}Open book: ${prof} of ${P.length} positions in profit.</td></tr>`,
+  ].join('');
+
+  // Workspace comparison — only the active, connected workspace has contract data so far
+  const row = (id, w) => id === WS.id
+    ? `<tr><td>${w.label}</td><td class="${d2Cls(total)}">${d2Signed(total)}</td><td class="${d2Cls(ret)}">${ret == null ? '—' : dhFmtPct(ret)}</td></tr>`
+    : `<tr class="p2-muted"><td>${w.label}</td><td>—</td><td>—</td></tr>`;
+  document.getElementById('p2-compare').innerHTML = '<thead><tr><th>Workspace</th><th style="text-align:right">Net P&amp;L</th><th style="text-align:right">Return</th></tr></thead><tbody>'
+    + Object.entries(WORKSPACES).map(([id, w]) => row(id, w)).join('')
+    + '<tr class="p2-total p2-muted"><td>All workspaces</td><td>—</td><td>—</td></tr></tbody>';
+  document.querySelectorAll('#p2-compare td:nth-child(2), #p2-compare td:nth-child(3)').forEach(td => { td.style.textAlign = 'right'; td.style.fontFamily = 'var(--font-mono)'; });
+
+  // Top contributors / detractors
+  const byPl = P.slice().sort((a, b) => b.plRs - a.plRs);
+  const top = byPl.filter(p => p.plRs > 0).slice(0, 4), bot = byPl.slice().reverse().filter(p => p.plRs < 0).slice(0, 4);
+  const mrow = (p, cls) => `<tr><td>${dhEsc(p.symbol)} <span class="p2-sub">${dhFmtPct(p.plPct)}</span></td><td class="${cls}">${d2Signed(p.plRs)}</td></tr>`;
+  document.getElementById('p2-movers').innerHTML =
+    '<tr class="p2-muted"><td colspan="2" style="font-size:10px;letter-spacing:.08em;text-transform:uppercase">Top contributors</td></tr>' + (top.map(p => mrow(p, 'pos')).join('') || '<tr class="p2-muted"><td colspan="2">None</td></tr>')
+    + '<tr class="p2-muted"><td colspan="2" style="font-size:10px;letter-spacing:.08em;text-transform:uppercase">Largest detractors</td></tr>' + (bot.map(p => mrow(p, 'neg')).join('') || '<tr class="p2-muted"><td colspan="2">None</td></tr>');
+  document.getElementById('p2-movers-hint').textContent = closed.length ? 'Largest stock-level realised P&L' : 'Open-position P&L (unrealised) — realised ranking appears once exits are recorded';
+
+  p2RenderCal(d);
+
+  // Quarterly & annual summary for the current FY
+  const fyY = fy.start.getFullYear(), now = new Date();
+  const quarters = [['Q1 · Apr–Jun', 3, 5], ['Q2 · Jul–Sep', 6, 8], ['Q3 · Oct–Dec', 9, 11], ['Q4 · Jan–Mar', 12, 14]].map(([label, m0, m1]) => {
+    const from = new Date(fyY, m0, 1), to = new Date(fyY, m1 + 1, 0);
+    const pl = ser.filter(s => { const t = new Date(s.date + 'T00:00:00'); return t >= from && t <= to; }).reduce((a, s) => a + s.delta, 0);
+    const has = ser.some(s => { const t = new Date(s.date + 'T00:00:00'); return t >= from && t <= to; });
+    const status = now < from ? 'Upcoming' : now <= to ? 'In progress' : (has ? 'Complete' : 'No data');
+    return { label, pl, has, status };
+  });
+  const pill = s => `<span class="d2-pill${s === 'Complete' ? '' : ' muted'}" style="${s === 'In progress' ? 'border-color:var(--amber);color:var(--amber)' : ''}">${s}</span>`;
+  document.getElementById('p2-quarters').innerHTML = '<thead><tr><th>Period</th><th style="text-align:right">Net P&amp;L</th><th style="text-align:right">Return</th><th style="text-align:right">Status</th></tr></thead><tbody>'
+    + quarters.map(r => `<tr><td>${r.label}</td><td class="${r.has ? d2Cls(r.pl) : ''}">${r.has ? d2Signed(r.pl) : '—'}</td><td class="${r.has ? d2Cls(r.pl) : ''}">${r.has && base ? dhFmtPct(r.pl / base * 100) : '—'}</td><td>${pill(r.status)}</td></tr>`).join('')
+    + `<tr class="p2-total"><td>${fy.label}</td><td class="${d2Cls(total)}">${d2Signed(total)}</td><td class="${d2Cls(ret)}">${ret == null ? '—' : dhFmtPct(ret)}</td><td></td></tr></tbody>`;
+  document.querySelectorAll('#p2-quarters td:nth-child(2), #p2-quarters td:nth-child(3)').forEach(td => { td.style.textAlign = 'right'; td.style.fontFamily = 'var(--font-mono)'; });
+  document.querySelectorAll('#p2-quarters td:nth-child(4)').forEach(td => { td.style.textAlign = 'right'; td.style.fontFamily = 'var(--font-ui)'; });
+
+  set('p2-foot', `${ws.label} workspace · ${ws.strategy} · fixed starting capital of ${base ? dhFmtRs(base) : '—'} (deposits ignored). Net P&L combines realised and open-book MTM; realised-only statistics fill in as exits are recorded (the Dhan MCP tradebook only returns today's trades).`);
+}
+
+function p2Ensure() {
+  const id = WS.id;
+  if (WS.data[id]) { p2Render(WS.data[id]); return; }
+  if (!WS_ADAPTERS[id]) return;
+  wsLoad(id).then(p2Render).catch(e => console.error('Performance load error:', e));
 }
 
 // ── THEME ───────────────────────────────────────────
