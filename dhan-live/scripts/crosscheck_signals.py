@@ -1,0 +1,116 @@
+"""Cross-check every dh252 signal against an independent calculation on complete Yahoo price history.
+
+Why: the backtester's stored OHLC once had an 11-trading-day hole (21 Oct - 4 Nov 2026), which silently changed
+Supertrend colours (3 of 28 signal stocks disagreed with a recompute on complete data, incl. an EXIT). Signals
+are only as good as that history, so before any order every signal stock is recomputed here and compared.
+
+Rules checked (same as dh252, entry on the CLOSING high as decided by the user):
+  entry : Supertrend(10, 3) GREEN  AND  last close >= highest close of the last 252 sessions
+  add-on: Supertrend GREEN         (the P&L / cooldown part of the rule uses holdings, not prices)
+  exit  : Supertrend RED
+Calculation: Wilder ATR(10) (SMA-seeded) and the standard band-ratchet Supertrend - identical to TradingView's
+default and to backtester/scripts/indicators.py - on 5 years of UNADJUSTED daily bars from Yahoo (TradingView's
+default also does not adjust for dividends). The intraday 52-week high is reported for reference only.
+
+Output: data/signal_crosscheck.json (read by build_order_ticket.py, which blocks flagged signals).
+Usage:  python dhan-live/scripts/crosscheck_signals.py [--signals PATH] [--out PATH]
+"""
+import argparse
+import json
+import warnings
+from datetime import datetime, timezone
+from pathlib import Path
+
+warnings.filterwarnings("ignore")
+ROOT = Path(__file__).resolve().parent.parent
+PERIOD, MULT, WINDOW = 10, 3.0, 252
+
+
+def supertrend(h, l, c, period=PERIOD, mult=MULT):
+    n = len(c)
+    tr = [h[0] - l[0]] + [max(h[i] - l[i], abs(h[i] - c[i - 1]), abs(l[i] - c[i - 1])) for i in range(1, n)]
+    atr = [None] * n
+    atr[period - 1] = sum(tr[:period]) / period
+    for i in range(period, n):
+        atr[i] = (atr[i - 1] * (period - 1) + tr[i]) / period
+    fu, fl, d = [None] * n, [None] * n, [None] * n
+    s0 = period - 1
+    m = (h[s0] + l[s0]) / 2
+    fu[s0], fl[s0] = m + mult * atr[s0], m - mult * atr[s0]
+    d[s0] = "down" if c[s0] <= fu[s0] else "up"
+    for i in range(s0 + 1, n):
+        m = (h[i] + l[i]) / 2
+        bu, bl = m + mult * atr[i], m - mult * atr[i]
+        fu[i] = bu if (bu < fu[i - 1] or c[i - 1] > fu[i - 1]) else fu[i - 1]
+        fl[i] = bl if (bl > fl[i - 1] or c[i - 1] < fl[i - 1]) else fl[i - 1]
+        d[i] = ("up" if c[i] > fu[i] else "down") if d[i - 1] == "down" else ("down" if c[i] < fl[i] else "up")
+    return d
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--signals", default=str(ROOT / "dhan_live_signals.json"))
+    ap.add_argument("--out", default=str(ROOT / "data" / "signal_crosscheck.json"))
+    args = ap.parse_args()
+
+    import yfinance as yf
+
+    sig = json.loads(Path(args.signals).read_text())
+    md = sig.get("market_data_date")
+    todo = ([("entry", r) for r in sig.get("entries", [])] + [("addon", r) for r in sig.get("addons", [])]
+            + [("exit", r) for r in sig.get("exits", [])])
+    syms = sorted({r["symbol"] for _, r in todo})
+    df = yf.download([s + ".NS" for s in syms], period="5y", progress=False, auto_adjust=False, threads=True)
+
+    results, last_bars = [], set()
+    for kind, r in todo:
+        s = r["symbol"]
+        res = {"symbol": s, "kind": kind, "ok": False, "reasons": []}
+        try:
+            x = df.xs(s + ".NS", axis=1, level=1).dropna(subset=["Close"])
+        except Exception:
+            x = None
+        if x is None or len(x) < PERIOD + 2:
+            res["reasons"].append("not enough Yahoo history to verify")
+            results.append(res)
+            continue
+        if len(x) < WINDOW:
+            res["note"] = f"recent listing: only {len(x)} sessions of history (closing high taken over those)"
+        h, l, c = x["High"].tolist(), x["Low"].tolist(), x["Close"].tolist()
+        colour = "green" if supertrend(h, l, c)[-1] == "up" else "red"
+        win = x.tail(WINDOW)
+        close = c[-1]
+        hi_close, hi_intra = float(win["Close"].max()), float(win["High"].max())
+        last_bar = str(x.index[-1].date())
+        last_bars.add(last_bar)
+        published = r.get("supertrend_color")
+        pub_close = r.get("close") if kind == "entry" else r.get("cmp")
+        res.update({
+            "published_colour": published, "recomputed_colour": colour, "yahoo_last_bar": last_bar,
+            "close": round(close, 2), "published_close": pub_close, "closing_high_252": round(hi_close, 2),
+            "intraday_high_252": round(hi_intra, 2), "pct_from_intraday_high": round((close / hi_intra - 1) * 100, 2),
+        })
+        if last_bar != md:
+            res["reasons"].append(f"Yahoo's last bar is {last_bar}, signals are dated {md}")
+        if pub_close and abs(close / pub_close - 1) > 0.005:
+            res["reasons"].append(f"close {close:.2f} differs from the signal's {pub_close}")
+        if kind in ("entry", "addon") and colour != "green":
+            res["reasons"].append(f"Supertrend is {colour.upper()} on complete data (signal says {published})")
+        if kind == "exit" and colour != "red":
+            res["reasons"].append(f"Supertrend is {colour.upper()} on complete data (signal says {published}) - not an exit")
+        if kind == "entry" and round(close, 2) < round(hi_close, 2):
+            res["reasons"].append(f"close {close:.2f} is below the 252-session closing high {hi_close:.2f}")
+        res["ok"] = not res["reasons"]
+        results.append(res)
+
+    bad = [x for x in results if not x["ok"]]
+    out = {"generated_at": datetime.now(timezone.utc).isoformat(), "market_data_date": md, "yahoo_last_bars": sorted(last_bars),
+           "checked": len(results), "flagged": len(bad), "results": results}
+    Path(args.out).write_text(json.dumps(out, indent=1))
+    print(f"cross-check of {len(results)} signals (market data {md}): {len(results) - len(bad)} agree, {len(bad)} flagged")
+    for x in bad:
+        print(f"  FLAG {x['kind']:5} {x['symbol']:12} " + "; ".join(x["reasons"]))
+
+
+if __name__ == "__main__":
+    main()

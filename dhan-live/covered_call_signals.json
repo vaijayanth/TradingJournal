@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-08T11:18:52.122479+00:00",
+  "generated_at": "2026-11-08T12:00:15.341020+00:00",
   "market_data_date": "2026-11-08",
   "as_of": "2026-11-08",
   "rules": {
@@ -104,11 +104,11 @@
     {
       "symbol": "SHRIRAMFIN",
       "spot": 960.05,
-      "colour": "red",
-      "flip_date": "2026-09-01",
-      "flip_trading_days": 35,
-      "rsi": 46.7,
-      "basis": "Supertrend red",
+      "colour": "green",
+      "flip_date": "2026-11-05",
+      "flip_trading_days": 2,
+      "rsi": 58.2,
+      "basis": "Supertrend green",
       "near_call": {
         "strike": 1120.0,
         "expiry": "2026-12-29",
@@ -122,9 +122,9 @@
       "shares": 106,
       "lot": 825,
       "covered": false,
-      "desired": "CALL",
+      "desired": "PUT_SPREAD",
       "status": "HOLD",
-      "note": "Open structure matches the rule (Supertrend red).",
+      "note": "Open structure matches the rule (Supertrend green).",
       "tagged": false,
       "suggestions": [],
       "legs": [
@@ -205,7 +205,7 @@
       "colour": "red",
       "flip_date": "2026-09-16",
       "flip_trading_days": 25,
-      "rsi": 35.8,
+      "rsi": 38.9,
       "basis": "Supertrend red",
       "near_call": {
         "strike": 900.0,
@@ -303,8 +303,8 @@
       "colour": "green",
       "flip_date": "2026-10-15",
       "flip_trading_days": 5,
-      "rsi": 69.7,
-      "basis": "Supertrend green",
+      "rsi": 70.1,
+      "basis": "RSI 70 > 70",
       "near_call": {
         "strike": 4100.0,
         "expiry": "2026-11-23",
@@ -318,9 +318,9 @@
       "shares": 34,
       "lot": 200,
       "covered": false,
-      "desired": "PUT_SPREAD",
+      "desired": "CALL",
       "status": "HOLD",
-      "note": "Open structure matches the rule (Supertrend green).",
+      "note": "Open structure matches the rule (RSI 70 > 70).",
       "tagged": false,
       "suggestions": [],
       "legs": [
@@ -434,11 +434,11 @@
     {
       "symbol": "DIXON",
       "spot": 12604.0,
-      "colour": "red",
-      "flip_date": "2026-09-10",
-      "flip_trading_days": 28,
-      "rsi": 42.7,
-      "basis": "Supertrend red",
+      "colour": "green",
+      "flip_date": "2026-11-02",
+      "flip_trading_days": 3,
+      "rsi": 54.5,
+      "basis": "Supertrend green",
       "near_call": {
         "strike": 13000.0,
         "expiry": "2026-11-23",
@@ -452,9 +452,9 @@
       "shares": 8,
       "lot": 50,
       "covered": false,
-      "desired": "CALL",
+      "desired": "PUT_SPREAD",
       "status": "HOLD",
-      "note": "Open structure matches the rule (Supertrend red).",
+      "note": "Open structure matches the rule (Supertrend green).",
       "tagged": false,
       "suggestions": [],
       "legs": [
@@ -535,8 +535,8 @@
       "colour": "green",
       "flip_date": "2026-10-13",
       "flip_trading_days": 7,
-      "rsi": 75.7,
-      "basis": "RSI 76 > 70",
+      "rsi": 67.4,
+      "basis": "Supertrend green",
       "near_call": {
         "strike": 1560.0,
         "expiry": "2026-11-23",
@@ -550,11 +550,38 @@
       "shares": 21,
       "lot": 400,
       "covered": false,
-      "desired": "CALL",
-      "status": "HOLD",
-      "note": "Open structure matches the rule (RSI 76 > 70).",
+      "desired": "PUT_SPREAD",
+      "status": "ENTER",
+      "note": "Supertrend green - no put spread open",
       "tagged": false,
-      "suggestions": [],
+      "suggestions": [
+        {
+          "expiry": "2026-11-23",
+          "days": 15,
+          "structure": "PUT_SPREAD",
+          "expiry_week": false,
+          "short": {
+            "type": "PE",
+            "strike": 1340.0,
+            "ltp": 7.9,
+            "iv": 36.4,
+            "delta": -0.143,
+            "oi": 171200
+          },
+          "stop_premium": 23.7,
+          "strike_distance_pct": -7.07,
+          "hedge": {
+            "type": "PE",
+            "strike": 1300.0,
+            "ltp": 4.75,
+            "iv": 39.7
+          },
+          "credit": 3.15,
+          "width": 40.0,
+          "credit_rs": 1260.0,
+          "max_loss_rs": 14740.0
+        }
+      ],
       "legs": [
         {
           "symbol": "HCLTECH",
@@ -600,7 +627,7 @@
       "colour": "green",
       "flip_date": "2026-10-14",
       "flip_trading_days": 6,
-      "rsi": 66.2,
+      "rsi": 62.0,
       "basis": "Supertrend green",
       "near_call": {
         "strike": 1334.0,
@@ -692,7 +719,7 @@
       "colour": "green",
       "flip_date": "2026-11-05",
       "flip_trading_days": 2,
-      "rsi": 56.1,
+      "rsi": 56.6,
       "basis": "Supertrend green",
       "near_call": {
         "strike": 150.0,
@@ -772,7 +799,7 @@
       "colour": "green",
       "flip_date": "2026-11-05",
       "flip_trading_days": 2,
-      "rsi": 62.9,
+      "rsi": 64.4,
       "basis": "Supertrend green",
       "near_call": null,
       "near_put": null,
@@ -817,51 +844,48 @@
       "symbol": "CUMMINSIND",
       "spot": 4115.0,
       "colour": "red",
-      "flip_date": "2026-08-12",
-      "flip_trading_days": 49,
-      "rsi": 22.9,
-      "basis": "RSI 23 < 30",
+      "flip_date": "2026-11-05",
+      "flip_trading_days": 2,
+      "rsi": 34.0,
+      "basis": "Supertrend red",
       "near_call": null,
       "near_put": null,
       "shares": 18,
       "lot": 100,
       "covered": false,
-      "desired": "PUT_SPREAD",
+      "desired": "CALL",
       "status": "ENTER",
-      "note": "RSI 23 < 30 - no put spread open",
+      "note": "Supertrend red - no short call open",
       "tagged": false,
       "suggestions": [
         {
           "expiry": "2026-11-23",
           "days": 15,
-          "structure": "PUT_SPREAD",
+          "structure": "CALL",
           "expiry_week": false,
           "short": {
-            "type": "PE",
-            "strike": 3800.0,
-            "ltp": 30.4,
-            "iv": 42.5,
-            "delta": -0.159,
-            "oi": 167400
+            "type": "CE",
+            "strike": 4550.0,
+            "ltp": 16.9,
+            "iv": 37.8,
+            "delta": 0.108,
+            "oi": 48300
           },
-          "stop_premium": 91.2,
-          "strike_distance_pct": -7.65,
-          "hedge": {
-            "type": "PE",
-            "strike": 3600.0,
-            "ltp": 13.85,
-            "iv": 48.2
-          },
-          "credit": 16.55,
-          "width": 200.0,
-          "credit_rs": 1655.0,
-          "max_loss_rs": 18345.0
+          "stop_premium": 50.7,
+          "credit": 16.9,
+          "credit_rs": 1690.0,
+          "strike_distance_pct": 10.57
         }
       ],
       "legs": []
     }
   ],
   "alerts": [
+    {
+      "level": "ENTER",
+      "symbol": "HCLTECH",
+      "text": "HCLTECH: Supertrend green - no put spread open - bull put spread"
+    },
     {
       "level": "ENTER",
       "symbol": "INFY",
@@ -875,7 +899,7 @@
     {
       "level": "ENTER",
       "symbol": "CUMMINSIND",
-      "text": "CUMMINSIND: RSI 23 < 30 - no put spread open - bull put spread"
+      "text": "CUMMINSIND: Supertrend red - no short call open - sell call"
     }
   ],
   "shares": {
@@ -909,16 +933,16 @@
         "value": 101765.3,
         "pl_pct": -14.76,
         "pl_rs": -17615.08,
-        "colour": "red",
-        "flip_date": "2026-09-01",
-        "flip_trading_days": 35,
-        "rsi": 46.7,
-        "avg_status": "NO",
+        "colour": "green",
+        "flip_date": "2026-11-05",
+        "flip_trading_days": 2,
+        "rsi": 58.2,
+        "avg_status": "ADD",
         "add_qty": 11,
         "add_value_rs": 10560.55,
         "last_add": null,
         "days_since_add": null,
-        "avg_note": "Supertrend red"
+        "avg_note": "no earlier add recorded"
       },
       {
         "symbol": "CGPOWER",
@@ -932,7 +956,7 @@
         "colour": "red",
         "flip_date": "2026-09-16",
         "flip_trading_days": 25,
-        "rsi": 35.8,
+        "rsi": 38.9,
         "avg_status": "NO",
         "add_qty": 18,
         "add_value_rs": 14088.6,
@@ -952,7 +976,7 @@
         "colour": "green",
         "flip_date": "2026-10-15",
         "flip_trading_days": 5,
-        "rsi": 69.7,
+        "rsi": 70.1,
         "avg_status": "NO",
         "add_qty": 3,
         "add_value_rs": 11400.0,
@@ -969,16 +993,16 @@
         "value": 100832.0,
         "pl_pct": -13.96,
         "pl_rs": -16360.96,
-        "colour": "red",
-        "flip_date": "2026-09-10",
-        "flip_trading_days": 28,
-        "rsi": 42.7,
-        "avg_status": "NO",
+        "colour": "green",
+        "flip_date": "2026-11-02",
+        "flip_trading_days": 3,
+        "rsi": 54.5,
+        "avg_status": "ADD",
         "add_qty": 1,
         "add_value_rs": 12604.0,
         "last_add": null,
         "days_since_add": null,
-        "avg_note": "Supertrend red"
+        "avg_note": "no earlier add recorded"
       },
       {
         "symbol": "HCLTECH",
@@ -992,7 +1016,7 @@
         "colour": "green",
         "flip_date": "2026-10-13",
         "flip_trading_days": 7,
-        "rsi": 75.7,
+        "rsi": 67.4,
         "avg_status": "ADD",
         "add_qty": 2,
         "add_value_rs": 2884.0,
@@ -1012,7 +1036,7 @@
         "colour": "green",
         "flip_date": "2026-10-14",
         "flip_trading_days": 6,
-        "rsi": 66.2,
+        "rsi": 62.0,
         "avg_status": "ADD",
         "add_qty": 2,
         "add_value_rs": 2343.2,
@@ -1032,7 +1056,7 @@
         "colour": "green",
         "flip_date": "2026-11-05",
         "flip_trading_days": 2,
-        "rsi": 56.1,
+        "rsi": 56.6,
         "avg_status": "ADD",
         "add_qty": 16,
         "add_value_rs": 2219.36,
@@ -1052,7 +1076,7 @@
         "colour": "green",
         "flip_date": "2026-11-05",
         "flip_trading_days": 2,
-        "rsi": 62.9,
+        "rsi": 64.4,
         "avg_status": "ADD",
         "add_qty": 7,
         "add_value_rs": 2223.2,
@@ -1070,9 +1094,9 @@
         "pl_pct": -25.84,
         "pl_rs": -25808.04,
         "colour": "red",
-        "flip_date": "2026-08-12",
-        "flip_trading_days": 49,
-        "rsi": 22.9,
+        "flip_date": "2026-11-05",
+        "flip_trading_days": 2,
+        "rsi": 34.0,
         "avg_status": "NO",
         "add_qty": 2,
         "add_value_rs": 8230.0,

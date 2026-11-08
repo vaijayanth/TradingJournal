@@ -13,6 +13,7 @@ This skill places REAL orders on the user's Dhan account through the Dhan MCP. T
 - The whole open position is sold - quantity comes from `build_order_ticket.py`, which also checks it equals the Dhan holdings quantity. Never sell more than held.
 - AFTER-MARKET (AMO) MARKET orders, CNC (delivery) - the user's rule: when an exit signal exists the position is sold at the next open, whatever the price. No limit price. Never during market hours (see step 3).
 - One explicit user confirmation for the exact batch shown; any change = show again and re-confirm. Never place on an implied or earlier "yes".
+- Signals flagged by the cross-check (`dhan-live/data/signal_crosscheck.json`, recomputed from complete Yahoo history) are BLOCKED: `build_order_ticket.py` lists them as BLOCKED and will not include them. Never work around it; `--override SYMBOL` exists but only the user may ask for it, naming the stock, after you have shown the flag reason.
 - Never retry a rejected order, never modify or cancel without being asked.
 
 ## Steps

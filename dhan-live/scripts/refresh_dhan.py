@@ -6,6 +6,9 @@ Steps (run from anywhere; paths are resolved relative to this repo):
   2. rebuild daily closes + SMA50/200 from fresh yfinance history   (build_dh252_daily_closes.py)
   3. rebuild dhan_live_signals.json from holdings + trade log + the above (compute_dh252_live_signals.py)
 
+It also runs crosscheck_signals.py (data/signal_crosscheck.json): Supertrend + closing high recomputed from complete Yahoo
+history for every signal stock; build_order_ticket.py refuses to order a flagged signal.
+
 The MCP-fed inputs must already be current before this runs (the refresh-dhan skill does that):
   data/holdings_snapshot.json   <- Dhan MCP holdings
   data/dh252_trade_log.json     <- fills (append_fills.py from MCP tradebook, or import_dhan_transactions.py from a CSV)
@@ -67,6 +70,7 @@ def main():
          "--entry-signals", tmp / "dh252_entry_signals.json",
          "--trade-log", DATA / "dh252_trade_log.json",
          "--out", ROOT / "dhan_live_signals.json"])
+    run([py, SCRIPTS / "crosscheck_signals.py"])   # recompute every signal on complete Yahoo data; flagged signals are blocked from orders
     run([py, SCRIPTS / "update_lot_sizes.py"])   # NSE's official lot file (best effort)
     run(cc)
     print("\nDone. Review `git diff --stat`, then commit dhan-live/ if the numbers look right.")

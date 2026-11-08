@@ -12,6 +12,9 @@ Usage:
   python dhan-live/scripts/build_order_ticket.py buy|entry|addon|exit            # numbered list
   python dhan-live/scripts/build_order_ticket.py buy --pick 3,7,12-15            # tickets for those numbers
   python dhan-live/scripts/build_order_ticket.py buy --symbols A,B               # or by symbol (must have a signal)
+  python dhan-live/scripts/build_order_ticket.py buy --override A,B              # include signals the cross-check flagged (deliberate)
+Every signal must pass data/signal_crosscheck.json (crosscheck_signals.py: Supertrend + closing high recomputed from complete
+Yahoo history). Flagged signals are listed as BLOCKED and are not selectable unless named in --override.
 Numbers are stable for a given signal file (entries in file order, then add-ons). Prints a table and a final
 TICKETS_JSON= line. Exit code 2 = refuse (stale data, stock without a signal, bad pick).
 """
@@ -48,6 +51,8 @@ def main():
     ap.add_argument("kind", choices=["buy", "entry", "addon", "exit"])
     ap.add_argument("--pick", default="", help="numbers from the printed list, e.g. 3,7,12-15")
     ap.add_argument("--symbols", default="", help="comma list: restrict to these signal stocks (must already have a signal)")
+    ap.add_argument("--override", default="", help="comma list of cross-check-FLAGGED symbols to include anyway")
+    ap.add_argument("--crosscheck", default=str(ROOT / "data" / "signal_crosscheck.json"))
     ap.add_argument("--signals", default=str(ROOT / "dhan_live_signals.json"))
     ap.add_argument("--holdings", default=str(ROOT / "data" / "holdings_snapshot.json"))
     args = ap.parse_args()
@@ -61,6 +66,17 @@ def main():
         print(f"REFUSED: signal data is {age} days old (market data {md}); run /refresh-dhan first.")
         sys.exit(2)
 
+    cc_path = Path(args.crosscheck)
+    if not cc_path.exists():
+        print("REFUSED: no signal cross-check found - run /refresh-dhan (it runs crosscheck_signals.py) first.")
+        sys.exit(2)
+    cc = json.loads(cc_path.read_text())
+    if cc.get("market_data_date") != md:
+        print(f"REFUSED: the cross-check is for market data {cc.get('market_data_date')} but the signals are {md}; re-run /refresh-dhan.")
+        sys.exit(2)
+    flagged = {(x["kind"], x["symbol"]): x["reasons"] for x in cc["results"] if not x["ok"]}
+    override = {s.strip().upper() for s in args.override.split(",") if s.strip()}
+
     srcs = {"entry": sig.get("entries", []), "addon": sig.get("addons", []), "exit": sig.get("exits", [])}
     kinds = ["entry", "addon"] if args.kind == "buy" else [args.kind]
     all_symbols = {(k, r["symbol"]) for k in kinds for r in srcs[k]}
@@ -70,7 +86,7 @@ def main():
         print(f"REFUSED: no current {'/'.join(kinds)} signal for {sorted(unknown)} - nothing is placed for stocks without a signal.")
         sys.exit(2)
 
-    tickets, skipped = [], []
+    tickets, skipped, blocked = [], [], []
     for kind in kinds:
         for r in srcs[kind]:
             s = r["symbol"]
@@ -95,8 +111,14 @@ def main():
                 side, ref, why = "SELL", r["cmp"], f"Supertrend red ({r.get('flip_label')}), P&L {r['pl_pct']:.1f}% - exit the whole position"
             if qty < 1:
                 skipped.append((s, "quantity < 1 share")); continue
+            bad = flagged.get((kind, s))
+            if bad is None and (kind, s) not in {(x["kind"], x["symbol"]) for x in cc["results"]}:
+                bad = ["not covered by the cross-check"]
+            if bad and s not in override:
+                blocked.append((kind, s, "; ".join(bad))); continue
             tickets.append({"kind": kind, "symbol": s, "side": side, "qty": int(qty), "ref_price": ref,
-                            "est_value": round(qty * ref, 2), "reason": why, "market_data_date": md})
+                            "est_value": round(qty * ref, 2), "reason": why, "market_data_date": md,
+                        "crosscheck": "OVERRIDDEN: " + "; ".join(bad) if bad else "ok"})
     for i, t in enumerate(tickets, 1):
         t["no"] = i
 
@@ -113,6 +135,8 @@ def main():
         print(f"  {t['no']:>2}) {t['side']:4} {t['symbol']:12} x{t['qty']:<4} ref Rs{t['ref_price']:<9} ~Rs{t['est_value']:<9} [{t['kind']}] {t['reason']}")
     for s, why in skipped:
         print(f"  skipped {s}: {why}")
+    for kind, s, why in blocked:
+        print(f"  BLOCKED by cross-check [{kind}] {s}: {why}")
     if args.pick or want:
         print(f"  total ~Rs{sum(t['est_value'] for t in chosen):,.2f}")
     print("TICKETS_JSON=" + json.dumps(chosen))

@@ -13,6 +13,7 @@ This skill places REAL orders on the user's Dhan account through the Dhan MCP. T
 - Only symbols that appear in the current signal file (`dhan-live/dhan_live_signals.json`) as `entries` (kind `entry`) or `addons` (kind `addon`). Quantity is whatever `build_order_ticket.py` says - never a number the user or you make up. If the user names a stock with no signal, refuse.
 - AFTER-MARKET (AMO) LIMIT orders only, CNC (delivery). Never market orders. Never during market hours (see step 3).
 - One explicit user confirmation for the exact batch shown. Any change (symbol, qty, price) = show the ticket again and re-confirm. Never place anything on an implied or earlier "yes".
+- Signals flagged by the cross-check (`dhan-live/data/signal_crosscheck.json`, recomputed from complete Yahoo history) are BLOCKED: `build_order_ticket.py` lists them as BLOCKED and will not include them. Never work around it; `--override SYMBOL` exists but only the user may ask for it, naming the stock, after you have shown the flag reason.
 - Never retry a rejected/failed order, never modify or cancel without being asked, never place orders while a refresh is running.
 
 ## Steps
