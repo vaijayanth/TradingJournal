@@ -1,17 +1,17 @@
 {
-  "generated_at": "2026-11-08T09:45:11.527983+00:00",
+  "generated_at": "2026-11-08T10:12:31.113670+00:00",
   "market_data_date": "2026-11-06",
   "source_generated_at": {
     "market_screens": "2026-11-06T20:35:59.810132+00:00",
     "supertrend": "2026-11-06T20:36:09.094184+00:00"
   },
   "sizing": {
-    "closed_trades_count": 0,
+    "closed_trades_count": 3,
     "base_tier_rs": 1000,
-    "total_positions_ever_opened": 48,
-    "realized_pl_rs": 0.0,
+    "total_positions_ever_opened": 51,
+    "realized_pl_rs": -250.8,
     "unrealized_pl_rs": 2373.83,
-    "combined_pl_rs": 2373.83,
+    "combined_pl_rs": 2123.03,
     "effective_tier_rs": 1000,
     "doubled": false
   },
@@ -46,92 +46,145 @@
     {
       "date": "2026-10-16",
       "pnl": 0.0,
+      "realised": 0.0,
       "invested": 0.0,
       "equity": 2000000.0
     },
     {
       "date": "2026-10-19",
       "pnl": 0.0,
+      "realised": 0.0,
       "invested": 0.0,
       "equity": 2000000.0
     },
     {
       "date": "2026-10-21",
-      "pnl": -143.41,
-      "invested": 10222.34,
-      "equity": 1999856.59
+      "pnl": -183.73,
+      "realised": 0.0,
+      "invested": 10320.97,
+      "equity": 1999816.27
     },
     {
       "date": "2026-10-22",
-      "pnl": -237.81,
-      "invested": 12057.04,
-      "equity": 1999762.19
+      "pnl": -275.33,
+      "realised": 0.0,
+      "invested": 12155.67,
+      "equity": 1999724.67
     },
     {
       "date": "2026-10-23",
-      "pnl": -559.66,
-      "invested": 12057.04,
-      "equity": 1999440.34
+      "pnl": -597.76,
+      "realised": 0.0,
+      "invested": 12155.67,
+      "equity": 1999402.24
     },
     {
       "date": "2026-10-26",
-      "pnl": -417.45,
-      "invested": 19718.59,
-      "equity": 1999582.55
+      "pnl": -488.27,
+      "realised": 0.0,
+      "invested": 19817.22,
+      "equity": 1999511.73
     },
     {
       "date": "2026-10-27",
-      "pnl": -98.78,
-      "invested": 20513.74,
-      "equity": 1999901.22
+      "pnl": -151.78,
+      "realised": 0.0,
+      "invested": 21562.17,
+      "equity": 1999848.22
     },
     {
       "date": "2026-10-28",
-      "pnl": -113.21,
-      "invested": 32132.83,
-      "equity": 1999886.79
+      "pnl": -274.35,
+      "realised": 0.0,
+      "invested": 33082.56,
+      "equity": 1999725.65
     },
     {
       "date": "2026-10-29",
-      "pnl": 407.15,
-      "invested": 34486.48,
-      "equity": 2000407.15
+      "pnl": 267.79,
+      "realised": -75.15,
+      "invested": 36662.69,
+      "equity": 2000267.79
     },
     {
       "date": "2026-10-30",
-      "pnl": 519.12,
-      "invested": 43454.78,
-      "equity": 2000519.12
+      "pnl": 326.66,
+      "realised": -75.15,
+      "invested": 45630.99,
+      "equity": 2000326.66
     },
     {
       "date": "2026-11-02",
-      "pnl": 830.96,
-      "invested": 60060.63,
-      "equity": 2000830.96
+      "pnl": 580.15,
+      "realised": -250.8,
+      "invested": 60060.64,
+      "equity": 2000580.15
     },
     {
       "date": "2026-11-03",
-      "pnl": 1373.82,
-      "invested": 65327.45,
-      "equity": 2001373.82
+      "pnl": 1123.01,
+      "realised": -250.8,
+      "invested": 65327.46,
+      "equity": 2001123.01
     },
     {
       "date": "2026-11-04",
-      "pnl": 1712.43,
-      "invested": 65327.45,
-      "equity": 2001712.43
+      "pnl": 1461.62,
+      "realised": -250.8,
+      "invested": 65327.46,
+      "equity": 2001461.62
     },
     {
       "date": "2026-11-05",
-      "pnl": 2077.93,
-      "invested": 65327.45,
-      "equity": 2002077.93
+      "pnl": 1827.12,
+      "realised": -250.8,
+      "invested": 65327.46,
+      "equity": 2001827.12
     },
     {
       "date": "2026-11-06",
-      "pnl": 2373.83,
-      "invested": 65327.45,
-      "equity": 2002373.83
+      "pnl": 2123.02,
+      "realised": -250.8,
+      "invested": 65327.46,
+      "equity": 2002123.02
+    }
+  ],
+  "closed_trades": [
+    {
+      "symbol": "GANDHAR",
+      "entry_date": "2026-10-28",
+      "exit_date": "2026-10-29",
+      "qty": 3,
+      "entry_price": 283.7,
+      "exit_price": 258.65,
+      "pl_rs": -75.15,
+      "pl_pct": -8.83,
+      "hold_days": 1,
+      "num_adds": 0
+    },
+    {
+      "symbol": "TBZ",
+      "entry_date": "2026-10-21",
+      "exit_date": "2026-11-02",
+      "qty": 2,
+      "entry_price": 669.55,
+      "exit_price": 577.45,
+      "pl_rs": -184.2,
+      "pl_pct": -13.76,
+      "hold_days": 12,
+      "num_adds": 1
+    },
+    {
+      "symbol": "SHREEJISPG",
+      "entry_date": "2026-10-29",
+      "exit_date": "2026-11-02",
+      "qty": 1,
+      "entry_price": 837.1,
+      "exit_price": 845.65,
+      "pl_rs": 8.55,
+      "pl_pct": 1.02,
+      "hold_days": 4,
+      "num_adds": 0
     }
   ],
   "hot_sectors": {
@@ -1003,7 +1056,7 @@
       "sma_asof": "2026-10-19"
     },
     {
-      "entry_date": "2026-10-28",
+      "entry_date": "2026-10-27",
       "symbol": "ORIENTHOT",
       "qty": 12,
       "avg_cost": 158.27,
@@ -1013,8 +1066,8 @@
       "supertrend_color": "green",
       "flip_label": "GREEN 90d",
       "pct_from_52w_high": 0.0,
-      "num_adds": 0,
-      "age_days": 11,
+      "num_adds": 1,
+      "age_days": 12,
       "rsi14": 81.6,
       "sector": "Consumer Cyclical",
       "sma200": 115.7,

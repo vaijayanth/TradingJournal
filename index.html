@@ -1030,10 +1030,7 @@ tbody tr:hover { filter: brightness(0.97); }
       <button class="nav-tab active" id="nav-dashboard" data-page="dashboard" onclick="showPage('dashboard', this)"><span class="nav-label-full">Dashboard</span><span class="nav-label-short">Dash</span></button>
       <button class="nav-tab" data-page="performance" onclick="showPage('performance', this)"><span class="nav-label-full">Performance</span><span class="nav-label-short">Perf</span></button>
       <button class="nav-tab" data-page="analysis" onclick="showPage('analysis', this)"><span class="nav-label-full">Analysis</span><span class="nav-label-short">Analysis</span></button>
-      <button class="nav-tab" data-page="strategy" onclick="showPage('strategy', this)"><span class="nav-label-full">Strategy</span><span class="nav-label-short">Strat</span></button>
-      <button class="nav-tab" data-page="journal" onclick="showPage('journal', this)"><span class="nav-label-full">Journal</span><span class="nav-label-short">Journal</span></button>
       <button class="nav-tab" data-page="dhanlive" onclick="showPage('dhanlive', this)"><span class="nav-label-full">Live Trading</span><span class="nav-label-short">Live</span></button>
-      <button class="nav-tab" data-page="config" onclick="showPage('config', this)">Config</button>
     </div>
     <div class="mode-chip" title="Trading mode (applies to every workspace)">
       <button class="sw-btn active" id="sw-swing" onclick="switchStrategy('swing')">Swing</button>
@@ -8635,11 +8632,11 @@ const WORKSPACES = {
                     ref: { label: 'dh252 10-yr backtest', winRate: 42.05, avgPlPct: 8.45, trades: 5203 } },
              pages: { live: true, dashboard: 'v2', performance: 'v2', analysis: 'v2' } },   // 'v2' = contract-driven page-dashboard2
   zerodha: { id: 'zerodha', label: 'Zerodha', strategy: 'SST',   source: 'Google Sheet',  status: 'live',
-             pages: { dashboard: true, performance: true, analysis: true, strategy: true, journal: true } },
+             pages: { dashboard: true, performance: true, analysis: true } },   // Strategy / Journal / Config tabs removed 2026-11-08
   icici:   { id: 'icici',   label: 'ICICI',   strategy: null,    source: 'not connected', status: 'pending',
              pages: {} },
 };
-const WS_PAGE_ORDER = ['dashboard', 'performance', 'analysis', 'strategy', 'journal', 'dhanlive'];
+const WS_PAGE_ORDER = ['dashboard', 'performance', 'analysis', 'dhanlive'];
 const WS = { id: 'dhan' }; // default workspace (a saved choice in localStorage overrides it)
 const WS_ALT = { // pages whose DOM differs per workspace version: legacy page id -> { v2 element, ensure fn }
   dashboard:   { el: 'page-dashboard2',   fn: 'd2Ensure' },
@@ -8713,6 +8710,8 @@ function wsSelect(id) {
   }
   wsApply();
   if (wsActivePageId() === 'dhanlive') dhLiveEnsure();
+  // Zerodha is still sheet-backed: load the Google Sheet feed the first time it's selected
+  if (id === 'zerodha' && !window._sheetRequested && loadConfig().url) { window._sheetRequested = true; refreshData(); }
 }
 
 function wsInit() {
@@ -8823,7 +8822,11 @@ function wsNormalizeDhan(raw, ws) {
                invested: positions.reduce((s, p) => s + (p.qty || 0) * (p.avgCost || 0), 0),
                realised: sz.realized_pl_rs, unrealised: sz.unrealized_pl_rs, combined: sz.combined_pl_rs },
     positions,
-    closed: [], // no Dhan closed-trade history yet (MCP tradebook is today-only) — fills in as exits are recorded
+    // Closed trades are derived by the engine from the real dated fills (Dhan Global Transaction Report import)
+    closed: (raw.closed_trades || []).map(c => ({
+      symbol: c.symbol, entryDate: c.entry_date, exitDate: c.exit_date, qty: c.qty, entry: c.entry_price, exit: c.exit_price,
+      plRs: c.pl_rs, plPct: c.pl_pct, holdDays: c.hold_days, adds: c.num_adds,
+    })),
     signals: { entry },
     rules: {
       addTriggerPct: rules.add_trigger_pct ?? cfg.addTriggerPct, addCooldownDays: rules.add_cooldown_days ?? cfg.addCooldownDays,
@@ -9245,7 +9248,7 @@ function d2Render(d) {
   const sma = P.find(p => p.smaAsOf);
   set('d2-foot', `${ws.label} workspace · ${ws.strategy} · fixed starting capital of ${d.capital.initial ? dhFmtRs(d.capital.initial) : '—'} (deposits ignored). `
     + (sma ? `200-day averages use price history through ${dhFmtDate(sma.smaAsOf)}. ` : '')
-    + 'Closed-trade history starts when exits are recorded — the Dhan MCP tradebook only returns today\'s trades.');
+    + 'Closed trades come from the imported Dhan Global Transaction Report (equity only; option-hedge portfolio excluded; dh252 era from 21-Oct-26).');
 }
 
 function d2Ensure() {
@@ -9392,7 +9395,7 @@ function p2Render(d) {
   document.getElementById('p2-movers').innerHTML =
     '<tr class="p2-muted"><td colspan="2" style="font-size:10px;letter-spacing:.08em;text-transform:uppercase">Top contributors</td></tr>' + (top.map(p => mrow(p, 'pos')).join('') || '<tr class="p2-muted"><td colspan="2">None</td></tr>')
     + '<tr class="p2-muted"><td colspan="2" style="font-size:10px;letter-spacing:.08em;text-transform:uppercase">Largest detractors</td></tr>' + (bot.map(p => mrow(p, 'neg')).join('') || '<tr class="p2-muted"><td colspan="2">None</td></tr>');
-  document.getElementById('p2-movers-hint').textContent = closed.length ? 'Largest stock-level realised P&L' : 'Open-position P&L (unrealised) — realised ranking appears once exits are recorded';
+  document.getElementById('p2-movers-hint').textContent = closed.length ? 'Open-position P&L (unrealised) — the ' + closed.length + ' closed trade' + (closed.length === 1 ? ' is' : 's are') + ' listed under Analysis' : 'Open-position P&L (unrealised) — realised ranking appears once exits are recorded';
 
   p2RenderCal(d);
 
@@ -9412,7 +9415,7 @@ function p2Render(d) {
   document.querySelectorAll('#p2-quarters td:nth-child(2), #p2-quarters td:nth-child(3)').forEach(td => { td.style.textAlign = 'right'; td.style.fontFamily = 'var(--font-mono)'; });
   document.querySelectorAll('#p2-quarters td:nth-child(4)').forEach(td => { td.style.textAlign = 'right'; td.style.fontFamily = 'var(--font-ui)'; });
 
-  set('p2-foot', `${ws.label} workspace · ${ws.strategy} · fixed starting capital of ${base ? dhFmtRs(base) : '—'} (deposits ignored). Net P&L combines realised and open-book MTM; realised-only statistics fill in as exits are recorded (the Dhan MCP tradebook only returns today's trades).`);
+  set('p2-foot', `${ws.label} workspace · ${ws.strategy} · fixed starting capital of ${base ? dhFmtRs(base) : '—'} (deposits ignored). Net P&L combines realised and open-book MTM; closed trades come from the imported Dhan Global Transaction Report (equity only, dh252 era from 21-Oct-26).`);
 }
 
 function p2Ensure() {
@@ -9542,6 +9545,14 @@ function a2Risk(d, S) {
   return a2Grid('a2-g2', age, conc) + a2Grid('a2-g2', top, act);
 }
 
+function a2ClosedTable(d) {
+  const c = d.closed || [];
+  if (!c.length) return a2Pending('No closed trades yet.', 'Closed-trade analysis fills in as exits are recorded.');
+  const pl = c.reduce((x, t) => x + t.plRs, 0);
+  return a2Table(['Stock', 'Entry', 'Exit', 'Held', 'Adds', 'P&L %', 'P&L ₹'], c.map(t => `<tr><td>${dhEsc(t.symbol)}</td><td>${dhFmtDate(t.entryDate)}</td><td>${dhFmtDate(t.exitDate)}</td><td>${t.holdDays}d</td><td>${t.adds}</td><td class="${dhPnlCls(t.plPct)}">${a2Pct(t.plPct)}</td><td class="${d2Cls(t.plRs)}">${d2Signed(t.plRs)}</td></tr>`))
+    + `<div class="d2-edge-foot">${c.length} closed trade${c.length === 1 ? '' : 's'} · net ${d2Signed(pl)} (gross of charges) — too small a sample for conclusions yet.</div>`;
+}
+
 function a2Loss(d, S) {
   const P = S.P;
   const edges = [['< −10%', -Infinity, -10], ['−10 to −6%', -10, -6], ['−6 to −3%', -6, -3], ['−3 to 0%', -3, 0], ['0 to 5%', 0, 5], ['5 to 10%', 5, 10], ['> 10%', 10, Infinity]];
@@ -9552,7 +9563,7 @@ function a2Loss(d, S) {
   const trigPanel = a2Panel(`Positions beyond the ${String(trig).replace('-', '−')}% add-on trigger`, 'Held until recovery by design — add when eligible', inLoss.length
     ? a2Table(['Stock', 'P&L %', 'Age', 'Supertrend', 'Add-on'], inLoss.map(p => `<tr><td>${dhEsc(p.symbol)}</td><td class="neg">${a2Pct(p.plPct)}</td><td>${p.ageDays}d</td><td>${dhTrendPill(p.supertrend)}</td><td>${p.signal === 'ADD-ON' ? '<span class="pos">Eligible</span>' : (p.supertrend || '').toLowerCase() === 'red' ? 'Exit rule' : 'Cooldown'}</td></tr>`))
     : a2Pending('No position is beyond the add-on trigger.', 'Every open position is above ' + String(trig).replace('-', '−') + '%.'));
-  const closed = a2Panel('Closed-trade loss analysis', 'Size, duration, setup and exit reason', a2Pending('Builds as exits are recorded.', 'Closed winner / loser size distributions, loss by hold duration and loss by setup need closed trades, which the Dhan MCP tradebook can\'t supply historically (today\'s trades only). dh252 has one exit rule — Supertrend red — so exit-reason splits will be a single bucket.'));
+  const closed = a2Panel('Closed trades', 'Round trips from the imported transaction report', a2ClosedTable(d));
   return a2Grid('a2-g2', dist, trigPanel) + a2Grid('a2-g2', closed, a2Panel('How dh252 treats losses', 'Strategy rules, not stop-losses', a2Items([
     ['', 'No stop-loss', 'A loss is held. The only exit is the Supertrend turning red, regardless of P&L.'],
     ['', 'Add on weakness', `At ${String(trig).replace('-', '−')}% or worse vs WAC with Supertrend still green and the ${(d.rules || {}).addCooldownDays || 7}-day cooldown met, add ${Math.round(((d.rules || {}).addFraction || 0.1) * 100)}% of the quantity.`],
@@ -9618,7 +9629,7 @@ function a2Attribution(d, S) {
   const cohorts = a2Panel('P&L by entry week', 'Cohorts of positions by when they were opened', a2Table(['Week of', 'Positions', 'Invested', 'MTM', 'Avg P&L %'],
     Object.keys(wk).sort().map(k => { const g = wk[k]; return `<tr><td>${dhFmtDate(k)}</td><td>${g.length}</td><td>${dhFmtRs(g.reduce((s, p) => s + a2Cost(p), 0))}</td><td class="${d2Cls(g.reduce((s, p) => s + p.plRs, 0))}">${d2Signed(g.reduce((s, p) => s + p.plRs, 0))}</td><td class="${d2Cls(a2Avg(g, p => p.plPct))}">${a2Pct(a2Avg(g, p => p.plPct))}</td></tr>`; })));
   const age = a2Panel('P&L by holding period', 'MTM by age bucket', a2Table(['Age', 'Positions', 'MTM', 'Avg P&L'], S.buckets.map(b => `<tr><td>${b.label}</td><td>${b.n}</td><td class="${d2Cls(b.mtm)}">${b.n ? d2Signed(b.mtm) : '—'}</td><td class="${d2Cls(b.avg)}">${a2Pct(b.avg)}</td></tr>`)));
-  const pend = a2Panel('Realised attribution', 'By stock, sector and holding period', a2Pending('Builds as exits are recorded.', 'Realised profit attribution and profit capture vs peak excursion need closed trades. Until then everything above is open-position (unrealised) P&L.'));
+  const pend = a2Panel('Realised attribution', 'Closed trades by stock', (d.closed || []).length ? a2ClosedTable(d) : a2Pending('Builds as exits are recorded.', 'Realised attribution needs closed trades. Everything above is open-position (unrealised) P&L.'));
   return a2Grid('a2-g2', secP, cohorts) + a2Grid('a2-g2', age, pend);
 }
 
@@ -9644,7 +9655,7 @@ function a2Render(d) {
   set('a2-v-overview', a2Overview(d, S)); set('a2-v-risk', a2Risk(d, S)); set('a2-v-loss', a2Loss(d, S));
   set('a2-v-trend', a2Trend(d, S)); set('a2-v-behaviour', a2Behaviour(d, S)); set('a2-v-attribution', a2Attribution(d, S));
   set('a2-v-opportunities', a2Opportunities(d, S));
-  set('a2-foot', `${dhEsc(ws.label)} workspace · ${dhEsc(ws.strategy)} · analytics use open positions and today's signals; sections needing closed-trade history say so and fill in as exits are recorded. Hot sectors follow the backtester's top-3 rule.`);
+  set('a2-foot', `${dhEsc(ws.label)} workspace · ${dhEsc(ws.strategy)} · analytics use open positions and today's signals; closed-trade sections use the imported Dhan transaction history (small sample so far). Hot sectors follow the backtester's top-3 rule.`);
   let saved = 'overview'; try { saved = localStorage.getItem(A2_TAB_KEY) || 'overview'; } catch (e) {}
   a2Tab(saved);
 }
@@ -13555,8 +13566,11 @@ document.addEventListener('DOMContentLoaded', () => {
   populateConfigPage();
   renderColMappings();
   const cfg = loadConfig();
-  if (cfg.url) {
+  if (cfg.url && WS.id === 'zerodha') { // the sheet feed backs the Zerodha workspace only — Dhan needs no Google Sheet
+    window._sheetRequested = true;
     refreshData();
+  } else if (cfg.url) {
+    // other workspaces: skip the Apps Script call; wsSelect('zerodha') loads it on demand
   } else {
     renderPositions([]);
     const ri = document.querySelector('.refresh-info');

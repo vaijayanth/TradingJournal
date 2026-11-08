@@ -104,27 +104,58 @@ def effective_tier_size(base_tier, total_positions_ever_opened, combined_pl_rs):
     return base_tier
 
 
-def build_dh252_positions(fills):
-    """Group fills by symbol -> {symbol: {entry_date, last_fill_date, num_adds}}.
-    First fill (by date) is the entry; any later fill is an add-on."""
+def build_ledger(fills):
+    """Replay dated BUY/SELL fills per symbol with weighted-average-cost accounting.
+
+    A cycle opens on the first BUY from flat and closes when quantity returns to zero; the next
+    BUY starts a new cycle (a stock can be traded several times). Returns
+    (open_positions, closed_trades, cycles):
+      open_positions - {symbol: {entry_date, last_fill_date (= last BUY, for the add-on cooldown),
+                       num_adds, log_qty, log_wac}} for cycles still open
+      closed_trades  - one record per closed cycle, P&L gross of charges (same basis as the
+                       unrealised MTM): sell value - WAC cost
+      cycles         - total positions ever opened (drives the size-doubling milestone)
+    Legacy seeded fills (no action field) count as BUYs; historical_num_adds is honoured."""
     by_symbol = {}
     for f in fills:
         by_symbol.setdefault(f["symbol"], []).append(f)
-    positions = {}
-    for symbol, symbol_fills in by_symbol.items():
-        symbol_fills.sort(key=lambda f: f["date"])
-        # historical_num_adds covers add-ons known to have happened before
-        # this log existed (seeded from a point-in-time export, exact fill
-        # date unknown) - real fills recorded by this system add on top.
-        historical_adds = max((f.get("historical_num_adds", 0) for f in symbol_fills), default=0)
-        positions[symbol] = {
-            "entry_date": symbol_fills[0]["date"],
-            "last_fill_date": symbol_fills[-1]["date"],
-            "num_adds": (len(symbol_fills) - 1) + historical_adds,
-            "log_qty": sum(f["qty"] for f in symbol_fills),
-            "log_wac": symbol_fills[0]["price"],  # entry price; qty/wac overridden by live holdings below
-        }
-    return positions
+    open_pos, closed, cycles = {}, [], 0
+    for symbol, sf in by_symbol.items():
+        sf = sorted(sf, key=lambda f: f["date"])
+        cur = None
+        for f in sf:
+            value = f.get("value", f["price"] * f["qty"])
+            if f.get("action", "BUY") == "BUY":
+                if cur is None:
+                    cur = {"entry_date": f["date"], "last_buy": f["date"], "qty": 0, "cost": 0.0, "buys": 0,
+                           "hist_adds": 0, "bought_qty": 0, "sold_qty": 0, "sold_value": 0.0, "cost_of_sold": 0.0}
+                    cycles += 1
+                cur["qty"] += f["qty"]; cur["bought_qty"] += f["qty"]; cur["cost"] += value
+                cur["buys"] += 1; cur["last_buy"] = f["date"]
+                cur["hist_adds"] = max(cur["hist_adds"], f.get("historical_num_adds", 0))
+            else:
+                if cur is None:
+                    continue  # SELL with no open cycle = an old holding being sold, not a dh252 trade
+                q = min(f["qty"], cur["qty"]); wac = cur["cost"] / cur["qty"]
+                cur["sold_qty"] += q; cur["sold_value"] += value * q / f["qty"]; cur["cost_of_sold"] += wac * q
+                cur["qty"] -= q; cur["cost"] -= wac * q
+                if cur["qty"] == 0:
+                    pl = cur["sold_value"] - cur["cost_of_sold"]
+                    closed.append({
+                        "symbol": symbol, "entry_date": cur["entry_date"], "exit_date": f["date"],
+                        "qty": cur["bought_qty"], "entry_price": round(cur["cost_of_sold"] / cur["sold_qty"], 2),
+                        "exit_price": round(cur["sold_value"] / cur["sold_qty"], 2),
+                        "pl_rs": round(pl, 2), "pl_pct": round(pl / cur["cost_of_sold"] * 100, 2),
+                        "hold_days": (datetime.strptime(f["date"], "%Y-%m-%d") - datetime.strptime(cur["entry_date"], "%Y-%m-%d")).days,
+                        "num_adds": cur["buys"] - 1 + cur["hist_adds"],
+                    })
+                    cur = None
+        if cur:
+            open_pos[symbol] = {"entry_date": cur["entry_date"], "last_fill_date": cur["last_buy"],
+                                "num_adds": cur["buys"] - 1 + cur["hist_adds"], "log_qty": cur["qty"],
+                                "log_wac": round(cur["cost"] / cur["qty"], 4)}
+    closed.sort(key=lambda c: c["exit_date"])
+    return open_pos, closed, cycles
 
 
 def days_since(date_str, today):
@@ -200,28 +231,37 @@ def load_smas(ohlc_dir, symbols):
     return out
 
 
-def build_equity_curve(rows, closes, initial_capital, realised_pl_rs=0.0):
-    """Day-by-day equity = initial capital + realised + sum over open positions of
-    qty * (close - WAC), counting a position from its entry date. Deposits are deliberately
-    ignored (user decision: fixed capital base), so adding capital never moves the line.
-    Approximation: current qty/WAC are used from the entry date, so a position's add-on
-    (exact add date unknown) is treated as if bought on day one."""
-    if not closes or not rows:
+def build_equity_curve(fills, closes, initial_capital):
+    """Day-by-day equity = initial capital + cumulative realised + unrealised on open lots, replaying
+    the real dated fills (exact add-on dates, real exits). Deposits are deliberately ignored (user
+    decision: fixed capital base), so adding capital never moves the line."""
+    if not closes or not fills:
         return []
     dates, by_sym = closes["dates"], closes["closes"]
-    last, curve = {}, []
-    for i, d in enumerate(dates):
-        pnl = invested = 0.0
-        for r in rows:
-            series = by_sym.get(r["symbol"])
-            if series and series[i] is not None:
-                last[r["symbol"]] = series[i]
-            if r["entry_date"] > d or r["symbol"] not in last:
-                continue
-            pnl += r["qty"] * (last[r["symbol"]] - r["avg_cost"])
-            invested += r["qty"] * r["avg_cost"]
-        curve.append({"date": d, "pnl": round(pnl, 2), "invested": round(invested, 2),
-                      "equity": round(initial_capital + realised_pl_rs + pnl, 2)})
+    pending = sorted(fills, key=lambda f: f["date"])
+    state, last, realised, curve, i = {}, {}, 0.0, [], 0
+    for di, d in enumerate(dates):
+        while i < len(pending) and pending[i]["date"] <= d:
+            f = pending[i]; i += 1
+            st = state.setdefault(f["symbol"], {"qty": 0, "cost": 0.0})
+            value = f.get("value", f["price"] * f["qty"])
+            if f.get("action", "BUY") == "BUY":
+                st["qty"] += f["qty"]; st["cost"] += value
+            elif st["qty"] > 0:
+                q = min(f["qty"], st["qty"]); wac = st["cost"] / st["qty"]
+                realised += value * q / f["qty"] - wac * q
+                st["qty"] -= q; st["cost"] -= wac * q
+        pnl_open = invested = 0.0
+        for sym, st in state.items():
+            series = by_sym.get(sym)
+            if series and series[di] is not None:
+                last[sym] = series[di]
+            if st["qty"] > 0 and sym in last:
+                pnl_open += st["qty"] * last[sym] - st["cost"]
+                invested += st["cost"]
+        pnl = realised + pnl_open
+        curve.append({"date": d, "pnl": round(pnl, 2), "realised": round(realised, 2), "invested": round(invested, 2),
+                      "equity": round(initial_capital + pnl, 2)})
     return curve
 
 
@@ -230,12 +270,12 @@ def build_signals(holdings, week52, stmap, rsimap, entry_signals, trade_log, tod
     # backtester's map uses an em dash for "sector unknown" - treat as no sector
     sectors = {k: v for k, v in (sectors or {}).items() if v and v.strip() not in ("—", "-")}
     holdings_by_symbol = {h["symbol"]: h for h in holdings}
-    dh252_positions = build_dh252_positions(trade_log.get("fills", []))
+    dh252_positions, closed_trades, cycles = build_ledger(trade_log.get("fills", []))
     dh252_symbols = set(dh252_positions)
 
-    closed_trades_count = trade_log.get("closed_trades_count", 0)
-    total_positions_ever_opened = trade_log.get("total_positions_ever_opened", 0)
-    realized_pl_rs = trade_log.get("realized_pl_rs", 0.0)
+    closed_trades_count = len(closed_trades)
+    total_positions_ever_opened = cycles
+    realized_pl_rs = round(sum(c["pl_rs"] for c in closed_trades), 2)
     base_tier = tier_size(closed_trades_count)
 
     exits, addons, holds, no_data, exited_outside_tracking = [], [], [], [], []
@@ -286,7 +326,12 @@ def build_signals(holdings, week52, stmap, rsimap, entry_signals, trade_log, tod
 
     combined_pl_rs = round(realized_pl_rs + unrealized_pl_rs, 2)
     initial_capital = trade_log.get("initial_capital")
-    equity_curve = build_equity_curve(exits + addons + holds, closes, initial_capital, realized_pl_rs) if initial_capital else []
+    equity_curve = build_equity_curve(trade_log.get("fills", []), closes, initial_capital) if initial_capital else []
+    if equity_curve:
+        drift = round(equity_curve[-1]["pnl"] - realized_pl_rs - unrealized_pl_rs, 2)
+        if abs(drift) > 1:
+            print(f"WARNING: equity curve's last-day open P&L differs from live holdings MTM by Rs{drift} "
+                  f"(fills vs holdings out of sync, or a missing close)")
     eff_tier = effective_tier_size(base_tier, total_positions_ever_opened, combined_pl_rs)
 
     entries = []
@@ -337,6 +382,7 @@ def build_signals(holdings, week52, stmap, rsimap, entry_signals, trade_log, tod
         "capital_base": {"initial_capital": initial_capital,
                          "note": "fixed capital base; deposits ignored, equity = initial + realised + unrealised"},
         "equity_curve": equity_curve,
+        "closed_trades": closed_trades,
         "hot_sectors": {"by_52wh_entries": sorted(hot_entry), "by_supertrend_turns": sorted(hot_turn)},
         "entries": entries,
         "exits": exits,
@@ -378,7 +424,7 @@ def main():
         entry_signals, trade_log, today,
         sectors=load_sectors,
         closes=load_json(args.daily_closes) if Path(args.daily_closes).exists() else None,
-        smas=load_smas(args.ohlc_dir, sorted(build_dh252_positions(trade_log.get("fills", [])))) if args.ohlc_dir else {},
+        smas=load_smas(args.ohlc_dir, sorted(build_ledger(trade_log.get("fills", []))[0])) if args.ohlc_dir else {},
     )
     # When the Dhan holdings snapshot was pulled - shown on the Open positions tab
     result["holdings_fetched_at"] = holdings_doc.get("fetched_at")
