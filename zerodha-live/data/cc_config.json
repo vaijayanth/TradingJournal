@@ -1,0 +1,16 @@
+{
+ "_note": "Zerodha covered call / option-selling rules (user, 2026-11-09): same logic as Dhan's, universe = all Nifty F&O stocks. No option quotes or chains are pulled; open option legs come from the MCP positions call (cc_positions.py), only expiries on/after track_from count (the existing November options are ignored). The expiry shown on each signal is the first monthly expiry at least rules.expiry_min_days away (rolls automatically).",
+ "rules": {
+  "short_call_delta": 0.1,
+  "short_put_delta": 0.1,
+  "hedge_strikes_below": 2,
+  "stop_premium_multiple": 3,
+  "show_next_month_after_day": 15,
+  "expiry_week_days": 5,
+  "risk_free_rate": 0.065,
+  "rsi_sell_call_above": 70,
+  "rsi_sell_put_below": 30,
+  "expiry_min_days": 30
+ },
+ "track_from": "2026-12-01"
+}

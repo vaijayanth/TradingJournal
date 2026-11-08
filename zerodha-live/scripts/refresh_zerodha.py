@@ -51,6 +51,9 @@ def main():
     # recompute every signal on complete Yahoo data (flip mode); flagged signals are blocked from orders
     run([py, SCRIPTS / "crosscheck_signals.py", "--mode", "flip",
          "--signals", ROOT / "zerodha_live_signals.json", "--out", DATA / "signal_crosscheck.json"])
+    # covered call (signals only): lot sizes / expiries from Zerodha's public instrument list, then the rule per stock
+    run([py, SCRIPTS / "update_options_master.py"])
+    run([py, SCRIPTS / "compute_covered_call.py"])
     print("\nDone. Review `git diff --stat`, then commit zerodha-live/ if the numbers look right.")
 
 

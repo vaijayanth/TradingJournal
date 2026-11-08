@@ -120,12 +120,16 @@ def build(holdings, uni, week52, stmap, rsimap, baseline, trades, today, market_
                         "recent_bullish_flip_days_ago": d, "qty_to_buy": max(1, int(tier // w["close"])),
                         "sector": sectors.get(sym), "flip_label": entry_flip_label(st),
                         "flip_date": st.get("current_streak_start_date")})
-    turn, entry_count, hot_turn, hot_entry = compute_hot_sectors(stmap, entries, sectors)
+    # Hot sector = top-3 sector by Supertrend turnarounds among the Nifty F&O stocks only (the strategy's universe), not the
+    # backtester's whole 1,500-stock universe; 52-week-high counts do not apply to this strategy.
+    fno_stmap = {k: v for k, v in stmap.items() if k in uni}
+    turn, _entry_count, hot_turn, _hot_entry = compute_hot_sectors(fno_stmap, entries, sectors)
+    hot_entry = set()
     for e in entries:
         sec = e["sector"]
-        e["sector_52wh_count"] = entry_count.get(sec, 0) if sec else 0
+        e["sector_52wh_count"] = 0
         e["sector_turn_count"] = turn.get(sec, 0) if sec else 0
-        e["hot_52wh"] = bool(sec and sec in hot_entry)
+        e["hot_52wh"] = False
         e["hot_turn"] = bool(sec and sec in hot_turn)
 
     combined = round(realised + unrealised, 2)
@@ -148,7 +152,7 @@ def build(holdings, uni, week52, stmap, rsimap, baseline, trades, today, market_
                    "realized_pl_rs": realised, "unrealized_pl_rs": round(unrealised, 2), "combined_pl_rs": combined,
                    "effective_tier_rs": tier, "doubled": False, "tier_note": tier_note},
         "dh252_position_count": len(held), "option_hedge_portfolio": [],
-        "dhan_holdings_count_total": len(holdings), "dhan_holdings_out_of_scope": len(holdings) - len(held),
+        "holdings_count_total": len(holdings), "holdings_out_of_scope": len(holdings) - len(held),
         "no_data": no_data, "exited_outside_tracking": [],
         "rules": {"add_trigger_pct": 0, "add_fraction": ADD_FRACTION, "add_cooldown_days": ADD_COOLDOWN_DAYS,
                   "entry_window_trading_days": ENTRY_WINDOW_TRADING_DAYS, "exit": "Supertrend red, any profit or loss",
@@ -202,7 +206,7 @@ def main():
     if not a.no_history:
         Path(a.history).write_text(json.dumps(out["equity_curve"], indent=1))
     z = out["sizing"]
-    print(f"universe {len(uni)} F&O stocks | holdings in scope {out['dh252_position_count']} of {out['dhan_holdings_count_total']} | "
+    print(f"universe {len(uni)} F&O stocks | holdings in scope {out['dh252_position_count']} of {out['holdings_count_total']} | "
           f"exits {len(out['exits'])}, add-ons {len(out['addons'])}, entries {len(out['entries'])} | trades {z['total_positions_ever_opened']} -> tier Rs{z['effective_tier_rs']:,} | "
           f"P&L realised {z['realized_pl_rs']:,.0f} unrealised {z['unrealized_pl_rs']:,.0f}")
     if out["reconciliation"]["differences"]:

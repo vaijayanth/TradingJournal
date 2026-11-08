@@ -247,9 +247,9 @@ def main():
         tag = tags.get(sym)
         flipped = bool(tag and tag.get("entry_colour") and tag["entry_colour"] != colour)
         if rsi is not None and rsi > rules["rsi_sell_call_above"]:
-            desired, basis = "CALL", f"RSI {rsi:.0f} > {rules['rsi_sell_call_above']:g}"
+            desired, basis = "CALL", f"RSI {rsi:.1f} > {rules['rsi_sell_call_above']:g}"
         elif rsi is not None and rsi < rules["rsi_sell_put_below"]:
-            desired, basis = "PUT_SPREAD", f"RSI {rsi:.0f} < {rules['rsi_sell_put_below']:g}"
+            desired, basis = "PUT_SPREAD", f"RSI {rsi:.1f} < {rules['rsi_sell_put_below']:g}"
         else:
             desired, basis = ("PUT_SPREAD" if colour == "green" else "CALL"), f"Supertrend {colour}"
         have = has_put_spread() if desired == "PUT_SPREAD" else has_call

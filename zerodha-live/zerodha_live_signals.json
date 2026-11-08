@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-08T19:22:40.461610+00:00",
+  "generated_at": "2026-11-08T19:55:46.033425+00:00",
   "market_data_date": "2026-11-08",
   "source_generated_at": null,
   "sizing": {
@@ -15,8 +15,8 @@
   },
   "dh252_position_count": 19,
   "option_hedge_portfolio": [],
-  "dhan_holdings_count_total": 191,
-  "dhan_holdings_out_of_scope": 172,
+  "holdings_count_total": 191,
+  "holdings_out_of_scope": 172,
   "no_data": [],
   "exited_outside_tracking": [],
   "rules": {
@@ -42,15 +42,11 @@
   ],
   "closed_trades": [],
   "hot_sectors": {
-    "by_52wh_entries": [
+    "by_52wh_entries": [],
+    "by_supertrend_turns": [
       "Basic Materials",
       "Consumer Cyclical",
       "Financial Services"
-    ],
-    "by_supertrend_turns": [
-      "Consumer Cyclical",
-      "Financial Services",
-      "Industrials"
     ]
   },
   "entries": [
@@ -67,8 +63,8 @@
       "sector": "Utilities",
       "flip_label": "Flipped to GREEN (3)",
       "flip_date": "2026-11-04",
-      "sector_52wh_count": 6,
-      "sector_turn_count": 16,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 7,
       "hot_52wh": false,
       "hot_turn": false
     },
@@ -85,8 +81,8 @@
       "sector": "Utilities",
       "flip_label": "Flipped to GREEN (3)",
       "flip_date": "2026-11-04",
-      "sector_52wh_count": 6,
-      "sector_turn_count": 16,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 7,
       "hot_52wh": false,
       "hot_turn": false
     },
@@ -103,8 +99,8 @@
       "sector": "Utilities",
       "flip_label": "Flipped to GREEN (3)",
       "flip_date": "2026-11-04",
-      "sector_52wh_count": 6,
-      "sector_turn_count": 16,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 7,
       "hot_52wh": false,
       "hot_turn": false
     },
@@ -121,9 +117,9 @@
       "sector": "Consumer Cyclical",
       "flip_label": "Flipped to GREEN (2)",
       "flip_date": "2026-11-05",
-      "sector_52wh_count": 9,
-      "sector_turn_count": 60,
-      "hot_52wh": true,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 14,
+      "hot_52wh": false,
       "hot_turn": true
     },
     {
@@ -139,10 +135,10 @@
       "sector": "Basic Materials",
       "flip_label": "Flipped to GREEN (2)",
       "flip_date": "2026-11-05",
-      "sector_52wh_count": 7,
-      "sector_turn_count": 45,
-      "hot_52wh": true,
-      "hot_turn": false
+      "sector_52wh_count": 0,
+      "sector_turn_count": 11,
+      "hot_52wh": false,
+      "hot_turn": true
     },
     {
       "symbol": "APOLLOHOSP",
@@ -157,8 +153,8 @@
       "sector": "Healthcare",
       "flip_label": "Flipped to GREEN (6)",
       "flip_date": "2026-10-30",
-      "sector_52wh_count": 7,
-      "sector_turn_count": 43,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 9,
       "hot_52wh": false,
       "hot_turn": false
     },
@@ -175,9 +171,9 @@
       "sector": "Financial Services",
       "flip_label": "Flipped to GREEN (2)",
       "flip_date": "2026-11-05",
-      "sector_52wh_count": 15,
-      "sector_turn_count": 53,
-      "hot_52wh": true,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 27,
+      "hot_52wh": false,
       "hot_turn": true
     },
     {
@@ -193,9 +189,9 @@
       "sector": "Financial Services",
       "flip_label": "Flipped to GREEN (2)",
       "flip_date": "2026-11-05",
-      "sector_52wh_count": 15,
-      "sector_turn_count": 53,
-      "hot_52wh": true,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 27,
+      "hot_52wh": false,
       "hot_turn": true
     },
     {
@@ -211,8 +207,8 @@
       "sector": "Healthcare",
       "flip_label": "Flipped to GREEN (4)",
       "flip_date": "2026-11-03",
-      "sector_52wh_count": 7,
-      "sector_turn_count": 43,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 9,
       "hot_52wh": false,
       "hot_turn": false
     },
@@ -229,10 +225,10 @@
       "sector": "Basic Materials",
       "flip_label": "Flipped to GREEN (2)",
       "flip_date": "2026-11-05",
-      "sector_52wh_count": 7,
-      "sector_turn_count": 45,
-      "hot_52wh": true,
-      "hot_turn": false
+      "sector_52wh_count": 0,
+      "sector_turn_count": 11,
+      "hot_52wh": false,
+      "hot_turn": true
     },
     {
       "symbol": "DABUR",
@@ -247,8 +243,8 @@
       "sector": "Consumer Defensive",
       "flip_label": "Flipped to GREEN (3)",
       "flip_date": "2026-11-04",
-      "sector_52wh_count": 5,
-      "sector_turn_count": 30,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 9,
       "hot_52wh": false,
       "hot_turn": false
     },
@@ -265,10 +261,10 @@
       "sector": "Industrials",
       "flip_label": "Flipped to GREEN (4)",
       "flip_date": "2026-11-03",
-      "sector_52wh_count": 6,
-      "sector_turn_count": 79,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 11,
       "hot_52wh": false,
-      "hot_turn": true
+      "hot_turn": false
     },
     {
       "symbol": "DIVISLAB",
@@ -283,8 +279,8 @@
       "sector": "Healthcare",
       "flip_label": "Flipped to GREEN (6)",
       "flip_date": "2026-10-30",
-      "sector_52wh_count": 7,
-      "sector_turn_count": 43,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 9,
       "hot_52wh": false,
       "hot_turn": false
     },
@@ -301,8 +297,8 @@
       "sector": "Technology",
       "flip_label": "Flipped to GREEN (5)",
       "flip_date": "2026-11-02",
-      "sector_52wh_count": 1,
-      "sector_turn_count": 17,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 3,
       "hot_52wh": false,
       "hot_turn": false
     },
@@ -319,8 +315,8 @@
       "sector": "Consumer Defensive",
       "flip_label": "Flipped to GREEN (3)",
       "flip_date": "2026-11-04",
-      "sector_52wh_count": 5,
-      "sector_turn_count": 30,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 9,
       "hot_52wh": false,
       "hot_turn": false
     },
@@ -337,9 +333,9 @@
       "sector": "Consumer Cyclical",
       "flip_label": "Flipped to GREEN (6)",
       "flip_date": "2026-10-30",
-      "sector_52wh_count": 9,
-      "sector_turn_count": 60,
-      "hot_52wh": true,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 14,
+      "hot_52wh": false,
       "hot_turn": true
     },
     {
@@ -355,9 +351,9 @@
       "sector": "Consumer Cyclical",
       "flip_label": "Flipped to GREEN (3)",
       "flip_date": "2026-11-04",
-      "sector_52wh_count": 9,
-      "sector_turn_count": 60,
-      "hot_52wh": true,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 14,
+      "hot_52wh": false,
       "hot_turn": true
     },
     {
@@ -373,8 +369,8 @@
       "sector": "Healthcare",
       "flip_label": "Flipped to GREEN (4)",
       "flip_date": "2026-11-03",
-      "sector_52wh_count": 7,
-      "sector_turn_count": 43,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 9,
       "hot_52wh": false,
       "hot_turn": false
     },
@@ -391,8 +387,8 @@
       "sector": "Healthcare",
       "flip_label": "Flipped to GREEN (5)",
       "flip_date": "2026-11-02",
-      "sector_52wh_count": 7,
-      "sector_turn_count": 43,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 9,
       "hot_52wh": false,
       "hot_turn": false
     },
@@ -409,10 +405,10 @@
       "sector": "Industrials",
       "flip_label": "Flipped to GREEN (3)",
       "flip_date": "2026-11-04",
-      "sector_52wh_count": 6,
-      "sector_turn_count": 79,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 11,
       "hot_52wh": false,
-      "hot_turn": true
+      "hot_turn": false
     },
     {
       "symbol": "HAVELLS",
@@ -427,10 +423,10 @@
       "sector": "Industrials",
       "flip_label": "Flipped to GREEN (1)",
       "flip_date": "2026-11-06",
-      "sector_52wh_count": 6,
-      "sector_turn_count": 79,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 11,
       "hot_52wh": false,
-      "hot_turn": true
+      "hot_turn": false
     },
     {
       "symbol": "HDFCAMC",
@@ -445,9 +441,9 @@
       "sector": "Financial Services",
       "flip_label": "Flipped to GREEN (4)",
       "flip_date": "2026-11-03",
-      "sector_52wh_count": 15,
-      "sector_turn_count": 53,
-      "hot_52wh": true,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 27,
+      "hot_52wh": false,
       "hot_turn": true
     },
     {
@@ -463,9 +459,9 @@
       "sector": "Financial Services",
       "flip_label": "Flipped to GREEN (4)",
       "flip_date": "2026-11-03",
-      "sector_52wh_count": 15,
-      "sector_turn_count": 53,
-      "hot_52wh": true,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 27,
+      "hot_52wh": false,
       "hot_turn": true
     },
     {
@@ -481,9 +477,9 @@
       "sector": "Financial Services",
       "flip_label": "Flipped to GREEN (1)",
       "flip_date": "2026-11-06",
-      "sector_52wh_count": 15,
-      "sector_turn_count": 53,
-      "hot_52wh": true,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 27,
+      "hot_52wh": false,
       "hot_turn": true
     },
     {
@@ -499,10 +495,10 @@
       "sector": "Basic Materials",
       "flip_label": "Flipped to GREEN (3)",
       "flip_date": "2026-11-04",
-      "sector_52wh_count": 7,
-      "sector_turn_count": 45,
-      "hot_52wh": true,
-      "hot_turn": false
+      "sector_52wh_count": 0,
+      "sector_turn_count": 11,
+      "hot_52wh": false,
+      "hot_turn": true
     },
     {
       "symbol": "HINDPETRO",
@@ -517,8 +513,8 @@
       "sector": "Energy",
       "flip_label": "Flipped to GREEN (3)",
       "flip_date": "2026-11-04",
-      "sector_52wh_count": 4,
-      "sector_turn_count": 8,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 6,
       "hot_52wh": false,
       "hot_turn": false
     },
@@ -535,8 +531,8 @@
       "sector": "Consumer Defensive",
       "flip_label": "Flipped to GREEN (4)",
       "flip_date": "2026-11-03",
-      "sector_52wh_count": 5,
-      "sector_turn_count": 30,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 9,
       "hot_52wh": false,
       "hot_turn": false
     },
@@ -553,10 +549,10 @@
       "sector": "Basic Materials",
       "flip_label": "Flipped to GREEN (3)",
       "flip_date": "2026-11-04",
-      "sector_52wh_count": 7,
-      "sector_turn_count": 45,
-      "hot_52wh": true,
-      "hot_turn": false
+      "sector_52wh_count": 0,
+      "sector_turn_count": 11,
+      "hot_52wh": false,
+      "hot_turn": true
     },
     {
       "symbol": "IDEA",
@@ -571,8 +567,8 @@
       "sector": "Communication Services",
       "flip_label": "Flipped to GREEN (2)",
       "flip_date": "2026-11-05",
-      "sector_52wh_count": 1,
-      "sector_turn_count": 11,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 1,
       "hot_52wh": false,
       "hot_turn": false
     },
@@ -589,9 +585,9 @@
       "sector": "Financial Services",
       "flip_label": "Flipped to GREEN (3)",
       "flip_date": "2026-11-04",
-      "sector_52wh_count": 15,
-      "sector_turn_count": 53,
-      "hot_52wh": true,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 27,
+      "hot_52wh": false,
       "hot_turn": true
     },
     {
@@ -607,9 +603,9 @@
       "sector": "Financial Services",
       "flip_label": "Flipped to GREEN (2)",
       "flip_date": "2026-11-05",
-      "sector_52wh_count": 15,
-      "sector_turn_count": 53,
-      "hot_52wh": true,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 27,
+      "hot_52wh": false,
       "hot_turn": true
     },
     {
@@ -625,10 +621,10 @@
       "sector": "Industrials",
       "flip_label": "Flipped to GREEN (2)",
       "flip_date": "2026-11-05",
-      "sector_52wh_count": 6,
-      "sector_turn_count": 79,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 11,
       "hot_52wh": false,
-      "hot_turn": true
+      "hot_turn": false
     },
     {
       "symbol": "IOC",
@@ -643,8 +639,8 @@
       "sector": "Energy",
       "flip_label": "Flipped to GREEN (5)",
       "flip_date": "2026-11-02",
-      "sector_52wh_count": 4,
-      "sector_turn_count": 8,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 6,
       "hot_52wh": false,
       "hot_turn": false
     },
@@ -661,9 +657,9 @@
       "sector": "Financial Services",
       "flip_label": "Flipped to GREEN (2)",
       "flip_date": "2026-11-05",
-      "sector_52wh_count": 15,
-      "sector_turn_count": 53,
-      "hot_52wh": true,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 27,
+      "hot_52wh": false,
       "hot_turn": true
     },
     {
@@ -679,8 +675,8 @@
       "sector": "Consumer Defensive",
       "flip_label": "Flipped to GREEN (4)",
       "flip_date": "2026-11-03",
-      "sector_52wh_count": 5,
-      "sector_turn_count": 30,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 9,
       "hot_52wh": false,
       "hot_turn": false
     },
@@ -697,9 +693,9 @@
       "sector": "Financial Services",
       "flip_label": "Flipped to GREEN (3)",
       "flip_date": "2026-11-04",
-      "sector_52wh_count": 15,
-      "sector_turn_count": 53,
-      "hot_52wh": true,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 27,
+      "hot_52wh": false,
       "hot_turn": true
     },
     {
@@ -715,9 +711,9 @@
       "sector": "Financial Services",
       "flip_label": "Flipped to GREEN (3)",
       "flip_date": "2026-11-04",
-      "sector_52wh_count": 15,
-      "sector_turn_count": 53,
-      "hot_52wh": true,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 27,
+      "hot_52wh": false,
       "hot_turn": true
     },
     {
@@ -733,9 +729,9 @@
       "sector": "Consumer Cyclical",
       "flip_label": "Flipped to GREEN (3)",
       "flip_date": "2026-11-04",
-      "sector_52wh_count": 9,
-      "sector_turn_count": 60,
-      "hot_52wh": true,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 14,
+      "hot_52wh": false,
       "hot_turn": true
     },
     {
@@ -751,9 +747,9 @@
       "sector": "Consumer Cyclical",
       "flip_label": "Flipped to GREEN (3)",
       "flip_date": "2026-11-04",
-      "sector_52wh_count": 9,
-      "sector_turn_count": 60,
-      "hot_52wh": true,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 14,
+      "hot_52wh": false,
       "hot_turn": true
     },
     {
@@ -769,8 +765,8 @@
       "sector": "Healthcare",
       "flip_label": "Flipped to GREEN (4)",
       "flip_date": "2026-11-03",
-      "sector_52wh_count": 7,
-      "sector_turn_count": 43,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 9,
       "hot_52wh": false,
       "hot_turn": false
     },
@@ -787,9 +783,9 @@
       "sector": "Financial Services",
       "flip_label": "Flipped to GREEN (4)",
       "flip_date": "2026-11-03",
-      "sector_52wh_count": 15,
-      "sector_turn_count": 53,
-      "hot_52wh": true,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 27,
+      "hot_52wh": false,
       "hot_turn": true
     },
     {
@@ -805,9 +801,9 @@
       "sector": "Consumer Cyclical",
       "flip_label": "Flipped to GREEN (2)",
       "flip_date": "2026-11-05",
-      "sector_52wh_count": 9,
-      "sector_turn_count": 60,
-      "hot_52wh": true,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 14,
+      "hot_52wh": false,
       "hot_turn": true
     },
     {
@@ -823,9 +819,9 @@
       "sector": "Financial Services",
       "flip_label": "Flipped to GREEN (2)",
       "flip_date": "2026-11-05",
-      "sector_52wh_count": 15,
-      "sector_turn_count": 53,
-      "hot_52wh": true,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 27,
+      "hot_52wh": false,
       "hot_turn": true
     },
     {
@@ -841,9 +837,9 @@
       "sector": "Financial Services",
       "flip_label": "Flipped to GREEN (3)",
       "flip_date": "2026-11-04",
-      "sector_52wh_count": 15,
-      "sector_turn_count": 53,
-      "hot_52wh": true,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 27,
+      "hot_52wh": false,
       "hot_turn": true
     },
     {
@@ -859,10 +855,10 @@
       "sector": "Industrials",
       "flip_label": "Flipped to GREEN (5)",
       "flip_date": "2026-11-02",
-      "sector_52wh_count": 6,
-      "sector_turn_count": 79,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 11,
       "hot_52wh": false,
-      "hot_turn": true
+      "hot_turn": false
     },
     {
       "symbol": "NTPC",
@@ -877,8 +873,8 @@
       "sector": "Utilities",
       "flip_label": "Flipped to GREEN (5)",
       "flip_date": "2026-11-02",
-      "sector_52wh_count": 6,
-      "sector_turn_count": 16,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 7,
       "hot_52wh": false,
       "hot_turn": false
     },
@@ -895,8 +891,8 @@
       "sector": "Real Estate",
       "flip_label": "Flipped to GREEN (2)",
       "flip_date": "2026-11-05",
-      "sector_52wh_count": 2,
-      "sector_turn_count": 15,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 4,
       "hot_52wh": false,
       "hot_turn": false
     },
@@ -913,8 +909,8 @@
       "sector": "Energy",
       "flip_label": "Flipped to GREEN (5)",
       "flip_date": "2026-11-02",
-      "sector_52wh_count": 4,
-      "sector_turn_count": 8,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 6,
       "hot_52wh": false,
       "hot_turn": false
     },
@@ -931,8 +927,8 @@
       "sector": "Utilities",
       "flip_label": "Flipped to GREEN (6)",
       "flip_date": "2026-10-30",
-      "sector_52wh_count": 6,
-      "sector_turn_count": 16,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 7,
       "hot_52wh": false,
       "hot_turn": false
     },
@@ -949,8 +945,8 @@
       "sector": "Real Estate",
       "flip_label": "Flipped to GREEN (4)",
       "flip_date": "2026-11-03",
-      "sector_52wh_count": 2,
-      "sector_turn_count": 15,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 4,
       "hot_52wh": false,
       "hot_turn": false
     },
@@ -967,8 +963,8 @@
       "sector": "Energy",
       "flip_label": "Flipped to GREEN (5)",
       "flip_date": "2026-11-02",
-      "sector_52wh_count": 4,
-      "sector_turn_count": 8,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 6,
       "hot_52wh": false,
       "hot_turn": false
     },
@@ -985,9 +981,9 @@
       "sector": "Financial Services",
       "flip_label": "Flipped to GREEN (2)",
       "flip_date": "2026-11-05",
-      "sector_52wh_count": 15,
-      "sector_turn_count": 53,
-      "hot_52wh": true,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 27,
+      "hot_52wh": false,
       "hot_turn": true
     },
     {
@@ -1003,8 +999,8 @@
       "sector": "Utilities",
       "flip_label": "Flipped to GREEN (2)",
       "flip_date": "2026-11-05",
-      "sector_52wh_count": 6,
-      "sector_turn_count": 16,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 7,
       "hot_52wh": false,
       "hot_turn": false
     },
@@ -1021,10 +1017,10 @@
       "sector": "Basic Materials",
       "flip_label": "Flipped to GREEN (2)",
       "flip_date": "2026-11-05",
-      "sector_52wh_count": 7,
-      "sector_turn_count": 45,
-      "hot_52wh": true,
-      "hot_turn": false
+      "sector_52wh_count": 0,
+      "sector_turn_count": 11,
+      "hot_52wh": false,
+      "hot_turn": true
     },
     {
       "symbol": "TIINDIA",
@@ -1039,10 +1035,10 @@
       "sector": "Industrials",
       "flip_label": "Flipped to GREEN (2)",
       "flip_date": "2026-11-05",
-      "sector_52wh_count": 6,
-      "sector_turn_count": 79,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 11,
       "hot_52wh": false,
-      "hot_turn": true
+      "hot_turn": false
     },
     {
       "symbol": "TMPV",
@@ -1057,9 +1053,9 @@
       "sector": "Consumer Cyclical",
       "flip_label": "Flipped to GREEN (2)",
       "flip_date": "2026-11-05",
-      "sector_52wh_count": 9,
-      "sector_turn_count": 60,
-      "hot_52wh": true,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 14,
+      "hot_52wh": false,
       "hot_turn": true
     },
     {
@@ -1075,9 +1071,9 @@
       "sector": "Consumer Cyclical",
       "flip_label": "Flipped to GREEN (6)",
       "flip_date": "2026-10-30",
-      "sector_52wh_count": 9,
-      "sector_turn_count": 60,
-      "hot_52wh": true,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 14,
+      "hot_52wh": false,
       "hot_turn": true
     },
     {
@@ -1093,10 +1089,10 @@
       "sector": "Basic Materials",
       "flip_label": "Flipped to GREEN (5)",
       "flip_date": "2026-11-02",
-      "sector_52wh_count": 7,
-      "sector_turn_count": 45,
-      "hot_52wh": true,
-      "hot_turn": false
+      "sector_52wh_count": 0,
+      "sector_turn_count": 11,
+      "hot_52wh": false,
+      "hot_turn": true
     },
     {
       "symbol": "UNOMINDA",
@@ -1111,9 +1107,9 @@
       "sector": "Consumer Cyclical",
       "flip_label": "Flipped to GREEN (3)",
       "flip_date": "2026-11-04",
-      "sector_52wh_count": 9,
-      "sector_turn_count": 60,
-      "hot_52wh": true,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 14,
+      "hot_52wh": false,
       "hot_turn": true
     },
     {
@@ -1129,8 +1125,8 @@
       "sector": "Consumer Defensive",
       "flip_label": "Flipped to GREEN (2)",
       "flip_date": "2026-11-05",
-      "sector_52wh_count": 5,
-      "sector_turn_count": 30,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 9,
       "hot_52wh": false,
       "hot_turn": false
     },
@@ -1147,10 +1143,10 @@
       "sector": "Basic Materials",
       "flip_label": "Flipped to GREEN (3)",
       "flip_date": "2026-11-04",
-      "sector_52wh_count": 7,
-      "sector_turn_count": 45,
-      "hot_52wh": true,
-      "hot_turn": false
+      "sector_52wh_count": 0,
+      "sector_turn_count": 11,
+      "hot_52wh": false,
+      "hot_turn": true
     },
     {
       "symbol": "YESBANK",
@@ -1165,9 +1161,9 @@
       "sector": "Financial Services",
       "flip_label": "Flipped to GREEN (1)",
       "flip_date": "2026-11-06",
-      "sector_52wh_count": 15,
-      "sector_turn_count": 53,
-      "hot_52wh": true,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 27,
+      "hot_52wh": false,
       "hot_turn": true
     },
     {
@@ -1183,8 +1179,8 @@
       "sector": "Healthcare",
       "flip_label": "Flipped to GREEN (6)",
       "flip_date": "2026-10-30",
-      "sector_52wh_count": 7,
-      "sector_turn_count": 43,
+      "sector_52wh_count": 0,
+      "sector_turn_count": 9,
       "hot_52wh": false,
       "hot_turn": false
     }
