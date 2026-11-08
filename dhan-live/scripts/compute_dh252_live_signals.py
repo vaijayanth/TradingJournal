@@ -303,7 +303,7 @@ def build_signals(holdings, week52, stmap, rsimap, entry_signals, trade_log, tod
         row = {
             "entry_date": pos["entry_date"], "symbol": symbol, "qty": qty, "avg_cost": wac, "cmp": cmp_,
             "pl_pct": pl_pct, "notional_pl_rs": notional_pl,
-            "supertrend_color": color, "flip_label": flip_label(st),
+            "supertrend_color": color, "flip_label": flip_label(st), "flip_date": st.get("current_streak_start_date"),
             "pct_from_52w_high": w.get("pct_from_high"),
             "num_adds": pos["num_adds"], "age_days": days_since(pos["entry_date"], today),
             "rsi14": rsimap.get(symbol),
@@ -350,6 +350,7 @@ def build_signals(holdings, week52, stmap, rsimap, entry_signals, trade_log, tod
         sec = sectors.get(e["symbol"])
         e["sector"] = sec
         e["flip_label"] = entry_flip_label(stmap.get(e["symbol"]))
+        e["flip_date"] = (stmap.get(e["symbol"]) or {}).get("current_streak_start_date")
         e["sector_52wh_count"] = entry_count.get(sec, 0) if sec else 0
         e["sector_turn_count"] = turn.get(sec, 0) if sec else 0
         e["hot_52wh"] = bool(sec and sec in hot_entry)

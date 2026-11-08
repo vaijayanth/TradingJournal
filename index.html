@@ -801,6 +801,7 @@ tbody tr:hover { filter: brightness(0.97); }
 .d2-value { font-family:var(--font-mono); font-variant-numeric:tabular-nums; font-size:20px; font-weight:700; letter-spacing:-.035em; margin-top:4px; }
 .d2-note { font-size:10px; color:var(--text-muted); margin-top:3px; }
 .d2-value.pos, .d2-health-total.pos, .pos { color:var(--green); } .d2-value.neg, .d2-health-total.neg, .neg { color:var(--red); }
+.d2-act { cursor:pointer; } .d2-act:hover .dhm-kpi-label { color:var(--accent); }
 .d2-layout { display:grid; grid-template-columns:1.55fr 1fr; gap:13px; }
 .d2-panel { background:var(--surface); border:1px solid var(--border); border-radius:9px; overflow:hidden; }
 .d2-panel-head { display:flex; align-items:center; justify-content:space-between; padding:12px 15px; border-bottom:1px solid var(--border); gap:10px; flex-wrap:wrap; }
@@ -1035,10 +1036,10 @@ tbody tr:hover { filter: brightness(0.97); }
   <nav>
     <div class="nav-tabs">
       <button class="nav-tab active" id="nav-dashboard" data-page="dashboard" onclick="showPage('dashboard', this)"><span class="nav-label-full">Dashboard</span><span class="nav-label-short">Dash</span></button>
-      <button class="nav-tab" data-page="performance" onclick="showPage('performance', this)"><span class="nav-label-full">Performance</span><span class="nav-label-short">Perf</span></button>
-      <button class="nav-tab" data-page="analysis" onclick="showPage('analysis', this)"><span class="nav-label-full">Analysis</span><span class="nav-label-short">Analysis</span></button>
       <button class="nav-tab" data-page="dhanlive" onclick="showPage('dhanlive', this)"><span class="nav-label-full">Live Trading</span><span class="nav-label-short">Live</span></button>
       <button class="nav-tab" data-page="covcall" onclick="showPage('covcall', this)"><span class="nav-label-full">Covered Call</span><span class="nav-label-short">CC</span></button>
+      <button class="nav-tab" data-page="performance" onclick="showPage('performance', this)"><span class="nav-label-full">Performance</span><span class="nav-label-short">Perf</span></button>
+      <button class="nav-tab" data-page="analysis" onclick="showPage('analysis', this)"><span class="nav-label-full">Analysis</span><span class="nav-label-short">Analysis</span></button>
     </div>
     <div class="mode-chip" title="Trading mode (applies to every workspace)">
       <button class="sw-btn active" id="sw-swing" onclick="switchStrategy('swing')">Swing</button>
@@ -1184,14 +1185,26 @@ tbody tr:hover { filter: brightness(0.97); }
     <div class="d2-kpi"><div class="d2-label">Portfolio value</div><div class="d2-value" id="d2-k-value">—</div><div class="d2-note">Starting capital + P&amp;L</div></div>
   </section>
 
-  <div class="d2-layout">
-    <section class="d2-panel">
-      <div class="d2-panel-head">
-        <div><div class="d2-title">Equity curve</div><div class="d2-hint" id="d2-curve-hint">Portfolio performance over time</div></div>
-        <div class="d2-legend"><span><i class="d2-dot" id="d2-leg-dot"></i>Equity</span><span><i class="d2-dot amber"></i>Starting capital</span></div>
-      </div>
-      <div class="d2-chart" id="d2-chart"></div>
-    </section>
+  <section class="d2-panel" id="d2-actions" style="margin-bottom:13px">
+    <div class="d2-panel-head"><div><div class="d2-title">Today's actions</div><div class="d2-hint">What needs doing at the next open — click a tile to jump to it</div></div><span class="d2-pill" id="d2-act-pill">—</span></div>
+    <div class="dhm-banner" style="padding:6px 0 2px;margin-bottom:6px">
+      <div class="dhm-kpi"><div class="dhm-kpi-label">Positions</div><div class="dhm-kpi-val" id="d2-a-pos">—</div></div>
+      <div class="dhm-kpi"><div class="dhm-kpi-label">Invested</div><div class="dhm-kpi-val" id="d2-a-inv">—</div></div>
+      <div class="dhm-kpi"><div class="dhm-kpi-label">Overall P&amp;L</div><div class="dhm-kpi-val" id="d2-a-pl">—</div></div>
+      <div class="dhm-kpi d2-act" onclick="d2Go('dhanlive','entry')"><div class="dhm-kpi-label">Entry signals</div><div class="dhm-kpi-val accent" id="d2-a-entry">—</div></div>
+      <div class="dhm-kpi d2-act" onclick="d2Go('dhanlive','exit')"><div class="dhm-kpi-label">Exit now</div><div class="dhm-kpi-val red" id="d2-a-exit">—</div></div>
+      <div class="dhm-kpi d2-act" onclick="d2Go('dhanlive','addon')"><div class="dhm-kpi-label">Add-on eligible</div><div class="dhm-kpi-val green" id="d2-a-addon">—</div></div>
+    </div>
+    <div class="dhm-banner" style="padding:10px 0 2px;margin-bottom:0;border-top:1px solid var(--border)">
+      <div class="dhm-kpi"><div class="dhm-kpi-label">Options · covered call</div><div class="dhm-kpi-val sm">Option actions</div></div>
+      <div class="dhm-kpi d2-act" onclick="d2Go('covcall','options-alerts')"><div class="dhm-kpi-label">Option entries</div><div class="dhm-kpi-val accent" id="d2-o-enter">—</div></div>
+      <div class="dhm-kpi d2-act" onclick="d2Go('covcall','options-alerts')"><div class="dhm-kpi-label">Exit / flip / warn</div><div class="dhm-kpi-val red" id="d2-o-risk">—</div></div>
+      <div class="dhm-kpi d2-act" onclick="d2Go('covcall','shares-addon')"><div class="dhm-kpi-label">Share averaging due</div><div class="dhm-kpi-val green" id="d2-o-avg">—</div></div>
+      <div class="dhm-kpi d2-act" onclick="d2Go('covcall','shares-entry')"><div class="dhm-kpi-label">Share entries</div><div class="dhm-kpi-val accent" id="d2-o-sent">—</div></div>
+    </div>
+  </section>
+
+  <div class="d2-layout" style="grid-template-columns:1fr">
     <section class="d2-panel">
       <div class="d2-panel-head"><div><div class="d2-title">Portfolio health</div><div class="d2-hint">Open-book exposure and position status</div></div><span class="d2-pill" id="d2-pill-open">—</span></div>
       <div class="d2-health">
@@ -3502,7 +3515,7 @@ tbody tr:hover { filter: brightness(0.97); }
       <table id="dh-live-exit-table" class="dh-blotter">
         <thead><tr>
           <th>Entry</th><th>Stock</th><th class="num">Qty</th><th class="num">WAC</th><th class="num">CMP</th>
-          <th>Trend</th><th>Flip</th><th class="num">vs 52WH</th><th class="num">P&amp;L ₹</th><th class="num">P&amp;L%</th>
+          <th>Trend</th><th>Flip</th><th class="num">Flip date</th><th class="num">vs 52WH</th><th class="num">P&amp;L ₹</th><th class="num">P&amp;L%</th>
           <th class="num">Adds</th><th class="num">Age</th>
         </tr></thead>
         <tbody id="dh-live-exit-tbody"></tbody>
@@ -3525,7 +3538,7 @@ tbody tr:hover { filter: brightness(0.97); }
       <table id="dh-live-entry-table" class="dh-blotter">
         <thead><tr>
           <th>Signal date</th><th>Stock</th><th>Sector</th><th class="num">CMP</th>
-          <th>Trend</th><th>Flip</th><th class="num">vs 52WH</th><th class="num">52WH hit</th><th class="num">Qty to buy</th>
+          <th>Trend</th><th>Flip</th><th class="num">Flip date</th><th class="num">vs 52WH</th><th class="num">52WH hit</th><th class="num">Qty to buy</th>
         </tr></thead>
         <tbody id="dh-live-entry-tbody"></tbody>
       </table>
@@ -3547,7 +3560,7 @@ tbody tr:hover { filter: brightness(0.97); }
       <table id="dh-live-addon-table" class="dh-blotter">
         <thead><tr>
           <th>Stock</th><th class="num">Qty</th><th class="num">WAC</th><th class="num">CMP</th><th class="num">P&amp;L%</th>
-          <th class="num">Add qty</th><th class="num">Days since buy</th><th>Trend</th><th>Flip</th><th class="num">RSI14</th>
+          <th class="num">Add qty</th><th class="num">Days since buy</th><th>Trend</th><th>Flip</th><th class="num">Flip date</th><th class="num">RSI14</th>
         </tr></thead>
         <tbody id="dh-live-addon-tbody"></tbody>
       </table>
@@ -3569,7 +3582,7 @@ tbody tr:hover { filter: brightness(0.97); }
       <table id="dh-live-pos-table" class="dh-blotter">
         <thead><tr>
           <th>Entry</th><th>Stock</th><th class="num">Qty</th><th class="num">WAC</th><th class="num">CMP</th>
-          <th>Trend</th><th>Flip</th><th class="num">vs 52WH</th><th class="num">P&amp;L ₹</th><th class="num">P&amp;L%</th>
+          <th>Trend</th><th>Flip</th><th class="num">Flip date</th><th class="num">vs 52WH</th><th class="num">P&amp;L ₹</th><th class="num">P&amp;L%</th>
           <th class="num">Adds</th><th class="num">Age</th><th>Signal</th>
         </tr></thead>
         <tbody id="dh-live-pos-tbody"></tbody>
@@ -8664,7 +8677,7 @@ const WORKSPACES = {
   icici:   { id: 'icici',   label: 'ICICI',   strategy: null,    source: 'not connected', status: 'pending',
              pages: {} },
 };
-const WS_PAGE_ORDER = ['dashboard', 'performance', 'analysis', 'dhanlive', 'covcall'];
+const WS_PAGE_ORDER = ['dashboard', 'dhanlive', 'covcall', 'performance', 'analysis'];
 const WS = { id: 'dhan' }; // default workspace (a saved choice in localStorage overrides it)
 const WS_ALT = { // pages whose DOM differs per workspace version: legacy page id -> { v2 element, ensure fn }
   dashboard:   { el: 'page-dashboard2',   fn: 'd2Ensure' },
@@ -8818,7 +8831,7 @@ function wsNormalizeDhan(raw, ws) {
   const mk = (r, signal) => ({
     symbol: r.symbol, sector: r.sector || null, entryDate: r.entry_date, ageDays: r.age_days,
     qty: r.qty, avgCost: r.avg_cost, cmp: r.cmp, plPct: r.pl_pct, plRs: r.notional_pl_rs, signal,
-    supertrend: r.supertrend_color, flip: r.flip_label, pctFromHigh: r.pct_from_52w_high,
+    supertrend: r.supertrend_color, flip: r.flip_label, flipDate: r.flip_date || null, pctFromHigh: r.pct_from_52w_high,
     adds: r.num_adds, rsi: r.rsi14, addQty: r.add_qty, daysSinceBuy: r.cooldown_days_since_last_buy,
     sma200: r.sma200 ?? null, sma50: r.sma50 ?? null, smaAsOf: r.sma_asof || null,
   });
@@ -8833,6 +8846,7 @@ function wsNormalizeDhan(raw, ws) {
     // Flip is always filled: engine label, else rebuild from the raw flip fields
     flip: e.flip_label || (e.flipped_today ? 'Flipped to GREEN (0)'
           : e.recent_bullish_flip_days_ago == null ? 'GREEN' : `Flipped to GREEN (${e.recent_bullish_flip_days_ago})`),
+    flipDate: e.flip_date || null,
     pctFromHigh: e.pct_from_high,
     // Older files carried recent_52w_high_*; the current screener only emits today's breakouts
     hitDays: e.recent_52w_high_days_ago != null ? e.recent_52w_high_days_ago : ((marketDate && e.date !== marketDate) ? 99 : 0),
@@ -8941,6 +8955,7 @@ const DH_POS_CELLS = [
   ['CMP', r => r.cmp, r => `<td class="num">${dhFmtRs(r.cmp)}</td>`],
   ['Supertrend', r => r.supertrend, r => `<td>${dhTrendPill(r.supertrend)}</td>`],
   ['Flip', r => r.flip, r => `<td>${dhFmtFlip(r.flip)}</td>`],
+  ['Flip date', r => r.flipDate, r => `<td class="num">${dhFmtDate(r.flipDate)}</td>`],
   ['vs 52WH %', r => r.pctFromHigh, r => `<td class="num">${dhFmtAway(r.pctFromHigh)}</td>`],
   ['P&L Rs', r => r.plRs, r => `<td class="num ${dhPnlCls(r.plRs)}">${dhFmtRs(r.plRs)}</td>`],
   ['P&L %', r => r.plPct, r => `<td class="num ${dhPnlCls(r.plPct)}">${dhFmtPct(r.plPct)}</td>`],
@@ -8953,13 +8968,13 @@ const DH_DEFS = {
   exit: {
     rows: d => d.positions.filter(p => p.signal === 'EXIT').sort((a, b) => a.plRs - b.plRs),
     filter: (r, f) => f === 'loss' ? r.plRs < 0 : f === 'profit' ? r.plRs >= 0 : true,
-    cls: () => 'row-red', empty: 'No exit signals right now.', cols: 12,
+    cls: () => 'row-red', empty: 'No exit signals right now.', cols: 13,
     cells: DH_POS_CELLS,
   },
   entry: {
     rows: d => d.signals.entry.slice().sort((a, b) => a.hitDays - b.hitDays || b.pctFromHigh - a.pctFromHigh),
     filter: (r, f) => f === 'today' ? r.hitDays === 0 : f === 'hot' ? (r.hot52wh || r.hotTurn) : true,
-    cls: r => (r.hot52wh || r.hotTurn) ? 'row-amber' : '', empty: 'No fresh 52-week-high breakouts right now.', cols: 9,
+    cls: r => (r.hot52wh || r.hotTurn) ? 'row-amber' : '', empty: 'No fresh 52-week-high breakouts right now.', cols: 10,
     cells: [
       ['Signal date', r => r.date, r => `<td>${dhFmtDate(r.date)}</td>`],
       ['Stock', r => r.symbol, r => `<td class="stock-name">${dhEsc(r.symbol)}</td>`],
@@ -8967,6 +8982,7 @@ const DH_DEFS = {
       ['CMP', r => r.cmp, r => `<td class="num">${dhFmtRs(r.cmp)}</td>`],
       ['Supertrend', r => r.supertrend, r => `<td>${dhTrendPill(r.supertrend)}</td>`],
       ['Flip', r => r.flip, r => `<td>${dhFmtFlip(r.flip)}</td>`],
+      ['Flip date', r => r.flipDate, r => `<td class="num">${dhFmtDate(r.flipDate)}</td>`],
       ['vs 52WH %', r => r.pctFromHigh, r => `<td class="num">${r.pctFromHigh == null ? '—' : dhFmtPct(r.pctFromHigh)}</td>`],
       ['52WH hit', r => r.hitDate, r => `<td class="num">${dhFmtHit(r)}</td>`],
       ['Qty to buy', r => r.qtyToBuy, r => `<td class="num" style="font-weight:700">${r.qtyToBuy}</td>`],
@@ -8976,7 +8992,7 @@ const DH_DEFS = {
     rows: d => d.positions.filter(p => p.signal === 'ADD-ON'),
     sort: (rows, f) => rows.sort(f === 'cooldown' ? (a, b) => b.daysSinceBuy - a.daysSinceBuy : (a, b) => a.plPct - b.plPct),
     filter: () => true,
-    cls: () => 'row-green', empty: 'No add-on signals right now.', cols: 10,
+    cls: () => 'row-green', empty: 'No add-on signals right now.', cols: 11,
     cells: [
       ['Stock', r => r.symbol, r => `<td class="stock-name">${dhEsc(r.symbol)}</td>`],
       ['Qty', r => r.qty, r => `<td class="num">${r.qty}</td>`],
@@ -8987,6 +9003,7 @@ const DH_DEFS = {
       ['Days since buy', r => r.daysSinceBuy, r => `<td class="num">${r.daysSinceBuy}d</td>`],
       ['Supertrend', r => r.supertrend, r => `<td>${dhTrendPill(r.supertrend)}</td>`],
       ['Flip', r => r.flip, r => `<td>${dhFmtFlip(r.flip)}</td>`],
+      ['Flip date', r => r.flipDate, r => `<td class="num">${dhFmtDate(r.flipDate)}</td>`],
       ['RSI14', r => r.rsi, r => `<td class="num">${r.rsi != null ? r.rsi.toFixed(1) : '—'}</td>`],
     ],
   },
@@ -8994,7 +9011,7 @@ const DH_DEFS = {
     rows: d => d.positions.slice().sort((a, b) => a.plPct - b.plPct),
     filter: (r, f) => f === 'all' ? true : r.signal === f,
     cls: r => r.signal === 'EXIT' ? 'row-red' : r.signal === 'ADD-ON' ? 'row-green' : '',
-    empty: 'No position data.', cols: 13,
+    empty: 'No position data.', cols: 14,
     cells: [...DH_POS_CELLS, ['Signal', r => r.signal, r => `<td>${dhSignalPill(r.signal)}</td>`]],
   },
 };
@@ -9198,6 +9215,38 @@ function d2Attn(kind) {
   }
 }
 
+// Today's actions strip on the Dashboard: dh252 counts from the contract + covered-call counts from its own JSON
+function d2Go(page, tab) {
+  const btn = document.querySelector('.app-header .nav-tab[data-page="' + page + '"]');
+  if (!btn || !wsHasPage(WS.id, page)) return;
+  showPage(page, btn);
+  setTimeout(() => {
+    if (page === 'dhanlive') dhLiveTab(tab);
+    else { const [a, b] = tab.split('-'); ccTab(a); if (a === 'options') ccOTab(b); else ccSTab(b); }
+  }, 60);
+}
+function d2RenderActions(d) {
+  const set = (id, v) => { const el = document.getElementById(id); if (el) el.textContent = v; };
+  const P = d.positions, cap = d.capital || {};
+  const n = s => P.filter(p => p.signal === s).length;
+  const exitN = n('EXIT'), addN = n('ADD-ON'), entryN = d.signals.entry.length;
+  set('d2-a-pos', P.length); set('d2-a-inv', P.length ? dhFmtRs(cap.invested) : '—');
+  const pl = document.getElementById('d2-a-pl');
+  if (pl) { pl.textContent = cap.combined == null ? '—' : dhFmtRs(cap.combined); pl.className = 'dhm-kpi-val' + (cap.combined == null ? '' : cap.combined >= 0 ? ' green' : ' red'); }
+  set('d2-a-entry', entryN); set('d2-a-exit', exitN); set('d2-a-addon', addN);
+  const fill = cc => {
+    const al = cc.alerts || [], rows = (cc.shares || {}).rows || [];
+    const enter = al.filter(a => a.level === 'ENTER').length, risk = al.filter(a => ['EXIT', 'FLIP', 'WARN'].includes(a.level)).length;
+    const avg = rows.filter(r => r.avg_status === 'ADD').length, sent = ((cc.shares || {}).entries || []).length;
+    set('d2-o-enter', enter); set('d2-o-risk', risk); set('d2-o-avg', avg); set('d2-o-sent', sent);
+    set('d2-act-pill', (exitN + addN + entryN + enter + risk + avg + sent) + ' items');
+  };
+  set('d2-act-pill', (exitN + addN + entryN) + ' items');
+  if (window._cc) fill(window._cc);
+  else fetch(CC_URL + '?t=' + Date.now()).then(r => r.ok ? r.json() : Promise.reject()).then(j => { window._cc = j; fill(j); })
+    .catch(() => ['d2-o-enter', 'd2-o-risk', 'd2-o-avg', 'd2-o-sent'].forEach(id => set(id, '—')));
+}
+
 function d2Render(d) {
   const set = (id, v, cls) => { const el = document.getElementById(id); if (!el) return; el.innerHTML = v; if (cls !== undefined) el.className = el.className.replace(/\b(pos|neg)\b/g, '').trim() + (cls ? ' ' + cls : ''); };
   const ws = WORKSPACES[WS.id], P = d.positions, closed = d.closed || [];
@@ -9220,9 +9269,7 @@ function d2Render(d) {
   set('d2-k-ret', fyRet == null ? '—' : dhFmtPct(fyRet), d2Cls(fyRet));
   set('d2-k-value', base ? dhFmtRs(base + realised + mtm) : '—');
 
-  document.getElementById('d2-chart').innerHTML = d2CurveSvg(d);
-  document.getElementById('d2-curve-hint').textContent = closed.length
-    ? 'Cumulative portfolio performance' : 'Starting capital + cumulative P&L (market value − cost, plus realised) — unaffected by deposits or new buys';
+  d2RenderActions(d);
 
   const prof = P.filter(p => p.plPct > 0).length, loss = P.filter(p => p.plPct < 0).length, n = P.length || 1;
   const holdAvg = P.length ? Math.round(P.reduce((s, p) => s + (p.ageDays || 0), 0) / P.length) : null;
@@ -9564,6 +9611,7 @@ function ccSharesView(d) {
       { h: 'Avg cost', v: r => r.avg_cost, c: r => ccP(r.avg_cost), num: true },
       { h: 'P&amp;L', v: r => r.pl_pct, c: pnl, num: true },
       { h: 'Supertrend', v: r => r.colour, c: r => dhTrendPill(r.colour) },
+      { h: 'Flip date', v: r => r.flip_date || '', c: r => dhFmtDate(r.flip_date) },
       { h: 'Last add', v: r => r.last_add || '', c: lastAdd },
       { h: 'Add', v: r => r.add_qty, c: r => `${r.add_qty} sh · ${dhFmtRs(r.add_value_rs)}`, num: true },
       { h: 'Status', v: r => r.avg_status, c: r => ccPill(r.avg_status) },
@@ -9892,7 +9940,7 @@ function a2Loss(d, S) {
   const trig = S.trigger;
   const inLoss = P.filter(p => p.plPct <= trig).sort((a, b) => a.plPct - b.plPct);
   const trigPanel = a2Panel(`Positions beyond the ${String(trig).replace('-', '−')}% add-on trigger`, 'Held until recovery by design — add when eligible', inLoss.length
-    ? a2Table(['Stock', 'P&L %', 'Age', 'Supertrend', 'Add-on'], inLoss.map(p => `<tr><td>${dhEsc(p.symbol)}</td><td class="neg">${a2Pct(p.plPct)}</td><td>${p.ageDays}d</td><td>${dhTrendPill(p.supertrend)}</td><td>${p.signal === 'ADD-ON' ? '<span class="pos">Eligible</span>' : (p.supertrend || '').toLowerCase() === 'red' ? 'Exit rule' : 'Cooldown'}</td></tr>`))
+    ? a2Table(['Stock', 'P&L %', 'Age', 'Supertrend', 'Flip date', 'Add-on'], inLoss.map(p => `<tr><td>${dhEsc(p.symbol)}</td><td class="neg">${a2Pct(p.plPct)}</td><td>${p.ageDays}d</td><td>${dhTrendPill(p.supertrend)}</td><td>${dhFmtDate(p.flipDate)}</td><td>${p.signal === 'ADD-ON' ? '<span class="pos">Eligible</span>' : (p.supertrend || '').toLowerCase() === 'red' ? 'Exit rule' : 'Cooldown'}</td></tr>`))
     : a2Pending('No position is beyond the add-on trigger.', 'Every open position is above ' + String(trig).replace('-', '−') + '%.'));
   const closed = a2Panel('Closed trades', 'Round trips from the imported transaction report', a2ClosedTable(d));
   return a2Grid('a2-g2', dist, trigPanel) + a2Grid('a2-g2', closed, a2Panel('How dh252 treats losses', 'Strategy rules, not stop-losses', a2Items([
@@ -9919,7 +9967,7 @@ function a2Trend(d, S) {
     const g = P.filter(p => p.rsi != null && p.rsi >= lo && p.rsi < hi); return `<tr><td>${l}</td><td>${g.length}</td><td class="${d2Cls(a2Avg(g, p => p.plPct))}">${a2Pct(a2Avg(g, p => p.plPct))}</td></tr>`; })));
   const flips = P.filter(p => /Flipped/.test(p.flip || '')).sort((a, b) => (a.flip || '').localeCompare(b.flip || ''));
   const flipPanel = a2Panel('Recent Supertrend flips', 'Positions whose trend turned recently', flips.length
-    ? a2Table(['Stock', 'Flip', 'P&L %'], flips.map(p => `<tr><td>${dhEsc(p.symbol)}</td><td>${dhFmtFlip(p.flip)}</td><td class="${dhPnlCls(p.plPct)}">${a2Pct(p.plPct)}</td></tr>`))
+    ? a2Table(['Stock', 'Flip', 'Flip date', 'P&L %'], flips.map(p => `<tr><td>${dhEsc(p.symbol)}</td><td>${dhFmtFlip(p.flip)}</td><td>${dhFmtDate(p.flipDate)}</td><td class="${dhPnlCls(p.plPct)}">${a2Pct(p.plPct)}</td></tr>`))
     : a2Pending('No recent flips.', 'No open position has flipped Supertrend colour in the recent window.'));
   return a2Grid('a2-g2', trendPanel, away) + a2Grid('a2-g2', rsiPanel, flipPanel);
 }
