@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-08T12:34:14.615525+00:00",
+  "generated_at": "2026-11-08T18:11:56.625336+00:00",
   "market_data_date": "2026-11-08",
   "as_of": "2026-11-08",
   "rules": {
@@ -1106,7 +1106,8 @@
       }
     ],
     "entries": [],
-    "exit_rule": null,
+    "exits": [],
+    "exit_rule": "Supertrend red and the position is in profit: sell the whole position",
     "entry_window": 7
   },
   "lots_source": "nse_lots.json",

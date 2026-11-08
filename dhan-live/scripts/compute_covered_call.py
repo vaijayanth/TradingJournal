@@ -165,6 +165,7 @@ def main():
     ap.add_argument("--market-screens", default=str(DATA / "cache" / "market_screens_full.json"), help="for RSI14")
     ap.add_argument("--lots", default=str(DATA / "nse_lots.json"))
     ap.add_argument("--adds", default=str(DATA / "cc_adds.json"))
+    ap.add_argument("--invest-trades", default=str(DATA / "invest_trades.json"))
     ap.add_argument("--chains-dir", default=str(DATA / "cc_raw" / "chains"))
     ap.add_argument("--out", default=str(ROOT / "covered_call_signals.json"))
     ap.add_argument("--as-of", default=None, help="override 'today' (YYYY-MM-DD)")
@@ -185,6 +186,12 @@ def main():
     held = {k: v["qty"] for k, v in hold_rows.items()}
     lots = json.loads(Path(args.lots).read_text()).get("lots", {}) if Path(args.lots).exists() else {}
     last_add = json.loads(Path(args.adds).read_text()).get("last_add", {}) if Path(args.adds).exists() else {}
+    # previous closed trade per stock (invest_trades.py): the next entry reinvests that trade's capital + profit
+    inv_path = Path(args.invest_trades)
+    prev_trade = {}
+    if inv_path.exists():
+        for t in sorted(json.loads(inv_path.read_text()).get("closed", []), key=lambda x: x["exit_date"]):
+            prev_trade[t["symbol"]] = t
 
     legs = parse_positions(Path(args.positions).read_text(encoding="utf-8"), expiries) if Path(args.positions).exists() else []
     chains = {}
@@ -196,7 +203,7 @@ def main():
     future = sorted(e for e in expiries if date.fromisoformat(e) >= today)
     show_exp = future[:1] + (future[1:2] if today.day > rules["show_next_month_after_day"] else [])
 
-    stocks, alerts, shares_rows, share_entries = [], [], [], []
+    stocks, alerts, shares_rows, share_entries, share_exits = [], [], [], [], []
     mult = rules["stop_premium_multiple"]
     for sym, u in uni.items():
         e = st_by.get(sym)
@@ -294,10 +301,23 @@ def main():
                                 "avg_status": ast, "add_qty": add_qty,
                                 "add_value_rs": round(add_qty * spot, 2), "last_add": la, "days_since_add": since,
                                 "avg_note": anote})
+            # share EXIT: Supertrend red AND the position is in profit -> sell the whole position
+            if colour == "red" and pl_pct > 0:
+                share_exits.append({"symbol": sym, "spot": spot, "qty": h["qty"], "avg_cost": h["avg_cost"],
+                                    "invested": round(h["qty"] * h["avg_cost"], 2), "value": round(h["qty"] * spot, 2),
+                                    "pl_pct": round(pl_pct, 2), "pl_rs": round(h["qty"] * (spot - h["avg_cost"]), 2),
+                                    "colour": colour, "flip_date": flip_date, "flip_trading_days": flip_days, "rsi": rsi})
         # share ENTRY: a universe stock you do NOT hold whose Supertrend turned green within the window
         if held.get(sym, 0) == 0 and colour == "green" and flip_days is not None and flip_days <= rules["share_entry_window_trading_days"]:
+            pt = prev_trade.get(sym)
+            cap = round(pt["capital"] + pt["profit"], 2) if pt else None
+            qty_buy = max(1, int(cap // spot)) if cap else None
             share_entries.append({"symbol": sym, "spot": spot, "colour": colour, "flip_date": flip_date,
-                                  "flip_trading_days": flip_days, "rsi": rsi})
+                                  "flip_trading_days": flip_days, "rsi": rsi,
+                                  "prev_capital": pt["capital"] if pt else None, "prev_profit": pt["profit"] if pt else None,
+                                  "entry_capital": cap, "qty_to_buy": qty_buy,
+                                  "sizing_note": (f"previous trade: capital {pt['capital']:,.0f} + profit {pt['profit']:,.0f}" if pt
+                                                  else "no previous trade recorded for this stock - quantity must be set by you")})
         stocks.append({
             "symbol": sym, "spot": spot, "colour": colour, "flip_date": flip_date, "flip_trading_days": flip_days,
             "rsi": rsi, "basis": basis, "near_call": nearest("CE"), "near_put": nearest("PE"),
@@ -311,7 +331,9 @@ def main():
     result = {
         "generated_at": datetime.now(timezone.utc).isoformat(), "market_data_date": market_date, "as_of": today.isoformat(),
         "rules": rules, "show_expiries": show_exp, "stocks": stocks, "alerts": alerts,
-        "shares": {"rows": shares_rows, "entries": share_entries, "exit_rule": None, "entry_window": rules["share_entry_window_trading_days"]},
+        "shares": {"rows": shares_rows, "entries": share_entries, "exits": share_exits,
+                   "exit_rule": "Supertrend red and the position is in profit: sell the whole position",
+                   "entry_window": rules["share_entry_window_trading_days"]},
         "lots_source": "nse_lots.json" if lots else "cc_config.json (fallback)",
         "positions_fetched": Path(args.positions).exists(), "legs_count": len(legs),
         "chains_loaded": {s: sorted(v) for s, v in chains.items()},
@@ -324,7 +346,7 @@ def main():
     n = lambda s: sum(1 for x in stocks if x.get("status") == s)
     n_add = sum(1 for a in shares_rows if a["avg_status"] == "ADD")
     n_ent = len(share_entries)
-    print(f"shares: averaging due {n_add}, entry signals {n_ent} | {len(stocks)} stocks | ENTER {n('ENTER')} HOLD {n('HOLD')} WAIT {n('WAIT')} FLIP {n('FLIP')} | legs {len(legs)} | alerts {len(alerts)}")
+    print(f"shares: exits {len(share_exits)}, averaging due {n_add}, entry signals {n_ent} | {len(stocks)} stocks | ENTER {n('ENTER')} HOLD {n('HOLD')} WAIT {n('WAIT')} FLIP {n('FLIP')} | legs {len(legs)} | alerts {len(alerts)}")
     for a in alerts:
         print(f"  {a['level']:5} {a['text']}")
     if result["chains_needed"]:

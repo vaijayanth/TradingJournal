@@ -1218,7 +1218,8 @@ tbody tr:hover { filter: brightness(0.97); }
     <div class="d2-act-row"><div class="d2-act-lab"><b>Buy: new entries</b><span>52-week high, trend green</span></div><div class="d2-act-chips" id="d2-r-entry"></div><div class="d2-act-st" id="d2-r-entry-s"></div></div>
     <div class="d2-act-row"><div class="d2-act-lab"><b>Buy: add-ons</b><span>Down 6%+, trend green</span></div><div class="d2-act-chips" id="d2-r-addon"></div><div class="d2-act-st" id="d2-r-addon-s"></div></div>
     <div class="d2-act-row"><div class="d2-act-lab"><b>Options</b><span>Covered call</span></div><div class="d2-act-chips" id="d2-r-opt"></div><div class="d2-act-st" id="d2-r-opt-s"></div></div>
-    <div class="d2-act-row"><div class="d2-act-lab"><b>Shares</b><span>Averaging due</span></div><div class="d2-act-chips" id="d2-r-shr"></div><div class="d2-act-st" id="d2-r-shr-s"></div></div>
+    <div class="d2-act-row"><div class="d2-act-lab"><b>Shares: sell</b><span>Red and in profit</span></div><div class="d2-act-chips" id="d2-r-shx"></div><div class="d2-act-st" id="d2-r-shx-s"></div></div>
+    <div class="d2-act-row"><div class="d2-act-lab"><b>Shares: buy</b><span>Flip to green, averaging</span></div><div class="d2-act-chips" id="d2-r-shr"></div><div class="d2-act-st" id="d2-r-shr-s"></div></div>
     <div class="d2-legend2"><span><i style="background:var(--green)"></i>Order placed</span><span><i style="border:1.5px solid var(--text-muted)"></i>No order yet</span><span><i style="background:var(--amber)"></i>Blocked by the price cross-check</span><span id="d2-ord-sync"></span></div>
   </section>
 
@@ -9362,8 +9363,17 @@ function d2RenderActions(d) {
     const shEnt = (cc.shares || {}).entries || [];
     set('d2-r-opt', enter.length + risk.length ? enter.map(a => chip('', a.symbol, a.text, "d2Go('covcall','options-alerts')")).join('') + risk.map(a => chip('blk', a.symbol + ' ' + a.level.toLowerCase(), a.text, "d2Go('covcall','options-alerts')")).join('') : none('No option actions'));
     set('d2-r-opt-s', `${enter.length} to open${risk.length ? ' · ' + risk.length + ' exit, flip or warning' : ' · no exit or warning'}`);
-    set('d2-r-shr', avg.length ? avg.map(r => chip('', `${r.symbol} ×${r.add_qty}`, `${r.pl_pct}% vs average cost`, "d2Go('covcall','shares-addon')")).join('') : none('No averaging due'));
-    set('d2-r-shr-s', `${avg.length} due${shEnt.length ? ' · ' + shEnt.length + ' new entries' : ''}`);
+    const shx = (cc.shares || {}).exits || [];
+    const shDraw = ex => {
+      const stOf = (sym, side, qty) => dhOrderState(ex, sym, side, qty);
+      set('d2-r-shx', shx.length ? shx.map(r => chip(stOf(r.symbol, 'SELL', r.qty).st === 'ok' ? 'ok' : '', `${r.symbol} ×${r.qty}`, `Red and ${r.pl_pct}% in profit`, "d2Go('covcall','shares-exit')")).join('') : none('No profit exits'));
+      set('d2-r-shx-s', shx.length ? `${shx.length} to sell${ex && ex.hasOrders ? ' · ' + shx.filter(r => stOf(r.symbol, 'SELL', r.qty).st === 'ok').length + ' ordered' : ''}` : '');
+      const buys = shEnt.map(e => ({ sym: e.symbol, qty: e.qty_to_buy, tip: e.sizing_note, go: "d2Go('covcall','shares-entry')" }))
+        .concat(avg.map(r => ({ sym: r.symbol, qty: r.add_qty, tip: `${r.pl_pct}% vs average cost`, go: "d2Go('covcall','shares-addon')" })));
+      set('d2-r-shr', buys.length ? buys.map(b => chip(b.qty != null && stOf(b.sym, 'BUY', b.qty).st === 'ok' ? 'ok' : '', b.qty != null ? `${b.sym} ×${b.qty}` : `${b.sym} (set qty)`, b.tip, b.go)).join('') : none('No share buys'));
+      set('d2-r-shr-s', `${shEnt.length} new ${shEnt.length === 1 ? 'entry' : 'entries'} · ${avg.length} averaging`);
+    };
+    shDraw(null); dhExtras().then(shDraw);
   };
   draw(null);
   dhExtras(true).then(draw);
@@ -9701,30 +9711,47 @@ function ccSharesView(d) {
   const sh = d.shares || { rows: [] }, R = d.rules || {};
   const rows = sh.rows || [];
   const entry = sh.entries || [];
+  const exits = sh.exits || [];
   const addon = rows.filter(r => r.avg_status === 'ADD' || r.avg_status === 'WAIT');
   const invested = rows.reduce((a, r) => a + r.invested, 0), value = rows.reduce((a, r) => a + r.value, 0), pl = value - invested;
   const kpis = a2Metrics([
-    ['Holdings', rows.length, 'Investment-portfolio stocks'],
-    ['Invested', dhFmtRs(invested), `Market value ${dhFmtRs(value)}`],
+    ['Invested', dhFmtRs(invested), `${rows.length} stocks · market value ${dhFmtRs(value)}`],
     ['Unrealised P&L', (pl >= 0 ? '+' : '−') + dhFmtRs(Math.abs(pl)), invested ? ccSigned(pl / invested * 100) + ' on cost' : '', pl >= 0 ? 'pos' : 'neg'],
-    ['Entry signals', entry.length, `Not-held stocks with a green flip in ${sh.entry_window || 7} trading days`, entry.length ? 'pos' : ''],
+    ['Exit now', exits.length, 'Supertrend red and in profit', exits.length ? 'neg' : ''],
+    ['Entry signals', entry.length, `Red to green flip on a stock you do not hold (${sh.entry_window || 7} trading days)`, entry.length ? 'pos' : ''],
     ['Averaging due', addon.filter(r => r.avg_status === 'ADD').length, 'Green, down 6%+, once a week', addon.some(r => r.avg_status === 'ADD') ? 'pos' : ''],
   ]);
   const pnl = r => `<span class="${dhPnlCls(r.pl_pct)}">${ccSigned(r.pl_pct)}</span>`;
   const lastAdd = r => r.last_add ? dhFmtDate(r.last_add) + ' (' + r.days_since_add + 'd)' : '<span style="color:var(--text-muted)">none recorded</span>';
 
-  const exitP = a2Panel('Exit now', 'No exit rule is defined for these shares',
-    a2Pending('No share exit signal.', 'These shares are held and hedged with options, so no exit rule is applied. Say the word if you want one (for example Supertrend red) and it will show here.'));
+  const exitP = ccTbl('exit', {
+    title: 'Exit now', hint: 'Supertrend is red and the position is in profit: sell the whole position',
+    rows: exits, search: r => r.symbol, sort: [5, -1],
+    empty: 'No share is both Supertrend red and in profit. A losing position stays held, even when red.',
+    cols: [
+      { h: 'Stock', v: r => r.symbol, c: r => `<b>${dhEsc(r.symbol)}</b>` },
+      { h: 'Qty', v: r => r.qty, c: r => r.qty, num: true },
+      { h: 'Avg cost', v: r => r.avg_cost, c: r => ccP(r.avg_cost), num: true },
+      { h: 'Spot', v: r => r.spot, c: r => ccP(r.spot), num: true },
+      { h: 'Supertrend', v: r => r.colour, c: r => dhTrendPill(r.colour) },
+      { h: 'Profit', v: r => r.pl_rs, c: r => `<span class="pnl-pos">+${dhFmtRs(r.pl_rs)}</span> <span style="color:var(--text-muted)">${ccSigned(r.pl_pct)}</span>`, num: true },
+      { h: 'Red since', v: r => r.flip_date || '', c: r => ccFlip(r.flip_date, r.flip_trading_days) },
+      { h: 'Sale value', v: r => r.value, c: r => dhFmtRs(r.value), num: true },
+    ],
+  });
   const entryT = ccTbl('entry', {
-    title: 'Entry signals', hint: `Portfolio-universe stocks you do not hold whose Supertrend turned green within the last ${sh.entry_window || 7} trading days`,
+    title: 'Entry signals', hint: `Stocks you do not hold whose Supertrend flipped from red to green in the last ${sh.entry_window || 7} trading days. Size = the previous position's capital plus the profit made on it.`,
     rows: entry, search: r => r.symbol, sort: [3, 1],
-    empty: `All ${rows.length} portfolio stocks are already held, so there is nothing to enter. A stock appears here if you sell it and its Supertrend later turns green again.`,
+    empty: `All ${rows.length} portfolio stocks are already held, so there is nothing to enter. A stock appears here after you sell it (profit exit) and its Supertrend later flips back to green.`,
     cols: [
       { h: 'Stock', v: r => r.symbol, c: r => `<b>${dhEsc(r.symbol)}</b>` },
       { h: 'Spot', v: r => r.spot, c: r => ccP(r.spot), num: true },
       { h: 'Supertrend', v: r => r.colour, c: r => dhTrendPill(r.colour) },
       { h: 'Flip', v: r => r.flip_trading_days, c: r => ccFlip(r.flip_date, r.flip_trading_days) },
       { h: 'RSI 14', v: r => r.rsi, c: r => ccRsi(r.rsi), num: true },
+      { h: 'Previous capital', v: r => r.prev_capital, c: r => r.prev_capital == null ? '—' : dhFmtRs(r.prev_capital), num: true },
+      { h: 'Profit made', v: r => r.prev_profit, c: r => r.prev_profit == null ? '—' : dhFmtRs(r.prev_profit), num: true },
+      { h: 'Qty to buy', v: r => r.qty_to_buy, c: r => r.qty_to_buy == null ? '<span style="color:var(--amber)">You set it</span>' : `<b>${r.qty_to_buy}</b> <span style="color:var(--text-muted)">${dhFmtRs(r.entry_capital)}</span>`, num: true },
     ],
   });
   const addT = ccTbl('addon', {
@@ -9744,6 +9771,7 @@ function ccSharesView(d) {
       { h: 'Note', v: r => r.avg_note, c: r => `<span style="color:var(--text-muted)">${dhEsc(r.avg_note)}</span>`, nw: 200 },
     ],
   }) + '<div class="dhm-foot">“Last add” comes from data/cc_adds.json, which /refresh-dhan updates from the tradebook; “none recorded” means no add has been recorded, not that none happened.</div>';
+  const exitSet = new Set(exits.map(e => e.symbol)), sig = r => exitSet.has(r.symbol) ? 'EXIT' : r.avg_status === 'ADD' ? 'ADD' : 'HOLD';
   const posT = ccTbl('pos', {
     title: 'Open positions', hint: 'The investment-portfolio holdings from Dhan',
     rows: rows, search: r => r.symbol, sort: [6, 1],
@@ -9760,10 +9788,10 @@ function ccSharesView(d) {
       { h: 'Supertrend', v: r => r.colour, c: r => dhTrendPill(r.colour) },
       { h: 'Flip', v: r => r.flip_trading_days, c: r => ccFlip(r.flip_date, r.flip_trading_days) },
       { h: 'RSI 14', v: r => r.rsi, c: r => ccRsi(r.rsi), num: true },
-      { h: 'Signal', v: r => r.avg_status === 'ADD' ? 'ADD' : 'HOLD', c: r => ccPill(r.avg_status === 'ADD' ? 'ADD' : 'HOLD') },
+      { h: 'Signal', v: r => sig(r), c: r => ccPill(sig(r)) },
     ],
   });
-  const bar = ccTabBar('cc-stabs', [['exit', 'Exit Now', 0], ['entry', 'Entry Signals', entry.length], ['addon', 'Add-on Eligible', addon.length], ['pos', 'Open Positions', rows.length]], 'ccSTab');
+  const bar = ccTabBar('cc-stabs', [['exit', 'Exit Now', exits.length], ['entry', 'Entry Signals', entry.length], ['addon', 'Add-on Eligible', addon.length], ['pos', 'Open Positions', rows.length]], 'ccSTab');
   return kpis + bar + `<div id="cc-sv-exit" class="a2-view">${exitP}</div><div id="cc-sv-entry" class="a2-view">${entryT}</div><div id="cc-sv-addon" class="a2-view">${addT}</div><div id="cc-sv-pos" class="a2-view">${posT}</div>`;
 }
 

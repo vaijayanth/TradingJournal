@@ -1,0 +1,5 @@
+{
+ "_note": "Investment-portfolio share trades. closed[] feeds the next entry's size (capital + profit of the previous trade on the same stock); pending_exits[] = exit orders placed but not yet filled. Profit is gross of charges. Written by scripts/invest_trades.py.",
+ "closed": [],
+ "pending_exits": []
+}
