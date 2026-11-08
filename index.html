@@ -3027,7 +3027,7 @@ tbody tr:hover { filter: brightness(0.97); }
   <!-- Sizing / summary stats -->
   <div class="card" style="margin-bottom:16px;padding:16px">
     <div class="flex-row" style="gap:24px;flex-wrap:wrap">
-      <div><div style="font-size:11px;color:var(--text-muted)">Holdings</div><div style="font-size:18px;font-weight:700" id="dh-live-holdings-count">—</div></div>
+      <div><div style="font-size:11px;color:var(--text-muted)">dh252 positions</div><div style="font-size:18px;font-weight:700" id="dh-live-holdings-count">—</div></div>
       <div><div style="font-size:11px;color:var(--text-muted)">Effective tier size</div><div style="font-size:18px;font-weight:700" id="dh-live-tier">—</div></div>
       <div><div style="font-size:11px;color:var(--text-muted)">Combined P&amp;L</div><div style="font-size:18px;font-weight:700" id="dh-live-combined-pl">—</div></div>
       <div><div style="font-size:11px;color:var(--text-muted)">Entry signals</div><div style="font-size:18px;font-weight:700" id="dh-live-entry-count">—</div></div>
@@ -3044,7 +3044,7 @@ tbody tr:hover { filter: brightness(0.97); }
     </div>
     <div class="table-wrap">
       <table id="dh-live-exit-table">
-        <thead><tr><th>Stock</th><th>Qty</th><th>Avg Cost ₹</th><th>CMP ₹</th><th>P&amp;L%</th><th>Notional P&amp;L ₹</th></tr></thead>
+        <thead><tr><th>Entry Date</th><th>Stock</th><th>Qty</th><th>WAC ₹</th><th>CMP ₹</th><th>Supertrend</th><th>Flip</th><th>Away from 52WH</th><th>Notional P&amp;L ₹</th><th>P&amp;L%</th><th>Adds</th><th>Age</th></tr></thead>
         <tbody id="dh-live-exit-tbody"></tbody>
       </table>
     </div>
@@ -3074,7 +3074,7 @@ tbody tr:hover { filter: brightness(0.97); }
     </div>
     <div class="table-wrap">
       <table id="dh-live-addon-table">
-        <thead><tr><th>Stock</th><th>Qty</th><th>Avg Cost ₹</th><th>CMP ₹</th><th>P&amp;L%</th><th>Add Qty</th><th>Cooldown</th></tr></thead>
+        <thead><tr><th>Stock</th><th>Qty</th><th>WAC ₹</th><th>CMP ₹</th><th>P&amp;L%</th><th>Add Qty</th><th>Days since buy</th><th>Supertrend</th><th>Flip</th><th>RSI14</th></tr></thead>
         <tbody id="dh-live-addon-tbody"></tbody>
       </table>
     </div>
@@ -3089,7 +3089,7 @@ tbody tr:hover { filter: brightness(0.97); }
     </div>
     <div class="table-wrap">
       <table id="dh-live-pos-table">
-        <thead><tr><th>Stock</th><th>Qty</th><th>Avg Cost ₹</th><th>CMP ₹</th><th>P&amp;L%</th><th>Supertrend</th><th>Signal</th></tr></thead>
+        <thead><tr><th>Entry Date</th><th>Stock</th><th>Qty</th><th>WAC ₹</th><th>CMP ₹</th><th>Supertrend</th><th>Flip</th><th>Away from 52WH</th><th>Notional P&amp;L ₹</th><th>P&amp;L%</th><th>Adds</th><th>Age</th><th>Signal</th></tr></thead>
         <tbody id="dh-live-pos-tbody"></tbody>
       </table>
     </div>
@@ -8211,7 +8211,7 @@ function dhLiveRender(data) {
     asofEl.textContent = 'Data as of ' + (isNaN(d) ? data.generated_at : d.toLocaleString('en-IN'));
   }
 
-  document.getElementById('dh-live-holdings-count').textContent = data.holdings_count ?? '—';
+  document.getElementById('dh-live-holdings-count').textContent = data.dh252_position_count ?? '—';
   document.getElementById('dh-live-tier').textContent = dhFmtRs(data.sizing && data.sizing.effective_tier_rs);
   const combinedEl = document.getElementById('dh-live-combined-pl');
   if (combinedEl) {
@@ -8223,16 +8223,24 @@ function dhLiveRender(data) {
   document.getElementById('dh-live-exit-count').textContent = (data.exits || []).length;
   document.getElementById('dh-live-addon-count').textContent = (data.addons || []).length;
 
+  const dhFmtAge = v => v == null ? '—' : v + 'd';
+  const dhFmtAway = v => v == null ? '—' : `<span style="color:${v >= 0 ? 'var(--green)' : 'var(--red)'}">${dhFmtPct(v)}</span>`;
+  const dhFmtFlip = label => label == null ? '<span style="color:var(--text-muted)">—</span>'
+    : `<span style="color:${label.includes('GREEN') ? 'var(--green)' : 'var(--red)'}">${label}</span>`;
+
   // Exit now
   const exits = data.exits || [];
   document.getElementById('dh-live-exit-text').textContent = exits.length + ' signal' + (exits.length === 1 ? '' : 's');
   document.getElementById('dh-live-exit-tbody').innerHTML = exits.length
     ? exits.map(r => `<tr>
-        <td>${r.symbol}</td><td>${r.qty}</td><td>${dhFmtRs(r.avg_cost)}</td><td>${dhFmtRs(r.cmp)}</td>
-        <td style="color:${r.pl_pct >= 0 ? 'var(--green)' : 'var(--red)'};font-weight:700">${dhFmtPct(r.pl_pct)}</td>
+        <td>${r.entry_date}</td><td>${r.symbol}</td><td>${r.qty}</td><td>${dhFmtRs(r.avg_cost)}</td><td>${dhFmtRs(r.cmp)}</td>
+        <td style="color:var(--red);font-weight:700">RED</td><td>${dhFmtFlip(r.flip_label)}</td>
+        <td>${dhFmtAway(r.pct_from_52w_high)}</td>
         <td style="color:${r.notional_pl_rs >= 0 ? 'var(--green)' : 'var(--red)'}">${dhFmtRs(r.notional_pl_rs)}</td>
+        <td style="color:${r.pl_pct >= 0 ? 'var(--green)' : 'var(--red)'};font-weight:700">${dhFmtPct(r.pl_pct)}</td>
+        <td>${r.num_adds}</td><td>${dhFmtAge(r.age_days)}</td>
       </tr>`).join('')
-    : '<tr><td colspan="6" style="color:var(--text-muted)">No exit signals right now.</td></tr>';
+    : '<tr><td colspan="12" style="color:var(--text-muted)">No exit signals right now.</td></tr>';
 
   // Entry signal
   const entries = data.entries || [];
@@ -8251,11 +8259,13 @@ function dhLiveRender(data) {
     ? addons.map(r => `<tr>
         <td>${r.symbol}</td><td>${r.qty}</td><td>${dhFmtRs(r.avg_cost)}</td><td>${dhFmtRs(r.cmp)}</td>
         <td style="color:var(--red);font-weight:700">${dhFmtPct(r.pl_pct)}</td><td>${r.add_qty}</td>
-        <td>${r.cooldown_days_since_last_buy == null ? 'day-1 default' : r.cooldown_days_since_last_buy + 'd'}</td>
+        <td>${r.cooldown_days_since_last_buy}d</td>
+        <td style="color:var(--green);font-weight:700">GREEN</td><td>${dhFmtFlip(r.flip_label)}</td>
+        <td>${r.rsi14 != null ? r.rsi14.toFixed(1) : '—'}</td>
       </tr>`).join('')
-    : '<tr><td colspan="7" style="color:var(--text-muted)">No add-on signals right now.</td></tr>';
+    : '<tr><td colspan="10" style="color:var(--text-muted)">No add-on signals right now.</td></tr>';
 
-  // Open positions — every holding, signal-tagged
+  // Open positions — every dh252 position in scope, signal-tagged
   const tagged = [
     ...exits.map(r => ({ ...r, signal: 'EXIT', signalColor: 'var(--red)' })),
     ...addons.map(r => ({ ...r, signal: 'ADD-ON', signalColor: 'var(--green)' })),
@@ -8264,12 +8274,15 @@ function dhLiveRender(data) {
   document.getElementById('dh-live-pos-text').textContent = tagged.length + ' position' + (tagged.length === 1 ? '' : 's');
   document.getElementById('dh-live-pos-tbody').innerHTML = tagged.length
     ? tagged.map(r => `<tr>
-        <td>${r.symbol}</td><td>${r.qty}</td><td>${dhFmtRs(r.avg_cost)}</td><td>${dhFmtRs(r.cmp)}</td>
+        <td>${r.entry_date}</td><td>${r.symbol}</td><td>${r.qty}</td><td>${dhFmtRs(r.avg_cost)}</td><td>${dhFmtRs(r.cmp)}</td>
+        <td style="color:${r.supertrend_color === 'green' ? 'var(--green)' : 'var(--red)'};font-weight:700">${(r.supertrend_color || '—').toUpperCase()}</td>
+        <td>${dhFmtFlip(r.flip_label)}</td><td>${dhFmtAway(r.pct_from_52w_high)}</td>
+        <td style="color:${r.notional_pl_rs >= 0 ? 'var(--green)' : 'var(--red)'}">${dhFmtRs(r.notional_pl_rs)}</td>
         <td style="color:${r.pl_pct >= 0 ? 'var(--green)' : 'var(--red)'}">${dhFmtPct(r.pl_pct)}</td>
-        <td style="color:${r.supertrend_color === 'green' ? 'var(--green)' : 'var(--red)'}">${(r.supertrend_color || '—').toUpperCase()}</td>
+        <td>${r.num_adds}</td><td>${dhFmtAge(r.age_days)}</td>
         <td style="color:${r.signalColor};font-weight:700">${r.signal}</td>
       </tr>`).join('')
-    : '<tr><td colspan="7" style="color:var(--text-muted)">No position data.</td></tr>';
+    : '<tr><td colspan="13" style="color:var(--text-muted)">No position data.</td></tr>';
 }
 
 // ── THEME ───────────────────────────────────────────

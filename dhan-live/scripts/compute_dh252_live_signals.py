@@ -1,42 +1,38 @@
-"""dh252 Live Signal Engine - joins real Dhan holdings against backtester's
-daily-published signals to produce personalized entry/exit/add-on signals.
+"""dh252 Live Signal Engine - joins real dh252 positions (scoped by our own
+trade log, NOT your whole Dhan account) against backtester's daily-published
+signals to produce personalized entry/exit/add-on signals.
 
-This is the Phase 2 piece of the plan: Phase 1 (backtester/scripts/
-dh252_entry_screener.py) already produces a universe-wide entry candidate
-list with no knowledge of what you actually hold. This script adds that
-knowledge - excluding symbols already held from the entry list, and
-computing EXIT/ADD-ON signals for symbols you do hold - using the exact
-rules already implemented in backtester's index.html (dh252RenderSignals,
-confirmed read directly from source):
+CORRECTED 2026-11-08: the first version of this script wrongly treated
+EVERY Dhan holding as a dh252 position. Confirmed wrong by the user: 11 of
+59 holdings (INFY, BPCL, CGPOWER, BANKINDIA, BSE, CUMMINSIND, SHRIRAMFIN,
+MCX, HCLTECH, DIXON, LIQUIDCASE) are a separate, unrelated portfolio and
+should never get dh252 exit/add-on signals. The ONLY source of truth for
+"is this a dh252 position" is dh252_trade_log.json - Dhan's API has no
+concept of which strategy a holding belongs to, so this has to be tracked
+ourselves (seeded 2026-11-08 from the user's own real position export,
+maintained going forward as orders actually get placed - see Phase 4).
+
+Rules ported exactly from backtester's index.html (dh252RenderSignals /
+dh252RenderPositions, confirmed read directly from source):
 
   EXIT:   Supertrend turns red -> exit unconditionally, regardless of P&L.
           Takes priority over an add-on signal the same day.
-  ADD-ON: P&L <= -6% vs avg cost AND Supertrend still green AND >=7 days
-          since the last buy on that symbol. Add qty = round(qty * 0.10).
-  ENTRY:  backtester's own universe-wide filter, minus symbols already held.
+  ADD-ON: P&L <= -6% vs WAC AND Supertrend still green AND >=7 days since
+          the last buy on that symbol. Add qty = round(qty * 0.10).
+  ENTRY:  backtester's own universe-wide filter, minus symbols already in
+          our dh252 position scope (NOT minus all Dhan holdings).
 
-Position sizing (unchanged hardcoded rule, per 2026-11-08 session):
-  tier_size = Rs1,000 + Rs1,000 per 100 closed trades (from our own trade
-  log - no retroactive history exists via Dhan MCP, confirmed empirically).
-  Doubles permanently once total_positions_ever_opened >= 100 AND combined
-  P&L >= 0 (also from our own log).
+For symbols in scope, qty/WAC are taken from the live Dhan holdings
+snapshot when present (holdings is ground truth, same "Holdings overrides
+FIFO" principle already used elsewhere in this app) - the trade log's own
+qty/wac is only a fallback if a position is somehow missing from the
+holdings pull. A trade-log symbol with NO matching Dhan holding at all is
+treated as already exited outside this system's tracking and dropped from
+"open", not force-kept.
 
-Cooldown day-1 policy (confirmed 2026-11-08): a held symbol with no entry
-in dh252_trade_log.json's fills is treated as cooldown-satisfied - the
-7-day clock only starts once THIS system records a real buy on it.
-
-No Google Sheet anywhere in this chain - inputs are:
-  - a Dhan holdings snapshot (JSON you provide; produced by calling
-    mcp__claude_ai_dhan_mcp__portfolio_agent_tool "holdings" and
-    normalizing the result - that MCP call can only happen inside a
-    Claude Code session, so it's not done by this script itself)
-  - backtester's daily-published market_screens_full.json,
-    supertrend_full.json, dh252_entry_signals.json (fetched from
-    raw.githubusercontent.com/vaijayanth/backtester/main/<file>, or a
-    local copy)
-  - this repo's own dh252_trade_log.json (read AND rewritten here only to
-    bump total_positions_ever_opened bookkeeping - fills themselves are
-    only ever appended when an order actually gets placed, a later phase)
+Open-position row shape matches dh252RenderPositions exactly: entry date,
+symbol, qty, WAC, CMP, Supertrend color, Supertrend flip/streak label, %
+away from 52-week high, notional P&L (Rs and %), add-on count, age (days).
 
 Usage:
   python compute_dh252_live_signals.py \
@@ -81,6 +77,10 @@ def index_supertrend(supertrend):
     return {strip_suffix(r["symbol"]): r for r in supertrend.get("entries", [])}
 
 
+def index_rsi(market_screens):
+    return {strip_suffix(r["symbol"]): r["rsi14"] for r in market_screens.get("rsi_all", [])}
+
+
 def tier_size(closed_trades_count):
     return BASE_POSITION_RS + (closed_trades_count // POSITION_INCREMENT_TRADES) * POSITION_INCREMENT_RS
 
@@ -91,30 +91,69 @@ def effective_tier_size(base_tier, total_positions_ever_opened, combined_pl_rs):
     return base_tier
 
 
-def last_fill_date(fills, symbol):
-    dates = [f["date"] for f in fills if f["symbol"] == symbol and f["action"] in ("BUY", "ADDON")]
-    return max(dates) if dates else None
+def build_dh252_positions(fills):
+    """Group fills by symbol -> {symbol: {entry_date, last_fill_date, num_adds}}.
+    First fill (by date) is the entry; any later fill is an add-on."""
+    by_symbol = {}
+    for f in fills:
+        by_symbol.setdefault(f["symbol"], []).append(f)
+    positions = {}
+    for symbol, symbol_fills in by_symbol.items():
+        symbol_fills.sort(key=lambda f: f["date"])
+        # historical_num_adds covers add-ons known to have happened before
+        # this log existed (seeded from a point-in-time export, exact fill
+        # date unknown) - real fills recorded by this system add on top.
+        historical_adds = max((f.get("historical_num_adds", 0) for f in symbol_fills), default=0)
+        positions[symbol] = {
+            "entry_date": symbol_fills[0]["date"],
+            "last_fill_date": symbol_fills[-1]["date"],
+            "num_adds": (len(symbol_fills) - 1) + historical_adds,
+            "log_qty": sum(f["qty"] for f in symbol_fills),
+            "log_wac": symbol_fills[0]["price"],  # entry price; qty/wac overridden by live holdings below
+        }
+    return positions
 
 
 def days_since(date_str, today):
     d = datetime.strptime(date_str, "%Y-%m-%d").date()
-    return (today - d).days
+    return max(0, (today - d).days)
 
 
-def build_signals(holdings, week52, stmap, entry_signals, trade_log, today):
-    held_symbols = {h["symbol"] for h in holdings}
+def flip_label(st):
+    """Port of index.html's stFlipLabel: 'Flipped to GREEN (Nd)' if a flip
+    happened recently, else 'GREEN/RED Nd' for an ongoing streak, else None."""
+    if not st:
+        return None
+    flip_days = st.get("recent_flip_trading_days_ago", st.get("recent_flip_days_ago"))
+    if flip_days is not None:
+        dir_label = "GREEN" if st.get("recent_flip_direction") == "up" else "RED"
+        return f"Flipped to {dir_label} ({flip_days})"
+    streak_days = st.get("current_streak_trading_days", st.get("current_streak_days"))
+    if streak_days is not None and st.get("color"):
+        return f"{st['color'].upper()} {streak_days}d"
+    return None
+
+
+def build_signals(holdings, week52, stmap, rsimap, entry_signals, trade_log, today):
+    holdings_by_symbol = {h["symbol"]: h for h in holdings}
+    dh252_positions = build_dh252_positions(trade_log.get("fills", []))
+    dh252_symbols = set(dh252_positions)
+
     closed_trades_count = trade_log.get("closed_trades_count", 0)
     total_positions_ever_opened = trade_log.get("total_positions_ever_opened", 0)
-    fills = trade_log.get("fills", [])
-
+    realized_pl_rs = trade_log.get("realized_pl_rs", 0.0)
     base_tier = tier_size(closed_trades_count)
 
-    exits, addons, holds, no_data = [], [], [], []
-    realized_pl_rs = trade_log.get("realized_pl_rs", 0.0)
+    exits, addons, holds, no_data, exited_outside_tracking = [], [], [], [], []
     unrealized_pl_rs = 0.0
 
-    for h in holdings:
-        symbol = h["symbol"]
+    for symbol, pos in sorted(dh252_positions.items()):
+        h = holdings_by_symbol.get(symbol)
+        if not h:
+            exited_outside_tracking.append(symbol)
+            continue
+        qty, wac = h["qty"], h["avg_cost"]  # holdings is ground truth, same principle as Equity Journal
+
         w = week52.get(symbol)
         st = stmap.get(symbol)
         if not w or not st or not st.get("color"):
@@ -122,15 +161,18 @@ def build_signals(holdings, week52, stmap, entry_signals, trade_log, today):
             continue
 
         cmp_ = w["close"]
-        pl_pct = round((cmp_ - h["avg_cost"]) / h["avg_cost"] * 100, 4)
-        notional_pl = round((cmp_ - h["avg_cost"]) * h["qty"], 2)
+        pl_pct = round((cmp_ - wac) / wac * 100, 4)
+        notional_pl = round((cmp_ - wac) * qty, 2)
         unrealized_pl_rs += notional_pl
         color = st["color"].lower()
 
         row = {
-            "symbol": symbol, "qty": h["qty"], "avg_cost": h["avg_cost"], "cmp": cmp_,
+            "entry_date": pos["entry_date"], "symbol": symbol, "qty": qty, "avg_cost": wac, "cmp": cmp_,
             "pl_pct": pl_pct, "notional_pl_rs": notional_pl,
-            "supertrend_color": color, "pct_from_52w_high": w.get("pct_from_high"),
+            "supertrend_color": color, "flip_label": flip_label(st),
+            "pct_from_52w_high": w.get("pct_from_high"),
+            "num_adds": pos["num_adds"], "age_days": days_since(pos["entry_date"], today),
+            "rsi14": rsimap.get(symbol),
         }
 
         if color == "red":
@@ -138,14 +180,10 @@ def build_signals(holdings, week52, stmap, entry_signals, trade_log, today):
             continue  # exit takes priority over an add-on signal the same day
 
         if pl_pct <= ADD_TRIGGER_PCT:
-            last_date = last_fill_date(fills, symbol)
-            cooldown_days = days_since(last_date, today) if last_date else None
-            cooldown_ok = last_date is None or cooldown_days >= ADD_COOLDOWN_DAYS
-            if cooldown_ok:
-                add_qty = max(1, round(h["qty"] * ADD_FRACTION))
-                addons.append({**row, "add_qty": add_qty,
-                               "cooldown_days_since_last_buy": cooldown_days,
-                               "cooldown_basis": "pre-existing position, day-1 default" if last_date is None else "own trade log"})
+            cooldown_days = days_since(pos["last_fill_date"], today)
+            if cooldown_days >= ADD_COOLDOWN_DAYS:
+                add_qty = max(1, round(qty * ADD_FRACTION))
+                addons.append({**row, "add_qty": add_qty, "cooldown_days_since_last_buy": cooldown_days})
                 continue
 
         holds.append(row)
@@ -156,8 +194,8 @@ def build_signals(holdings, week52, stmap, entry_signals, trade_log, today):
     entries = []
     for e in entry_signals.get("entries", []):
         symbol = e["symbol"]
-        if symbol in held_symbols:
-            continue
+        if symbol in dh252_symbols:
+            continue  # already a dh252 position - not "any Dhan holding"
         qty_to_buy = max(1, int(eff_tier // e["close"]))
         entries.append({**{k: v for k, v in e.items() if k != "qty_at_base_tier"}, "qty_to_buy": qty_to_buy})
 
@@ -173,8 +211,11 @@ def build_signals(holdings, week52, stmap, entry_signals, trade_log, today):
             "effective_tier_rs": eff_tier,
             "doubled": eff_tier != base_tier,
         },
-        "holdings_count": len(holdings),
+        "dh252_position_count": len(dh252_symbols),
+        "dhan_holdings_count_total": len(holdings),
+        "dhan_holdings_out_of_scope": len(holdings) - len(dh252_symbols & set(holdings_by_symbol)),
         "no_data": no_data,
+        "exited_outside_tracking": exited_outside_tracking,
         "entries": entries,
         "exits": exits,
         "addons": addons,
@@ -203,15 +244,17 @@ def main():
              else datetime.now(timezone.utc).date())
 
     result = build_signals(
-        holdings, index_week52(market_screens), index_supertrend(supertrend),
+        holdings, index_week52(market_screens), index_supertrend(supertrend), index_rsi(market_screens),
         entry_signals, trade_log, today,
     )
     Path(args.out).write_text(json.dumps(result, indent=2))
 
-    print(f"Holdings: {result['holdings_count']} ({len(result['no_data'])} with no data today)")
-    print(f"Entry signals (not held): {len(result['entries'])}")
+    print(f"dh252 positions in scope: {result['dh252_position_count']} (of {result['dhan_holdings_count_total']} total Dhan holdings)")
+    print(f"Entry signals (not in scope): {len(result['entries'])}")
     print(f"Exit signals: {len(result['exits'])}")
     print(f"Add-on signals: {len(result['addons'])}")
+    if result["exited_outside_tracking"]:
+        print(f"WARNING - in trade log but not in current holdings (exited outside tracking?): {result['exited_outside_tracking']}")
     print(f"Effective tier size: Rs{result['sizing']['effective_tier_rs']}")
     print(f"Written to {args.out}")
 

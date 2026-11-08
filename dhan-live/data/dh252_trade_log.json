@@ -1,6 +1,440 @@
 {
-  "_comment": "Our own persistent record of every order this system places for the dh252 strategy on Dhan. Replaces the hand-maintained Google Sheet trade log that backtester's index.html dh252 page uses today. Starts empty on 2026-11-08 - no retroactive history exists for the 59 pre-existing Dhan holdings (confirmed: Dhan's MCP tradebook/orderbook tools are today-only, holdings has no date field). Per the confirmed policy, pre-existing positions are treated as cooldown-satisfied until this log records a real buy on that symbol.",
+  "_comment": "Seeded 2026-11-08 from the real dh252 position export the user provided, after discovering compute_dh252_live_signals.py had incorrectly evaluated ALL 59 Dhan holdings instead of just real dh252 positions. These 48 symbols + their real entry dates ARE the authoritative scope - any other Dhan holding is out of scope for this strategy entirely, not just defaulted to cooldown-satisfied.",
   "closed_trades_count": 0,
-  "total_positions_ever_opened": 0,
-  "fills": []
+  "total_positions_ever_opened": 48,
+  "realized_pl_rs": 0.0,
+  "fills": [
+    {
+      "symbol": "TIPSMUSIC",
+      "date": "2026-10-21",
+      "qty": 1,
+      "price": 753.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    },
+    {
+      "symbol": "MUFIN",
+      "date": "2026-10-21",
+      "qty": 7,
+      "price": 139.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    },
+    {
+      "symbol": "THELEELA",
+      "date": "2026-10-21",
+      "qty": 1,
+      "price": 605.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    },
+    {
+      "symbol": "SHRINGARMS",
+      "date": "2026-10-21",
+      "qty": 4,
+      "price": 303.0,
+      "action": "BUY",
+      "note": "entry date only; this symbol has had 1 add-on whose exact date is unknown (seeded from a point-in-time export) - cooldown conservatively uses entry_date",
+      "historical_num_adds": 1
+    },
+    {
+      "symbol": "SOUTHBANK",
+      "date": "2026-10-21",
+      "qty": 18,
+      "price": 56.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    },
+    {
+      "symbol": "KRISHANA",
+      "date": "2026-10-21",
+      "qty": 4,
+      "price": 210.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    },
+    {
+      "symbol": "RATNAVEER",
+      "date": "2026-10-21",
+      "qty": 2,
+      "price": 345.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    },
+    {
+      "symbol": "SBC",
+      "date": "2026-10-21",
+      "qty": 15,
+      "price": 64.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    },
+    {
+      "symbol": "SHYAMMETL",
+      "date": "2026-10-21",
+      "qty": 1,
+      "price": 1213.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    },
+    {
+      "symbol": "KARURVYSYA",
+      "date": "2026-10-21",
+      "qty": 3,
+      "price": 374.0,
+      "action": "BUY",
+      "note": "entry date only; this symbol has had 1 add-on whose exact date is unknown (seeded from a point-in-time export) - cooldown conservatively uses entry_date",
+      "historical_num_adds": 1
+    },
+    {
+      "symbol": "KROSS",
+      "date": "2026-10-21",
+      "qty": 3,
+      "price": 284.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    },
+    {
+      "symbol": "TECHM",
+      "date": "2026-10-22",
+      "qty": 1,
+      "price": 1835.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    },
+    {
+      "symbol": "CYIENT",
+      "date": "2026-10-26",
+      "qty": 1,
+      "price": 1227.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    },
+    {
+      "symbol": "PASHUPATI",
+      "date": "2026-10-26",
+      "qty": 9,
+      "price": 109.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    },
+    {
+      "symbol": "MAHASTEEL",
+      "date": "2026-10-26",
+      "qty": 1,
+      "price": 1500.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    },
+    {
+      "symbol": "ANANDRATHI",
+      "date": "2026-10-26",
+      "qty": 1,
+      "price": 2228.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    },
+    {
+      "symbol": "SSWL",
+      "date": "2026-10-26",
+      "qty": 2,
+      "price": 486.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    },
+    {
+      "symbol": "IGIL",
+      "date": "2026-10-26",
+      "qty": 2,
+      "price": 376.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    },
+    {
+      "symbol": "INDHOTEL",
+      "date": "2026-10-27",
+      "qty": 1,
+      "price": 795.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    },
+    {
+      "symbol": "LAURUSLABS",
+      "date": "2026-10-28",
+      "qty": 1,
+      "price": 2164.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    },
+    {
+      "symbol": "SONACOMS",
+      "date": "2026-10-28",
+      "qty": 1,
+      "price": 861.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    },
+    {
+      "symbol": "ACUTAAS",
+      "date": "2026-10-28",
+      "qty": 1,
+      "price": 3893.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    },
+    {
+      "symbol": "ORIENTHOT",
+      "date": "2026-10-28",
+      "qty": 6,
+      "price": 158.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    },
+    {
+      "symbol": "WESTLIFE",
+      "date": "2026-10-28",
+      "qty": 1,
+      "price": 606.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    },
+    {
+      "symbol": "GCSL",
+      "date": "2026-10-28",
+      "qty": 1,
+      "price": 755.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    },
+    {
+      "symbol": "PVRINOX",
+      "date": "2026-10-28",
+      "qty": 1,
+      "price": 1441.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    },
+    {
+      "symbol": "SHREEPUSHK",
+      "date": "2026-10-29",
+      "qty": 1,
+      "price": 568.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    },
+    {
+      "symbol": "PPLPHARMA",
+      "date": "2026-10-29",
+      "qty": 4,
+      "price": 235.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    },
+    {
+      "symbol": "STOVEKRAFT",
+      "date": "2026-10-29",
+      "qty": 1,
+      "price": 846.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    },
+    {
+      "symbol": "KOTAKBANK",
+      "date": "2026-10-30",
+      "qty": 2,
+      "price": 462.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    },
+    {
+      "symbol": "SMSPHARMA",
+      "date": "2026-10-30",
+      "qty": 2,
+      "price": 497.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    },
+    {
+      "symbol": "SPECTRUM",
+      "date": "2026-10-30",
+      "qty": 1,
+      "price": 3894.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    },
+    {
+      "symbol": "MBAPL",
+      "date": "2026-10-30",
+      "qty": 5,
+      "price": 178.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    },
+    {
+      "symbol": "SGMART",
+      "date": "2026-10-30",
+      "qty": 1,
+      "price": 854.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    },
+    {
+      "symbol": "SGFIN",
+      "date": "2026-10-30",
+      "qty": 1,
+      "price": 715.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    },
+    {
+      "symbol": "NYKAA",
+      "date": "2026-10-30",
+      "qty": 2,
+      "price": 350.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    },
+    {
+      "symbol": "COFORGE",
+      "date": "2026-11-02",
+      "qty": 1,
+      "price": 2089.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    },
+    {
+      "symbol": "ATHERENERG",
+      "date": "2026-11-02",
+      "qty": 1,
+      "price": 1751.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    },
+    {
+      "symbol": "NINSYS",
+      "date": "2026-11-02",
+      "qty": 1,
+      "price": 946.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    },
+    {
+      "symbol": "ZYDUSLIFE",
+      "date": "2026-11-02",
+      "qty": 1,
+      "price": 1241.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    },
+    {
+      "symbol": "ETERNAL",
+      "date": "2026-11-02",
+      "qty": 2,
+      "price": 346.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    },
+    {
+      "symbol": "DIVISLAB",
+      "date": "2026-11-02",
+      "qty": 1,
+      "price": 9887.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    },
+    {
+      "symbol": "TANLA",
+      "date": "2026-11-03",
+      "qty": 1,
+      "price": 638.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    },
+    {
+      "symbol": "INDGN",
+      "date": "2026-11-03",
+      "qty": 1,
+      "price": 625.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    },
+    {
+      "symbol": "ALIVUS",
+      "date": "2026-11-03",
+      "qty": 1,
+      "price": 1474.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    },
+    {
+      "symbol": "SHREEJISPG",
+      "date": "2026-11-03",
+      "qty": 1,
+      "price": 866.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    },
+    {
+      "symbol": "WELSPUNLIV",
+      "date": "2026-11-03",
+      "qty": 4,
+      "price": 246.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    },
+    {
+      "symbol": "NITINSPIN",
+      "date": "2026-11-03",
+      "qty": 1,
+      "price": 679.0,
+      "action": "BUY",
+      "note": null,
+      "historical_num_adds": 0
+    }
+  ]
 }
