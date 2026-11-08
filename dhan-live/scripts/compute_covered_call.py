@@ -196,7 +196,7 @@ def main():
     future = sorted(e for e in expiries if date.fromisoformat(e) >= today)
     show_exp = future[:1] + (future[1:2] if today.day > rules["show_next_month_after_day"] else [])
 
-    stocks, alerts, shares_rows = [], [], []
+    stocks, alerts, shares_rows, share_entries = [], [], [], []
     mult = rules["stop_premium_multiple"]
     for sym, u in uni.items():
         e = st_by.get(sym)
@@ -287,14 +287,17 @@ def main():
             else:
                 ast, anote = "ADD", ("no earlier add recorded" if since is None else f"last add {since}d ago")
             add_qty = max(1, round(h["qty"] * rules["averaging_fraction"]))
-            entry_sig = colour == "green" and flip_days is not None and flip_days <= rules["share_entry_window_trading_days"]
             shares_rows.append({"symbol": sym, "spot": spot, "avg_cost": h["avg_cost"], "qty": h["qty"],
                                 "invested": round(h["qty"] * h["avg_cost"], 2), "value": round(h["qty"] * spot, 2),
                                 "pl_pct": round(pl_pct, 2), "pl_rs": round(h["qty"] * (spot - h["avg_cost"]), 2),
                                 "colour": colour, "flip_date": flip_date, "flip_trading_days": flip_days, "rsi": rsi,
-                                "entry_signal": entry_sig, "avg_status": ast, "add_qty": add_qty,
+                                "avg_status": ast, "add_qty": add_qty,
                                 "add_value_rs": round(add_qty * spot, 2), "last_add": la, "days_since_add": since,
                                 "avg_note": anote})
+        # share ENTRY: a universe stock you do NOT hold whose Supertrend turned green within the window
+        if held.get(sym, 0) == 0 and colour == "green" and flip_days is not None and flip_days <= rules["share_entry_window_trading_days"]:
+            share_entries.append({"symbol": sym, "spot": spot, "colour": colour, "flip_date": flip_date,
+                                  "flip_trading_days": flip_days, "rsi": rsi})
         stocks.append({
             "symbol": sym, "spot": spot, "colour": colour, "flip_date": flip_date, "flip_trading_days": flip_days,
             "rsi": rsi, "basis": basis, "near_call": nearest("CE"), "near_put": nearest("PE"),
@@ -308,7 +311,7 @@ def main():
     result = {
         "generated_at": datetime.now(timezone.utc).isoformat(), "market_data_date": market_date, "as_of": today.isoformat(),
         "rules": rules, "show_expiries": show_exp, "stocks": stocks, "alerts": alerts,
-        "shares": {"rows": shares_rows, "exit_rule": None, "entry_window": rules["share_entry_window_trading_days"]},
+        "shares": {"rows": shares_rows, "entries": share_entries, "exit_rule": None, "entry_window": rules["share_entry_window_trading_days"]},
         "lots_source": "nse_lots.json" if lots else "cc_config.json (fallback)",
         "positions_fetched": Path(args.positions).exists(), "legs_count": len(legs),
         "chains_loaded": {s: sorted(v) for s, v in chains.items()},
@@ -320,7 +323,7 @@ def main():
     Path(args.out).write_text(json.dumps(result, indent=2, ensure_ascii=False))
     n = lambda s: sum(1 for x in stocks if x.get("status") == s)
     n_add = sum(1 for a in shares_rows if a["avg_status"] == "ADD")
-    n_ent = sum(1 for a in shares_rows if a["entry_signal"])
+    n_ent = len(share_entries)
     print(f"shares: averaging due {n_add}, entry signals {n_ent} | {len(stocks)} stocks | ENTER {n('ENTER')} HOLD {n('HOLD')} WAIT {n('WAIT')} FLIP {n('FLIP')} | legs {len(legs)} | alerts {len(alerts)}")
     for a in alerts:
         print(f"  {a['level']:5} {a['text']}")

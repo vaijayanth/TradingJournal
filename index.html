@@ -893,6 +893,8 @@ tbody tr:hover { filter: brightness(0.97); }
 #cc-root .a2-view > .d2-panel, #cc-root .a2-view > .a2-grid { margin-top: 13px; }
 #cc-root .p2-table td:last-child, #cc-root .p2-table th:last-child { text-align: left; }
 #cc-root .p2-table td { vertical-align: top; white-space: nowrap; }
+#cc-root .cc-sort { cursor: pointer; user-select: none; } #cc-root .cc-sort:hover { color: var(--accent); }
+#cc-root .d2-panel-head .dhm-controls { margin: 0; }
 .a2-g3 { grid-template-columns: 1.15fr 1fr 1fr; } .a2-g2 { grid-template-columns: 1fr 1fr; } .a2-g3e { grid-template-columns: repeat(3, 1fr); }
 .a2-kpis { grid-template-columns: repeat(5, 1fr); margin-bottom: 0; }
 .a2-insight { border-left: 3px solid var(--amber); background: var(--amber-soft); padding: 11px 14px; border-radius: 7px; font-size: 12.5px; color: var(--text-secondary); margin-top: 13px; line-height: 1.55; }
@@ -9345,29 +9347,90 @@ function ccSuggest(g, lot) {
 }
 
 const CC_TABS = ['options', 'shares'], CC_TAB_KEY = 'tj_cc_tab';
+const CC_OTABS = ['alerts', 'signals', 'legs', 'rules'], CC_OTAB_KEY = 'tj_cc_otab';
 const CC_STABS = ['exit', 'entry', 'addon', 'pos'], CC_STAB_KEY = 'tj_cc_stab';
-function ccTab(name) {
-  if (!CC_TABS.includes(name)) name = 'options';
-  CC_TABS.forEach(t => {
-    const v = document.getElementById('cc-v-' + t); if (v) v.classList.toggle('active', t === name);
-    const b = document.querySelector('#cc-tabs .dhm-tab[data-tab="' + t + '"]'); if (b) b.classList.toggle('active', t === name);
+function ccPick(bar, prefix, keys, name, store) {
+  keys.forEach(t => {
+    const v = document.getElementById(prefix + t); if (v) v.classList.toggle('active', t === name);
+    const b = document.querySelector('#' + bar + ' .dhm-tab[data-tab="' + t + '"]'); if (b) b.classList.toggle('active', t === name);
   });
-  try { localStorage.setItem(CC_TAB_KEY, name); } catch (e) {}
+  try { localStorage.setItem(store, name); } catch (e) {}
 }
-function ccSTab(name) {
-  if (!CC_STABS.includes(name)) name = 'entry';
-  CC_STABS.forEach(t => {
-    const v = document.getElementById('cc-sv-' + t); if (v) v.classList.toggle('active', t === name);
-    const b = document.querySelector('#cc-stabs .dhm-tab[data-tab="' + t + '"]'); if (b) b.classList.toggle('active', t === name);
-  });
-  try { localStorage.setItem(CC_STAB_KEY, name); } catch (e) {}
-}
+function ccTab(name) { ccPick('cc-tabs', 'cc-v-', CC_TABS, CC_TABS.includes(name) ? name : 'options', CC_TAB_KEY); }
+function ccOTab(name) { ccPick('cc-otabs', 'cc-ov-', CC_OTABS, CC_OTABS.includes(name) ? name : 'alerts', CC_OTAB_KEY); }
+function ccSTab(name) { ccPick('cc-stabs', 'cc-sv-', CC_STABS, CC_STABS.includes(name) ? name : 'entry', CC_STAB_KEY); }
+
 const ccSD = iso => { const m = /^\d{4}-(\d{2})-(\d{2})/.exec(iso || ''); return m ? m[2] + '-' + P2_MONTHS[+m[1] - 1] : '—'; };
 const ccSigned = v => v == null ? '—' : (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(2) + '%';
 const ccFlip = (date, days) => date ? `${dhFmtDate(date)}${days != null ? ' (' + days + 'd)' : ''}` : '—';
 const ccRsi = v => v == null ? '—' : `<span style="color:${v > 70 ? 'var(--amber)' : v < 30 ? 'var(--green)' : 'inherit'}">${v.toFixed(1)}</span>`;
 const ccNear = n => n ? `<span class="${Math.abs(n.dist_pct) < 5 ? 'neg' : ''}">${ccSigned(n.dist_pct)}</span> <span style="color:var(--text-muted)">${ccStrike(n.strike)} · ${ccSD(n.expiry)}</span>` : '<span style="color:var(--text-muted)">none</span>';
-const ccScroll = (heads, rows) => '<div class="p2-scroll">' + a2Table(heads, rows) + '</div>';
+const ccNearText = n => n ? `${ccSigned(n.dist_pct)} ${ccStrike(n.strike)} ${ccSD(n.expiry)}` : '';
+function ccSuggestText(g) {
+  if (g.missing_chain) return `${ccSD(g.expiry)}: option chain not loaded`;
+  if (g.no_strike) return `${ccSD(g.expiry)}: no strike with usable IV`;
+  let t = `${ccSD(g.expiry)}: sell ${ccStrike(g.short.strike)}${g.short.type} @ ${g.short.ltp} (delta ${Math.abs(g.short.delta).toFixed(2)})`;
+  if (g.hedge) t += `, buy ${ccStrike(g.hedge.strike)}PE @ ${g.hedge.ltp}`;
+  return t + `, credit ${g.credit}/sh, exit at ${g.stop_premium}`;
+}
+
+// ── generic covered-call table: search + filter + click-to-sort + CSV export + row count (same controls as Live Trading) ──
+const CC_T = {};
+const ccTblEsc = s => dhEsc(s).replace(/'/g, '&#39;');
+function ccTbl(id, def) {
+  const prev = CC_T[id];
+  const st = prev ? prev.st : { q: '', f: 'all', sort: def.sort ? def.sort[0] : null, dir: def.sort ? def.sort[1] : 1 };
+  CC_T[id] = { def, st };
+  const filt = def.filters ? `<select onchange="ccTblSet('${id}','f',this.value)">${def.filters.map(([v, l]) => `<option value="${v}"${v === st.f ? ' selected' : ''}>${l}</option>`).join('')}</select>` : '';
+  return `<div class="d2-panel"><div class="d2-panel-head"><div><div class="d2-title">${def.title}</div>${def.hint ? `<div class="d2-hint">${def.hint}</div>` : ''}</div>`
+    + `<div class="dhm-controls"><input type="search" placeholder="Search stock…" value="${ccTblEsc(st.q)}" oninput="ccTblSet('${id}','q',this.value)">${filt}`
+    + `<button onclick="ccTblExport('${id}')">Export ↓</button></div></div>`
+    + `<div class="p2-scroll"><table class="p2-table a2-t"><thead id="cc-th-${id}"></thead><tbody id="cc-tb-${id}"></tbody></table></div>`
+    + `<div class="d2-edge-foot" id="cc-ft-${id}"></div></div>`;
+}
+function ccTblRows(id) {
+  const { def, st } = CC_T[id];
+  const f = def.filters && def.filters.find(x => x[0] === st.f), q = st.q.trim().toLowerCase();
+  let rows = def.rows.filter(r => (!f || f[2](r)) && (!q || def.search(r).toLowerCase().includes(q)));
+  if (st.sort != null) {
+    const c = def.cols[st.sort];
+    rows = rows.slice().sort((a, b) => {
+      const x = c.v(a), y = c.v(b);
+      if (x == null && y == null) return 0; if (x == null) return 1; if (y == null) return -1;
+      const r = typeof x === 'number' && typeof y === 'number' ? x - y : String(x).localeCompare(String(y), undefined, { numeric: true });
+      return r * st.dir;
+    });
+  }
+  return rows;
+}
+function ccTblApply(id) {
+  const t = CC_T[id]; if (!t) return;
+  const { def, st } = t, rows = ccTblRows(id);
+  document.getElementById('cc-th-' + id).innerHTML = '<tr>' + def.cols.map((c, i) =>
+    `<th class="cc-sort${c.num ? ' num' : ''}" onclick="ccTblSort('${id}',${i})" title="Click to sort">${c.h}${st.sort === i ? (st.dir > 0 ? ' ▲' : ' ▼') : ''}</th>`).join('') + '</tr>';
+  document.getElementById('cc-tb-' + id).innerHTML = rows.length
+    ? rows.map(r => '<tr>' + def.cols.map(c => `<td${c.num ? ' class="num"' : ''}${c.nw ? ' style="white-space:normal;min-width:' + c.nw + 'px"' : ''}>${c.c(r)}</td>`).join('') + '</tr>').join('')
+    : `<tr><td colspan="${def.cols.length}" style="color:var(--text-muted)">${def.rows.length ? 'No rows match the search / filter.' : (def.empty || 'No data.')}</td></tr>`;
+  document.getElementById('cc-ft-' + id).textContent = (rows.length === def.rows.length ? `${rows.length} row${rows.length === 1 ? '' : 's'}` : `${rows.length} of ${def.rows.length} rows shown`) + ' · click a column header to sort';
+}
+function ccTblSet(id, k, v) { CC_T[id].st[k] = v; ccTblApply(id); }
+function ccTblSort(id, i) {
+  const st = CC_T[id].st;
+  if (st.sort === i) st.dir = -st.dir; else { st.sort = i; st.dir = 1; }
+  ccTblApply(id);
+}
+function ccTblExport(id) {
+  const { def } = CC_T[id], rows = ccTblRows(id), d = window._cc || {};
+  const q = v => { const s = v == null ? '' : String(v); return /[",\n]/.test(s) ? '"' + s.replace(/"/g, '""') + '"' : s; };
+  const csv = [def.cols.map(c => q(c.h.replace(/&amp;/g, '&'))).join(',')].concat(rows.map(r => def.cols.map(c => q(c.v(r))).join(','))).join('\r\n');
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(new Blob([csv], { type: 'text/csv;charset=utf-8' }));
+  a.download = `covered_call_${id}_${d.market_data_date || 'data'}.csv`;
+  document.body.appendChild(a); a.click(); a.remove();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+}
+const ccTabBar = (id, tabs, extra) => `<div class="dhm-tabs" id="${id}" role="tablist" style="margin-top:14px">` + tabs.map(([k, l, n]) =>
+  `<button class="dhm-tab" data-tab="${k}" onclick="${extra}('${k}')">${l}${n == null ? '' : `<span class="dhm-count">${n}</span>`}</button>`).join('') + '</div>';
 
 function ccOptionsView(d) {
   const S = d.stocks || [];
@@ -9382,43 +9445,72 @@ function ccOptionsView(d) {
     ['Open option legs', legs.length, `${shorts.length} short · ${legs.length - shorts.length} hedge`],
     ['Exit / warn alerts', `${nExit} / ${nWarn}`, '3× premium or colour flip / strike touch', nExit ? 'neg' : ''],
     ['Nearest short strike', nearest ? ccSigned(nearest.dist_pct) : '—', nearest ? `${nearest.symbol} ${ccStrike(nearest.strike)}${nearest.type} · ${ccSD(nearest.expiry)}` : 'No short legs', nearest && Math.abs(nearest.dist_pct) < 5 ? 'neg' : ''],
-    ['Options MTM', (mtm >= 0 ? '+' : '−') + dhFmtRs(Math.abs(mtm)), 'Unrealised on the legs below', mtm >= 0 ? 'pos' : 'neg'],
+    ['Options MTM', (mtm >= 0 ? '+' : '−') + dhFmtRs(Math.abs(mtm)), 'Unrealised on the legs', mtm >= 0 ? 'pos' : 'neg'],
   ]);
 
-  const alertRows = (d.alerts || []).map(a => `<tr><td>${ccPill(a.level)}</td><td><b>${dhEsc(a.symbol)}</b></td><td style="white-space:normal">${dhEsc(a.text.replace(a.symbol + ': ', ''))}</td></tr>`);
-  const alertsPanel = a2Panel('Alerts', 'Exits first, then warnings, then new option entries',
-    alertRows.length ? ccScroll(['Level', 'Stock', 'Alert'], alertRows) : a2Pending('No alerts.', 'No exit, strike touch or new option entry right now.'));
-
-  const sigRows = S.map(s => {
-    if (s.status === 'NO_DATA') return `<tr><td>${dhEsc(s.symbol)}</td><td colspan="9" style="color:var(--text-muted)">${dhEsc(s.note)}</td></tr>`;
-    const sug = (s.suggestions || []).length ? s.suggestions.map(g => ccSuggest(g, s.lot)).join('<br>') : `<span style="color:var(--text-muted)">${dhEsc(s.note)}</span>`;
-    const struct = s.desired === 'PUT_SPREAD' ? 'Put spread' : 'Short call';
-    return `<tr><td><b>${dhEsc(s.symbol)}</b></td><td>${ccP(s.spot)}</td><td>${dhTrendPill(s.colour)}</td><td>${ccFlip(s.flip_date, s.flip_trading_days)}</td><td>${ccRsi(s.rsi)}</td>`
-      + `<td style="color:var(--text-muted)">${dhEsc(s.basis)}</td><td>${ccPill(s.status)}</td><td>${struct}</td>`
-      + `<td style="line-height:1.5">CE ${ccNear(s.near_call)}<br>PE ${ccNear(s.near_put)}</td><td style="white-space:normal;min-width:300px">${sug}</td></tr>`;
+  const lvlOrd = { EXIT: 0, WARN: 1, ENTER: 2 };
+  const alertsT = ccTbl('alerts', {
+    title: 'Alerts', hint: 'Exits first, then warnings, then new option entries',
+    rows: (d.alerts || []).slice().sort((a, b) => lvlOrd[a.level] - lvlOrd[b.level]),
+    search: r => r.symbol + ' ' + r.text, empty: 'No exit, strike touch or new option entry right now.',
+    filters: [['all', 'All alerts', () => true], ['EXIT', 'Exit', r => r.level === 'EXIT'], ['WARN', 'Warn', r => r.level === 'WARN'], ['ENTER', 'Enter', r => r.level === 'ENTER']],
+    cols: [
+      { h: 'Level', v: r => lvlOrd[r.level], c: r => ccPill(r.level) },
+      { h: 'Stock', v: r => r.symbol, c: r => `<b>${dhEsc(r.symbol)}</b>` },
+      { h: 'Alert', v: r => r.text, c: r => dhEsc(r.text.replace(r.symbol + ': ', '')), nw: 320 },
+    ],
   });
-  const sigPanel = a2Panel('Signals', 'RSI overrides the colour; strikes from the option chain (delta estimated from IV); the “from spot” column is the nearest active short strike',
-    ccScroll(['Stock', 'Spot', 'Supertrend', 'Last flip', 'RSI 14', 'Rule applied', 'Status', 'Structure', 'Active shorts vs spot', 'Suggested trade'], sigRows));
 
-  const order = { EXIT: 0, WARN: 1, OK: 2, HEDGE: 3 };
+  const minDist = s => { const v = [s.near_call, s.near_put].filter(Boolean).map(n => Math.abs(n.dist_pct)); return v.length ? Math.min(...v) : null; };
+  const sigT = ccTbl('signals', {
+    title: 'Signals', hint: 'RSI overrides the colour; strikes from the option chain (delta estimated from IV); “Active shorts vs spot” = nearest open short call / put',
+    rows: S.filter(s => s.status !== 'NO_DATA'), search: s => s.symbol + ' ' + s.basis, empty: 'No stock data.',
+    filters: [['all', 'All stocks', () => true], ['act', 'Needs action (enter / flip)', s => s.status === 'ENTER' || s.status === 'FLIP'], ['HOLD', 'Hold', s => s.status === 'HOLD'],
+              ['green', 'Supertrend green', s => s.colour === 'green'], ['red', 'Supertrend red', s => s.colour === 'red'],
+              ['rsi', 'RSI above 70 / below 30', s => s.rsi != null && (s.rsi > 70 || s.rsi < 30)]],
+    cols: [
+      { h: 'Stock', v: s => s.symbol, c: s => `<b>${dhEsc(s.symbol)}</b>` },
+      { h: 'Spot', v: s => s.spot, c: s => ccP(s.spot), num: true },
+      { h: 'Supertrend', v: s => s.colour, c: s => dhTrendPill(s.colour) },
+      { h: 'Last flip', v: s => s.flip_trading_days, c: s => ccFlip(s.flip_date, s.flip_trading_days) },
+      { h: 'RSI 14', v: s => s.rsi, c: s => ccRsi(s.rsi), num: true },
+      { h: 'Rule applied', v: s => s.basis, c: s => `<span style="color:var(--text-muted)">${dhEsc(s.basis)}</span>` },
+      { h: 'Status', v: s => s.status, c: s => ccPill(s.status) },
+      { h: 'Structure', v: s => s.desired, c: s => s.desired === 'PUT_SPREAD' ? 'Put spread' : 'Short call' },
+      { h: 'Active shorts vs spot', v: minDist, c: s => `<span style="line-height:1.5">CE ${ccNear(s.near_call)}<br>PE ${ccNear(s.near_put)}</span>` },
+      { h: 'Suggested trade', v: s => (s.suggestions || []).map(ccSuggestText).join(' | ') || s.note,
+        c: s => (s.suggestions || []).length ? s.suggestions.map(g => ccSuggest(g, s.lot)).join('<br>') : `<span style="color:var(--text-muted)">${dhEsc(s.note)}</span>`, nw: 300 },
+    ],
+  });
+
+  const stOrd = { EXIT: 0, WARN: 1, OK: 2, HEDGE: 3 };
   const legStatus = l => l.side === 'LONG' ? 'HEDGE' : l.stop_hit ? 'EXIT' : l.touched ? 'WARN' : 'OK';
-  const legRows = legs.slice().sort((a, b) => order[legStatus(a)] - order[legStatus(b)] || a.stock.symbol.localeCompare(b.stock.symbol) || a.expiry.localeCompare(b.expiry) || a.strike - b.strike).map(l => {
-    const st = legStatus(l);
-    return `<tr><td><b>${dhEsc(l.symbol)}</b></td><td>${dhFmtDate(l.expiry)}</td><td>${l.side} ${ccStrike(l.strike)} ${l.type}</td>`
-      + `<td>${l.qty}${l.lots ? ' (' + l.lots + ' lot)' : ''}</td><td>${ccP(l.side === 'SHORT' ? l.sell_avg : l.buy_avg)}</td><td>${ccP(l.ltp)}</td>`
-      + `<td class="${dhPnlCls(l.pnl_rs)}">${(l.pnl_rs >= 0 ? '+' : '−') + dhFmtRs(Math.abs(l.pnl_rs))}</td>`
-      + `<td>${l.side === 'SHORT' ? ccP(l.stop_at) : '—'}</td><td>${ccSigned(l.dist_pct)}</td><td>${ccPill(st)}</td></tr>`;
+  const legRows = legs.slice().sort((a, b) => stOrd[legStatus(a)] - stOrd[legStatus(b)] || a.stock.symbol.localeCompare(b.stock.symbol) || a.expiry.localeCompare(b.expiry) || a.strike - b.strike);
+  const legT = ccTbl('legs', {
+    title: 'Open option positions', hint: 'From Dhan positions; current price is derived from each leg’s unrealised P&L; “% from spot” = strike’s distance from the stock price',
+    rows: legRows, search: l => l.symbol, empty: 'Nothing returned by the Dhan positions call.',
+    filters: [['all', 'All legs', () => true], ['short', 'Short legs', l => l.side === 'SHORT'], ['long', 'Hedge legs', l => l.side === 'LONG'], ['CE', 'Calls', l => l.type === 'CE'], ['PE', 'Puts', l => l.type === 'PE'],
+              ['attn', 'Exit / warn only', l => ['EXIT', 'WARN'].includes(legStatus(l))]],
+    cols: [
+      { h: 'Stock', v: l => l.symbol, c: l => `<b>${dhEsc(l.symbol)}</b>` },
+      { h: 'Expiry', v: l => l.expiry, c: l => dhFmtDate(l.expiry) },
+      { h: 'Leg', v: l => `${l.side} ${l.strike} ${l.type}`, c: l => `${l.side} ${ccStrike(l.strike)} ${l.type}` },
+      { h: 'Qty', v: l => l.qty, c: l => `${l.qty}${l.lots ? ' (' + l.lots + ' lot)' : ''}`, num: true },
+      { h: 'Sold / bought @', v: l => l.side === 'SHORT' ? l.sell_avg : l.buy_avg, c: l => ccP(l.side === 'SHORT' ? l.sell_avg : l.buy_avg), num: true },
+      { h: 'LTP', v: l => l.ltp, c: l => ccP(l.ltp), num: true },
+      { h: 'P&amp;L', v: l => l.pnl_rs, c: l => `<span class="${dhPnlCls(l.pnl_rs)}">${(l.pnl_rs >= 0 ? '+' : '−') + dhFmtRs(Math.abs(l.pnl_rs))}</span>`, num: true },
+      { h: 'Exit at 3×', v: l => l.side === 'SHORT' ? l.stop_at : null, c: l => l.side === 'SHORT' ? ccP(l.stop_at) : '—', num: true },
+      { h: '% from spot', v: l => l.dist_pct, c: l => ccSigned(l.dist_pct), num: true },
+      { h: 'Status', v: l => stOrd[legStatus(l)], c: l => ccPill(legStatus(l)) },
+    ],
   });
-  const legPanel = a2Panel('Open option positions', 'From Dhan positions; current price is derived from each leg’s unrealised P&L; “% from spot” is the strike’s distance from the stock price',
-    legs.length ? ccScroll(['Stock', 'Expiry', 'Leg', 'Qty', 'Sold / bought @', 'LTP', 'P&amp;L', 'Exit at 3×', '% from spot', 'Status'], legRows)
-      : a2Pending('No option positions.', 'Nothing returned by the Dhan positions call.'));
 
   const R = d.rules || {};
   const rulesPanel = a2Panel('Option rules', 'Edit dhan-live/data/cc_config.json to change; shown here as applied',
     a2Rows([
       ['RSI above ' + R.rsi_sell_call_above, `Sell the ${R.short_call_delta} delta call, whatever the Supertrend colour`],
       ['RSI below ' + R.rsi_sell_put_below, `Bull put spread (sell ${R.short_put_delta} delta put, buy ${R.hedge_strikes_below} strikes lower), whatever the colour`],
-      ['Otherwise · green', `Bull put spread (no flip-age limit for options)`],
+      ['Otherwise · green', 'Bull put spread (no flip-age limit for options)'],
       ['Otherwise · red', `Sell the ${R.short_call_delta} delta call only`],
       ['Expiry', `Current month; after the ${R.show_next_month_after_day}th the next month is shown too (now: ${(d.show_expiries || []).map(dhFmtDate).join(', ') || '—'})`],
       ['Size', '1 lot per signal; lot sizes from NSE’s official F&O lot file, per expiry month'],
@@ -9428,47 +9520,77 @@ function ccOptionsView(d) {
     ]));
   const other = (d.other_positions || []).length ? ` Other option positions not in this universe: ${d.other_positions.join(', ')}.` : '';
   const foot = `<div class="d2-edge-foot" style="border:0">Market data ${dhFmtDate(d.market_data_date)} · deltas are estimates (Black-Scholes from the chain’s IV, no dividends) · option chains loaded: ${Object.keys(d.chains_loaded || {}).join(', ') || 'none'}.${other}</div>`;
-  return kpis + a2Grid('', alertsPanel) + sigPanel + legPanel + rulesPanel + foot;
+  const bar = ccTabBar('cc-otabs', [['alerts', 'Alerts', alertsT && CC_T.alerts.def.rows.length], ['signals', 'Signals', CC_T.signals.def.rows.length], ['legs', 'Open positions', legs.length], ['rules', 'Rules', null]], 'ccOTab');
+  return kpis + bar + `<div id="cc-ov-alerts" class="a2-view">${alertsT}</div><div id="cc-ov-signals" class="a2-view">${sigT}</div><div id="cc-ov-legs" class="a2-view">${legT}</div><div id="cc-ov-rules" class="a2-view">${rulesPanel}${foot}</div>`;
 }
 
 function ccSharesView(d) {
   const sh = d.shares || { rows: [] }, R = d.rules || {};
   const rows = sh.rows || [];
-  const entry = rows.filter(r => r.entry_signal);
-  const addon = rows.filter(r => r.avg_status === 'ADD' || r.avg_status === 'WAIT').sort((a, b) => a.pl_pct - b.pl_pct);
+  const entry = sh.entries || [];
+  const addon = rows.filter(r => r.avg_status === 'ADD' || r.avg_status === 'WAIT');
   const invested = rows.reduce((a, r) => a + r.invested, 0), value = rows.reduce((a, r) => a + r.value, 0), pl = value - invested;
   const kpis = a2Metrics([
     ['Holdings', rows.length, 'Investment-portfolio stocks'],
     ['Invested', dhFmtRs(invested), `Market value ${dhFmtRs(value)}`],
     ['Unrealised P&L', (pl >= 0 ? '+' : '−') + dhFmtRs(Math.abs(pl)), invested ? ccSigned(pl / invested * 100) + ' on cost' : '', pl >= 0 ? 'pos' : 'neg'],
-    ['Entry signals', entry.length, `Green flip within ${sh.entry_window || 7} trading days`, entry.length ? 'pos' : ''],
+    ['Entry signals', entry.length, `Not-held stocks with a green flip in ${sh.entry_window || 7} trading days`, entry.length ? 'pos' : ''],
     ['Averaging due', addon.filter(r => r.avg_status === 'ADD').length, 'Green, down 6%+, once a week', addon.some(r => r.avg_status === 'ADD') ? 'pos' : ''],
   ]);
-  const tabs = [['exit', 'Exit Now', 0], ['entry', 'Entry Signals', entry.length], ['addon', 'Add-on Eligible', addon.length], ['pos', 'Open Positions', rows.length]];
-  const bar = '<div class="dhm-tabs" id="cc-stabs" role="tablist" style="margin-top:14px">' + tabs.map(([k, l, n]) =>
-    `<button class="dhm-tab" data-tab="${k}" onclick="ccSTab('${k}')">${l}<span class="dhm-count">${n}</span></button>`).join('') + '</div>';
   const pnl = r => `<span class="${dhPnlCls(r.pl_pct)}">${ccSigned(r.pl_pct)}</span>`;
+  const lastAdd = r => r.last_add ? dhFmtDate(r.last_add) + ' (' + r.days_since_add + 'd)' : '<span style="color:var(--text-muted)">none recorded</span>';
 
   const exitP = a2Panel('Exit now', 'No exit rule is defined for these shares',
     a2Pending('No share exit signal.', 'These shares are held and hedged with options, so no exit rule is applied. Say the word if you want one (for example Supertrend red) and it will show here.'));
-  const entryP = a2Panel('Entry signals', `Portfolio stocks whose Supertrend turned green within the last ${sh.entry_window || 7} trading days`,
-    entry.length ? ccScroll(['Stock', 'Spot', 'Supertrend', 'Flip', 'RSI 14', 'Held', 'Avg cost', 'P&amp;L'],
-      entry.sort((a, b) => a.flip_trading_days - b.flip_trading_days).map(r => `<tr><td><b>${dhEsc(r.symbol)}</b></td><td>${ccP(r.spot)}</td><td>${dhTrendPill(r.colour)}</td><td>${ccFlip(r.flip_date, r.flip_trading_days)}</td><td>${ccRsi(r.rsi)}</td><td>${r.qty}</td><td>${ccP(r.avg_cost)}</td><td>${pnl(r)}</td></tr>`))
-      : a2Pending('No entry signals.', 'No portfolio stock has a fresh green flip.'));
-  const addP = a2Panel('Add-on eligible', `Supertrend green and down ${Math.abs(R.averaging_loss_pct || 6)}%+: buy ${(R.averaging_fraction || 0.1) * 100}% of the open quantity, once every ${R.averaging_cooldown_days || 7} days`,
-    (addon.length ? ccScroll(['Stock', 'Spot', 'Avg cost', 'P&amp;L', 'Supertrend', 'Last add', 'Add', 'Status', 'Note'],
-      addon.map(r => `<tr><td><b>${dhEsc(r.symbol)}</b></td><td>${ccP(r.spot)}</td><td>${ccP(r.avg_cost)}</td><td>${pnl(r)}</td><td>${dhTrendPill(r.colour)}</td>`
-        + `<td>${r.last_add ? dhFmtDate(r.last_add) + ' (' + r.days_since_add + 'd)' : '<span style="color:var(--text-muted)">none recorded</span>'}</td><td>${r.add_qty} sh · ${dhFmtRs(r.add_value_rs)}</td><td>${ccPill(r.avg_status)}</td>`
-        + `<td style="color:var(--text-muted);white-space:normal">${dhEsc(r.avg_note)}</td></tr>`))
-      : a2Pending('Nothing to average.', 'No holding is both green and down enough.'))
-    + '<div class="d2-edge-foot">“Last add” comes from data/cc_adds.json, which /refresh-dhan updates from the tradebook; “none recorded” means no add has been recorded, not that none happened.</div>');
-  const sig = r => [r.avg_status === 'ADD' ? 'ADD' : null, r.entry_signal ? 'ENTRY' : null].filter(Boolean);
-  const posP = a2Panel('Open positions', 'The investment-portfolio holdings from Dhan',
-    ccScroll(['Stock', 'Qty', 'Avg cost', 'Spot', 'Value', 'P&amp;L ₹', 'P&amp;L', 'Supertrend', 'Flip', 'RSI 14', 'Signal'],
-      rows.slice().sort((a, b) => a.pl_pct - b.pl_pct).map(r => `<tr><td><b>${dhEsc(r.symbol)}</b></td><td>${r.qty}</td><td>${ccP(r.avg_cost)}</td><td>${ccP(r.spot)}</td><td>${dhFmtRs(r.value)}</td>`
-        + `<td class="${dhPnlCls(r.pl_rs)}">${(r.pl_rs >= 0 ? '+' : '−') + dhFmtRs(Math.abs(r.pl_rs))}</td><td>${pnl(r)}</td><td>${dhTrendPill(r.colour)}</td><td>${ccFlip(r.flip_date, r.flip_trading_days)}</td><td>${ccRsi(r.rsi)}</td>`
-        + `<td>${sig(r).map(ccPill).join(' ') || ccPill('HOLD')}</td></tr>`)));
-  return kpis + bar + `<div id="cc-sv-exit" class="a2-view">${exitP}</div><div id="cc-sv-entry" class="a2-view">${entryP}</div><div id="cc-sv-addon" class="a2-view">${addP}</div><div id="cc-sv-pos" class="a2-view">${posP}</div>`;
+  const entryT = ccTbl('entry', {
+    title: 'Entry signals', hint: `Portfolio-universe stocks you do not hold whose Supertrend turned green within the last ${sh.entry_window || 7} trading days`,
+    rows: entry, search: r => r.symbol, sort: [3, 1],
+    empty: `All ${rows.length} portfolio stocks are already held, so there is nothing to enter. A stock appears here if you sell it and its Supertrend later turns green again.`,
+    cols: [
+      { h: 'Stock', v: r => r.symbol, c: r => `<b>${dhEsc(r.symbol)}</b>` },
+      { h: 'Spot', v: r => r.spot, c: r => ccP(r.spot), num: true },
+      { h: 'Supertrend', v: r => r.colour, c: r => dhTrendPill(r.colour) },
+      { h: 'Flip', v: r => r.flip_trading_days, c: r => ccFlip(r.flip_date, r.flip_trading_days) },
+      { h: 'RSI 14', v: r => r.rsi, c: r => ccRsi(r.rsi), num: true },
+    ],
+  });
+  const addT = ccTbl('addon', {
+    title: 'Add-on eligible', hint: `Supertrend green and down ${Math.abs(R.averaging_loss_pct || 6)}%+: buy ${(R.averaging_fraction || 0.1) * 100}% of the open quantity, once every ${R.averaging_cooldown_days || 7} days`,
+    rows: addon, search: r => r.symbol, sort: [3, 1], empty: 'No holding is both green and down enough.',
+    filters: [['all', 'All eligible', () => true], ['ADD', 'Due now', r => r.avg_status === 'ADD'], ['WAIT', 'Waiting (cooldown)', r => r.avg_status === 'WAIT']],
+    cols: [
+      { h: 'Stock', v: r => r.symbol, c: r => `<b>${dhEsc(r.symbol)}</b>` },
+      { h: 'Spot', v: r => r.spot, c: r => ccP(r.spot), num: true },
+      { h: 'Avg cost', v: r => r.avg_cost, c: r => ccP(r.avg_cost), num: true },
+      { h: 'P&amp;L', v: r => r.pl_pct, c: pnl, num: true },
+      { h: 'Supertrend', v: r => r.colour, c: r => dhTrendPill(r.colour) },
+      { h: 'Last add', v: r => r.last_add || '', c: lastAdd },
+      { h: 'Add', v: r => r.add_qty, c: r => `${r.add_qty} sh · ${dhFmtRs(r.add_value_rs)}`, num: true },
+      { h: 'Status', v: r => r.avg_status, c: r => ccPill(r.avg_status) },
+      { h: 'Note', v: r => r.avg_note, c: r => `<span style="color:var(--text-muted)">${dhEsc(r.avg_note)}</span>`, nw: 200 },
+    ],
+  }) + '<div class="dhm-foot">“Last add” comes from data/cc_adds.json, which /refresh-dhan updates from the tradebook; “none recorded” means no add has been recorded, not that none happened.</div>';
+  const posT = ccTbl('pos', {
+    title: 'Open positions', hint: 'The investment-portfolio holdings from Dhan',
+    rows: rows, search: r => r.symbol, sort: [6, 1],
+    filters: [['all', 'All positions', () => true], ['loss', 'In loss', r => r.pl_pct < 0], ['profit', 'In profit', r => r.pl_pct >= 0], ['ADD', 'Add-on due', r => r.avg_status === 'ADD'],
+              ['green', 'Supertrend green', r => r.colour === 'green'], ['red', 'Supertrend red', r => r.colour === 'red']],
+    cols: [
+      { h: 'Stock', v: r => r.symbol, c: r => `<b>${dhEsc(r.symbol)}</b>` },
+      { h: 'Qty', v: r => r.qty, c: r => r.qty, num: true },
+      { h: 'Avg cost', v: r => r.avg_cost, c: r => ccP(r.avg_cost), num: true },
+      { h: 'Spot', v: r => r.spot, c: r => ccP(r.spot), num: true },
+      { h: 'Value', v: r => r.value, c: r => dhFmtRs(r.value), num: true },
+      { h: 'P&amp;L ₹', v: r => r.pl_rs, c: r => `<span class="${dhPnlCls(r.pl_rs)}">${(r.pl_rs >= 0 ? '+' : '−') + dhFmtRs(Math.abs(r.pl_rs))}</span>`, num: true },
+      { h: 'P&amp;L', v: r => r.pl_pct, c: pnl, num: true },
+      { h: 'Supertrend', v: r => r.colour, c: r => dhTrendPill(r.colour) },
+      { h: 'Flip', v: r => r.flip_trading_days, c: r => ccFlip(r.flip_date, r.flip_trading_days) },
+      { h: 'RSI 14', v: r => r.rsi, c: r => ccRsi(r.rsi), num: true },
+      { h: 'Signal', v: r => r.avg_status === 'ADD' ? 'ADD' : 'HOLD', c: r => ccPill(r.avg_status === 'ADD' ? 'ADD' : 'HOLD') },
+    ],
+  });
+  const bar = ccTabBar('cc-stabs', [['exit', 'Exit Now', 0], ['entry', 'Entry Signals', entry.length], ['addon', 'Add-on Eligible', addon.length], ['pos', 'Open Positions', rows.length]], 'ccSTab');
+  return kpis + bar + `<div id="cc-sv-exit" class="a2-view">${exitP}</div><div id="cc-sv-entry" class="a2-view">${entryT}</div><div id="cc-sv-addon" class="a2-view">${addT}</div><div id="cc-sv-pos" class="a2-view">${posT}</div>`;
 }
 
 function ccRender(d) {
@@ -9476,9 +9598,10 @@ function ccRender(d) {
   if (asof) asof.textContent = 'Market data ' + dhFmtDate(d.market_data_date);
   document.getElementById('cc-root').innerHTML =
     `<div id="cc-v-options" class="a2-view">${ccOptionsView(d)}</div><div id="cc-v-shares" class="a2-view">${ccSharesView(d)}</div>`;
-  let t = 'options', st = 'entry';
-  try { t = localStorage.getItem(CC_TAB_KEY) || t; st = localStorage.getItem(CC_STAB_KEY) || st; } catch (e) {}
-  ccTab(t); ccSTab(st);
+  Object.keys(CC_T).forEach(ccTblApply);
+  let t = 'options', ot = 'alerts', st = 'entry';
+  try { t = localStorage.getItem(CC_TAB_KEY) || t; ot = localStorage.getItem(CC_OTAB_KEY) || ot; st = localStorage.getItem(CC_STAB_KEY) || st; } catch (e) {}
+  ccTab(t); ccOTab(ot); ccSTab(st);
 }
 
 // ── PERFORMANCE 2.0 (renders the active workspace's contract data) ───────────
