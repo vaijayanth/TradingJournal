@@ -175,7 +175,58 @@ def compute_hot_sectors(stmap, entries, sectors, top_n=3):
     return turn, entry_count, top(turn), top(entry_count)
 
 
-def build_signals(holdings, week52, stmap, rsimap, entry_signals, trade_log, today, sectors=None):
+def load_smas(ohlc_dir, symbols):
+    """SMA50 / SMA200 per symbol from backtester's 10-year daily OHLC checkpoints
+    (<dir>/<SYMBOL>_NS.parquet). The cache can lag the screens' market date, so the bar date the
+    averages are computed through is returned too and shown in the UI. Optional - returns {}
+    if pandas/pyarrow or the files are unavailable (positions then just have no SMA fields)."""
+    try:
+        import pandas as pd
+    except ImportError:
+        return {}
+    out = {}
+    for sym in symbols:
+        f = Path(ohlc_dir) / f"{sym}_NS.parquet"
+        if not f.exists():
+            continue
+        close = pd.read_parquet(f)["Close"].dropna()
+        if len(close) < 200:
+            continue
+        out[sym] = {
+            "sma200": round(float(close.rolling(200).mean().iloc[-1]), 2),
+            "sma50": round(float(close.rolling(50).mean().iloc[-1]), 2),
+            "sma_asof": str(close.index[-1].date()),
+        }
+    return out
+
+
+def build_equity_curve(rows, closes, initial_capital, realised_pl_rs=0.0):
+    """Day-by-day equity = initial capital + realised + sum over open positions of
+    qty * (close - WAC), counting a position from its entry date. Deposits are deliberately
+    ignored (user decision: fixed capital base), so adding capital never moves the line.
+    Approximation: current qty/WAC are used from the entry date, so a position's add-on
+    (exact add date unknown) is treated as if bought on day one."""
+    if not closes or not rows:
+        return []
+    dates, by_sym = closes["dates"], closes["closes"]
+    last, curve = {}, []
+    for i, d in enumerate(dates):
+        pnl = invested = 0.0
+        for r in rows:
+            series = by_sym.get(r["symbol"])
+            if series and series[i] is not None:
+                last[r["symbol"]] = series[i]
+            if r["entry_date"] > d or r["symbol"] not in last:
+                continue
+            pnl += r["qty"] * (last[r["symbol"]] - r["avg_cost"])
+            invested += r["qty"] * r["avg_cost"]
+        curve.append({"date": d, "pnl": round(pnl, 2), "invested": round(invested, 2),
+                      "equity": round(initial_capital + realised_pl_rs + pnl, 2)})
+    return curve
+
+
+def build_signals(holdings, week52, stmap, rsimap, entry_signals, trade_log, today, sectors=None, smas=None, closes=None):
+    smas = smas or {}
     # backtester's map uses an em dash for "sector unknown" - treat as no sector
     sectors = {k: v for k, v in (sectors or {}).items() if v and v.strip() not in ("—", "-")}
     holdings_by_symbol = {h["symbol"]: h for h in holdings}
@@ -216,6 +267,8 @@ def build_signals(holdings, week52, stmap, rsimap, entry_signals, trade_log, tod
             "pct_from_52w_high": w.get("pct_from_high"),
             "num_adds": pos["num_adds"], "age_days": days_since(pos["entry_date"], today),
             "rsi14": rsimap.get(symbol),
+            "sector": sectors.get(symbol),
+            **smas.get(symbol, {}),
         }
 
         if color == "red":
@@ -232,6 +285,8 @@ def build_signals(holdings, week52, stmap, rsimap, entry_signals, trade_log, tod
         holds.append(row)
 
     combined_pl_rs = round(realized_pl_rs + unrealized_pl_rs, 2)
+    initial_capital = trade_log.get("initial_capital")
+    equity_curve = build_equity_curve(exits + addons + holds, closes, initial_capital, realized_pl_rs) if initial_capital else []
     eff_tier = effective_tier_size(base_tier, total_positions_ever_opened, combined_pl_rs)
 
     entries = []
@@ -277,6 +332,11 @@ def build_signals(holdings, week52, stmap, rsimap, entry_signals, trade_log, tod
         "dhan_holdings_out_of_scope": len(holdings) - len(dh252_symbols & set(holdings_by_symbol)),
         "no_data": no_data,
         "exited_outside_tracking": exited_outside_tracking,
+        # strategy rules the engine actually applied - the page shows these instead of hardcoding them
+        "rules": {"add_trigger_pct": ADD_TRIGGER_PCT, "add_fraction": ADD_FRACTION, "add_cooldown_days": ADD_COOLDOWN_DAYS},
+        "capital_base": {"initial_capital": initial_capital,
+                         "note": "fixed capital base; deposits ignored, equity = initial + realised + unrealised"},
+        "equity_curve": equity_curve,
         "hot_sectors": {"by_52wh_entries": sorted(hot_entry), "by_supertrend_turns": sorted(hot_turn)},
         "entries": entries,
         "exits": exits,
@@ -295,6 +355,10 @@ def main():
     parser.add_argument("--out", required=True)
     parser.add_argument("--sectors", default=str(Path(__file__).parent.parent / "data" / "equity_sectors.json"),
                         help="symbol -> sector map (copy of backtester's data/equity_sectors.json)")
+    parser.add_argument("--ohlc-dir", default=None,
+                        help="dir of <SYMBOL>_NS.parquet daily OHLC (backtester checkpoints/raw) for SMA50/200")
+    parser.add_argument("--daily-closes", default=str(Path(__file__).parent.parent / "data" / "dh252_daily_closes.json"),
+                        help="output of build_dh252_daily_closes.py (equity curve); skipped if absent")
     parser.add_argument("--as-of", default=None, help="Override today's date (YYYY-MM-DD), for testing against historical data")
     args = parser.parse_args()
 
@@ -308,10 +372,13 @@ def main():
     today = (datetime.strptime(args.as_of, "%Y-%m-%d").date() if args.as_of
              else datetime.now(timezone.utc).date())
 
+    load_sectors = load_json(args.sectors) if Path(args.sectors).exists() else {}
     result = build_signals(
         holdings, index_week52(market_screens), index_supertrend(supertrend), index_rsi(market_screens),
         entry_signals, trade_log, today,
-        sectors=load_json(args.sectors) if Path(args.sectors).exists() else {},
+        sectors=load_sectors,
+        closes=load_json(args.daily_closes) if Path(args.daily_closes).exists() else None,
+        smas=load_smas(args.ohlc_dir, sorted(build_dh252_positions(trade_log.get("fills", [])))) if args.ohlc_dir else {},
     )
     # When the Dhan holdings snapshot was pulled - shown on the Open positions tab
     result["holdings_fetched_at"] = holdings_doc.get("fetched_at")
