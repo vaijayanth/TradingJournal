@@ -39,8 +39,12 @@ def main():
     # uses rows from `start` onward.
     hist_start = min(start, (datetime.now() - timedelta(days=450)).strftime("%Y-%m-%d"))
     full = yf.download([s + ".NS" for s in symbols], start=hist_start, progress=False, auto_adjust=False, threads=True)["Close"]
-    # Weekend rows can appear as a copy of Friday - keep real trading days only
-    full = full[full.index.dayofweek < 5].dropna(how="all")
+    # Weekend rows are normally a stale copy of Friday - drop them. But NSE holds special sessions on
+    # weekends (Diwali Muhurat, budget day): keep a weekend row when most prices actually moved.
+    full = full.dropna(how="all")
+    prev = full.shift(1)
+    moved = ((full != prev) & full.notna() & prev.notna()).sum(axis=1) / full.notna().sum(axis=1).clip(lower=1)
+    full = full[(full.index.dayofweek < 5) | (moved > 0.5)]
     df = full[full.index >= start]
 
     smas = {}
