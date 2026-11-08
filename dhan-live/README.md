@@ -15,18 +15,46 @@ Dhan data. No Google Sheet anywhere in this chain.
   that MCP call can only happen inside a Claude session, so it's not
   something this script does itself.
 - `data/dh252_trade_log.json` - **the one persistent, hand-off-limits
-  file**. Records every order this system places going forward (symbol,
-  date, qty, price, action). This is what makes the 7-day add-on cooldown
-  real over time, since Dhan's own MCP tools only expose today's
-  trades/orders (confirmed empirically 2026-11-08) - there is no other
-  source for "when did I last buy this." Starts empty; a pre-existing
-  Dhan position with no entry here is treated as cooldown-satisfied
-  (confirmed policy) until this log records a real buy on it.
+  file, and the sole source of truth for "is this a dh252 position."**
+  Dhan's holdings API has no concept of which strategy a position belongs
+  to - it was wrongly assumed early on that "all Dhan holdings = dh252
+  positions," which produced 6 wrong exit signals and several wrong
+  add-on signals before the user caught it (2026-11-08). Re-seeded from
+  the user's own real position export: 48 symbols with real entry dates,
+  real add-on counts. Records every order this system places going
+  forward (symbol, date, qty, price, action) - this is what makes the
+  7-day add-on cooldown real over time, since Dhan's own MCP tools only
+  expose today's trades/orders (confirmed empirically) - there is no
+  other source for "when did I last buy this." A dh252 position present
+  here with no matching current Dhan holding is treated as exited outside
+  this system's tracking and dropped, not force-kept (surfaced in the
+  output's `exited_outside_tracking` list).
+- `data/dh252_positions_seed.json` - the raw parse of that real position
+  export, kept for reference/re-seeding if the trade log ever needs
+  rebuilding.
 - `dhan_live_signals.json` - the output: entries (universe-wide candidates
-  minus anything already held), exits (held + Supertrend red,
-  unconditional), add-ons (held + P&L <= -6% + Supertrend green + cooldown
-  satisfied), plus the current effective position-size tier. Overwritten
-  on each run. This is what Phase 3's TradingJournal dashboard tab reads.
+  minus anything already a dh252 position, minus the permanent Dhan
+  Option Hedge Portfolio exclusion below), exits (dh252 positions +
+  Supertrend red, unconditional), add-ons (dh252 positions + P&L <= -6%
+  + Supertrend green + cooldown satisfied), plus the current effective
+  position-size tier. Overwritten on each run. This is what Phase 3's
+  TradingJournal dashboard tab reads.
+
+## Dhan Option Hedge Portfolio - permanent exclusion
+
+**User's explicit instruction (2026-11-08, verbatim):** "keep this list as
+Dhan Option Hedge Portfolio : INFY, BPCL, CGPOWER, BANKINDIA, BSE,
+CUMMINSIND, SHRIRAMFIN, MCX, HCLTECH, DIXON, LIQUIDCASE and never include
+in dh252 strategy .. both in entry and exit signals .. remember this."
+
+These 11 symbols are a separate, unrelated portfolio sharing the same
+Dhan account - never a dh252 position, never a dh252 entry candidate,
+even if one of them later meets the 52-week-high + Supertrend-green
+condition. Hardcoded as `DHAN_OPTION_HEDGE_PORTFOLIO` in
+`compute_dh252_live_signals.py` and filtered out of entry signals
+explicitly (exit/add-on are already scoped to `dh252_trade_log.json`'s
+own positions, so these 11 never appear there by construction - the
+entry filter is the one place they could otherwise leak back in).
 
 ## Running it today (on-demand, per the approved plan - not automated yet)
 

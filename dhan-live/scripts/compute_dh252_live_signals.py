@@ -49,6 +49,19 @@ import json
 from datetime import datetime, timezone
 from pathlib import Path
 
+# Permanent, named exclusion - the user's explicit instruction (2026-11-08):
+# "keep this list as Dhan Option Hedge Portfolio ... never include in dh252
+# strategy ... both in entry and exit signals ... remember this". A
+# separate, unrelated portfolio sharing the same Dhan account. Exit/add-on
+# are already scoped to dh252_trade_log.json's own positions so these never
+# appear there by construction - this list's only job is to make sure none
+# of them can ever show up as an ENTRY signal either, even if one of them
+# later meets the 52-week-high + Supertrend-green condition.
+DHAN_OPTION_HEDGE_PORTFOLIO = {
+    "INFY", "BPCL", "CGPOWER", "BANKINDIA", "BSE", "CUMMINSIND",
+    "SHRIRAMFIN", "MCX", "HCLTECH", "DIXON", "LIQUIDCASE",
+}
+
 ADD_TRIGGER_PCT = -6.0
 ADD_FRACTION = 0.10
 ADD_COOLDOWN_DAYS = 7
@@ -196,6 +209,8 @@ def build_signals(holdings, week52, stmap, rsimap, entry_signals, trade_log, tod
         symbol = e["symbol"]
         if symbol in dh252_symbols:
             continue  # already a dh252 position - not "any Dhan holding"
+        if symbol in DHAN_OPTION_HEDGE_PORTFOLIO:
+            continue  # permanent exclusion - separate unrelated portfolio, never dh252
         qty_to_buy = max(1, int(eff_tier // e["close"]))
         entries.append({**{k: v for k, v in e.items() if k != "qty_at_base_tier"}, "qty_to_buy": qty_to_buy})
 
@@ -212,6 +227,7 @@ def build_signals(holdings, week52, stmap, rsimap, entry_signals, trade_log, tod
             "doubled": eff_tier != base_tier,
         },
         "dh252_position_count": len(dh252_symbols),
+        "option_hedge_portfolio": sorted(DHAN_OPTION_HEDGE_PORTFOLIO),
         "dhan_holdings_count_total": len(holdings),
         "dhan_holdings_out_of_scope": len(holdings) - len(dh252_symbols & set(holdings_by_symbol)),
         "no_data": no_data,
