@@ -254,7 +254,8 @@ def main():
     parser.add_argument("--as-of", default=None, help="Override today's date (YYYY-MM-DD), for testing against historical data")
     args = parser.parse_args()
 
-    holdings = load_json(args.holdings)["holdings"]
+    holdings_doc = load_json(args.holdings)
+    holdings = holdings_doc["holdings"]
     market_screens = load_json(args.market_screens)
     supertrend = load_json(args.supertrend)
     entry_signals = load_json(args.entry_signals)
@@ -267,6 +268,8 @@ def main():
         holdings, index_week52(market_screens), index_supertrend(supertrend), index_rsi(market_screens),
         entry_signals, trade_log, today,
     )
+    # When the Dhan holdings snapshot was pulled - shown on the Open positions tab
+    result["holdings_fetched_at"] = holdings_doc.get("fetched_at")
     Path(args.out).write_text(json.dumps(result, indent=2))
 
     print(f"dh252 positions in scope: {result['dh252_position_count']} (of {result['dhan_holdings_count_total']} total Dhan holdings)")
