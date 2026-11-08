@@ -1052,9 +1052,9 @@ th.te-sort { cursor:pointer; user-select:none; } th.te-sort:hover { color:var(--
       <span class="nav-logo-text"><span>VJ</span> TradeIQ</span>
     </div>
     <div class="ws-switch" id="ws-switch" role="group" aria-label="Broker workspace">
-      <button class="ws-btn" data-ws="dhan" onclick="wsSelect('dhan')" aria-pressed="false">DHAN</button>
-      <button class="ws-btn" data-ws="zerodha" onclick="wsSelect('zerodha')" aria-pressed="false">ZERODHA</button>
-      <button class="ws-btn" data-ws="icici" onclick="wsSelect('icici')" aria-pressed="false">ICICI</button>
+      <button class="ws-btn" data-ws="dhan" onclick="wsSelect('dhan')" aria-pressed="false">ND</button>
+      <button class="ws-btn" data-ws="zerodha" onclick="wsSelect('zerodha')" aria-pressed="false">AZ</button>
+      <button class="ws-btn" data-ws="icici" onclick="wsSelect('icici')" aria-pressed="false">DI</button>
     </div>
     <div class="nav-right">
       <div style="text-align:right;line-height:1.4">
@@ -1134,7 +1134,7 @@ th.te-sort { cursor:pointer; user-select:none; } th.te-sort:hover { color:var(--
     </div>
     <div class="d2-filters">
       <span class="d2-chip" id="p2-fy">FY 2026–27</span>
-      <span class="d2-chip" id="p2-ws">Dhan workspace</span>
+      <span class="d2-chip" id="p2-ws">ND workspace</span>
       <span class="d2-chip d2-chip-soft" id="p2-asof">—</span>
       <button class="d2-chip d2-chip-btn" onclick="wsRefresh()">↻ Refresh</button>
     </div>
@@ -1200,7 +1200,7 @@ th.te-sort { cursor:pointer; user-select:none; } th.te-sort:hover { color:var(--
 
   <div class="d2-head">
     <div>
-      <div class="d2-eyebrow">Portfolio overview · <span id="d2-ws-name">Dhan</span> workspace</div>
+      <div class="d2-eyebrow">Portfolio overview · <span id="d2-ws-name">ND</span> workspace</div>
       <h1>Dashboard</h1>
       <div class="d2-sub">A decision cockpit for portfolio performance, system quality and items needing attention.</div>
     </div>
@@ -3479,7 +3479,7 @@ th.te-sort { cursor:pointer; user-select:none; } th.te-sort:hover { color:var(--
 <div id="page-covcall" class="page">
   <div class="d2-head">
     <div>
-      <div class="d2-eyebrow">Dhan workspace · investment portfolio options</div>
+      <div class="d2-eyebrow">ND workspace · investment portfolio options</div>
       <h1>Covered Call Hedging</h1>
       <div class="d2-sub">Options: RSI &gt; 70 sell call, RSI &lt; 30 bull put spread, else Supertrend green = bull put spread, red = sell call. Shares: entries, exits and averaging for the investment portfolio.</div>
     </div>
@@ -3500,8 +3500,8 @@ th.te-sort { cursor:pointer; user-select:none; } th.te-sort:hover { color:var(--
 
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px">
     <div>
-      <div style="font-size:15px; font-weight:700">Strategy monitor <span id="dh-live-title" style="font-weight:500;color:var(--text-muted);font-size:12px">/ Dhan Live · dh252</span></div>
-      <div id="dh-live-subtitle" style="font-size:12px; color:var(--text-muted); margin-top:2px">Live Dhan positions vs. backtester's daily Supertrend / 52-week-high signals</div>
+      <div style="font-size:15px; font-weight:700">Strategy monitor <span id="dh-live-title" style="font-weight:500;color:var(--text-muted);font-size:12px">/ ND Live · dh252</span></div>
+      <div id="dh-live-subtitle" style="font-size:12px; color:var(--text-muted); margin-top:2px">Live ND positions vs. backtester's daily Supertrend / 52-week-high signals</div>
     </div>
     <div style="display:flex;align-items:center;gap:10px">
       <div id="dh-live-asof" style="font-size:12px;color:var(--text-muted)">—</div>
@@ -8726,28 +8726,28 @@ function renderClosedTradesReal(closed) {
    (dh252 vs SST differ), never to the pages. `pages` = which pages have real data today. */
 const WS_KEY = 'tj_workspace';
 const WORKSPACES = {
-  dhan:    { id: 'dhan',    label: 'Dhan',    strategy: 'dh252', source: 'MCP snapshot',  status: 'live',
+  dhan:    { id: 'dhan',    label: 'ND',      strategy: 'dh252', source: 'MCP snapshot',  status: 'live',
              snapshotUrl: 'dhan-live/dhan_live_signals.json',
              ordersUrl: 'dhan-live/data/orders_snapshot.json', crosscheckUrl: 'dhan-live/data/signal_crosscheck.json',
-             copy: { refreshCmd: '/refresh-dhan', hasCC: true, strat: 'dh252', liveTitle: 'Dhan Live · dh252',
-                     liveSub: "Live Dhan positions vs. backtester's daily Supertrend / 52-week-high signals", logoA: 'dh', logoB: '252', logoSub: '52-week-high swing',
+             copy: { refreshCmd: '/refresh-dhan', hasCC: true, strat: 'dh252', liveTitle: 'ND Live · dh252',
+                     liveSub: "Live ND positions vs. backtester's daily Supertrend / 52-week-high signals", logoA: 'dh', logoB: '252', logoSub: '52-week-high swing',
                      entryShort: '52-week high, trend green', addShort: 'Down 6%+, trend green',
                      entryHint: 'Close at 52-week high + Supertrend green · not already a dh252 position · 🔥 = top-3 sector by 52WH breakouts or Supertrend turnarounds',
                      posHint: 'Every dh252 position', hideEntryCols: false,
                      entryFilter: ['All breakouts', '🔥 Hot sectors only', 'Hit today only'], entryEmpty: 'No fresh 52-week-high breakouts right now.',
                      otherOrderKind: 'Investment share', closedHint: 'Round trips from the imported transaction report',
-                     closedSrc: 'the imported Dhan Global Transaction Report (equity only; option-hedge portfolio excluded; dh252 era from 21-Oct-26)',
+                     closedSrc: 'the imported ND Global Transaction Report (equity only; option-hedge portfolio excluded; dh252 era from 21-Oct-26)',
                      entryRule: 'Enter only on a fresh 52-week high', lossTitle: 'Positions beyond the add-on trigger' },
              cfg: { staleDays: 3, addTriggerPct: -6, addCooldownDays: 7, addFraction: 0.1, // fallbacks; engine output wins
                     ref: { label: 'dh252 10-yr backtest', winRate: 42.05, avgPlPct: 8.45, trades: 5203 } },
              pages: { live: true, covcall: true, dashboard: 'v2', performance: 'v2', analysis: 'v2' } },   // 'v2' = contract-driven page-dashboard2
-  zerodha: { id: 'zerodha', label: 'Zerodha', strategy: 'F&O Supertrend', source: 'MCP snapshot', status: 'live',
+  zerodha: { id: 'zerodha', label: 'AZ',      strategy: 'F&O Supertrend', source: 'MCP snapshot', status: 'live',
              snapshotUrl: 'zerodha-live/zerodha_live_signals.json',
              ordersUrl: 'zerodha-live/data/orders_snapshot.json', crosscheckUrl: 'zerodha-live/data/signal_crosscheck.json',
              ccUrl: 'zerodha-live/covered_call_signals.json',
              cfg: { staleDays: 3, addTriggerPct: 0, addCooldownDays: 7, addFraction: 0.1 },
-             copy: { refreshCmd: '/refresh-zerodha', hasCC: false, strat: 'F&O Supertrend', liveTitle: 'Zerodha Live · Nifty F&O',
-                     liveSub: "Zerodha holdings in Nifty F&O stocks vs. the backtester's daily Supertrend signals", logoA: 'F&O', logoB: '', logoSub: 'Supertrend swing',
+             copy: { refreshCmd: '/refresh-zerodha', hasCC: false, strat: 'F&O Supertrend', liveTitle: 'AZ Live · Nifty F&O',
+                     liveSub: "AZ holdings in Nifty F&O stocks vs. the backtester's daily Supertrend signals", logoA: 'F&O', logoB: '', logoSub: 'Supertrend swing',
                      entryShort: 'Supertrend flipped to green in the last 6 days', addShort: 'In loss, trend green',
                      entryHint: 'Supertrend flipped to green within the last 6 trading days · no open position in the stock · Nifty F&O stocks only · 🔥 = top-3 sector by Supertrend turnarounds',
                      posHint: 'Every Nifty F&O holding', hideEntryCols: true,
@@ -8757,7 +8757,7 @@ const WORKSPACES = {
                      entryRule: 'Enter on a fresh Supertrend flip to green (last 6 trading days)', lossTitle: 'Positions in loss' },
              // 'sheet' = the old Google-Sheet dashboard, kept as one tab; every other page reads the MCP snapshot
              pages: { sheet: true, live: true, covcall: true, dashboard: 'v2', performance: 'v2', analysis: 'v2' } },
-  icici:   { id: 'icici',   label: 'ICICI',   strategy: null,    source: 'not connected', status: 'pending',
+  icici:   { id: 'icici',   label: 'DI',      strategy: null,    source: 'not connected', status: 'pending',
              pages: {} },
 };
 const WS_PAGE_ORDER = ['dashboard', 'dhanlive', 'covcall', 'performance', 'analysis', 'sheet'];
@@ -8804,7 +8804,7 @@ function wsGate(pageId) {
   const msg = ws.status === 'pending'
     ? `${ws.label} isn't connected yet. Its data will arrive over MCP — this page lights up automatically once a snapshot exists.`
     : (WS.id === 'dhan'
-        ? `The Dhan ${names[pageId]} page is next in the page-by-page rebuild. Live Trading is ready now.`
+        ? `The ND ${names[pageId]} page is next in the page-by-page rebuild. Live Trading is ready now.`
         : `${ws.label} ${names[pageId]} needs the MCP connection, which isn't wired yet.`);
   ph.className = 'card ws-empty';
   ph.style.display = 'block';
@@ -9124,7 +9124,7 @@ const DH_DEFS = {
   orders: {
     rows: d => (d.orders || []).slice().sort((a, b) => (a.side === b.side ? a.symbol.localeCompare(b.symbol) : a.side === 'SELL' ? -1 : 1)),
     filter: (r, f) => f === 'all' ? true : r.side === f,
-    cls: r => r.side === 'SELL' ? 'row-red' : '', empty: 'No orders in the snapshot yet. They appear here after you place them and refresh Dhan.', cols: 8,
+    cls: r => r.side === 'SELL' ? 'row-red' : '', empty: 'No orders in the snapshot yet. They appear here after you place them and refresh ND.', cols: 8,
     cells: [
       ['Stock', r => r.symbol, r => `<td class="stock-name">${dhEsc(r.symbol)}</td>`],
       ['Side', r => r.side, r => `<td><span class="trend-pill" style="background:${r.side === 'SELL' ? 'var(--red-soft)' : 'var(--green-soft)'};color:${r.side === 'SELL' ? 'var(--red)' : 'var(--green)'}">${r.side}</span></td>`],
@@ -9808,8 +9808,8 @@ function ccOptionsView(d) {
   const legStatus = l => l.side === 'LONG' ? 'HEDGE' : l.stop_hit ? 'EXIT' : l.touched ? 'WARN' : 'OK';
   const legRows = legs.slice().sort((a, b) => stOrd[legStatus(a)] - stOrd[legStatus(b)] || a.stock.symbol.localeCompare(b.stock.symbol) || a.expiry.localeCompare(b.expiry) || a.strike - b.strike);
   const legT = ccTbl('legs', {
-    title: 'Open option positions', hint: 'From Dhan positions; current price is derived from each leg’s unrealised P&L; “% from spot” = strike’s distance from the stock price',
-    rows: legRows, search: l => l.symbol, empty: 'Nothing returned by the Dhan positions call.',
+    title: 'Open option positions', hint: 'From ND positions; current price is derived from each leg’s unrealised P&L; “% from spot” = strike’s distance from the stock price',
+    rows: legRows, search: l => l.symbol, empty: 'Nothing returned by the ND positions call.',
     filters: [['all', 'All legs', () => true], ['short', 'Short legs', l => l.side === 'SHORT'], ['long', 'Hedge legs', l => l.side === 'LONG'], ['CE', 'Calls', l => l.type === 'CE'], ['PE', 'Puts', l => l.type === 'PE'],
               ['attn', 'Exit / warn only', l => ['EXIT', 'WARN'].includes(legStatus(l))]],
     cols: [
@@ -9911,7 +9911,7 @@ function ccSharesView(d) {
   }) + '<div class="dhm-foot">“Last add” comes from data/cc_adds.json, which /refresh-dhan updates from the tradebook; “none recorded” means no add has been recorded, not that none happened.</div>';
   const exitSet = new Set(exits.map(e => e.symbol)), sig = r => exitSet.has(r.symbol) ? 'EXIT' : r.avg_status === 'ADD' ? 'ADD' : 'HOLD';
   const posT = ccTbl('pos', {
-    title: 'Open positions', hint: 'The investment-portfolio holdings from Dhan',
+    title: 'Open positions', hint: 'The investment-portfolio holdings from ND',
     rows: rows, search: r => r.symbol, sort: [6, 1],
     filters: [['all', 'All positions', () => true], ['loss', 'In loss', r => r.pl_pct < 0], ['profit', 'In profit', r => r.pl_pct >= 0], ['ADD', 'Add-on due', r => r.avg_status === 'ADD'],
               ['green', 'Supertrend green', r => r.colour === 'green'], ['red', 'Supertrend red', r => r.colour === 'red']],
@@ -9949,7 +9949,7 @@ function ccZerodhaView(d) {
   const S_legs = S.flatMap(s => (s.legs || []).map(l => ({ ...l, stock: s })));
   const struct = s => s.desired === 'PUT_SPREAD' ? 'Bull put spread' : 'Sell call';
   const sigT = ccTbl('zsignals', {
-    title: 'Signals', hint: 'One row per Nifty F&O stock. Strikes and premiums are not shown: pick the 0.10-delta strike in Zerodha.',
+    title: 'Signals', hint: 'One row per Nifty F&O stock. Strikes and premiums are not shown: pick the 0.10-delta strike in your broker app.',
     rows: S, search: s => s.symbol + ' ' + s.basis, empty: 'No stock data.', sort: [0, 1],
     filters: [['all', 'All stocks', () => true], ['call', 'Sell call', s => s.desired === 'CALL'], ['put', 'Bull put spread', s => s.desired === 'PUT_SPREAD'],
               ['green', 'Supertrend green', s => s.colour === 'green'], ['red', 'Supertrend red', s => s.colour === 'red'],
@@ -9965,7 +9965,7 @@ function ccZerodhaView(d) {
       { h: 'Status', v: s => s.status, c: s => ccPill(s.status) },
       { h: 'Structure', v: s => struct(s), c: s => `<b>${struct(s)}</b>` },
       { h: 'Expiry', v: s => (s.expiries[0] || {}).expiry, c: s => s.expiries.map(x => dhFmtDate(x.expiry)).join(', ') || '—' },
-      { h: 'Lot size', v: s => (s.expiries[0] || {}).lot, c: s => (s.expiries[0] || {}).lot || '<span style="color:var(--text-muted)" title="This expiry is not listed yet in the Zerodha instrument list">not listed</span>', num: true },
+      { h: 'Lot size', v: s => (s.expiries[0] || {}).lot, c: s => (s.expiries[0] || {}).lot || '<span style="color:var(--text-muted)" title="This expiry is not listed yet in the AZ instrument list">not listed</span>', num: true },
     ],
   });
   const lvlOrd = { EXIT: 0, WARN: 1 };
@@ -9981,9 +9981,9 @@ function ccZerodhaView(d) {
   const stOrd = { EXIT: 0, WARN: 1, OK: 2, HEDGE: 3 };
   const legStatus = l => l.side === 'LONG' ? 'HEDGE' : l.stop_hit ? 'EXIT' : l.touched ? 'WARN' : 'OK';
   const legT = ccTbl('zlegs', {
-    title: 'Open option positions', hint: 'From the Zerodha positions call (expiries from ' + dhFmtDate((d.positions || {}).track_from) + ' onwards); price and P&L are the broker’s own',
+    title: 'Open option positions', hint: 'From the AZ positions call (expiries from ' + dhFmtDate((d.positions || {}).track_from) + ' onwards); price and P&L are the broker’s own',
     rows: S_legs.slice().sort((a, b) => stOrd[legStatus(a)] - stOrd[legStatus(b)] || a.symbol.localeCompare(b.symbol) || a.strike - b.strike), search: l => l.symbol,
-    empty: 'No open option legs with a December-or-later expiry in the Zerodha positions.',
+    empty: 'No open option legs with a December-or-later expiry in the AZ positions.',
     filters: [['all', 'All legs', () => true], ['short', 'Short legs', l => l.side === 'SHORT'], ['long', 'Hedge legs', l => l.side === 'LONG'], ['attn', 'Exit / warn only', l => ['EXIT', 'WARN'].includes(legStatus(l))]],
     cols: [
       { h: 'Stock', v: l => l.symbol, c: l => `<b>${dhEsc(l.symbol)}</b>` },
@@ -10007,7 +10007,7 @@ function ccZerodhaView(d) {
       ['Expiry', (d.show_expiries || []).map(dhFmtDate).join(', ') || '—'],
       ['Exit · premium', `Short option price reaches ${R.stop_premium_multiple}× the premium sold`],
       ['Exit · colour', 'Supertrend colour changes against the colour at entry (the colour when the legs were first seen): close the structure and open the opposite one'],
-      ['Positions', 'Open legs with an expiry on/after ' + dhFmtDate((d.positions || {}).track_from) + ' come from the Zerodha MCP positions call; earlier expiries are ignored'],
+      ['Positions', 'Open legs with an expiry on/after ' + dhFmtDate((d.positions || {}).track_from) + ' come from the AZ MCP positions call; earlier expiries are ignored'],
       ['Universe', 'All Nifty F&O stocks except ' + ((d.excluded || []).join(', ') || 'none')],
     ]));
   const foot = `<div class="d2-edge-foot" style="border:0">Market data ${dhFmtDate(d.market_data_date)} · no option quotes are pulled, so strikes and premiums for new trades are not shown · positions fetched ${(d.positions || {}).fetched_at ? dhFmtDate(String(d.positions.fetched_at).slice(0, 10)) : 'never (run /refresh-zerodha)'}.</div>`;
@@ -10023,7 +10023,7 @@ function ccRender(d) {
   if (tabs) tabs.style.display = zer ? 'none' : '';
   const pg = document.getElementById('page-covcall');
   if (pg) {
-    pg.querySelector('.d2-eyebrow').textContent = zer ? 'Zerodha workspace · Nifty F&O option selling' : 'Dhan workspace · investment portfolio options';
+    pg.querySelector('.d2-eyebrow').textContent = zer ? 'AZ workspace · Nifty F&O option selling' : 'ND workspace · investment portfolio options';
     pg.querySelector('.d2-sub').textContent = zer
       ? 'RSI > 70 sell call, RSI < 30 bull put spread, else Supertrend green = bull put spread, red = sell call. Exit at 3× premium or when the Supertrend colour changes. Open December-onwards legs are tracked.'
       : 'Options: RSI > 70 sell call, RSI < 30 bull put spread, else Supertrend green = bull put spread, red = sell call. Shares: entries, exits and averaging for the investment portfolio.';
