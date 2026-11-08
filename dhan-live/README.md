@@ -68,6 +68,13 @@ The MCP tradebook returns today's trades only: run the refresh every trading day
 *Global Transaction Report* CSV with `scripts/import_dhan_transactions.py`. Sector + hot-sector tags use
 `data/equity_sectors.json` (copy of backtester's; re-copy if sectors change). Scheduling is not set up.
 
+## Covered Call Hedging page
+
+`scripts/compute_covered_call.py` (run by `refresh_dhan.py`) writes `covered_call_signals.json` for the Covered Call
+page. Config/rules: `data/cc_config.json` (universe, lot sizes, delta targets, 3x stop, expiry cut-off).
+Optional `data/cc_tags.json` enables the Supertrend-flip stop per stock. Raw MCP text inputs live in
+`data/cc_raw/` (`positions.txt`, `chains/<SYMBOL>_<EXPIRY>.txt`); the engine says which chains it still needs.
+
 ## Not in scope yet
 
 - No order placement (Phase 4) - this only reports, never executes.

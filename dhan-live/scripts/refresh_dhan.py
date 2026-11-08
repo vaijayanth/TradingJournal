@@ -10,7 +10,10 @@ The MCP-fed inputs must already be current before this runs (the refresh-dhan sk
   data/holdings_snapshot.json   <- Dhan MCP holdings
   data/dh252_trade_log.json     <- fills (append_fills.py from MCP tradebook, or import_dhan_transactions.py from a CSV)
 
-Usage:  python dhan-live/scripts/refresh_dhan.py [--skip-closes] [--branch main]
+It also rebuilds covered_call_signals.json (Covered Call page) from data/cc_raw/*. If that prints CHAINS NEEDED,
+save those option chains and re-run with --cc-only (reuses the cached Supertrend file, no re-download).
+
+Usage:  python dhan-live/scripts/refresh_dhan.py [--skip-closes] [--cc-only] [--branch main]
 Needs:  python 3.10+, pandas, yfinance.
 """
 
@@ -37,15 +40,21 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--branch", default="main", help="backtester branch to read screens from")
     ap.add_argument("--skip-closes", action="store_true", help="reuse existing data/dh252_daily_closes.json")
+    ap.add_argument("--cc-only", action="store_true", help="only rebuild covered_call_signals.json from the cached screens")
     args = ap.parse_args()
 
-    tmp = Path(tempfile.mkdtemp(prefix="dh252_screens_"))
+    py = sys.executable
+    tmp = DATA / "cache"          # gitignored; keeps the last download so --cc-only can reuse it
+    tmp.mkdir(exist_ok=True)
+    cc = [py, SCRIPTS / "compute_covered_call.py", "--supertrend", tmp / "supertrend_full.json"]
+    if args.cc_only:
+        run(cc)
+        return
     for name in FILES:
         url = RAW.format(branch=args.branch, name=name)
         print("fetching", url)
         urllib.request.urlretrieve(url, tmp / name)
 
-    py = sys.executable
     run([py, SCRIPTS / "dh252_entry_screener.py", "--market-screens", tmp / "market_screens_full.json",
          "--supertrend", tmp / "supertrend_full.json", "--out", tmp / "dh252_entry_signals.json"])
     if not args.skip_closes:
@@ -58,6 +67,8 @@ def main():
          "--entry-signals", tmp / "dh252_entry_signals.json",
          "--trade-log", DATA / "dh252_trade_log.json",
          "--out", ROOT / "dhan_live_signals.json"])
+    run([py, SCRIPTS / "update_lot_sizes.py"])   # NSE's official lot file (best effort)
+    run(cc)
     print("\nDone. Review `git diff --stat`, then commit dhan-live/ if the numbers look right.")
 
 

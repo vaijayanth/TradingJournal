@@ -1,0 +1,62 @@
+{
+  "_note": "Covered Call Hedging (Dhan investment portfolio). lot = fallback shares per option lot; the real per-expiry lots come from data/nse_lots.json (NSE's official file via scripts/update_lot_sizes.py). security_id = NSE_EQ id for the Dhan MCP optionchain call.",
+  "universe": {
+    "MCX": {
+      "security_id": 31181,
+      "lot": 225
+    },
+    "SHRIRAMFIN": {
+      "security_id": 4306,
+      "lot": 825
+    },
+    "CGPOWER": {
+      "security_id": 760,
+      "lot": 850
+    },
+    "BSE": {
+      "security_id": 19585,
+      "lot": 200
+    },
+    "DIXON": {
+      "security_id": 21690,
+      "lot": 50
+    },
+    "HCLTECH": {
+      "security_id": 7229,
+      "lot": 400
+    },
+    "INFY": {
+      "security_id": 1594,
+      "lot": 400
+    },
+    "BANKINDIA": {
+      "security_id": 4745,
+      "lot": 5200
+    },
+    "BPCL": {
+      "security_id": 526,
+      "lot": 1975
+    },
+    "CUMMINSIND": {
+      "security_id": 1901,
+      "lot": 100
+    }
+  },
+  "expiries": [
+    "2026-11-23",
+    "2026-12-29",
+    "2027-01-25"
+  ],
+  "rules": {
+    "short_call_delta": 0.1,
+    "short_put_delta": 0.15,
+    "hedge_strikes_below": 2,
+    "stop_premium_multiple": 3,
+    "show_next_month_after_day": 15,
+    "expiry_week_days": 5,
+    "risk_free_rate": 0.065,
+    "averaging_loss_pct": -6,
+    "averaging_fraction": 0.1,
+    "averaging_cooldown_days": 7
+  }
+}

@@ -888,6 +888,11 @@ tbody tr:hover { filter: brightness(0.97); }
 #page-analysis2 { max-width: 1600px; }
 .a2-view { display: none; } .a2-view.active { display: block; }
 .a2-grid { display: grid; gap: 13px; margin-top: 13px; }
+/* Covered Call page */
+.p2-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+#cc-root > .d2-panel, #cc-root > .a2-grid { margin-top: 13px; }
+#cc-root .p2-table td:last-child, #cc-root .p2-table th:last-child { text-align: left; }
+#cc-root .p2-table td { vertical-align: top; white-space: nowrap; }
 .a2-g3 { grid-template-columns: 1.15fr 1fr 1fr; } .a2-g2 { grid-template-columns: 1fr 1fr; } .a2-g3e { grid-template-columns: repeat(3, 1fr); }
 .a2-kpis { grid-template-columns: repeat(5, 1fr); margin-bottom: 0; }
 .a2-insight { border-left: 3px solid var(--amber); background: var(--amber-soft); padding: 11px 14px; border-radius: 7px; font-size: 12.5px; color: var(--text-secondary); margin-top: 13px; line-height: 1.55; }
@@ -1031,6 +1036,7 @@ tbody tr:hover { filter: brightness(0.97); }
       <button class="nav-tab" data-page="performance" onclick="showPage('performance', this)"><span class="nav-label-full">Performance</span><span class="nav-label-short">Perf</span></button>
       <button class="nav-tab" data-page="analysis" onclick="showPage('analysis', this)"><span class="nav-label-full">Analysis</span><span class="nav-label-short">Analysis</span></button>
       <button class="nav-tab" data-page="dhanlive" onclick="showPage('dhanlive', this)"><span class="nav-label-full">Live Trading</span><span class="nav-label-short">Live</span></button>
+      <button class="nav-tab" data-page="covcall" onclick="showPage('covcall', this)"><span class="nav-label-full">Covered Call</span><span class="nav-label-short">CC</span></button>
     </div>
     <div class="mode-chip" title="Trading mode (applies to every workspace)">
       <button class="sw-btn active" id="sw-swing" onclick="switchStrategy('swing')">Swing</button>
@@ -3418,6 +3424,22 @@ tbody tr:hover { filter: brightness(0.97); }
 </div>
 
 <!-- ════ DHAN LIVE ════ -->
+<!-- ════ COVERED CALL HEDGING (Dhan investment portfolio) ════ -->
+<div id="page-covcall" class="page">
+  <div class="d2-head">
+    <div>
+      <div class="d2-eyebrow">Dhan workspace · investment portfolio options</div>
+      <h1>Covered Call Hedging</h1>
+      <div class="d2-sub">Supertrend green: bull put spread · red: sell call · exits: 3× premium, strike touch, end-of-day colour flip · share averaging when green and down 6%+.</div>
+    </div>
+    <div class="d2-filters">
+      <span class="d2-chip d2-chip-soft" id="cc-asof">—</span>
+      <button class="d2-chip d2-chip-btn" onclick="ccRefresh(true)">↻ Refresh</button>
+    </div>
+  </div>
+  <div id="cc-root"><div class="a2-pending">Loading…</div></div>
+</div>
+
 <div id="page-dhanlive" class="page">
 
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px">
@@ -8630,13 +8652,13 @@ const WORKSPACES = {
              snapshotUrl: 'dhan-live/dhan_live_signals.json',
              cfg: { staleDays: 3, addTriggerPct: -6, addCooldownDays: 7, addFraction: 0.1, // fallbacks; engine output wins
                     ref: { label: 'dh252 10-yr backtest', winRate: 42.05, avgPlPct: 8.45, trades: 5203 } },
-             pages: { live: true, dashboard: 'v2', performance: 'v2', analysis: 'v2' } },   // 'v2' = contract-driven page-dashboard2
+             pages: { live: true, covcall: true, dashboard: 'v2', performance: 'v2', analysis: 'v2' } },   // 'v2' = contract-driven page-dashboard2
   zerodha: { id: 'zerodha', label: 'Zerodha', strategy: 'SST',   source: 'Google Sheet',  status: 'live',
              pages: { dashboard: true, performance: true, analysis: true } },   // Strategy / Journal / Config tabs removed 2026-11-08
   icici:   { id: 'icici',   label: 'ICICI',   strategy: null,    source: 'not connected', status: 'pending',
              pages: {} },
 };
-const WS_PAGE_ORDER = ['dashboard', 'performance', 'analysis', 'dhanlive'];
+const WS_PAGE_ORDER = ['dashboard', 'performance', 'analysis', 'dhanlive', 'covcall'];
 const WS = { id: 'dhan' }; // default workspace (a saved choice in localStorage overrides it)
 const WS_ALT = { // pages whose DOM differs per workspace version: legacy page id -> { v2 element, ensure fn }
   dashboard:   { el: 'page-dashboard2',   fn: 'd2Ensure' },
@@ -8667,7 +8689,7 @@ function wsGate(pageId) {
   if (!ph) { ph = document.createElement('div'); ph.id = 'ws-empty'; swing.prepend(ph); }
   if (ok) { ph.style.display = 'none'; return; }
   const ws = WORKSPACES[WS.id];
-  const names = { dashboard: 'Dashboard', performance: 'Performance', analysis: 'Analysis', strategy: 'Strategy', journal: 'Journal', dhanlive: 'Live Trading' };
+  const names = { dashboard: 'Dashboard', performance: 'Performance', analysis: 'Analysis', strategy: 'Strategy', journal: 'Journal', dhanlive: 'Live Trading', covcall: 'Covered Call' };
   const msg = ws.status === 'pending'
     ? `${ws.label} isn't connected yet. Its data will arrive over MCP — this page lights up automatically once a snapshot exists.`
     : (WS.id === 'dhan'
@@ -8759,6 +8781,7 @@ function showPage(id, btn) {
     window._eqInit = true;
   }
   if (id === 'dhanlive') dhLiveEnsure(); // Live Trading: render the active workspace's data (fetch on first use)
+  if (id === 'covcall') ccEnsure();
 }
 
 // ── ADAPTERS (broker data → the common contract; see WORKSPACES above) ────────
@@ -9265,12 +9288,130 @@ async function wsRefresh() {
   if (WS_ADAPTERS[WS.id] && cur && cur !== 'config' && ws.pages[wsPageKey(cur)]) {
     try {
       await wsLoad(WS.id, true);
-      if (cur === 'dashboard') d2Ensure(); else if (cur === 'performance') p2Ensure(); else if (cur === 'analysis') a2Ensure(); else if (cur === 'dhanlive') dhLiveEnsure();
+      if (cur === 'dashboard') d2Ensure(); else if (cur === 'performance') p2Ensure(); else if (cur === 'analysis') a2Ensure(); else if (cur === 'dhanlive') dhLiveEnsure(); else if (cur === 'covcall') ccRefresh(true);
       if (typeof showToast === 'function') showToast('Refreshed ' + ws.label + ' data', 'green');
     } catch (e) { if (typeof showToast === 'function') showToast('Refresh failed: ' + e.message, 'red'); }
   } else {
     refreshData();
   }
+}
+
+// ── COVERED CALL HEDGING (Dhan) — renders dhan-live/covered_call_signals.json (compute_covered_call.py) ────────
+const CC_URL = 'dhan-live/covered_call_signals.json';
+const ccP = v => v == null ? '—' : '₹' + Number(v).toFixed(2);
+const ccStrike = v => Number(v).toString();
+function ccPill(st) {
+  const m = { ENTER: ['var(--accent-soft, var(--surface2))', 'var(--accent)'], HOLD: ['var(--surface2)', 'var(--text-muted)'], WAIT: ['var(--amber-soft, var(--surface2))', 'var(--amber)'],
+              FLIP: ['var(--red-soft)', 'var(--red)'], EXIT: ['var(--red-soft)', 'var(--red)'], ADD: ['var(--green-soft)', 'var(--green)'], NO: ['var(--surface2)', 'var(--text-muted)'], WARN: ['var(--amber-soft, var(--surface2))', 'var(--amber)'],
+              OK: ['var(--green-soft)', 'var(--green)'], HEDGE: ['var(--surface2)', 'var(--text-muted)'], NO_DATA: ['var(--surface2)', 'var(--text-muted)'] };
+  const [bg, fg] = m[st] || m.HOLD;
+  return `<span class="trend-pill" style="background:${bg};color:${fg}">${st}</span>`;
+}
+async function ccRefresh(spin) {
+  const root = document.getElementById('cc-root'), asof = document.getElementById('cc-asof');
+  if (spin && asof) asof.textContent = 'Loading…';
+  try {
+    const res = await fetch(CC_URL + '?t=' + Date.now());
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    window._cc = await res.json();
+    ccRender(window._cc);
+  } catch (e) {
+    if (asof) asof.textContent = 'Could not load';
+    if (root) root.innerHTML = `<div class="a2-pending"><b>Could not load covered-call data.</b><br>${dhEsc(e.message)} — run /refresh-dhan to generate ${CC_URL}.</div>`;
+    console.error('Covered call load error:', e);
+  }
+}
+function ccEnsure() { if (window._cc) ccRender(window._cc); else ccRefresh(false); }
+
+function ccSuggest(g, lot) {
+  const x = dhFmtDate(g.expiry), tag = `<b>${x}</b>${g.expiry_week ? ' <span class="neg">expiry week</span>' : ''} · `;
+  if (g.missing_chain) return `${tag}<span style="color:var(--text-muted)">no option chain loaded — run /refresh-dhan</span>`;
+  if (g.no_strike) return `${tag}<span style="color:var(--text-muted)">no strike with usable IV near the target delta</span>`;
+  const sh = g.short;
+  let t = `${tag}Sell ${ccStrike(sh.strike)}${sh.type} @ ${ccP(sh.ltp)} <span style="color:var(--text-muted)">(Δ ${Math.abs(sh.delta).toFixed(2)}, ${g.strike_distance_pct > 0 ? '+' : ''}${g.strike_distance_pct}%)</span>`;
+  if (g.structure === 'PUT_SPREAD') {
+    if (g.no_hedge) t += ' · <span class="neg">no strike 2 below to hedge</span>';
+    else t += ` · Buy ${ccStrike(g.hedge.strike)}PE @ ${ccP(g.hedge.ltp)}`;
+  }
+  const bits = [`credit ${ccP(g.credit)}/sh`];
+  if (g.credit_rs != null) bits.push(`${dhFmtRs(g.credit_rs)}/lot`);
+  if (g.max_loss_rs != null) bits.push(`max loss ${dhFmtRs(g.max_loss_rs)}`);
+  bits.push(`exit at ${ccP(g.stop_premium)}`);
+  return t + `<br><span style="color:var(--text-muted)">${bits.join(' · ')}</span>`;
+}
+
+function ccRender(d) {
+  const root = document.getElementById('cc-root');
+  const asof = document.getElementById('cc-asof');
+  if (asof) asof.textContent = 'Market data ' + dhFmtDate(d.market_data_date);
+  const S = d.stocks || [];
+  const legs = S.flatMap(s => (s.legs || []).map(l => ({ ...l, stock: s })));
+  const mtm = legs.reduce((a, l) => a + (l.pnl_rs || 0), 0);
+  const nExit = (d.alerts || []).filter(a => a.level === 'EXIT').length, nWarn = (d.alerts || []).filter(a => a.level === 'WARN').length;
+  const nSig = S.filter(s => s.status === 'ENTER' || s.status === 'FLIP').length;
+  const nAvg = (d.averaging || []).filter(a => a.status === 'ADD').length;
+  const kpis = a2Metrics([
+    ['Option entry / flip signals', nSig, `New structures to open or flip · ${S.length} stocks tracked`],
+    ['Averaging due', nAvg, 'Green Supertrend, down 6%+, once a week', nAvg ? 'pos' : ''],
+    ['Open option legs', legs.length, `${legs.filter(l => l.side === 'SHORT').length} short · ${legs.filter(l => l.side === 'LONG').length} hedge`],
+    ['Exit / warn alerts', `${nExit} / ${nWarn}`, '3× premium or colour flip / strike touch', nExit ? 'neg' : ''],
+    ['Options MTM', (mtm >= 0 ? '+' : '−') + dhFmtRs(Math.abs(mtm)).replace('₹', '₹'), 'Unrealised on the legs above', mtm >= 0 ? 'pos' : 'neg'],
+  ]);
+
+  const lvl = { EXIT: 'red', WARN: 'amber', ADD: 'green', ENTER: 'green' };
+  const alertsPanel = a2Panel('Alerts', 'Exits first, then warnings, share averaging, then new option entries',
+    (d.alerts || []).length ? a2Items(d.alerts.map(a => [lvl[a.level] || '', a.level, dhEsc(a.text)]))
+      : a2Pending('No alerts.', 'No stop, strike touch or new entry signal right now.'));
+
+  const sigRows = S.map(s => {
+    if (s.status === 'NO_DATA') return `<tr><td>${dhEsc(s.symbol)}</td><td colspan="7" style="color:var(--text-muted)">${dhEsc(s.note)}</td></tr>`;
+    const cover = s.lot ? `${s.shares} sh / lot ${s.lot}${s.covered ? '' : ' <span style="color:var(--text-muted)" title="Shares held are fewer than one lot, so a short call is not fully covered by the stock">· &lt; 1 lot</span>'}`
+                        : `${s.shares} sh / <span class="neg">lot size not set</span>`;
+    const flip = s.flip_date ? `${dhFmtDate(s.flip_date)}${s.flip_trading_days != null ? ' (' + s.flip_trading_days + 'd)' : ''}` : '—';
+    const sug = (s.suggestions || []).length ? s.suggestions.map(g => ccSuggest(g, s.lot)).join('<br>') : `<span style="color:var(--text-muted)">${dhEsc(s.note)}</span>`;
+    return `<tr><td><b>${dhEsc(s.symbol)}</b></td><td>${ccP(s.spot)}</td><td>${dhTrendPill(s.colour)}</td><td>${flip}</td><td>${cover}</td><td>${ccPill(s.status)}</td><td>${s.desired === 'PUT_SPREAD' ? 'Put spread' : 'Short call'}</td><td style="white-space:normal;min-width:300px">${sug}</td></tr>`;
+  });
+  const sigPanel = a2Panel('Signals', 'Desired structure from the Supertrend colour; strikes from the option chain (delta estimated from IV)',
+    '<div class="p2-scroll">' + a2Table(['Stock', 'Spot', 'Supertrend', 'Last flip', 'Shares / lot', 'Status', 'Structure', 'Suggested trade'], sigRows) + '</div>');
+
+  const avOrd = { ADD: 0, WAIT: 1, NO: 2 };
+  const avRows = (d.averaging || []).slice().sort((a, b) => avOrd[a.status] - avOrd[b.status] || a.pl_pct - b.pl_pct).map(a =>
+    `<tr><td><b>${dhEsc(a.symbol)}</b></td><td>${ccP(a.spot)}</td><td>${ccP(a.avg_cost)}</td><td class="${dhPnlCls(a.pl_pct)}">${dhFmtPct(a.pl_pct)}</td>`
+    + `<td>${dhTrendPill(a.colour)}</td><td>${a.last_add ? dhFmtDate(a.last_add) + ' (' + a.days_since_add + 'd)' : '<span style="color:var(--text-muted)">none recorded</span>'}</td>`
+    + `<td>${a.status === 'NO' ? '—' : a.add_qty + ' sh · ' + dhFmtRs(a.add_value_rs)}</td><td>${ccPill(a.status)}</td>`
+    + `<td style="color:var(--text-muted);white-space:normal">${dhEsc(a.note)}</td></tr>`);
+  const avgPanel = a2Panel('Share averaging', 'Buy 1/10 of the open quantity when Supertrend is green and the holding is down 6%+, at most once a week',
+    '<div class="p2-scroll">' + a2Table(['Stock', 'Spot', 'Avg cost', 'P&amp;L', 'Supertrend', 'Last add', 'Add', 'Status', 'Note'], avRows) + '</div>'
+    + '<div class="d2-edge-foot">“Last add” comes from data/cc_adds.json, which /refresh-dhan updates from the tradebook; an empty entry means no add has been recorded, not that none happened.</div>');
+
+  const order = { EXIT: 0, WARN: 1, OK: 2, HEDGE: 3 };
+  const legStatus = l => l.side === 'LONG' ? 'HEDGE' : l.stop_hit ? 'EXIT' : l.touched ? 'WARN' : 'OK';
+  const legRows = legs.slice().sort((a, b) => order[legStatus(a)] - order[legStatus(b)] || a.stock.symbol.localeCompare(b.stock.symbol) || a.expiry.localeCompare(b.expiry) || a.strike - b.strike).map(l => {
+    const st = legStatus(l);
+    return `<tr><td><b>${dhEsc(l.symbol)}</b></td><td>${dhFmtDate(l.expiry)}</td><td>${l.side} ${ccStrike(l.strike)} ${l.type}</td>`
+      + `<td>${l.qty}${l.lots ? ' (' + l.lots + ' lot)' : ''}</td><td>${ccP(l.side === 'SHORT' ? l.sell_avg : l.buy_avg)}</td><td>${ccP(l.ltp)}</td>`
+      + `<td class="${dhPnlCls(l.pnl_rs)}">${(l.pnl_rs >= 0 ? '+' : '−') + dhFmtRs(Math.abs(l.pnl_rs))}</td>`
+      + `<td>${l.side === 'SHORT' ? ccP(l.stop_at) : '—'}</td><td>${l.side === 'SHORT' ? (l.dist_pct > 0 ? '+' : '') + l.dist_pct + '%' : '—'}</td><td>${ccPill(st)}</td></tr>`;
+  });
+  const legPanel = a2Panel('Open option positions', 'From Dhan positions; current price is derived from each leg’s unrealised P&L',
+    legs.length ? '<div class="p2-scroll">' + a2Table(['Stock', 'Expiry', 'Leg', 'Qty', 'Sold / bought @', 'LTP', 'P&amp;L', 'Exit at 3×', 'To strike', 'Status'], legRows) + '</div>'
+      : a2Pending('No option positions.', 'Nothing returned by the Dhan positions call.'));
+
+  const R = d.rules || {};
+  const rulesPanel = a2Panel('Strategy rules', 'Edit dhan-live/data/cc_config.json to change; shown here as applied',
+    a2Rows([
+      ['Supertrend green', `Bull put spread: sell ${R.short_put_delta} delta put, buy ${R.hedge_strikes_below} strikes lower (no flip-age limit for options)`],
+      ['Supertrend red', `Sell the ${R.short_call_delta} delta call only`],
+      ['Expiry', `Current month; after the ${R.show_next_month_after_day}th the next month is shown too (now: ${(d.show_expiries || []).map(dhFmtDate).join(', ') || '—'})`],
+      ['Size', '1 lot per signal; lot sizes from NSE’s official F&O lot file, per expiry month'],
+      ['Share averaging', `Supertrend green and loss ≥ ${Math.abs(R.averaging_loss_pct)}%: buy ${R.averaging_fraction * 100}% of the open quantity (min 1 share), once every ${R.averaging_cooldown_days} days`],
+      ['Exit · premium', `Short option price ≥ ${R.stop_premium_multiple}× the premium sold`],
+      ['Exit · strike', 'Stock price reaches the short strike (warning)'],
+      ['Exit · colour', 'End-of-day Supertrend flip vs the colour at entry: close and open the opposite structure (only for stocks tagged in cc_tags.json)'],
+    ].map(([a, b]) => [a, b])));
+  const other = (d.other_positions || []).length ? ` Other option positions not in this universe: ${d.other_positions.join(', ')}.` : '';
+  const foot = `<div class="d2-edge-foot" style="border:0">Market data ${dhFmtDate(d.market_data_date)} · deltas are estimates (Black-Scholes from the chain’s IV, no dividends) · option chains loaded: ${Object.keys(d.chains_loaded || {}).join(', ') || 'none'}.${other}</div>`;
+  root.innerHTML = kpis + a2Grid('', alertsPanel) + sigPanel + avgPanel + legPanel + rulesPanel + foot;
 }
 
 // ── PERFORMANCE 2.0 (renders the active workspace's contract data) ───────────
