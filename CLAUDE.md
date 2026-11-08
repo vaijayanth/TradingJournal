@@ -1148,3 +1148,17 @@ User picked this name themselves (not one of the suggested options) after being 
 
 ### Branch/workflow note
 All of the above was committed in small, separately-pushed commits directly to `claude/beautiful-hamilton-fwa55n` (the branch GitHub Pages serves from) as each change was verified — not batched into one giant commit. Continue that pattern for future sessions on this file: one focused change, visually verified live, then committed+pushed, rather than stacking multiple unverified changes before the first push.
+
+---
+
+## VJ TradeIQ 2.0 rebuild — architecture (Step 0, 2026-11-08)
+
+Fundamental rebuild driven by the user's mockups (dashboard.html / performance.html / analysis.html; Live, Strategy, Journal, Config mockups not yet received). **Done page by page, user go-ahead after each step**, in this order: Step 0 foundation → Live Trading → Dashboard → Performance → Analysis → Strategy/Journal/Config. Keep each page visually close to its mockup.
+
+- **Workspaces = brokers** (DHAN / ZERODHA / ICICI switcher in the header, persisted in `localStorage 'tj_workspace'`). Registry + gating live in the `WORKSPACES` / `WS` block just above `showPage()` in index.html (`wsSelect`, `wsGate`, `wsApply`, `wsInit`). `pages:{}` per workspace = which pages have real data today; pages without data show a "Not available for this workspace yet" placeholder (`#ws-empty`) and their nav tab is dimmed. **When a page gets a workspace adapter, flip its flag in `WORKSPACES`.**
+- **Common pages, broker-agnostic.** Dashboard / Performance / Analysis / Live render from a normalised data contract (documented in the comment above `WORKSPACES`), never from a broker directly. Strategy rules and health thresholds belong to the workspace config (dh252 ≠ SST: target WR ≥70% vs dh252 backtest ~42%), not hardcoded in pages — the existing pages still hardcode SST thresholds until they are migrated.
+- **MCP data path:** browsers cannot call MCP. A Claude session (later a scheduled job) pulls broker data over MCP and commits a snapshot JSON the adapter reads (Dhan: `dhan-live/dhan_live_signals.json`). **Zerodha currently = the legacy Google Sheet feed (TRADES sheet, SST)** — user confirmed; it is to be swapped for an MCP snapshot later. ICICI: not connected.
+- **Default workspace is Zerodha** during the transition (the existing sheet-backed Dashboard/Performance/Analysis keep working). Flip the default to Dhan when Dhan's Dashboard lands.
+- **F&O** stays as a Swing/F&O mode chip (right side of the nav row, reusing `switchStrategy`) — no new F&O pages; fresh logic for all three brokers later.
+- Header is now `.app-header` (topbar: brand · broker switcher · status; nav row below). The nav tab for `page-dhanlive` is labelled "Live Trading" (page id unchanged). The mockup's Dashboard figures (225 trades / 94.7% WR / 183 open) are the **Zerodha sheet** numbers, not Dhan's — Dhan's trade log has 0 closed trades so far.
+- Mockup copy to NOT carry over: the Analysis mockup's diagnostics are SST-hostile ("review exit rules letting losses persist", "positions stop out", "₹2,000 tier", partial exits flagged red) — rewrite them to each strategy's own rules. Keep the app's blue accent for active states (the Performance/Analysis mockups use green, which is reserved for profit).

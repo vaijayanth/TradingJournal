@@ -784,6 +784,34 @@ tbody tr:hover { filter: brightness(0.97); }
 #dash-momentum-dots {
   font-family: var(--font-mono);
 }
+/* ── APP HEADER 2.0 — brand · broker workspaces · status / page nav ── */
+.app-header { position: sticky; top: 0; z-index: 100; background: var(--nav-bg); }
+.app-header .topbar { height: 54px; padding: 0 20px; display: grid; grid-template-columns: 1fr auto 1fr; align-items: center; border-bottom: 1px solid var(--border); gap: 12px; }
+.app-header .topbar .nav-logo { margin-right: 0; }
+.app-header nav { position: static; height: 46px; padding: 0 20px; border-bottom: 1px solid var(--border); gap: 12px; }
+.ws-switch { display: flex; gap: 6px; }
+.ws-btn { background: transparent; color: var(--text-muted); border: 1px solid var(--border); border-radius: 6px; padding: 7px 18px; font: inherit; font-size: 11px; font-weight: 750; letter-spacing: .08em; cursor: pointer; transition: all .15s; }
+.ws-btn:hover { color: var(--text-primary); border-color: var(--accent); }
+.ws-btn.active { background: var(--accent-soft); border-color: var(--accent); color: var(--accent); }
+.ws-btn.pending:not(.active) { opacity: .6; }
+.ws-status { font-size: 10.5px; color: var(--text-muted); white-space: nowrap; }
+.ws-status b { font-weight: 600; color: var(--text-secondary); }
+.mode-chip { display: flex; gap: 4px; margin-left: auto; }
+.mode-chip .sw-btn { padding: 4px 13px; font-size: 11.5px; border-width: 1px; border-radius: 6px; }
+.nav-tab.nav-tab-off { opacity: .5; }
+.ws-empty { max-width: 560px; margin: 70px auto; text-align: center; padding: 34px 28px; }
+.ws-empty .ws-empty-mark { font-size: 11px; font-weight: 750; letter-spacing: .14em; color: var(--accent); text-transform: uppercase; }
+.ws-empty h2 { font-size: 20px; margin: 8px 0 6px; letter-spacing: -.02em; }
+.ws-empty p { font-size: 13px; color: var(--text-muted); line-height: 1.6; }
+@media (max-width: 640px) {
+  .app-header .topbar { grid-template-columns: auto 1fr; height: auto; min-height: 50px; padding: 6px 10px; row-gap: 6px; }
+  .app-header .topbar .ws-switch { grid-column: 1 / -1; grid-row: 2; justify-content: center; }
+  .app-header .topbar .nav-right { grid-column: 2; grid-row: 1; justify-content: flex-end; }
+  .ws-btn { padding: 6px 12px; } .ws-status { display: none; }
+  .app-header nav { padding: 0 10px; height: 44px; gap: 6px; }
+  .mode-chip { gap: 2px; flex-shrink: 0; } .mode-chip .sw-btn { padding: 3px 7px; font-size: 10.5px; }
+  .app-header nav .nav-tabs { min-width: 0; flex: 1 1 0; }
+}
 /* ── DHAN LIVE — strategy monitor layout ── */
 .dhm-banner { display:flex; align-items:center; gap:0; padding:16px 18px; margin-bottom:18px; flex-wrap:wrap; row-gap:14px; }
 .dhm-banner-title { padding-right:20px; margin-right:6px; border-right:1px solid var(--border); min-width:150px; }
@@ -843,40 +871,47 @@ tbody tr:hover { filter: brightness(0.97); }
   </div>
 </div>
 
-<!-- ════ STRATEGY SWITCHER ════ -->
-<div class="strategy-bar">
-  <span class="strategy-bar-label">Strategy</span>
-  <button class="sw-btn active" id="sw-swing" onclick="switchStrategy('swing')">📈 Swing</button>
-  <button class="sw-btn" id="sw-fno" onclick="switchStrategy('fno')">📊 F&amp;O</button>
-</div>
-
-<!-- ════ NAVBAR ════ -->
-<nav>
-  <div class="nav-logo">
-    <svg class="nav-logo-mark" width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
-      <polyline points="2,10 11,13 18.5,3" stroke="currentColor" stroke-width="2.2" stroke-linecap="square" stroke-linejoin="miter"/>
-      <line x1="11.5" y1="8" x2="18" y2="8" stroke="currentColor" stroke-width="1.6"/>
-    </svg>
-    <span class="nav-logo-text"><span>VJ</span> TradeIQ</span>
-  </div>
-  <div class="nav-tabs">
-    <button class="nav-tab active" id="nav-dashboard" onclick="showPage('dashboard', this)"><span class="nav-label-full">Dashboard</span><span class="nav-label-short">Dash</span></button>
-    <button class="nav-tab" onclick="showPage('performance', this)"><span class="nav-label-full">Performance</span><span class="nav-label-short">Perf</span></button>
-    <button class="nav-tab" onclick="showPage('analysis', this)"><span class="nav-label-full">Analysis</span><span class="nav-label-short">Analysis</span></button>
-    <button class="nav-tab" onclick="showPage('strategy', this)"><span class="nav-label-full">Strategy</span><span class="nav-label-short">Strat</span></button>
-    <button class="nav-tab" onclick="showPage('journal', this)"><span class="nav-label-full">Journal</span><span class="nav-label-short">Journal</span></button>
-    <button class="nav-tab" onclick="showPage('dhanlive', this)"><span class="nav-label-full">Dhan Live</span><span class="nav-label-short">Dhan</span></button>
-    <button class="nav-tab" onclick="showPage('config', this)">Config</button>
-  </div>
-  <div class="nav-right">
-    <div style="text-align:right;line-height:1.4">
-      <span class="refresh-info">Updated 2 min ago</span>
-      <div id="signal-run-info" style="font-size:11.5px;color:var(--text-muted);white-space:nowrap"></div>
+<!-- ════ APP HEADER (2.0): brand · broker workspaces · status, then page nav ════ -->
+<div class="app-header">
+  <div class="topbar">
+    <div class="nav-logo">
+      <svg class="nav-logo-mark" width="22" height="22" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <polyline points="2,10 11,13 18.5,3" stroke="currentColor" stroke-width="2.2" stroke-linecap="square" stroke-linejoin="miter"/>
+        <line x1="11.5" y1="8" x2="18" y2="8" stroke="currentColor" stroke-width="1.6"/>
+      </svg>
+      <span class="nav-logo-text"><span>VJ</span> TradeIQ</span>
     </div>
-    <button class="btn-icon" title="Refresh" onclick="window._strategy==='fno'?refreshFnoData():refreshData()">↻</button>
-    <button class="btn-icon" title="Toggle theme" onclick="toggleTheme()">☀️</button>
+    <div class="ws-switch" id="ws-switch" role="group" aria-label="Broker workspace">
+      <button class="ws-btn" data-ws="dhan" onclick="wsSelect('dhan')" aria-pressed="false">DHAN</button>
+      <button class="ws-btn" data-ws="zerodha" onclick="wsSelect('zerodha')" aria-pressed="false">ZERODHA</button>
+      <button class="ws-btn" data-ws="icici" onclick="wsSelect('icici')" aria-pressed="false">ICICI</button>
+    </div>
+    <div class="nav-right">
+      <div style="text-align:right;line-height:1.4">
+        <span class="refresh-info">Updated 2 min ago</span>
+        <div id="signal-run-info" style="font-size:11.5px;color:var(--text-muted);white-space:nowrap"></div>
+        <div id="ws-status" class="ws-status"></div>
+      </div>
+      <button class="btn-icon" title="Refresh" onclick="window._strategy==='fno'?refreshFnoData():refreshData()">↻</button>
+      <button class="btn-icon" title="Toggle theme" onclick="toggleTheme()">☀️</button>
+    </div>
   </div>
-</nav>
+  <nav>
+    <div class="nav-tabs">
+      <button class="nav-tab active" id="nav-dashboard" data-page="dashboard" onclick="showPage('dashboard', this)"><span class="nav-label-full">Dashboard</span><span class="nav-label-short">Dash</span></button>
+      <button class="nav-tab" data-page="performance" onclick="showPage('performance', this)"><span class="nav-label-full">Performance</span><span class="nav-label-short">Perf</span></button>
+      <button class="nav-tab" data-page="analysis" onclick="showPage('analysis', this)"><span class="nav-label-full">Analysis</span><span class="nav-label-short">Analysis</span></button>
+      <button class="nav-tab" data-page="strategy" onclick="showPage('strategy', this)"><span class="nav-label-full">Strategy</span><span class="nav-label-short">Strat</span></button>
+      <button class="nav-tab" data-page="journal" onclick="showPage('journal', this)"><span class="nav-label-full">Journal</span><span class="nav-label-short">Journal</span></button>
+      <button class="nav-tab" data-page="dhanlive" onclick="showPage('dhanlive', this)"><span class="nav-label-full">Live Trading</span><span class="nav-label-short">Live</span></button>
+      <button class="nav-tab" data-page="config" onclick="showPage('config', this)">Config</button>
+    </div>
+    <div class="mode-chip" title="Trading mode (applies to every workspace)">
+      <button class="sw-btn active" id="sw-swing" onclick="switchStrategy('swing')">Swing</button>
+      <button class="sw-btn" id="sw-fno" onclick="switchStrategy('fno')">F&amp;O</button>
+    </div>
+  </nav>
+</div>
 
 <!-- ════ SWING PAGES WRAPPER ════ -->
 <div id="swing-pages">
@@ -8251,12 +8286,117 @@ function renderClosedTradesReal(closed) {
   }).join('');
 }
 
+// ── WORKSPACES (2.0) — broker-agnostic shell ────────
+/* One shell, common pages, one adapter per broker. Pages never talk to a broker directly.
+   DATA CONTRACT — every adapter must eventually return this shape; pages migrate to it one
+   step at a time (Step 0 only wires the switcher + page gating, Live Trading already reads Dhan):
+     { meta:    { broker, strategy, source, fetchedAt, marketDate },
+       capital: { initial, realised, unrealised, current },
+       positions: [{ symbol, sector, entryDate, ageDays, qty, avgCost, cmp, plPct, plRs,
+                     signal, supertrend, flip, ema200, ema50 }],
+       closed:    [{ symbol, entryDate, exitDate, qty, entry, exit, plRs, plPct, holdDays }],
+       signals:   { exit: [], entry: [], addon: [] } }
+   Sources: browsers can't call MCP, so a Claude session (or later a scheduled job) pulls broker
+   data over MCP and commits a snapshot JSON the adapter reads. Zerodha uses the legacy Google
+   Sheet feed until its MCP snapshot exists. Strategy rules/thresholds belong to the workspace
+   (dh252 vs SST differ), never to the pages. `pages` = which pages have real data today. */
+const WS_KEY = 'tj_workspace';
+const WORKSPACES = {
+  dhan:    { id: 'dhan',    label: 'Dhan',    strategy: 'dh252', source: 'MCP snapshot',  status: 'live',
+             snapshotUrl: 'dhan-live/dhan_live_signals.json',
+             pages: { live: true } },
+  zerodha: { id: 'zerodha', label: 'Zerodha', strategy: 'SST',   source: 'Google Sheet',  status: 'live',
+             pages: { dashboard: true, performance: true, analysis: true, strategy: true, journal: true } },
+  icici:   { id: 'icici',   label: 'ICICI',   strategy: null,    source: 'not connected', status: 'pending',
+             pages: {} },
+};
+const WS_PAGE_ORDER = ['dashboard', 'performance', 'analysis', 'strategy', 'journal', 'dhanlive'];
+const WS = { id: 'zerodha' }; // default stays Zerodha (existing sheet data) until Dhan's Dashboard lands
+
+function wsPageKey(id) { return id === 'dhanlive' ? 'live' : id; }
+function wsHasPage(wsId, pageId) {
+  return pageId === 'config' || !!(WORKSPACES[wsId] && WORKSPACES[wsId].pages[wsPageKey(pageId)]);
+}
+function wsActivePageId() {
+  const p = document.querySelector('#swing-pages .page.active');
+  return p ? p.id.replace(/^page-/, '') : null;
+}
+
+function wsGate(pageId) {
+  const swing = document.getElementById('swing-pages');
+  const page = document.getElementById('page-' + pageId);
+  if (!swing || !page) return;
+  const ok = wsHasPage(WS.id, pageId);
+  page.style.display = ok ? '' : 'none';
+  let ph = document.getElementById('ws-empty');
+  if (!ph) { ph = document.createElement('div'); ph.id = 'ws-empty'; swing.prepend(ph); }
+  if (ok) { ph.style.display = 'none'; return; }
+  const ws = WORKSPACES[WS.id];
+  const names = { dashboard: 'Dashboard', performance: 'Performance', analysis: 'Analysis', strategy: 'Strategy', journal: 'Journal', dhanlive: 'Live Trading' };
+  const msg = ws.status === 'pending'
+    ? `${ws.label} isn't connected yet. Its data will arrive over MCP — this page lights up automatically once a snapshot exists.`
+    : (WS.id === 'dhan'
+        ? `The Dhan ${names[pageId]} page is next in the page-by-page rebuild. Live Trading is ready now.`
+        : `${ws.label} ${names[pageId]} needs the MCP connection, which isn't wired yet.`);
+  ph.className = 'card ws-empty';
+  ph.style.display = 'block';
+  ph.innerHTML = `<div class="ws-empty-mark">${ws.label} · ${names[pageId] || pageId}</div><h2>Not available for this workspace yet</h2><p>${msg}</p>`;
+}
+
+function wsApply() {
+  const ws = WORKSPACES[WS.id];
+  document.querySelectorAll('#ws-switch .ws-btn').forEach(b => {
+    const on = b.dataset.ws === WS.id;
+    b.classList.toggle('active', on);
+    b.classList.toggle('pending', WORKSPACES[b.dataset.ws].status === 'pending');
+    b.setAttribute('aria-pressed', on ? 'true' : 'false');
+    b.title = WORKSPACES[b.dataset.ws].label + ' · ' + WORKSPACES[b.dataset.ws].source;
+  });
+  const st = document.getElementById('ws-status');
+  if (st) st.innerHTML = (ws.status === 'live' ? '● ' : '○ ') + `<b>${ws.label}</b> · ${ws.source}` + (ws.strategy ? ` · ${ws.strategy}` : '');
+  document.querySelectorAll('.app-header .nav-tab[data-page]').forEach(t =>
+    t.classList.toggle('nav-tab-off', !wsHasPage(WS.id, t.dataset.page)));
+  const sig = document.getElementById('signal-run-info'); // "Signals: …" comes from the sheet feed only
+  if (sig) sig.style.visibility = WS.id === 'zerodha' ? '' : 'hidden';
+  const cur = wsActivePageId();
+  if (cur) wsGate(cur);
+}
+
+function wsSelect(id) {
+  if (!WORKSPACES[id]) return;
+  WS.id = id;
+  try { localStorage.setItem(WS_KEY, id); } catch (e) {}
+  // If the page we're on has no data for this workspace, hop to the first page that does
+  const cur = wsActivePageId();
+  if (cur && !wsHasPage(id, cur)) {
+    const next = WS_PAGE_ORDER.find(p => wsHasPage(id, p));
+    const btn = next && document.querySelector('.app-header .nav-tab[data-page="' + next + '"]');
+    if (btn) showPage(next, btn);
+  }
+  wsApply();
+}
+
+function wsInit() {
+  let saved = null;
+  try { saved = localStorage.getItem(WS_KEY); } catch (e) {}
+  if (saved && WORKSPACES[saved]) WS.id = saved;
+  // Opening on a workspace whose first page isn't Dashboard: land on a page that has data
+  if (!wsHasPage(WS.id, 'dashboard')) {
+    const next = WS_PAGE_ORDER.find(p => wsHasPage(WS.id, p));
+    const btn = next && document.querySelector('.app-header .nav-tab[data-page="' + next + '"]');
+    if (btn) showPage(next, btn);
+  }
+  wsApply();
+}
+document.addEventListener('DOMContentLoaded', wsInit);
+
 // ── NAVIGATION ──────────────────────────────────────
 function showPage(id, btn) {
   document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
   document.querySelectorAll('.nav-tab').forEach(t => t.classList.remove('active'));
   document.getElementById('page-' + id).classList.add('active');
   btn.classList.add('active');
+  if (typeof wsGate === 'function' && document.getElementById('page-' + id).closest('#swing-pages')) wsGate(id);
   if (id === 'performance' && !window._perfChartsInit) {
     const d = window._data;
     initPerfCharts(d ? d.closed : [], d ? d.initialCapital : 0, d ? d.open : []);
