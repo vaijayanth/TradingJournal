@@ -2,8 +2,9 @@
 
 Rules (user, 2026-11-08):
   * Universe = the investment-portfolio stocks that have listed options (data/cc_config.json).
-  * Supertrend GREEN -> bull put spread: sell the put nearest 0.15 delta, buy the put 2 listed strikes lower
-    (no flip-age window for options - any green stock without a put spread is a signal).
+  * RSI(14) overrides the colour: RSI > 70 -> sell the call (0.10 delta); RSI < 30 -> bull put spread.
+  * Otherwise Supertrend GREEN -> bull put spread: sell the put nearest 0.15 delta, buy the put 2 listed strikes
+    lower (no flip-age window for options - any green stock without a put spread is a signal).
   * Supertrend RED   -> sell the call nearest 0.10 delta only (no put spread).
   * Expiry: the current month; after the 15th the next month is shown as well.
   * 1 lot per signal (flagged when the shares held do not cover the lot). Lot sizes: NSE's official F&O lot file
@@ -161,6 +162,7 @@ def main():
     ap.add_argument("--config", default=str(DATA / "cc_config.json"))
     ap.add_argument("--tags", default=str(DATA / "cc_tags.json"))
     ap.add_argument("--positions", default=str(DATA / "cc_raw" / "positions.txt"))
+    ap.add_argument("--market-screens", default=str(DATA / "cache" / "market_screens_full.json"), help="for RSI14")
     ap.add_argument("--lots", default=str(DATA / "nse_lots.json"))
     ap.add_argument("--adds", default=str(DATA / "cc_adds.json"))
     ap.add_argument("--chains-dir", default=str(DATA / "cc_raw" / "chains"))
@@ -175,6 +177,10 @@ def main():
     st_by = {e["symbol"].replace(".NS", ""): e for e in st["entries"]}
     market_date = st.get("latest_market_date")
     today = date.fromisoformat(args.as_of or market_date or datetime.now(timezone.utc).date().isoformat())
+    rsi_by = {}
+    if Path(args.market_screens).exists():
+        ms = json.loads(Path(args.market_screens).read_text())
+        rsi_by = {r["symbol"].replace(".NS", ""): r["rsi14"] for r in ms.get("rsi_all", []) if r.get("rsi14") is not None}
     hold_rows = {h["symbol"]: h for h in json.loads(Path(args.holdings).read_text())["holdings"]}
     held = {k: v["qty"] for k, v in hold_rows.items()}
     lots = json.loads(Path(args.lots).read_text()).get("lots", {}) if Path(args.lots).exists() else {}
@@ -190,7 +196,7 @@ def main():
     future = sorted(e for e in expiries if date.fromisoformat(e) >= today)
     show_exp = future[:1] + (future[1:2] if today.day > rules["show_next_month_after_day"] else [])
 
-    stocks, alerts, averaging = [], [], []
+    stocks, alerts, shares_rows = [], [], []
     mult = rules["stop_premium_multiple"]
     for sym, u in uni.items():
         e = st_by.get(sym)
@@ -200,8 +206,13 @@ def main():
         spot, colour = e["close"], e["color"]
         shares = held.get(sym, 0)
         lot = lot_for(sym, show_exp[0] if show_exp else None, lots, uni)
-        flip_days = e.get("recent_bullish_flip_trading_days_ago") if colour == "green" else e.get("recent_flip_trading_days_ago")
-        flip_date = e.get("recent_bullish_flip_date") if colour == "green" else e.get("recent_flip_date")
+        # "last flip" = when the current colour began (the recent_flip_* fields are empty once the flip is older
+        # than the screener's lookback, which left red stocks blank)
+        flip_date = e.get("current_streak_start_date") or e.get("recent_flip_date")
+        flip_days = e.get("current_streak_trading_days")
+        if flip_days is None:
+            flip_days = e.get("recent_flip_trading_days_ago")
+        rsi = rsi_by.get(sym)
         my_legs = [l for l in legs if l["symbol"] == sym]
         for l in my_legs:
             if l["side"] == "SHORT":
@@ -228,8 +239,21 @@ def main():
         has_call = any(l["type"] == "CE" and l["side"] == "SHORT" for l in my_legs)
         tag = tags.get(sym)
         flipped = bool(tag and tag.get("entry_colour") and tag["entry_colour"] != colour)
-        desired = "PUT_SPREAD" if colour == "green" else "CALL"
+        if rsi is not None and rsi > rules["rsi_sell_call_above"]:
+            desired, basis = "CALL", f"RSI {rsi:.0f} > {rules['rsi_sell_call_above']:g}"
+        elif rsi is not None and rsi < rules["rsi_sell_put_below"]:
+            desired, basis = "PUT_SPREAD", f"RSI {rsi:.0f} < {rules['rsi_sell_put_below']:g}"
+        else:
+            desired, basis = ("PUT_SPREAD" if colour == "green" else "CALL"), f"Supertrend {colour}"
         have = has_put_spread() if desired == "PUT_SPREAD" else has_call
+        shorts = [l for l in my_legs if l["side"] == "SHORT"]
+
+        def nearest(kind):
+            c = [l for l in shorts if l["type"] == kind]
+            if not c:
+                return None
+            l = min(c, key=lambda x: abs(x["dist_pct"]))
+            return {"strike": l["strike"], "expiry": l["expiry"], "dist_pct": l["dist_pct"]}
         if flipped:
             status = "FLIP"
             note = (f"Supertrend turned {colour.upper()} since entry ({tag.get('entry_colour')}): close the "
@@ -237,18 +261,17 @@ def main():
                     f"{'short call' if colour == 'red' else 'bull put spread'}.")
             alerts.append({"level": "EXIT", "symbol": sym, "text": f"{sym}: {note}"})
         elif have:
-            status, note = "HOLD", "Open structure matches the Supertrend colour."
+            status, note = "HOLD", f"Open structure matches the rule ({basis})."
         else:
             status = "ENTER"
-            note = ("Supertrend green" if colour == "green" else "Supertrend red") + (
-                f" since {flip_date}" if flip_date else "") + " - no " + ("put spread" if desired == "PUT_SPREAD" else "short call") + " open"
+            note = f"{basis} - no " + ("put spread" if desired == "PUT_SPREAD" else "short call") + " open"
         suggestions = []
         if status in ("ENTER", "FLIP"):
             for ex in show_exp:
                 suggestions.append(suggest(desired, chains.get(sym, {}).get(ex), ex, today, rules, lot, spot))
             if status == "ENTER":
                 alerts.append({"level": "ENTER", "symbol": sym, "text": f"{sym}: {note} - {'bull put spread' if desired == 'PUT_SPREAD' else 'sell call'}"})
-        # averaging the shares themselves
+        # the shares themselves (Shares sub-tab)
         h = hold_rows.get(sym)
         if h and h.get("avg_cost"):
             pl_pct = (spot / h["avg_cost"] - 1) * 100
@@ -264,23 +287,28 @@ def main():
             else:
                 ast, anote = "ADD", ("no earlier add recorded" if since is None else f"last add {since}d ago")
             add_qty = max(1, round(h["qty"] * rules["averaging_fraction"]))
-            averaging.append({"symbol": sym, "spot": spot, "avg_cost": h["avg_cost"], "qty": h["qty"], "pl_pct": round(pl_pct, 2),
-                              "colour": colour, "last_add": la, "days_since_add": since, "add_qty": add_qty,
-                              "add_value_rs": round(add_qty * spot, 2), "status": ast, "note": anote})
-            if ast == "ADD":
-                alerts.append({"level": "ADD", "symbol": sym, "text": f"{sym}: Supertrend green, loss {pl_pct:.1f}% - average {add_qty} share(s) ({anote})"})
+            entry_sig = colour == "green" and flip_days is not None and flip_days <= rules["share_entry_window_trading_days"]
+            shares_rows.append({"symbol": sym, "spot": spot, "avg_cost": h["avg_cost"], "qty": h["qty"],
+                                "invested": round(h["qty"] * h["avg_cost"], 2), "value": round(h["qty"] * spot, 2),
+                                "pl_pct": round(pl_pct, 2), "pl_rs": round(h["qty"] * (spot - h["avg_cost"]), 2),
+                                "colour": colour, "flip_date": flip_date, "flip_trading_days": flip_days, "rsi": rsi,
+                                "entry_signal": entry_sig, "avg_status": ast, "add_qty": add_qty,
+                                "add_value_rs": round(add_qty * spot, 2), "last_add": la, "days_since_add": since,
+                                "avg_note": anote})
         stocks.append({
             "symbol": sym, "spot": spot, "colour": colour, "flip_date": flip_date, "flip_trading_days": flip_days,
-            "streak_trading_days": e.get("current_streak_trading_days"), "shares": shares, "lot": lot,
-            "covered": (shares >= lot) if lot else None, "desired": desired, "status": status, "note": note,
+            "rsi": rsi, "basis": basis, "near_call": nearest("CE"), "near_put": nearest("PE"),
+            "shares": shares, "lot": lot, "covered": (shares >= lot) if lot else None,
+            "desired": desired, "status": status, "note": note,
             "tagged": bool(tag), "suggestions": suggestions, "legs": my_legs,
         })
 
-    order = {"EXIT": 0, "WARN": 1, "ADD": 2, "ENTER": 3}
+    order = {"EXIT": 0, "WARN": 1, "ENTER": 2}
     alerts.sort(key=lambda a: order.get(a["level"], 9))
     result = {
         "generated_at": datetime.now(timezone.utc).isoformat(), "market_data_date": market_date, "as_of": today.isoformat(),
-        "rules": rules, "show_expiries": show_exp, "stocks": stocks, "alerts": alerts, "averaging": averaging,
+        "rules": rules, "show_expiries": show_exp, "stocks": stocks, "alerts": alerts,
+        "shares": {"rows": shares_rows, "exit_rule": None, "entry_window": rules["share_entry_window_trading_days"]},
         "lots_source": "nse_lots.json" if lots else "cc_config.json (fallback)",
         "positions_fetched": Path(args.positions).exists(), "legs_count": len(legs),
         "chains_loaded": {s: sorted(v) for s, v in chains.items()},
@@ -291,8 +319,9 @@ def main():
     }
     Path(args.out).write_text(json.dumps(result, indent=2, ensure_ascii=False))
     n = lambda s: sum(1 for x in stocks if x.get("status") == s)
-    n_add = sum(1 for a in averaging if a["status"] == "ADD")
-    print(f"averaging due: {n_add} | {len(stocks)} stocks | ENTER {n('ENTER')} HOLD {n('HOLD')} WAIT {n('WAIT')} FLIP {n('FLIP')} | legs {len(legs)} | alerts {len(alerts)}")
+    n_add = sum(1 for a in shares_rows if a["avg_status"] == "ADD")
+    n_ent = sum(1 for a in shares_rows if a["entry_signal"])
+    print(f"shares: averaging due {n_add}, entry signals {n_ent} | {len(stocks)} stocks | ENTER {n('ENTER')} HOLD {n('HOLD')} WAIT {n('WAIT')} FLIP {n('FLIP')} | legs {len(legs)} | alerts {len(alerts)}")
     for a in alerts:
         print(f"  {a['level']:5} {a['text']}")
     if result["chains_needed"]:

@@ -26,7 +26,7 @@ Run from the repo root of TradingJournal on branch `claude/beautiful-hamilton-fw
    - Open positions in scope == holdings qty/WAC for every dh252 symbol (the engine's 48-style count; any `exited_outside_tracking` list must be empty or explained).
    - Market data date and SMA as-of date are the latest trading day (not older than the previous session).
    - Counts: exits / add-ons / entries / closed trades / realised + unrealised P&L. Flag anything surprising (an add-on with P&L > -6%, an exit that isn't Supertrend red, etc. means a bug - investigate, don't publish).
-   - Covered Call: report alerts (EXIT / WARN / ADD / ENTER), that the options MTM ties to Dhan's "Unrealized P&L" in the positions output, and which stocks still have no chain or lot size. Deltas are Black-Scholes estimates from the chain's IV (no dividends) - say so.
+   - Covered Call: report the Options alerts (EXIT / WARN / ENTER) and the Shares tab signals (entry signals, averaging due), that the options MTM ties to Dhan's "Unrealized P&L" in the positions output, and which stocks still have no chain or lot size. Deltas are Black-Scholes estimates from the chain's IV (no dividends) - say so.
 7. **Commit + push only after the user says push.** Stage only `dhan-live/` files (never `.playwright-mcp/`). Message: `Dhan refresh <market date>`.
 
 ## Rules (do not change without the user)

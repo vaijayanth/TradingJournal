@@ -890,7 +890,7 @@ tbody tr:hover { filter: brightness(0.97); }
 .a2-grid { display: grid; gap: 13px; margin-top: 13px; }
 /* Covered Call page */
 .p2-scroll { overflow-x: auto; -webkit-overflow-scrolling: touch; }
-#cc-root > .d2-panel, #cc-root > .a2-grid { margin-top: 13px; }
+#cc-root .a2-view > .d2-panel, #cc-root .a2-view > .a2-grid { margin-top: 13px; }
 #cc-root .p2-table td:last-child, #cc-root .p2-table th:last-child { text-align: left; }
 #cc-root .p2-table td { vertical-align: top; white-space: nowrap; }
 .a2-g3 { grid-template-columns: 1.15fr 1fr 1fr; } .a2-g2 { grid-template-columns: 1fr 1fr; } .a2-g3e { grid-template-columns: repeat(3, 1fr); }
@@ -3430,12 +3430,16 @@ tbody tr:hover { filter: brightness(0.97); }
     <div>
       <div class="d2-eyebrow">Dhan workspace · investment portfolio options</div>
       <h1>Covered Call Hedging</h1>
-      <div class="d2-sub">Supertrend green: bull put spread · red: sell call · exits: 3× premium, strike touch, end-of-day colour flip · share averaging when green and down 6%+.</div>
+      <div class="d2-sub">Options: RSI &gt; 70 sell call, RSI &lt; 30 bull put spread, else Supertrend green = bull put spread, red = sell call. Shares: entries, exits and averaging for the investment portfolio.</div>
     </div>
     <div class="d2-filters">
       <span class="d2-chip d2-chip-soft" id="cc-asof">—</span>
       <button class="d2-chip d2-chip-btn" onclick="ccRefresh(true)">↻ Refresh</button>
     </div>
+  </div>
+  <div class="dhm-tabs" id="cc-tabs" role="tablist">
+    <button class="dhm-tab active" data-tab="options" onclick="ccTab('options')">Options</button>
+    <button class="dhm-tab" data-tab="shares" onclick="ccTab('shares')">Shares</button>
   </div>
   <div id="cc-root"><div class="a2-pending">Loading…</div></div>
 </div>
@@ -9340,49 +9344,61 @@ function ccSuggest(g, lot) {
   return t + `<br><span style="color:var(--text-muted)">${bits.join(' · ')}</span>`;
 }
 
-function ccRender(d) {
-  const root = document.getElementById('cc-root');
-  const asof = document.getElementById('cc-asof');
-  if (asof) asof.textContent = 'Market data ' + dhFmtDate(d.market_data_date);
+const CC_TABS = ['options', 'shares'], CC_TAB_KEY = 'tj_cc_tab';
+const CC_STABS = ['exit', 'entry', 'addon', 'pos'], CC_STAB_KEY = 'tj_cc_stab';
+function ccTab(name) {
+  if (!CC_TABS.includes(name)) name = 'options';
+  CC_TABS.forEach(t => {
+    const v = document.getElementById('cc-v-' + t); if (v) v.classList.toggle('active', t === name);
+    const b = document.querySelector('#cc-tabs .dhm-tab[data-tab="' + t + '"]'); if (b) b.classList.toggle('active', t === name);
+  });
+  try { localStorage.setItem(CC_TAB_KEY, name); } catch (e) {}
+}
+function ccSTab(name) {
+  if (!CC_STABS.includes(name)) name = 'entry';
+  CC_STABS.forEach(t => {
+    const v = document.getElementById('cc-sv-' + t); if (v) v.classList.toggle('active', t === name);
+    const b = document.querySelector('#cc-stabs .dhm-tab[data-tab="' + t + '"]'); if (b) b.classList.toggle('active', t === name);
+  });
+  try { localStorage.setItem(CC_STAB_KEY, name); } catch (e) {}
+}
+const ccSD = iso => { const m = /^\d{4}-(\d{2})-(\d{2})/.exec(iso || ''); return m ? m[2] + '-' + P2_MONTHS[+m[1] - 1] : '—'; };
+const ccSigned = v => v == null ? '—' : (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(2) + '%';
+const ccFlip = (date, days) => date ? `${dhFmtDate(date)}${days != null ? ' (' + days + 'd)' : ''}` : '—';
+const ccRsi = v => v == null ? '—' : `<span style="color:${v > 70 ? 'var(--amber)' : v < 30 ? 'var(--green)' : 'inherit'}">${v.toFixed(1)}</span>`;
+const ccNear = n => n ? `<span class="${Math.abs(n.dist_pct) < 5 ? 'neg' : ''}">${ccSigned(n.dist_pct)}</span> <span style="color:var(--text-muted)">${ccStrike(n.strike)} · ${ccSD(n.expiry)}</span>` : '<span style="color:var(--text-muted)">none</span>';
+const ccScroll = (heads, rows) => '<div class="p2-scroll">' + a2Table(heads, rows) + '</div>';
+
+function ccOptionsView(d) {
   const S = d.stocks || [];
   const legs = S.flatMap(s => (s.legs || []).map(l => ({ ...l, stock: s })));
   const mtm = legs.reduce((a, l) => a + (l.pnl_rs || 0), 0);
   const nExit = (d.alerts || []).filter(a => a.level === 'EXIT').length, nWarn = (d.alerts || []).filter(a => a.level === 'WARN').length;
   const nSig = S.filter(s => s.status === 'ENTER' || s.status === 'FLIP').length;
-  const nAvg = (d.averaging || []).filter(a => a.status === 'ADD').length;
+  const shorts = legs.filter(l => l.side === 'SHORT');
+  const nearest = shorts.slice().sort((a, b) => Math.abs(a.dist_pct) - Math.abs(b.dist_pct))[0];
   const kpis = a2Metrics([
     ['Option entry / flip signals', nSig, `New structures to open or flip · ${S.length} stocks tracked`],
-    ['Averaging due', nAvg, 'Green Supertrend, down 6%+, once a week', nAvg ? 'pos' : ''],
-    ['Open option legs', legs.length, `${legs.filter(l => l.side === 'SHORT').length} short · ${legs.filter(l => l.side === 'LONG').length} hedge`],
+    ['Open option legs', legs.length, `${shorts.length} short · ${legs.length - shorts.length} hedge`],
     ['Exit / warn alerts', `${nExit} / ${nWarn}`, '3× premium or colour flip / strike touch', nExit ? 'neg' : ''],
-    ['Options MTM', (mtm >= 0 ? '+' : '−') + dhFmtRs(Math.abs(mtm)).replace('₹', '₹'), 'Unrealised on the legs above', mtm >= 0 ? 'pos' : 'neg'],
+    ['Nearest short strike', nearest ? ccSigned(nearest.dist_pct) : '—', nearest ? `${nearest.symbol} ${ccStrike(nearest.strike)}${nearest.type} · ${ccSD(nearest.expiry)}` : 'No short legs', nearest && Math.abs(nearest.dist_pct) < 5 ? 'neg' : ''],
+    ['Options MTM', (mtm >= 0 ? '+' : '−') + dhFmtRs(Math.abs(mtm)), 'Unrealised on the legs below', mtm >= 0 ? 'pos' : 'neg'],
   ]);
 
-  const lvl = { EXIT: 'red', WARN: 'amber', ADD: 'green', ENTER: 'green' };
-  const alertsPanel = a2Panel('Alerts', 'Exits first, then warnings, share averaging, then new option entries',
-    (d.alerts || []).length ? a2Items(d.alerts.map(a => [lvl[a.level] || '', a.level, dhEsc(a.text)]))
-      : a2Pending('No alerts.', 'No stop, strike touch or new entry signal right now.'));
+  const alertRows = (d.alerts || []).map(a => `<tr><td>${ccPill(a.level)}</td><td><b>${dhEsc(a.symbol)}</b></td><td style="white-space:normal">${dhEsc(a.text.replace(a.symbol + ': ', ''))}</td></tr>`);
+  const alertsPanel = a2Panel('Alerts', 'Exits first, then warnings, then new option entries',
+    alertRows.length ? ccScroll(['Level', 'Stock', 'Alert'], alertRows) : a2Pending('No alerts.', 'No exit, strike touch or new option entry right now.'));
 
   const sigRows = S.map(s => {
-    if (s.status === 'NO_DATA') return `<tr><td>${dhEsc(s.symbol)}</td><td colspan="7" style="color:var(--text-muted)">${dhEsc(s.note)}</td></tr>`;
-    const cover = s.lot ? `${s.shares} sh / lot ${s.lot}${s.covered ? '' : ' <span style="color:var(--text-muted)" title="Shares held are fewer than one lot, so a short call is not fully covered by the stock">· &lt; 1 lot</span>'}`
-                        : `${s.shares} sh / <span class="neg">lot size not set</span>`;
-    const flip = s.flip_date ? `${dhFmtDate(s.flip_date)}${s.flip_trading_days != null ? ' (' + s.flip_trading_days + 'd)' : ''}` : '—';
+    if (s.status === 'NO_DATA') return `<tr><td>${dhEsc(s.symbol)}</td><td colspan="9" style="color:var(--text-muted)">${dhEsc(s.note)}</td></tr>`;
     const sug = (s.suggestions || []).length ? s.suggestions.map(g => ccSuggest(g, s.lot)).join('<br>') : `<span style="color:var(--text-muted)">${dhEsc(s.note)}</span>`;
-    return `<tr><td><b>${dhEsc(s.symbol)}</b></td><td>${ccP(s.spot)}</td><td>${dhTrendPill(s.colour)}</td><td>${flip}</td><td>${cover}</td><td>${ccPill(s.status)}</td><td>${s.desired === 'PUT_SPREAD' ? 'Put spread' : 'Short call'}</td><td style="white-space:normal;min-width:300px">${sug}</td></tr>`;
+    const struct = s.desired === 'PUT_SPREAD' ? 'Put spread' : 'Short call';
+    return `<tr><td><b>${dhEsc(s.symbol)}</b></td><td>${ccP(s.spot)}</td><td>${dhTrendPill(s.colour)}</td><td>${ccFlip(s.flip_date, s.flip_trading_days)}</td><td>${ccRsi(s.rsi)}</td>`
+      + `<td style="color:var(--text-muted)">${dhEsc(s.basis)}</td><td>${ccPill(s.status)}</td><td>${struct}</td>`
+      + `<td style="line-height:1.5">CE ${ccNear(s.near_call)}<br>PE ${ccNear(s.near_put)}</td><td style="white-space:normal;min-width:300px">${sug}</td></tr>`;
   });
-  const sigPanel = a2Panel('Signals', 'Desired structure from the Supertrend colour; strikes from the option chain (delta estimated from IV)',
-    '<div class="p2-scroll">' + a2Table(['Stock', 'Spot', 'Supertrend', 'Last flip', 'Shares / lot', 'Status', 'Structure', 'Suggested trade'], sigRows) + '</div>');
-
-  const avOrd = { ADD: 0, WAIT: 1, NO: 2 };
-  const avRows = (d.averaging || []).slice().sort((a, b) => avOrd[a.status] - avOrd[b.status] || a.pl_pct - b.pl_pct).map(a =>
-    `<tr><td><b>${dhEsc(a.symbol)}</b></td><td>${ccP(a.spot)}</td><td>${ccP(a.avg_cost)}</td><td class="${dhPnlCls(a.pl_pct)}">${dhFmtPct(a.pl_pct)}</td>`
-    + `<td>${dhTrendPill(a.colour)}</td><td>${a.last_add ? dhFmtDate(a.last_add) + ' (' + a.days_since_add + 'd)' : '<span style="color:var(--text-muted)">none recorded</span>'}</td>`
-    + `<td>${a.status === 'NO' ? '—' : a.add_qty + ' sh · ' + dhFmtRs(a.add_value_rs)}</td><td>${ccPill(a.status)}</td>`
-    + `<td style="color:var(--text-muted);white-space:normal">${dhEsc(a.note)}</td></tr>`);
-  const avgPanel = a2Panel('Share averaging', 'Buy 1/10 of the open quantity when Supertrend is green and the holding is down 6%+, at most once a week',
-    '<div class="p2-scroll">' + a2Table(['Stock', 'Spot', 'Avg cost', 'P&amp;L', 'Supertrend', 'Last add', 'Add', 'Status', 'Note'], avRows) + '</div>'
-    + '<div class="d2-edge-foot">“Last add” comes from data/cc_adds.json, which /refresh-dhan updates from the tradebook; an empty entry means no add has been recorded, not that none happened.</div>');
+  const sigPanel = a2Panel('Signals', 'RSI overrides the colour; strikes from the option chain (delta estimated from IV); the “from spot” column is the nearest active short strike',
+    ccScroll(['Stock', 'Spot', 'Supertrend', 'Last flip', 'RSI 14', 'Rule applied', 'Status', 'Structure', 'Active shorts vs spot', 'Suggested trade'], sigRows));
 
   const order = { EXIT: 0, WARN: 1, OK: 2, HEDGE: 3 };
   const legStatus = l => l.side === 'LONG' ? 'HEDGE' : l.stop_hit ? 'EXIT' : l.touched ? 'WARN' : 'OK';
@@ -9391,27 +9407,78 @@ function ccRender(d) {
     return `<tr><td><b>${dhEsc(l.symbol)}</b></td><td>${dhFmtDate(l.expiry)}</td><td>${l.side} ${ccStrike(l.strike)} ${l.type}</td>`
       + `<td>${l.qty}${l.lots ? ' (' + l.lots + ' lot)' : ''}</td><td>${ccP(l.side === 'SHORT' ? l.sell_avg : l.buy_avg)}</td><td>${ccP(l.ltp)}</td>`
       + `<td class="${dhPnlCls(l.pnl_rs)}">${(l.pnl_rs >= 0 ? '+' : '−') + dhFmtRs(Math.abs(l.pnl_rs))}</td>`
-      + `<td>${l.side === 'SHORT' ? ccP(l.stop_at) : '—'}</td><td>${l.side === 'SHORT' ? (l.dist_pct > 0 ? '+' : '') + l.dist_pct + '%' : '—'}</td><td>${ccPill(st)}</td></tr>`;
+      + `<td>${l.side === 'SHORT' ? ccP(l.stop_at) : '—'}</td><td>${ccSigned(l.dist_pct)}</td><td>${ccPill(st)}</td></tr>`;
   });
-  const legPanel = a2Panel('Open option positions', 'From Dhan positions; current price is derived from each leg’s unrealised P&L',
-    legs.length ? '<div class="p2-scroll">' + a2Table(['Stock', 'Expiry', 'Leg', 'Qty', 'Sold / bought @', 'LTP', 'P&amp;L', 'Exit at 3×', 'To strike', 'Status'], legRows) + '</div>'
+  const legPanel = a2Panel('Open option positions', 'From Dhan positions; current price is derived from each leg’s unrealised P&L; “% from spot” is the strike’s distance from the stock price',
+    legs.length ? ccScroll(['Stock', 'Expiry', 'Leg', 'Qty', 'Sold / bought @', 'LTP', 'P&amp;L', 'Exit at 3×', '% from spot', 'Status'], legRows)
       : a2Pending('No option positions.', 'Nothing returned by the Dhan positions call.'));
 
   const R = d.rules || {};
-  const rulesPanel = a2Panel('Strategy rules', 'Edit dhan-live/data/cc_config.json to change; shown here as applied',
+  const rulesPanel = a2Panel('Option rules', 'Edit dhan-live/data/cc_config.json to change; shown here as applied',
     a2Rows([
-      ['Supertrend green', `Bull put spread: sell ${R.short_put_delta} delta put, buy ${R.hedge_strikes_below} strikes lower (no flip-age limit for options)`],
-      ['Supertrend red', `Sell the ${R.short_call_delta} delta call only`],
+      ['RSI above ' + R.rsi_sell_call_above, `Sell the ${R.short_call_delta} delta call, whatever the Supertrend colour`],
+      ['RSI below ' + R.rsi_sell_put_below, `Bull put spread (sell ${R.short_put_delta} delta put, buy ${R.hedge_strikes_below} strikes lower), whatever the colour`],
+      ['Otherwise · green', `Bull put spread (no flip-age limit for options)`],
+      ['Otherwise · red', `Sell the ${R.short_call_delta} delta call only`],
       ['Expiry', `Current month; after the ${R.show_next_month_after_day}th the next month is shown too (now: ${(d.show_expiries || []).map(dhFmtDate).join(', ') || '—'})`],
       ['Size', '1 lot per signal; lot sizes from NSE’s official F&O lot file, per expiry month'],
-      ['Share averaging', `Supertrend green and loss ≥ ${Math.abs(R.averaging_loss_pct)}%: buy ${R.averaging_fraction * 100}% of the open quantity (min 1 share), once every ${R.averaging_cooldown_days} days`],
       ['Exit · premium', `Short option price ≥ ${R.stop_premium_multiple}× the premium sold`],
       ['Exit · strike', 'Stock price reaches the short strike (warning)'],
       ['Exit · colour', 'End-of-day Supertrend flip vs the colour at entry: close and open the opposite structure (only for stocks tagged in cc_tags.json)'],
-    ].map(([a, b]) => [a, b])));
+    ]));
   const other = (d.other_positions || []).length ? ` Other option positions not in this universe: ${d.other_positions.join(', ')}.` : '';
   const foot = `<div class="d2-edge-foot" style="border:0">Market data ${dhFmtDate(d.market_data_date)} · deltas are estimates (Black-Scholes from the chain’s IV, no dividends) · option chains loaded: ${Object.keys(d.chains_loaded || {}).join(', ') || 'none'}.${other}</div>`;
-  root.innerHTML = kpis + a2Grid('', alertsPanel) + sigPanel + avgPanel + legPanel + rulesPanel + foot;
+  return kpis + a2Grid('', alertsPanel) + sigPanel + legPanel + rulesPanel + foot;
+}
+
+function ccSharesView(d) {
+  const sh = d.shares || { rows: [] }, R = d.rules || {};
+  const rows = sh.rows || [];
+  const entry = rows.filter(r => r.entry_signal);
+  const addon = rows.filter(r => r.avg_status === 'ADD' || r.avg_status === 'WAIT').sort((a, b) => a.pl_pct - b.pl_pct);
+  const invested = rows.reduce((a, r) => a + r.invested, 0), value = rows.reduce((a, r) => a + r.value, 0), pl = value - invested;
+  const kpis = a2Metrics([
+    ['Holdings', rows.length, 'Investment-portfolio stocks'],
+    ['Invested', dhFmtRs(invested), `Market value ${dhFmtRs(value)}`],
+    ['Unrealised P&L', (pl >= 0 ? '+' : '−') + dhFmtRs(Math.abs(pl)), invested ? ccSigned(pl / invested * 100) + ' on cost' : '', pl >= 0 ? 'pos' : 'neg'],
+    ['Entry signals', entry.length, `Green flip within ${sh.entry_window || 7} trading days`, entry.length ? 'pos' : ''],
+    ['Averaging due', addon.filter(r => r.avg_status === 'ADD').length, 'Green, down 6%+, once a week', addon.some(r => r.avg_status === 'ADD') ? 'pos' : ''],
+  ]);
+  const tabs = [['exit', 'Exit Now', 0], ['entry', 'Entry Signals', entry.length], ['addon', 'Add-on Eligible', addon.length], ['pos', 'Open Positions', rows.length]];
+  const bar = '<div class="dhm-tabs" id="cc-stabs" role="tablist" style="margin-top:14px">' + tabs.map(([k, l, n]) =>
+    `<button class="dhm-tab" data-tab="${k}" onclick="ccSTab('${k}')">${l}<span class="dhm-count">${n}</span></button>`).join('') + '</div>';
+  const pnl = r => `<span class="${dhPnlCls(r.pl_pct)}">${ccSigned(r.pl_pct)}</span>`;
+
+  const exitP = a2Panel('Exit now', 'No exit rule is defined for these shares',
+    a2Pending('No share exit signal.', 'These shares are held and hedged with options, so no exit rule is applied. Say the word if you want one (for example Supertrend red) and it will show here.'));
+  const entryP = a2Panel('Entry signals', `Portfolio stocks whose Supertrend turned green within the last ${sh.entry_window || 7} trading days`,
+    entry.length ? ccScroll(['Stock', 'Spot', 'Supertrend', 'Flip', 'RSI 14', 'Held', 'Avg cost', 'P&amp;L'],
+      entry.sort((a, b) => a.flip_trading_days - b.flip_trading_days).map(r => `<tr><td><b>${dhEsc(r.symbol)}</b></td><td>${ccP(r.spot)}</td><td>${dhTrendPill(r.colour)}</td><td>${ccFlip(r.flip_date, r.flip_trading_days)}</td><td>${ccRsi(r.rsi)}</td><td>${r.qty}</td><td>${ccP(r.avg_cost)}</td><td>${pnl(r)}</td></tr>`))
+      : a2Pending('No entry signals.', 'No portfolio stock has a fresh green flip.'));
+  const addP = a2Panel('Add-on eligible', `Supertrend green and down ${Math.abs(R.averaging_loss_pct || 6)}%+: buy ${(R.averaging_fraction || 0.1) * 100}% of the open quantity, once every ${R.averaging_cooldown_days || 7} days`,
+    (addon.length ? ccScroll(['Stock', 'Spot', 'Avg cost', 'P&amp;L', 'Supertrend', 'Last add', 'Add', 'Status', 'Note'],
+      addon.map(r => `<tr><td><b>${dhEsc(r.symbol)}</b></td><td>${ccP(r.spot)}</td><td>${ccP(r.avg_cost)}</td><td>${pnl(r)}</td><td>${dhTrendPill(r.colour)}</td>`
+        + `<td>${r.last_add ? dhFmtDate(r.last_add) + ' (' + r.days_since_add + 'd)' : '<span style="color:var(--text-muted)">none recorded</span>'}</td><td>${r.add_qty} sh · ${dhFmtRs(r.add_value_rs)}</td><td>${ccPill(r.avg_status)}</td>`
+        + `<td style="color:var(--text-muted);white-space:normal">${dhEsc(r.avg_note)}</td></tr>`))
+      : a2Pending('Nothing to average.', 'No holding is both green and down enough.'))
+    + '<div class="d2-edge-foot">“Last add” comes from data/cc_adds.json, which /refresh-dhan updates from the tradebook; “none recorded” means no add has been recorded, not that none happened.</div>');
+  const sig = r => [r.avg_status === 'ADD' ? 'ADD' : null, r.entry_signal ? 'ENTRY' : null].filter(Boolean);
+  const posP = a2Panel('Open positions', 'The investment-portfolio holdings from Dhan',
+    ccScroll(['Stock', 'Qty', 'Avg cost', 'Spot', 'Value', 'P&amp;L ₹', 'P&amp;L', 'Supertrend', 'Flip', 'RSI 14', 'Signal'],
+      rows.slice().sort((a, b) => a.pl_pct - b.pl_pct).map(r => `<tr><td><b>${dhEsc(r.symbol)}</b></td><td>${r.qty}</td><td>${ccP(r.avg_cost)}</td><td>${ccP(r.spot)}</td><td>${dhFmtRs(r.value)}</td>`
+        + `<td class="${dhPnlCls(r.pl_rs)}">${(r.pl_rs >= 0 ? '+' : '−') + dhFmtRs(Math.abs(r.pl_rs))}</td><td>${pnl(r)}</td><td>${dhTrendPill(r.colour)}</td><td>${ccFlip(r.flip_date, r.flip_trading_days)}</td><td>${ccRsi(r.rsi)}</td>`
+        + `<td>${sig(r).map(ccPill).join(' ') || ccPill('HOLD')}</td></tr>`)));
+  return kpis + bar + `<div id="cc-sv-exit" class="a2-view">${exitP}</div><div id="cc-sv-entry" class="a2-view">${entryP}</div><div id="cc-sv-addon" class="a2-view">${addP}</div><div id="cc-sv-pos" class="a2-view">${posP}</div>`;
+}
+
+function ccRender(d) {
+  const asof = document.getElementById('cc-asof');
+  if (asof) asof.textContent = 'Market data ' + dhFmtDate(d.market_data_date);
+  document.getElementById('cc-root').innerHTML =
+    `<div id="cc-v-options" class="a2-view">${ccOptionsView(d)}</div><div id="cc-v-shares" class="a2-view">${ccSharesView(d)}</div>`;
+  let t = 'options', st = 'entry';
+  try { t = localStorage.getItem(CC_TAB_KEY) || t; st = localStorage.getItem(CC_STAB_KEY) || st; } catch (e) {}
+  ccTab(t); ccSTab(st);
 }
 
 // ── PERFORMANCE 2.0 (renders the active workspace's contract data) ───────────

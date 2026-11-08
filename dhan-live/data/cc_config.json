@@ -57,6 +57,9 @@
     "risk_free_rate": 0.065,
     "averaging_loss_pct": -6,
     "averaging_fraction": 0.1,
-    "averaging_cooldown_days": 7
+    "averaging_cooldown_days": 7,
+    "rsi_sell_call_above": 70,
+    "rsi_sell_put_below": 30,
+    "share_entry_window_trading_days": 7
   }
 }
