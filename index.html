@@ -259,14 +259,19 @@ details[open] > summary .toggle-hint::before { content: '▼ collapse'; }
 .alert-green {
   background: var(--green-soft); border-color: var(--green);
 }
+.alert-blue {
+  background: var(--accent-soft); border-color: var(--accent);
+}
 .alert-icon { font-size: 15px; flex-shrink: 0; }
 .alert-text { flex: 1; }
 .alert-title { font-size: 13px; font-weight: 700; }
 .alert-red .alert-title { color: var(--red); }
 .alert-amber .alert-title { color: var(--amber); }
 .alert-green .alert-title { color: var(--green); }
+.alert-blue .alert-title { color: var(--accent); }
 .alert-desc { font-size: 12px; color: var(--text-secondary); margin-top: 1px; }
 .alert-arrow { color: var(--text-muted); font-size: 12px; }
+.alert-num { font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
 /* ── ALERT GROUPS ── */
 .alert-group { border-radius: var(--radius-sm); overflow: hidden; margin-bottom: 6px; }
 .alert-group-header {
@@ -507,6 +512,12 @@ tbody tr:hover { filter: brightness(0.97); }
 .row-amber { background: var(--amber-soft) !important; }
 .row-green { background: var(--green-soft) !important; }
 .stock-name { font-weight: 700; font-size: 13.5px; }
+.dh-blotter th.num, .dh-blotter td.num { text-align: right; }
+.dh-blotter td { padding: 7px 12px; font-size: 12px; }
+.dh-blotter .trend-pill {
+  display: inline-block; font-size: 10.5px; font-weight: 700;
+  padding: 1px 6px; border-radius: 4px;
+}
 .pnl-pos { color: var(--green); font-weight: 600; font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
 .pnl-neg { color: var(--red); font-weight: 600; font-family: var(--font-mono); font-variant-numeric: tabular-nums; }
 .tag {
@@ -3015,8 +3026,8 @@ tbody tr:hover { filter: brightness(0.97); }
 
   <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px">
     <div>
-      <div style="font-size:15px; font-weight:700">Dhan Live — dh252 Strategy</div>
-      <div style="font-size:12px; color:var(--text-muted); margin-top:2px">Live Dhan holdings → compared against backtester's daily Supertrend/52-week-high signals. No Google Sheet in this chain.</div>
+      <div style="font-size:15px; font-weight:700">Dhan Live · dh252</div>
+      <div style="font-size:12px; color:var(--text-muted); margin-top:2px">Live Dhan positions vs. backtester's daily Supertrend/52-week-high signals · no Google Sheet</div>
     </div>
     <div style="display:flex;align-items:center;gap:10px">
       <div id="dh-live-asof" style="font-size:12px;color:var(--text-muted)">—</div>
@@ -3024,72 +3035,79 @@ tbody tr:hover { filter: brightness(0.97); }
     </div>
   </div>
 
-  <!-- Sizing / summary stats -->
-  <div class="card" style="margin-bottom:16px;padding:16px">
-    <div class="flex-row" style="gap:24px;flex-wrap:wrap">
-      <div><div style="font-size:11px;color:var(--text-muted)">dh252 positions</div><div style="font-size:18px;font-weight:700" id="dh-live-holdings-count">—</div></div>
-      <div><div style="font-size:11px;color:var(--text-muted)">Effective tier size</div><div style="font-size:18px;font-weight:700" id="dh-live-tier">—</div></div>
-      <div><div style="font-size:11px;color:var(--text-muted)">Combined P&amp;L</div><div style="font-size:18px;font-weight:700" id="dh-live-combined-pl">—</div></div>
-      <div><div style="font-size:11px;color:var(--text-muted)">Entry signals</div><div style="font-size:18px;font-weight:700" id="dh-live-entry-count">—</div></div>
-      <div><div style="font-size:11px;color:var(--text-muted)">Exit signals</div><div style="font-size:18px;font-weight:700;color:var(--red)" id="dh-live-exit-count">—</div></div>
-      <div><div style="font-size:11px;color:var(--text-muted)">Add-on signals</div><div style="font-size:18px;font-weight:700;color:var(--green)" id="dh-live-addon-count">—</div></div>
+  <!-- Summary stat strip -->
+  <div class="card" style="margin-bottom:20px;padding:16px">
+    <div style="display:grid;grid-template-columns:repeat(auto-fit,minmax(120px,1fr));gap:16px">
+      <div><div class="stat-label">Positions</div><div class="stat-value" id="dh-live-holdings-count" style="font-size:22px">—</div></div>
+      <div><div class="stat-label">Tier size</div><div class="stat-value" id="dh-live-tier" style="font-size:22px">—</div></div>
+      <div><div class="stat-label">Combined P&amp;L</div><div class="stat-value" id="dh-live-combined-pl" style="font-size:22px">—</div></div>
+      <div><div class="stat-label">Exit</div><div class="stat-value red" id="dh-live-exit-count" style="font-size:22px">—</div></div>
+      <div><div class="stat-label">Add-on</div><div class="stat-value green" id="dh-live-addon-count" style="font-size:22px">—</div></div>
+      <div><div class="stat-label">Entry</div><div class="stat-value" id="dh-live-entry-count" style="font-size:22px">—</div></div>
     </div>
   </div>
 
   <!-- Exit now -->
-  <div class="card" style="margin-bottom:16px;padding:16px">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
-      <div style="font-size:13px;font-weight:700;color:var(--red)">🔴 Exit now</div>
-      <div style="font-size:11.5px;color:var(--text-muted)" id="dh-live-exit-text">—</div>
-    </div>
-    <div class="table-wrap">
-      <table id="dh-live-exit-table">
-        <thead><tr><th>Entry Date</th><th>Stock</th><th>Qty</th><th>WAC ₹</th><th>CMP ₹</th><th>Supertrend</th><th>Flip</th><th>Away from 52WH</th><th>Notional P&amp;L ₹</th><th>P&amp;L%</th><th>Adds</th><th>Age</th></tr></thead>
+  <div class="section-title" style="display:flex;justify-content:space-between;align-items:center">
+    <span>Exit now</span><span id="dh-live-exit-text" style="text-transform:none;letter-spacing:normal;font-weight:500">—</span>
+  </div>
+  <div class="card" style="padding:0;margin-bottom:20px">
+    <div class="table-wrap" style="border:none;border-radius:var(--radius)">
+      <table id="dh-live-exit-table" class="dh-blotter">
+        <thead><tr>
+          <th>Entry</th><th>Stock</th><th class="num">Qty</th><th class="num">WAC</th><th class="num">CMP</th>
+          <th>Trend</th><th>Flip</th><th class="num">vs 52WH</th><th class="num">P&amp;L ₹</th><th class="num">P&amp;L%</th>
+          <th class="num">Adds</th><th class="num">Age</th>
+        </tr></thead>
         <tbody id="dh-live-exit-tbody"></tbody>
       </table>
     </div>
-    <div style="font-size:11px;color:var(--text-muted);margin-top:10px">Supertrend turned red → exit the entire position, regardless of P&amp;L. No profit condition.</div>
-  </div>
-
-  <!-- Entry signal -->
-  <div class="card" style="margin-bottom:16px;padding:16px">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
-      <div style="font-size:13px;font-weight:700">Entry signal · 52-week high breakout</div>
-      <div style="font-size:11.5px;color:var(--text-muted)" id="dh-live-entry-text">—</div>
-    </div>
-    <div class="table-wrap">
-      <table id="dh-live-entry-table">
-        <thead><tr><th>Stock</th><th>Close ₹</th><th>52W High ₹</th><th>Qty to buy</th><th>Supertrend</th></tr></thead>
-        <tbody id="dh-live-entry-tbody"></tbody>
-      </table>
-    </div>
-    <div style="font-size:11px;color:var(--text-muted);margin-top:10px">Close at/above the trailing 52-week high AND Supertrend green, universe-wide, excludes symbols you already hold.</div>
   </div>
 
   <!-- Add-on eligible -->
-  <div class="card" style="margin-bottom:16px;padding:16px">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
-      <div style="font-size:13px;font-weight:700;color:var(--green)">🟢 Add-on eligible</div>
-      <div style="font-size:11.5px;color:var(--text-muted)" id="dh-live-addon-text">—</div>
-    </div>
-    <div class="table-wrap">
-      <table id="dh-live-addon-table">
-        <thead><tr><th>Stock</th><th>Qty</th><th>WAC ₹</th><th>CMP ₹</th><th>P&amp;L%</th><th>Add Qty</th><th>Days since buy</th><th>Supertrend</th><th>Flip</th><th>RSI14</th></tr></thead>
+  <div class="section-title" style="display:flex;justify-content:space-between;align-items:center">
+    <span>Add-on eligible</span><span id="dh-live-addon-text" style="text-transform:none;letter-spacing:normal;font-weight:500">—</span>
+  </div>
+  <div class="card" style="padding:0;margin-bottom:20px">
+    <div class="table-wrap" style="border:none;border-radius:var(--radius)">
+      <table id="dh-live-addon-table" class="dh-blotter">
+        <thead><tr>
+          <th>Stock</th><th class="num">Qty</th><th class="num">WAC</th><th class="num">CMP</th><th class="num">P&amp;L%</th>
+          <th class="num">Add qty</th><th class="num">Days since buy</th><th>Trend</th><th>Flip</th><th class="num">RSI14</th>
+        </tr></thead>
         <tbody id="dh-live-addon-tbody"></tbody>
       </table>
     </div>
-    <div style="font-size:11px;color:var(--text-muted);margin-top:10px">P&amp;L ≤ −6% AND Supertrend still green AND ≥7 days since last buy (pre-existing positions default to cooldown-satisfied on day 1 — no retroactive fill history exists via Dhan's API).</div>
   </div>
 
-  <!-- Open positions (all holdings, signal-tagged) -->
-  <div class="card" style="padding:16px">
-    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
-      <div style="font-size:13px;font-weight:700">Open Positions</div>
-      <div style="font-size:11.5px;color:var(--text-muted)" id="dh-live-pos-text">—</div>
+  <!-- Entry signal -->
+  <div class="section-title" style="display:flex;justify-content:space-between;align-items:center">
+    <span>Entry signal · 52-week high in last 5 sessions + Supertrend green</span><span id="dh-live-entry-text" style="text-transform:none;letter-spacing:normal;font-weight:500">—</span>
+  </div>
+  <div class="card" style="padding:0;margin-bottom:20px">
+    <div class="table-wrap" style="border:none;border-radius:var(--radius)">
+      <table id="dh-live-entry-table" class="dh-blotter">
+        <thead><tr>
+          <th>Stock</th><th class="num">Close</th><th class="num">52WH</th><th class="num">52WH hit</th>
+          <th>Trend</th><th class="num">Qty to buy</th>
+        </tr></thead>
+        <tbody id="dh-live-entry-tbody"></tbody>
+      </table>
     </div>
-    <div class="table-wrap">
-      <table id="dh-live-pos-table">
-        <thead><tr><th>Entry Date</th><th>Stock</th><th>Qty</th><th>WAC ₹</th><th>CMP ₹</th><th>Supertrend</th><th>Flip</th><th>Away from 52WH</th><th>Notional P&amp;L ₹</th><th>P&amp;L%</th><th>Adds</th><th>Age</th><th>Signal</th></tr></thead>
+  </div>
+
+  <!-- Open positions blotter -->
+  <div class="section-title" style="display:flex;justify-content:space-between;align-items:center">
+    <span>Open positions</span><span id="dh-live-pos-text" style="text-transform:none;letter-spacing:normal;font-weight:500">—</span>
+  </div>
+  <div class="card" style="padding:0">
+    <div class="table-wrap" style="border:none;border-radius:var(--radius)">
+      <table id="dh-live-pos-table" class="dh-blotter">
+        <thead><tr>
+          <th>Entry</th><th>Stock</th><th class="num">Qty</th><th class="num">WAC</th><th class="num">CMP</th>
+          <th>Trend</th><th>Flip</th><th class="num">vs 52WH</th><th class="num">P&amp;L ₹</th><th class="num">P&amp;L%</th>
+          <th class="num">Adds</th><th class="num">Age</th><th>Signal</th>
+        </tr></thead>
         <tbody id="dh-live-pos-tbody"></tbody>
       </table>
     </div>
@@ -8208,7 +8226,10 @@ function dhLiveRender(data) {
   const asofEl = document.getElementById('dh-live-asof');
   if (asofEl) {
     const d = new Date(data.generated_at);
-    asofEl.textContent = 'Data as of ' + (isNaN(d) ? data.generated_at : d.toLocaleString('en-IN'));
+    const ran = isNaN(d) ? data.generated_at : d.toLocaleString('en-IN');
+    asofEl.textContent = data.market_data_date
+      ? 'Market data: ' + data.market_data_date + ' close · computed ' + ran
+      : 'Computed ' + ran + ' (market data date unknown)';
   }
 
   document.getElementById('dh-live-holdings-count').textContent = data.dh252_position_count ?? '—';
@@ -8217,70 +8238,82 @@ function dhLiveRender(data) {
   if (combinedEl) {
     const pl = data.sizing && data.sizing.combined_pl_rs;
     combinedEl.textContent = dhFmtRs(pl);
-    combinedEl.style.color = pl == null ? '' : pl >= 0 ? 'var(--green)' : 'var(--red)';
+    combinedEl.className = 'stat-value' + (pl == null ? '' : pl >= 0 ? ' green' : ' red');
+    combinedEl.style.fontSize = '22px';
   }
   document.getElementById('dh-live-entry-count').textContent = (data.entries || []).length;
   document.getElementById('dh-live-exit-count').textContent = (data.exits || []).length;
   document.getElementById('dh-live-addon-count').textContent = (data.addons || []).length;
 
   const dhFmtAge = v => v == null ? '—' : v + 'd';
-  const dhFmtAway = v => v == null ? '—' : `<span style="color:${v >= 0 ? 'var(--green)' : 'var(--red)'}">${dhFmtPct(v)}</span>`;
+  const dhPnlCls = v => v == null ? '' : v >= 0 ? 'pnl-pos' : 'pnl-neg';
+  const dhFmtAway = v => v == null ? '—' : `<span class="${dhPnlCls(v)}">${dhFmtPct(v)}</span>`;
+  const dhTrendPill = color => {
+    const c = (color || '').toLowerCase();
+    if (!c) return '<span style="color:var(--text-muted)">—</span>';
+    return `<span class="trend-pill" style="background:${c === 'green' ? 'var(--green-soft)' : 'var(--red-soft)'};color:${c === 'green' ? 'var(--green)' : 'var(--red)'}">${c.toUpperCase()}</span>`;
+  };
   const dhFmtFlip = label => label == null ? '<span style="color:var(--text-muted)">—</span>'
     : `<span style="color:${label.includes('GREEN') ? 'var(--green)' : 'var(--red)'}">${label}</span>`;
 
-  // Exit now
+  // Exit now — blotter table, worst notional P&L first
   const exits = data.exits || [];
   document.getElementById('dh-live-exit-text').textContent = exits.length + ' signal' + (exits.length === 1 ? '' : 's');
   document.getElementById('dh-live-exit-tbody').innerHTML = exits.length
-    ? exits.map(r => `<tr>
-        <td>${r.entry_date}</td><td>${r.symbol}</td><td>${r.qty}</td><td>${dhFmtRs(r.avg_cost)}</td><td>${dhFmtRs(r.cmp)}</td>
-        <td style="color:var(--red);font-weight:700">RED</td><td>${dhFmtFlip(r.flip_label)}</td>
-        <td>${dhFmtAway(r.pct_from_52w_high)}</td>
-        <td style="color:${r.notional_pl_rs >= 0 ? 'var(--green)' : 'var(--red)'}">${dhFmtRs(r.notional_pl_rs)}</td>
-        <td style="color:${r.pl_pct >= 0 ? 'var(--green)' : 'var(--red)'};font-weight:700">${dhFmtPct(r.pl_pct)}</td>
-        <td>${r.num_adds}</td><td>${dhFmtAge(r.age_days)}</td>
+    ? exits.slice().sort((a, b) => a.notional_pl_rs - b.notional_pl_rs).map(r => `<tr class="row-red">
+        <td>${r.entry_date.slice(5)}</td><td class="stock-name">${r.symbol}</td><td class="num">${r.qty}</td>
+        <td class="num">${dhFmtRs(r.avg_cost)}</td><td class="num">${dhFmtRs(r.cmp)}</td>
+        <td>${dhTrendPill(r.supertrend_color)}</td><td>${dhFmtFlip(r.flip_label)}</td>
+        <td class="num">${dhFmtAway(r.pct_from_52w_high)}</td>
+        <td class="num ${dhPnlCls(r.notional_pl_rs)}">${dhFmtRs(r.notional_pl_rs)}</td>
+        <td class="num ${dhPnlCls(r.pl_pct)}">${dhFmtPct(r.pl_pct)}</td>
+        <td class="num">${r.num_adds}</td><td class="num">${dhFmtAge(r.age_days)}</td>
       </tr>`).join('')
     : '<tr><td colspan="12" style="color:var(--text-muted)">No exit signals right now.</td></tr>';
 
-  // Entry signal
-  const entries = data.entries || [];
-  document.getElementById('dh-live-entry-text').textContent = entries.length + ' signal' + (entries.length === 1 ? '' : 's');
-  document.getElementById('dh-live-entry-tbody').innerHTML = entries.length
-    ? entries.map(r => `<tr>
-        <td>${r.symbol}</td><td>${dhFmtRs(r.close)}</td><td>${dhFmtRs(r.high_52w)}</td><td>${r.qty_to_buy}</td>
-        <td style="color:var(--green);font-weight:700">${(r.supertrend_color || '—').toUpperCase()}</td>
-      </tr>`).join('')
-    : '<tr><td colspan="5" style="color:var(--text-muted)">No fresh 52-week-high breakouts today.</td></tr>';
-
-  // Add-on eligible
+  // Add-on eligible — blotter table, worst P&L first
   const addons = data.addons || [];
   document.getElementById('dh-live-addon-text').textContent = addons.length + ' signal' + (addons.length === 1 ? '' : 's');
   document.getElementById('dh-live-addon-tbody').innerHTML = addons.length
-    ? addons.map(r => `<tr>
-        <td>${r.symbol}</td><td>${r.qty}</td><td>${dhFmtRs(r.avg_cost)}</td><td>${dhFmtRs(r.cmp)}</td>
-        <td style="color:var(--red);font-weight:700">${dhFmtPct(r.pl_pct)}</td><td>${r.add_qty}</td>
-        <td>${r.cooldown_days_since_last_buy}d</td>
-        <td style="color:var(--green);font-weight:700">GREEN</td><td>${dhFmtFlip(r.flip_label)}</td>
-        <td>${r.rsi14 != null ? r.rsi14.toFixed(1) : '—'}</td>
+    ? addons.slice().sort((a, b) => a.pl_pct - b.pl_pct).map(r => `<tr class="row-green">
+        <td class="stock-name">${r.symbol}</td><td class="num">${r.qty}</td><td class="num">${dhFmtRs(r.avg_cost)}</td>
+        <td class="num">${dhFmtRs(r.cmp)}</td><td class="num ${dhPnlCls(r.pl_pct)}">${dhFmtPct(r.pl_pct)}</td>
+        <td class="num">${r.add_qty}</td><td class="num">${r.cooldown_days_since_last_buy}d</td>
+        <td>${dhTrendPill(r.supertrend_color)}</td><td>${dhFmtFlip(r.flip_label)}</td>
+        <td class="num">${r.rsi14 != null ? r.rsi14.toFixed(1) : '—'}</td>
       </tr>`).join('')
     : '<tr><td colspan="10" style="color:var(--text-muted)">No add-on signals right now.</td></tr>';
 
-  // Open positions — every dh252 position in scope, signal-tagged
+  // Entry signal — universe-wide, not a position yet, most recent 52WH hit first
+  const entries = data.entries || [];
+  document.getElementById('dh-live-entry-text').textContent = entries.length + ' signal' + (entries.length === 1 ? '' : 's');
+  document.getElementById('dh-live-entry-tbody').innerHTML = entries.length
+    ? entries.slice().sort((a, b) => a.recent_52w_high_days_ago - b.recent_52w_high_days_ago || b.pct_from_high - a.pct_from_high).map(r => {
+        const hitLabel = r.recent_52w_high_days_ago === 0 ? 'today' : `${r.recent_52w_high_days_ago}d ago (${r.recent_52w_high_date.slice(5)})`;
+        return `<tr>
+          <td class="stock-name">${r.symbol}</td><td class="num">${dhFmtRs(r.close)}</td><td class="num">${dhFmtRs(r.high_52w)}</td>
+          <td class="num">${hitLabel}</td><td>${dhTrendPill(r.supertrend_color)}</td><td class="num">${r.qty_to_buy}</td>
+        </tr>`;
+      }).join('')
+    : '<tr><td colspan="6" style="color:var(--text-muted)">No fresh 52-week-high breakouts in the last 5 sessions.</td></tr>';
+
+  // Open positions — every dh252 position in scope, dense blotter, worst P&L first
   const tagged = [
-    ...exits.map(r => ({ ...r, signal: 'EXIT', signalColor: 'var(--red)' })),
-    ...addons.map(r => ({ ...r, signal: 'ADD-ON', signalColor: 'var(--green)' })),
-    ...(data.holds || []).map(r => ({ ...r, signal: 'HOLD', signalColor: '' })),
+    ...exits.map(r => ({ ...r, signal: 'EXIT', rowCls: 'row-red' })),
+    ...addons.map(r => ({ ...r, signal: 'ADD-ON', rowCls: 'row-green' })),
+    ...(data.holds || []).map(r => ({ ...r, signal: 'HOLD', rowCls: '' })),
   ].sort((a, b) => a.pl_pct - b.pl_pct);
   document.getElementById('dh-live-pos-text').textContent = tagged.length + ' position' + (tagged.length === 1 ? '' : 's');
   document.getElementById('dh-live-pos-tbody').innerHTML = tagged.length
-    ? tagged.map(r => `<tr>
-        <td>${r.entry_date}</td><td>${r.symbol}</td><td>${r.qty}</td><td>${dhFmtRs(r.avg_cost)}</td><td>${dhFmtRs(r.cmp)}</td>
-        <td style="color:${r.supertrend_color === 'green' ? 'var(--green)' : 'var(--red)'};font-weight:700">${(r.supertrend_color || '—').toUpperCase()}</td>
-        <td>${dhFmtFlip(r.flip_label)}</td><td>${dhFmtAway(r.pct_from_52w_high)}</td>
-        <td style="color:${r.notional_pl_rs >= 0 ? 'var(--green)' : 'var(--red)'}">${dhFmtRs(r.notional_pl_rs)}</td>
-        <td style="color:${r.pl_pct >= 0 ? 'var(--green)' : 'var(--red)'}">${dhFmtPct(r.pl_pct)}</td>
-        <td>${r.num_adds}</td><td>${dhFmtAge(r.age_days)}</td>
-        <td style="color:${r.signalColor};font-weight:700">${r.signal}</td>
+    ? tagged.map(r => `<tr class="${r.rowCls}">
+        <td>${r.entry_date.slice(5)}</td><td class="stock-name">${r.symbol}</td><td class="num">${r.qty}</td>
+        <td class="num">${dhFmtRs(r.avg_cost)}</td><td class="num">${dhFmtRs(r.cmp)}</td>
+        <td>${dhTrendPill(r.supertrend_color)}</td>
+        <td>${dhFmtFlip(r.flip_label)}</td><td class="num">${dhFmtAway(r.pct_from_52w_high)}</td>
+        <td class="num ${dhPnlCls(r.notional_pl_rs)}">${dhFmtRs(r.notional_pl_rs)}</td>
+        <td class="num ${dhPnlCls(r.pl_pct)}">${dhFmtPct(r.pl_pct)}</td>
+        <td class="num">${r.num_adds}</td><td class="num">${dhFmtAge(r.age_days)}</td>
+        <td><span class="trend-pill" style="background:${r.signal === 'EXIT' ? 'var(--red-soft)' : r.signal === 'ADD-ON' ? 'var(--green-soft)' : 'var(--surface2)'};color:${r.signal === 'EXIT' ? 'var(--red)' : r.signal === 'ADD-ON' ? 'var(--green)' : 'var(--text-muted)'}">${r.signal}</span></td>
       </tr>`).join('')
     : '<tr><td colspan="13" style="color:var(--text-muted)">No position data.</td></tr>';
 }

@@ -216,6 +216,10 @@ def build_signals(holdings, week52, stmap, rsimap, entry_signals, trade_log, tod
 
     return {
         "generated_at": datetime.now(timezone.utc).isoformat(),
+        # Date of the market data these signals are based on (backtester's
+        # latest_market_date) - generated_at alone only says when this script ran.
+        "market_data_date": entry_signals.get("latest_market_date"),
+        "source_generated_at": entry_signals.get("source_generated_at"),
         "sizing": {
             "closed_trades_count": closed_trades_count,
             "base_tier_rs": base_tier,
