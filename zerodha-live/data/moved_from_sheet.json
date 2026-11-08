@@ -1,0 +1,29 @@
+{
+ "_note": "The positions the NEW Zerodha dashboard starts with: Supertrend green and in profit under 7% in the old sheet on the move date, moved by the user (who deletes them from the sheet). The new dashboard shows ONLY these plus positions it opens itself later (zerodha_trades.json entry_dates); every other Zerodha holding is ignored. Closed trades in the sheet are NOT brought over.",
+ "moved_at": "2026-11-09",
+ "symbols": [
+  "ANANDRATHI",
+  "ANGELONE",
+  "APLAPOLLO",
+  "ASHOKLEY",
+  "AXISBANK",
+  "BHARTIARTL",
+  "GAIL",
+  "HCLTECH",
+  "INDIANB",
+  "JINDALSTEL",
+  "JSWSTEEL",
+  "LT",
+  "MAHABANK",
+  "MARICO",
+  "MPHASIS",
+  "NYKAA",
+  "PERSISTENT",
+  "TVSMOTOR",
+  "UNIONBANK"
+ ],
+ "include_baseline_closed": false,
+ "kept_on_sheet": {
+  "CANBK": "6,750 shares held in Zerodha, not part of the new dashboard. The user adds it to the old sheet dashboard and keeps it there until they exit (2026-11-09). It is ignored here but still blocks a new CANBK entry while held."
+ }
+}

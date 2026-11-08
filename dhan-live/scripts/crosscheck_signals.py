@@ -13,7 +13,9 @@ default and to backtester/scripts/indicators.py - on 5 years of UNADJUSTED daily
 default also does not adjust for dividends). The intraday 52-week high is reported for reference only.
 
 Output: data/signal_crosscheck.json (read by build_order_ticket.py, which blocks flagged signals).
-Usage:  python dhan-live/scripts/crosscheck_signals.py [--signals PATH] [--out PATH]
+Usage:  python dhan-live/scripts/crosscheck_signals.py [--signals PATH] [--out PATH] [--mode dh252|flip]
+  --mode flip (Zerodha, Nifty F&O): an entry needs Supertrend GREEN and a red->green flip within the last 6 trading bars
+  (recomputed from Yahoo); the 252-session closing-high test is not applied. Add-ons and exits are checked as above.
 """
 import argparse
 import json
@@ -51,6 +53,7 @@ def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--signals", default=str(ROOT / "dhan_live_signals.json"))
     ap.add_argument("--out", default=str(ROOT / "data" / "signal_crosscheck.json"))
+    ap.add_argument("--mode", choices=["dh252", "flip"], default="dh252")
     args = ap.parse_args()
 
     import yfinance as yf
@@ -77,7 +80,13 @@ def main():
         if len(x) < WINDOW:
             res["note"] = f"recent listing: only {len(x)} sessions of history (closing high taken over those)"
         h, l, c = x["High"].tolist(), x["Low"].tolist(), x["Close"].tolist()
-        colour = "green" if supertrend(h, l, c)[-1] == "up" else "red"
+        dirs = supertrend(h, l, c)
+        colour = "green" if dirs[-1] == "up" else "red"
+        flip_bars = None                       # bars since the last red -> green flip (0 = flipped on the last bar)
+        for k in range(len(dirs) - 1, 0, -1):
+            if dirs[k] == "up" and dirs[k - 1] == "down":
+                flip_bars = len(dirs) - 1 - k
+                break
         win = x.tail(WINDOW)
         close = c[-1]
         hi_close, hi_intra = float(win["Close"].max()), float(win["High"].max())
@@ -88,7 +97,7 @@ def main():
         res.update({
             "published_colour": published, "recomputed_colour": colour, "yahoo_last_bar": last_bar,
             "close": round(close, 2), "published_close": pub_close, "closing_high_252": round(hi_close, 2),
-            "intraday_high_252": round(hi_intra, 2), "pct_from_intraday_high": round((close / hi_intra - 1) * 100, 2),
+            "intraday_high_252": round(hi_intra, 2), "flip_bars_ago": flip_bars, "pct_from_intraday_high": round((close / hi_intra - 1) * 100, 2),
         })
         if last_bar != md:
             res["reasons"].append(f"Yahoo's last bar is {last_bar}, signals are dated {md}")
@@ -98,8 +107,10 @@ def main():
             res["reasons"].append(f"Supertrend is {colour.upper()} on complete data (signal says {published})")
         if kind == "exit" and colour != "red":
             res["reasons"].append(f"Supertrend is {colour.upper()} on complete data (signal says {published}) - not an exit")
-        if kind == "entry" and round(close, 2) < round(hi_close, 2):
+        if kind == "entry" and args.mode == "dh252" and round(close, 2) < round(hi_close, 2):
             res["reasons"].append(f"close {close:.2f} is below the 252-session closing high {hi_close:.2f}")
+        if kind == "entry" and args.mode == "flip" and (flip_bars is None or flip_bars > 6):
+            res["reasons"].append(f"no red-to-green Supertrend flip in the last 6 trading bars on complete data (last flip {flip_bars} bars ago)")
         res["ok"] = not res["reasons"]
         results.append(res)
 
