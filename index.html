@@ -785,19 +785,19 @@ tbody tr:hover { filter: brightness(0.97); }
   font-family: var(--font-mono);
 }
 /* ── DHAN LIVE — strategy monitor layout ── */
-.dhm-banner { display:flex; align-items:center; gap:0; padding:16px 18px; margin-bottom:12px; flex-wrap:wrap; row-gap:14px; }
+.dhm-banner { display:flex; align-items:center; gap:0; padding:16px 18px; margin-bottom:18px; flex-wrap:wrap; row-gap:14px; }
 .dhm-banner-title { padding-right:20px; margin-right:6px; border-right:1px solid var(--border); min-width:150px; }
-.dhm-banner-title b { display:block; font-size:13.5px; }
-.dhm-banner-title span { font-size:11px; color:var(--text-muted); }
+.dhm-banner-title { display:flex; align-items:center; gap:11px; }
+.dhm-logo { width:34px; height:34px; flex:none; }
+.dhm-logo-text b { display:block; font-family:var(--font-mono); font-size:17px; font-weight:700; letter-spacing:-0.03em; line-height:1.1; }
+.dhm-logo-text b em { font-style:normal; color:var(--accent); }
+.dhm-logo-text span { font-size:10.5px; color:var(--text-muted); letter-spacing:.02em; }
+.dhm-kpi-val.sm { font-family:var(--font-ui); font-size:13.5px; font-weight:600; letter-spacing:0; padding-top:7px; white-space:nowrap; }
 .dhm-kpi { padding:0 20px; border-right:1px solid var(--border); }
 .dhm-kpi:last-child { border-right:none; }
 .dhm-kpi-label { font-size:10px; font-weight:600; letter-spacing:.09em; text-transform:uppercase; color:var(--text-muted); margin-bottom:3px; }
 .dhm-kpi-val { font-family:var(--font-mono); font-variant-numeric:tabular-nums; letter-spacing:-0.02em; font-size:23px; font-weight:600; line-height:1.15; }
 .dhm-kpi-val.red { color:var(--red); } .dhm-kpi-val.green { color:var(--green); } .dhm-kpi-val.accent { color:var(--accent); }
-.dhm-tiles { display:grid; grid-template-columns:repeat(4,minmax(140px,1fr)); gap:10px; margin-bottom:18px; }
-.dhm-tile { background:var(--surface); border:1px solid var(--border); border-radius:8px; padding:10px 14px; }
-.dhm-tile-label { font-size:10px; font-weight:600; letter-spacing:.09em; text-transform:uppercase; color:var(--text-muted); margin-bottom:4px; }
-.dhm-tile-val { font-size:13.5px; font-weight:600; }
 .dhm-tabs { display:flex; gap:6px; border-bottom:1px solid var(--border); padding-bottom:12px; margin-bottom:16px; overflow-x:auto; }
 .dhm-tab { background:transparent; border:1px solid transparent; color:var(--text-secondary, var(--text-muted)); font:inherit; font-size:13px; padding:7px 14px; border-radius:6px; cursor:pointer; white-space:nowrap; }
 .dhm-tab:hover { background:var(--surface2); }
@@ -820,10 +820,9 @@ tbody tr:hover { filter: brightness(0.97); }
 .dhm-status::before { content:''; width:6px; height:6px; border-radius:50%; background:currentColor; }
 .dhm-status.ok { background:var(--green-soft); color:var(--green); } .dhm-status.stale { background:var(--amber-soft); color:var(--amber); }
 @media (max-width: 640px) {
-  .dhm-tiles { grid-template-columns:repeat(2,1fr); }
-  .dhm-banner { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px 10px; }
+    .dhm-banner { display:grid; grid-template-columns:1fr 1fr 1fr; gap:14px 10px; }
   .dhm-banner-title { grid-column:1 / -1; border-right:none; padding-right:0; margin-right:0; }
-  .dhm-kpi { padding:0; border-right:none; } .dhm-kpi-val { font-size:20px; }
+  .dhm-kpi { padding:0; border-right:none; } .dhm-kpi-val { font-size:20px; } .dhm-kpi-val.sm { font-size:12.5px; white-space:normal; padding-top:4px; }
   .dhm-controls input { min-width:0; flex:1; }
 }
 </style>
@@ -3080,20 +3079,23 @@ tbody tr:hover { filter: brightness(0.97); }
 
   <!-- KPI banner -->
   <div class="card dhm-banner">
-    <div class="dhm-banner-title"><b>dh252 Signals</b><span>Actions requiring attention</span></div>
+    <div class="dhm-banner-title">
+      <svg class="dhm-logo" viewBox="0 0 32 32" fill="none" aria-hidden="true">
+        <rect x="1" y="1" width="30" height="30" rx="8" fill="var(--accent-soft)" stroke="var(--accent)" stroke-opacity=".45"/>
+        <path d="M5 11H27" stroke="var(--accent)" stroke-width="1.5" stroke-dasharray="2.5 2.5" stroke-linecap="round" opacity=".7"/>
+        <path d="M6 24H12V19H17V14H22V8.5H26.5" stroke="var(--accent)" stroke-width="2.4" stroke-linecap="square" stroke-linejoin="miter"/>
+      </svg>
+      <div class="dhm-logo-text"><b>dh<em>252</em></b><span>52-week-high swing</span></div>
+    </div>
     <div class="dhm-kpi"><div class="dhm-kpi-label">Positions</div><div class="dhm-kpi-val" id="dh-live-holdings-count">—</div></div>
     <div class="dhm-kpi"><div class="dhm-kpi-label">Invested</div><div class="dhm-kpi-val" id="dh-live-invested">—</div></div>
     <div class="dhm-kpi"><div class="dhm-kpi-label">Overall P&amp;L</div><div class="dhm-kpi-val" id="dh-live-combined-pl">—</div></div>
     <div class="dhm-kpi"><div class="dhm-kpi-label">Entry signals</div><div class="dhm-kpi-val accent" id="dh-live-entry-count">—</div></div>
     <div class="dhm-kpi"><div class="dhm-kpi-label">Exit now</div><div class="dhm-kpi-val red" id="dh-live-exit-count">—</div></div>
     <div class="dhm-kpi"><div class="dhm-kpi-label">Add-on eligible</div><div class="dhm-kpi-val green" id="dh-live-addon-count">—</div></div>
-  </div>
-
-  <div class="dhm-tiles">
-    <div class="dhm-tile"><div class="dhm-tile-label">Tier size</div><div class="dhm-tile-val" id="dh-live-tier">—</div></div>
-    <div class="dhm-tile"><div class="dhm-tile-label">Signal priority</div><div class="dhm-tile-val"><span style="color:var(--red)">Exit</span> / <span style="color:var(--green)">Add-on</span> / Hold</div></div>
-    <div class="dhm-tile"><div class="dhm-tile-label">Strategy</div><div class="dhm-tile-val">252-day high · Supertrend</div></div>
-    <div class="dhm-tile"><div class="dhm-tile-label">Market data</div><div class="dhm-tile-val" id="dh-live-mdate">—</div></div>
+    <div class="dhm-kpi"><div class="dhm-kpi-label">Tier size</div><div class="dhm-kpi-val" id="dh-live-tier">—</div></div>
+    <div class="dhm-kpi"><div class="dhm-kpi-label">Strategy</div><div class="dhm-kpi-val sm">252-day high · Supertrend</div></div>
+    <div class="dhm-kpi"><div class="dhm-kpi-label">Market data</div><div class="dhm-kpi-val sm" id="dh-live-mdate">—</div></div>
   </div>
 
   <div class="dhm-tabs" role="tablist">
