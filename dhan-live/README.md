@@ -74,6 +74,8 @@ entry filter is the one place they could otherwise leak back in).
      --trade-log data/dh252_trade_log.json \
      --out dhan_live_signals.json
    ```
+   Sector + 🔥 hot-sector tagging uses `data/equity_sectors.json` (a copy of
+   backtester's `data/equity_sectors.json`; re-copy it if sectors change).
 4. Commit the updated `data/holdings_snapshot.json` and `dhan_live_signals.json`.
 
 Promoting this to a scheduled cloud agent (instead of on-demand) is

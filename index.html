@@ -3131,19 +3131,18 @@ tbody tr:hover { filter: brightness(0.97); }
   <!-- Entry signals -->
   <div class="dhm-panel" id="dh-panel-entry">
     <div class="dhm-toolbar">
-      <div><h3>Entry signals</h3><p>Close at 52-week high + Supertrend green · not already a dh252 position</p></div>
+      <div><h3>Entry signals</h3><p>Close at 52-week high + Supertrend green · not already a dh252 position · 🔥 = top-3 sector by 52WH breakouts or Supertrend turnarounds</p></div>
       <div class="dhm-controls">
         <input type="search" id="dh-search-entry" placeholder="Search stock…" oninput="dhLiveApply('entry')">
-        <select id="dh-filter-entry" onchange="dhLiveApply('entry')"><option value="all">All breakouts</option><option value="today">Hit today only</option></select>
+        <select id="dh-filter-entry" onchange="dhLiveApply('entry')"><option value="all">All breakouts</option><option value="hot">🔥 Hot sectors only</option><option value="today">Hit today only</option></select>
         <button onclick="dhLiveExportCsv('entry')">Export ↓</button>
       </div>
     </div>
     <div class="card" style="padding:0"><div class="table-wrap" style="border:none;border-radius:var(--radius)">
       <table id="dh-live-entry-table" class="dh-blotter">
         <thead><tr>
-          <th>Signal date</th><th>Stock</th><th class="num">Qty</th><th class="num">WAC</th><th class="num">CMP</th>
-          <th>Trend</th><th>Flip</th><th class="num">vs 52WH</th><th class="num">P&amp;L ₹</th><th class="num">P&amp;L%</th>
-          <th class="num">Adds</th><th class="num">Age</th><th class="num">52WH hit</th><th class="num">Qty to buy</th>
+          <th>Signal date</th><th>Stock</th><th>Sector</th><th class="num">CMP</th>
+          <th>Trend</th><th>Flip</th><th class="num">vs 52WH</th><th class="num">52WH hit</th><th class="num">Qty to buy</th>
         </tr></thead>
         <tbody id="dh-live-entry-tbody"></tbody>
       </table>
@@ -8319,7 +8318,9 @@ function dhTrendPill(color) {
   return `<span class="trend-pill" style="background:${c === 'green' ? 'var(--green-soft)' : 'var(--red-soft)'};color:${c === 'green' ? 'var(--green)' : 'var(--red)'}">${c.toUpperCase()}</span>`;
 }
 function dhFmtFlip(label) {
-  return label == null ? dhDash : `<span style="color:${label.includes('GREEN') ? 'var(--green)' : 'var(--red)'}">${dhEsc(label)}</span>`;
+  if (label == null) return dhDash;
+  const shown = label.replace(/\(0\)$/, '(today)'); // flipped on the signal day itself
+  return `<span style="color:${label.includes('GREEN') ? 'var(--green)' : 'var(--red)'}">${dhEsc(shown)}</span>`;
 }
 function dhSignalPill(sig) {
   const bg = sig === 'EXIT' ? 'var(--red-soft)' : sig === 'ADD-ON' ? 'var(--green-soft)' : 'var(--surface2)';
@@ -8335,8 +8336,17 @@ function dhFmtDate(iso) {
 }
 // Supertrend flip label for an entry signal, same wording as positions' flip_label
 function dhEntryFlip(r) {
-  const n = r.flipped_today ? 0 : r.recent_bullish_flip_days_ago;
-  return n == null ? null : `Flipped to GREEN (${n})`;
+  if (r.flip_label) return r.flip_label;
+  if (r.flipped_today) return 'Flipped to GREEN (0)';
+  return r.recent_bullish_flip_days_ago == null ? 'GREEN' : `Flipped to GREEN (${r.recent_bullish_flip_days_ago})`;
+}
+// Sector text with the backtester's hot-sector tag: top-3 by fresh 52WH count and/or Supertrend turnarounds
+function dhSectorText(r) {
+  if (!r.sector) return '—';
+  const tags = [];
+  if (r.hot_52wh) tags.push(r.sector_52wh_count + ' at 52WH');
+  if (r.hot_turn) tags.push(r.sector_turn_count + ' turned');
+  return tags.length ? `🔥 ${r.sector} (${tags.join(' · ')})` : r.sector;
 }
 
 // 52-week-high recency. Older signal files carried recent_52w_high_days_ago/_date; the backtester's
@@ -8350,7 +8360,7 @@ function dhFmtHit(r) {
   if (r.recent_52w_high_days_ago != null) {
     return r.recent_52w_high_days_ago === 0 ? 'today' : `${r.recent_52w_high_days_ago}d ago (${dhEsc((r.recent_52w_high_date || '').slice(5))})`;
   }
-  return dhHitDays(r) === 0 ? 'today' : dhEsc((r.date || '—').slice(5));
+  return dhHitDays(r) === 0 ? 'today' : dhFmtDate(r.date);
 }
 
 // Per-tab definition: base rows (sorted), filter fn, row renderer, CSV columns, empty message
@@ -8376,22 +8386,16 @@ const DH_DEFS = {
   },
   entry: {
     rows: d => (d.entries || []).slice().sort((a, b) => dhHitDays(a) - dhHitDays(b) || b.pct_from_high - a.pct_from_high),
-    filter: (r, f) => f === 'today' ? dhHitDays(r) === 0 : true,
-    cls: () => '', empty: 'No fresh 52-week-high breakouts right now.', cols: 14,
-    // Same columns as Exit now (position-only fields show "—": nothing is held yet), plus Qty to buy / 52WH hit
+    filter: (r, f) => f === 'today' ? dhHitDays(r) === 0 : f === 'hot' ? (r.hot_52wh || r.hot_turn) : true,
+    cls: r => (r.hot_52wh || r.hot_turn) ? 'row-amber' : '', empty: 'No fresh 52-week-high breakouts right now.', cols: 9,
     cells: [
       ['Signal date', r => r.date, r => `<td>${dhFmtDate(r.date)}</td>`],
       ['Stock', r => r.symbol, r => `<td class="stock-name">${dhEsc(r.symbol)}</td>`],
-      ['Qty', () => '', () => `<td class="num">${dhDash}</td>`],
-      ['WAC', () => '', () => `<td class="num">${dhDash}</td>`],
+      ['Sector', r => dhSectorText(r), r => `<td style="${(r.hot_52wh || r.hot_turn) ? 'color:var(--amber);font-weight:700;' : ''}white-space:normal;min-width:150px">${dhEsc(dhSectorText(r))}</td>`],
       ['CMP', r => r.close, r => `<td class="num">${dhFmtRs(r.close)}</td>`],
       ['Supertrend', r => r.supertrend_color, r => `<td>${dhTrendPill(r.supertrend_color)}</td>`],
       ['Flip', r => dhEntryFlip(r), r => `<td>${dhFmtFlip(dhEntryFlip(r))}</td>`],
       ['vs 52WH %', r => r.pct_from_high, r => `<td class="num">${r.pct_from_high == null ? '—' : dhFmtPct(r.pct_from_high)}</td>`],
-      ['P&L Rs', () => '', () => `<td class="num">${dhDash}</td>`],
-      ['P&L %', () => '', () => `<td class="num">${dhDash}</td>`],
-      ['Adds', () => '', () => `<td class="num">${dhDash}</td>`],
-      ['Age days', () => '', () => `<td class="num">${dhDash}</td>`],
       ['52WH hit', r => r.recent_52w_high_date || r.date, r => `<td class="num">${dhFmtHit(r)}</td>`],
       ['Qty to buy', r => r.qty_to_buy, r => `<td class="num" style="font-weight:700">${r.qty_to_buy}</td>`],
     ],

@@ -147,7 +147,37 @@ def flip_label(st):
     return None
 
 
-def build_signals(holdings, week52, stmap, rsimap, entry_signals, trade_log, today):
+def entry_flip_label(st):
+    """Flip text for an ENTRY row - always filled (entries are Supertrend-green by
+    definition): recent bullish flip -> 'Flipped to GREEN (N)', else 'GREEN Nd' streak."""
+    label = flip_label(st)
+    if label:
+        return label
+    return "GREEN" if st and st.get("color") == "green" else None
+
+
+def compute_hot_sectors(stmap, entries, sectors, top_n=3):
+    """Same 'hot sector' logic as backtester's dh252RenderSignals: a sector is hot if it
+    is top-N by (a) fresh 52-week-high entry count or (b) universe-wide count of
+    Supertrend bullish turnarounds in the recent window."""
+    turn, entry_count = {}, {}
+    for sym, st in stmap.items():
+        if st.get("recent_bullish_flip_days_ago") is None:
+            continue
+        sec = sectors.get(sym)
+        if sec:
+            turn[sec] = turn.get(sec, 0) + 1
+    for e in entries:
+        sec = sectors.get(e["symbol"])
+        if sec:
+            entry_count[sec] = entry_count.get(sec, 0) + 1
+    top = lambda d: {s for s, _ in sorted(d.items(), key=lambda kv: -kv[1])[:top_n]}
+    return turn, entry_count, top(turn), top(entry_count)
+
+
+def build_signals(holdings, week52, stmap, rsimap, entry_signals, trade_log, today, sectors=None):
+    # backtester's map uses an em dash for "sector unknown" - treat as no sector
+    sectors = {k: v for k, v in (sectors or {}).items() if v and v.strip() not in ("—", "-")}
     holdings_by_symbol = {h["symbol"]: h for h in holdings}
     dh252_positions = build_dh252_positions(trade_log.get("fills", []))
     dh252_symbols = set(dh252_positions)
@@ -214,6 +244,17 @@ def build_signals(holdings, week52, stmap, rsimap, entry_signals, trade_log, tod
         qty_to_buy = max(1, int(eff_tier // e["close"]))
         entries.append({**{k: v for k, v in e.items() if k != "qty_at_base_tier"}, "qty_to_buy": qty_to_buy})
 
+    # Sector + hot-sector tagging (ported from backtester's dh252RenderSignals)
+    turn, entry_count, hot_turn, hot_entry = compute_hot_sectors(stmap, entries, sectors)
+    for e in entries:
+        sec = sectors.get(e["symbol"])
+        e["sector"] = sec
+        e["flip_label"] = entry_flip_label(stmap.get(e["symbol"]))
+        e["sector_52wh_count"] = entry_count.get(sec, 0) if sec else 0
+        e["sector_turn_count"] = turn.get(sec, 0) if sec else 0
+        e["hot_52wh"] = bool(sec and sec in hot_entry)
+        e["hot_turn"] = bool(sec and sec in hot_turn)
+
     return {
         "generated_at": datetime.now(timezone.utc).isoformat(),
         # Date of the market data these signals are based on (backtester's
@@ -236,6 +277,7 @@ def build_signals(holdings, week52, stmap, rsimap, entry_signals, trade_log, tod
         "dhan_holdings_out_of_scope": len(holdings) - len(dh252_symbols & set(holdings_by_symbol)),
         "no_data": no_data,
         "exited_outside_tracking": exited_outside_tracking,
+        "hot_sectors": {"by_52wh_entries": sorted(hot_entry), "by_supertrend_turns": sorted(hot_turn)},
         "entries": entries,
         "exits": exits,
         "addons": addons,
@@ -251,6 +293,8 @@ def main():
     parser.add_argument("--entry-signals", required=True)
     parser.add_argument("--trade-log", required=True)
     parser.add_argument("--out", required=True)
+    parser.add_argument("--sectors", default=str(Path(__file__).parent.parent / "data" / "equity_sectors.json"),
+                        help="symbol -> sector map (copy of backtester's data/equity_sectors.json)")
     parser.add_argument("--as-of", default=None, help="Override today's date (YYYY-MM-DD), for testing against historical data")
     args = parser.parse_args()
 
@@ -267,6 +311,7 @@ def main():
     result = build_signals(
         holdings, index_week52(market_screens), index_supertrend(supertrend), index_rsi(market_screens),
         entry_signals, trade_log, today,
+        sectors=load_json(args.sectors) if Path(args.sectors).exists() else {},
     )
     # When the Dhan holdings snapshot was pulled - shown on the Open positions tab
     result["holdings_fetched_at"] = holdings_doc.get("fetched_at")
