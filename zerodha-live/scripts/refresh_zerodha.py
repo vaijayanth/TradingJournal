@@ -49,7 +49,7 @@ def main():
          "--supertrend", cache / "supertrend_full.json",
          "--out", ROOT / "zerodha_live_signals.json"])
     # recompute every signal on complete Yahoo data (flip mode); flagged signals are blocked from orders
-    run([py, ROOT.parent / "dhan-live" / "scripts" / "crosscheck_signals.py", "--mode", "flip",
+    run([py, SCRIPTS / "crosscheck_signals.py", "--mode", "flip",
          "--signals", ROOT / "zerodha_live_signals.json", "--out", DATA / "signal_crosscheck.json"])
     print("\nDone. Review `git diff --stat`, then commit zerodha-live/ if the numbers look right.")
 

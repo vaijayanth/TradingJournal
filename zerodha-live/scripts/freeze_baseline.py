@@ -52,7 +52,7 @@ def main():
     uni = set(json.loads((DATA / "fno_universe.json").read_text())["symbols"])
     cutoff = args.cutoff
     if not cutoff:
-        st = DATA.parent.parent / "dhan-live" / "data" / "cache" / "supertrend_full.json"
+        st = DATA / "cache" / "supertrend_full.json"
         cutoff = json.loads(st.read_text()).get("latest_market_date") if st.exists() else datetime.now(timezone.utc).date().isoformat()
     req = urllib.request.Request(SHEET_URL + "?" + urllib.parse.urlencode(COLS), headers={"User-Agent": "Mozilla/5.0"})
     d = json.loads(urllib.request.urlopen(req, timeout=90).read())

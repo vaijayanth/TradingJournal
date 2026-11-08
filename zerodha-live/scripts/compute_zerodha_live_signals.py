@@ -30,8 +30,8 @@ from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
 DATA = HERE.parent / "data"
-sys.path.insert(0, str(HERE.parent.parent / "dhan-live" / "scripts"))
-from compute_dh252_live_signals import (compute_hot_sectors, days_since, entry_flip_label, flip_label,  # noqa: E402
+sys.path.insert(0, str(HERE))
+from zerodha_common import (compute_hot_sectors, days_since, entry_flip_label, flip_label,  # noqa: E402
                                         index_rsi, index_supertrend, index_week52, load_json)
 
 STARTING_CAPITAL = 3_000_000
@@ -172,7 +172,7 @@ def main():
     ap.add_argument("--history", default=str(DATA / "equity_history.json"))
     ap.add_argument("--excluded", default=str(DATA / "excluded_symbols.json"))
     ap.add_argument("--moved", default=str(DATA / "moved_from_sheet.json"))
-    ap.add_argument("--sectors", default=str(HERE.parent.parent / "dhan-live" / "data" / "equity_sectors.json"))
+    ap.add_argument("--sectors", default=str(DATA / "equity_sectors.json"))
     ap.add_argument("--out", required=True)
     ap.add_argument("--as-of", default=None)
     ap.add_argument("--no-history", action="store_true", help="do not write the equity history (testing)")
