@@ -419,12 +419,17 @@ def main():
              else datetime.now(timezone.utc).date())
 
     load_sectors = load_json(args.sectors) if Path(args.sectors).exists() else {}
+    closes_doc = load_json(args.daily_closes) if Path(args.daily_closes).exists() else None
+    open_syms = sorted(build_ledger(trade_log.get("fills", []))[0])
+    # SMAs: --ohlc-dir (backtester cache) if given, else the ones computed from fresh yfinance history
+    smas = (load_smas(args.ohlc_dir, open_syms) if args.ohlc_dir
+            else {s: v for s, v in (closes_doc or {}).get("smas", {}).items() if s in open_syms})
     result = build_signals(
         holdings, index_week52(market_screens), index_supertrend(supertrend), index_rsi(market_screens),
         entry_signals, trade_log, today,
         sectors=load_sectors,
-        closes=load_json(args.daily_closes) if Path(args.daily_closes).exists() else None,
-        smas=load_smas(args.ohlc_dir, sorted(build_ledger(trade_log.get("fills", []))[0])) if args.ohlc_dir else {},
+        closes=closes_doc,
+        smas=smas,
     )
     # When the Dhan holdings snapshot was pulled - shown on the Open positions tab
     result["holdings_fetched_at"] = holdings_doc.get("fetched_at")

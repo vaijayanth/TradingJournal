@@ -56,30 +56,17 @@ explicitly (exit/add-on are already scoped to `dh252_trade_log.json`'s
 own positions, so these 11 never appear there by construction - the
 entry filter is the one place they could otherwise leak back in).
 
-## Running it today (on-demand, per the approved plan - not automated yet)
+## Refreshing (Dhan)
 
-1. In a Claude Code session with the Dhan MCP tools available, call
-   `portfolio_agent_tool` ("holdings") and update `data/holdings_snapshot.json`
-   with the result.
-2. Fetch backtester's latest `market_screens_full.json`, `supertrend_full.json`,
-   `dh252_entry_signals.json` (from `raw.githubusercontent.com/vaijayanth/backtester/main/<file>`,
-   or a local checkout).
-3. Run:
-   ```
-   python scripts/compute_dh252_live_signals.py \
-     --holdings data/holdings_snapshot.json \
-     --market-screens <path to market_screens_full.json> \
-     --supertrend <path to supertrend_full.json> \
-     --entry-signals <path to dh252_entry_signals.json> \
-     --trade-log data/dh252_trade_log.json \
-     --out dhan_live_signals.json
-   ```
-   Sector + 🔥 hot-sector tagging uses `data/equity_sectors.json` (a copy of
-   backtester's `data/equity_sectors.json`; re-copy it if sectors change).
-4. Commit the updated `data/holdings_snapshot.json` and `dhan_live_signals.json`.
+Run the `refresh-dhan` skill (`.claude/skills/refresh-dhan/SKILL.md`, in this repo so it works on any
+clone) in a Claude Code session with the Dhan MCP connected. It pulls holdings + today's fills over MCP,
+then runs `python dhan-live/scripts/refresh_dhan.py`, which downloads backtester's published
+`market_screens_full.json` / `supertrend_full.json`, derives entry signals with the vendored
+`dh252_entry_screener.py`, rebuilds yfinance closes + SMA50/200 and regenerates `dhan_live_signals.json`.
 
-Promoting this to a scheduled cloud agent (instead of on-demand) is
-explicitly deferred per the plan - not done yet.
+The MCP tradebook returns today's trades only: run the refresh every trading day, or catch up from a Dhan
+*Global Transaction Report* CSV with `scripts/import_dhan_transactions.py`. Sector + hot-sector tags use
+`data/equity_sectors.json` (copy of backtester's; re-copy if sectors change). Scheduling is not set up.
 
 ## Not in scope yet
 

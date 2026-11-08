@@ -35,9 +35,24 @@ def main():
     # start a few days before the first entry so the curve opens flat at the starting capital
     start = (datetime.strptime(first_entry, "%Y-%m-%d") - timedelta(days=5)).strftime("%Y-%m-%d")
 
-    df = yf.download([s + ".NS" for s in symbols], start=start, progress=False, auto_adjust=False, threads=True)["Close"]
+    # Fetch ~15 months so SMA200 can be computed from the same download; the curve itself only
+    # uses rows from `start` onward.
+    hist_start = min(start, (datetime.now() - timedelta(days=450)).strftime("%Y-%m-%d"))
+    full = yf.download([s + ".NS" for s in symbols], start=hist_start, progress=False, auto_adjust=False, threads=True)["Close"]
     # Weekend rows can appear as a copy of Friday - keep real trading days only
-    df = df[df.index.dayofweek < 5].dropna(how="all")
+    full = full[full.index.dayofweek < 5].dropna(how="all")
+    df = full[full.index >= start]
+
+    smas = {}
+    for s in symbols:
+        col = s + ".NS"
+        if col not in full:
+            continue
+        c = full[col].dropna()
+        if len(c) >= 200:
+            smas[s] = {"sma200": round(float(c.rolling(200).mean().iloc[-1]), 2),
+                       "sma50": round(float(c.rolling(50).mean().iloc[-1]), 2),
+                       "sma_asof": str(c.index[-1].date())}
 
     closes = {}
     for s in symbols:
@@ -51,9 +66,11 @@ def main():
         "source": "yfinance (NSE, unadjusted close)",
         "dates": [d.strftime("%Y-%m-%d") for d in df.index],
         "closes": closes,
+        "smas": smas,
         "missing_symbols": [s for s in symbols if s not in closes],
     }
     Path(args.out).write_text(json.dumps(out, indent=1))
+    print(f"SMA50/200 computed for {len(smas)}/{len(symbols)} symbols (as of {max((v['sma_asof'] for v in smas.values()), default='n/a')})")
     print(f"{len(closes)}/{len(symbols)} symbols, {len(out['dates'])} trading days "
           f"({out['dates'][0]} -> {out['dates'][-1]}); missing: {out['missing_symbols'] or 'none'}")
 
