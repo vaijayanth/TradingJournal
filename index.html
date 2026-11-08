@@ -813,6 +813,7 @@ tbody tr:hover { filter: brightness(0.97); }
     <button class="nav-tab" onclick="showPage('analysis', this)"><span class="nav-label-full">Analysis</span><span class="nav-label-short">Analysis</span></button>
     <button class="nav-tab" onclick="showPage('strategy', this)"><span class="nav-label-full">Strategy</span><span class="nav-label-short">Strat</span></button>
     <button class="nav-tab" onclick="showPage('journal', this)"><span class="nav-label-full">Journal</span><span class="nav-label-short">Journal</span></button>
+    <button class="nav-tab" onclick="showPage('dhanlive', this)"><span class="nav-label-full">Dhan Live</span><span class="nav-label-short">Dhan</span></button>
     <button class="nav-tab" onclick="showPage('config', this)">Config</button>
   </div>
   <div class="nav-right">
@@ -3007,6 +3008,93 @@ tbody tr:hover { filter: brightness(0.97); }
       </table>
     </div>
   </div>
+</div>
+
+<!-- ════ DHAN LIVE ════ -->
+<div id="page-dhanlive" class="page">
+
+  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:16px; flex-wrap:wrap; gap:10px">
+    <div>
+      <div style="font-size:15px; font-weight:700">Dhan Live — dh252 Strategy</div>
+      <div style="font-size:12px; color:var(--text-muted); margin-top:2px">Live Dhan holdings → compared against backtester's daily Supertrend/52-week-high signals. No Google Sheet in this chain.</div>
+    </div>
+    <div style="display:flex;align-items:center;gap:10px">
+      <div id="dh-live-asof" style="font-size:12px;color:var(--text-muted)">—</div>
+      <button class="btn-icon" title="Refresh" onclick="dhLiveRefresh(true)">↻</button>
+    </div>
+  </div>
+
+  <!-- Sizing / summary stats -->
+  <div class="card" style="margin-bottom:16px;padding:16px">
+    <div class="flex-row" style="gap:24px;flex-wrap:wrap">
+      <div><div style="font-size:11px;color:var(--text-muted)">Holdings</div><div style="font-size:18px;font-weight:700" id="dh-live-holdings-count">—</div></div>
+      <div><div style="font-size:11px;color:var(--text-muted)">Effective tier size</div><div style="font-size:18px;font-weight:700" id="dh-live-tier">—</div></div>
+      <div><div style="font-size:11px;color:var(--text-muted)">Combined P&amp;L</div><div style="font-size:18px;font-weight:700" id="dh-live-combined-pl">—</div></div>
+      <div><div style="font-size:11px;color:var(--text-muted)">Entry signals</div><div style="font-size:18px;font-weight:700" id="dh-live-entry-count">—</div></div>
+      <div><div style="font-size:11px;color:var(--text-muted)">Exit signals</div><div style="font-size:18px;font-weight:700;color:var(--red)" id="dh-live-exit-count">—</div></div>
+      <div><div style="font-size:11px;color:var(--text-muted)">Add-on signals</div><div style="font-size:18px;font-weight:700;color:var(--green)" id="dh-live-addon-count">—</div></div>
+    </div>
+  </div>
+
+  <!-- Exit now -->
+  <div class="card" style="margin-bottom:16px;padding:16px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+      <div style="font-size:13px;font-weight:700;color:var(--red)">🔴 Exit now</div>
+      <div style="font-size:11.5px;color:var(--text-muted)" id="dh-live-exit-text">—</div>
+    </div>
+    <div class="table-wrap">
+      <table id="dh-live-exit-table">
+        <thead><tr><th>Stock</th><th>Qty</th><th>Avg Cost ₹</th><th>CMP ₹</th><th>P&amp;L%</th><th>Notional P&amp;L ₹</th></tr></thead>
+        <tbody id="dh-live-exit-tbody"></tbody>
+      </table>
+    </div>
+    <div style="font-size:11px;color:var(--text-muted);margin-top:10px">Supertrend turned red → exit the entire position, regardless of P&amp;L. No profit condition.</div>
+  </div>
+
+  <!-- Entry signal -->
+  <div class="card" style="margin-bottom:16px;padding:16px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+      <div style="font-size:13px;font-weight:700">Entry signal · 52-week high breakout</div>
+      <div style="font-size:11.5px;color:var(--text-muted)" id="dh-live-entry-text">—</div>
+    </div>
+    <div class="table-wrap">
+      <table id="dh-live-entry-table">
+        <thead><tr><th>Stock</th><th>Close ₹</th><th>52W High ₹</th><th>Qty to buy</th><th>Supertrend</th></tr></thead>
+        <tbody id="dh-live-entry-tbody"></tbody>
+      </table>
+    </div>
+    <div style="font-size:11px;color:var(--text-muted);margin-top:10px">Close at/above the trailing 52-week high AND Supertrend green, universe-wide, excludes symbols you already hold.</div>
+  </div>
+
+  <!-- Add-on eligible -->
+  <div class="card" style="margin-bottom:16px;padding:16px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+      <div style="font-size:13px;font-weight:700;color:var(--green)">🟢 Add-on eligible</div>
+      <div style="font-size:11.5px;color:var(--text-muted)" id="dh-live-addon-text">—</div>
+    </div>
+    <div class="table-wrap">
+      <table id="dh-live-addon-table">
+        <thead><tr><th>Stock</th><th>Qty</th><th>Avg Cost ₹</th><th>CMP ₹</th><th>P&amp;L%</th><th>Add Qty</th><th>Cooldown</th></tr></thead>
+        <tbody id="dh-live-addon-tbody"></tbody>
+      </table>
+    </div>
+    <div style="font-size:11px;color:var(--text-muted);margin-top:10px">P&amp;L ≤ −6% AND Supertrend still green AND ≥7 days since last buy (pre-existing positions default to cooldown-satisfied on day 1 — no retroactive fill history exists via Dhan's API).</div>
+  </div>
+
+  <!-- Open positions (all holdings, signal-tagged) -->
+  <div class="card" style="padding:16px">
+    <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:10px;flex-wrap:wrap;gap:8px">
+      <div style="font-size:13px;font-weight:700">Open Positions</div>
+      <div style="font-size:11.5px;color:var(--text-muted)" id="dh-live-pos-text">—</div>
+    </div>
+    <div class="table-wrap">
+      <table id="dh-live-pos-table">
+        <thead><tr><th>Stock</th><th>Qty</th><th>Avg Cost ₹</th><th>CMP ₹</th><th>P&amp;L%</th><th>Supertrend</th><th>Signal</th></tr></thead>
+        <tbody id="dh-live-pos-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
 </div>
 
 <!-- ════ CONFIG ════ -->
@@ -8091,6 +8179,97 @@ function showPage(id, btn) {
     eqRefresh();
     window._eqInit = true;
   }
+  if (id === 'dhanlive' && !window._dhLiveInit) {
+    dhLiveRefresh(false);
+    window._dhLiveInit = true;
+  }
+}
+
+// ── DHAN LIVE (dh252 strategy, no Google Sheet) ────────
+function dhFmtRs(v) { return v == null ? '—' : '₹' + Math.round(v).toLocaleString('en-IN'); }
+function dhFmtPct(v) { return v == null ? '—' : (v >= 0 ? '+' : '') + v.toFixed(2) + '%'; }
+
+async function dhLiveRefresh(forceSpinner) {
+  const asofEl = document.getElementById('dh-live-asof');
+  if (forceSpinner && asofEl) asofEl.textContent = 'Loading…';
+  try {
+    const res = await fetch('dhan-live/dhan_live_signals.json?t=' + Date.now());
+    if (!res.ok) throw new Error('HTTP ' + res.status);
+    const data = await res.json();
+    window._dhLiveData = data;
+    dhLiveRender(data);
+  } catch (e) {
+    if (asofEl) asofEl.textContent = 'Could not load dhan_live_signals.json: ' + e.message;
+    console.error('Dhan Live fetch error:', e);
+  }
+}
+
+function dhLiveRender(data) {
+  const asofEl = document.getElementById('dh-live-asof');
+  if (asofEl) {
+    const d = new Date(data.generated_at);
+    asofEl.textContent = 'Data as of ' + (isNaN(d) ? data.generated_at : d.toLocaleString('en-IN'));
+  }
+
+  document.getElementById('dh-live-holdings-count').textContent = data.holdings_count ?? '—';
+  document.getElementById('dh-live-tier').textContent = dhFmtRs(data.sizing && data.sizing.effective_tier_rs);
+  const combinedEl = document.getElementById('dh-live-combined-pl');
+  if (combinedEl) {
+    const pl = data.sizing && data.sizing.combined_pl_rs;
+    combinedEl.textContent = dhFmtRs(pl);
+    combinedEl.style.color = pl == null ? '' : pl >= 0 ? 'var(--green)' : 'var(--red)';
+  }
+  document.getElementById('dh-live-entry-count').textContent = (data.entries || []).length;
+  document.getElementById('dh-live-exit-count').textContent = (data.exits || []).length;
+  document.getElementById('dh-live-addon-count').textContent = (data.addons || []).length;
+
+  // Exit now
+  const exits = data.exits || [];
+  document.getElementById('dh-live-exit-text').textContent = exits.length + ' signal' + (exits.length === 1 ? '' : 's');
+  document.getElementById('dh-live-exit-tbody').innerHTML = exits.length
+    ? exits.map(r => `<tr>
+        <td>${r.symbol}</td><td>${r.qty}</td><td>${dhFmtRs(r.avg_cost)}</td><td>${dhFmtRs(r.cmp)}</td>
+        <td style="color:${r.pl_pct >= 0 ? 'var(--green)' : 'var(--red)'};font-weight:700">${dhFmtPct(r.pl_pct)}</td>
+        <td style="color:${r.notional_pl_rs >= 0 ? 'var(--green)' : 'var(--red)'}">${dhFmtRs(r.notional_pl_rs)}</td>
+      </tr>`).join('')
+    : '<tr><td colspan="6" style="color:var(--text-muted)">No exit signals right now.</td></tr>';
+
+  // Entry signal
+  const entries = data.entries || [];
+  document.getElementById('dh-live-entry-text').textContent = entries.length + ' signal' + (entries.length === 1 ? '' : 's');
+  document.getElementById('dh-live-entry-tbody').innerHTML = entries.length
+    ? entries.map(r => `<tr>
+        <td>${r.symbol}</td><td>${dhFmtRs(r.close)}</td><td>${dhFmtRs(r.high_52w)}</td><td>${r.qty_to_buy}</td>
+        <td style="color:var(--green);font-weight:700">${(r.supertrend_color || '—').toUpperCase()}</td>
+      </tr>`).join('')
+    : '<tr><td colspan="5" style="color:var(--text-muted)">No fresh 52-week-high breakouts today.</td></tr>';
+
+  // Add-on eligible
+  const addons = data.addons || [];
+  document.getElementById('dh-live-addon-text').textContent = addons.length + ' signal' + (addons.length === 1 ? '' : 's');
+  document.getElementById('dh-live-addon-tbody').innerHTML = addons.length
+    ? addons.map(r => `<tr>
+        <td>${r.symbol}</td><td>${r.qty}</td><td>${dhFmtRs(r.avg_cost)}</td><td>${dhFmtRs(r.cmp)}</td>
+        <td style="color:var(--red);font-weight:700">${dhFmtPct(r.pl_pct)}</td><td>${r.add_qty}</td>
+        <td>${r.cooldown_days_since_last_buy == null ? 'day-1 default' : r.cooldown_days_since_last_buy + 'd'}</td>
+      </tr>`).join('')
+    : '<tr><td colspan="7" style="color:var(--text-muted)">No add-on signals right now.</td></tr>';
+
+  // Open positions — every holding, signal-tagged
+  const tagged = [
+    ...exits.map(r => ({ ...r, signal: 'EXIT', signalColor: 'var(--red)' })),
+    ...addons.map(r => ({ ...r, signal: 'ADD-ON', signalColor: 'var(--green)' })),
+    ...(data.holds || []).map(r => ({ ...r, signal: 'HOLD', signalColor: '' })),
+  ].sort((a, b) => a.pl_pct - b.pl_pct);
+  document.getElementById('dh-live-pos-text').textContent = tagged.length + ' position' + (tagged.length === 1 ? '' : 's');
+  document.getElementById('dh-live-pos-tbody').innerHTML = tagged.length
+    ? tagged.map(r => `<tr>
+        <td>${r.symbol}</td><td>${r.qty}</td><td>${dhFmtRs(r.avg_cost)}</td><td>${dhFmtRs(r.cmp)}</td>
+        <td style="color:${r.pl_pct >= 0 ? 'var(--green)' : 'var(--red)'}">${dhFmtPct(r.pl_pct)}</td>
+        <td style="color:${r.supertrend_color === 'green' ? 'var(--green)' : 'var(--red)'}">${(r.supertrend_color || '—').toUpperCase()}</td>
+        <td style="color:${r.signalColor};font-weight:700">${r.signal}</td>
+      </tr>`).join('')
+    : '<tr><td colspan="7" style="color:var(--text-muted)">No position data.</td></tr>';
 }
 
 // ── THEME ───────────────────────────────────────────
