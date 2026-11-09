@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-11-09T08:44:42.329216+00:00",
+  "generated_at": "2026-11-09T09:20:55.444723+00:00",
   "market_data_date": "2026-11-08",
   "live_prices_at": "2026-11-09T12:02:12+05:30",
-  "super_scan_at": "2026-11-09T14:14:42+05:30",
+  "super_scan_at": "2026-11-09T14:50:55+05:30",
   "as_of": "2026-11-08",
   "rules": {
     "short_call_delta": 0.1,
@@ -1140,47 +1140,14 @@
     },
     {
       "level": "WARN",
-      "type": "No stop placed",
+      "type": "Invalid stop order",
       "symbol": "BANKINDIA",
       "expiry": "2026-11-23",
       "strike": 150.0,
       "opt_type": "CE",
-      "concern": "No Stop: No super order matches this short (5200 @ 0.46): no stop protects it",
-      "action": "Close and re-enter as a super order, or use a daily stop order",
-      "text": "BANKINDIA: No super order matches this short (5200 @ 0.46): no stop protects it"
-    },
-    {
-      "level": "WARN",
-      "type": "No stop placed",
-      "symbol": "DIXON",
-      "expiry": "2026-11-23",
-      "strike": 13000.0,
-      "opt_type": "CE",
-      "concern": "No Stop: No super order matches this short (50 @ 164.85): no stop protects it",
-      "action": "Close and re-enter as a super order, or use a daily stop order",
-      "text": "DIXON: No super order matches this short (50 @ 164.85): no stop protects it"
-    },
-    {
-      "level": "WARN",
-      "type": "No stop placed",
-      "symbol": "HCLTECH",
-      "expiry": "2026-11-23",
-      "strike": 1560.0,
-      "opt_type": "CE",
-      "concern": "No Stop: No super order matches this short (400 @ 5.5): no stop protects it",
-      "action": "Close and re-enter as a super order, or use a daily stop order",
-      "text": "HCLTECH: No super order matches this short (400 @ 5.5): no stop protects it"
-    },
-    {
-      "level": "WARN",
-      "type": "No stop placed",
-      "symbol": "SHRIRAMFIN",
-      "expiry": "2026-12-29",
-      "strike": 1120.0,
-      "opt_type": "CE",
-      "concern": "No Stop: No super order matches this short (825 @ 5.6): no stop protects it",
-      "action": "Close and re-enter as a super order, or use a daily stop order",
-      "text": "SHRIRAMFIN: No super order matches this short (825 @ 5.6): no stop protects it"
+      "concern": "Off-Rule: Stop 2 is 4.3x the sold 0.46 (rule 3x)",
+      "action": "Move the stop leg to 1.38 (order 2132611092644873)",
+      "text": "BANKINDIA: Stop 2 is 4.3x the sold 0.46 (rule 3x)"
     },
     {
       "level": "WARN",
