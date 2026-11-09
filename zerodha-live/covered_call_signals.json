@@ -1,9 +1,9 @@
 {
- "generated_at": "2026-11-09T12:29:55.911221+00:00",
+ "generated_at": "2026-11-09T12:36:21.492949+00:00",
  "market_data_date": "2026-11-09",
  "live_prices_at": "2026-11-09T17:59:43+05:30",
- "gtt_scan_at": "2026-11-09T17:59:44+05:30",
- "gtt_checked_at": "2026-11-09T17:59:17+05:30",
+ "gtt_scan_at": "2026-11-09T18:06:21+05:30",
+ "gtt_checked_at": "2026-11-09T18:06:21+05:30",
  "rules": {
   "short_call_delta": 0.1,
   "short_put_delta": 0.1,
@@ -8399,17 +8399,6 @@
    "concern": "Supertrend GREEN but the short call is still open",
    "action": "Close it and open the bull put spread",
    "text": "TIINDIA: Supertrend is GREEN: the open short call (2450CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
-  },
-  {
-   "level": "BREACH",
-   "type": "Invalid GTT",
-   "symbol": "CHOLAFIN",
-   "expiry": "2026-11-23",
-   "strike": 1520.0,
-   "opt_type": "PE",
-   "concern": "Stale: No open position on this contract (closed or expired): if it triggers it BUYS a new long position",
-   "action": "Delete this GTT (GTT 342983446)",
-   "text": "CHOLAFIN CHOLAFIN26NOV1520PE: No open position on this contract (closed or expired): if it triggers it BUYS a new long position"
   },
   {
    "expiry": "2026-11-23",

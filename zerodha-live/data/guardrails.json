@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-09T17:59:56+05:30",
+ "generated_at": "2026-11-09T18:06:21+05:30",
  "broker": "zerodha",
  "market_data_date": "2026-11-09",
  "signals_generated_at": "2026-11-09T12:29:50.109466+00:00",
@@ -7,7 +7,7 @@
  "global_block": false,
  "counts": {
   "block": 0,
-  "warn": 4,
+  "warn": 3,
   "info": 0
  },
  "per_symbol_blocks": {},
@@ -29,12 +29,6 @@
    "level": "WARN",
    "symbol": null,
    "msg": "63 open option exit / strike-breach alerts on 52 stocks (360ONE, ABB, ADANIENSOL, ADANIGREEN, ADANIPOWER, ALKEM, AMBER, ANGELONE...) - see the Covered Call alerts"
-  },
-  {
-   "id": "P5",
-   "level": "WARN",
-   "symbol": null,
-   "msg": "1 invalid GTT orders (1 high: e.g. buy GTTs on contracts you no longer hold) - see Covered Call > Alerts > Invalid GTT; the zerodha-gtt-order skill can delete them"
   }
  ]
 }
