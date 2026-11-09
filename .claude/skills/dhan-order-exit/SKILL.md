@@ -16,6 +16,13 @@ This skill places REAL orders on the user's Dhan account through the Dhan MCP. T
 - Signals flagged by the cross-check (`dhan-live/data/signal_crosscheck.json`, recomputed from complete Yahoo history) are BLOCKED: `build_order_ticket.py` lists them as BLOCKED and will not include them. Never work around it; `--override SYMBOL` exists but only the user may ask for it, naming the stock, after you have shown the flag reason.
 - Never retry a rejected order, never modify or cancel without being asked.
 
+## Guardrails (hard rules, added 2026-11-09)
+- Tickets come ONLY from the ticket builder, which now refuses (exit code 2) unless `dhan-live/data/guardrails.json` is current for the same signals. A GLOBAL block (trading halt, stale data, mass-exit anomaly, NaN in the signals, cross-broker import) means nothing may be ordered; per-stock blocks (bad P&L, wrong quantity vs holdings, bought-but-unsettled, oversell, ...) list the stock as BLOCKED. Never work around a guardrail block; tell the user the id and message and stop. Only the user can fix the cause (or switch off `data/trading_halt.json`).
+- Show every guardrail WARN the builder prints in the ticket you present, before asking for the "yes".
+- Batch caps (`data/guardrails_config.json`: 40 orders, 25% of the capital base per batch). A bigger batch is refused unless the user, after seeing it, explicitly asks for `--allow-big-batch`.
+- Kill switch: if the user says stop/halt, set `"halt": true` in `dhan-live/data/trading_halt.json`; set it back to false only when they say so.
+- Re-run `python dhan-live/scripts/guardrails.py` right before building tickets if more than a few hours have passed since the refresh.
+
 ## Steps
 1. **One-shot pick.** Run `python dhan-live/scripts/build_order_ticket.py exit` (after steps 2-3 below) and print its numbered list VERBATIM as a table: number, stock, qty, reference price, est. proceeds, P&L %. Then ask once: "Reply with the numbers to exit - e.g. `1,3` - or `all`." Echo the choice back. Never default to everything; if unclear, ask again. Refuse any stock not in the list.
 2. **Fresh data - after the close.** Signals must be the day's final ones: the backtester's "Daily OHLC Update" publishes after the close (around 16:00 IST; run it from GitHub Actions if needed), then `/refresh-dhan`. Check `market_data_date` is the session that just ended. Run `portfolio_agent_tool` holdings and confirm each stock's quantity and that `avail` (not T1/pledged) covers the sale - if available qty < qty, stop and tell the user.

@@ -54,6 +54,8 @@ def main():
     # covered call (signals only): lot sizes / expiries from Zerodha's public instrument list, then the rule per stock
     run([py, SCRIPTS / "update_options_master.py"])
     run([py, SCRIPTS / "compute_covered_call.py"])
+    run([py, SCRIPTS / "guardrails.py"])          # checks and balances over everything above
+    run([py, SCRIPTS / "test_guardrails.py"])     # the checks themselves must still fire
     print("\nDone. Review `git diff --stat`, then commit zerodha-live/ if the numbers look right.")
 
 

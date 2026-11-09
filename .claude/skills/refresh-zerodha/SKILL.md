@@ -34,6 +34,12 @@ Run from the repo root of TradingJournal on branch `claude/beautiful-hamilton-fw
    - If many entry signals appear at once, say how much capital they would need versus the Rs 30,00,000 base and how much is already deployed.
 8. **Commit + push only after the user says push.** Stage only `zerodha-live/` files (never `.playwright-mcp/`). Message: `Zerodha refresh <market date>`.
 
+## Guardrails (hard rules, added 2026-11-09)
+- The rebuild now ends with `guardrails.py (zerodha-live)` (checks and balances: freshness, fill ledger vs holdings, signal logic re-derived, capital/concentration, orders, options, broker separation, kill switch) and `test_guardrails.py (zerodha-live)` (every check must still fire). Report the line `GUARDRAILS <broker>: OK|WARN|BLOCK` and every BLOCK/WARN it prints in the verify step. The same result drives the banner on the pages and refuses order tickets.
+- Settlement timing: Zerodha has no fill ledger (holdings from the MCP are the truth), so there is no I3 check; Dhan holdings can lag the day's fills; the engine then warns (I3 WARN) and the positions/P&L exclude those stocks until holdings catch up. That is expected; a BLOCK (I3 with no recent buy) is a real missed fill.
+- Never commit/push while a BLOCK is open without telling the user and getting their explicit go-ahead.
+- `data/trading_halt.json` is the user's kill switch; do not flip it without being asked.
+
 ## Rules (do not change without the user)
 - Nifty F&O stocks only. Never invent numbers; if a source is missing, say so.
 - The Google Sheet is NEVER re-read after the baseline is frozen.

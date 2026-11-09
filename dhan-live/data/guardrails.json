@@ -1,0 +1,46 @@
+{
+ "generated_at": "2026-11-09T10:51:57+05:30",
+ "broker": "dhan",
+ "market_data_date": "2026-11-08",
+ "signals_generated_at": "2026-11-09T05:21:38.385690+00:00",
+ "status": "BLOCK",
+ "global_block": true,
+ "counts": {
+  "block": 1,
+  "warn": 4,
+  "info": 0
+ },
+ "per_symbol_blocks": {},
+ "findings": [
+  {
+   "id": "F5",
+   "level": "BLOCK",
+   "symbol": null,
+   "msg": "the cross-check disagrees with 4 of 4 signals - prices are suspect (a partial same-day bar while the market is open, a hole in the price history, or a bad feed). Do not order until the close-of-day data is published and the refresh re-run."
+  },
+  {
+   "id": "I3",
+   "level": "WARN",
+   "symbol": null,
+   "msg": "20 stocks were bought in the last 3 days and are not in Dhan holdings yet (settlement timing); positions and P&L exclude them until holdings catch up: CYIENT (1->2), STOVEKRAFT (1->2), AUROPHARMA (0->1), ENTERO (0->1), MACPOWER (0->1), ROLEXRINGS (0->4), CORONA (0->1), GRWRHITECH (0->1), MANAKCOAT (0->6), NAVINFLUOR (0->1), APLLTD (0->1), EMCURE (0->1) ..."
+  },
+  {
+   "id": "P4",
+   "level": "WARN",
+   "symbol": "CGPOWER",
+   "msg": "CGPOWER: a short call would not be covered by the shares held (lot 850, held 184)"
+  },
+  {
+   "id": "P4",
+   "level": "WARN",
+   "symbol": "BSE",
+   "msg": "BSE: a short call would not be covered by the shares held (lot 200, held 34)"
+  },
+  {
+   "id": "P4",
+   "level": "WARN",
+   "symbol": "CUMMINSIND",
+   "msg": "CUMMINSIND: a short call would not be covered by the shares held (lot 100, held 18)"
+  }
+ ]
+}

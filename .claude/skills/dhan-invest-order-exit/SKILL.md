@@ -19,6 +19,13 @@ This places REAL orders on the user's Dhan account through the Dhan MCP. It cove
 - One explicit user confirmation for the exact batch shown; any change = show again and re-confirm. Never place on an implied or earlier "yes".
 - Never retry a rejected order, never modify or cancel without being asked.
 
+## Guardrails (hard rules, added 2026-11-09)
+- Tickets come ONLY from the ticket builder, which now refuses (exit code 2) unless `dhan-live/data/guardrails.json` is current for the same signals. A GLOBAL block (trading halt, stale data, mass-exit anomaly, NaN in the signals, cross-broker import) means nothing may be ordered; per-stock blocks (bad P&L, wrong quantity vs holdings, bought-but-unsettled, oversell, ...) list the stock as BLOCKED. Never work around a guardrail block; tell the user the id and message and stop. Only the user can fix the cause (or switch off `data/trading_halt.json`).
+- Show every guardrail WARN the builder prints in the ticket you present, before asking for the "yes".
+- Batch caps (`data/guardrails_config.json`: 40 orders, 25% of the capital base per batch). A bigger batch is refused unless the user, after seeing it, explicitly asks for `--allow-big-batch`.
+- Kill switch: if the user says stop/halt, set `"halt": true` in `dhan-live/data/trading_halt.json`; set it back to false only when they say so.
+- Re-run `python dhan-live/scripts/guardrails.py` right before building tickets if more than a few hours have passed since the refresh.
+
 ## Steps
 1. **List, every time.** EVERY invocation, re-run the script and print the FULL numbered table again, all rows, even if it was shown earlier - never write "same as before". Columns: number, stock, qty, reference price, est. proceeds, profit (Rs and %), red since. If the list is empty, say so and show the red-but-in-loss stocks as "held, no exit" for context. Ask once: "Reply with the numbers to exit - e.g. `1,2` - or `all`." Echo the choice back. Never default to everything. Refuse any stock not in the list.
 2. **Fresh data, after the close; live holdings.** `/refresh-dhan` must have run for the session that just ended (the script refuses data older than 3 days). Run `portfolio_agent_tool` action `holdings` and confirm each stock's quantity and that `avail` (not T1 or pledged) covers the sale. If available quantity < quantity, stop and tell the user.

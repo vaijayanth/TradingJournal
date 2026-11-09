@@ -20,6 +20,13 @@ This places REAL orders on the user's Dhan account through the Dhan MCP. It cove
 - One explicit user confirmation for the exact batch shown; any change = show the ticket again and re-confirm. Never place on an implied or earlier "yes".
 - Never retry a rejected order, never modify or cancel without being asked, never place while a refresh is running.
 
+## Guardrails (hard rules, added 2026-11-09)
+- Tickets come ONLY from the ticket builder, which now refuses (exit code 2) unless `dhan-live/data/guardrails.json` is current for the same signals. A GLOBAL block (trading halt, stale data, mass-exit anomaly, NaN in the signals, cross-broker import) means nothing may be ordered; per-stock blocks (bad P&L, wrong quantity vs holdings, bought-but-unsettled, oversell, ...) list the stock as BLOCKED. Never work around a guardrail block; tell the user the id and message and stop. Only the user can fix the cause (or switch off `data/trading_halt.json`).
+- Show every guardrail WARN the builder prints in the ticket you present, before asking for the "yes".
+- Batch caps (`data/guardrails_config.json`: 40 orders, 25% of the capital base per batch). A bigger batch is refused unless the user, after seeing it, explicitly asks for `--allow-big-batch`.
+- Kill switch: if the user says stop/halt, set `"halt": true` in `dhan-live/data/trading_halt.json`; set it back to false only when they say so.
+- Re-run `python dhan-live/scripts/guardrails.py` right before building tickets if more than a few hours have passed since the refresh.
+
 ## Steps
 1. **List, every time.** EVERY invocation, re-run the script and print the FULL numbered tables again, all rows, even if shown earlier - never write "same as before". Run `python dhan-live/scripts/build_share_ticket.py entry` and `python dhan-live/scripts/build_share_ticket.py add` (after steps 2-3). Show: number, stock, kind (entry / add), qty, reference price, est. value, held qty, reason (for entries: the previous capital + profit it is sized from). Directly under the tables show a **capital check**: from `portfolio_agent_tool` action `funds` the available balance, withdrawable cash and collateral; the est. value of ALL listed buys; and that as a % of available balance and of withdrawable cash. Say plainly that most of the balance is collateral, not cash. Then ask once: "Reply with the numbers to place - e.g. `1,3` - or `all entries`, `all adds`." (Entries and adds are numbered separately; say which list.) Echo the choice back. Never default to everything. Refuse any stock not in the list.
 2. **Fresh data, after the close.** `/refresh-dhan` must have run for the session that just ended; check `market_data_date`. The script refuses data older than 3 days.

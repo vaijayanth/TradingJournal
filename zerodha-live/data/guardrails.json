@@ -1,0 +1,28 @@
+{
+ "generated_at": "2026-11-09T10:51:57+05:30",
+ "broker": "zerodha",
+ "market_data_date": "2026-11-08",
+ "signals_generated_at": "2026-11-09T05:21:30.109462+00:00",
+ "status": "BLOCK",
+ "global_block": true,
+ "counts": {
+  "block": 1,
+  "warn": 1,
+  "info": 0
+ },
+ "per_symbol_blocks": {},
+ "findings": [
+  {
+   "id": "F5",
+   "level": "BLOCK",
+   "symbol": null,
+   "msg": "the cross-check disagrees with 63 of 63 signals - prices are suspect (a partial same-day bar while the market is open, a hole in the price history, or a bad feed). Do not order until the close-of-day data is published and the refresh re-run."
+  },
+  {
+   "id": "C2",
+   "level": "WARN",
+   "symbol": "TVSMOTOR",
+   "msg": "TVSMOTOR is 23% of deployed capital"
+  }
+ ]
+}

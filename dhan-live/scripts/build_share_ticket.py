@@ -21,6 +21,9 @@ import sys
 from datetime import date, datetime
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from order_gate import check_caps, load_gate  # noqa: E402
+
 ROOT = Path(__file__).resolve().parent.parent
 MAX_STALE_DAYS = 3
 
@@ -71,6 +74,7 @@ def main():
     ap.add_argument("--pick", default="", help="numbers from the printed list, e.g. 1,3")
     ap.add_argument("--qty", default="", help="SYMBOL=N,... required for entry and exit")
     ap.add_argument("--signals", default=str(ROOT / "covered_call_signals.json"))
+    ap.add_argument("--allow-big-batch", action="store_true", help="user-approved: skip the batch size / value caps")
     args = ap.parse_args()
 
     cc = json.loads(Path(args.signals).read_text())
@@ -80,6 +84,8 @@ def main():
         print(f"REFUSED: covered-call data is {age} days old (market data {md}); run /refresh-dhan first.")
         sys.exit(2)
 
+    dh_sig = json.loads((ROOT / "dhan_live_signals.json").read_text())
+    gate_blocks, gate_cfg = load_gate(dh_sig)   # guardrails: halt / stale data / anomalies refuse everything
     universe = {s["symbol"] for s in cc.get("stocks", [])}
     rows = {r["symbol"]: r for r in cc.get("shares", {}).get("rows", [])}
     stocks = {s["symbol"]: s for s in cc.get("stocks", [])}
@@ -117,6 +123,9 @@ def main():
     tickets, warnings = [], []
     for c in chosen:
         sym = c["symbol"]
+        if sym in gate_blocks:
+            print(f"REFUSED by guardrails for {sym}: " + "; ".join(gate_blocks[sym]))
+            sys.exit(2)
         if args.pick and args.kind == "entry":
             if c["qty"] is None:
                 if sym not in qty_in:
@@ -142,6 +151,9 @@ def main():
         c["market_data_date"] = md
         tickets.append(c)
 
+    if args.pick:
+        for pr in check_caps(tickets, (dh_sig.get("capital_base") or {}).get("initial_capital"), gate_cfg, args.allow_big_batch):
+            print("  BATCH CAP OVERRIDDEN by the user: " + pr)
     label = "selected" if args.pick else "available"
     print(f"SHARE {args.kind.upper()} - investment portfolio, data {md} ({age}d old) - {len(tickets)} {label}" + ("" if args.pick else " (numbered):"))
     for c in tickets:

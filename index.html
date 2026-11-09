@@ -8728,7 +8728,7 @@ const WS_KEY = 'tj_workspace';
 const WORKSPACES = {
   dhan:    { id: 'dhan',    label: 'ND',      strategy: 'dh252', source: 'MCP snapshot',  status: 'live',
              snapshotUrl: 'dhan-live/dhan_live_signals.json',
-             ordersUrl: 'dhan-live/data/orders_snapshot.json', crosscheckUrl: 'dhan-live/data/signal_crosscheck.json',
+             ordersUrl: 'dhan-live/data/orders_snapshot.json', crosscheckUrl: 'dhan-live/data/signal_crosscheck.json', guardUrl: 'dhan-live/data/guardrails.json',
              copy: { refreshCmd: '/refresh-dhan', hasCC: true, strat: 'dh252', liveTitle: 'ND Live · dh252',
                      liveSub: "Live ND positions vs. backtester's daily Supertrend / 52-week-high signals", logoA: 'dh', logoB: '252', logoSub: '52-week-high swing',
                      entryShort: '52-week high, trend green', addShort: 'Down 6%+, trend green',
@@ -8743,7 +8743,7 @@ const WORKSPACES = {
              pages: { live: true, covcall: true, dashboard: 'v2', performance: 'v2', analysis: 'v2' } },   // 'v2' = contract-driven page-dashboard2
   zerodha: { id: 'zerodha', label: 'AZ',      strategy: 'F&O Supertrend', source: 'MCP snapshot', status: 'live',
              snapshotUrl: 'zerodha-live/zerodha_live_signals.json',
-             ordersUrl: 'zerodha-live/data/orders_snapshot.json', crosscheckUrl: 'zerodha-live/data/signal_crosscheck.json',
+             ordersUrl: 'zerodha-live/data/orders_snapshot.json', crosscheckUrl: 'zerodha-live/data/signal_crosscheck.json', guardUrl: 'zerodha-live/data/guardrails.json',
              ccUrl: 'zerodha-live/covered_call_signals.json',
              cfg: { staleDays: 3, addTriggerPct: 0, addCooldownDays: 7, addFraction: 0.1 },
              copy: { refreshCmd: '/refresh-zerodha', hasCC: false, strat: 'F&O Supertrend', liveTitle: 'AZ Live · Nifty F&O',
@@ -9372,15 +9372,15 @@ function d2Attn(kind) {
 // Order status + cross-check, read from the committed snapshots (a browser cannot call the Dhan MCP)
 function dhCopy() { return (WORKSPACES[WS.id] || {}).copy || {}; }
 function dhExtras(force) {
-  const wsCfg = WORKSPACES[WS.id] || {}, DH_ORD_URL = wsCfg.ordersUrl, DH_XC_URL = wsCfg.crosscheckUrl;
+  const wsCfg = WORKSPACES[WS.id] || {}, DH_ORD_URL = wsCfg.ordersUrl, DH_XC_URL = wsCfg.crosscheckUrl, DH_GD_URL = wsCfg.guardUrl;
   window._dhXs = window._dhXs || {};
   if (!force && window._dhXs[WS.id]) return window._dhXs[WS.id];
   const get = u => u ? fetch(u + '?t=' + Date.now()).then(r => r.ok ? r.json() : null).catch(() => null) : Promise.resolve(null);
-  window._dhXs[WS.id] = Promise.all([get(DH_ORD_URL), get(DH_XC_URL)]).then(([o, x]) => {
+  window._dhXs[WS.id] = Promise.all([get(DH_ORD_URL), get(DH_XC_URL), get(DH_GD_URL)]).then(([o, x, gd]) => {
     const orders = (o && o.orders) || [], amo = {}, blocked = {};
     orders.filter(r => r.status === 'PENDING' && r.amo !== false).forEach(r => { const k = r.symbol + '|' + r.side; amo[k] = (amo[k] || 0) + (r.qty || 0); });
     ((x && x.results) || []).filter(r => !r.ok).forEach(r => { blocked[r.symbol] = (r.reasons || []).join('; '); });
-    return { orders, amo, blocked, fetchedAt: o && o.fetched_at, hasOrders: !!o };
+    return { orders, amo, blocked, fetchedAt: o && o.fetched_at, hasOrders: !!o, guard: gd };
   });
   return window._dhXs[WS.id];
 }
@@ -9432,6 +9432,18 @@ function dhStaleAlerts(d, ex) {
   }
   return out;
 }
+// Guardrails (scripts/guardrails.py): BLOCK = no order may be placed (whole workspace, or the named stocks); WARN = look before ordering
+function dhGuardHtml(g, d) {
+  if (!g || !g.findings) return '';
+  const bl = g.findings.filter(x => x.level === 'BLOCK'), wa = g.findings.filter(x => x.level === 'WARN');
+  const stale = d && d.meta && g.market_data_date && d.meta.marketDate && g.market_data_date !== d.meta.marketDate;
+  if (!bl.length && !wa.length && !stale) return '';
+  const row = x => `<div class="dh-stale-row"><b>${dhEsc(x.id)} · ${x.level === 'BLOCK' ? 'Blocking' : 'Warning'}${x.symbol ? ' · ' + dhEsc(x.symbol) : ''}</b><span>${dhEsc(x.msg)}</span></div>`;
+  const head = (stale ? 'Guardrail check is older than the signals - run the refresh. ' : '') + (g.global_block ? 'ALL ORDERS BLOCKED. ' : '')
+    + `Guardrails: ${bl.length} blocking · ${wa.length} warning${wa.length === 1 ? '' : 's'}`;
+  return `<details class="dh-stale ${bl.length || stale ? 'high' : ''}" ${bl.length ? 'open' : ''}><summary style="cursor:pointer;font-weight:700;font-size:13px">${dhEsc(head)}</summary>`
+    + bl.concat(wa).slice(0, 40).map(row).join('') + '</details>';
+}
 function dhRenderStale(d) {
   const slots = document.querySelectorAll('.dh-stale-slot'); if (!slots.length || !d) return;
   const paint = ex => {
@@ -9439,7 +9451,7 @@ function dhRenderStale(d) {
     const html = a.length ? `<div class="dh-stale ${a.some(x => x.sev === 'high') ? 'high' : ''}" role="alert">`
       + a.map(x => `<div class="dh-stale-row"><b>${dhEsc(x.title)}</b><span>${dhEsc(x.text)}</span></div>`).join('')
       + `<div class="dh-stale-act">In Claude Code, run <code>${dhEsc(dhCopy().refreshCmd || '/refresh-dhan')}</code> <button onclick="navigator.clipboard&&navigator.clipboard.writeText('${dhCopy().refreshCmd || '/refresh-dhan'}');this.textContent='Copied'">Copy command</button></div></div>` : '';
-    slots.forEach(s => { s.innerHTML = html; });
+    slots.forEach(s => { s.innerHTML = html + dhGuardHtml(ex && ex.guard, d); });
   };
   paint(null); dhExtras().then(paint);
 }

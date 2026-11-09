@@ -32,6 +32,12 @@ Run from the repo root of TradingJournal on branch `claude/beautiful-hamilton-fw
    - Covered Call: report the Options alerts (EXIT / WARN / ENTER) and the Shares tab signals (entry signals, averaging due), that the options MTM ties to Dhan's "Unrealized P&L" in the positions output, and which stocks still have no chain or lot size. Deltas are Black-Scholes estimates from the chain's IV (no dividends) - say so.
 7. **Commit + push only after the user says push.** Stage only `dhan-live/` files (never `.playwright-mcp/`). Message: `Dhan refresh <market date>`.
 
+## Guardrails (hard rules, added 2026-11-09)
+- The rebuild now ends with `guardrails.py` (checks and balances: freshness, fill ledger vs holdings, signal logic re-derived, capital/concentration, orders, options, broker separation, kill switch) and `test_guardrails.py` (every check must still fire). Report the line `GUARDRAILS <broker>: OK|WARN|BLOCK` and every BLOCK/WARN it prints in the verify step. The same result drives the banner on the pages and refuses order tickets.
+- Settlement timing: Dhan holdings can lag the day's fills; the engine then warns (I3 WARN) and the positions/P&L exclude those stocks until holdings catch up. That is expected; a BLOCK (I3 with no recent buy) is a real missed fill.
+- Never commit/push while a BLOCK is open without telling the user and getting their explicit go-ahead.
+- `data/trading_halt.json` is the user's kill switch; do not flip it without being asked.
+
 ## Rules (do not change without the user)
 - Fixed capital base 20,00,000; deposits ignored. Closed-trade P&L is gross of charges.
 - Equity only; the option-hedge portfolio and investment portfolio are never dh252.

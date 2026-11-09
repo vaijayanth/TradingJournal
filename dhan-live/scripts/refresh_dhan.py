@@ -73,6 +73,8 @@ def main():
     run([py, SCRIPTS / "crosscheck_signals.py"])   # recompute every signal on complete Yahoo data; flagged signals are blocked from orders
     run([py, SCRIPTS / "update_lot_sizes.py"])   # NSE's official lot file (best effort)
     run(cc)
+    run([py, SCRIPTS / "guardrails.py"])          # checks and balances over everything above; order tickets refuse on a BLOCK
+    run([py, SCRIPTS / "test_guardrails.py"])     # the checks themselves must still fire
     print("\nDone. Review `git diff --stat`, then commit dhan-live/ if the numbers look right.")
 
 

@@ -1,0 +1,15 @@
+{
+ "_note": "Thresholds for scripts/guardrails.py and the order gate. Only keys listed here override the built-in defaults. Edit deliberately: they are the safety limits.",
+ "max_orders_per_batch": 40,
+ "max_batch_notional_pct_of_base": 25,
+ "single_stock_warn_pct": 20,
+ "sector_warn_pct": 40,
+ "settlement_window_days": 3,
+ "max_entries_warn": 80,
+ "mass_exit_min": 3,
+ "mass_exit_pct_of_positions": 20,
+ "overspend_x_tier": 3,
+ "entry_window_days": 6,
+ "require_high": false,
+ "add_trigger_pct": 0.0
+}

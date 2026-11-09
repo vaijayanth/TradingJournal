@@ -24,6 +24,9 @@ import sys
 from datetime import date, datetime
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from order_gate import check_caps, load_gate  # noqa: E402
+
 ROOT = Path(__file__).resolve().parent.parent
 MAX_STALE_DAYS = 3
 
@@ -55,6 +58,7 @@ def main():
     ap.add_argument("--crosscheck", default=str(ROOT / "data" / "signal_crosscheck.json"))
     ap.add_argument("--signals", default=str(ROOT / "dhan_live_signals.json"))
     ap.add_argument("--holdings", default=str(ROOT / "data" / "holdings_snapshot.json"))
+    ap.add_argument("--allow-big-batch", action="store_true", help="user-approved: skip the batch size / value caps")
     args = ap.parse_args()
 
     sig = json.loads(Path(args.signals).read_text())
@@ -65,6 +69,8 @@ def main():
     if age is None or age > MAX_STALE_DAYS:
         print(f"REFUSED: signal data is {age} days old (market data {md}); run /refresh-dhan first.")
         sys.exit(2)
+
+    gate_blocks, gate_cfg = load_gate(sig)   # guardrails: halt / stale data / mass exit ... refuse everything; per-stock blocks below
 
     cc_path = Path(args.crosscheck)
     if not cc_path.exists():
@@ -111,6 +117,8 @@ def main():
                 side, ref, why = "SELL", r["cmp"], f"Supertrend red ({r.get('flip_label')}), P&L {r['pl_pct']:.1f}% - exit the whole position"
             if qty < 1:
                 skipped.append((s, "quantity < 1 share")); continue
+            if s in gate_blocks:
+                blocked.append((kind, s, "guardrail: " + "; ".join(gate_blocks[s]))); continue
             bad = flagged.get((kind, s))
             if bad is None and (kind, s) not in {(x["kind"], x["symbol"]) for x in cc["results"]}:
                 bad = ["not covered by the cross-check"]
@@ -129,6 +137,9 @@ def main():
     if want:
         chosen = [t for t in chosen if t["symbol"] in want]
 
+    if args.pick or want:
+        for pr in check_caps(chosen, (sig.get("capital_base") or {}).get("initial_capital"), gate_cfg, args.allow_big_batch):
+            print("  BATCH CAP OVERRIDDEN by the user: " + pr)
     label = "selected" if (args.pick or want) else "available"
     print(f"{args.kind.upper()} signals dated {md} ({age}d old) - {len(chosen)} {label}" + ("" if (args.pick or want) else " (numbered):"))
     for t in chosen:
