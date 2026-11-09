@@ -59,6 +59,7 @@ def main():
     ap.add_argument("--crosscheck", default=str(ROOT / "data" / "signal_crosscheck.json"))
     ap.add_argument("--signals", default=str(ROOT / "dhan_live_signals.json"))
     ap.add_argument("--holdings", default=str(ROOT / "data" / "holdings_snapshot.json"))
+    ap.add_argument("--all-days", action="store_true", help="include entry signals whose 52-week-high day is not the latest session (default: today's only)")
     ap.add_argument("--allow-big-batch", action="store_true", help="user-approved: skip the batch size / value caps")
     args = ap.parse_args()
 
@@ -104,6 +105,8 @@ def main():
                 qty = r.get("qty_to_buy") or 0
                 if h and h["qty"] > 0:
                     skipped.append((s, "already held")); continue
+                if not args.all_days and r.get("date") != md:
+                    skipped.append((s, f"52-week-high day {r.get('date')} is not today ({md}) - missed day, not ordered (--all-days shows it)")); continue
                 side, ref, why = "BUY", r["close"], f"52-week high + Supertrend {r['supertrend_color']} ({r.get('flip_label')})"
             elif kind == "addon":
                 qty = r.get("add_qty") or 0

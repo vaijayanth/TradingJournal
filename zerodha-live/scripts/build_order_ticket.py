@@ -63,7 +63,7 @@ def main():
     ap.add_argument("--signals", default=str(ROOT / "zerodha_live_signals.json"))
     ap.add_argument("--holdings", default=str(ROOT / "data" / "holdings_snapshot.json"))
     ap.add_argument("--excluded", default=str(ROOT / "data" / "excluded_symbols.json"))
-    ap.add_argument("--all-days", action="store_true", help="list entry signals from every flip day in the window (default: only the freshest flip day that has an orderable signal)")
+    ap.add_argument("--all-days", action="store_true", help="list entry signals from every flip day in the window (default: only today's flips)")
     ap.add_argument("--allow-big-batch", action="store_true", help="user-approved: skip the batch size / value caps")
     args = ap.parse_args()
 
@@ -149,16 +149,15 @@ def main():
                             "est_value": round(qty * ref, 2), "reason": why, "market_data_date": md,
                             "crosscheck": "OVERRIDDEN: " + "; ".join(bad) if bad else "ok",
                             "flip_days_ago": r.get("recent_bullish_flip_days_ago") if kind == "entry" else None})
-    # user rule (2026-11-09): order only the freshest flips. If today's flips (age 0) have orderable signals, list only those; if there are none,
-    # the freshest day that has some (yesterday = 1, then 2 ...). Add-ons are not flip signals and are always listed.
+    # user rule (2026-11-09, final): order only TODAY's flips (age 0). A missed day is a missed signal: yesterday's or older flips are never
+    # listed (--all-days shows them). Add-ons are not flip signals and are always listed.
     older = []
+    fresh_note = ""
     if not args.all_days:
-        ages = [t["flip_days_ago"] for t in tickets if t["kind"] == "entry" and t["flip_days_ago"] is not None]
-        if ages:
-            fresh = min(ages)
-            older = [t for t in tickets if t["kind"] == "entry" and t["flip_days_ago"] is not None and t["flip_days_ago"] != fresh]
-            tickets = [t for t in tickets if t not in older]
-            fresh_note = f"entry signals shown: flips {'today' if fresh == 0 else str(fresh) + ' trading day(s) ago'} only ({len(older)} older flip(s) hidden; --all-days shows them)"
+        older = [t for t in tickets if t["kind"] == "entry" and t["flip_days_ago"] != 0]
+        tickets = [t for t in tickets if t not in older]
+        if older:
+            fresh_note = f"entry signals shown: flips today only ({len(older)} older flip(s) hidden - missed day, not ordered; --all-days shows them)"
     for i, t in enumerate(tickets, 1):
         t["no"] = i
 

@@ -41,7 +41,7 @@ DEFAULTS = {
     "max_entries_warn": 60, "mass_exit_min": 5, "mass_exit_pct_of_positions": 20, "overspend_x_tier": 3,
     "single_stock_warn_pct": 20, "sector_warn_pct": 40, "deployed_warn_pct_of_base": 100, "pending_buy_warn_pct_of_base": 25,
     "expiry_week_days": 5, "add_trigger_pct": -6.0, "add_cooldown_days": 7, "entry_max_pct_below_high": 0.5,
-    "require_high": False, "entry_window_days": 3,   # AZ entry = Supertrend flipped to green within 3 trading days (no 52-week-high rule)
+    "require_high": False, "entry_window_days": 0,   # AZ entry = Supertrend flipped to green today (no 52-week-high rule)
 }
 IST = timezone(timedelta(hours=5, minutes=30))
 

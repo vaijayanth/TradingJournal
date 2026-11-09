@@ -102,10 +102,10 @@ c = base(); c["signals"]["entries"] = [{"symbol": "AAA", "close": 100, "supertre
 check("S3 entry in a held stock = BLOCK", has(run(c), "S3", "BLOCK", "AAA"))
 c = base(); c["signals"]["entries"] = [{"symbol": "NEW", "close": 100, "supertrend_color": "red", "pct_from_high": 0, "qty_to_buy": 1, "recent_bullish_flip_days_ago": 2}]
 check("S3 entry on red = BLOCK", has(run(c), "S3", "BLOCK", "NEW"))
-c = base(); c["signals"]["entries"] = [{"symbol": "NEW", "close": 100, "supertrend_color": "green", "pct_from_high": -30, "qty_to_buy": 5, "recent_bullish_flip_days_ago": 3}]
+c = base(); c["signals"]["entries"] = [{"symbol": "NEW", "close": 100, "supertrend_color": "green", "pct_from_high": -30, "qty_to_buy": 5, "recent_bullish_flip_days_ago": 0}]
 check("S3 entry far below the 52-week high is fine for AZ (no high rule)", not has(run(c), "S3", "BLOCK", "NEW"))
 c = base(); c["signals"]["entries"] = [{"symbol": "NEW", "close": 100, "supertrend_color": "green", "pct_from_high": 0, "qty_to_buy": 5, "recent_bullish_flip_days_ago": 9}]
-check("S3 entry whose flip is 9 trading days old = BLOCK (window 6)", has(run(c), "S3", "BLOCK", "NEW"))
+check("S3 entry whose flip is 9 trading days old = BLOCK (window 0)", has(run(c), "S3", "BLOCK", "NEW"))
 c = base(); c["signals"]["entries"] = [{"symbol": "BIG", "close": 90000, "supertrend_color": "green", "pct_from_high": 0, "qty_to_buy": 1, "recent_bullish_flip_days_ago": 2}]
 check("S4 1-share overspend = WARN", has(run(c), "S4", "WARN"))
 c = base(); c["signals"]["entries"] = [{"symbol": f"E{i}", "close": 10, "supertrend_color": "green", "pct_from_high": 0, "qty_to_buy": 1, "recent_bullish_flip_days_ago": 2} for i in range(70)]
