@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # dhan-invest-order-entry - real-money after-market BUY orders for the investment-portfolio shares
 
-This places REAL orders on the user's Dhan account through the Dhan MCP. It covers only the investment-portfolio shares in `dhan-live/data/cc_config.json` (`universe`; currently MCX, SHRIRAMFIN, CGPOWER, BSE, DIXON, HCLTECH, INFY, BANKINDIA, BPCL, CUMMINSIND). The dh252 stocks use `dhan-order-entry`; option orders have their own skill. Orders go in after the close as AFTER-MARKET (AMO) orders for the NEXT trading day.
+This places REAL orders on the user's Dhan account through the Dhan MCP. It covers only the investment-portfolio shares in `dhan-live/data/cc_config.json` (`universe`; currently MCX, SHRIRAMFIN, CGPOWER, BSE, DIXON, HCLTECH, INFY, BANKINDIA, BPCL, CUMMINSIND). The dh252 stocks use `dhan-order`; option orders have their own skill. Orders go in after the close as AFTER-MARKET (AMO) orders for the NEXT trading day.
 
 ## Strategy (user, 2026-11-08)
 - **Entry:** when a stock's Supertrend flips from red to green and you do not hold it, buy with **the last position's capital plus the profit earned on that same stock in the previous trade** (profit is reinvested). Quantity = that amount divided by the close, floored to whole shares, minimum 1 (computed by `compute_covered_call.py` from `dhan-live/data/invest_trades.json`, written by the exit skill).

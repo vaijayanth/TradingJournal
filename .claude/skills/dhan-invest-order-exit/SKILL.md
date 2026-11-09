@@ -6,7 +6,7 @@ disable-model-invocation: true
 
 # dhan-invest-order-exit - real-money after-market SELL orders for investment-portfolio shares
 
-This places REAL orders on the user's Dhan account through the Dhan MCP. It covers only the investment-portfolio shares in `dhan-live/data/cc_config.json` (`universe`; currently MCX, SHRIRAMFIN, CGPOWER, BSE, DIXON, HCLTECH, INFY, BANKINDIA, BPCL, CUMMINSIND). dh252 exits use `dhan-order-exit`; option orders have their own skill. Orders go in after the close as AFTER-MARKET (AMO) orders for the NEXT trading day.
+This places REAL orders on the user's Dhan account through the Dhan MCP. It covers only the investment-portfolio shares in `dhan-live/data/cc_config.json` (`universe`; currently MCX, SHRIRAMFIN, CGPOWER, BSE, DIXON, HCLTECH, INFY, BANKINDIA, BPCL, CUMMINSIND). dh252 exits use `dhan-order`; option orders have their own skill. Orders go in after the close as AFTER-MARKET (AMO) orders for the NEXT trading day.
 
 ## Strategy (user, 2026-11-08)
 **Exit when the Supertrend is red AND the position is profitable.** The whole position is sold. A red stock that is in loss is HELD, not sold. The profit made here is reinvested: the next entry in the same stock is sized at this position's capital plus this profit (see `dhan-invest-order-entry`), which is why the capital and profit are recorded in steps 8 and 12.

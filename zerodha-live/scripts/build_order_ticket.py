@@ -5,14 +5,15 @@ Quantities come from the engine, never from the caller:
   entry : each entry signal (Supertrend flipped to green within the entry window, no holding in the account), qty = qty_to_buy
           (Rs20,000 tier floored to whole shares, min 1), BUY
   addon : each add-on signal (green and down 6% or more, 1/10 of the quantity, weekly cooldown), qty = add_qty, BUY
-  buy   : entry + add-on signals in ONE numbered list (what /zerodha-order-entry shows for one-shot picking)
+  buy   : entry + add-on signals in ONE numbered list (the BUY half of /zerodha-order)
+  all   : exits, then entries, then add-ons in ONE numbered list (what /zerodha-order shows)
   exit  : each exit signal (Supertrend red after the grandfather cut-off, any profit or loss), qty = the WHOLE open position, SELL
-          (what /zerodha-order-exit shows). Each exit ticket carries the position's avg_cost and entry_date (for zerodha_trades.py pending)
+          (the SELL half of /zerodha-order). Each exit ticket carries the position's avg_cost and entry_date (for zerodha_trades.py pending)
           and a warning when a short CALL is open on the stock (selling the shares would leave it uncovered).
-The ticket is information for the order skills (zerodha-order-entry / zerodha-order-exit); this script places nothing.
+The ticket is information for the order skills (zerodha-order); this script places nothing.
 
 Usage:
-  python zerodha-live/scripts/build_order_ticket.py buy|entry|addon|exit        # numbered list
+  python zerodha-live/scripts/build_order_ticket.py all|buy|entry|addon|exit    # numbered list
   python zerodha-live/scripts/build_order_ticket.py buy --pick 3,7,12-15        # tickets for those numbers
   python zerodha-live/scripts/build_order_ticket.py buy --symbols A,B           # or by symbol (must have a signal)
   python zerodha-live/scripts/build_order_ticket.py buy --override A,B          # include signals the cross-check flagged (deliberate)
@@ -54,7 +55,7 @@ def parse_pick(text, n):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("kind", choices=["buy", "entry", "addon", "exit"])
+    ap.add_argument("kind", choices=["all", "buy", "entry", "addon", "exit"])
     ap.add_argument("--pick", default="", help="numbers from the printed list, e.g. 3,7,12-15")
     ap.add_argument("--symbols", default="", help="comma list: restrict to these signal stocks (must already have a signal)")
     ap.add_argument("--override", default="", help="comma list of cross-check-FLAGGED symbols to include anyway")
@@ -97,7 +98,7 @@ def main():
         for l in json.loads(legs_p.read_text(encoding="utf-8")).get("legs", []):
             if l.get("side") == "SHORT" and l.get("type") == "CE":
                 short_calls.setdefault(l["symbol"], []).append(f"{l['tradingsymbol']} x{l['qty']}")
-    kinds = ["entry", "addon"] if args.kind == "buy" else [args.kind]
+    kinds = ["exit", "entry", "addon"] if args.kind == "all" else (["entry", "addon"] if args.kind == "buy" else [args.kind])
     all_symbols = {(k, r["symbol"]) for k in kinds for r in srcs[k]}
     want = {s.strip().upper() for s in args.symbols.split(",") if s.strip()}
     unknown = want - {s for _, s in all_symbols}

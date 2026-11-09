@@ -4,12 +4,13 @@ Only stocks that currently have a signal can appear (no options, no hedge-portfo
 user types in by hand). Quantities come from the engine, never from the caller:
   entry : each entry signal, qty = qty_to_buy (>= 1 share, effective tier size), BUY
   addon : each add-on signal, qty = add_qty (1/10 of the open position), BUY
-  buy   : entry + add-on signals in ONE numbered list (what /dhan-order-entry shows for one-shot picking)
+  buy   : entry + add-on signals in ONE numbered list (the BUY half of /dhan-order)
+  all   : exits, then entries, then add-ons in ONE numbered list (only used for the overview counts of /dhan-order)
   exit  : each exit signal (Supertrend red), qty = the whole open position, SELL
-The ticket is information for the order skills (dhan-order-entry / dhan-order-exit); this script places nothing.
+The ticket is information for the order skill (dhan-order); this script places nothing.
 
 Usage:
-  python dhan-live/scripts/build_order_ticket.py buy|entry|addon|exit            # numbered list
+  python dhan-live/scripts/build_order_ticket.py all|buy|entry|addon|exit        # numbered list
   python dhan-live/scripts/build_order_ticket.py buy --pick 3,7,12-15            # tickets for those numbers
   python dhan-live/scripts/build_order_ticket.py buy --symbols A,B               # or by symbol (must have a signal)
   python dhan-live/scripts/build_order_ticket.py buy --override A,B              # include signals the cross-check flagged (deliberate)
@@ -51,7 +52,7 @@ def parse_pick(text, n):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("kind", choices=["buy", "entry", "addon", "exit"])
+    ap.add_argument("kind", choices=["all", "buy", "entry", "addon", "exit"])
     ap.add_argument("--pick", default="", help="numbers from the printed list, e.g. 3,7,12-15")
     ap.add_argument("--symbols", default="", help="comma list: restrict to these signal stocks (must already have a signal)")
     ap.add_argument("--override", default="", help="comma list of cross-check-FLAGGED symbols to include anyway")
@@ -84,7 +85,7 @@ def main():
     override = {s.strip().upper() for s in args.override.split(",") if s.strip()}
 
     srcs = {"entry": sig.get("entries", []), "addon": sig.get("addons", []), "exit": sig.get("exits", [])}
-    kinds = ["entry", "addon"] if args.kind == "buy" else [args.kind]
+    kinds = ["exit", "entry", "addon"] if args.kind == "all" else (["entry", "addon"] if args.kind == "buy" else [args.kind])
     all_symbols = {(k, r["symbol"]) for k in kinds for r in srcs[k]}
     want = {s.strip().upper() for s in args.symbols.split(",") if s.strip()}
     unknown = want - {s for _, s in all_symbols}
