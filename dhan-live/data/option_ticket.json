@@ -1,0 +1,35 @@
+{
+ "symbol": "BPCL",
+ "structure": "call",
+ "expiry": "2026-11-23",
+ "spot": 316.0,
+ "otm_pct_asked": 10.0,
+ "lot": 1975,
+ "lots": 1,
+ "quantity": 1975,
+ "legs": [
+  {
+   "role": "short",
+   "type": "CE",
+   "strike": 345.0,
+   "ltp": 0.85,
+   "oi": 92825,
+   "iv": 32.1,
+   "pct_from_spot": 9.2,
+   "delta": 0.092,
+   "warn": []
+  }
+ ],
+ "super_order": {
+  "transactionType": "SELL",
+  "exchangeSegment": "NSE_FNO",
+  "orderType": "LIMIT",
+  "productType": "MARGIN",
+  "price": 0.85,
+  "stopLossPrice": 2.55,
+  "targetPrice": 0.35,
+  "trailingJump": 0.05
+ },
+ "net_credit_per_share": 0.85,
+ "net_credit_rs": 1679
+}

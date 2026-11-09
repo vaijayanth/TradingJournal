@@ -10,11 +10,12 @@ What it picks (user rule 2026-11-09): the listed strike nearest to `otm-pct` per
 It shows the premium (the chain's last traded price: the Dhan chain has no bid/ask, so the skill adds a live quote for the chosen
 contract), the credit, the lot, the quantity and the super order legs: stop = stop_premium_multiple x the premium, target = the
 premium decayed profit_exit_decay_pct (60%) i.e. 40% of it, trailing jump 0.05 (all rounded to the 0.05 tick).
-Refuses: trading_halt.json halt, a global guardrail block, expiry week, a stock outside the covered-call universe, no lot size.
+Refuses: trading_halt.json halt (H1) or X1, expiry week, a stock outside the covered-call universe, no lot size.
 Warns: a price that looks stale (out of line with its neighbouring strikes) or thin open interest.
 """
 import argparse
 import json
+import math
 import re
 import sys
 from datetime import date, datetime, timedelta, timezone
@@ -50,6 +51,16 @@ def parse_chain(text):
     return float(spot.group(1).replace(",", "")) if spot else None, rows
 
 
+def bs_delta(kind, spot, strike, iv_pct, days, r):
+    """Black-Scholes delta from the chain's IV (an estimate: no dividends), the same as the covered-call engine."""
+    if iv_pct <= 0 or spot <= 0 or strike <= 0:
+        return None
+    t, v = max(days, 1) / 365.0, iv_pct / 100.0
+    d1 = (math.log(spot / strike) + (r + v * v / 2) * t) / (v * math.sqrt(t))
+    cdf = 0.5 * (1 + math.erf(d1 / math.sqrt(2)))
+    return cdf if kind == "CE" else cdf - 1
+
+
 def stale_flag(rows, i, kind):
     """A premium out of line with its neighbours (calls must not rise with the strike, puts must not fall) or with thin OI."""
     ltp, oi = (rows[i]["ce_ltp"], rows[i]["ce_oi"]) if kind == "CE" else (rows[i]["pe_ltp"], rows[i]["pe_oi"])
@@ -73,21 +84,29 @@ def main():
     ap.add_argument("--structure", choices=["call", "put-spread"], required=True)
     ap.add_argument("--expiry", required=True, help="YYYY-MM-DD, one of the expiries in data/cc_config.json")
     ap.add_argument("--lots", type=int, default=1)
-    ap.add_argument("--otm-pct", type=float, default=10.0)
+    ap.add_argument("--target-credit", type=float, help="Rs credit wanted per trade: picks the number of lots (1-4) whose credit is nearest to it (overrides --lots)")
+    ap.add_argument("--otm-pct", type=float, default=None, help="default (user rule 2026-11-09): 10 for the current month expiry, 15 for a later month")
     ap.add_argument("--chain")
+    ap.add_argument("--delta", type=float, help="pick the strike whose estimated delta is nearest this (e.g. 0.10) instead of a percentage away")
     ap.add_argument("--preview", action="store_true", help="show the pick and the premium even when the guardrails block placing; writes no ticket")
     a = ap.parse_args()
     sym = a.symbol.upper()
+    if a.otm_pct is None:
+        a.otm_pct = 10.0 if a.expiry[:7] == datetime.now(IST).strftime("%Y-%m") else 15.0
 
     if (load(DATA / "trading_halt.json", {}) or {}).get("halt"):
         sys.exit("REFUSED: trading halt is ON. Nothing may be placed.")
     g = load(DATA / "guardrails.json", {})
+    # The F5 cross-check (Yahoo vs the backtester's equity closes) and the other equity-signal checks are about the Supertrend / dh252 signals;
+    # an option ticket is built from a live Dhan option chain for a contract the user names, so only the halt switch and a broker-code-mix
+    # error (X1) stop it (user, 2026-11-09: "I don't think options should have the F5 block").
     blocked_note = None
-    if g.get("global_block"):
-        blk = [f["msg"] for f in g.get("findings", []) if f["level"] == "BLOCK" and f.get("symbol") is None]
-        blocked_note = "guardrails block placing (prices suspect): " + " | ".join(blk)[:300]
-        if not a.preview:
-            sys.exit("REFUSED by guardrails (prices suspect, nothing may be opened): " + " | ".join(blk)[:400])
+    hard = [f for f in g.get("findings", []) if f["level"] == "BLOCK" and f.get("symbol") is None and f.get("id") in ("H1", "X1")]
+    if hard:
+        sys.exit("REFUSED by guardrails: " + " | ".join(f"{f['id']}: {f['msg']}" for f in hard)[:400])
+    ignored = [f["id"] for f in g.get("findings", []) if f["level"] == "BLOCK" and f.get("symbol") is None and f.get("id") not in ("H1", "X1")]
+    if ignored:
+        blocked_note = f"global equity-data block(s) {', '.join(ignored)} do not apply to options; the live chain is used"
     if sym in (g.get("per_symbol_blocks") or {}) and not a.preview:
         sys.exit(f"REFUSED: {sym} is blocked by the guardrails: {g['per_symbol_blocks'][sym]}")
     cfg = load(DATA / "cc_config.json")
@@ -120,11 +139,23 @@ def main():
     rows = [r for r in rows if (r["ce_oi"] > 0 and r["ce_ltp"] > 0 if kind == "CE" else r["pe_oi"] > 0 and r["pe_ltp"] > 0)]
     if not rows:
         sys.exit("REFUSED: no live strikes (open interest > 0) in the chain.")
-    i = min(range(len(rows)), key=lambda j: (abs(rows[j]["strike"] - target), -abs(rows[j]["strike"] - spot)))
+    dte = (date.fromisoformat(a.expiry) - datetime.now(IST).date()).days
+    rf = rules.get("risk_free_rate", 0.065)
+    ivk = "ce_iv" if kind == "CE" else "pe_iv"
+    for x in rows:
+        d_ = bs_delta(kind, spot, x["strike"], x[ivk], dte, rf)
+        x["delta"] = None if d_ is None else round(abs(d_), 3)
+    if a.delta:
+        cand = [j for j in range(len(rows)) if rows[j]["delta"] is not None and ((rows[j]["strike"] > spot) if kind == "CE" else (rows[j]["strike"] < spot))]
+        if not cand:
+            sys.exit("REFUSED: no live strike with an implied volatility to estimate a delta from.")
+        i = min(cand, key=lambda j: abs(rows[j]["delta"] - a.delta))
+    else:
+        i = min(range(len(rows)), key=lambda j: (abs(rows[j]["strike"] - target), -abs(rows[j]["strike"] - spot)))
     r = rows[i]
     prem = r["ce_ltp"] if kind == "CE" else r["pe_ltp"]
     legs = [{"role": "short", "type": kind, "strike": r["strike"], "ltp": prem, "oi": r["ce_oi"] if kind == "CE" else r["pe_oi"],
-             "iv": r["ce_iv"] if kind == "CE" else r["pe_iv"], "pct_from_spot": round((r["strike"] / spot - 1) * 100, 1), "warn": stale_flag(rows, i, kind)}]
+             "iv": r["ce_iv"] if kind == "CE" else r["pe_iv"], "pct_from_spot": round((r["strike"] / spot - 1) * 100, 1), "delta": r.get("delta"), "warn": stale_flag(rows, i, kind)}]
     hedge = None
     if a.structure == "put-spread":
         h = i - rules.get("hedge_strikes_below", 2)
@@ -134,6 +165,9 @@ def main():
         hedge = {"role": "hedge", "type": "PE", "strike": hr["strike"], "ltp": hr["pe_ltp"], "oi": hr["pe_oi"], "iv": hr["pe_iv"],
                  "pct_from_spot": round((hr["strike"] / spot - 1) * 100, 1), "warn": stale_flag(rows, h, "PE")}
         legs.append(hedge)
+    if a.target_credit:
+        per_lot = (prem - (hedge["ltp"] if hedge else 0)) * lot
+        a.lots = min(range(1, MAX_LOTS + 1), key=lambda n: abs(n * per_lot - a.target_credit)) if per_lot > 0 else 1
     qty = lot * a.lots
     stop = tick(rules.get("stop_premium_multiple", 3) * prem)
     target_px = max(TICK, tick(prem * (1 - rules.get("profit_exit_decay_pct", 60) / 100)))
@@ -144,8 +178,8 @@ def main():
               "net_credit_per_share": round(credit, 2), "net_credit_rs": round(credit * qty)}
     if not a.preview:
         (DATA / "option_ticket.json").write_text(json.dumps(ticket, indent=1))
-    print(f"{sym} {a.structure} {a.expiry}: stock {spot:g}, rule = strike nearest {a.otm_pct:g}% {'above' if kind == 'CE' else 'below'} -> target {target:.1f}")
-    print(f"  SHORT {r['strike']:g}{kind}  ({legs[0]['pct_from_spot']:+.1f}% from the price)  premium (last traded) Rs{prem:g}  OI {legs[0]['oi']:,}  IV {legs[0]['iv']:g}")
+    print(f"{sym} {a.structure} {a.expiry}: stock {spot:g}, " + (f"rule = strike with estimated delta nearest {a.delta:g}" if a.delta else f"rule = strike nearest {a.otm_pct:g}% {'above' if kind == 'CE' else 'below'} -> target {target:.1f}"))
+    print(f"  SHORT {r['strike']:g}{kind}  ({legs[0]['pct_from_spot']:+.1f}% from the price, delta {legs[0]['delta']})  premium (last traded) Rs{prem:g}  OI {legs[0]['oi']:,}  IV {legs[0]['iv']:g}")
     for w in legs[0]["warn"]:
         print(f"    WARNING: {w}")
     if hedge:

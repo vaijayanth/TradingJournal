@@ -42,7 +42,7 @@ def num(s):
 
 
 # ---------- parsers for the raw MCP text ----------
-POS_HEAD = re.compile(r"^([A-Z0-9&]+)-([A-Za-z]{3})(\d{4})-([\d.]+)-(CE|PE) \[(\w+)\] (LONG|SHORT)")
+POS_HEAD = re.compile(r"^([A-Z0-9&]+)-([A-Za-z]{3})(\d{4})-([\d.]+)-(CE|PE) \[(\w+)\] (LONG|SHORT|CLOSED)")
 
 
 def parse_positions(text, expiries):
@@ -63,7 +63,7 @@ def parse_positions(text, expiries):
         elif cur and line.strip().startswith("P&L:"):
             p = re.search(r"([▲▼])\s*₹([\d,.]+)", line)
             cur["pnl_rs"] = (1 if p.group(1) == "▲" else -1) * num(p.group(2))
-    return [l for l in legs if "qty" in l and "pnl_rs" in l]
+    return [l for l in legs if "qty" in l and "pnl_rs" in l and l["qty"] > 0]   # a CLOSED row (net 0, realised P&L only) is not an open leg
 
 
 def parse_chain(text):
@@ -221,6 +221,29 @@ def structure_alerts(sym, my_legs, shares_held, gtt_active):
     return out
 
 
+def expiry_alerts(sym, my_legs, spot, shares_held, rules):
+    """Stock options are settled by physical delivery at expiry: an in-the-money leg close to expiry means shares to deliver (short call, long put)
+    or to buy and pay for (short put, long call). Flag every in-the-money leg within expiry_risk_days of expiry; closing it earlier avoids the delivery."""
+    out = []
+    window = rules.get("expiry_risk_days", 7)
+    today = datetime.now(timezone(timedelta(hours=5, minutes=30))).date()
+    for l in my_legs:
+        if not l.get("touched"):
+            continue
+        days = (date.fromisoformat(l["expiry"]) - today).days
+        if days < 0 or days > window:
+            continue
+        side = "short" if l["side"] == "SHORT" else "long"
+        delivers = (l["side"] == "SHORT") == (l["type"] == "CE")      # short call / long put: you deliver shares; short put / long call: you take delivery
+        value = l["qty"] * l["strike"]
+        what = (f"deliver {l['qty']} shares" + (f" (you hold {shares_held})" if shares_held is not None and l["type"] == "CE" else "")) if delivers else f"buy {l['qty']} shares (about Rs{value / 100000:.1f} lakh)"
+        out.append({"level": "BREACH" if days <= 3 else "WARN", "type": "Expiry risk", "symbol": sym, "expiry": l["expiry"], "strike": l["strike"], "opt_type": l["type"], "qty": l["qty"],
+                    "concern": f"{side.title()} {l['strike']:g}{l['type']} is in the money {days}d before expiry: physical settlement, you would {what}",
+                    "action": "Close it before expiry" if days > 1 else "Close it today",
+                    "text": f"{sym} {l['expiry']} {side} {l['strike']:g}{l['type']} in the money, {days} days to expiry: physical settlement"})
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--supertrend", required=True)
@@ -324,6 +347,7 @@ def main():
                                "text": f"{sym} {l['expiry']} {l['strike']:g}{l['type']}: premium decayed {(1 - l['ltp'] / l['sell_avg']) * 100:.0f}% (sold {l['sell_avg']:g}, now {l['ltp']:g}) - book the profit"})
         alerts.extend(a for a in strike_alerts(sym, my_legs, spot_now, rules.get("near_strike_pct", 2), None))
         alerts.extend(structure_alerts(sym, my_legs, held.get(sym, 0), None))   # ND: no GTT data, hedge check only
+        alerts.extend(expiry_alerts(sym, my_legs, spot_now, held.get(sym, 0), rules))
 
         def has_put_spread():
             sp = [l for l in my_legs if l["type"] == "PE" and l["side"] == "SHORT"]

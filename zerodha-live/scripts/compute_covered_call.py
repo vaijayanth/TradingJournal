@@ -15,7 +15,7 @@ Usage: python zerodha-live/scripts/compute_covered_call.py   (run after refresh_
 """
 import json
 import sys
-from datetime import datetime, timedelta, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -100,6 +100,29 @@ def structure_alerts(sym, my_legs, shares_held, gtt_active):
     return out
 
 
+def expiry_alerts(sym, my_legs, spot, shares_held, rules):
+    """Stock options are settled by physical delivery at expiry: an in-the-money leg close to expiry means shares to deliver (short call, long put)
+    or to buy and pay for (short put, long call). Flag every in-the-money leg within expiry_risk_days of expiry; closing it earlier avoids the delivery."""
+    out = []
+    window = rules.get("expiry_risk_days", 7)
+    today = datetime.now(timezone(timedelta(hours=5, minutes=30))).date()
+    for l in my_legs:
+        if not l.get("touched"):
+            continue
+        days = (date.fromisoformat(l["expiry"]) - today).days
+        if days < 0 or days > window:
+            continue
+        side = "short" if l["side"] == "SHORT" else "long"
+        delivers = (l["side"] == "SHORT") == (l["type"] == "CE")      # short call / long put: you deliver shares; short put / long call: you take delivery
+        value = l["qty"] * l["strike"]
+        what = (f"deliver {l['qty']} shares" + (f" (you hold {shares_held})" if shares_held is not None and l["type"] == "CE" else "")) if delivers else f"buy {l['qty']} shares (about Rs{value / 100000:.1f} lakh)"
+        out.append({"level": "BREACH" if days <= 3 else "WARN", "type": "Expiry risk", "symbol": sym, "expiry": l["expiry"], "strike": l["strike"], "opt_type": l["type"], "qty": l["qty"],
+                    "concern": f"{side.title()} {l['strike']:g}{l['type']} is in the money {days}d before expiry: physical settlement, you would {what}",
+                    "action": "Close it before expiry" if days > 1 else "Close it today",
+                    "text": f"{sym} {l['expiry']} {side} {l['strike']:g}{l['type']} in the money, {days} days to expiry: physical settlement"})
+    return out
+
+
 def main():
     cfg = load_json(DATA / "cc_config.json"); rules = cfg["rules"]
     st_file = load_json(DATA / "cache" / "supertrend_full.json")
@@ -177,6 +200,7 @@ def main():
             l["touched_h"] = l["touched"] if l["side"] == "LONG" else False
         alerts.extend(strike_alerts(sym, my, spot_now, rules.get("near_strike_pct", 2), None))
         alerts.extend(structure_alerts(sym, my, held_qty.get(sym, 0), gtt_active))
+        alerts.extend(expiry_alerts(sym, my, spot_now, held_qty.get(sym, 0), rules))
         shorts = [l for l in my if l["side"] == "SHORT"]
         has_call = any(l["type"] == "CE" for l in shorts)
         has_put_spread = any(s["type"] == "PE" and any(b["type"] == "PE" and b["side"] == "LONG" and b["expiry"] == s["expiry"] and b["strike"] < s["strike"] for b in my) for s in shorts)

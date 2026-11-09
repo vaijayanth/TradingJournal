@@ -9801,7 +9801,7 @@ const ccTabBar = (id, tabs, extra) => `<div class="dhm-tabs" id="${id}" role="ta
   `<button class="dhm-tab" data-tab="${k}" onclick="${extra}('${k}')">${l}${n == null ? '' : `<span class="dhm-count">${n}</span>`}</button>`).join('') + '</div>';
 
 // Alert type pill: the label is the alert's own type (3× premium, Near strike, Beyond strike, No GTT placed ...), the colour follows its severity
-const CC_TYPE_ORDER = ['Exit', '3× premium', 'Through hedge', 'Beyond strike', 'Near strike', 'Profit Exit', 'Invalid GTT', 'Invalid stop order', 'No GTT placed', 'No stop placed', 'No hedge', 'Partly hedged', 'New trade'];
+const CC_TYPE_ORDER = ['Exit', '3× premium', 'Through hedge', 'Beyond strike', 'Expiry risk', 'Near strike', 'Profit Exit', 'Invalid GTT', 'Invalid stop order', 'No GTT placed', 'No stop placed', 'No hedge', 'Partly hedged', 'New trade'];
 function ccTypePill(a) {
   const m = { EXIT: ['var(--red-soft)', 'var(--red)'], BREACH: ['var(--red)', '#fff'], WARN: ['var(--amber-soft, var(--surface2))', 'var(--amber)'], ENTER: ['var(--accent-soft, var(--surface2))', 'var(--accent)'], PROFIT: ['var(--green-soft)', 'var(--green)'] };
   const [bg, fg] = m[a.level] || ['var(--surface2)', 'var(--text-muted)'];
@@ -9843,11 +9843,12 @@ function ccPrio(S) {
 const ccPrioCell = s => s.prio == null ? '<span style="color:var(--text-muted)">—</span>' : `<b>#${s.prio}</b>`;
 const ccFlipCell = s => ccFlip(s.flip_date, s.flip_trading_days) + ((s.status === 'ENTER' || s.status === 'FLIP') && s.flip_trading_days != null && s.flip_trading_days <= CC_NEW_FLIP_DAYS
   ? ' <span class="trend-pill" style="background:var(--accent-soft, var(--surface2));color:var(--accent)">NEW FLIP</span>' : '');
-const ccActNow = d => (d.alerts || []).filter(a => ['Exit', '3× premium', 'Through hedge', 'Beyond strike', 'Profit Exit'].includes(a.type)).length;
-const ccActNowBad = d => (d.alerts || []).some(a => ['Exit', '3× premium', 'Through hedge', 'Beyond strike'].includes(a.type));
+const ccActNow = d => (d.alerts || []).filter(a => ['Exit', '3× premium', 'Through hedge', 'Beyond strike', 'Expiry risk', 'Profit Exit'].includes(a.type)).length;
+const ccActNowBad = d => (d.alerts || []).some(a => ['Exit', '3× premium', 'Through hedge', 'Beyond strike', 'Expiry risk'].includes(a.type));
 const ccRulesCommon = (R, stopRow) => [
   ['Exit · profit', `Short option premium has decayed ${R.profit_exit_decay_pct ?? 60}% or more since it was sold: book the profit (buy back)`],
   ['Strike alerts', `Near = stock price within ${R.near_strike_pct ?? 2}% of a short strike; Beyond = at or past it (in the money); Through hedge = past the hedge leg too (maximum loss)`],
+  ['Expiry risk', `Stock options settle by physical delivery at expiry: any in-the-money leg within ${R.expiry_risk_days ?? 7} days of expiry (urgent in the last 3) is flagged; close it before expiry to avoid delivering or buying shares`],
   ['Hedge check', 'A short leg not covered by long legs of the same type and expiry (plus shares held, for calls) raises No hedge / Partly hedged'],
   stopRow,
   ['Exit · colour (priority)', 'Open structure opposite to the Supertrend colour (short call while green, short put / put spread while red) raises Exit; the RSI override never does'],

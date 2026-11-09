@@ -1,0 +1,5 @@
+variant,n,win%,avg_win,avg_loss,exp_Rs,total_Rs,ann_%cap,avg_mo_%,worst_mo_%,maxDD_%,peak_margin_%,avg_margin_%,stop%,strike%,profit%,expiry%,worst_trade,pos_months,signals
+flip2 | dte30-45 | strike_exit=Y flip_exit=N | margin cap 100%,687,83.7,3139,-13051,499,343082,0.82,0.07,-0.71,-1.92,33.0,5.7,12.8,3.5,83.4,0.3,-67475,20/35,687
+flip2 | dte30-45 | strike_exit=Y flip_exit=N | margin cap 50%,687,83.7,3139,-13051,499,343082,0.82,0.07,-0.71,-1.92,33.0,5.7,12.8,3.5,83.4,0.3,-67475,20/35,687
+v1 | dte30-45 | strike_exit=Y flip_exit=N | margin cap 100%,3800,80.6,4641,-14899,857,3255278,7.72,0.62,-5.24,-9.14,73.4,30.5,10.2,9.4,80.1,0.3,-120796,22/35,3800
+v1 | dte30-45 | strike_exit=Y flip_exit=N | margin cap 50%,3535,80.6,4222,-14268,639,2257747,5.35,0.43,-3.71,-8.77,50.0,27.3,10.3,9.3,80.1,0.3,-86596,23/35,3800
