@@ -28,3 +28,14 @@ Idle cash accrues daily at a flat annual yield (`--cash-rate`). LIQUIDBEES pays 
 | 5% | 27.7% / -15.9% / Rs2.30 Cr | 19.6% / -22.9% / Rs1.79 Cr |
 | **6%** | **28.1% / -15.5% / Rs2.37 Cr** | **19.6% / -22.8% / Rs1.80 Cr** |
 | 7% | 28.4% / -15.2% / Rs2.43 Cr | 19.9% / -22.5% / Rs1.85 Cr |
+
+## Position-size cap test (idle cash at 6%, user request 2026-11-09)
+`--tier-cap` stops the per-position size growing at a maximum. Uncapped = the 6% row above.
+
+| Cap per new position | ND CAGR / max DD / win rate / profit factor / final | AZ CAGR / max DD / win rate / profit factor / final |
+|---|---|---|
+| None (uncapped) | 28.1% / -15.5% / 41.4% / 2.01 / Rs2.37 Cr | 19.6% / -22.8% / 40.3% / 1.72 / Rs1.80 Cr |
+| Rs1,00,000 | not run | 19.1% / -22.4% / 40.1% / 1.76 / Rs1.72 Cr |
+| Rs50,000 | 27.8% / -15.5% / 41.2% / 2.11 / Rs2.32 Cr | 18.6% / -17.2% / 42.0% / 2.03 / Rs1.65 Cr |
+| Rs25,000 | 26.4% / -13.1% / 42.0% / 2.42 / Rs2.08 Cr | not run |
+| Rs10,000 | 20.9% / -11.8% / 42.7% / 2.63 / Rs1.34 Cr | not run |

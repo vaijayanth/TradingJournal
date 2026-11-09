@@ -73,7 +73,7 @@ def load(data_dir, symbols, start, with_high_window):
     return raw
 
 
-def run(strategy, data_dir, symbols, start, slip, seed=0, fresh_only=True, cash_rate=0.0):
+def run(strategy, data_dir, symbols, start, slip, seed=0, fresh_only=True, cash_rate=0.0, tier_cap=None):
     cfg = CFG[strategy]
     data = load(data_dir, symbols, start, strategy == "dhan")
     dates = sorted({d for s in data.values() for d in s if d >= start})
@@ -111,6 +111,8 @@ def run(strategy, data_dir, symbols, start, slip, seed=0, fresh_only=True, cash_
             elif od["a"] == "buy" and sym not in pos:
                 n = len(closed) if cfg["count"] == "closed" else opened
                 tier = cfg["base"] + (n // cfg["every"]) * cfg["step"]
+                if tier_cap:
+                    tier = min(tier, tier_cap)
                 px = o * (1 + slip)
                 qty = max(1, int(tier // px))
                 val = qty * px
@@ -210,6 +212,7 @@ def main():
     ap.add_argument("--start", default="2017-11-01")
     ap.add_argument("--slip", type=float, default=0.001)
     ap.add_argument("--out", default="")
+    ap.add_argument("--tier-cap", type=float, default=None, help="maximum Rs per new position (the tier stops growing here)")
     ap.add_argument("--cash-rate", type=float, default=0.0, help="annual yield earned by idle cash (liquid ETF), e.g. 0.06")
     ap.add_argument("--all-days", action="store_true", help="az: order every flip in the 3-day window, not only the freshest day")
     a = ap.parse_args()
@@ -223,8 +226,8 @@ def main():
         symbols = [s for s in valid if s in want]
     else:
         symbols = valid
-    res = run(a.strategy, data_dir, symbols, pd.Timestamp(a.start), a.slip, fresh_only=not a.all_days, cash_rate=a.cash_rate)
-    out, cv, tr = summarise(res, f"{a.strategy} start={a.start} slip={a.slip} cash={a.cash_rate}{' all-days' if a.all_days else ''}")
+    res = run(a.strategy, data_dir, symbols, pd.Timestamp(a.start), a.slip, fresh_only=not a.all_days, cash_rate=a.cash_rate, tier_cap=a.tier_cap)
+    out, cv, tr = summarise(res, f"{a.strategy} start={a.start} slip={a.slip} cash={a.cash_rate} cap={a.tier_cap}{' all-days' if a.all_days else ''}")
     print(json.dumps(out, indent=1, default=str))
     if a.out:
         cv.to_csv(a.out + "_equity.csv")
