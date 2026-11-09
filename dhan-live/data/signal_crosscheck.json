@@ -1,57 +1,52 @@
 {
- "generated_at": "2026-11-09T05:21:39.564321+00:00",
+ "generated_at": "2026-11-09T06:47:16.691389+00:00",
  "market_data_date": "2026-11-08",
  "yahoo_last_bars": [
-  "2026-11-06",
+  "2026-11-06"
+ ],
+ "bars_after_signal_date_ignored": [
   "2026-11-09"
  ],
  "checked": 4,
- "flagged": 4,
+ "flagged": 2,
  "results": [
   {
    "symbol": "GLENMARK",
    "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "Yahoo's last bar is 2026-11-09, signals are dated 2026-11-08",
-    "close 2681.90 differs from the signal's 2594.9"
-   ],
+   "ok": true,
+   "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-09",
-   "close": 2681.9,
+   "yahoo_last_bar": "2026-11-06",
+   "close": 2590.0,
    "published_close": 2594.9,
-   "closing_high_252": 2681.9,
-   "intraday_high_252": 2714.0,
-   "flip_bars_ago": 5,
-   "pct_from_intraday_high": -1.18
+   "closing_high_252": 2590.0,
+   "intraday_high_252": 2682.5,
+   "flip_bars_ago": 4,
+   "pct_from_intraday_high": -3.45
   },
   {
    "symbol": "PANACHE",
    "kind": "entry",
    "ok": false,
    "reasons": [
-    "Yahoo's last bar is 2026-11-09, signals are dated 2026-11-08",
-    "close 685.80 differs from the signal's 699.75",
-    "close 685.80 is below the 252-session closing high 686.05"
+    "close 686.05 differs from the signal's 699.75"
    ],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-09",
-   "close": 685.8,
+   "yahoo_last_bar": "2026-11-06",
+   "close": 686.05,
    "published_close": 699.75,
    "closing_high_252": 686.05,
    "intraday_high_252": 686.05,
-   "flip_bars_ago": 132,
-   "pct_from_intraday_high": -0.04
+   "flip_bars_ago": 131,
+   "pct_from_intraday_high": 0.0
   },
   {
    "symbol": "PRIZOR",
    "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "Yahoo's last bar is 2026-11-06, signals are dated 2026-11-08"
-   ],
+   "ok": true,
+   "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
    "yahoo_last_bar": "2026-11-06",
@@ -67,18 +62,17 @@
    "kind": "exit",
    "ok": false,
    "reasons": [
-    "Yahoo's last bar is 2026-11-09, signals are dated 2026-11-08",
-    "close 92.72 differs from the signal's 97.59"
+    "close 108.43 differs from the signal's 97.59"
    ],
    "published_colour": "red",
    "recomputed_colour": "red",
-   "yahoo_last_bar": "2026-11-09",
-   "close": 92.72,
+   "yahoo_last_bar": "2026-11-06",
+   "close": 108.43,
    "published_close": 97.59,
    "closing_high_252": 148.72,
    "intraday_high_252": 155.49,
-   "flip_bars_ago": 14,
-   "pct_from_intraday_high": -40.37
+   "flip_bars_ago": 13,
+   "pct_from_intraday_high": -30.27
   }
  ]
 }

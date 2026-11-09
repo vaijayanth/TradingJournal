@@ -306,7 +306,7 @@ def evaluate(ctx, now):
     cc = ctx.get("cc")
     if cc:
         for a in cc.get("alerts", []):
-            if a.get("level") == "EXIT":
+            if a.get("level") in ("EXIT", "BREACH"):
                 out.append(f("WARN", "P3", f"option exit alert open: {a.get('text')}", a.get("symbol")))
         for s in cc.get("stocks", []):
             for g in s.get("suggestions", []):

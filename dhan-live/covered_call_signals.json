@@ -1,12 +1,14 @@
 {
-  "generated_at": "2026-11-09T05:21:39.964279+00:00",
+  "generated_at": "2026-11-09T06:32:23.944295+00:00",
   "market_data_date": "2026-11-08",
+  "live_prices_at": "2026-11-09T12:02:12+05:30",
   "as_of": "2026-11-08",
   "rules": {
     "short_call_delta": 0.1,
     "short_put_delta": 0.15,
     "hedge_strikes_below": 2,
     "stop_premium_multiple": 3,
+    "near_strike_pct": 2,
     "show_next_month_after_day": 15,
     "expiry_week_days": 5,
     "risk_free_rate": 0.065,
@@ -32,12 +34,12 @@
       "near_call": {
         "strike": 3900.0,
         "expiry": "2026-11-23",
-        "dist_pct": 9.64
+        "dist_pct": 9.83
       },
       "near_put": {
         "strike": 3100.0,
         "expiry": "2026-11-23",
-        "dist_pct": -12.85
+        "dist_pct": -12.7
       },
       "shares": 37,
       "lot": 225,
@@ -59,7 +61,12 @@
           "sell_avg": 0.0,
           "pnl_rs": -5242.5,
           "ltp": 3.9,
-          "dist_pct": -21.28,
+          "beyond_pct": -26.82,
+          "intrinsic_rs": 0,
+          "touched": false,
+          "near": false,
+          "touched_h": false,
+          "dist_pct": -21.15,
           "lot": 225,
           "lots": 1.0
         },
@@ -76,8 +83,12 @@
           "ltp": 10.4,
           "stop_at": 45.45,
           "stop_hit": false,
+          "beyond_pct": -14.55,
+          "intrinsic_rs": 0,
           "touched": false,
-          "dist_pct": -12.85,
+          "near": false,
+          "touched_h": false,
+          "dist_pct": -12.7,
           "lot": 225,
           "lots": 1.0
         },
@@ -94,8 +105,12 @@
           "ltp": 23.3,
           "stop_at": 48.45,
           "stop_hit": false,
+          "beyond_pct": -8.95,
+          "intrinsic_rs": 0,
           "touched": false,
-          "dist_pct": 9.64,
+          "near": false,
+          "touched_h": false,
+          "dist_pct": 9.83,
           "lot": 225,
           "lots": 1.0
         }
@@ -112,7 +127,7 @@
       "near_call": {
         "strike": 1120.0,
         "expiry": "2026-12-29",
-        "dist_pct": 16.66
+        "dist_pct": 16.65
       },
       "near_put": {
         "strike": 880.0,
@@ -141,7 +156,11 @@
           "ltp": 6.8,
           "stop_at": 23.55,
           "stop_hit": false,
+          "beyond_pct": -9.1,
+          "intrinsic_rs": 0,
           "touched": false,
+          "near": false,
+          "touched_h": false,
           "dist_pct": -8.34,
           "lot": 825,
           "lots": 1.0
@@ -159,7 +178,11 @@
           "ltp": 3.0,
           "stop_at": 9.3,
           "stop_hit": false,
+          "beyond_pct": -17.09,
+          "intrinsic_rs": 0,
           "touched": false,
+          "near": false,
+          "touched_h": false,
           "dist_pct": -14.59,
           "lot": 825,
           "lots": 1.0
@@ -175,7 +198,12 @@
           "sell_avg": 0.0,
           "pnl_rs": -412.5,
           "ltp": 4.7,
-          "dist_pct": -10.42,
+          "beyond_pct": -11.64,
+          "intrinsic_rs": 0,
+          "touched": false,
+          "near": false,
+          "touched_h": false,
+          "dist_pct": -10.43,
           "lot": 825,
           "lots": 1.0
         },
@@ -192,8 +220,12 @@
           "ltp": 8.0,
           "stop_at": 16.8,
           "stop_hit": false,
+          "beyond_pct": -14.28,
+          "intrinsic_rs": 0,
           "touched": false,
-          "dist_pct": 16.66,
+          "near": false,
+          "touched_h": false,
+          "dist_pct": 16.65,
           "lot": 825,
           "lots": 1.0
         }
@@ -210,12 +242,12 @@
       "near_call": {
         "strike": 900.0,
         "expiry": "2026-12-29",
-        "dist_pct": 14.99
+        "dist_pct": 14.23
       },
       "near_put": {
         "strike": 700.0,
         "expiry": "2026-11-23",
-        "dist_pct": -10.57
+        "dist_pct": -11.16
       },
       "shares": 184,
       "lot": 850,
@@ -237,7 +269,12 @@
           "sell_avg": 0.0,
           "pnl_rs": -1657.5,
           "ltp": 4.45,
-          "dist_pct": -13.12,
+          "beyond_pct": -15.87,
+          "intrinsic_rs": 0,
+          "touched": false,
+          "near": false,
+          "touched_h": false,
+          "dist_pct": -13.69,
           "lot": 850,
           "lots": 1.0
         },
@@ -254,8 +291,12 @@
           "ltp": 6.9,
           "stop_at": 28.2,
           "stop_hit": false,
+          "beyond_pct": -12.56,
+          "intrinsic_rs": 0,
           "touched": false,
-          "dist_pct": -10.57,
+          "near": false,
+          "touched_h": false,
+          "dist_pct": -11.16,
           "lot": 850,
           "lots": 1.0
         },
@@ -272,8 +313,12 @@
           "ltp": 2.5,
           "stop_at": 9.75,
           "stop_hit": false,
+          "beyond_pct": -13.42,
+          "intrinsic_rs": 0,
           "touched": false,
-          "dist_pct": 16.26,
+          "near": false,
+          "touched_h": false,
+          "dist_pct": 15.5,
           "lot": 850,
           "lots": 1.0
         },
@@ -290,8 +335,12 @@
           "ltp": 11.85,
           "stop_at": 31.35,
           "stop_hit": false,
+          "beyond_pct": -12.46,
+          "intrinsic_rs": 0,
           "touched": false,
-          "dist_pct": 14.99,
+          "near": false,
+          "touched_h": false,
+          "dist_pct": 14.23,
           "lot": 850,
           "lots": 1.0
         }
@@ -308,12 +357,12 @@
       "near_call": {
         "strike": 4100.0,
         "expiry": "2026-11-23",
-        "dist_pct": 7.89
+        "dist_pct": 8.12
       },
       "near_put": {
         "strike": 3400.0,
         "expiry": "2026-11-23",
-        "dist_pct": -10.53
+        "dist_pct": -10.34
       },
       "shares": 34,
       "lot": 200,
@@ -335,7 +384,12 @@
           "sell_avg": 0.0,
           "pnl_rs": -3270.0,
           "ltp": 5.6,
-          "dist_pct": -21.05,
+          "beyond_pct": -26.4,
+          "intrinsic_rs": 0,
+          "touched": false,
+          "near": false,
+          "touched_h": false,
+          "dist_pct": -20.89,
           "lot": 200,
           "lots": 1.0
         },
@@ -352,8 +406,12 @@
           "ltp": 18.7,
           "stop_at": 53.7,
           "stop_hit": false,
+          "beyond_pct": -11.53,
+          "intrinsic_rs": 0,
           "touched": false,
-          "dist_pct": -10.53,
+          "near": false,
+          "touched_h": false,
+          "dist_pct": -10.34,
           "lot": 200,
           "lots": 1.0
         },
@@ -370,8 +428,12 @@
           "ltp": 14.65,
           "stop_at": 40.05,
           "stop_hit": false,
+          "beyond_pct": -9.71,
+          "intrinsic_rs": 0,
           "touched": false,
-          "dist_pct": 10.53,
+          "near": false,
+          "touched_h": false,
+          "dist_pct": 10.76,
           "lot": 200,
           "lots": 1.0
         },
@@ -388,8 +450,12 @@
           "ltp": 24.25,
           "stop_at": 44.7,
           "stop_hit": false,
+          "beyond_pct": -7.51,
+          "intrinsic_rs": 0,
           "touched": false,
-          "dist_pct": 7.89,
+          "near": false,
+          "touched_h": false,
+          "dist_pct": 8.12,
           "lot": 200,
           "lots": 1.0
         },
@@ -406,8 +472,12 @@
           "ltp": 25.2,
           "stop_at": 70.65,
           "stop_hit": false,
+          "beyond_pct": -18.5,
+          "intrinsic_rs": 0,
           "touched": false,
-          "dist_pct": -15.79,
+          "near": false,
+          "touched_h": false,
+          "dist_pct": -15.61,
           "lot": 200,
           "lots": 1.0
         },
@@ -424,8 +494,12 @@
           "ltp": 71.45,
           "stop_at": 161.55,
           "stop_hit": false,
+          "beyond_pct": -9.71,
+          "intrinsic_rs": 0,
           "touched": false,
-          "dist_pct": 10.53,
+          "near": false,
+          "touched_h": false,
+          "dist_pct": 10.76,
           "lot": 200,
           "lots": 1.0
         }
@@ -442,12 +516,12 @@
       "near_call": {
         "strike": 13000.0,
         "expiry": "2026-11-23",
-        "dist_pct": 3.14
+        "dist_pct": 3.2
       },
       "near_put": {
         "strike": 11500.0,
         "expiry": "2026-12-29",
-        "dist_pct": -8.76
+        "dist_pct": -8.71
       },
       "shares": 8,
       "lot": 50,
@@ -469,7 +543,12 @@
           "sell_avg": 0.0,
           "pnl_rs": -475.0,
           "ltp": 111.0,
-          "dist_pct": -12.73,
+          "beyond_pct": -14.52,
+          "intrinsic_rs": 0,
+          "touched": false,
+          "near": false,
+          "touched_h": false,
+          "dist_pct": -12.68,
           "lot": 50,
           "lots": 1.0
         },
@@ -486,8 +565,12 @@
           "ltp": 184.0,
           "stop_at": 601.65,
           "stop_hit": false,
+          "beyond_pct": -9.54,
+          "intrinsic_rs": 0,
           "touched": false,
-          "dist_pct": -8.76,
+          "near": false,
+          "touched_h": false,
+          "dist_pct": -8.71,
           "lot": 50,
           "lots": 1.0
         },
@@ -504,8 +587,12 @@
           "ltp": 37.05,
           "stop_at": 189.0,
           "stop_hit": false,
+          "beyond_pct": -14.52,
+          "intrinsic_rs": 0,
           "touched": false,
-          "dist_pct": -12.73,
+          "near": false,
+          "touched_h": false,
+          "dist_pct": -12.68,
           "lot": 50,
           "lots": 1.0
         },
@@ -522,8 +609,12 @@
           "ltp": 170.05,
           "stop_at": 494.55,
           "stop_hit": false,
+          "beyond_pct": -3.1,
+          "intrinsic_rs": 0,
           "touched": false,
-          "dist_pct": 3.14,
+          "near": false,
+          "touched_h": false,
+          "dist_pct": 3.2,
           "lot": 50,
           "lots": 1.0
         }
@@ -540,12 +631,12 @@
       "near_call": {
         "strike": 1560.0,
         "expiry": "2026-11-23",
-        "dist_pct": 8.18
+        "dist_pct": 10.8
       },
       "near_put": {
         "strike": 1320.0,
         "expiry": "2026-11-23",
-        "dist_pct": -8.46
+        "dist_pct": -6.25
       },
       "shares": 21,
       "lot": 400,
@@ -596,8 +687,12 @@
           "ltp": 6.0,
           "stop_at": 39.15,
           "stop_hit": false,
+          "beyond_pct": -6.67,
+          "intrinsic_rs": 0,
           "touched": false,
-          "dist_pct": -8.46,
+          "near": false,
+          "touched_h": false,
+          "dist_pct": -6.25,
           "lot": 400,
           "lots": 1.0
         },
@@ -614,8 +709,12 @@
           "ltp": 5.2,
           "stop_at": 16.5,
           "stop_hit": false,
+          "beyond_pct": -9.74,
+          "intrinsic_rs": 0,
           "touched": false,
-          "dist_pct": 8.18,
+          "near": false,
+          "touched_h": false,
+          "dist_pct": 10.8,
           "lot": 400,
           "lots": 1.0
         }
@@ -632,12 +731,12 @@
       "near_call": {
         "strike": 1334.0,
         "expiry": "2026-12-29",
-        "dist_pct": 13.86
+        "dist_pct": 15.97
       },
       "near_put": {
         "strike": 1034.0,
         "expiry": "2026-12-29",
-        "dist_pct": -11.74
+        "dist_pct": -10.11
       },
       "shares": 21,
       "lot": 400,
@@ -688,8 +787,12 @@
           "ltp": 10.1,
           "stop_at": 34.5,
           "stop_hit": false,
+          "beyond_pct": -11.25,
+          "intrinsic_rs": 0,
           "touched": false,
-          "dist_pct": -11.74,
+          "near": false,
+          "touched_h": false,
+          "dist_pct": -10.11,
           "lot": 400,
           "lots": 1.0
         },
@@ -706,8 +809,12 @@
           "ltp": 10.55,
           "stop_at": 29.7,
           "stop_hit": false,
+          "beyond_pct": -13.77,
+          "intrinsic_rs": 0,
           "touched": false,
-          "dist_pct": 13.86,
+          "near": false,
+          "touched_h": false,
+          "dist_pct": 15.97,
           "lot": 400,
           "lots": 1.0
         }
@@ -724,12 +831,12 @@
       "near_call": {
         "strike": 150.0,
         "expiry": "2026-11-23",
-        "dist_pct": 8.14
+        "dist_pct": 6.16
       },
       "near_put": {
         "strike": 125.0,
         "expiry": "2026-11-23",
-        "dist_pct": -9.88
+        "dist_pct": -11.54
       },
       "shares": 163,
       "lot": 5200,
@@ -751,7 +858,12 @@
           "sell_avg": 0.0,
           "pnl_rs": -624.0,
           "ltp": 0.23,
-          "dist_pct": -13.49,
+          "beyond_pct": -17.75,
+          "intrinsic_rs": 0,
+          "touched": false,
+          "near": false,
+          "touched_h": false,
+          "dist_pct": -15.07,
           "lot": 5200,
           "lots": 1.0
         },
@@ -768,8 +880,12 @@
           "ltp": 0.51,
           "stop_at": 1.68,
           "stop_hit": false,
+          "beyond_pct": -13.04,
+          "intrinsic_rs": 0,
           "touched": false,
-          "dist_pct": -9.88,
+          "near": false,
+          "touched_h": false,
+          "dist_pct": -11.54,
           "lot": 5200,
           "lots": 1.0
         },
@@ -786,8 +902,12 @@
           "ltp": 0.55,
           "stop_at": 1.38,
           "stop_hit": false,
+          "beyond_pct": -5.8,
+          "intrinsic_rs": 0,
           "touched": false,
-          "dist_pct": 8.14,
+          "near": false,
+          "touched_h": false,
+          "dist_pct": 6.16,
           "lot": 5200,
           "lots": 1.0
         }

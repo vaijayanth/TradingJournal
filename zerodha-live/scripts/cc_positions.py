@@ -2,7 +2,7 @@
 
 Usage: python zerodha-live/scripts/cc_positions.py <raw get_positions json file>
 Keeps only stock-option legs (NFO, non-index, non-zero net quantity) in F&O universe stocks whose expiry is on/after
-`track_from` in data/cc_config.json (user, 2026-11-09: only December-onwards options count; earlier ones are ignored).
+`track_from` in data/cc_config.json (user, 2026-11-09: November 2026 onwards counts (changed from December on 2026-11-09); earlier ones are ignored. get_positions returns a day list then a net list: only the last row per contract is kept).
 Writes data/cc_positions.json {fetched_at, track_from, legs[], ignored_legs}. Prices come from the positions call itself
 (last_price, pnl); no option quotes are pulled.
 """
@@ -26,6 +26,12 @@ def main(path):
     exp_by = {e[2:4] + MON[int(e[5:7]) - 1]: e for s in master.values() for e in s["lot"]}
     raw = json.loads(Path(path).read_text(encoding="utf-8"))
     raw = raw.get("data", raw) if isinstance(raw, dict) else raw
+    # get_positions returns the day list followed by the net list; every symbol traded today is in both. The net row is the
+    # real holding (it includes the overnight quantity), so keep the LAST row per contract and drop the day-only duplicate.
+    last = {}
+    for i, x in enumerate(raw):
+        last[(x.get("tradingsymbol"), x.get("product"))] = i
+    raw = [x for i, x in enumerate(raw) if last[(x.get("tradingsymbol"), x.get("product"))] == i]
     legs, ignored = [], 0
     for x in raw:
         if x.get("exchange") != "NFO" or not x.get("quantity"):

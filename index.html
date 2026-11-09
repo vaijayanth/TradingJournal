@@ -9637,8 +9637,8 @@ const ccP = v => v == null ? '—' : '₹' + Number(v).toFixed(2);
 const ccStrike = v => Number(v).toString();
 function ccPill(st) {
   const m = { ENTER: ['var(--accent-soft, var(--surface2))', 'var(--accent)'], HOLD: ['var(--surface2)', 'var(--text-muted)'], WAIT: ['var(--amber-soft, var(--surface2))', 'var(--amber)'],
-              FLIP: ['var(--red-soft)', 'var(--red)'], EXIT: ['var(--red-soft)', 'var(--red)'], ADD: ['var(--green-soft)', 'var(--green)'], NO: ['var(--surface2)', 'var(--text-muted)'], WARN: ['var(--amber-soft, var(--surface2))', 'var(--amber)'],
-              OK: ['var(--green-soft)', 'var(--green)'], HEDGE: ['var(--surface2)', 'var(--text-muted)'], NO_DATA: ['var(--surface2)', 'var(--text-muted)'] };
+              FLIP: ['var(--red-soft)', 'var(--red)'], BREACH: ['var(--red)', '#fff'], EXIT: ['var(--red-soft)', 'var(--red)'], ADD: ['var(--green-soft)', 'var(--green)'], NO: ['var(--surface2)', 'var(--text-muted)'], WARN: ['var(--amber-soft, var(--surface2))', 'var(--amber)'],
+              OK: ['var(--green-soft)', 'var(--green)'], NEAR: ['var(--amber-soft, var(--surface2))', 'var(--amber)'], HEDGE: ['var(--surface2)', 'var(--text-muted)'], NO_DATA: ['var(--surface2)', 'var(--text-muted)'] };
   const [bg, fg] = m[st] || m.HOLD;
   return `<span class="trend-pill" style="background:${bg};color:${fg}">${st}</span>`;
 }
@@ -9764,11 +9764,20 @@ function ccTblExport(id) {
 const ccTabBar = (id, tabs, extra) => `<div class="dhm-tabs" id="${id}" role="tablist" style="margin-top:14px">` + tabs.map(([k, l, n]) =>
   `<button class="dhm-tab" data-tab="${k}" onclick="${extra}('${k}')">${l}${n == null ? '' : `<span class="dhm-count">${n}</span>`}</button>`).join('') + '</div>';
 
+// Strike alerts: stock price at/through an open short strike (BREACH), through the hedge too (EXIT) or close to it (WARN)
+function ccStrikeBanner(d) {
+  const hot = (d.alerts || []).filter(a => a.level === 'BREACH' || (a.level === 'EXIT' && /hedge/.test(a.text)));
+  const near = (d.alerts || []).filter(a => a.level === 'WARN');
+  if (!hot.length && !near.length) return '';
+  const row = a => `<div class="dh-stale-row"><b>${dhEsc(a.symbol)} · ${a.level === 'EXIT' ? 'MAX LOSS ZONE' : a.level === 'BREACH' ? 'STRIKE BREACHED' : 'Near strike'}</b><span>${dhEsc(a.text.replace(a.symbol + ' ', ''))}</span></div>`;
+  const head = (hot.length ? `${hot.length} open short strike${hot.length === 1 ? '' : 's'} reached or passed` : '') + (hot.length && near.length ? ' · ' : '') + (near.length ? `${near.length} near` : '');
+  return `<details class="dh-stale ${hot.length ? 'high' : ''}" open role="alert"><summary style="cursor:pointer;font-weight:700;font-size:13px">Strike alert: ${dhEsc(head)} (${d.live_prices_at ? 'live price at ' + dhEsc(String(d.live_prices_at).slice(11, 16)) + ' IST' : 'price = last close'})</summary>${hot.concat(near).map(row).join('')}</details>`;
+}
 function ccOptionsView(d) {
   const S = d.stocks || [];
   const legs = S.flatMap(s => (s.legs || []).map(l => ({ ...l, stock: s })));
   const mtm = legs.reduce((a, l) => a + (l.pnl_rs || 0), 0);
-  const nExit = (d.alerts || []).filter(a => a.level === 'EXIT').length, nWarn = (d.alerts || []).filter(a => a.level === 'WARN').length;
+  const nExit = (d.alerts || []).filter(a => a.level === 'EXIT').length, nWarn = (d.alerts || []).filter(a => a.level === 'WARN' || a.level === 'BREACH').length;
   const nSig = S.filter(s => s.status === 'ENTER' || s.status === 'FLIP').length;
   const shorts = legs.filter(l => l.side === 'SHORT');
   const nearest = shorts.slice().sort((a, b) => Math.abs(a.dist_pct) - Math.abs(b.dist_pct))[0];
@@ -9780,12 +9789,12 @@ function ccOptionsView(d) {
     ['Options MTM', (mtm >= 0 ? '+' : '−') + dhFmtRs(Math.abs(mtm)), 'Unrealised on the legs', mtm >= 0 ? 'pos' : 'neg'],
   ]);
 
-  const lvlOrd = { EXIT: 0, WARN: 1, ENTER: 2 };
+  const lvlOrd = { EXIT: 0, BREACH: 1, WARN: 2, ENTER: 3 };
   const alertsT = ccTbl('alerts', {
     title: 'Alerts', hint: 'Exits first, then warnings, then new option entries',
     rows: (d.alerts || []).slice().sort((a, b) => lvlOrd[a.level] - lvlOrd[b.level]),
     search: r => r.symbol + ' ' + r.text, empty: 'No exit, strike touch or new option entry right now.',
-    filters: [['all', 'All alerts', () => true], ['EXIT', 'Exit', r => r.level === 'EXIT'], ['WARN', 'Warn', r => r.level === 'WARN'], ['ENTER', 'Enter', r => r.level === 'ENTER']],
+    filters: [['all', 'All alerts', () => true], ['EXIT', 'Exit', r => r.level === 'EXIT'], ['BREACH', 'Strike breached', r => r.level === 'BREACH'], ['WARN', 'Near strike', r => r.level === 'WARN'], ['ENTER', 'Enter', r => r.level === 'ENTER']],
     cols: [
       { h: 'Level', v: r => lvlOrd[r.level], c: r => ccPill(r.level) },
       { h: 'Stock', v: r => r.symbol, c: r => `<b>${dhEsc(r.symbol)}</b>` },
@@ -9816,14 +9825,14 @@ function ccOptionsView(d) {
     ],
   });
 
-  const stOrd = { EXIT: 0, WARN: 1, OK: 2, HEDGE: 3 };
-  const legStatus = l => l.side === 'LONG' ? 'HEDGE' : l.stop_hit ? 'EXIT' : l.touched ? 'WARN' : 'OK';
+  const stOrd = { EXIT: 0, BREACH: 1, NEAR: 2, WARN: 2, OK: 3, HEDGE: 4 };
+  const legStatus = l => l.side === 'LONG' ? (l.touched ? 'BREACH' : 'HEDGE') : l.stop_hit ? 'EXIT' : l.touched ? 'BREACH' : l.near ? 'NEAR' : 'OK';
   const legRows = legs.slice().sort((a, b) => stOrd[legStatus(a)] - stOrd[legStatus(b)] || a.stock.symbol.localeCompare(b.stock.symbol) || a.expiry.localeCompare(b.expiry) || a.strike - b.strike);
   const legT = ccTbl('legs', {
     title: 'Open option positions', hint: 'From ND positions; current price is derived from each leg’s unrealised P&L; “% from spot” = strike’s distance from the stock price',
     rows: legRows, search: l => l.symbol, empty: 'Nothing returned by the ND positions call.',
     filters: [['all', 'All legs', () => true], ['short', 'Short legs', l => l.side === 'SHORT'], ['long', 'Hedge legs', l => l.side === 'LONG'], ['CE', 'Calls', l => l.type === 'CE'], ['PE', 'Puts', l => l.type === 'PE'],
-              ['attn', 'Exit / warn only', l => ['EXIT', 'WARN'].includes(legStatus(l))]],
+              ['attn', 'Needs attention', l => ['EXIT', 'BREACH', 'NEAR'].includes(legStatus(l))]],
     cols: [
       { h: 'Stock', v: l => l.symbol, c: l => `<b>${dhEsc(l.symbol)}</b>` },
       { h: 'Expiry', v: l => l.expiry, c: l => dhFmtDate(l.expiry) },
@@ -9854,7 +9863,7 @@ function ccOptionsView(d) {
   const other = (d.other_positions || []).length ? ` Other option positions not in this universe: ${d.other_positions.join(', ')}.` : '';
   const foot = `<div class="d2-edge-foot" style="border:0">Market data ${dhFmtDate(d.market_data_date)} · deltas are estimates (Black-Scholes from the chain’s IV, no dividends) · option chains loaded: ${Object.keys(d.chains_loaded || {}).join(', ') || 'none'}.${other}</div>`;
   const bar = ccTabBar('cc-otabs', [['alerts', 'Alerts', alertsT && CC_T.alerts.def.rows.length], ['signals', 'Signals', CC_T.signals.def.rows.length], ['legs', 'Open positions', legs.length], ['rules', 'Rules', null]], 'ccOTab');
-  return kpis + bar + `<div id="cc-ov-alerts" class="a2-view">${alertsT}</div><div id="cc-ov-signals" class="a2-view">${sigT}</div><div id="cc-ov-legs" class="a2-view">${legT}</div><div id="cc-ov-rules" class="a2-view">${rulesPanel}${foot}</div>`;
+  return ccStrikeBanner(d) + kpis + bar + `<div id="cc-ov-alerts" class="a2-view">${alertsT}</div><div id="cc-ov-signals" class="a2-view">${sigT}</div><div id="cc-ov-legs" class="a2-view">${legT}</div><div id="cc-ov-rules" class="a2-view">${rulesPanel}${foot}</div>`;
 }
 
 function ccSharesView(d) {
@@ -9980,9 +9989,9 @@ function ccZerodhaView(d) {
       { h: 'Lot size', v: s => (s.expiries[0] || {}).lot, c: s => (s.expiries[0] || {}).lot || '<span style="color:var(--text-muted)" title="This expiry is not listed yet in the AZ instrument list">not listed</span>', num: true },
     ],
   });
-  const lvlOrd = { EXIT: 0, WARN: 1 };
+  const lvlOrd = { EXIT: 0, BREACH: 1, WARN: 2 };
   const alertsT = ccTbl('zalerts', {
-    title: 'Alerts', hint: 'Exits first, then strike touches. Only open legs from ' + dhFmtDate((d.positions || {}).track_from) + ' onwards are checked',
+    title: 'Alerts', hint: 'Exits first, then strike breaches, then strikes within 2%. Only open legs from ' + dhFmtDate((d.positions || {}).track_from) + ' onwards are checked',
     rows: (d.alerts || []).slice().sort((a, b) => lvlOrd[a.level] - lvlOrd[b.level]), search: r => r.symbol + ' ' + r.text, empty: 'No exit or strike-touch alert on the open legs.',
     cols: [
       { h: 'Level', v: r => lvlOrd[r.level], c: r => ccPill(r.level) },
@@ -9990,13 +9999,13 @@ function ccZerodhaView(d) {
       { h: 'Alert', v: r => r.text, c: r => dhEsc(r.text.replace(r.symbol + ': ', '')), nw: 320 },
     ],
   });
-  const stOrd = { EXIT: 0, WARN: 1, OK: 2, HEDGE: 3 };
-  const legStatus = l => l.side === 'LONG' ? 'HEDGE' : l.stop_hit ? 'EXIT' : l.touched ? 'WARN' : 'OK';
+  const stOrd = { EXIT: 0, BREACH: 1, NEAR: 2, WARN: 2, OK: 3, HEDGE: 4 };
+  const legStatus = l => l.side === 'LONG' ? (l.touched ? 'BREACH' : 'HEDGE') : l.stop_hit ? 'EXIT' : l.touched ? 'BREACH' : l.near ? 'NEAR' : 'OK';
   const legT = ccTbl('zlegs', {
     title: 'Open option positions', hint: 'From the AZ positions call (expiries from ' + dhFmtDate((d.positions || {}).track_from) + ' onwards); price and P&L are the broker’s own',
     rows: S_legs.slice().sort((a, b) => stOrd[legStatus(a)] - stOrd[legStatus(b)] || a.symbol.localeCompare(b.symbol) || a.strike - b.strike), search: l => l.symbol,
-    empty: 'No open option legs with a December-or-later expiry in the AZ positions.',
-    filters: [['all', 'All legs', () => true], ['short', 'Short legs', l => l.side === 'SHORT'], ['long', 'Hedge legs', l => l.side === 'LONG'], ['attn', 'Exit / warn only', l => ['EXIT', 'WARN'].includes(legStatus(l))]],
+    empty: `No open option legs with an expiry from ${dhFmtDate((d.positions || {}).track_from)} onwards in the AZ positions.`,
+    filters: [['all', 'All legs', () => true], ['short', 'Short legs', l => l.side === 'SHORT'], ['long', 'Hedge legs', l => l.side === 'LONG'], ['attn', 'Needs attention', l => ['EXIT', 'BREACH', 'NEAR'].includes(legStatus(l))]],
     cols: [
       { h: 'Stock', v: l => l.symbol, c: l => `<b>${dhEsc(l.symbol)}</b>` },
       { h: 'Expiry', v: l => l.expiry, c: l => dhFmtDate(l.expiry) },
@@ -10024,7 +10033,7 @@ function ccZerodhaView(d) {
     ]));
   const foot = `<div class="d2-edge-foot" style="border:0">Market data ${dhFmtDate(d.market_data_date)} · no option quotes are pulled, so strikes and premiums for new trades are not shown · positions fetched ${(d.positions || {}).fetched_at ? dhFmtDate(String(d.positions.fetched_at).slice(0, 10)) : 'never (run /refresh-zerodha)'}.</div>`;
   const bar = ccTabBar('cc-otabs', [['alerts', 'Alerts', (d.alerts || []).length], ['signals', 'Signals', S.length], ['legs', 'Open positions', S_legs.length], ['rules', 'Rules', null]], 'ccZTab');
-  return kpis + bar + `<div id="cc-ov-alerts" class="a2-view">${alertsT}</div><div id="cc-ov-signals" class="a2-view">${sigT}</div><div id="cc-ov-legs" class="a2-view">${legT}</div><div id="cc-ov-rules" class="a2-view">${rulesPanel}${foot}</div>`;
+  return ccStrikeBanner(d) + kpis + bar + `<div id="cc-ov-alerts" class="a2-view">${alertsT}</div><div id="cc-ov-signals" class="a2-view">${sigT}</div><div id="cc-ov-legs" class="a2-view">${legT}</div><div id="cc-ov-rules" class="a2-view">${rulesPanel}${foot}</div>`;
 }
 
 function ccRender(d) {
@@ -10037,7 +10046,7 @@ function ccRender(d) {
   if (pg) {
     pg.querySelector('.d2-eyebrow').textContent = zer ? 'AZ workspace · Nifty F&O option selling' : 'ND workspace · investment portfolio options';
     pg.querySelector('.d2-sub').textContent = zer
-      ? 'RSI > 70 sell call, RSI < 30 bull put spread, else Supertrend green = bull put spread, red = sell call. Exit at 3× premium or when the Supertrend colour changes. Open December-onwards legs are tracked.'
+      ? 'RSI > 70 sell call, RSI < 30 bull put spread, else Supertrend green = bull put spread, red = sell call. Exit at 3× premium or when the Supertrend colour changes. Open legs from the tracking start date (see Alerts) are checked against the live price.'
       : 'Options: RSI > 70 sell call, RSI < 30 bull put spread, else Supertrend green = bull put spread, red = sell call. Shares: entries, exits and averaging for the investment portfolio.';
   }
   if (zer) {

@@ -8,14 +8,14 @@ Rules (user, 2026-11-09; same logic as Dhan's covered call, universe = every Nif
 No option quotes or chains are pulled, so strikes/premiums for NEW trades are not computed: each signal says which structure to
 sell, the basis, the lot size and the expiry (Zerodha's public instrument list, data/nfo_options.json). Open option legs come
 from the Zerodha MCP get_positions call (scripts/cc_positions.py -> data/cc_positions.json): only expiries on/after
-`track_from` count (user: December onwards); older ones are ignored. Their price/P&L is the positions call's own.
+`track_from` count (user: from 2026-11-01, i.e. the November options too); older ones are ignored. Their price/P&L is the positions call's own.
 Entry colour for the FLIP exit is the Supertrend colour when a stock's legs were first seen (data/cc_tags.json, written here).
 
 Usage: python zerodha-live/scripts/compute_covered_call.py   (run after refresh_zerodha.py has fetched the screens)
 """
 import json
 import sys
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 HERE = Path(__file__).resolve().parent
@@ -32,6 +32,40 @@ def desired_structure(colour, rsi, rules):
     if rsi is not None and rsi < rules["rsi_sell_put_below"]:
         return "PUT_SPREAD", f"RSI {rsi:.1f} < {rules['rsi_sell_put_below']:g}"
     return ("PUT_SPREAD" if colour == "green" else "CALL"), f"Supertrend {colour}"
+
+
+def strike_zone(l, spot, near_pct):
+    """How far the stock is from a leg's strike: beyond_pct > 0 = spot at/past the strike (in the money)."""
+    ce = l["type"] == "CE"
+    beyond = (spot / l["strike"] - 1) * 100 if ce else (1 - spot / l["strike"]) * 100
+    intrinsic = max(0.0, (spot - l["strike"]) if ce else (l["strike"] - spot))
+    l["beyond_pct"] = round(beyond, 2)
+    l["intrinsic_rs"] = round(intrinsic * l["qty"])
+    l["touched"] = beyond >= 0
+    l["near"] = (not l["touched"]) and -beyond <= near_pct
+    return beyond
+
+
+def strike_alerts(sym, my_legs, spot, near_pct, stop_alerted):
+    """Graded alerts for the stock price against the open legs (spot = the last close in the signals).
+    EXIT   = price is through the hedge leg too (the spread is at its maximum loss)
+    BREACH = price has reached or passed a short strike
+    WARN   = price is within near_pct of a short strike"""
+    out = []
+    for l in my_legs:
+        if l["side"] == "SHORT" and l["touched"]:
+            hedges = [h for h in my_legs if h["side"] == "LONG" and h["type"] == l["type"] and h["expiry"] == l["expiry"]
+                      and ((h["type"] == "CE" and h["strike"] > l["strike"]) or (h["type"] == "PE" and h["strike"] < l["strike"]))]
+            thru = [h for h in hedges if h["touched_h"]]
+            base = (f"{sym} {l['expiry']}: price {spot:g} is {abs(l['beyond_pct']):.1f}% {'above' if l['type']=='CE' else 'below'} the short "
+                    f"{l['strike']:g}{l['type']} (in the money, intrinsic Rs{l['intrinsic_rs']:,} on {l['qty']} qty)")
+            if thru:
+                out.append({"level": "EXIT", "symbol": sym, "text": base + f"; it is also through the {thru[0]['strike']:g}{thru[0]['type']} hedge - the spread is at maximum loss, decide now"})
+            else:
+                out.append({"level": "BREACH", "symbol": sym, "text": base + "; decide: roll, close, or hold"})
+        elif l["side"] == "SHORT" and l["near"]:
+            out.append({"level": "WARN", "symbol": sym, "text": f"{sym} {l['expiry']}: price {spot:g} is within {abs(l['beyond_pct']):.1f}% of the short {l['strike']:g}{l['type']}"})
+    return out
 
 
 def main():
@@ -64,6 +98,10 @@ def main():
     tags_file = DATA / "cc_tags.json"
     tags = load_json(tags_file).get("tags", {}) if tags_file.exists() else {}
     mult = rules["stop_premium_multiple"]
+    lp_file = DATA / "cc_live_prices.json"
+    live = load_json(lp_file) if lp_file.exists() else {}
+    ist_today = datetime.now(timezone(timedelta(hours=5, minutes=30))).strftime("%Y-%m-%d")
+    live_px = live.get("prices", {}) if str(live.get("fetched_at", ""))[:10] == ist_today else {}   # only same-day live prices count
     stocks, no_data, alerts, new_tags = [], [], [], False
     for sym in uni:
         px = aliases.get(sym, sym)  # NSE renames: only the data lookup is aliased
@@ -76,18 +114,19 @@ def main():
         flip_days = e.get("current_streak_trading_days", e.get("recent_flip_trading_days_ago"))
         lots = (master.get(sym) or {}).get("lot", {})
         my = [dict(l) for l in legs_by.get(sym, [])]
+        spot_now = live_px.get(sym, spot)   # live price when it was pulled today, else the last close
         for l in my:
             l["lot"] = lots.get(l["expiry"])
             l["lots"] = round(l["qty"] / l["lot"], 2) if l["lot"] else None
-            l["dist_pct"] = round((l["strike"] / spot - 1) * 100, 2)
+            l["dist_pct"] = round((l["strike"] / spot_now - 1) * 100, 2)
             if l["side"] == "SHORT":
                 l["stop_at"] = round(mult * l["avg"], 2)
                 l["stop_hit"] = l["ltp"] >= l["stop_at"]
-                l["touched"] = spot >= l["strike"] if l["type"] == "CE" else spot <= l["strike"]
                 if l["stop_hit"]:
                     alerts.append({"level": "EXIT", "symbol": sym, "text": f"{sym} {l['expiry']} {l['strike']:g}{l['type']}: premium {l['ltp']} >= {mult}x sold {l['avg']} - close it"})
-                elif l["touched"]:
-                    alerts.append({"level": "WARN", "symbol": sym, "text": f"{sym} spot {spot:g} has reached the short {l['strike']:g}{l['type']} ({l['expiry']})"})
+            strike_zone(l, spot_now, rules.get("near_strike_pct", 2))
+            l["touched_h"] = l["touched"] if l["side"] == "LONG" else False
+        alerts.extend(strike_alerts(sym, my, spot_now, rules.get("near_strike_pct", 2), None))
         shorts = [l for l in my if l["side"] == "SHORT"]
         has_call = any(l["type"] == "CE" for l in shorts)
         has_put_spread = any(s["type"] == "PE" and any(b["type"] == "PE" and b["side"] == "LONG" and b["expiry"] == s["expiry"] and b["strike"] < s["strike"] for b in my) for s in shorts)
@@ -114,11 +153,11 @@ def main():
         })
     if new_tags:
         tags_file.write_text(json.dumps({"_note": "Supertrend colour when a stock's tracked option legs were first seen = the entry colour for the FLIP exit. Edit by hand if the real entry colour differed.", "tags": tags}, indent=1))
-    order = {"EXIT": 0, "WARN": 1}
+    order = {"EXIT": 0, "BREACH": 1, "WARN": 2}
     alerts.sort(key=lambda a: order.get(a["level"], 9))
     calls = sum(1 for s in stocks if s["desired"] == "CALL")
     n = lambda k: sum(1 for s in stocks if s["status"] == k)
-    result = {"generated_at": datetime.now(timezone.utc).isoformat(), "market_data_date": market_date, "rules": rules,
+    result = {"generated_at": datetime.now(timezone.utc).isoformat(), "market_data_date": market_date, "live_prices_at": live.get("fetched_at") if live_px else None, "rules": rules,
               "show_expiries": expiries, "stocks": stocks, "alerts": alerts, "no_data": no_data, "excluded": sorted(excluded),
               "positions": {"fetched_at": pos.get("fetched_at"), "track_from": cfg.get("track_from"), "legs": sum(len(s["legs"]) for s in stocks),
                             "ignored_legs": pos.get("ignored_legs", 0)},

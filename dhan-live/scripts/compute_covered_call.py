@@ -29,7 +29,7 @@ import argparse
 import json
 import math
 import re
-from datetime import date, datetime, timezone
+from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
@@ -155,6 +155,40 @@ def lot_for(sym, expiry, lots, uni):
 
 
 # ---------- main ----------
+def strike_zone(l, spot, near_pct):
+    """How far the stock is from a leg's strike: beyond_pct > 0 = spot at/past the strike (in the money)."""
+    ce = l["type"] == "CE"
+    beyond = (spot / l["strike"] - 1) * 100 if ce else (1 - spot / l["strike"]) * 100
+    intrinsic = max(0.0, (spot - l["strike"]) if ce else (l["strike"] - spot))
+    l["beyond_pct"] = round(beyond, 2)
+    l["intrinsic_rs"] = round(intrinsic * l["qty"])
+    l["touched"] = beyond >= 0
+    l["near"] = (not l["touched"]) and -beyond <= near_pct
+    return beyond
+
+
+def strike_alerts(sym, my_legs, spot, near_pct, stop_alerted):
+    """Graded alerts for the stock price against the open legs (spot = the last close in the signals).
+    EXIT   = price is through the hedge leg too (the spread is at its maximum loss)
+    BREACH = price has reached or passed a short strike
+    WARN   = price is within near_pct of a short strike"""
+    out = []
+    for l in my_legs:
+        if l["side"] == "SHORT" and l["touched"]:
+            hedges = [h for h in my_legs if h["side"] == "LONG" and h["type"] == l["type"] and h["expiry"] == l["expiry"]
+                      and ((h["type"] == "CE" and h["strike"] > l["strike"]) or (h["type"] == "PE" and h["strike"] < l["strike"]))]
+            thru = [h for h in hedges if h["touched_h"]]
+            base = (f"{sym} {l['expiry']}: price {spot:g} is {abs(l['beyond_pct']):.1f}% {'above' if l['type']=='CE' else 'below'} the short "
+                    f"{l['strike']:g}{l['type']} (in the money, intrinsic Rs{l['intrinsic_rs']:,} on {l['qty']} qty)")
+            if thru:
+                out.append({"level": "EXIT", "symbol": sym, "text": base + f"; it is also through the {thru[0]['strike']:g}{thru[0]['type']} hedge - the spread is at maximum loss, decide now"})
+            else:
+                out.append({"level": "BREACH", "symbol": sym, "text": base + "; decide: roll, close, or hold"})
+        elif l["side"] == "SHORT" and l["near"]:
+            out.append({"level": "WARN", "symbol": sym, "text": f"{sym} {l['expiry']}: price {spot:g} is within {abs(l['beyond_pct']):.1f}% of the short {l['strike']:g}{l['type']}"})
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--supertrend", required=True)
@@ -205,12 +239,17 @@ def main():
 
     stocks, alerts, shares_rows, share_entries, share_exits = [], [], [], [], []
     mult = rules["stop_premium_multiple"]
+    lp_file = DATA / "cc_live_prices.json"
+    live = json.loads(lp_file.read_text(encoding="utf-8")) if lp_file.exists() else {}
+    ist_today = datetime.now(timezone(timedelta(hours=5, minutes=30))).strftime("%Y-%m-%d")
+    live_px = live.get("prices", {}) if str(live.get("fetched_at", ""))[:10] == ist_today else {}   # only same-day live prices count
     for sym, u in uni.items():
         e = st_by.get(sym)
         if not e:
             stocks.append({"symbol": sym, "status": "NO_DATA", "note": "not in the Supertrend universe file"})
             continue
         spot, colour = e["close"], e["color"]
+        spot_now = live_px.get(sym, spot)   # live price when pulled today, else the last close (signals stay end-of-day)
         shares = held.get(sym, 0)
         lot = lot_for(sym, show_exp[0] if show_exp else None, lots, uni)
         # "last flip" = when the current colour began (the recent_flip_* fields are empty once the flip is older
@@ -226,17 +265,17 @@ def main():
                 l["ltp"] = round(l["sell_avg"] - l["pnl_rs"] / l["qty"], 2)
                 l["stop_at"] = round(mult * l["sell_avg"], 2)
                 l["stop_hit"] = l["ltp"] >= l["stop_at"]
-                l["touched"] = spot >= l["strike"] if l["type"] == "CE" else spot <= l["strike"]
             else:
                 l["ltp"] = round(l["buy_avg"] + l["pnl_rs"] / l["qty"], 2)
-            l["dist_pct"] = round((l["strike"] / spot - 1) * 100, 2)
+            strike_zone(l, spot_now, rules.get("near_strike_pct", 2))
+            l["touched_h"] = l["touched"] if l["side"] == "LONG" else False
+            l["dist_pct"] = round((l["strike"] / spot_now - 1) * 100, 2)
             leg_lot = lot_for(sym, l["expiry"], lots, uni)
             l["lot"] = leg_lot
             l["lots"] = round(l["qty"] / leg_lot, 2) if leg_lot else None
             if l["side"] == "SHORT" and l["stop_hit"]:
                 alerts.append({"level": "EXIT", "symbol": sym, "text": f"{sym} {l['expiry']} {l['strike']:g}{l['type']}: premium {l['ltp']} >= {mult}x sold {l['sell_avg']} - close it"})
-            elif l["side"] == "SHORT" and l["touched"]:
-                alerts.append({"level": "WARN", "symbol": sym, "text": f"{sym} spot {spot:g} has reached the short {l['strike']:g}{l['type']} ({l['expiry']})"})
+        alerts.extend(a for a in strike_alerts(sym, my_legs, spot_now, rules.get("near_strike_pct", 2), None))
 
         def has_put_spread():
             sp = [l for l in my_legs if l["type"] == "PE" and l["side"] == "SHORT"]
@@ -326,10 +365,10 @@ def main():
             "tagged": bool(tag), "suggestions": suggestions, "legs": my_legs,
         })
 
-    order = {"EXIT": 0, "WARN": 1, "ENTER": 2}
+    order = {"EXIT": 0, "BREACH": 1, "WARN": 2, "ENTER": 3}
     alerts.sort(key=lambda a: order.get(a["level"], 9))
     result = {
-        "generated_at": datetime.now(timezone.utc).isoformat(), "market_data_date": market_date, "as_of": today.isoformat(),
+        "generated_at": datetime.now(timezone.utc).isoformat(), "market_data_date": market_date, "live_prices_at": live.get("fetched_at") if live_px else None, "as_of": today.isoformat(),
         "rules": rules, "show_expiries": show_exp, "stocks": stocks, "alerts": alerts,
         "shares": {"rows": shares_rows, "entries": share_entries, "exits": share_exits,
                    "exit_rule": "Supertrend red and the position is in profit: sell the whole position",

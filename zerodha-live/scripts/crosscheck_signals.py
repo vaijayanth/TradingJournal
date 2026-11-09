@@ -56,6 +56,7 @@ def main():
     ap.add_argument("--mode", choices=["dh252", "flip"], default="flip")
     args = ap.parse_args()
 
+    import numpy as np
     import yfinance as yf
 
     sig = json.loads(Path(args.signals).read_text())
@@ -65,7 +66,7 @@ def main():
     syms = sorted({r["symbol"] for _, r in todo})
     df = yf.download([s + ".NS" for s in syms], period="5y", progress=False, auto_adjust=False, threads=True)
 
-    results, last_bars = [], set()
+    results, last_bars, dropped = [], set(), set()
     for kind, r in todo:
         s = r["symbol"]
         res = {"symbol": s, "kind": kind, "ok": False, "reasons": []}
@@ -73,6 +74,12 @@ def main():
             x = df.xs(s + ".NS", axis=1, level=1).dropna(subset=["Close"])
         except Exception:
             x = None
+        if x is not None and md:
+            # a bar dated after the signals is not what they were built on (while the market is open it is also unfinished): leave it out
+            later = [d for d in x.index if str(d.date()) > md]
+            if later:
+                dropped.update(str(d.date()) for d in later)
+                x = x[[str(d.date()) <= md for d in x.index]]
         if x is None or len(x) < PERIOD + 2:
             res["reasons"].append("not enough Yahoo history to verify")
             results.append(res)
@@ -99,7 +106,7 @@ def main():
             "close": round(close, 2), "published_close": pub_close, "closing_high_252": round(hi_close, 2),
             "intraday_high_252": round(hi_intra, 2), "flip_bars_ago": flip_bars, "pct_from_intraday_high": round((close / hi_intra - 1) * 100, 2),
         })
-        if last_bar != md:
+        if md and np.busday_count(np.datetime64(last_bar) + 1, np.datetime64(md) + 1) > 0:   # a session between Yahoo's last bar and the signal date is missing (a weekend signal date is fine)
             res["reasons"].append(f"Yahoo's last bar is {last_bar}, signals are dated {md}")
         if pub_close and abs(close / pub_close - 1) > 0.005:
             res["reasons"].append(f"close {close:.2f} differs from the signal's {pub_close}")
@@ -115,7 +122,7 @@ def main():
         results.append(res)
 
     bad = [x for x in results if not x["ok"]]
-    out = {"generated_at": datetime.now(timezone.utc).isoformat(), "market_data_date": md, "yahoo_last_bars": sorted(last_bars),
+    out = {"generated_at": datetime.now(timezone.utc).isoformat(), "market_data_date": md, "yahoo_last_bars": sorted(last_bars), "bars_after_signal_date_ignored": sorted(dropped),
            "checked": len(results), "flagged": len(bad), "results": results}
     Path(args.out).write_text(json.dumps(out, indent=1))
     print(f"cross-check of {len(results)} signals (market data {md}): {len(results) - len(bad)} agree, {len(bad)} flagged")
