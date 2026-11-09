@@ -1,4 +1,4 @@
-"""Order gate for the Zerodha (AZ) ticket builders (none written yet; the future zerodha order skills must call this): nothing is ticketed unless the guardrails say it may be.
+"""Order gate for the Zerodha (AZ) ticket builders (build_order_ticket.py; the zerodha-order-entry skill relies on it): nothing is ticketed unless the guardrails say it may be.
 
 load_gate(signals) -> (blocks_by_symbol, cfg)   exits with code 2 (REFUSED) when
   * data/guardrails.json is missing, or was built for a different market date than the signals (run guardrails.py / the refresh), or
