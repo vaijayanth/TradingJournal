@@ -271,10 +271,19 @@ def main():
 
     stocks, alerts, shares_rows, share_entries, share_exits = [], [], [], [], []
     mult = rules["stop_premium_multiple"]
+    sf = DATA / "super_scan.json"
+    scan = json.loads(sf.read_text(encoding="utf-8")) if sf.exists() else {}
     lp_file = DATA / "cc_live_prices.json"
     live = json.loads(lp_file.read_text(encoding="utf-8")) if lp_file.exists() else {}
     ist_today = datetime.now(timezone(timedelta(hours=5, minutes=30))).strftime("%Y-%m-%d")
     live_px = live.get("prices", {}) if str(live.get("fetched_at", ""))[:10] == ist_today else {}   # only same-day live prices count
+    scan_ok = str(scan.get("fetched_at", ""))[:10] == datetime.now(timezone(timedelta(hours=5, minutes=30))).strftime("%Y-%m-%d")
+    if scan_ok:   # a scan from an earlier day is not shown as current
+        for f in scan.get("findings", []):
+            alerts.append({"level": "BREACH" if f["severity"] == "HIGH" else "WARN", "type": "No stop placed" if f["check"] == "S2" else "Invalid stop order",
+                           "symbol": f["symbol"], "expiry": f.get("expiry"), "strike": f.get("strike"), "opt_type": f.get("opt_type"),
+                           "concern": f"{f['name'].title()}: {f['concern']}", "action": f["action"] + (f" (order {f['order_id']})" if f.get("order_id") and f["order_id"] not in f["action"] else ""),
+                           "text": f"{f['symbol']}: {f['concern']}"})
     for sym, u in uni.items():
         e = st_by.get(sym)
         if not e:
@@ -419,7 +428,7 @@ def main():
     order = {"EXIT": 0, "BREACH": 1, "WARN": 2, "ENTER": 3}
     alerts.sort(key=lambda a: order.get(a["level"], 9))
     result = {
-        "generated_at": datetime.now(timezone.utc).isoformat(), "market_data_date": market_date, "live_prices_at": live.get("fetched_at") if live_px else None, "as_of": today.isoformat(),
+        "generated_at": datetime.now(timezone.utc).isoformat(), "market_data_date": market_date, "live_prices_at": live.get("fetched_at") if live_px else None, "super_scan_at": scan.get("fetched_at") if scan_ok else None, "as_of": today.isoformat(),
         "rules": rules, "show_expiries": show_exp, "stocks": stocks, "alerts": alerts,
         "shares": {"rows": shares_rows, "entries": share_entries, "exits": share_exits,
                    "exit_rule": "Supertrend red and the position is in profit: sell the whole position",
@@ -432,7 +441,7 @@ def main():
         "chains_needed": [{"symbol": s["symbol"], "security_id": uni[s["symbol"]]["security_id"], "expiry": g["expiry"]}
                           for s in stocks for g in s.get("suggestions", []) if g.get("missing_chain")],
     }
-    Path(args.out).write_text(json.dumps(result, indent=2, ensure_ascii=False))
+    Path(args.out).write_text(json.dumps(result, indent=2, ensure_ascii=False), encoding="utf-8")
     n = lambda s: sum(1 for x in stocks if x.get("status") == s)
     n_add = sum(1 for a in shares_rows if a["avg_status"] == "ADD")
     n_ent = len(share_entries)

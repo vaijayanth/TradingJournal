@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-09T13:39:43+05:30",
+ "generated_at": "2026-11-09T14:08:54+05:30",
  "broker": "dhan",
  "market_data_date": "2026-11-08",
  "signals_generated_at": "2026-11-09T05:21:38.385690+00:00",
@@ -7,7 +7,7 @@
  "global_block": true,
  "counts": {
   "block": 1,
-  "warn": 5,
+  "warn": 6,
   "info": 0
  },
  "per_symbol_blocks": {},
@@ -28,7 +28,13 @@
    "id": "P3",
    "level": "WARN",
    "symbol": null,
-   "msg": "8 open option exit / strike-breach alerts on 8 stocks (BANKINDIA, BSE, CGPOWER, DIXON, HCLTECH, INFY, MCX, SHRIRAMFIN) - see the Covered Call alerts"
+   "msg": "9 open option exit / strike-breach alerts on 8 stocks (BANKINDIA, BSE, CGPOWER, DIXON, HCLTECH, INFY, MCX, SHRIRAMFIN) - see the Covered Call alerts"
+  },
+  {
+   "id": "P5",
+   "level": "WARN",
+   "symbol": null,
+   "msg": "21 super order stop findings (17 high: likely orphaned stop legs that could BUY a new long) - see Covered Call > Alerts; the dhan-superorder skill can cancel them"
   },
   {
    "id": "P4",

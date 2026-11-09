@@ -305,10 +305,14 @@ def evaluate(ctx, now):
     # P options
     cc = ctx.get("cc")
     if cc:
-        hot = [a for a in cc.get("alerts", []) if a.get("level") in ("EXIT", "BREACH") and a.get("type") != "Invalid GTT"]
+        hot = [a for a in cc.get("alerts", []) if a.get("level") in ("EXIT", "BREACH") and a.get("type") not in ("Invalid GTT", "Invalid stop order", "No stop placed")]
         if hot:   # one line here; the per-leg detail is in the Covered Call page's strike-alert table
             names = sorted({a.get("symbol") for a in hot})
             out.append(f("WARN", "P3", f"{len(hot)} open option exit / strike-breach alerts on {len(names)} stocks ({', '.join(names[:8])}{'...' if len(names) > 8 else ''}) - see the Covered Call alerts", None))
+        bad = [a for a in cc.get("alerts", []) if a.get("type") in ("Invalid stop order", "No stop placed")]
+        if bad:   # P5: the super order scan (scan_super_orders.py) found invalid or missing stop legs
+            hi = sum(1 for a in bad if a.get("level") == "BREACH")
+            out.append(f("WARN", "P5", f"{len(bad)} super order stop findings ({hi} high: likely orphaned stop legs that could BUY a new long) - see Covered Call > Alerts; the dhan-superorder skill can cancel them", None))
         for s in cc.get("stocks", []):
             for g in s.get("suggestions", []):
                 if g.get("expiry_week") and s.get("status") in ("ENTER", "FLIP"):
