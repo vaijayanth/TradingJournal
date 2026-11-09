@@ -305,7 +305,7 @@ def evaluate(ctx, now):
     # P options
     cc = ctx.get("cc")
     if cc:
-        hot = [a for a in cc.get("alerts", []) if a.get("level") in ("EXIT", "BREACH")]
+        hot = [a for a in cc.get("alerts", []) if a.get("level") in ("EXIT", "BREACH") and a.get("type") != "Invalid GTT"]
         if hot:   # one line here; the per-leg detail is in the Covered Call page's strike-alert table
             names = sorted({a.get("symbol") for a in hot})
             out.append(f("WARN", "P3", f"{len(hot)} open option exit / strike-breach alerts on {len(names)} stocks ({', '.join(names[:8])}{'...' if len(names) > 8 else ''}) - see the Covered Call alerts", None))

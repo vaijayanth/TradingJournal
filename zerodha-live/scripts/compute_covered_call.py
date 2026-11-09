@@ -138,7 +138,15 @@ def main():
     held_qty = {h["symbol"]: h["qty"] for h in load_json(hs).get("holdings", [])} if hs.exists() else {}
     gf = DATA / "cc_gtts.json"
     gtt_active = load_json(gf).get("active", {}) if gf.exists() and str(load_json(gf).get("fetched_at", ""))[:10] == ist_today else None   # None = no same-day GTT list: the check is skipped, not failed
+    sf = DATA / "gtt_scan.json"
+    scan = load_json(sf) if sf.exists() else {}
+    scan_ok = str(scan.get("fetched_at", ""))[:10] == ist_today   # a scan from an earlier day is not shown as current
     stocks, no_data, alerts, new_tags = [], [], [], False
+    if scan_ok:
+        for f in scan.get("findings", []):
+            alerts.append({"level": "BREACH" if f["severity"] == "HIGH" else "WARN", "type": "Invalid GTT", "symbol": f["symbol"], "expiry": f.get("expiry"), "strike": f.get("strike"),
+                           "opt_type": f.get("opt_type"), "concern": f"{f['name'].title()}: {f['concern']}", "action": f["action"] + f" (GTT {f['gtt_id']})",
+                           "text": f"{f['symbol']} {f['tradingsymbol']}: {f['concern']}"})
     for sym in uni:
         px = aliases.get(sym, sym)  # NSE renames: only the data lookup is aliased
         e = st.get(px)
@@ -211,7 +219,7 @@ def main():
     alerts.sort(key=lambda a: order.get(a["level"], 9))
     calls = sum(1 for s in stocks if s["desired"] == "CALL")
     n = lambda k: sum(1 for s in stocks if s["status"] == k)
-    result = {"generated_at": datetime.now(timezone.utc).isoformat(), "market_data_date": market_date, "live_prices_at": live.get("fetched_at") if live_px else None, "gtt_checked_at": load_json(gf).get("fetched_at") if gtt_active is not None else None, "rules": rules,
+    result = {"generated_at": datetime.now(timezone.utc).isoformat(), "market_data_date": market_date, "live_prices_at": live.get("fetched_at") if live_px else None, "gtt_scan_at": scan.get("fetched_at") if scan_ok else None, "gtt_checked_at": load_json(gf).get("fetched_at") if gtt_active is not None else None, "rules": rules,
               "show_expiries": expiries, "stocks": stocks, "alerts": alerts, "no_data": no_data, "excluded": sorted(excluded),
               "positions": {"fetched_at": pos.get("fetched_at"), "track_from": cfg.get("track_from"), "legs": sum(len(s["legs"]) for s in stocks),
                             "ignored_legs": pos.get("ignored_legs", 0)},

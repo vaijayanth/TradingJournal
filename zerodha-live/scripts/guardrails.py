@@ -308,10 +308,14 @@ def evaluate(ctx, now):
     # P options
     cc = ctx.get("cc")
     if cc:
-        hot = [a for a in cc.get("alerts", []) if a.get("level") in ("EXIT", "BREACH")]
+        hot = [a for a in cc.get("alerts", []) if a.get("level") in ("EXIT", "BREACH") and a.get("type") != "Invalid GTT"]
         if hot:   # one line here; the per-leg detail is in the Covered Call page's strike-alert table
             names = sorted({a.get("symbol") for a in hot})
             out.append(f("WARN", "P3", f"{len(hot)} open option exit / strike-breach alerts on {len(names)} stocks ({', '.join(names[:8])}{'...' if len(names) > 8 else ''}) - see the Covered Call alerts", None))
+        bad = [a for a in cc.get("alerts", []) if a.get("type") == "Invalid GTT"]
+        if bad:   # P5: the GTT scan (scan_gtts.py) found invalid orders; a stale GTT on a closed contract buys a NEW long if it triggers
+            hi = sum(1 for a in bad if a.get("level") == "BREACH")
+            out.append(f("WARN", "P5", f"{len(bad)} invalid GTT orders ({hi} high: e.g. buy GTTs on contracts you no longer hold) - see Covered Call > Alerts > Invalid GTT; the zerodha-gtt-order skill can delete them", None))
         for s in cc.get("stocks", []):
             for g in s.get("suggestions", []):
                 if g.get("expiry_week") and s.get("status") in ("ENTER", "FLIP"):

@@ -9467,7 +9467,7 @@ function dhStaleAlerts(d, ex) {
 // Guardrails (scripts/guardrails.py): BLOCK = no order may be placed (whole workspace, or the named stocks); WARN = look before ordering
 const GUARD_TYPES = { F1: 'Old market data', F2: 'Old holdings', F3: 'Signals older than holdings', F4: 'Old order list', F5: 'Price data mismatch', I1: 'Bad numbers in data', I2: 'Position data mismatch', I3: 'Fills vs holdings', I4: 'Stock in two lists', I5: 'Excluded stock signalled', I6: 'Fill data wrong', I7: 'Recent buy not in holdings',
   S1: 'Exit not red', S2: 'Add-on rule broken', S3: 'Entry rule broken', S4: 'Oversized minimum buy', S5: 'Too many entries / mass exit', C1: 'Capital over-deployed', C2: 'Concentration', C3: 'Pending buys too big', O1: 'Sell more than held', O2: 'Duplicate orders', O3: 'Order without signal',
-  P1: 'Expiry week', P2: 'No lot size', P3: 'Open option alerts', P4: 'Short call not covered', X1: 'Broker code mix', H1: 'Trading halted' };
+  P1: 'Expiry week', P2: 'No lot size', P3: 'Open option alerts', P4: 'Short call not covered', P5: 'Invalid GTT orders', X1: 'Broker code mix', H1: 'Trading halted' };
 function dhGuardHtml(g, d) {
   if (!g || !g.findings) return '';
   const bl = g.findings.filter(x => x.level === 'BLOCK'), wa = g.findings.filter(x => x.level === 'WARN');
@@ -9801,7 +9801,7 @@ const ccTabBar = (id, tabs, extra) => `<div class="dhm-tabs" id="${id}" role="ta
   `<button class="dhm-tab" data-tab="${k}" onclick="${extra}('${k}')">${l}${n == null ? '' : `<span class="dhm-count">${n}</span>`}</button>`).join('') + '</div>';
 
 // Alert type pill: the label is the alert's own type (3× premium, Near strike, Beyond strike, No GTT placed ...), the colour follows its severity
-const CC_TYPE_ORDER = ['Exit', '3× premium', 'Through hedge', 'Beyond strike', 'Near strike', 'Profit Exit', 'No GTT placed', 'No hedge', 'Partly hedged', 'New trade'];
+const CC_TYPE_ORDER = ['Exit', '3× premium', 'Through hedge', 'Beyond strike', 'Near strike', 'Profit Exit', 'Invalid GTT', 'No GTT placed', 'No hedge', 'Partly hedged', 'New trade'];
 function ccTypePill(a) {
   const m = { EXIT: ['var(--red-soft)', 'var(--red)'], BREACH: ['var(--red)', '#fff'], WARN: ['var(--amber-soft, var(--surface2))', 'var(--amber)'], ENTER: ['var(--accent-soft, var(--surface2))', 'var(--accent)'], PROFIT: ['var(--green-soft)', 'var(--green)'] };
   const [bg, fg] = m[a.level] || ['var(--surface2)', 'var(--text-muted)'];

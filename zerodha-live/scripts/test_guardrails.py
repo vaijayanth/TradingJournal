@@ -137,6 +137,10 @@ r = run(c)
 check("P1 expiry week = WARN", has(r, "P1", "WARN", "AAA"))
 check("P2 no lot size = WARN", has(r, "P2", "WARN", "AAA"))
 check("P3 open option exit alert = WARN", has(r, "P3", "WARN"))
+c = base(); c["cc"] = {"market_data_date": TODAY, "alerts": [{"level": "BREACH", "type": "Invalid GTT", "symbol": "AAA", "text": "stale"}], "stocks": []}
+r = run(c)
+check("P5 invalid GTT = WARN", has(r, "P5", "WARN"))
+check("P3 ignores Invalid GTT findings", not has(r, "P3", "WARN"))
 c = base(); c["cc"] = {"market_data_date": TODAY, "alerts": [], "stocks": [{"symbol": "AAA", "status": "ENTER", "lot": 500, "shares": 10, "covered": False, "desired": "CALL", "suggestions": []}]}
 check("P4 uncovered short call = WARN", has(run(c), "P4", "WARN", "AAA"))
 # X1
