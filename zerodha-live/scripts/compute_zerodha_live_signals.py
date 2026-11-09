@@ -199,6 +199,7 @@ def main():
     md = sup.get("latest_market_date")
     out = build(hdoc["holdings"], uni, index_week52(ms), index_supertrend(sup), index_rsi(ms), base, trades, today, md, sectors, hist, aliases, load_json(a.moved) if Path(a.moved).exists() else None)
     out["holdings_fetched_at"] = hdoc.get("fetched_at")
+    out["source_generated_at"] = {"supertrend": sup.get("generated_at"), "market_screens": ms.get("generated_at")}   # when the backtester published the prices behind these signals
     out["universe"] = {"month": load_json(a.universe)["month"], "count": len(uni), "excluded": sorted(excluded)}
     out["scope"] = {"moved_from_sheet": load_json(a.moved)["symbols"] if Path(a.moved).exists() else None, "moved_at": load_json(a.moved).get("moved_at") if Path(a.moved).exists() else None}
     out["excluded_holdings"] = [{"symbol": h["symbol"], "qty": h["qty"], "invested": round(h["qty"] * h["avg_cost"], 2)} for h in hdoc["holdings"] if h["symbol"] in excluded and h.get("qty", 0) > 0]

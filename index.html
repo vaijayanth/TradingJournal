@@ -932,6 +932,7 @@ tbody tr:hover { filter: brightness(0.97); }
 .a2-t td:not(:first-child), .a2-t th:not(:first-child) { text-align: right; font-family: var(--font-mono); }
 .a2-t th:not(:first-child) { font-family: var(--font-ui); }
 .a2-t td:first-child { font-family: var(--font-ui); }
+.a2-t td.txt, .a2-t th.txt { text-align:left; font-family: var(--font-ui); }
 .a2-note { font-size: 11px; color: var(--text-muted); line-height: 1.55; margin-top: 8px; }
 .a2-callout { padding: 10px 13px; background: var(--accent-soft); border: 1px solid var(--accent); border-radius: 8px; font-size: 12px; color: var(--text-secondary); margin-top: 10px; line-height: 1.5; }
 .a2-callout b { color: var(--accent); }
@@ -8965,7 +8966,7 @@ function wsNormalizeDhan(raw, ws) {
   const rules = raw.rules || {};
   return {
     meta: { broker: ws.id, strategy: ws.strategy, universe: raw.universe || null, source: ws.source, marketDate, computedAt: raw.generated_at,
-            fetchedAt: raw.holdings_fetched_at || null, positionCount: raw.dh252_position_count ?? positions.length },
+            fetchedAt: raw.holdings_fetched_at || null, sourceAt: (raw.source_generated_at && (raw.source_generated_at.supertrend || raw.source_generated_at.market_screens)) || null, positionCount: raw.dh252_position_count ?? positions.length },
     equity: raw.equity_curve || [],
     capital: { initial: (raw.capital_base && raw.capital_base.initial_capital) || null, tierSize: sz.effective_tier_rs, baseTier: sz.base_tier_rs, doubled: !!sz.doubled, posEver: sz.total_positions_ever_opened, tierNote: sz.tier_note || null,
                invested: positions.reduce((s, p) => s + (p.qty || 0) * (p.avgCost || 0), 0),
@@ -9196,7 +9197,7 @@ function dhLiveRender(d) {
   document.querySelectorAll('#dh-live-entry-table thead th').forEach(th => { th.style.display = (cp.hideEntryCols && /52WH/.test(th.textContent)) ? 'none' : ''; });
 
   const ranD = new Date(m.computedAt);
-  set('dh-live-asof', 'Computed ' + (isNaN(ranD) ? m.computedAt : ranD.toLocaleString('en-IN')));
+  wsPaintFresh();
 
   // Data freshness — static snapshot, so show the market date honestly (not a fake "LIVE")
   const statusEl = document.getElementById('dh-live-status');
@@ -9413,10 +9414,39 @@ function dhExpectedSession(now) {
   if (![0, 6].includes(now.dow) && now.mins >= 16 * 60 + 30) return now.iso;
   return dhPrevWeekday(now.iso);
 }
+// Freshness label: market data date, when the source published it, when we last pulled/refreshed, and how long ago (amber when the market is open and it is over an hour)
+const wsFmtT = (iso, withDate) => { const x = new Date(iso); if (!iso || isNaN(x)) return null;
+  const o = { timeZone: 'Asia/Kolkata', hour: '2-digit', minute: '2-digit', hour12: false };
+  const t = x.toLocaleTimeString('en-GB', o), day = x.toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' }), today = new Date().toLocaleDateString('en-CA', { timeZone: 'Asia/Kolkata' });
+  return (day === today && !withDate ? '' : dhFmtDate(day) + ' ') + t; };
+const wsAgo = iso => { const m = Math.round((Date.now() - new Date(iso)) / 60000); return isNaN(m) ? '' : m < 1 ? 'just now' : m < 60 ? m + ' min ago' : m < 1440 ? Math.floor(m / 60) + 'h ' + (m % 60) + 'm ago' : Math.floor(m / 1440) + ' d ago'; };
+function wsFresh(meta, extra) {
+  const m = meta || {}, cc = (window._cc && window._ccWs === WS.id) ? window._cc : null, live = (extra && extra.livePricesAt) || (cc && cc.live_prices_at) || null;
+  const stamps = [m.fetchedAt, m.computedAt, live].filter(x => x && !isNaN(new Date(x)));
+  const last = stamps.length ? stamps.reduce((a, b) => (new Date(a) > new Date(b) ? a : b)) : null;
+  const mins = last ? Math.round((Date.now() - new Date(last)) / 60000) : null;
+  const wd = new Date(new Date().toLocaleString('en-US', { timeZone: 'Asia/Kolkata' })), hm = wd.getHours() * 60 + wd.getMinutes(), mktOpen = wd.getDay() >= 1 && wd.getDay() <= 5 && hm >= 555 && hm <= 930;
+  const stale = mktOpen && mins != null && mins > 60;
+  const parts = [];
+  parts.push('Market data ' + (m.marketDate ? dhFmtDate(m.marketDate) : 'date unknown') + (m.sourceAt ? ' (published ' + wsFmtT(m.sourceAt) + ')' : ''));
+  if (last) parts.push('refreshed ' + wsFmtT(last) + ' IST · ' + wsAgo(last));
+  const tip = ['Market data date: ' + (m.marketDate || '?'), m.sourceAt ? 'Prices published by the source: ' + wsFmtT(m.sourceAt, true) + ' IST' : null,
+    m.fetchedAt ? 'Holdings pulled: ' + wsFmtT(m.fetchedAt, true) + ' IST' : null, m.computedAt ? 'Signals computed: ' + wsFmtT(m.computedAt, true) + ' IST' : null,
+    live ? 'Live prices (options): ' + wsFmtT(live, true) + ' IST' : 'Live prices: not pulled today'].filter(Boolean).join('\n');
+  return { text: parts.join(' · ') + (stale ? ' · refresh overdue' : ''), tip, stale };
+}
+function wsPaintFresh() {
+  const d = WS.data && WS.data[WS.id]; if (!d || !d.meta) return;
+  const f = wsFresh(d.meta);
+  ['d2-asof', 'p2-asof', 'a2-asof', 'cc-asof', 'dh-live-asof'].forEach(id => { const el = document.getElementById(id); if (!el) return;
+    el.textContent = f.text; el.title = f.tip; el.style.color = f.stale ? 'var(--amber)' : ''; el.style.whiteSpace = 'normal'; });
+}
+setInterval(() => { try { wsPaintFresh(); } catch (e) {} }, 60000);
 function dhStaleAlerts(d, ex) {
   const now = dhNowIst(), out = [], exp = dhExpectedSession(now), md = d.meta.marketDate;
   const fmt = iso => dhFmtDate(iso);
   if (md && md < exp) out.push({ sev: 'warn', title: 'Signals are out of date', text: `The data is from ${fmt(md)}, but the market has closed since (${fmt(exp)}).` });
+  { const f = wsFresh(d.meta); if (f.stale) out.push({ sev: 'warn', title: 'Refresh overdue: the market is open', text: f.text + '. Prices, positions and strike alerts may be out of date.' }); }
   const hf = d.meta.fetchedAt ? String(d.meta.fetchedAt).slice(0, 10) : null;
   if (hf && hf < exp) out.push({ sev: 'warn', title: 'Holdings not pulled since ' + fmt(hf), text: 'Quantities, average costs and P&L may be wrong.' });
   // Orders that should have executed at a session open since they were placed, with no refresh after that open
@@ -9539,7 +9569,7 @@ function d2Render(d) {
   const ws = WORKSPACES[WS.id], P = d.positions, closed = d.closed || [];
   const fy = d2FyBounds(new Date());
   set('d2-ws-name', dhEsc(ws.label)); set('d2-fy', fy.label);
-  set('d2-asof', d.meta.marketDate ? 'Market data · ' + dhFmtDate(d.meta.marketDate) : 'Market data date unknown');
+  wsPaintFresh();
 
   const inv = d.capital.invested || 0;
   const mtm = P.reduce((s, p) => s + (p.plRs || 0), 0);
@@ -9745,9 +9775,9 @@ function ccTblApply(id) {
   const t = CC_T[id]; if (!t || !document.getElementById('cc-th-' + id)) return;   // the other broker's table is not on screen
   const { def, st } = t, rows = ccTblRows(id);
   document.getElementById('cc-th-' + id).innerHTML = '<tr>' + def.cols.map((c, i) =>
-    `<th class="cc-sort${c.num ? ' num' : ''}" onclick="ccTblSort('${id}',${i})" title="Click to sort">${c.h}${st.sort === i ? (st.dir > 0 ? ' ▲' : ' ▼') : ''}</th>`).join('') + '</tr>';
+    `<th class="cc-sort${c.num ? ' num' : ''}${c.txt ? ' txt' : ''}" onclick="ccTblSort('${id}',${i})" title="Click to sort">${c.h}${st.sort === i ? (st.dir > 0 ? ' ▲' : ' ▼') : ''}</th>`).join('') + '</tr>';
   document.getElementById('cc-tb-' + id).innerHTML = rows.length
-    ? rows.map(r => `<tr class="${def.rowCls ? def.rowCls(r) : ''}">` + def.cols.map(c => `<td${c.num ? ' class="num"' : ''}${c.nw ? ' style="white-space:normal;min-width:' + c.nw + 'px"' : ''}>${c.c(r)}</td>`).join('') + '</tr>').join('')
+    ? rows.map(r => `<tr class="${def.rowCls ? def.rowCls(r) : ''}">` + def.cols.map(c => `<td${c.num ? ' class="num"' : c.txt ? ' class="txt"' : ''}${c.nw ? ' style="white-space:normal;min-width:' + c.nw + 'px"' : ''}>${c.c(r)}</td>`).join('') + '</tr>').join('')
     : `<tr><td colspan="${def.cols.length}" style="color:var(--text-muted)">${def.rows.length ? 'No rows match the search / filter.' : (def.empty || 'No data.')}</td></tr>`;
   document.getElementById('cc-ft-' + id).textContent = (rows.length === def.rows.length ? `${rows.length} row${rows.length === 1 ? '' : 's'}` : `${rows.length} of ${def.rows.length} rows shown`) + ' · click a column header to sort';
 }
@@ -9771,21 +9801,38 @@ const ccTabBar = (id, tabs, extra) => `<div class="dhm-tabs" id="${id}" role="ta
   `<button class="dhm-tab" data-tab="${k}" onclick="${extra}('${k}')">${l}${n == null ? '' : `<span class="dhm-count">${n}</span>`}</button>`).join('') + '</div>';
 
 // Alert type pill: the label is the alert's own type (3× premium, Near strike, Beyond strike, No GTT placed ...), the colour follows its severity
-const CC_TYPE_ORDER = ['Exit', '3× premium', 'Through hedge', 'Beyond strike', 'Near strike', 'No GTT placed', 'No hedge', 'Partly hedged', 'New trade'];
+const CC_TYPE_ORDER = ['Exit', '3× premium', 'Through hedge', 'Beyond strike', 'Near strike', 'Profit Exit', 'No GTT placed', 'No hedge', 'Partly hedged', 'New trade'];
 function ccTypePill(a) {
-  const m = { EXIT: ['var(--red-soft)', 'var(--red)'], BREACH: ['var(--red)', '#fff'], WARN: ['var(--amber-soft, var(--surface2))', 'var(--amber)'], ENTER: ['var(--accent-soft, var(--surface2))', 'var(--accent)'] };
+  const m = { EXIT: ['var(--red-soft)', 'var(--red)'], BREACH: ['var(--red)', '#fff'], WARN: ['var(--amber-soft, var(--surface2))', 'var(--amber)'], ENTER: ['var(--accent-soft, var(--surface2))', 'var(--accent)'], PROFIT: ['var(--green-soft)', 'var(--green)'] };
   const [bg, fg] = m[a.level] || ['var(--surface2)', 'var(--text-muted)'];
   return `<span class="trend-pill" style="background:${bg};color:${fg};white-space:nowrap">${dhEsc(a.type || a.level)}</span>`;
 }
 const ccTypeFilters = rows => [['all', 'All alert types', () => true]].concat(CC_TYPE_ORDER.filter(t => rows.some(r => r.type === t)).map(t => [t, t, r => r.type === t]));
 const ccAlertDetail = r => (r.text || '').replace(new RegExp('^' + r.symbol.replace(/[-.]/g, '\$&') + '( \d{4}-\d{2}-\d{2})?( [^:]*)?: '), '');
-const ccAlertCols = [
-  { h: 'Alert type', v: r => ccTypeOrd(r), c: r => ccTypePill(r) },
+const ccAlertCols = withType => (withType ? [{ h: 'Alert type', v: r => ccTypeOrd(r), c: r => ccTypePill(r) }] : []).concat([
   { h: 'Stock', v: r => r.symbol, c: r => `<b>${dhEsc(r.symbol)}</b>` },
   { h: 'Leg', v: r => r.strike == null ? '' : r.strike, c: r => r.strike == null ? '—' : ccStrike(r.strike) + ' ' + (r.opt_type || '') },
   { h: 'Expiry', v: r => r.expiry || '', c: r => r.expiry ? dhFmtDate(r.expiry) : '—' },
-  { h: 'Detail', v: r => r.text, c: r => dhEsc(ccAlertDetail(r)), nw: 320 },
-];
+  { h: 'Concern', v: r => r.concern || r.text, c: r => dhEsc(r.concern || ccAlertDetail(r)), nw: 260, txt: true },
+  { h: 'Action', v: r => r.action || '', c: r => `<b>${dhEsc(r.action || '')}</b>`, nw: 190, txt: true },
+]);
+// Alerts box with one sub-tab per alert type (count badge each), so nothing needs scrolling past unrelated alerts
+window._ccAlertSub = window._ccAlertSub || null;
+function ccAlertSub(k) { window._ccAlertSub = k; document.querySelectorAll('#cc-alert-subs button').forEach(b => b.classList.toggle('active', b.dataset.k === k)); document.querySelectorAll('.cc-asub').forEach(v => { v.style.display = v.dataset.k === k ? '' : 'none'; }); }
+function ccAlertsBox(d, pfx, hint) {
+  const rows = (d.alerts || []).slice().sort(ccAlertSort);
+  if (!rows.length) return `<div class="d2-panel"><div class="d2-panel-head"><div><div class="d2-title">Alerts</div></div></div><div class="d2-edge-foot" style="border:0">No alerts on the open option legs.</div></div>`;
+  const types = CC_TYPE_ORDER.filter(t => rows.some(r => r.type === t));
+  const keys = ['All'].concat(types);
+  const cur = keys.includes(window._ccAlertSub) ? window._ccAlertSub : (types[0] || 'All');
+  const sev = t => { const r = rows.find(x => x.type === t); return r ? r.level : ''; };
+  const bar = `<div class="dhm-tabs" id="cc-alert-subs" style="margin:10px 0 0">` + keys.map(k => { const n = k === 'All' ? rows.length : rows.filter(r => r.type === k).length;
+    return `<button class="dhm-tab${k === cur ? ' active' : ''}" data-k="${dhEsc(k)}" onclick="ccAlertSub(this.dataset.k)">${dhEsc(k)}<span class="dhm-count">${n}</span></button>`; }).join('') + '</div>';
+  const body = keys.map(k => { const rs = k === 'All' ? rows : rows.filter(r => r.type === k);
+    return `<div class="cc-asub" data-k="${dhEsc(k)}" style="${k === cur ? '' : 'display:none'}">` + ccTbl(pfx + '_' + k.replace(/\W/g, ''), {
+      title: k === 'All' ? 'All alerts' : k, hint: k === 'All' ? hint : '', rows: rs, search: r => r.symbol + ' ' + (r.concern || r.text), empty: 'None.', cols: ccAlertCols(k === 'All') }) + '</div>'; }).join('');
+  return bar + body;
+}
 const ccAlertSort = (a, b) => ccTypeOrd(a) - ccTypeOrd(b) || a.symbol.localeCompare(b.symbol);
 const ccTypeOrd = a => { const i = CC_TYPE_ORDER.indexOf(a.type); return i < 0 ? 99 : i; };
 // Strike alerts: stock price at/through an open short strike (BREACH), through the hedge too (EXIT) or close to it (WARN)
@@ -9819,13 +9866,7 @@ function ccOptionsView(d) {
   ]);
 
   const lvlOrd = { EXIT: 0, BREACH: 1, WARN: 2, ENTER: 3 };
-  const alertsT = ccTbl('alerts', {
-    title: 'Alerts', hint: 'Alert types: 3× premium, beyond / near strike, through hedge, no hedge, Exit (colour flipped, opposite position open), new trade',
-    rows: (d.alerts || []).slice().sort(ccAlertSort),
-    search: r => r.symbol + ' ' + r.text, empty: 'No exit, strike touch or new option entry right now.',
-    filters: ccTypeFilters(d.alerts || []),
-    cols: ccAlertCols,
-  });
+  const alertsT = ccAlertsBox(d, 'cal', 'Alert types: 3× premium, beyond / near strike, through hedge, profit exit, no GTT, no hedge, Exit (colour flipped, opposite position open)');
 
   const minDist = s => { const v = [s.near_call, s.near_put].filter(Boolean).map(n => Math.abs(n.dist_pct)); return v.length ? Math.min(...v) : null; };
   const sigT = ccTbl('signals', {
@@ -9887,7 +9928,7 @@ function ccOptionsView(d) {
     ]));
   const other = (d.other_positions || []).length ? ` Other option positions not in this universe: ${d.other_positions.join(', ')}.` : '';
   const foot = `<div class="d2-edge-foot" style="border:0">Market data ${dhFmtDate(d.market_data_date)} · deltas are estimates (Black-Scholes from the chain’s IV, no dividends) · option chains loaded: ${Object.keys(d.chains_loaded || {}).join(', ') || 'none'}.${other}</div>`;
-  const bar = ccTabBar('cc-otabs', [['alerts', 'Alerts', alertsT && CC_T.alerts.def.rows.length], ['signals', 'Signals', CC_T.signals.def.rows.length], ['legs', 'Open positions', legs.length], ['rules', 'Rules', null]], 'ccOTab');
+  const bar = ccTabBar('cc-otabs', [['alerts', 'Alerts', (d.alerts || []).length], ['signals', 'Signals', CC_T.signals.def.rows.length], ['legs', 'Open positions', legs.length], ['rules', 'Rules', null]], 'ccOTab');
   return ccStrikeBanner(d) + kpis + bar + `<div id="cc-ov-alerts" class="a2-view">${alertsT}</div><div id="cc-ov-signals" class="a2-view">${sigT}</div><div id="cc-ov-legs" class="a2-view">${legT}</div><div id="cc-ov-rules" class="a2-view">${rulesPanel}${foot}</div>`;
 }
 
@@ -9990,7 +10031,7 @@ function ccZerodhaView(d) {
     ['Bull put spread', C.put_spread || 0, 'Supertrend green, or RSI below ' + R.rsi_sell_put_below],
     ['RSI overrides', C.rsi_override || 0, 'RSI decided the structure instead of the colour'],
     ['Open option legs', (d.positions || {}).legs || 0, 'Expiries from ' + dhFmtDate((d.positions || {}).track_from) + ' · ' + ((d.positions || {}).ignored_legs || 0) + ' earlier legs ignored'],
-    ['Exit / flip alerts', (d.alerts || []).length, '3× premium, strike touch or colour change', (d.alerts || []).length ? 'neg' : ''],
+    ['Act now', (d.alerts || []).filter(a => ['Exit', '3× premium', 'Through hedge', 'Beyond strike', 'Profit Exit'].includes(a.type)).length, 'Exit, 3× premium, beyond strike, profit exit (other alerts are in the Alerts tab)', (d.alerts || []).some(a => ['Exit', '3× premium', 'Through hedge', 'Beyond strike'].includes(a.type)) ? 'neg' : ''],
   ]);
   const S_legs = S.flatMap(s => (s.legs || []).map(l => ({ ...l, stock: s })));
   const struct = s => s.desired === 'PUT_SPREAD' ? 'Bull put spread' : 'Sell call';
@@ -10015,12 +10056,7 @@ function ccZerodhaView(d) {
     ],
   });
   const lvlOrd = { EXIT: 0, BREACH: 1, WARN: 2 };
-  const alertsT = ccTbl('zalerts', {
-    title: 'Alerts', hint: 'Alert types: 3× premium, beyond / near strike, through hedge, no GTT placed, no hedge, Exit (colour flipped, opposite position open). Only open legs from ' + dhFmtDate((d.positions || {}).track_from) + ' onwards are checked',
-    rows: (d.alerts || []).slice().sort(ccAlertSort), search: r => r.symbol + ' ' + r.text, empty: 'No exit or strike-touch alert on the open legs.',
-    filters: ccTypeFilters(d.alerts || []),
-    cols: ccAlertCols,
-  });
+  const alertsT = ccAlertsBox(d, 'zal', 'Alert types: 3× premium, beyond / near strike, through hedge, profit exit, no GTT, no hedge, Exit (colour flipped, opposite position open)');
   const stOrd = { EXIT: 0, BREACH: 1, NEAR: 2, WARN: 2, OK: 3, HEDGE: 4 };
   const legStatus = l => l.side === 'LONG' ? (l.touched ? 'BREACH' : 'HEDGE') : l.stop_hit ? 'EXIT' : l.touched ? 'BREACH' : l.near ? 'NEAR' : 'OK';
   const legT = ccTbl('zlegs', {
@@ -10061,7 +10097,7 @@ function ccZerodhaView(d) {
 function ccRender(d) {
   try { const c = WS.data[WS.id]; if (c) dhRenderStale(c); } catch (e) {}
   const asof = document.getElementById('cc-asof');
-  if (asof) asof.textContent = 'Market data ' + dhFmtDate(d.market_data_date);
+  wsPaintFresh();
   const zer = WS.id === 'zerodha', tabs = document.getElementById('cc-tabs');
   if (tabs) tabs.style.display = zer ? 'none' : '';
   const pg = document.getElementById('page-covcall');
@@ -10240,7 +10276,7 @@ function p2Render(d) {
   const ws = WORKSPACES[WS.id], P = d.positions, closed = d.closed || [], base = d.capital.initial || 0;
   const fy = d2FyBounds(new Date()), ser = p2Series(d);
   set('p2-ws', dhEsc(ws.label) + ' workspace'); set('p2-fy', fy.label);
-  set('p2-asof', d.meta.marketDate ? 'Market data · ' + dhFmtDate(d.meta.marketDate) : 'Market data date unknown');
+  wsPaintFresh();
 
   const mtm = P.reduce((s, p) => s + (p.plRs || 0), 0);
   const closedFy = closed.filter(c => c.exitDate && new Date(c.exitDate + 'T00:00:00') >= fy.start);
@@ -10562,7 +10598,7 @@ function a2Render(d) {
   const ws = WORKSPACES[WS.id], S = a2Stats(d);
   const set = (id, v) => { const el = document.getElementById(id); if (el) el.innerHTML = v; };
   set('a2-fy', d2FyBounds(new Date()).label); set('a2-strat', dhEsc(ws.strategy || '') + ' strategy');
-  set('a2-asof', d.meta.marketDate ? 'Market data · ' + dhFmtDate(d.meta.marketDate) : 'Market data date unknown');
+  wsPaintFresh();
   set('a2-v-overview', a2Overview(d, S)); set('a2-v-risk', a2Risk(d, S)); set('a2-v-loss', a2Loss(d, S));
   set('a2-v-trend', a2Trend(d, S)); set('a2-v-behaviour', a2Behaviour(d, S)); set('a2-v-attribution', a2Attribution(d, S));
   set('a2-v-opportunities', a2Opportunities(d, S));

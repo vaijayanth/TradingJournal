@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-09T07:27:19.545340+00:00",
+ "generated_at": "2026-11-09T07:37:21.108301+00:00",
  "market_data_date": "2026-11-08",
  "live_prices_at": "2026-11-09T11:29:31+05:30",
  "gtt_checked_at": "2026-11-09T12:47:51+05:30",
@@ -9,6 +9,7 @@
   "hedge_strikes_below": 2,
   "stop_premium_multiple": 3,
   "near_strike_pct": 2,
+  "profit_exit_decay_pct": 60,
   "show_next_month_after_day": 15,
   "expiry_week_days": 5,
   "risk_free_rate": 0.065,
@@ -7545,111 +7546,201 @@
  ],
  "alerts": [
   {
+   "expiry": "2026-11-23",
+   "strike": 1200.0,
+   "opt_type": "CE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "360ONE",
+   "concern": "Supertrend GREEN but the short call is still open",
+   "action": "Close it and open the bull put spread",
    "text": "360ONE: Supertrend is GREEN: the open short call (1200CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 6100.0,
+   "opt_type": "PE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "ABB",
+   "concern": "Supertrend RED but the short put / put spread is still open",
+   "action": "Close it and sell the call",
    "text": "ABB: Supertrend is RED: the open short put / put spread (6100PE 2026-11-23) is the opposite of the colour rule - close it and sell the call."
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 1600.0,
+   "opt_type": "CE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "ADANIENSOL",
+   "concern": "Supertrend GREEN but the short call is still open",
+   "action": "Close it and open the bull put spread",
    "text": "ADANIENSOL: Supertrend is GREEN: the open short call (1600CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 1600.0,
+   "opt_type": "CE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "ADANIGREEN",
+   "concern": "Supertrend GREEN but the short call is still open",
+   "action": "Close it and open the bull put spread",
    "text": "ADANIGREEN: Supertrend is GREEN: the open short call (1600CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 220.0,
+   "opt_type": "CE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "ADANIPOWER",
+   "concern": "Supertrend GREEN but the short call is still open",
+   "action": "Close it and open the bull put spread",
    "text": "ADANIPOWER: Supertrend is GREEN: the open short call (220CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 7000.0,
+   "opt_type": "CE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "AMBER",
+   "concern": "Supertrend GREEN but the short call is still open",
+   "action": "Close it and open the bull put spread",
    "text": "AMBER: Supertrend is GREEN: the open short call (7000CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 370.0,
+   "opt_type": "CE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "ANGELONE",
+   "concern": "Supertrend GREEN but the short call is still open",
+   "action": "Close it and open the bull put spread",
    "text": "ANGELONE: Supertrend is GREEN: the open short call (370CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 9100.0,
+   "opt_type": "CE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "APOLLOHOSP",
+   "concern": "Supertrend GREEN but the short call is still open",
+   "action": "Close it and open the bull put spread",
    "text": "APOLLOHOSP: Supertrend is GREEN: the open short call (9100CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 200.0,
+   "opt_type": "CE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "ASHOKLEY",
+   "concern": "Supertrend GREEN but the short call is still open",
+   "action": "Close it and open the bull put spread",
    "text": "ASHOKLEY: Supertrend is GREEN: the open short call (200CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 1820.0,
+   "opt_type": "CE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "ATHERENERG",
+   "concern": "Supertrend GREEN but the short call is still open",
+   "action": "Close it and open the bull put spread",
    "text": "ATHERENERG: Supertrend is GREEN: the open short call (1820CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 860.0,
+   "opt_type": "PE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "AUBANK",
+   "concern": "Supertrend RED but the short put / put spread is still open",
+   "action": "Close it and sell the call",
    "text": "AUBANK: Supertrend is RED: the open short put / put spread (860PE 2026-11-23) is the opposite of the colour rule - close it and sell the call."
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 370.0,
+   "opt_type": "PE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "BHEL",
+   "concern": "Supertrend RED but the short put / put spread is still open",
+   "action": "Close it and sell the call",
    "text": "BHEL: Supertrend is RED: the open short put / put spread (370PE 2026-11-23) is the opposite of the colour rule - close it and sell the call."
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 385.0,
+   "opt_type": "CE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "BIOCON",
+   "concern": "Supertrend GREEN but the short call is still open",
+   "action": "Close it and open the bull put spread",
    "text": "BIOCON: Supertrend is GREEN: the open short call (385CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 51500.0,
+   "opt_type": "CE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "BOSCHLTD",
+   "concern": "Supertrend GREEN but the short call is still open",
+   "action": "Close it and open the bull put spread",
    "text": "BOSCHLTD: Supertrend is GREEN: the open short call (51500CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 345.0,
+   "opt_type": "CE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "BPCL",
+   "concern": "Supertrend GREEN but the short call is still open",
+   "action": "Close it and open the bull put spread",
    "text": "BPCL: Supertrend is GREEN: the open short call (345CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 5000.0,
+   "opt_type": "CE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "BRITANNIA",
+   "concern": "Supertrend GREEN but the short call is still open",
+   "action": "Close it and open the bull put spread",
    "text": "BRITANNIA: Supertrend is GREEN: the open short call (5000CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 800.0,
+   "opt_type": "CE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "CAMS",
+   "concern": "Supertrend GREEN but the short call is still open",
+   "action": "Close it and open the bull put spread",
    "text": "CAMS: Supertrend is GREEN: the open short call (800CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 115.0,
+   "opt_type": "PE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "CANBK",
+   "concern": "Supertrend RED but the short put / put spread is still open",
+   "action": "Close it and sell the call",
    "text": "CANBK: Supertrend is RED: the open short put / put spread (115PE 2026-11-23) is the opposite of the colour rule - close it and sell the call."
   },
   {
@@ -7659,24 +7750,41 @@
    "expiry": "2026-11-23",
    "strike": 1800.0,
    "opt_type": "CE",
-   "text": "CHOLAFIN 2026-11-23 1800CE: premium 28.45 >= 3x sold 5.45 - close it"
+   "text": "CHOLAFIN 2026-11-23 1800CE: premium 28.45 >= 3x sold 5.45 - close it",
+   "concern": "Premium 28.45 is 5.2x the 5.45 sold",
+   "action": "Close now (3x stop hit)"
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 1800.0,
+   "opt_type": "CE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "CHOLAFIN",
+   "concern": "Supertrend GREEN but the short call is still open",
+   "action": "Close it and open the bull put spread",
    "text": "CHOLAFIN: Supertrend is GREEN: the open short call (1800CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 1040.0,
+   "opt_type": "PE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "COCHINSHIP",
+   "concern": "Supertrend RED but the short put / put spread is still open",
+   "action": "Close it and sell the call",
    "text": "COCHINSHIP: Supertrend is RED: the open short put / put spread (1040PE 2026-11-23) is the opposite of the colour rule - close it and sell the call."
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 2220.0,
+   "opt_type": "CE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "COFORGE",
+   "concern": "Supertrend GREEN but the short call is still open",
+   "action": "Close it and open the bull put spread",
    "text": "COFORGE: Supertrend is GREEN: the open short call (2220CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
   },
   {
@@ -7686,7 +7794,9 @@
    "expiry": "2026-11-23",
    "strike": 10600.0,
    "opt_type": "CE",
-   "text": "DIVISLAB 2026-11-23 10600CE: premium 967 >= 3x sold 116.95 - close it"
+   "text": "DIVISLAB 2026-11-23 10600CE: premium 967 >= 3x sold 116.95 - close it",
+   "concern": "Premium 967 is 8.3x the 116.95 sold",
+   "action": "Close now (3x stop hit)"
   },
   {
    "expiry": "2026-11-23",
@@ -7700,42 +7810,74 @@
    "type": "Through hedge",
    "hedge_strike": 10800.0,
    "symbol": "DIVISLAB",
+   "concern": "Price 8.3% past the short and through the 10800 hedge: max loss, Rs87,650 intrinsic",
+   "action": "Close or roll now",
    "text": "DIVISLAB 2026-11-23: price 11476.5 is 8.3% above the short 10600CE (in the money, intrinsic Rs87,650 on 100 qty); it is also through the 10800CE hedge - the spread is at maximum loss, decide now"
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 10600.0,
+   "opt_type": "CE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "DIVISLAB",
+   "concern": "Supertrend GREEN but the short call is still open (2 legs)",
+   "action": "Close it and open the bull put spread",
    "text": "DIVISLAB: Supertrend is GREEN: the open short call (10600CE 2026-11-23, 12400CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 3700.0,
+   "opt_type": "CE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "DMART",
+   "concern": "Supertrend GREEN but the short call is still open",
+   "action": "Close it and open the bull put spread",
    "text": "DMART: Supertrend is GREEN: the open short call (3700CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 1450.0,
+   "opt_type": "CE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "DRREDDY",
+   "concern": "Supertrend GREEN but the short call is still open",
+   "action": "Close it and open the bull put spread",
    "text": "DRREDDY: Supertrend is GREEN: the open short call (1450CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 375.0,
+   "opt_type": "CE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "FEDERALBNK",
+   "concern": "Supertrend GREEN but the short call is still open",
+   "action": "Close it and open the bull put spread",
    "text": "FEDERALBNK: Supertrend is GREEN: the open short call (375CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 102.0,
+   "opt_type": "CE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "GMRAIRPORT",
+   "concern": "Supertrend GREEN but the short call is still open",
+   "action": "Close it and open the bull put spread",
    "text": "GMRAIRPORT: Supertrend is GREEN: the open short call (102CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 1560.0,
+   "opt_type": "CE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "HCLTECH",
+   "concern": "Supertrend GREEN but the short call is still open",
+   "action": "Close it and open the bull put spread",
    "text": "HCLTECH: Supertrend is GREEN: the open short call (1560CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
   },
   {
@@ -7745,7 +7887,9 @@
    "expiry": "2026-11-23",
    "strike": 760.0,
    "opt_type": "CE",
-   "text": "HDFCBANK 2026-11-23 760CE: premium 37.15 >= 3x sold 2.8 - close it"
+   "text": "HDFCBANK 2026-11-23 760CE: premium 37.15 >= 3x sold 2.8 - close it",
+   "concern": "Premium 37.15 is 13.3x the 2.8 sold",
+   "action": "Close now (3x stop hit)"
   },
   {
    "expiry": "2026-11-23",
@@ -7759,18 +7903,30 @@
    "type": "Through hedge",
    "hedge_strike": 770.0,
    "symbol": "HDFCBANK",
+   "concern": "Price 4.3% past the short and through the 770 hedge: max loss, Rs21,255 intrinsic",
+   "action": "Close or roll now",
    "text": "HDFCBANK 2026-11-23: price 792.7 is 4.3% above the short 760CE (in the money, intrinsic Rs21,255 on 650 qty); it is also through the 770CE hedge - the spread is at maximum loss, decide now"
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 760.0,
+   "opt_type": "CE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "HDFCBANK",
+   "concern": "Supertrend GREEN but the short call is still open (2 legs)",
+   "action": "Close it and open the bull put spread",
    "text": "HDFCBANK: Supertrend is GREEN: the open short call (760CE 2026-11-23, 800CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 5650.0,
+   "opt_type": "CE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "HEROMOTOCO",
+   "concern": "Supertrend GREEN but the short call is still open",
+   "action": "Close it and open the bull put spread",
    "text": "HEROMOTOCO: Supertrend is GREEN: the open short call (5650CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
   },
   {
@@ -7780,42 +7936,74 @@
    "expiry": "2026-11-23",
    "strike": 380.0,
    "opt_type": "CE",
-   "text": "HINDPETRO 2026-11-23 380CE: premium 13.05 >= 3x sold 1.3 - close it"
+   "text": "HINDPETRO 2026-11-23 380CE: premium 13.05 >= 3x sold 1.3 - close it",
+   "concern": "Premium 13.05 is 10.0x the 1.3 sold",
+   "action": "Close now (3x stop hit)"
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 380.0,
+   "opt_type": "CE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "HINDPETRO",
+   "concern": "Supertrend GREEN but the short call is still open (2 legs)",
+   "action": "Close it and open the bull put spread",
    "text": "HINDPETRO: Supertrend is GREEN: the open short call (380CE 2026-11-23, 400CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 960.0,
+   "opt_type": "CE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "INDHOTEL",
+   "concern": "Supertrend GREEN but the short call is still open",
+   "action": "Close it and open the bull put spread",
    "text": "INDHOTEL: Supertrend is GREEN: the open short call (960CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 88.0,
+   "opt_type": "CE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "IRFC",
+   "concern": "Supertrend GREEN but the short call is still open",
+   "action": "Close it and open the bull put spread",
    "text": "IRFC: Supertrend is GREEN: the open short call (88CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 290.0,
+   "opt_type": "CE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "ITC",
+   "concern": "Supertrend GREEN but the short call is still open",
+   "action": "Close it and open the bull put spread",
    "text": "ITC: Supertrend is GREEN: the open short call (290CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 410.0,
+   "opt_type": "CE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "KARURVYSYA",
+   "concern": "Supertrend GREEN but the short call is still open",
+   "action": "Close it and open the bull put spread",
    "text": "KARURVYSYA: Supertrend is GREEN: the open short call (410CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 2680.0,
+   "opt_type": "CE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "LAURUSLABS",
+   "concern": "Supertrend GREEN but the short call is still open",
+   "action": "Close it and open the bull put spread",
    "text": "LAURUSLABS: Supertrend is GREEN: the open short call (2680CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
   },
   {
@@ -7825,12 +8013,19 @@
    "expiry": "2026-11-23",
    "strike": 1200.0,
    "opt_type": "CE",
-   "text": "LODHA 2026-11-23 1200CE: premium 26.45 >= 3x sold 4.45 - close it"
+   "text": "LODHA 2026-11-23 1200CE: premium 26.45 >= 3x sold 4.45 - close it",
+   "concern": "Premium 26.45 is 5.9x the 4.45 sold",
+   "action": "Close now (3x stop hit)"
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 1200.0,
+   "opt_type": "CE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "LODHA",
+   "concern": "Supertrend GREEN but the short call is still open",
+   "action": "Close it and open the bull put spread",
    "text": "LODHA: Supertrend is GREEN: the open short call (1200CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
   },
   {
@@ -7840,24 +8035,41 @@
    "expiry": "2026-11-23",
    "strike": 89.0,
    "opt_type": "CE",
-   "text": "MAHABANK 2026-11-23 89CE: premium 2.03 >= 3x sold 0.32 - close it"
+   "text": "MAHABANK 2026-11-23 89CE: premium 2.03 >= 3x sold 0.32 - close it",
+   "concern": "Premium 2.03 is 6.3x the 0.32 sold",
+   "action": "Close now (3x stop hit)"
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 89.0,
+   "opt_type": "CE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "MAHABANK",
+   "concern": "Supertrend GREEN but the short call is still open (2 legs)",
+   "action": "Close it and open the bull put spread",
    "text": "MAHABANK: Supertrend is GREEN: the open short call (89CE 2026-11-23, 93CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 360.0,
+   "opt_type": "CE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "MANAPPURAM",
+   "concern": "Supertrend GREEN but the short call is still open",
+   "action": "Close it and open the bull put spread",
    "text": "MANAPPURAM: Supertrend is GREEN: the open short call (360CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 4000.0,
+   "opt_type": "CE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "MCX",
+   "concern": "Supertrend GREEN but the short call is still open",
+   "action": "Close it and open the bull put spread",
    "text": "MCX: Supertrend is GREEN: the open short call (4000CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
   },
   {
@@ -7867,54 +8079,96 @@
    "expiry": "2026-11-23",
    "strike": 1100.0,
    "opt_type": "CE",
-   "text": "NAM-INDIA 2026-11-23 1100CE: premium 20 >= 3x sold 3.85 - close it"
+   "text": "NAM-INDIA 2026-11-23 1100CE: premium 20 >= 3x sold 3.85 - close it",
+   "concern": "Premium 20 is 5.2x the 3.85 sold",
+   "action": "Close now (3x stop hit)"
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 1100.0,
+   "opt_type": "CE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "NAM-INDIA",
+   "concern": "Supertrend GREEN but the short call is still open",
+   "action": "Close it and open the bull put spread",
    "text": "NAM-INDIA: Supertrend is GREEN: the open short call (1100CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 1350.0,
+   "opt_type": "CE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "NESTLEIND",
+   "concern": "Supertrend GREEN but the short call is still open",
+   "action": "Close it and open the bull put spread",
    "text": "NESTLEIND: Supertrend is GREEN: the open short call (1350CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 6500.0,
+   "opt_type": "CE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "PERSISTENT",
+   "concern": "Supertrend GREEN but the short call is still open",
+   "action": "Close it and open the bull put spread",
    "text": "PERSISTENT: Supertrend is GREEN: the open short call (6500CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 4100.0,
+   "opt_type": "PE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "RADICO",
+   "concern": "Supertrend RED but the short put / put spread is still open",
+   "action": "Close it and sell the call",
    "text": "RADICO: Supertrend is RED: the open short put / put spread (4100PE 2026-11-23) is the opposite of the colour rule - close it and sell the call."
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 1320.0,
+   "opt_type": "PE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "SYRMA",
+   "concern": "Supertrend RED but the short put / put spread is still open",
+   "action": "Close it and sell the call",
    "text": "SYRMA: Supertrend is RED: the open short put / put spread (1320PE 2026-11-23) is the opposite of the colour rule - close it and sell the call."
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 2700.0,
+   "opt_type": "CE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "TCS",
+   "concern": "Supertrend GREEN but the short call is still open",
+   "action": "Close it and open the bull put spread",
    "text": "TCS: Supertrend is GREEN: the open short call (2700CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 1960.0,
+   "opt_type": "CE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "TECHM",
+   "concern": "Supertrend GREEN but the short call is still open",
+   "action": "Close it and open the bull put spread",
    "text": "TECHM: Supertrend is GREEN: the open short call (1960CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
   },
   {
+   "expiry": "2026-11-23",
+   "strike": 2450.0,
+   "opt_type": "CE",
    "level": "EXIT",
    "type": "Exit",
    "symbol": "TIINDIA",
+   "concern": "Supertrend GREEN but the short call is still open",
+   "action": "Close it and open the bull put spread",
    "text": "TIINDIA: Supertrend is GREEN: the open short call (2450CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
   },
   {
@@ -7928,6 +8182,8 @@
    "level": "BREACH",
    "type": "Beyond strike",
    "symbol": "ATHERENERG",
+   "concern": "In the money: price 1.8% past the strike, Rs12,000 intrinsic",
+   "action": "Roll, close or hold",
    "text": "ATHERENERG 2026-11-23: price 1852 is 1.8% above the short 1820CE (in the money, intrinsic Rs12,000 on 375 qty); decide: roll, close, or hold"
   },
   {
@@ -7941,6 +8197,8 @@
    "level": "BREACH",
    "type": "Beyond strike",
    "symbol": "CANBK",
+   "concern": "In the money: price 4.7% past the strike, Rs38,273 intrinsic",
+   "action": "Roll, close or hold",
    "text": "CANBK 2026-11-23: price 125.67 is 4.7% above the short 120CE (in the money, intrinsic Rs38,273 on 6750 qty); decide: roll, close, or hold"
   },
   {
@@ -7954,6 +8212,8 @@
    "level": "BREACH",
    "type": "Beyond strike",
    "symbol": "HINDPETRO",
+   "concern": "In the money: price 0.8% past the strike, Rs6,480 intrinsic",
+   "action": "Roll, close or hold",
    "text": "HINDPETRO 2026-11-23: price 383.2 is 0.8% above the short 380CE (in the money, intrinsic Rs6,480 on 2025 qty); decide: roll, close, or hold"
   },
   {
@@ -7963,6 +8223,8 @@
    "expiry": "2026-11-23",
    "strike": 1200.0,
    "opt_type": "CE",
+   "concern": "483 of 500 qty uncovered (hedge 0 + 17 shares)",
+   "action": "Buy a hedge or hold shares",
    "text": "360ONE 2026-11-23: short 1200CE 500 qty, hedge 0 qty + 17 shares - 483 qty uncovered"
   },
   {
@@ -7972,6 +8234,8 @@
    "expiry": "2026-11-23",
    "strike": 7800.0,
    "opt_type": "CE",
+   "concern": "125 of 125 qty uncovered (hedge 0)",
+   "action": "Buy a hedge or hold shares",
    "text": "ABB 2026-11-23: short 7800CE 125 qty, hedge 0 qty - 125 qty uncovered"
   },
   {
@@ -7982,6 +8246,8 @@
    "strike": 7800.0,
    "opt_type": "CE",
    "qty": 125,
+   "concern": "No buy-back GTT on this short",
+   "action": "Place GTT at 91.65 (3x premium)",
    "text": "ABB 2026-11-23 short 7800CE: no active buy-back GTT (3x premium stop = 91.65)"
   },
   {
@@ -7991,6 +8257,8 @@
    "expiry": "2026-11-23",
    "strike": 1600.0,
    "opt_type": "CE",
+   "concern": "675 of 675 qty uncovered (hedge 0)",
+   "action": "Buy a hedge or hold shares",
    "text": "ADANIENSOL 2026-11-23: short 1600CE 675 qty, hedge 0 qty - 675 qty uncovered"
   },
   {
@@ -8000,6 +8268,8 @@
    "expiry": "2026-11-23",
    "strike": 1600.0,
    "opt_type": "CE",
+   "concern": "600 of 600 qty uncovered (hedge 0)",
+   "action": "Buy a hedge or hold shares",
    "text": "ADANIGREEN 2026-11-23: short 1600CE 600 qty, hedge 0 qty - 600 qty uncovered"
   },
   {
@@ -8010,6 +8280,8 @@
    "strike": 1600.0,
    "opt_type": "CE",
    "qty": 600,
+   "concern": "No buy-back GTT on this short",
+   "action": "Place GTT at 13.5 (3x premium)",
    "text": "ADANIGREEN 2026-11-23 short 1600CE: no active buy-back GTT (3x premium stop = 13.5)"
   },
   {
@@ -8019,6 +8291,8 @@
    "expiry": "2026-11-23",
    "strike": 220.0,
    "opt_type": "CE",
+   "concern": "3550 of 3550 qty uncovered (hedge 0)",
+   "action": "Buy a hedge or hold shares",
    "text": "ADANIPOWER 2026-11-23: short 220CE 3550 qty, hedge 0 qty - 3550 qty uncovered"
   },
   {
@@ -8028,6 +8302,8 @@
    "expiry": "2026-11-23",
    "strike": 7000.0,
    "opt_type": "CE",
+   "concern": "100 of 100 qty uncovered (hedge 0)",
+   "action": "Buy a hedge or hold shares",
    "text": "AMBER 2026-11-23: short 7000CE 100 qty, hedge 0 qty - 100 qty uncovered"
   },
   {
@@ -8038,6 +8314,8 @@
    "strike": 7000.0,
    "opt_type": "CE",
    "qty": 100,
+   "concern": "No buy-back GTT on this short",
+   "action": "Place GTT at 80.25 (3x premium)",
    "text": "AMBER 2026-11-23 short 7000CE: no active buy-back GTT (3x premium stop = 80.25)"
   },
   {
@@ -8047,6 +8325,8 @@
    "expiry": "2026-11-23",
    "strike": 370.0,
    "opt_type": "CE",
+   "concern": "2404 of 2500 qty uncovered (hedge 0 + 96 shares)",
+   "action": "Buy a hedge or hold shares",
    "text": "ANGELONE 2026-11-23: short 370CE 2500 qty, hedge 0 qty + 96 shares - 2404 qty uncovered"
   },
   {
@@ -8056,6 +8336,8 @@
    "expiry": "2026-11-23",
    "strike": 9100.0,
    "opt_type": "CE",
+   "concern": "125 of 125 qty uncovered (hedge 0)",
+   "action": "Buy a hedge or hold shares",
    "text": "APOLLOHOSP 2026-11-23: short 9100CE 125 qty, hedge 0 qty - 125 qty uncovered"
   },
   {
@@ -8066,6 +8348,8 @@
    "strike": 7400.0,
    "opt_type": "PE",
    "qty": 125,
+   "concern": "No buy-back GTT on this short",
+   "action": "Place GTT at 30.3 (3x premium)",
    "text": "APOLLOHOSP 2026-11-23 short 7400PE: no active buy-back GTT (3x premium stop = 30.3)"
   },
   {
@@ -8075,6 +8359,8 @@
    "expiry": "2026-11-23",
    "strike": 200.0,
    "opt_type": "CE",
+   "concern": "4881 of 5000 qty uncovered (hedge 0 + 119 shares)",
+   "action": "Buy a hedge or hold shares",
    "text": "ASHOKLEY 2026-11-23: short 200CE 5000 qty, hedge 0 qty + 119 shares - 4881 qty uncovered"
   },
   {
@@ -8085,6 +8371,8 @@
    "strike": 200.0,
    "opt_type": "CE",
    "qty": 5000,
+   "concern": "No buy-back GTT on this short",
+   "action": "Place GTT at 2.64 (3x premium)",
    "text": "ASHOKLEY 2026-11-23 short 200CE: no active buy-back GTT (3x premium stop = 2.64)"
   },
   {
@@ -8094,6 +8382,8 @@
    "expiry": "2026-11-23",
    "strike": 1820.0,
    "opt_type": "CE",
+   "concern": "375 of 375 qty uncovered (hedge 0)",
+   "action": "Buy a hedge or hold shares",
    "text": "ATHERENERG 2026-11-23: short 1820CE 375 qty, hedge 0 qty - 375 qty uncovered"
   },
   {
@@ -8103,6 +8393,8 @@
    "expiry": "2026-11-23",
    "strike": 1020.0,
    "opt_type": "CE",
+   "concern": "981 of 1000 qty uncovered (hedge 0 + 19 shares)",
+   "action": "Buy a hedge or hold shares",
    "text": "AUBANK 2026-11-23: short 1020CE 1000 qty, hedge 0 qty + 19 shares - 981 qty uncovered"
   },
   {
@@ -8113,6 +8405,8 @@
    "strike": 860.0,
    "opt_type": "PE",
    "qty": 500,
+   "concern": "No buy-back GTT on this short",
+   "action": "Place GTT at 10.35 (3x premium)",
    "text": "AUBANK 2026-11-23 short 860PE: no active buy-back GTT (3x premium stop = 10.35)"
   },
   {
@@ -8122,6 +8416,8 @@
    "expiry": "2026-11-23",
    "strike": 1240.0,
    "opt_type": "CE",
+   "concern": "410 of 425 qty uncovered (hedge 0 + 15 shares)",
+   "action": "Buy a hedge or hold shares",
    "text": "BDL 2026-11-23: short 1240CE 425 qty, hedge 0 qty + 15 shares - 410 qty uncovered"
   },
   {
@@ -8131,6 +8427,8 @@
    "expiry": "2026-11-23",
    "strike": 450.0,
    "opt_type": "CE",
+   "concern": "2625 of 2625 qty uncovered (hedge 0)",
+   "action": "Buy a hedge or hold shares",
    "text": "BHEL 2026-11-23: short 450CE 2625 qty, hedge 0 qty - 2625 qty uncovered"
   },
   {
@@ -8140,6 +8438,8 @@
    "expiry": "2026-11-23",
    "strike": 385.0,
    "opt_type": "CE",
+   "concern": "2500 of 2500 qty uncovered (hedge 0)",
+   "action": "Buy a hedge or hold shares",
    "text": "BIOCON 2026-11-23: short 385CE 2500 qty, hedge 0 qty - 2500 qty uncovered"
   },
   {
@@ -8149,6 +8449,8 @@
    "expiry": "2026-11-23",
    "strike": 45500.0,
    "opt_type": "PE",
+   "concern": "25 of 25 qty uncovered (hedge 0)",
+   "action": "Buy a hedge",
    "text": "BOSCHLTD 2026-11-23: short 45500PE 25 qty, hedge 0 qty - 25 qty uncovered"
   },
   {
@@ -8158,6 +8460,8 @@
    "expiry": "2026-11-23",
    "strike": 51500.0,
    "opt_type": "CE",
+   "concern": "25 of 25 qty uncovered (hedge 0)",
+   "action": "Buy a hedge or hold shares",
    "text": "BOSCHLTD 2026-11-23: short 51500CE 25 qty, hedge 0 qty - 25 qty uncovered"
   },
   {
@@ -8168,6 +8472,8 @@
    "strike": 45500.0,
    "opt_type": "PE",
    "qty": 25,
+   "concern": "No buy-back GTT on this short",
+   "action": "Place GTT at 550.2 (3x premium)",
    "text": "BOSCHLTD 2026-11-23 short 45500PE: no active buy-back GTT (3x premium stop = 550.2)"
   },
   {
@@ -8178,6 +8484,8 @@
    "strike": 51500.0,
    "opt_type": "CE",
    "qty": 25,
+   "concern": "No buy-back GTT on this short",
+   "action": "Place GTT at 1179.45 (3x premium)",
    "text": "BOSCHLTD 2026-11-23 short 51500CE: no active buy-back GTT (3x premium stop = 1179.45)"
   },
   {
@@ -8187,6 +8495,8 @@
    "expiry": "2026-11-23",
    "strike": 345.0,
    "opt_type": "CE",
+   "concern": "1913 of 1975 qty uncovered (hedge 0 + 62 shares)",
+   "action": "Buy a hedge or hold shares",
    "text": "BPCL 2026-11-23: short 345CE 1975 qty, hedge 0 qty + 62 shares - 1913 qty uncovered"
   },
   {
@@ -8197,6 +8507,8 @@
    "strike": 345.0,
    "opt_type": "CE",
    "qty": 1975,
+   "concern": "No buy-back GTT on this short",
+   "action": "Place GTT at 3.6 (3x premium)",
    "text": "BPCL 2026-11-23 short 345CE: no active buy-back GTT (3x premium stop = 3.6)"
   },
   {
@@ -8206,6 +8518,8 @@
    "expiry": "2026-11-23",
    "strike": 5000.0,
    "opt_type": "CE",
+   "concern": "121 of 125 qty uncovered (hedge 0 + 4 shares)",
+   "action": "Buy a hedge or hold shares",
    "text": "BRITANNIA 2026-11-23: short 5000CE 125 qty, hedge 0 qty + 4 shares - 121 qty uncovered"
   },
   {
@@ -8215,6 +8529,8 @@
    "expiry": "2026-11-23",
    "strike": 800.0,
    "opt_type": "CE",
+   "concern": "800 of 825 qty uncovered (hedge 0 + 25 shares)",
+   "action": "Buy a hedge or hold shares",
    "text": "CAMS 2026-11-23: short 800CE 825 qty, hedge 0 qty + 25 shares - 800 qty uncovered"
   },
   {
@@ -8228,6 +8544,8 @@
    "level": "WARN",
    "type": "Near strike",
    "symbol": "CHOLAFIN",
+   "concern": "Price 1.7% from the short strike",
+   "action": "Watch; plan the roll",
    "text": "CHOLAFIN 2026-11-23: price 1768.7 is within 1.7% of the short 1800CE"
   },
   {
@@ -8237,6 +8555,8 @@
    "expiry": "2026-11-23",
    "strike": 1800.0,
    "opt_type": "CE",
+   "concern": "614 of 625 qty uncovered (hedge 0 + 11 shares)",
+   "action": "Buy a hedge or hold shares",
    "text": "CHOLAFIN 2026-11-23: short 1800CE 625 qty, hedge 0 qty + 11 shares - 614 qty uncovered"
   },
   {
@@ -8247,6 +8567,8 @@
    "strike": 1800.0,
    "opt_type": "CE",
    "qty": 625,
+   "concern": "No buy-back GTT on this short",
+   "action": "Place GTT at 16.35 (3x premium)",
    "text": "CHOLAFIN 2026-11-23 short 1800CE: no active buy-back GTT (3x premium stop = 16.35)"
   },
   {
@@ -8256,6 +8578,8 @@
    "expiry": "2026-11-23",
    "strike": 1400.0,
    "opt_type": "CE",
+   "concern": "400 of 400 qty uncovered (hedge 0)",
+   "action": "Buy a hedge or hold shares",
    "text": "COCHINSHIP 2026-11-23: short 1400CE 400 qty, hedge 0 qty - 400 qty uncovered"
   },
   {
@@ -8266,6 +8590,8 @@
    "strike": 1400.0,
    "opt_type": "CE",
    "qty": 400,
+   "concern": "No buy-back GTT on this short",
+   "action": "Place GTT at 19.2 (3x premium)",
    "text": "COCHINSHIP 2026-11-23 short 1400CE: no active buy-back GTT (3x premium stop = 19.2)"
   },
   {
@@ -8275,6 +8601,8 @@
    "expiry": "2026-11-23",
    "strike": 1840.0,
    "opt_type": "PE",
+   "concern": "475 of 475 qty uncovered (hedge 0)",
+   "action": "Buy a hedge",
    "text": "COFORGE 2026-11-23: short 1840PE 475 qty, hedge 0 qty - 475 qty uncovered"
   },
   {
@@ -8284,6 +8612,8 @@
    "expiry": "2026-11-23",
    "strike": 2220.0,
    "opt_type": "CE",
+   "concern": "475 of 475 qty uncovered (hedge 0)",
+   "action": "Buy a hedge or hold shares",
    "text": "COFORGE 2026-11-23: short 2220CE 475 qty, hedge 0 qty - 475 qty uncovered"
   },
   {
@@ -8294,6 +8624,8 @@
    "strike": 1840.0,
    "opt_type": "PE",
    "qty": 475,
+   "concern": "No buy-back GTT on this short",
+   "action": "Place GTT at 36.3 (3x premium)",
    "text": "COFORGE 2026-11-23 short 1840PE: no active buy-back GTT (3x premium stop = 36.3)"
   },
   {
@@ -8307,6 +8639,8 @@
    "level": "WARN",
    "type": "Near strike",
    "symbol": "DIVISLAB",
+   "concern": "Price 1.6% from the short strike",
+   "action": "Watch; plan the roll",
    "text": "DIVISLAB 2026-11-23: price 11476.5 is within 1.6% of the short 11300PE"
   },
   {
@@ -8316,6 +8650,8 @@
    "expiry": "2026-11-23",
    "strike": 10600.0,
    "opt_type": "CE",
+   "concern": "100 of 200 qty uncovered (hedge 100)",
+   "action": "Buy a hedge or hold shares",
    "text": "DIVISLAB 2026-11-23: short 10600/12400CE 200 qty, hedge 100 qty - 100 qty uncovered"
   },
   {
@@ -8326,6 +8662,8 @@
    "strike": 10600.0,
    "opt_type": "CE",
    "qty": 100,
+   "concern": "No buy-back GTT on this short",
+   "action": "Place GTT at 350.85 (3x premium)",
    "text": "DIVISLAB 2026-11-23 short 10600CE: no active buy-back GTT (3x premium stop = 350.85)"
   },
   {
@@ -8336,6 +8674,8 @@
    "strike": 11300.0,
    "opt_type": "PE",
    "qty": 100,
+   "concern": "No buy-back GTT on this short",
+   "action": "Place GTT at 491.85 (3x premium)",
    "text": "DIVISLAB 2026-11-23 short 11300PE: no active buy-back GTT (3x premium stop = 491.85)"
   },
   {
@@ -8345,6 +8685,8 @@
    "expiry": "2026-11-23",
    "strike": 3700.0,
    "opt_type": "CE",
+   "concern": "150 of 150 qty uncovered (hedge 0)",
+   "action": "Buy a hedge or hold shares",
    "text": "DMART 2026-11-23: short 3700CE 150 qty, hedge 0 qty - 150 qty uncovered"
   },
   {
@@ -8354,6 +8696,8 @@
    "expiry": "2026-11-23",
    "strike": 1450.0,
    "opt_type": "CE",
+   "concern": "625 of 625 qty uncovered (hedge 0)",
+   "action": "Buy a hedge or hold shares",
    "text": "DRREDDY 2026-11-23: short 1450CE 625 qty, hedge 0 qty - 625 qty uncovered"
   },
   {
@@ -8364,6 +8708,8 @@
    "strike": 1450.0,
    "opt_type": "CE",
    "qty": 625,
+   "concern": "No buy-back GTT on this short",
+   "action": "Place GTT at 13.2 (3x premium)",
    "text": "DRREDDY 2026-11-23 short 1450CE: no active buy-back GTT (3x premium stop = 13.2)"
   },
   {
@@ -8373,6 +8719,8 @@
    "expiry": "2026-11-23",
    "strike": 315.0,
    "opt_type": "PE",
+   "concern": "2425 of 2425 qty uncovered (hedge 0)",
+   "action": "Buy a hedge",
    "text": "ETERNAL 2026-11-23: short 315PE 2425 qty, hedge 0 qty - 2425 qty uncovered"
   },
   {
@@ -8382,6 +8730,8 @@
    "expiry": "2026-11-23",
    "strike": 375.0,
    "opt_type": "CE",
+   "concern": "2500 of 2500 qty uncovered (hedge 0)",
+   "action": "Buy a hedge or hold shares",
    "text": "FEDERALBNK 2026-11-23: short 375CE 2500 qty, hedge 0 qty - 2500 qty uncovered"
   },
   {
@@ -8391,6 +8741,8 @@
    "expiry": "2026-11-23",
    "strike": 102.0,
    "opt_type": "CE",
+   "concern": "6975 of 6975 qty uncovered (hedge 0)",
+   "action": "Buy a hedge or hold shares",
    "text": "GMRAIRPORT 2026-11-23: short 102CE 6975 qty, hedge 0 qty - 6975 qty uncovered"
   },
   {
@@ -8401,6 +8753,8 @@
    "strike": 102.0,
    "opt_type": "CE",
    "qty": 6975,
+   "concern": "No buy-back GTT on this short",
+   "action": "Place GTT at 0.93 (3x premium)",
    "text": "GMRAIRPORT 2026-11-23 short 102CE: no active buy-back GTT (3x premium stop = 0.93)"
   },
   {
@@ -8410,6 +8764,8 @@
    "expiry": "2026-11-23",
    "strike": 1560.0,
    "opt_type": "CE",
+   "concern": "385 of 400 qty uncovered (hedge 0 + 15 shares)",
+   "action": "Buy a hedge or hold shares",
    "text": "HCLTECH 2026-11-23: short 1560CE 400 qty, hedge 0 qty + 15 shares - 385 qty uncovered"
   },
   {
@@ -8420,6 +8776,8 @@
    "strike": 1560.0,
    "opt_type": "CE",
    "qty": 400,
+   "concern": "No buy-back GTT on this short",
+   "action": "Place GTT at 14.85 (3x premium)",
    "text": "HCLTECH 2026-11-23 short 1560CE: no active buy-back GTT (3x premium stop = 14.85)"
   },
   {
@@ -8433,6 +8791,8 @@
    "level": "WARN",
    "type": "Near strike",
    "symbol": "HDFCBANK",
+   "concern": "Price 1.6% from the short strike",
+   "action": "Watch; plan the roll",
    "text": "HDFCBANK 2026-11-23: price 792.7 is within 1.6% of the short 780PE"
   },
   {
@@ -8446,6 +8806,8 @@
    "level": "WARN",
    "type": "Near strike",
    "symbol": "HDFCBANK",
+   "concern": "Price 0.9% from the short strike",
+   "action": "Watch; plan the roll",
    "text": "HDFCBANK 2026-11-23: price 792.7 is within 0.9% of the short 800CE"
   },
   {
@@ -8455,6 +8817,8 @@
    "expiry": "2026-11-23",
    "strike": 760.0,
    "opt_type": "CE",
+   "concern": "650 of 1300 qty uncovered (hedge 650)",
+   "action": "Buy a hedge or hold shares",
    "text": "HDFCBANK 2026-11-23: short 760/800CE 1300 qty, hedge 650 qty - 650 qty uncovered"
   },
   {
@@ -8465,6 +8829,8 @@
    "strike": 760.0,
    "opt_type": "CE",
    "qty": 650,
+   "concern": "No buy-back GTT on this short",
+   "action": "Place GTT at 8.4 (3x premium)",
    "text": "HDFCBANK 2026-11-23 short 760CE: no active buy-back GTT (3x premium stop = 8.4)"
   },
   {
@@ -8474,6 +8840,8 @@
    "expiry": "2026-11-23",
    "strike": 5650.0,
    "opt_type": "CE",
+   "concern": "150 of 150 qty uncovered (hedge 0)",
+   "action": "Buy a hedge or hold shares",
    "text": "HEROMOTOCO 2026-11-23: short 5650CE 150 qty, hedge 0 qty - 150 qty uncovered"
   },
   {
@@ -8484,6 +8852,8 @@
    "strike": 5650.0,
    "opt_type": "CE",
    "qty": 150,
+   "concern": "No buy-back GTT on this short",
+   "action": "Place GTT at 49.95 (3x premium)",
    "text": "HEROMOTOCO 2026-11-23 short 5650CE: no active buy-back GTT (3x premium stop = 49.95)"
   },
   {
@@ -8493,6 +8863,8 @@
    "expiry": "2026-11-23",
    "strike": 380.0,
    "opt_type": "CE",
+   "concern": "2025 of 4050 qty uncovered (hedge 2025)",
+   "action": "Buy a hedge or hold shares",
    "text": "HINDPETRO 2026-11-23: short 380/400CE 4050 qty, hedge 2025 qty - 2025 qty uncovered"
   },
   {
@@ -8503,6 +8875,8 @@
    "strike": 380.0,
    "opt_type": "CE",
    "qty": 2025,
+   "concern": "No buy-back GTT on this short",
+   "action": "Place GTT at 3.9 (3x premium)",
    "text": "HINDPETRO 2026-11-23 short 380CE: no active buy-back GTT (3x premium stop = 3.9)"
   },
   {
@@ -8512,6 +8886,8 @@
    "expiry": "2026-11-23",
    "strike": 960.0,
    "opt_type": "CE",
+   "concern": "1000 of 1000 qty uncovered (hedge 0)",
+   "action": "Buy a hedge or hold shares",
    "text": "INDHOTEL 2026-11-23: short 960CE 1000 qty, hedge 0 qty - 1000 qty uncovered"
   },
   {
@@ -8522,6 +8898,8 @@
    "strike": 974.0,
    "opt_type": "PE",
    "qty": 800,
+   "concern": "No buy-back GTT on this short",
+   "action": "Place GTT at 8.85 (3x premium)",
    "text": "INFY 2026-11-23 short 974PE: no active buy-back GTT (3x premium stop = 8.85)"
   },
   {
@@ -8531,6 +8909,8 @@
    "expiry": "2026-11-23",
    "strike": 88.0,
    "opt_type": "CE",
+   "concern": "5425 of 5425 qty uncovered (hedge 0)",
+   "action": "Buy a hedge or hold shares",
    "text": "IRFC 2026-11-23: short 88CE 5425 qty, hedge 0 qty - 5425 qty uncovered"
   },
   {
@@ -8541,6 +8921,8 @@
    "strike": 74.0,
    "opt_type": "PE",
    "qty": 5425,
+   "concern": "No buy-back GTT on this short",
+   "action": "Place GTT at 0.9 (3x premium)",
    "text": "IRFC 2026-11-23 short 74PE: no active buy-back GTT (3x premium stop = 0.9)"
   },
   {
@@ -8550,6 +8932,8 @@
    "expiry": "2026-11-23",
    "strike": 290.0,
    "opt_type": "CE",
+   "concern": "3450 of 3450 qty uncovered (hedge 0)",
+   "action": "Buy a hedge or hold shares",
    "text": "ITC 2026-11-23: short 290CE 3450 qty, hedge 0 qty - 3450 qty uncovered"
   },
   {
@@ -8559,6 +8943,8 @@
    "expiry": "2026-11-23",
    "strike": 410.0,
    "opt_type": "CE",
+   "concern": "1550 of 1550 qty uncovered (hedge 0)",
+   "action": "Buy a hedge or hold shares",
    "text": "KARURVYSYA 2026-11-23: short 410CE 1550 qty, hedge 0 qty - 1550 qty uncovered"
   },
   {
@@ -8568,6 +8954,8 @@
    "expiry": "2026-11-23",
    "strike": 2680.0,
    "opt_type": "CE",
+   "concern": "850 of 850 qty uncovered (hedge 0)",
+   "action": "Buy a hedge or hold shares",
    "text": "LAURUSLABS 2026-11-23: short 2680CE 850 qty, hedge 0 qty - 850 qty uncovered"
   },
   {
@@ -8578,6 +8966,8 @@
    "strike": 2200.0,
    "opt_type": "PE",
    "qty": 850,
+   "concern": "No buy-back GTT on this short",
+   "action": "Place GTT at 26.7 (3x premium)",
    "text": "LAURUSLABS 2026-11-23 short 2200PE: no active buy-back GTT (3x premium stop = 26.7)"
   },
   {
@@ -8587,6 +8977,8 @@
    "expiry": "2026-11-23",
    "strike": 1200.0,
    "opt_type": "CE",
+   "concern": "609 of 625 qty uncovered (hedge 0 + 16 shares)",
+   "action": "Buy a hedge or hold shares",
    "text": "LODHA 2026-11-23: short 1200CE 625 qty, hedge 0 qty + 16 shares - 609 qty uncovered"
   },
   {
@@ -8597,6 +8989,8 @@
    "strike": 1200.0,
    "opt_type": "CE",
    "qty": 625,
+   "concern": "No buy-back GTT on this short",
+   "action": "Place GTT at 13.35 (3x premium)",
    "text": "LODHA 2026-11-23 short 1200CE: no active buy-back GTT (3x premium stop = 13.35)"
   },
   {
@@ -8606,6 +9000,8 @@
    "expiry": "2026-11-23",
    "strike": 89.0,
    "opt_type": "CE",
+   "concern": "6257 of 13000 qty uncovered (hedge 6500 + 243 shares)",
+   "action": "Buy a hedge or hold shares",
    "text": "MAHABANK 2026-11-23: short 89/93CE 13000 qty, hedge 6500 qty + 243 shares - 6257 qty uncovered"
   },
   {
@@ -8616,6 +9012,8 @@
    "strike": 89.0,
    "opt_type": "CE",
    "qty": 6500,
+   "concern": "No buy-back GTT on this short",
+   "action": "Place GTT at 0.96 (3x premium)",
    "text": "MAHABANK 2026-11-23 short 89CE: no active buy-back GTT (3x premium stop = 0.96)"
   },
   {
@@ -8625,6 +9023,8 @@
    "expiry": "2026-11-23",
    "strike": 360.0,
    "opt_type": "CE",
+   "concern": "2944 of 3000 qty uncovered (hedge 0 + 56 shares)",
+   "action": "Buy a hedge or hold shares",
    "text": "MANAPPURAM 2026-11-23: short 360CE 3000 qty, hedge 0 qty + 56 shares - 2944 qty uncovered"
   },
   {
@@ -8634,6 +9034,8 @@
    "expiry": "2026-11-23",
    "strike": 3100.0,
    "opt_type": "PE",
+   "concern": "225 of 225 qty uncovered (hedge 0)",
+   "action": "Buy a hedge",
    "text": "MCX 2026-11-23: short 3100PE 225 qty, hedge 0 qty - 225 qty uncovered"
   },
   {
@@ -8643,6 +9045,8 @@
    "expiry": "2026-11-23",
    "strike": 4000.0,
    "opt_type": "CE",
+   "concern": "225 of 225 qty uncovered (hedge 0)",
+   "action": "Buy a hedge or hold shares",
    "text": "MCX 2026-11-23: short 4000CE 225 qty, hedge 0 qty - 225 qty uncovered"
   },
   {
@@ -8652,6 +9056,8 @@
    "expiry": "2026-11-23",
    "strike": 1100.0,
    "opt_type": "CE",
+   "concern": "607 of 625 qty uncovered (hedge 0 + 18 shares)",
+   "action": "Buy a hedge or hold shares",
    "text": "NAM-INDIA 2026-11-23: short 1100CE 625 qty, hedge 0 qty + 18 shares - 607 qty uncovered"
   },
   {
@@ -8662,6 +9068,8 @@
    "strike": 1100.0,
    "opt_type": "CE",
    "qty": 625,
+   "concern": "No buy-back GTT on this short",
+   "action": "Place GTT at 11.55 (3x premium)",
    "text": "NAM-INDIA 2026-11-23 short 1100CE: no active buy-back GTT (3x premium stop = 11.55)"
   },
   {
@@ -8671,6 +9079,8 @@
    "expiry": "2026-11-23",
    "strike": 370.0,
    "opt_type": "CE",
+   "concern": "1875 of 1875 qty uncovered (hedge 0)",
+   "action": "Buy a hedge or hold shares",
    "text": "NATIONALUM 2026-11-23: short 370CE 1875 qty, hedge 0 qty - 1875 qty uncovered"
   },
   {
@@ -8680,6 +9090,8 @@
    "expiry": "2026-11-23",
    "strike": 1280.0,
    "opt_type": "CE",
+   "concern": "550 of 550 qty uncovered (hedge 0)",
+   "action": "Buy a hedge or hold shares",
    "text": "NAUKRI 2026-11-23: short 1280CE 550 qty, hedge 0 qty - 550 qty uncovered"
   },
   {
@@ -8690,6 +9102,8 @@
    "strike": 1280.0,
    "opt_type": "CE",
    "qty": 550,
+   "concern": "No buy-back GTT on this short",
+   "action": "Place GTT at 13.8 (3x premium)",
    "text": "NAUKRI 2026-11-23 short 1280CE: no active buy-back GTT (3x premium stop = 13.8)"
   },
   {
@@ -8699,6 +9113,8 @@
    "expiry": "2026-11-23",
    "strike": 1350.0,
    "opt_type": "CE",
+   "concern": "487 of 500 qty uncovered (hedge 0 + 13 shares)",
+   "action": "Buy a hedge or hold shares",
    "text": "NESTLEIND 2026-11-23: short 1350CE 500 qty, hedge 0 qty + 13 shares - 487 qty uncovered"
   },
   {
@@ -8708,6 +9124,8 @@
    "expiry": "2026-11-23",
    "strike": 11000.0,
    "opt_type": "CE",
+   "concern": "100 of 100 qty uncovered (hedge 0)",
+   "action": "Buy a hedge or hold shares",
    "text": "OFSS 2026-11-23: short 11000CE 100 qty, hedge 0 qty - 100 qty uncovered"
   },
   {
@@ -8717,6 +9135,8 @@
    "expiry": "2026-11-23",
    "strike": 6500.0,
    "opt_type": "CE",
+   "concern": "120 of 125 qty uncovered (hedge 0 + 5 shares)",
+   "action": "Buy a hedge or hold shares",
    "text": "PERSISTENT 2026-11-23: short 6500CE 125 qty, hedge 0 qty + 5 shares - 120 qty uncovered"
   },
   {
@@ -8726,6 +9146,8 @@
    "expiry": "2026-11-23",
    "strike": 1100.0,
    "opt_type": "CE",
+   "concern": "350 of 350 qty uncovered (hedge 0)",
+   "action": "Buy a hedge or hold shares",
    "text": "POLICYBZR 2026-11-23: short 1100CE 350 qty, hedge 0 qty - 350 qty uncovered"
   },
   {
@@ -8735,6 +9157,8 @@
    "expiry": "2026-11-23",
    "strike": 1720.0,
    "opt_type": "CE",
+   "concern": "306 of 325 qty uncovered (hedge 0 + 19 shares)",
+   "action": "Buy a hedge or hold shares",
    "text": "SYRMA 2026-11-23: short 1720CE 325 qty, hedge 0 qty + 19 shares - 306 qty uncovered"
   },
   {
@@ -8744,6 +9168,8 @@
    "expiry": "2026-11-23",
    "strike": 2700.0,
    "opt_type": "CE",
+   "concern": "450 of 450 qty uncovered (hedge 0)",
+   "action": "Buy a hedge or hold shares",
    "text": "TCS 2026-11-23: short 2700CE 450 qty, hedge 0 qty - 450 qty uncovered"
   },
   {
@@ -8754,6 +9180,8 @@
    "strike": 2700.0,
    "opt_type": "CE",
    "qty": 450,
+   "concern": "No buy-back GTT on this short",
+   "action": "Place GTT at 24.15 (3x premium)",
    "text": "TCS 2026-11-23 short 2700CE: no active buy-back GTT (3x premium stop = 24.15)"
   },
   {
@@ -8763,6 +9191,8 @@
    "expiry": "2026-11-23",
    "strike": 1960.0,
    "opt_type": "CE",
+   "concern": "600 of 600 qty uncovered (hedge 0)",
+   "action": "Buy a hedge or hold shares",
    "text": "TECHM 2026-11-23: short 1960CE 600 qty, hedge 0 qty - 600 qty uncovered"
   },
   {
@@ -8772,7 +9202,53 @@
    "expiry": "2026-11-23",
    "strike": 2450.0,
    "opt_type": "CE",
+   "concern": "200 of 200 qty uncovered (hedge 0)",
+   "action": "Buy a hedge or hold shares",
    "text": "TIINDIA 2026-11-23: short 2450CE 200 qty, hedge 0 qty - 200 qty uncovered"
+  },
+  {
+   "level": "PROFIT",
+   "type": "Profit Exit",
+   "symbol": "ASHOKLEY",
+   "expiry": "2026-11-23",
+   "strike": 137.5,
+   "opt_type": "PE",
+   "concern": "Premium decayed 63% (sold 0.57, now 0.21)",
+   "action": "Book profit: buy back",
+   "text": "ASHOKLEY 2026-11-23 137.5PE: premium decayed 63% (sold 0.57, now 0.21) - book the profit"
+  },
+  {
+   "level": "PROFIT",
+   "type": "Profit Exit",
+   "symbol": "BHEL",
+   "expiry": "2026-11-23",
+   "strike": 370.0,
+   "opt_type": "PE",
+   "concern": "Premium decayed 64% (sold 3.2, now 1.15)",
+   "action": "Book profit: buy back",
+   "text": "BHEL 2026-11-23 370PE: premium decayed 64% (sold 3.2, now 1.15) - book the profit"
+  },
+  {
+   "level": "PROFIT",
+   "type": "Profit Exit",
+   "symbol": "CHOLAFIN",
+   "expiry": "2026-11-23",
+   "strike": 1520.0,
+   "opt_type": "PE",
+   "concern": "Premium decayed 65% (sold 5.7, now 2)",
+   "action": "Book profit: buy back",
+   "text": "CHOLAFIN 2026-11-23 1520PE: premium decayed 65% (sold 5.7, now 2) - book the profit"
+  },
+  {
+   "level": "PROFIT",
+   "type": "Profit Exit",
+   "symbol": "COCHINSHIP",
+   "expiry": "2026-11-23",
+   "strike": 1040.0,
+   "opt_type": "PE",
+   "concern": "Premium decayed 73% (sold 12.8, now 3.4)",
+   "action": "Book profit: buy back",
+   "text": "COCHINSHIP 2026-11-23 1040PE: premium decayed 73% (sold 12.8, now 3.4) - book the profit"
   }
  ],
  "no_data": [],

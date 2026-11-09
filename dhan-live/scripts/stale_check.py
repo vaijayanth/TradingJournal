@@ -1,4 +1,5 @@
 """Is /refresh-dhan overdue? Prints nothing when everything is fresh.
+(2026-11-09: also overdue when the market is open and the last refresh is more than 60 minutes old.)
 
 Run by the project's SessionStart hook so Claude Code can tell the user at the start of a session. The same rules as the
 dashboard banner in index.html (dhStaleAlerts):
@@ -45,11 +46,28 @@ def load(p):
         return None
 
 
+def last_refresh():
+    """Latest of: holdings pull, signals computed, live prices pulled (all done by /refresh-dhan)."""
+    ts = []
+    for path, key in (("data/holdings_snapshot.json", "fetched_at"), ("dhan_live_signals.json", "generated_at"), ("data/cc_live_prices.json", "fetched_at")):
+        d = load(path)
+        try:
+            t = datetime.fromisoformat(d[key])
+            ts.append(t if t.tzinfo else t.replace(tzinfo=IST))
+        except Exception:
+            pass
+    return max(ts).astimezone(IST) if ts else None
+
+
 def alerts(now):
     out = []
     today = now.date()
     mins = now.hour * 60 + now.minute
     expected = today if (today.weekday() < 5 and mins >= 16 * 60 + 30) else prev_weekday(today)
+    last = last_refresh()
+    if last and today.weekday() < 5 and 9 * 60 + 15 <= mins <= 15 * 60 + 30 and now - last > timedelta(minutes=60):
+        m = int((now - last).total_seconds() // 60)
+        out.append(f"the market is open and the last refresh was {m // 60}h {m % 60}m ago ({last.strftime('%H:%M')} IST): prices, positions and the strike alerts are out of date - run /refresh-dhan")
     sig = load("dhan_live_signals.json")
     hold = load("data/holdings_snapshot.json")
     orders = load("data/orders_snapshot.json")
