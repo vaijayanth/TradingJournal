@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-09T07:37:21.305584+00:00",
+  "generated_at": "2026-11-09T07:51:13.671617+00:00",
   "market_data_date": "2026-11-08",
   "live_prices_at": "2026-11-09T12:02:12+05:30",
   "as_of": "2026-11-08",
@@ -1295,7 +1295,8 @@
       "level": "ENTER",
       "type": "New trade",
       "symbol": "BPCL",
-      "concern": "Supertrend green, no put spread open",
+      "flip_days": 2,
+      "concern": "Supertrend green, flipped 2d ago, no put spread open",
       "action": "Open bull put spread",
       "text": "BPCL: Supertrend green - no put spread open - bull put spread"
     },
@@ -1303,7 +1304,8 @@
       "level": "ENTER",
       "type": "New trade",
       "symbol": "CUMMINSIND",
-      "concern": "Supertrend red, no short call open",
+      "flip_days": 2,
+      "concern": "Supertrend red, flipped 2d ago, no short call open",
       "action": "Sell the call",
       "text": "CUMMINSIND: Supertrend red - no short call open - sell call"
     }

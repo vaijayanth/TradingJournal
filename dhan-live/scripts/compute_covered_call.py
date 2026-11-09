@@ -367,7 +367,7 @@ def main():
             for ex in show_exp:
                 suggestions.append(suggest(desired, chains.get(sym, {}).get(ex), ex, today, rules, lot, spot))
             if status == "ENTER":
-                alerts.append({"level": "ENTER", "type": "New trade", "symbol": sym, "concern": f"{basis}, no {'put spread' if desired == 'PUT_SPREAD' else 'short call'} open", "action": "Open bull put spread" if desired == "PUT_SPREAD" else "Sell the call", "text": f"{sym}: {note} - {'bull put spread' if desired == 'PUT_SPREAD' else 'sell call'}"})
+                alerts.append({"level": "ENTER", "type": "New trade", "symbol": sym, "flip_days": flip_days, "concern": f"{basis}{f', flipped {flip_days}d ago' if flip_days is not None else ''}, no {'put spread' if desired == 'PUT_SPREAD' else 'short call'} open", "action": "Open bull put spread" if desired == "PUT_SPREAD" else "Sell the call", "text": f"{sym}: {note} - {'bull put spread' if desired == 'PUT_SPREAD' else 'sell call'}"})
         # the shares themselves (Shares sub-tab)
         h = hold_rows.get(sym)
         if h and h.get("avg_cost"):

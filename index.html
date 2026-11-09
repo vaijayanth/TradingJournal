@@ -9833,7 +9833,17 @@ function ccAlertsBox(d, pfx, hint) {
       title: k === 'All' ? 'All alerts' : k, hint: k === 'All' ? hint : '', rows: rs, search: r => r.symbol + ' ' + (r.concern || r.text), empty: 'None.', cols: ccAlertCols(k === 'All') }) + '</div>'; }).join('');
   return bar + body;
 }
-const ccAlertSort = (a, b) => ccTypeOrd(a) - ccTypeOrd(b) || a.symbol.localeCompare(b.symbol);
+// Option entry priority: stocks that need an option trade (ENTER / FLIP), most recent Supertrend flip first
+const CC_NEW_FLIP_DAYS = 5;
+function ccPrio(S) {
+  const act = S.filter(s => s.status === 'ENTER' || s.status === 'FLIP').sort((a, b) => (a.flip_trading_days ?? 999) - (b.flip_trading_days ?? 999) || a.symbol.localeCompare(b.symbol));
+  S.forEach(s => { s.prio = null; }); act.forEach((s, i) => { s.prio = i + 1; });
+  return act.length;
+}
+const ccPrioCell = s => s.prio == null ? '<span style="color:var(--text-muted)">—</span>' : `<b>#${s.prio}</b>`;
+const ccFlipCell = s => ccFlip(s.flip_date, s.flip_trading_days) + ((s.status === 'ENTER' || s.status === 'FLIP') && s.flip_trading_days != null && s.flip_trading_days <= CC_NEW_FLIP_DAYS
+  ? ' <span class="trend-pill" style="background:var(--accent-soft, var(--surface2));color:var(--accent)">NEW FLIP</span>' : '');
+const ccAlertSort = (a, b) => ccTypeOrd(a) - ccTypeOrd(b) || (a.flip_days ?? 999) - (b.flip_days ?? 999) || a.symbol.localeCompare(b.symbol);
 const ccTypeOrd = a => { const i = CC_TYPE_ORDER.indexOf(a.type); return i < 0 ? 99 : i; };
 // Strike alerts: stock price at/through an open short strike (BREACH), through the hedge too (EXIT) or close to it (WARN)
 function ccStrikeBanner(d) {
@@ -9869,18 +9879,20 @@ function ccOptionsView(d) {
   const alertsT = ccAlertsBox(d, 'cal', 'Alert types: 3× premium, beyond / near strike, through hedge, profit exit, no GTT, no hedge, Exit (colour flipped, opposite position open)');
 
   const minDist = s => { const v = [s.near_call, s.near_put].filter(Boolean).map(n => Math.abs(n.dist_pct)); return v.length ? Math.min(...v) : null; };
+  ccPrio(S);
   const sigT = ccTbl('signals', {
-    title: 'Signals', hint: 'RSI overrides the colour; strikes from the option chain (delta estimated from IV); “Active shorts vs spot” = nearest open short call / put',
+    title: 'Signals', hint: 'Priority = stocks needing an option trade, most recent Supertrend flip first; RSI overrides the colour; strikes from the option chain (delta estimated from IV); “Active shorts vs spot” = nearest open short call / put',
     rows: S.filter(s => s.status !== 'NO_DATA'), search: s => s.symbol + ' ' + s.basis, empty: 'No stock data.',
-    sort: [6, 1], rowCls: s => (s.status === 'HOLD' ? 'cc-dim' : 'cc-act'),
-    filters: [['all', 'All stocks', () => true], ['act', 'Needs action (enter / flip)', s => s.status === 'ENTER' || s.status === 'FLIP'], ['HOLD', 'Hold', s => s.status === 'HOLD'],
+    sort: [0, 1], rowCls: s => (s.status === 'HOLD' ? 'cc-dim' : 'cc-act'),
+    filters: [['all', 'All stocks', () => true], ['act', 'Needs action (enter / flip)', s => s.status === 'ENTER' || s.status === 'FLIP'], ['new', 'Recent flips (last ' + CC_NEW_FLIP_DAYS + ' days)', s => s.flip_trading_days != null && s.flip_trading_days <= CC_NEW_FLIP_DAYS], ['HOLD', 'Hold', s => s.status === 'HOLD'],
               ['green', 'Supertrend green', s => s.colour === 'green'], ['red', 'Supertrend red', s => s.colour === 'red'],
               ['rsi', 'RSI above 70 / below 30', s => s.rsi != null && (s.rsi > 70 || s.rsi < 30)]],
     cols: [
-      { h: 'Stock', v: s => s.symbol, c: s => `<b>${dhEsc(s.symbol)}</b>` },
+      { h: 'Priority', v: s => s.prio, c: ccPrioCell, num: true },
+      { h: 'Stock', v: s => s.symbol, c: s => `<b>${dhEsc(s.symbol)}</b>`, txt: true },
       { h: 'Spot', v: s => s.spot, c: s => ccP(s.spot), num: true },
       { h: 'Supertrend', v: s => s.colour, c: s => dhTrendPill(s.colour) },
-      { h: 'Last flip', v: s => s.flip_trading_days, x: s => s.flip_date, c: s => ccFlip(s.flip_date, s.flip_trading_days) },
+      { h: 'Last flip', v: s => s.flip_trading_days, x: s => s.flip_date, c: s => ccFlipCell(s) },
       { h: 'RSI 14', v: s => s.rsi, c: s => ccRsi(s.rsi), num: true },
       { h: 'Rule applied', v: s => s.basis, c: s => `<span style="color:var(--text-muted)">${dhEsc(s.basis)}</span>`, nw: 110 },
       { h: 'Status', v: s => s.status, c: s => ccPill(s.status) },
@@ -10035,18 +10047,21 @@ function ccZerodhaView(d) {
   ]);
   const S_legs = S.flatMap(s => (s.legs || []).map(l => ({ ...l, stock: s })));
   const struct = s => s.desired === 'PUT_SPREAD' ? 'Bull put spread' : 'Sell call';
+  ccPrio(S);
   const sigT = ccTbl('zsignals', {
-    title: 'Signals', hint: 'One row per Nifty F&O stock. Strikes and premiums are not shown: pick the 0.10-delta strike in your broker app.',
+    title: 'Signals', hint: 'Priority = stocks needing an option trade, most recent Supertrend flip first. One row per Nifty F&O stock. Strikes and premiums are not shown: pick the 0.10-delta strike in your broker app.',
     rows: S, search: s => s.symbol + ' ' + s.basis, empty: 'No stock data.', sort: [0, 1],
     filters: [['all', 'All stocks', () => true], ['call', 'Sell call', s => s.desired === 'CALL'], ['put', 'Bull put spread', s => s.desired === 'PUT_SPREAD'],
               ['green', 'Supertrend green', s => s.colour === 'green'], ['red', 'Supertrend red', s => s.colour === 'red'],
               ['rsi', 'RSI override (above 70 / below 30)', s => s.rsi_override],
-              ['hold', 'Open structure (hold / flip)', s => s.status === 'HOLD' || s.status === 'FLIP']],
+              ['hold', 'Open structure (hold / flip)', s => s.status === 'HOLD' || s.status === 'FLIP'],
+              ['act', 'Needs an option trade (enter / flip)', s => s.status === 'ENTER' || s.status === 'FLIP'], ['new', 'Recent flips (last ' + CC_NEW_FLIP_DAYS + ' days)', s => s.flip_trading_days != null && s.flip_trading_days <= CC_NEW_FLIP_DAYS]],
     cols: [
-      { h: 'Stock', v: s => s.symbol, c: s => `<b>${dhEsc(s.symbol)}</b>` },
+      { h: 'Priority', v: s => s.prio, c: ccPrioCell, num: true },
+      { h: 'Stock', v: s => s.symbol, c: s => `<b>${dhEsc(s.symbol)}</b>`, txt: true },
       { h: 'Spot', v: s => s.spot, c: s => ccP(s.spot), num: true },
       { h: 'Supertrend', v: s => s.colour, c: s => dhTrendPill(s.colour) },
-      { h: 'Last flip', v: s => s.flip_trading_days, x: s => s.flip_date, c: s => ccFlip(s.flip_date, s.flip_trading_days) },
+      { h: 'Last flip', v: s => s.flip_trading_days, x: s => s.flip_date, c: s => ccFlipCell(s) },
       { h: 'RSI 14', v: s => s.rsi, c: s => ccRsi(s.rsi), num: true },
       { h: 'Rule applied', v: s => s.basis, c: s => `<span style="color:var(--text-muted)">${dhEsc(s.basis)}</span>` },
       { h: 'Status', v: s => s.status, c: s => ccPill(s.status) },
