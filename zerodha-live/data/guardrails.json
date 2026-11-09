@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-09T12:17:59+05:30",
+ "generated_at": "2026-11-09T12:57:19+05:30",
  "broker": "zerodha",
  "market_data_date": "2026-11-08",
  "signals_generated_at": "2026-11-09T05:21:30.109462+00:00",
@@ -7,7 +7,7 @@
  "global_block": true,
  "counts": {
   "block": 1,
-  "warn": 13,
+  "warn": 2,
   "info": 0
  },
  "per_symbol_blocks": {},
@@ -27,74 +27,8 @@
   {
    "id": "P3",
    "level": "WARN",
-   "symbol": "CHOLAFIN",
-   "msg": "option exit alert open: CHOLAFIN 2026-11-23 1800CE: premium 28.45 >= 3x sold 5.45 - close it"
-  },
-  {
-   "id": "P3",
-   "level": "WARN",
-   "symbol": "DIVISLAB",
-   "msg": "option exit alert open: DIVISLAB 2026-11-23 10600CE: premium 967 >= 3x sold 116.95 - close it"
-  },
-  {
-   "id": "P3",
-   "level": "WARN",
-   "symbol": "DIVISLAB",
-   "msg": "option exit alert open: DIVISLAB 2026-11-23: price 11476.5 is 8.3% above the short 10600CE (in the money, intrinsic Rs87,650 on 100 qty); it is also through the 10800CE hedge - the spread is at maximum loss, decide now"
-  },
-  {
-   "id": "P3",
-   "level": "WARN",
-   "symbol": "HDFCBANK",
-   "msg": "option exit alert open: HDFCBANK 2026-11-23 760CE: premium 37.15 >= 3x sold 2.8 - close it"
-  },
-  {
-   "id": "P3",
-   "level": "WARN",
-   "symbol": "HDFCBANK",
-   "msg": "option exit alert open: HDFCBANK 2026-11-23: price 792.7 is 4.3% above the short 760CE (in the money, intrinsic Rs21,255 on 650 qty); it is also through the 770CE hedge - the spread is at maximum loss, decide now"
-  },
-  {
-   "id": "P3",
-   "level": "WARN",
-   "symbol": "HINDPETRO",
-   "msg": "option exit alert open: HINDPETRO 2026-11-23 380CE: premium 13.05 >= 3x sold 1.3 - close it"
-  },
-  {
-   "id": "P3",
-   "level": "WARN",
-   "symbol": "LODHA",
-   "msg": "option exit alert open: LODHA 2026-11-23 1200CE: premium 26.45 >= 3x sold 4.45 - close it"
-  },
-  {
-   "id": "P3",
-   "level": "WARN",
-   "symbol": "MAHABANK",
-   "msg": "option exit alert open: MAHABANK 2026-11-23 89CE: premium 2.03 >= 3x sold 0.32 - close it"
-  },
-  {
-   "id": "P3",
-   "level": "WARN",
-   "symbol": "NAM-INDIA",
-   "msg": "option exit alert open: NAM-INDIA 2026-11-23 1100CE: premium 20 >= 3x sold 3.85 - close it"
-  },
-  {
-   "id": "P3",
-   "level": "WARN",
-   "symbol": "ATHERENERG",
-   "msg": "option exit alert open: ATHERENERG 2026-11-23: price 1852 is 1.8% above the short 1820CE (in the money, intrinsic Rs12,000 on 375 qty); decide: roll, close, or hold"
-  },
-  {
-   "id": "P3",
-   "level": "WARN",
-   "symbol": "CANBK",
-   "msg": "option exit alert open: CANBK 2026-11-23: price 125.67 is 4.7% above the short 120CE (in the money, intrinsic Rs38,273 on 6750 qty); decide: roll, close, or hold"
-  },
-  {
-   "id": "P3",
-   "level": "WARN",
-   "symbol": "HINDPETRO",
-   "msg": "option exit alert open: HINDPETRO 2026-11-23: price 383.2 is 0.8% above the short 380CE (in the money, intrinsic Rs6,480 on 2025 qty); decide: roll, close, or hold"
+   "symbol": null,
+   "msg": "59 open option exit / strike-breach alerts on 47 stocks (360ONE, ABB, ADANIENSOL, ADANIGREEN, ADANIPOWER, AMBER, ANGELONE, APOLLOHOSP...) - see the Covered Call alerts"
   }
  ]
 }

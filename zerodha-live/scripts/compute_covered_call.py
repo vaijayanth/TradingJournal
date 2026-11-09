@@ -53,6 +53,8 @@ def strike_alerts(sym, my_legs, spot, near_pct, stop_alerted):
     WARN   = price is within near_pct of a short strike"""
     out = []
     for l in my_legs:
+        d = {"expiry": l["expiry"], "strike": l["strike"], "opt_type": l["type"], "qty": l["qty"], "spot": spot,
+             "beyond_pct": l["beyond_pct"], "intrinsic_rs": l["intrinsic_rs"]}
         if l["side"] == "SHORT" and l["touched"]:
             hedges = [h for h in my_legs if h["side"] == "LONG" and h["type"] == l["type"] and h["expiry"] == l["expiry"]
                       and ((h["type"] == "CE" and h["strike"] > l["strike"]) or (h["type"] == "PE" and h["strike"] < l["strike"]))]
@@ -60,11 +62,36 @@ def strike_alerts(sym, my_legs, spot, near_pct, stop_alerted):
             base = (f"{sym} {l['expiry']}: price {spot:g} is {abs(l['beyond_pct']):.1f}% {'above' if l['type']=='CE' else 'below'} the short "
                     f"{l['strike']:g}{l['type']} (in the money, intrinsic Rs{l['intrinsic_rs']:,} on {l['qty']} qty)")
             if thru:
-                out.append({"level": "EXIT", "symbol": sym, "text": base + f"; it is also through the {thru[0]['strike']:g}{thru[0]['type']} hedge - the spread is at maximum loss, decide now"})
+                out.append({**d, "level": "EXIT", "type": "Through hedge", "hedge_strike": thru[0]["strike"], "symbol": sym, "text": base + f"; it is also through the {thru[0]['strike']:g}{thru[0]['type']} hedge - the spread is at maximum loss, decide now"})
             else:
-                out.append({"level": "BREACH", "symbol": sym, "text": base + "; decide: roll, close, or hold"})
+                out.append({**d, "level": "BREACH", "type": "Beyond strike", "symbol": sym, "text": base + "; decide: roll, close, or hold"})
         elif l["side"] == "SHORT" and l["near"]:
-            out.append({"level": "WARN", "symbol": sym, "text": f"{sym} {l['expiry']}: price {spot:g} is within {abs(l['beyond_pct']):.1f}% of the short {l['strike']:g}{l['type']}"})
+            out.append({**d, "level": "WARN", "type": "Near strike", "symbol": sym, "text": f"{sym} {l['expiry']}: price {spot:g} is within {abs(l['beyond_pct']):.1f}% of the short {l['strike']:g}{l['type']}"})
+    return out
+
+
+def structure_alerts(sym, my_legs, shares_held, gtt_active):
+    """Alerts about how the open legs are set up (not about price): a short leg without hedge, a short leg without a buy-back GTT."""
+    out = []
+    groups = {}
+    for l in my_legs:
+        groups.setdefault((l["type"], l["expiry"]), []).append(l)
+    for (typ, exp), ls in groups.items():
+        short_q = sum(l["qty"] for l in ls if l["side"] == "SHORT")
+        if not short_q:
+            continue
+        long_q = sum(l["qty"] for l in ls if l["side"] == "LONG")
+        cover = long_q + (shares_held if typ == "CE" else 0)
+        if cover < short_q:
+            strikes = "/".join(f"{l['strike']:g}" for l in ls if l["side"] == "SHORT")
+            extra = f" + {shares_held} shares" if typ == "CE" and shares_held else ""
+            out.append({"level": "WARN", "type": "No hedge" if cover == 0 else "Partly hedged", "symbol": sym, "expiry": exp, "strike": ls[0]["strike"], "opt_type": typ,
+                        "text": f"{sym} {exp}: short {strikes}{typ} {short_q} qty, hedge {long_q} qty{extra} - {short_q - cover} qty uncovered"})
+    if gtt_active is not None:
+        for l in my_legs:
+            if l["side"] == "SHORT" and l.get("tradingsymbol") and l["tradingsymbol"] not in gtt_active:
+                out.append({"level": "WARN", "type": "No GTT placed", "symbol": sym, "expiry": l["expiry"], "strike": l["strike"], "opt_type": l["type"], "qty": l["qty"],
+                            "text": f"{sym} {l['expiry']} short {l['strike']:g}{l['type']}: no active buy-back GTT (3x premium stop = {l['stop_at']})"})
     return out
 
 
@@ -102,6 +129,10 @@ def main():
     live = load_json(lp_file) if lp_file.exists() else {}
     ist_today = datetime.now(timezone(timedelta(hours=5, minutes=30))).strftime("%Y-%m-%d")
     live_px = live.get("prices", {}) if str(live.get("fetched_at", ""))[:10] == ist_today else {}   # only same-day live prices count
+    hs = DATA / "holdings_snapshot.json"
+    held_qty = {h["symbol"]: h["qty"] for h in load_json(hs).get("holdings", [])} if hs.exists() else {}
+    gf = DATA / "cc_gtts.json"
+    gtt_active = load_json(gf).get("active", {}) if gf.exists() and str(load_json(gf).get("fetched_at", ""))[:10] == ist_today else None   # None = no same-day GTT list: the check is skipped, not failed
     stocks, no_data, alerts, new_tags = [], [], [], False
     for sym in uni:
         px = aliases.get(sym, sym)  # NSE renames: only the data lookup is aliased
@@ -123,10 +154,11 @@ def main():
                 l["stop_at"] = round(mult * l["avg"], 2)
                 l["stop_hit"] = l["ltp"] >= l["stop_at"]
                 if l["stop_hit"]:
-                    alerts.append({"level": "EXIT", "symbol": sym, "text": f"{sym} {l['expiry']} {l['strike']:g}{l['type']}: premium {l['ltp']} >= {mult}x sold {l['avg']} - close it"})
+                    alerts.append({"level": "EXIT", "type": "3× premium", "symbol": sym, "expiry": l["expiry"], "strike": l["strike"], "opt_type": l["type"], "text": f"{sym} {l['expiry']} {l['strike']:g}{l['type']}: premium {l['ltp']} >= {mult}x sold {l['avg']} - close it"})
             strike_zone(l, spot_now, rules.get("near_strike_pct", 2))
             l["touched_h"] = l["touched"] if l["side"] == "LONG" else False
         alerts.extend(strike_alerts(sym, my, spot_now, rules.get("near_strike_pct", 2), None))
+        alerts.extend(structure_alerts(sym, my, held_qty.get(sym, 0), gtt_active))
         shorts = [l for l in my if l["side"] == "SHORT"]
         has_call = any(l["type"] == "CE" for l in shorts)
         has_put_spread = any(s["type"] == "PE" and any(b["type"] == "PE" and b["side"] == "LONG" and b["expiry"] == s["expiry"] and b["strike"] < s["strike"] for b in my) for s in shorts)
@@ -136,11 +168,18 @@ def main():
         tag = tags.get(sym)
         flipped = bool(my and tag and tag.get("entry_colour") and tag["entry_colour"] != colour)
         have = has_put_spread if kind == "PUT_SPREAD" else has_call
-        if flipped:
+        col_rule = "PUT_SPREAD" if colour == "green" else "CALL"   # the Supertrend colour alone (the RSI override never triggers an Exit)
+        opp_legs = [l for l in shorts if l["type"] == ("PE" if col_rule == "CALL" else "CE")]   # open legs of the structure the colour no longer wants
+        opposite = bool(opp_legs)
+        if opposite and not flipped:
+            leg_txt = ", ".join(f"{l['strike']:g}{l['type']} {l['expiry']}" for l in opp_legs)
+            opp_note = (f"Supertrend is {colour.upper()}: the open {'short put / put spread' if col_rule == 'CALL' else 'short call'} ({leg_txt}) is the opposite of the colour rule - close it and "
+                        f"{'sell the call' if col_rule == 'CALL' else 'open the bull put spread'}.")
+        if flipped or opposite:
             status = "FLIP"
-            note = (f"Supertrend turned {colour.upper()} since entry ({tag['entry_colour']}): close the "
+            note = opp_note if (opposite and not flipped) else (f"Supertrend turned {colour.upper()} since entry ({tag['entry_colour']}): close the "
                     f"{'put spread' if colour == 'red' else 'short call'} and open the {'short call' if colour == 'red' else 'bull put spread'}.")
-            alerts.append({"level": "EXIT", "symbol": sym, "text": f"{sym}: {note}"})
+            alerts.append({"level": "EXIT", "type": "Exit", "symbol": sym, "text": f"{sym}: {note}"})
         elif have:
             status, note = "HOLD", f"Open structure matches the rule ({basis})."
         else:
@@ -157,7 +196,7 @@ def main():
     alerts.sort(key=lambda a: order.get(a["level"], 9))
     calls = sum(1 for s in stocks if s["desired"] == "CALL")
     n = lambda k: sum(1 for s in stocks if s["status"] == k)
-    result = {"generated_at": datetime.now(timezone.utc).isoformat(), "market_data_date": market_date, "live_prices_at": live.get("fetched_at") if live_px else None, "rules": rules,
+    result = {"generated_at": datetime.now(timezone.utc).isoformat(), "market_data_date": market_date, "live_prices_at": live.get("fetched_at") if live_px else None, "gtt_checked_at": load_json(gf).get("fetched_at") if gtt_active is not None else None, "rules": rules,
               "show_expiries": expiries, "stocks": stocks, "alerts": alerts, "no_data": no_data, "excluded": sorted(excluded),
               "positions": {"fetched_at": pos.get("fetched_at"), "track_from": cfg.get("track_from"), "legs": sum(len(s["legs"]) for s in stocks),
                             "ignored_legs": pos.get("ignored_legs", 0)},

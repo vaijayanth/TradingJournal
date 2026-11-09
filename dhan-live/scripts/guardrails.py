@@ -305,9 +305,10 @@ def evaluate(ctx, now):
     # P options
     cc = ctx.get("cc")
     if cc:
-        for a in cc.get("alerts", []):
-            if a.get("level") in ("EXIT", "BREACH"):
-                out.append(f("WARN", "P3", f"option exit alert open: {a.get('text')}", a.get("symbol")))
+        hot = [a for a in cc.get("alerts", []) if a.get("level") in ("EXIT", "BREACH")]
+        if hot:   # one line here; the per-leg detail is in the Covered Call page's strike-alert table
+            names = sorted({a.get("symbol") for a in hot})
+            out.append(f("WARN", "P3", f"{len(hot)} open option exit / strike-breach alerts on {len(names)} stocks ({', '.join(names[:8])}{'...' if len(names) > 8 else ''}) - see the Covered Call alerts", None))
         for s in cc.get("stocks", []):
             for g in s.get("suggestions", []):
                 if g.get("expiry_week") and s.get("status") in ("ENTER", "FLIP"):

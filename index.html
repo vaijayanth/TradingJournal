@@ -804,6 +804,8 @@ tbody tr:hover { filter: brightness(0.97); }
 .dh-stale { border:1px solid var(--amber); background:var(--amber-soft); border-radius:9px; padding:11px 15px; margin-bottom:13px; }
 .dh-stale.high { border-color:var(--red); background:var(--red-soft); }
 .dh-stale-row { display:flex; flex-direction:column; gap:1px; padding:3px 0; } .dh-stale-row b { font-size:13px; } .dh-stale-row span { font-size:12px; color:var(--text-secondary); }
+.al-tbl { width:100%; border-collapse:collapse; margin-top:8px; font-size:12px; } .al-tbl th { text-align:left; font:600 10.5px var(--font-ui); letter-spacing:.04em; text-transform:uppercase; color:var(--text-muted); padding:5px 10px 5px 0; border-bottom:1px solid var(--border); white-space:nowrap; }
+.al-tbl td { font-family:var(--font-ui); padding:6px 10px 6px 0; border-bottom:1px solid var(--border); vertical-align:top; color:var(--text-secondary); } .al-tbl tr:last-child td { border-bottom:0; } .al-tbl td.n, .al-tbl th.n { text-align:right; } .al-tbl td b { color:var(--text-primary); } .al-wrap { overflow-x:auto; }
 .dh-stale-act { margin-top:6px; padding-top:7px; border-top:1px solid var(--border); font-size:12px; color:var(--text-secondary); }
 .dh-stale-act code { font-family:var(--font-mono); background:var(--surface2); padding:1px 6px; border-radius:4px; color:var(--text-primary); }
 .dh-stale-act button { margin-left:8px; font:600 11px var(--font-ui); padding:2px 9px; border-radius:20px; border:1px solid var(--border); background:transparent; color:var(--text-secondary); cursor:pointer; }
@@ -9433,16 +9435,20 @@ function dhStaleAlerts(d, ex) {
   return out;
 }
 // Guardrails (scripts/guardrails.py): BLOCK = no order may be placed (whole workspace, or the named stocks); WARN = look before ordering
+const GUARD_TYPES = { F1: 'Old market data', F2: 'Old holdings', F3: 'Signals older than holdings', F4: 'Old order list', F5: 'Price data mismatch', I1: 'Bad numbers in data', I2: 'Position data mismatch', I3: 'Fills vs holdings', I4: 'Stock in two lists', I5: 'Excluded stock signalled', I6: 'Fill data wrong', I7: 'Recent buy not in holdings',
+  S1: 'Exit not red', S2: 'Add-on rule broken', S3: 'Entry rule broken', S4: 'Oversized minimum buy', S5: 'Too many entries / mass exit', C1: 'Capital over-deployed', C2: 'Concentration', C3: 'Pending buys too big', O1: 'Sell more than held', O2: 'Duplicate orders', O3: 'Order without signal',
+  P1: 'Expiry week', P2: 'No lot size', P3: 'Open option alerts', P4: 'Short call not covered', X1: 'Broker code mix', H1: 'Trading halted' };
 function dhGuardHtml(g, d) {
   if (!g || !g.findings) return '';
   const bl = g.findings.filter(x => x.level === 'BLOCK'), wa = g.findings.filter(x => x.level === 'WARN');
   const stale = d && d.meta && g.market_data_date && d.meta.marketDate && g.market_data_date !== d.meta.marketDate;
   if (!bl.length && !wa.length && !stale) return '';
-  const row = x => `<div class="dh-stale-row"><b>${dhEsc(x.id)} · ${x.level === 'BLOCK' ? 'Blocking' : 'Warning'}${x.symbol ? ' · ' + dhEsc(x.symbol) : ''}</b><span>${dhEsc(x.msg)}</span></div>`;
+  const all = bl.concat(wa), rows = all.slice(0, 40).map(x => `<tr><td>${ccTypePill({ level: x.level === 'BLOCK' ? 'BREACH' : 'WARN', type: (x.level === 'BLOCK' ? 'Blocked: ' : '') + (GUARD_TYPES[x.id] || 'Check ' + x.id) })}</td><td>${x.symbol ? '<b>' + dhEsc(x.symbol) + '</b>' : 'All'}</td><td>${dhEsc(x.msg)}</td></tr>`).join('');
   const head = (stale ? 'Guardrail check is older than the signals - run the refresh. ' : '') + (g.global_block ? 'ALL ORDERS BLOCKED. ' : '')
     + `Guardrails: ${bl.length} blocking · ${wa.length} warning${wa.length === 1 ? '' : 's'}`;
   return `<details class="dh-stale ${bl.length || stale ? 'high' : ''}" ${bl.length ? 'open' : ''}><summary style="cursor:pointer;font-weight:700;font-size:13px">${dhEsc(head)}</summary>`
-    + bl.concat(wa).slice(0, 40).map(row).join('') + '</details>';
+    + `<div class="al-wrap"><table class="al-tbl"><thead><tr><th>Alert type</th><th>Stock</th><th>Detail</th></tr></thead><tbody>${rows}</tbody></table></div>`
+    + (all.length > 40 ? `<div class="dh-stale-act">+${all.length - 40} more</div>` : '') + '</details>';
 }
 function dhRenderStale(d) {
   const slots = document.querySelectorAll('.dh-stale-slot'); if (!slots.length || !d) return;
@@ -9764,14 +9770,37 @@ function ccTblExport(id) {
 const ccTabBar = (id, tabs, extra) => `<div class="dhm-tabs" id="${id}" role="tablist" style="margin-top:14px">` + tabs.map(([k, l, n]) =>
   `<button class="dhm-tab" data-tab="${k}" onclick="${extra}('${k}')">${l}${n == null ? '' : `<span class="dhm-count">${n}</span>`}</button>`).join('') + '</div>';
 
+// Alert type pill: the label is the alert's own type (3× premium, Near strike, Beyond strike, No GTT placed ...), the colour follows its severity
+const CC_TYPE_ORDER = ['Exit', '3× premium', 'Through hedge', 'Beyond strike', 'Near strike', 'No GTT placed', 'No hedge', 'Partly hedged', 'New trade'];
+function ccTypePill(a) {
+  const m = { EXIT: ['var(--red-soft)', 'var(--red)'], BREACH: ['var(--red)', '#fff'], WARN: ['var(--amber-soft, var(--surface2))', 'var(--amber)'], ENTER: ['var(--accent-soft, var(--surface2))', 'var(--accent)'] };
+  const [bg, fg] = m[a.level] || ['var(--surface2)', 'var(--text-muted)'];
+  return `<span class="trend-pill" style="background:${bg};color:${fg};white-space:nowrap">${dhEsc(a.type || a.level)}</span>`;
+}
+const ccTypeFilters = rows => [['all', 'All alert types', () => true]].concat(CC_TYPE_ORDER.filter(t => rows.some(r => r.type === t)).map(t => [t, t, r => r.type === t]));
+const ccAlertDetail = r => (r.text || '').replace(new RegExp('^' + r.symbol.replace(/[-.]/g, '\$&') + '( \d{4}-\d{2}-\d{2})?( [^:]*)?: '), '');
+const ccAlertCols = [
+  { h: 'Alert type', v: r => ccTypeOrd(r), c: r => ccTypePill(r) },
+  { h: 'Stock', v: r => r.symbol, c: r => `<b>${dhEsc(r.symbol)}</b>` },
+  { h: 'Leg', v: r => r.strike == null ? '' : r.strike, c: r => r.strike == null ? '—' : ccStrike(r.strike) + ' ' + (r.opt_type || '') },
+  { h: 'Expiry', v: r => r.expiry || '', c: r => r.expiry ? dhFmtDate(r.expiry) : '—' },
+  { h: 'Detail', v: r => r.text, c: r => dhEsc(ccAlertDetail(r)), nw: 320 },
+];
+const ccAlertSort = (a, b) => ccTypeOrd(a) - ccTypeOrd(b) || a.symbol.localeCompare(b.symbol);
+const ccTypeOrd = a => { const i = CC_TYPE_ORDER.indexOf(a.type); return i < 0 ? 99 : i; };
 // Strike alerts: stock price at/through an open short strike (BREACH), through the hedge too (EXIT) or close to it (WARN)
 function ccStrikeBanner(d) {
-  const hot = (d.alerts || []).filter(a => a.level === 'BREACH' || (a.level === 'EXIT' && /hedge/.test(a.text)));
-  const near = (d.alerts || []).filter(a => a.level === 'WARN');
+  const hot = (d.alerts || []).filter(a => a.type === 'Beyond strike' || a.type === 'Through hedge');
+  const near = (d.alerts || []).filter(a => a.type === 'Near strike');
   if (!hot.length && !near.length) return '';
-  const row = a => `<div class="dh-stale-row"><b>${dhEsc(a.symbol)} · ${a.level === 'EXIT' ? 'MAX LOSS ZONE' : a.level === 'BREACH' ? 'STRIKE BREACHED' : 'Near strike'}</b><span>${dhEsc(a.text.replace(a.symbol + ' ', ''))}</span></div>`;
+  const row = a => {
+    const dist = a.beyond_pct == null ? '' : (a.beyond_pct >= 0 ? '+' : '−') + Math.abs(a.beyond_pct).toFixed(1) + '%';
+    return `<tr><td>${ccTypePill(a)}</td><td><b>${dhEsc(a.symbol)}</b></td><td>${a.strike == null ? '' : 'Short ' + ccStrike(a.strike) + ' ' + a.opt_type}${a.hedge_strike ? ' · hedge ' + ccStrike(a.hedge_strike) : ''}</td>`
+      + `<td>${a.expiry ? dhFmtDate(a.expiry) : ''}</td><td class="n">${a.spot == null ? '' : a.spot}</td><td class="n">${dist}</td><td class="n">${a.intrinsic_rs ? dhFmtRs(a.intrinsic_rs) : '—'}</td><td>${a.level === 'EXIT' ? 'Spread at max loss: decide now' : a.level === 'BREACH' ? 'In the money: roll, close or hold' : 'Watch'}</td></tr>`;
+  };
   const head = (hot.length ? `${hot.length} open short strike${hot.length === 1 ? '' : 's'} reached or passed` : '') + (hot.length && near.length ? ' · ' : '') + (near.length ? `${near.length} near` : '');
-  return `<details class="dh-stale ${hot.length ? 'high' : ''}" open role="alert"><summary style="cursor:pointer;font-weight:700;font-size:13px">Strike alert: ${dhEsc(head)} (${d.live_prices_at ? 'live price at ' + dhEsc(String(d.live_prices_at).slice(11, 16)) + ' IST' : 'price = last close'})</summary>${hot.concat(near).map(row).join('')}</details>`;
+  return `<details class="dh-stale ${hot.length ? 'high' : ''}" open role="alert"><summary style="cursor:pointer;font-weight:700;font-size:13px">Strike alert: ${dhEsc(head)} (${d.live_prices_at ? 'live price at ' + dhEsc(String(d.live_prices_at).slice(11, 16)) + ' IST' : 'price = last close'})</summary>`
+    + `<div class="al-wrap"><table class="al-tbl"><thead><tr><th>Alert type</th><th>Stock</th><th>Leg</th><th>Expiry</th><th class="n">Price</th><th class="n">From strike</th><th class="n">Intrinsic</th><th>Action</th></tr></thead><tbody>${hot.concat(near).map(row).join('')}</tbody></table></div></details>`;
 }
 function ccOptionsView(d) {
   const S = d.stocks || [];
@@ -9791,15 +9820,11 @@ function ccOptionsView(d) {
 
   const lvlOrd = { EXIT: 0, BREACH: 1, WARN: 2, ENTER: 3 };
   const alertsT = ccTbl('alerts', {
-    title: 'Alerts', hint: 'Exits first, then warnings, then new option entries',
-    rows: (d.alerts || []).slice().sort((a, b) => lvlOrd[a.level] - lvlOrd[b.level]),
+    title: 'Alerts', hint: 'Alert types: 3× premium, beyond / near strike, through hedge, no hedge, Exit (colour flipped, opposite position open), new trade',
+    rows: (d.alerts || []).slice().sort(ccAlertSort),
     search: r => r.symbol + ' ' + r.text, empty: 'No exit, strike touch or new option entry right now.',
-    filters: [['all', 'All alerts', () => true], ['EXIT', 'Exit', r => r.level === 'EXIT'], ['BREACH', 'Strike breached', r => r.level === 'BREACH'], ['WARN', 'Near strike', r => r.level === 'WARN'], ['ENTER', 'Enter', r => r.level === 'ENTER']],
-    cols: [
-      { h: 'Level', v: r => lvlOrd[r.level], c: r => ccPill(r.level) },
-      { h: 'Stock', v: r => r.symbol, c: r => `<b>${dhEsc(r.symbol)}</b>` },
-      { h: 'Alert', v: r => r.text, c: r => dhEsc(r.text.replace(r.symbol + ': ', '')), nw: 320 },
-    ],
+    filters: ccTypeFilters(d.alerts || []),
+    cols: ccAlertCols,
   });
 
   const minDist = s => { const v = [s.near_call, s.near_put].filter(Boolean).map(n => Math.abs(n.dist_pct)); return v.length ? Math.min(...v) : null; };
@@ -9991,13 +10016,10 @@ function ccZerodhaView(d) {
   });
   const lvlOrd = { EXIT: 0, BREACH: 1, WARN: 2 };
   const alertsT = ccTbl('zalerts', {
-    title: 'Alerts', hint: 'Exits first, then strike breaches, then strikes within 2%. Only open legs from ' + dhFmtDate((d.positions || {}).track_from) + ' onwards are checked',
-    rows: (d.alerts || []).slice().sort((a, b) => lvlOrd[a.level] - lvlOrd[b.level]), search: r => r.symbol + ' ' + r.text, empty: 'No exit or strike-touch alert on the open legs.',
-    cols: [
-      { h: 'Level', v: r => lvlOrd[r.level], c: r => ccPill(r.level) },
-      { h: 'Stock', v: r => r.symbol, c: r => `<b>${dhEsc(r.symbol)}</b>` },
-      { h: 'Alert', v: r => r.text, c: r => dhEsc(r.text.replace(r.symbol + ': ', '')), nw: 320 },
-    ],
+    title: 'Alerts', hint: 'Alert types: 3× premium, beyond / near strike, through hedge, no GTT placed, no hedge, Exit (colour flipped, opposite position open). Only open legs from ' + dhFmtDate((d.positions || {}).track_from) + ' onwards are checked',
+    rows: (d.alerts || []).slice().sort(ccAlertSort), search: r => r.symbol + ' ' + r.text, empty: 'No exit or strike-touch alert on the open legs.',
+    filters: ccTypeFilters(d.alerts || []),
+    cols: ccAlertCols,
   });
   const stOrd = { EXIT: 0, BREACH: 1, NEAR: 2, WARN: 2, OK: 3, HEDGE: 4 };
   const legStatus = l => l.side === 'LONG' ? (l.touched ? 'BREACH' : 'HEDGE') : l.stop_hit ? 'EXIT' : l.touched ? 'BREACH' : l.near ? 'NEAR' : 'OK';

@@ -174,6 +174,8 @@ def strike_alerts(sym, my_legs, spot, near_pct, stop_alerted):
     WARN   = price is within near_pct of a short strike"""
     out = []
     for l in my_legs:
+        d = {"expiry": l["expiry"], "strike": l["strike"], "opt_type": l["type"], "qty": l["qty"], "spot": spot,
+             "beyond_pct": l["beyond_pct"], "intrinsic_rs": l["intrinsic_rs"]}
         if l["side"] == "SHORT" and l["touched"]:
             hedges = [h for h in my_legs if h["side"] == "LONG" and h["type"] == l["type"] and h["expiry"] == l["expiry"]
                       and ((h["type"] == "CE" and h["strike"] > l["strike"]) or (h["type"] == "PE" and h["strike"] < l["strike"]))]
@@ -181,11 +183,36 @@ def strike_alerts(sym, my_legs, spot, near_pct, stop_alerted):
             base = (f"{sym} {l['expiry']}: price {spot:g} is {abs(l['beyond_pct']):.1f}% {'above' if l['type']=='CE' else 'below'} the short "
                     f"{l['strike']:g}{l['type']} (in the money, intrinsic Rs{l['intrinsic_rs']:,} on {l['qty']} qty)")
             if thru:
-                out.append({"level": "EXIT", "symbol": sym, "text": base + f"; it is also through the {thru[0]['strike']:g}{thru[0]['type']} hedge - the spread is at maximum loss, decide now"})
+                out.append({**d, "level": "EXIT", "type": "Through hedge", "hedge_strike": thru[0]["strike"], "symbol": sym, "text": base + f"; it is also through the {thru[0]['strike']:g}{thru[0]['type']} hedge - the spread is at maximum loss, decide now"})
             else:
-                out.append({"level": "BREACH", "symbol": sym, "text": base + "; decide: roll, close, or hold"})
+                out.append({**d, "level": "BREACH", "type": "Beyond strike", "symbol": sym, "text": base + "; decide: roll, close, or hold"})
         elif l["side"] == "SHORT" and l["near"]:
-            out.append({"level": "WARN", "symbol": sym, "text": f"{sym} {l['expiry']}: price {spot:g} is within {abs(l['beyond_pct']):.1f}% of the short {l['strike']:g}{l['type']}"})
+            out.append({**d, "level": "WARN", "type": "Near strike", "symbol": sym, "text": f"{sym} {l['expiry']}: price {spot:g} is within {abs(l['beyond_pct']):.1f}% of the short {l['strike']:g}{l['type']}"})
+    return out
+
+
+def structure_alerts(sym, my_legs, shares_held, gtt_active):
+    """Alerts about how the open legs are set up (not about price): a short leg without hedge, a short leg without a buy-back GTT."""
+    out = []
+    groups = {}
+    for l in my_legs:
+        groups.setdefault((l["type"], l["expiry"]), []).append(l)
+    for (typ, exp), ls in groups.items():
+        short_q = sum(l["qty"] for l in ls if l["side"] == "SHORT")
+        if not short_q:
+            continue
+        long_q = sum(l["qty"] for l in ls if l["side"] == "LONG")
+        cover = long_q + (shares_held if typ == "CE" else 0)
+        if cover < short_q:
+            strikes = "/".join(f"{l['strike']:g}" for l in ls if l["side"] == "SHORT")
+            extra = f" + {shares_held} shares" if typ == "CE" and shares_held else ""
+            out.append({"level": "WARN", "type": "No hedge" if cover == 0 else "Partly hedged", "symbol": sym, "expiry": exp, "strike": ls[0]["strike"], "opt_type": typ,
+                        "text": f"{sym} {exp}: short {strikes}{typ} {short_q} qty, hedge {long_q} qty{extra} - {short_q - cover} qty uncovered"})
+    if gtt_active is not None:
+        for l in my_legs:
+            if l["side"] == "SHORT" and l.get("tradingsymbol") and l["tradingsymbol"] not in gtt_active:
+                out.append({"level": "WARN", "type": "No GTT placed", "symbol": sym, "expiry": l["expiry"], "strike": l["strike"], "opt_type": l["type"], "qty": l["qty"],
+                            "text": f"{sym} {l['expiry']} short {l['strike']:g}{l['type']}: no active buy-back GTT (3x premium stop = {l['stop_at']})"})
     return out
 
 
@@ -274,8 +301,9 @@ def main():
             l["lot"] = leg_lot
             l["lots"] = round(l["qty"] / leg_lot, 2) if leg_lot else None
             if l["side"] == "SHORT" and l["stop_hit"]:
-                alerts.append({"level": "EXIT", "symbol": sym, "text": f"{sym} {l['expiry']} {l['strike']:g}{l['type']}: premium {l['ltp']} >= {mult}x sold {l['sell_avg']} - close it"})
+                alerts.append({"level": "EXIT", "type": "3× premium", "symbol": sym, "expiry": l["expiry"], "strike": l["strike"], "opt_type": l["type"], "text": f"{sym} {l['expiry']} {l['strike']:g}{l['type']}: premium {l['ltp']} >= {mult}x sold {l['sell_avg']} - close it"})
         alerts.extend(a for a in strike_alerts(sym, my_legs, spot_now, rules.get("near_strike_pct", 2), None))
+        alerts.extend(structure_alerts(sym, my_legs, held.get(sym, 0), None))   # ND: no GTT data, hedge check only
 
         def has_put_spread():
             sp = [l for l in my_legs if l["type"] == "PE" and l["side"] == "SHORT"]
@@ -293,19 +321,26 @@ def main():
             desired, basis = ("PUT_SPREAD" if colour == "green" else "CALL"), f"Supertrend {colour}"
         have = has_put_spread() if desired == "PUT_SPREAD" else has_call
         shorts = [l for l in my_legs if l["side"] == "SHORT"]
-
+        col_rule = "PUT_SPREAD" if colour == "green" else "CALL"   # the Supertrend colour alone (the RSI override never triggers an Exit)
+        opp_legs = [l for l in shorts if l["type"] == ("PE" if col_rule == "CALL" else "CE")]   # open legs of the structure the colour no longer wants
+        opposite = bool(opp_legs)
+        if opposite and not flipped:
+            leg_txt = ", ".join(f"{l['strike']:g}{l['type']} {l['expiry']}" for l in opp_legs)
+            opp_note = (f"Supertrend is {colour.upper()}: the open {'short put / put spread' if col_rule == 'CALL' else 'short call'} ({leg_txt}) is the opposite of the colour rule - close it and "
+                        f"{'sell the call' if col_rule == 'CALL' else 'open the bull put spread'}.")
         def nearest(kind):
             c = [l for l in shorts if l["type"] == kind]
             if not c:
                 return None
             l = min(c, key=lambda x: abs(x["dist_pct"]))
             return {"strike": l["strike"], "expiry": l["expiry"], "dist_pct": l["dist_pct"]}
-        if flipped:
+
+        if flipped or opposite:
             status = "FLIP"
-            note = (f"Supertrend turned {colour.upper()} since entry ({tag.get('entry_colour')}): close the "
+            note = opp_note if (opposite and not flipped) else (f"Supertrend turned {colour.upper()} since entry ({tag.get('entry_colour')}): close the "
                     f"{'put spread' if colour == 'red' else 'short call'} and open the "
                     f"{'short call' if colour == 'red' else 'bull put spread'}.")
-            alerts.append({"level": "EXIT", "symbol": sym, "text": f"{sym}: {note}"})
+            alerts.append({"level": "EXIT", "type": "Exit", "symbol": sym, "text": f"{sym}: {note}"})
         elif have:
             status, note = "HOLD", f"Open structure matches the rule ({basis})."
         else:
@@ -316,7 +351,7 @@ def main():
             for ex in show_exp:
                 suggestions.append(suggest(desired, chains.get(sym, {}).get(ex), ex, today, rules, lot, spot))
             if status == "ENTER":
-                alerts.append({"level": "ENTER", "symbol": sym, "text": f"{sym}: {note} - {'bull put spread' if desired == 'PUT_SPREAD' else 'sell call'}"})
+                alerts.append({"level": "ENTER", "type": "New trade", "symbol": sym, "text": f"{sym}: {note} - {'bull put spread' if desired == 'PUT_SPREAD' else 'sell call'}"})
         # the shares themselves (Shares sub-tab)
         h = hold_rows.get(sym)
         if h and h.get("avg_cost"):
