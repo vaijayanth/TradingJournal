@@ -4,12 +4,15 @@ Only stocks that currently have a signal can appear (no options, no excluded sym
 Quantities come from the engine, never from the caller:
   entry : each entry signal (Supertrend flipped to green within the entry window, no holding in the account), qty = qty_to_buy
           (Rs20,000 tier floored to whole shares, min 1), BUY
-  addon : each add-on signal (green and in loss, 1/10 of the quantity, weekly cooldown), qty = add_qty, BUY
+  addon : each add-on signal (green and down 6% or more, 1/10 of the quantity, weekly cooldown), qty = add_qty, BUY
   buy   : entry + add-on signals in ONE numbered list (what /zerodha-order-entry shows for one-shot picking)
-The ticket is information for the order skill (zerodha-order-entry); this script places nothing.
+  exit  : each exit signal (Supertrend red after the grandfather cut-off, any profit or loss), qty = the WHOLE open position, SELL
+          (what /zerodha-order-exit shows). Each exit ticket carries the position's avg_cost and entry_date (for zerodha_trades.py pending)
+          and a warning when a short CALL is open on the stock (selling the shares would leave it uncovered).
+The ticket is information for the order skills (zerodha-order-entry / zerodha-order-exit); this script places nothing.
 
 Usage:
-  python zerodha-live/scripts/build_order_ticket.py buy|entry|addon             # numbered list
+  python zerodha-live/scripts/build_order_ticket.py buy|entry|addon|exit        # numbered list
   python zerodha-live/scripts/build_order_ticket.py buy --pick 3,7,12-15        # tickets for those numbers
   python zerodha-live/scripts/build_order_ticket.py buy --symbols A,B           # or by symbol (must have a signal)
   python zerodha-live/scripts/build_order_ticket.py buy --override A,B          # include signals the cross-check flagged (deliberate)
@@ -51,7 +54,7 @@ def parse_pick(text, n):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("kind", choices=["buy", "entry", "addon"])
+    ap.add_argument("kind", choices=["buy", "entry", "addon", "exit"])
     ap.add_argument("--pick", default="", help="numbers from the printed list, e.g. 3,7,12-15")
     ap.add_argument("--symbols", default="", help="comma list: restrict to these signal stocks (must already have a signal)")
     ap.add_argument("--override", default="", help="comma list of cross-check-FLAGGED symbols to include anyway")
@@ -87,7 +90,13 @@ def main():
     covered = {(x["kind"], x["symbol"]) for x in cc["results"]}
     override = {s.strip().upper() for s in args.override.split(",") if s.strip()}
 
-    srcs = {"entry": sig.get("entries", []), "addon": sig.get("addons", [])}
+    srcs = {"entry": sig.get("entries", []), "addon": sig.get("addons", []), "exit": sig.get("exits", [])}
+    legs_p = ROOT / "data" / "cc_positions.json"
+    short_calls = {}
+    if legs_p.exists():
+        for l in json.loads(legs_p.read_text(encoding="utf-8")).get("legs", []):
+            if l.get("side") == "SHORT" and l.get("type") == "CE":
+                short_calls.setdefault(l["symbol"], []).append(f"{l['tradingsymbol']} x{l['qty']}")
     kinds = ["entry", "addon"] if args.kind == "buy" else [args.kind]
     all_symbols = {(k, r["symbol"]) for k in kinds for r in srcs[k]}
     want = {s.strip().upper() for s in args.symbols.split(",") if s.strip()}
@@ -108,12 +117,18 @@ def main():
                 if h and h["qty"] > 0:
                     skipped.append((s, "already held in the account")); continue
                 ref, why = r["close"], f"Supertrend {r['supertrend_color']}, {r.get('flip_label')} (flip {r.get('flip_date')})"
+            elif kind == "exit":
+                qty = r["qty"]
+                if not h or h["qty"] != qty:
+                    skipped.append((s, f"signal qty {qty} != holdings qty {h['qty'] if h else 0} - refresh holdings first")); continue
+                ref = r["cmp"]
+                why = f"Supertrend red ({r.get('flip_label')}), P&L {r['pl_pct']:.1f}% - exit the whole position"
             else:
                 qty = r.get("add_qty") or 0
                 if not h or h["qty"] != r["qty"]:
                     skipped.append((s, f"signal qty {r['qty']} != holdings qty {h['qty'] if h else 0} - refresh holdings first")); continue
                 ref = r["cmp"]
-                why = (f"add-on: P&L {r['pl_pct']:.1f}% (in loss), Supertrend {r['supertrend_color']}, "
+                why = (f"add-on: P&L {r['pl_pct']:.1f}% (at or beyond -6%), Supertrend {r['supertrend_color']}, "
                        f"{r.get('cooldown_days_since_last_buy')}d since last buy")
             if qty < 1:
                 skipped.append((s, "quantity < 1 share")); continue
@@ -124,7 +139,12 @@ def main():
                 bad = ["not covered by the cross-check"]
             if bad and s not in override:
                 blocked.append((kind, s, "; ".join(bad))); continue
-            tickets.append({"kind": kind, "symbol": s, "side": "BUY", "qty": int(qty), "ref_price": ref,
+            extra = {}
+            if kind == "exit":
+                extra = {"avg_cost": r["avg_cost"], "entry_date": r.get("entry_date"), "pl_pct": r["pl_pct"]}
+                if s in short_calls:
+                    extra["warning"] = "short CALL open on this stock (" + ", ".join(short_calls[s]) + "): selling the shares leaves it uncovered"
+            tickets.append({**extra, "kind": kind, "symbol": s, "side": "SELL" if kind == "exit" else "BUY", "qty": int(qty), "ref_price": ref,
                             "est_value": round(qty * ref, 2), "reason": why, "market_data_date": md,
                             "crosscheck": "OVERRIDDEN: " + "; ".join(bad) if bad else "ok",
                             "flip_days_ago": r.get("recent_bullish_flip_days_ago") if kind == "entry" else None})
@@ -157,6 +177,9 @@ def main():
         print(f"  {t['no']:>2}) {t['side']:4} {t['symbol']:12} x{t['qty']:<4} ref Rs{t['ref_price']:<9} ~Rs{t['est_value']:<9} [{t['kind']}] {t['reason']}")
     if older:
         print("  " + fresh_note)
+    for t in chosen:
+        if t.get("warning"):
+            print(f"  WARNING {t['symbol']}: {t['warning']}")
     for s, why in skipped:
         print(f"  skipped {s}: {why}")
     for kind, s, why in blocked:

@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-11-09T12:51:29.682551+00:00",
+  "generated_at": "2026-11-09T14:25:04.550037+00:00",
   "market_data_date": "2026-11-09",
   "source_generated_at": {
-    "supertrend": "2026-11-09T10:14:58.533330+00:00",
-    "market_screens": "2026-11-09T10:14:46.431267+00:00"
+    "supertrend": "2026-11-09T14:20:40.532795+00:00",
+    "market_screens": "2026-11-09T14:20:28.598191+00:00"
   },
   "sizing": {
     "closed_trades_count": 1,
@@ -23,7 +23,7 @@
   "no_data": [],
   "exited_outside_tracking": [],
   "rules": {
-    "add_trigger_pct": 0,
+    "add_trigger_pct": -6.0,
     "add_fraction": 0.1,
     "add_cooldown_days": 7,
     "entry_window_trading_days": 3,
@@ -578,27 +578,7 @@
     }
   ],
   "exits": [],
-  "addons": [
-    {
-      "entry_date": "2026-08-10",
-      "symbol": "MPHASIS",
-      "qty": 8,
-      "avg_cost": 2499.9,
-      "cmp": 2455.0,
-      "pl_pct": -1.7961,
-      "notional_pl_rs": -359.2,
-      "supertrend_color": "green",
-      "flip_label": "GREEN 19d",
-      "flip_date": "2026-10-13",
-      "pct_from_52w_high": -14.65,
-      "num_adds": 0,
-      "age_days": 91,
-      "rsi14": 48.7,
-      "sector": "Technology",
-      "add_qty": 1,
-      "cooldown_days_since_last_buy": 91
-    }
-  ],
+  "addons": [],
   "holds": [
     {
       "entry_date": "2026-08-13",
@@ -854,6 +834,23 @@
       "age_days": 104,
       "rsi14": 76.2,
       "sector": "Consumer Defensive"
+    },
+    {
+      "entry_date": "2026-08-10",
+      "symbol": "MPHASIS",
+      "qty": 8,
+      "avg_cost": 2499.9,
+      "cmp": 2455.0,
+      "pl_pct": -1.7961,
+      "notional_pl_rs": -359.2,
+      "supertrend_color": "green",
+      "flip_label": "GREEN 19d",
+      "flip_date": "2026-10-13",
+      "pct_from_52w_high": -14.65,
+      "num_adds": 0,
+      "age_days": 91,
+      "rsi14": 48.7,
+      "sector": "Technology"
     },
     {
       "entry_date": "2026-07-31",
