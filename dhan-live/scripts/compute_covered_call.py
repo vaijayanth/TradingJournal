@@ -55,6 +55,8 @@ def parse_positions(text, expiries):
             ym = f"{yr}-{MONTHS[mon]:02d}"
             cur = {"symbol": sym, "expiry": by_ym.get(ym, ym), "strike": float(strike), "type": typ, "side": side}
             legs.append(cur)
+        elif re.match(r"^\S+\s+\[[A-Z]+\]", line.strip()):
+            cur = None      # a non-option block (e.g. a CNC share position): its Net/P&L lines must not overwrite the previous option leg
         elif cur and line.strip().startswith("Net:"):
             cur["qty"] = abs(int(re.search(r"Net:\s*(-?\d+)", line).group(1)))
             b = re.search(r"Buy\s+(\d+)\s*@\s*₹([\d,.]+)", line); s = re.search(r"Sell\s+(\d+)\s*@\s*₹([\d,.]+)", line)

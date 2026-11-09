@@ -1,22 +1,22 @@
 {
- "generated_at": "2026-11-09T15:42:37+05:30",
+ "generated_at": "2026-11-09T17:58:10+05:30",
  "broker": "dhan",
- "market_data_date": "2026-11-08",
- "signals_generated_at": "2026-11-09T09:44:32.333588+00:00",
- "status": "BLOCK",
- "global_block": true,
+ "market_data_date": "2026-11-09",
+ "signals_generated_at": "2026-11-09T12:28:08.174184+00:00",
+ "status": "WARN",
+ "global_block": false,
  "counts": {
-  "block": 1,
-  "warn": 6,
+  "block": 0,
+  "warn": 8,
   "info": 0
  },
  "per_symbol_blocks": {},
  "findings": [
   {
    "id": "F5",
-   "level": "BLOCK",
+   "level": "WARN",
    "symbol": null,
-   "msg": "the cross-check disagrees with 2 of 4 signals - prices are suspect (a partial same-day bar while the market is open, a hole in the price history, or a bad feed). Do not order until the close-of-day data is published and the refresh re-run."
+   "msg": "the cross-check flagged 4 of 24 signals (they are blocked from orders): PETRONET, PNB, PRIZOR, UNIONBANK"
   },
   {
    "id": "I3",
@@ -25,16 +25,22 @@
    "msg": "20 stocks were bought in the last 3 days and are not in Dhan holdings yet (settlement timing); positions and P&L exclude them until holdings catch up: CYIENT (1->2), STOVEKRAFT (1->2), AUROPHARMA (0->1), ENTERO (0->1), MACPOWER (0->1), ROLEXRINGS (0->4), CORONA (0->1), GRWRHITECH (0->1), MANAKCOAT (0->6), NAVINFLUOR (0->1), APLLTD (0->1), EMCURE (0->1) ..."
   },
   {
+   "id": "S4",
+   "level": "WARN",
+   "symbol": null,
+   "msg": "3 entries cost more than 3x the tier (Rs1,000) because the minimum is 1 share; largest TVSMOTOR Rs4,506. Check before ordering."
+  },
+  {
    "id": "P3",
    "level": "WARN",
    "symbol": null,
-   "msg": "7 open option exit / strike-breach alerts on 7 stocks (BSE, CGPOWER, DIXON, HCLTECH, INFY, MCX, SHRIRAMFIN) - see the Covered Call alerts"
+   "msg": "9 open option exit / strike-breach alerts on 9 stocks (BANKINDIA, BPCL, BSE, CGPOWER, DIXON, HCLTECH, INFY, MCX...) - see the Covered Call alerts"
   },
   {
    "id": "P5",
    "level": "WARN",
    "symbol": null,
-   "msg": "1 super order stop findings (1 high: likely orphaned stop legs that could BUY a new long) - see Covered Call > Alerts; the dhan-superorder skill can cancel them"
+   "msg": "2 super order stop findings (2 high: likely orphaned stop legs that could BUY a new long) - see Covered Call > Alerts; the dhan-superorder skill can cancel them"
   },
   {
    "id": "P4",

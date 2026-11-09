@@ -1,34 +1,40 @@
 {
- "generated_at": "2026-11-09T15:42:36+05:30",
+ "generated_at": "2026-11-09T17:59:56+05:30",
  "broker": "zerodha",
- "market_data_date": "2026-11-08",
- "signals_generated_at": "2026-11-09T07:32:50.644502+00:00",
- "status": "BLOCK",
- "global_block": true,
+ "market_data_date": "2026-11-09",
+ "signals_generated_at": "2026-11-09T12:29:50.109466+00:00",
+ "status": "WARN",
+ "global_block": false,
  "counts": {
-  "block": 1,
-  "warn": 2,
+  "block": 0,
+  "warn": 4,
   "info": 0
  },
  "per_symbol_blocks": {},
  "findings": [
   {
    "id": "F5",
-   "level": "BLOCK",
+   "level": "WARN",
    "symbol": null,
-   "msg": "the cross-check disagrees with 34 of 63 signals - prices are suspect (a partial same-day bar while the market is open, a hole in the price history, or a bad feed). Do not order until the close-of-day data is published and the refresh re-run."
+   "msg": "the cross-check flagged 1 of 65 signals (they are blocked from orders): NATIONALUM"
   },
   {
    "id": "C2",
    "level": "WARN",
    "symbol": "TVSMOTOR",
-   "msg": "TVSMOTOR is 23% of deployed capital"
+   "msg": "TVSMOTOR is 24% of deployed capital"
   },
   {
    "id": "P3",
    "level": "WARN",
    "symbol": null,
-   "msg": "61 open option exit / strike-breach alerts on 49 stocks (360ONE, ABB, ADANIENSOL, ADANIGREEN, ADANIPOWER, AMBER, ANGELONE, APOLLOHOSP...) - see the Covered Call alerts"
+   "msg": "63 open option exit / strike-breach alerts on 52 stocks (360ONE, ABB, ADANIENSOL, ADANIGREEN, ADANIPOWER, ALKEM, AMBER, ANGELONE...) - see the Covered Call alerts"
+  },
+  {
+   "id": "P5",
+   "level": "WARN",
+   "symbol": null,
+   "msg": "1 invalid GTT orders (1 high: e.g. buy GTTs on contracts you no longer hold) - see Covered Call > Alerts > Invalid GTT; the zerodha-gtt-order skill can delete them"
   }
  ]
 }

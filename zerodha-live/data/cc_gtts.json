@@ -1,5 +1,5 @@
 {
- "fetched_at": "2026-11-09T14:00:35+05:30",
+ "fetched_at": "2026-11-09T17:59:17+05:30",
  "active": {
   "TCS26NOV2700CE": [
    {
@@ -179,26 +179,6 @@
      14.85
     ],
     "qty": 400
-   }
-  ],
-  "GMRAIRPORT26NOV102CE": [
-   {
-    "id": 344059836,
-    "type": "two-leg",
-    "trigger_values": [
-     0.1,
-     0.95
-    ],
-    "qty": 6975
-   },
-   {
-    "id": 344059836,
-    "type": "two-leg",
-    "trigger_values": [
-     0.1,
-     0.95
-    ],
-    "qty": 6975
    }
   ],
   "DRREDDY26NOV1450CE": [
@@ -506,7 +486,7 @@
     "id": 344051339,
     "type": "trailing-single",
     "trigger_values": [
-     23
+     21
     ],
     "qty": 400
    }
@@ -616,7 +596,7 @@
     "id": 343976441,
     "type": "trailing-single",
     "trigger_values": [
-     15
+     14
     ],
     "qty": 625
    }
@@ -651,22 +631,12 @@
     "qty": 6750
    }
   ],
-  "NIFTY26DEC26000PE": [
-   {
-    "id": 343875032,
-    "type": "trailing-single",
-    "trigger_values": [
-     1290
-    ],
-    "qty": 325
-   }
-  ],
   "ATHERENERG26NOV1620PE": [
    {
     "id": 343865349,
     "type": "trailing-single",
     "trigger_values": [
-     23
+     22
     ],
     "qty": 375
    }
@@ -779,16 +749,6 @@
      11
     ],
     "qty": 2025
-   }
-  ],
-  "CANBK26NOV120CE": [
-   {
-    "id": 343694417,
-    "type": "trailing-single",
-    "trigger_values": [
-     9
-    ],
-    "qty": 6750
    }
   ],
   "HDFCBANK26NOV780PE": [
@@ -1096,7 +1056,7 @@
     "id": 343047298,
     "type": "trailing-single",
     "trigger_values": [
-     4.8
+     3.8
     ],
     "qty": 2500
    }
@@ -1306,7 +1266,7 @@
     "id": 341503509,
     "type": "trailing-single",
     "trigger_values": [
-     210
+     207.5
     ],
     "qty": 100
    }
@@ -1610,34 +1570,6 @@
      "side": "BUY",
      "qty": 400,
      "price": 15.3,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
-   "id": 344059836,
-   "type": "two-leg",
-   "created_at": "2026-11-09T13:58:49+05:30",
-   "expires_at": "2026-11-24T00:00:00+05:30",
-   "tradingsymbol": "GMRAIRPORT26NOV102CE",
-   "last_price": 0.85,
-   "triggers": [
-    0.1,
-    0.95
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 6975,
-     "price": 0.15,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    },
-    {
-     "side": "BUY",
-     "qty": 6975,
-     "price": 1,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -2083,13 +2015,13 @@
    "tradingsymbol": "COCHINSHIP26NOV1120PE",
    "last_price": 7.95,
    "triggers": [
-    23
+    21
    ],
    "orders": [
     {
      "side": "BUY",
      "qty": 400,
-     "price": 24,
+     "price": 22,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -2303,13 +2235,13 @@
    "tradingsymbol": "LODHA26NOV1060PE",
    "last_price": 5.15,
    "triggers": [
-    15
+    14
    ],
    "orders": [
     {
      "side": "BUY",
      "qty": 625,
-     "price": 16,
+     "price": 15,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -2376,26 +2308,6 @@
    ]
   },
   {
-   "id": 343875032,
-   "type": "trailing-single",
-   "created_at": "2026-11-08T14:46:33+05:30",
-   "expires_at": "2026-12-30T00:00:00+05:30",
-   "tradingsymbol": "NIFTY26DEC26000PE",
-   "last_price": 973.6,
-   "triggers": [
-    1290
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 325,
-     "price": 0,
-     "product": "NRML",
-     "order_type": "MARKET"
-    }
-   ]
-  },
-  {
    "id": 343865349,
    "type": "trailing-single",
    "created_at": "2026-11-08T14:30:46+05:30",
@@ -2403,13 +2315,13 @@
    "tradingsymbol": "ATHERENERG26NOV1620PE",
    "last_price": 8.4,
    "triggers": [
-    23
+    22
    ],
    "orders": [
     {
      "side": "BUY",
      "qty": 375,
-     "price": 24,
+     "price": 23,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -2630,26 +2542,6 @@
      "side": "BUY",
      "qty": 2025,
      "price": 11.5,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
-   "id": 343694417,
-   "type": "trailing-single",
-   "created_at": "2026-11-06T11:15:05+05:30",
-   "expires_at": "2026-11-24T00:00:00+05:30",
-   "tradingsymbol": "CANBK26NOV120CE",
-   "last_price": 3.94,
-   "triggers": [
-    9
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 6750,
-     "price": 9.1,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -3263,13 +3155,13 @@
    "tradingsymbol": "FEDERALBNK26NOV310PE",
    "last_price": 1.6,
    "triggers": [
-    4.8
+    3.8
    ],
    "orders": [
     {
      "side": "BUY",
      "qty": 2500,
-     "price": 5,
+     "price": 4,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -3599,13 +3491,13 @@
    "tradingsymbol": "OFSS26NOV11000CE",
    "last_price": 85,
    "triggers": [
-    210
+    207.5
    ],
    "orders": [
     {
      "side": "BUY",
      "qty": 100,
-     "price": 211,
+     "price": 208.5,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -3712,5 +3604,5 @@
    ]
   }
  ],
- "non_option_gtts": 12
+ "non_option_gtts": 11
 }

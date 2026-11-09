@@ -1,7 +1,7 @@
 {
- "fetched_at": "2026-11-09T15:15:07+05:30",
- "orders_checked": 39,
- "shorts": 21,
+ "fetched_at": "2026-11-09T17:57:58+05:30",
+ "orders_checked": 43,
+ "shorts": 24,
  "findings": [
   {
    "check": "S1",
@@ -14,6 +14,18 @@
    "opt_type": null,
    "concern": "Likely orphaned: sold 5200 @ 0.46 but no open short matches; target 0 still pending: a stop firing would BUY a new long",
    "action": "Check the position; if closed, cancel the legs (order 2132611092644873)"
+  },
+  {
+   "check": "S1",
+   "name": "ORPHAN",
+   "severity": "HIGH",
+   "order_id": "2132611061596973",
+   "symbol": "CGPOWER",
+   "expiry": null,
+   "strike": null,
+   "opt_type": null,
+   "concern": "Likely orphaned: sold 850 @ 9.4 but no open short matches; stop_loss 28 + target 0 still pending: a stop firing would BUY a new long",
+   "action": "Check the position; if closed, cancel the legs (order 2132611061596973)"
   }
  ]
 }

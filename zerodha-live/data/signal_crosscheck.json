@@ -1,48 +1,42 @@
 {
- "generated_at": "2026-11-09T07:32:59.914657+00:00",
- "market_data_date": "2026-11-08",
+ "generated_at": "2026-11-09T12:29:54.345112+00:00",
+ "market_data_date": "2026-11-09",
  "yahoo_last_bars": [
-  "2026-11-06"
- ],
- "bars_after_signal_date_ignored": [
   "2026-11-09"
  ],
- "checked": 63,
- "flagged": 34,
+ "bars_after_signal_date_ignored": [],
+ "checked": 65,
+ "flagged": 1,
  "results": [
   {
    "symbol": "ADANIENSOL",
    "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "close 1457.40 differs from the signal's 1450.0"
-   ],
+   "ok": true,
+   "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 1457.4,
-   "published_close": 1450.0,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 1439.1,
+   "published_close": 1439.1,
    "closing_high_252": 1741.6,
    "intraday_high_252": 1789.0,
-   "flip_bars_ago": 2,
-   "pct_from_intraday_high": -18.54
+   "flip_bars_ago": 3,
+   "pct_from_intraday_high": -19.56
   },
   {
    "symbol": "ADANIGREEN",
    "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "close 1424.10 differs from the signal's 1417.0"
-   ],
+   "ok": true,
+   "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 1424.1,
-   "published_close": 1417.0,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 1448.9,
+   "published_close": 1448.9,
    "closing_high_252": 1604.5,
    "intraday_high_252": 1631.5,
-   "flip_bars_ago": 2,
-   "pct_from_intraday_high": -12.71
+   "flip_bars_ago": 3,
+   "pct_from_intraday_high": -11.19
   },
   {
    "symbol": "ADANIPOWER",
@@ -51,79 +45,58 @@
    "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 204.29,
-   "published_close": 204.4,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 206.0,
+   "published_close": 206.0,
    "closing_high_252": 248.91,
    "intraday_high_252": 254.2,
-   "flip_bars_ago": 2,
-   "pct_from_intraday_high": -19.63
+   "flip_bars_ago": 3,
+   "pct_from_intraday_high": -18.96
   },
   {
    "symbol": "AMBER",
-   "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "close 6403.00 differs from the signal's 6354.0"
-   ],
-   "published_colour": "green",
-   "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 6403.0,
-   "published_close": 6354.0,
-   "closing_high_252": 8842.5,
-   "intraday_high_252": 8974.0,
-   "flip_bars_ago": 1,
-   "pct_from_intraday_high": -28.65
-  },
-  {
-   "symbol": "AMBUJACEM",
-   "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "close 390.60 differs from the signal's 395.65"
-   ],
-   "published_colour": "green",
-   "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 390.6,
-   "published_close": 395.65,
-   "closing_high_252": 577.2,
-   "intraday_high_252": 588.75,
-   "flip_bars_ago": 1,
-   "pct_from_intraday_high": -33.66
-  },
-  {
-   "symbol": "APOLLOHOSP",
    "kind": "entry",
    "ok": true,
    "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 8446.0,
-   "published_close": 8430.0,
-   "closing_high_252": 9069.0,
-   "intraday_high_252": 9070.5,
-   "flip_bars_ago": 5,
-   "pct_from_intraday_high": -6.88
+   "yahoo_last_bar": "2026-11-09",
+   "close": 6230.0,
+   "published_close": 6230.0,
+   "closing_high_252": 8842.5,
+   "intraday_high_252": 8974.0,
+   "flip_bars_ago": 2,
+   "pct_from_intraday_high": -30.58
+  },
+  {
+   "symbol": "AMBUJACEM",
+   "kind": "entry",
+   "ok": true,
+   "reasons": [],
+   "published_colour": "green",
+   "recomputed_colour": "green",
+   "yahoo_last_bar": "2026-11-09",
+   "close": 389.55,
+   "published_close": 389.55,
+   "closing_high_252": 577.2,
+   "intraday_high_252": 588.75,
+   "flip_bars_ago": 2,
+   "pct_from_intraday_high": -33.83
   },
   {
    "symbol": "BAJAJFINSV",
    "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "close 1864.70 differs from the signal's 1855.1"
-   ],
+   "ok": true,
+   "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 1864.7,
-   "published_close": 1855.1,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 1836.9,
+   "published_close": 1836.9,
    "closing_high_252": 2118.3,
-   "intraday_high_252": 2128.9,
-   "flip_bars_ago": 1,
-   "pct_from_intraday_high": -12.41
+   "intraday_high_252": 2126.8,
+   "flip_bars_ago": 2,
+   "pct_from_intraday_high": -13.63
   },
   {
    "symbol": "BANKINDIA",
@@ -132,13 +105,28 @@
    "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 138.57,
-   "published_close": 138.71,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 145.0,
+   "published_close": 145.0,
    "closing_high_252": 177.2,
    "intraday_high_252": 178.36,
-   "flip_bars_ago": 1,
-   "pct_from_intraday_high": -22.31
+   "flip_bars_ago": 2,
+   "pct_from_intraday_high": -18.7
+  },
+  {
+   "symbol": "CANBK",
+   "kind": "entry",
+   "ok": true,
+   "reasons": [],
+   "published_colour": "green",
+   "recomputed_colour": "green",
+   "yahoo_last_bar": "2026-11-09",
+   "close": 128.1,
+   "published_close": 128.1,
+   "closing_high_252": 158.93,
+   "intraday_high_252": 162.89,
+   "flip_bars_ago": 0,
+   "pct_from_intraday_high": -21.36
   },
   {
    "symbol": "CIPLA",
@@ -147,13 +135,28 @@
    "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 1411.0,
-   "published_close": 1405.8,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 1403.8,
+   "published_close": 1403.8,
    "closing_high_252": 1535.6,
    "intraday_high_252": 1539.7,
-   "flip_bars_ago": 3,
-   "pct_from_intraday_high": -8.36
+   "flip_bars_ago": 4,
+   "pct_from_intraday_high": -8.83
+  },
+  {
+   "symbol": "COCHINSHIP",
+   "kind": "entry",
+   "ok": true,
+   "reasons": [],
+   "published_colour": "green",
+   "recomputed_colour": "green",
+   "yahoo_last_bar": "2026-11-09",
+   "close": 1290.0,
+   "published_close": 1290.0,
+   "closing_high_252": 1814.7,
+   "intraday_high_252": 1842.8,
+   "flip_bars_ago": 0,
+   "pct_from_intraday_high": -30.0
   },
   {
    "symbol": "COROMANDEL",
@@ -162,30 +165,43 @@
    "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 1824.0,
-   "published_close": 1827.1,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 1879.2,
+   "published_close": 1879.2,
    "closing_high_252": 2408.2,
    "intraday_high_252": 2499.0,
-   "flip_bars_ago": 1,
-   "pct_from_intraday_high": -27.01
+   "flip_bars_ago": 2,
+   "pct_from_intraday_high": -24.8
+  },
+  {
+   "symbol": "CROMPTON",
+   "kind": "entry",
+   "ok": true,
+   "reasons": [],
+   "published_colour": "green",
+   "recomputed_colour": "green",
+   "yahoo_last_bar": "2026-11-09",
+   "close": 218.9,
+   "published_close": 218.9,
+   "closing_high_252": 301.95,
+   "intraday_high_252": 310.5,
+   "flip_bars_ago": 0,
+   "pct_from_intraday_high": -29.5
   },
   {
    "symbol": "DABUR",
    "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "close 380.35 differs from the signal's 382.8"
-   ],
+   "ok": true,
+   "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 380.35,
-   "published_close": 382.8,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 375.25,
+   "published_close": 375.25,
    "closing_high_252": 525.35,
    "intraday_high_252": 534.0,
-   "flip_bars_ago": 2,
-   "pct_from_intraday_high": -28.77
+   "flip_bars_ago": 3,
+   "pct_from_intraday_high": -29.73
   },
   {
    "symbol": "DELHIVERY",
@@ -194,30 +210,13 @@
    "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 428.0,
-   "published_close": 430.0,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 433.15,
+   "published_close": 433.15,
    "closing_high_252": 520.3,
    "intraday_high_252": 524.0,
-   "flip_bars_ago": 3,
-   "pct_from_intraday_high": -18.32
-  },
-  {
-   "symbol": "DIVISLAB",
-   "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "close 10320.50 differs from the signal's 11097.0"
-   ],
-   "published_colour": "green",
-   "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 10320.5,
-   "published_close": 11097.0,
-   "closing_high_252": 10320.5,
-   "intraday_high_252": 10320.5,
-   "flip_bars_ago": 5,
-   "pct_from_intraday_high": 0.0
+   "flip_bars_ago": 4,
+   "pct_from_intraday_high": -17.34
   },
   {
    "symbol": "DIXON",
@@ -226,13 +225,13 @@
    "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 12625.0,
-   "published_close": 12604.0,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 12603.0,
+   "published_close": 12603.0,
    "closing_high_252": 15697.0,
    "intraday_high_252": 15775.0,
-   "flip_bars_ago": 4,
-   "pct_from_intraday_high": -19.97
+   "flip_bars_ago": 5,
+   "pct_from_intraday_high": -20.11
   },
   {
    "symbol": "DMART",
@@ -241,28 +240,13 @@
    "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 3425.0,
-   "published_close": 3425.0,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 3466.9,
+   "published_close": 3466.9,
    "closing_high_252": 4628.5,
    "intraday_high_252": 4644.0,
-   "flip_bars_ago": 2,
-   "pct_from_intraday_high": -26.25
-  },
-  {
-   "symbol": "ETERNAL",
-   "kind": "entry",
-   "ok": true,
-   "reasons": [],
-   "published_colour": "green",
-   "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 363.15,
-   "published_close": 364.4,
-   "closing_high_252": 363.15,
-   "intraday_high_252": 363.15,
-   "flip_bars_ago": 5,
-   "pct_from_intraday_high": 0.0
+   "flip_bars_ago": 3,
+   "pct_from_intraday_high": -25.35
   },
   {
    "symbol": "FORCEMOT",
@@ -271,30 +255,28 @@
    "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 18968.0,
-   "published_close": 18900.0,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 18837.0,
+   "published_close": 18837.0,
    "closing_high_252": 25776.0,
    "intraday_high_252": 26450.0,
-   "flip_bars_ago": 2,
-   "pct_from_intraday_high": -28.29
+   "flip_bars_ago": 3,
+   "pct_from_intraday_high": -28.78
   },
   {
    "symbol": "FORTIS",
    "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "close 766.90 differs from the signal's 773.65"
-   ],
+   "ok": true,
+   "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 766.9,
-   "published_close": 773.65,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 774.55,
+   "published_close": 774.55,
    "closing_high_252": 1030.7,
-   "intraday_high_252": 1048.9,
-   "flip_bars_ago": 3,
-   "pct_from_intraday_high": -26.89
+   "intraday_high_252": 1040.5,
+   "flip_bars_ago": 4,
+   "pct_from_intraday_high": -25.56
   },
   {
    "symbol": "GLENMARK",
@@ -303,30 +285,28 @@
    "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 2590.0,
-   "published_close": 2594.9,
-   "closing_high_252": 2590.0,
-   "intraday_high_252": 2682.5,
-   "flip_bars_ago": 4,
-   "pct_from_intraday_high": -3.45
+   "yahoo_last_bar": "2026-11-09",
+   "close": 2671.1,
+   "published_close": 2671.1,
+   "closing_high_252": 2671.1,
+   "intraday_high_252": 2714.0,
+   "flip_bars_ago": 5,
+   "pct_from_intraday_high": -1.58
   },
   {
    "symbol": "GMRAIRPORT",
    "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "close 98.75 differs from the signal's 97.92"
-   ],
+   "ok": true,
+   "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 98.75,
-   "published_close": 97.92,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 99.4,
+   "published_close": 99.4,
    "closing_high_252": 114.98,
    "intraday_high_252": 115.64,
-   "flip_bars_ago": 2,
-   "pct_from_intraday_high": -14.61
+   "flip_bars_ago": 3,
+   "pct_from_intraday_high": -14.04
   },
   {
    "symbol": "HAVELLS",
@@ -335,13 +315,13 @@
    "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 1128.0,
-   "published_close": 1123.0,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 1159.5,
+   "published_close": 1159.5,
    "closing_high_252": 1501.7,
    "intraday_high_252": 1514.7,
-   "flip_bars_ago": 0,
-   "pct_from_intraday_high": -25.53
+   "flip_bars_ago": 1,
+   "pct_from_intraday_high": -23.45
   },
   {
    "symbol": "HDFCAMC",
@@ -350,81 +330,73 @@
    "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 2649.8,
-   "published_close": 2642.0,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 2619.6,
+   "published_close": 2619.6,
    "closing_high_252": 2863.6,
    "intraday_high_252": 2901.5,
-   "flip_bars_ago": 3,
-   "pct_from_intraday_high": -8.67
+   "flip_bars_ago": 4,
+   "pct_from_intraday_high": -9.72
   },
   {
    "symbol": "HDFCBANK",
    "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "close 788.25 differs from the signal's 784.1"
-   ],
+   "ok": true,
+   "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 788.25,
-   "published_close": 784.1,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 798.15,
+   "published_close": 798.15,
    "closing_high_252": 1009.5,
    "intraday_high_252": 1017.5,
-   "flip_bars_ago": 3,
-   "pct_from_intraday_high": -22.53
+   "flip_bars_ago": 4,
+   "pct_from_intraday_high": -21.56
   },
   {
    "symbol": "HDFCLIFE",
    "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "close 565.30 differs from the signal's 562.0"
-   ],
+   "ok": true,
+   "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 565.3,
-   "published_close": 562.0,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 565.4,
+   "published_close": 565.4,
    "closing_high_252": 787.55,
    "intraday_high_252": 788.5,
-   "flip_bars_ago": 0,
-   "pct_from_intraday_high": -28.31
+   "flip_bars_ago": 1,
+   "pct_from_intraday_high": -28.29
   },
   {
    "symbol": "HINDALCO",
    "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "close 958.40 differs from the signal's 953.0"
-   ],
+   "ok": true,
+   "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 958.4,
-   "published_close": 953.0,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 960.0,
+   "published_close": 960.0,
    "closing_high_252": 1149.7,
    "intraday_high_252": 1176.0,
-   "flip_bars_ago": 2,
-   "pct_from_intraday_high": -18.5
+   "flip_bars_ago": 3,
+   "pct_from_intraday_high": -18.37
   },
   {
    "symbol": "HINDPETRO",
    "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "close 387.15 differs from the signal's 383.6"
-   ],
+   "ok": true,
+   "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 387.15,
-   "published_close": 383.6,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 385.75,
+   "published_close": 385.75,
    "closing_high_252": 499.05,
    "intraday_high_252": 508.45,
-   "flip_bars_ago": 2,
-   "pct_from_intraday_high": -23.86
+   "flip_bars_ago": 3,
+   "pct_from_intraday_high": -24.13
   },
   {
    "symbol": "HINDUNILVR",
@@ -433,13 +405,13 @@
    "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 1998.4,
-   "published_close": 1997.0,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 1990.3,
+   "published_close": 1990.3,
    "closing_high_252": 2477.8,
    "intraday_high_252": 2488.0,
-   "flip_bars_ago": 3,
-   "pct_from_intraday_high": -19.68
+   "flip_bars_ago": 4,
+   "pct_from_intraday_high": -20.0
   },
   {
    "symbol": "HINDZINC",
@@ -448,13 +420,13 @@
    "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 568.1,
-   "published_close": 568.0,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 575.95,
+   "published_close": 575.95,
    "closing_high_252": 727.2,
    "intraday_high_252": 733.0,
-   "flip_bars_ago": 2,
-   "pct_from_intraday_high": -22.5
+   "flip_bars_ago": 3,
+   "pct_from_intraday_high": -21.43
   },
   {
    "symbol": "IDEA",
@@ -463,81 +435,73 @@
    "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 12.76,
-   "published_close": 12.81,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 12.67,
+   "published_close": 12.67,
    "closing_high_252": 15.6,
    "intraday_high_252": 15.79,
-   "flip_bars_ago": 1,
-   "pct_from_intraday_high": -19.19
+   "flip_bars_ago": 2,
+   "pct_from_intraday_high": -19.76
   },
   {
    "symbol": "IEX",
    "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "close 109.50 differs from the signal's 110.82"
-   ],
+   "ok": true,
+   "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 109.5,
-   "published_close": 110.82,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 112.74,
+   "published_close": 112.74,
    "closing_high_252": 154.78,
    "intraday_high_252": 160.27,
-   "flip_bars_ago": 2,
-   "pct_from_intraday_high": -31.68
+   "flip_bars_ago": 3,
+   "pct_from_intraday_high": -29.66
   },
   {
    "symbol": "INDUSINDBK",
    "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "close 910.25 differs from the signal's 903.0"
-   ],
+   "ok": true,
+   "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 910.25,
-   "published_close": 903.0,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 895.0,
+   "published_close": 895.0,
    "closing_high_252": 1069.3,
    "intraday_high_252": 1077.85,
-   "flip_bars_ago": 1,
-   "pct_from_intraday_high": -15.55
+   "flip_bars_ago": 2,
+   "pct_from_intraday_high": -16.96
   },
   {
    "symbol": "INOXWIND",
    "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "close 64.80 differs from the signal's 65.38"
-   ],
+   "ok": true,
+   "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 64.8,
-   "published_close": 65.38,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 66.69,
+   "published_close": 66.69,
    "closing_high_252": 157.25,
    "intraday_high_252": 158.5,
-   "flip_bars_ago": 1,
-   "pct_from_intraday_high": -59.12
+   "flip_bars_ago": 2,
+   "pct_from_intraday_high": -57.92
   },
   {
    "symbol": "IOC",
    "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "close 146.25 differs from the signal's 145.1"
-   ],
+   "ok": true,
+   "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 146.25,
-   "published_close": 145.1,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 146.85,
+   "published_close": 146.85,
    "closing_high_252": 187.47,
    "intraday_high_252": 188.96,
-   "flip_bars_ago": 4,
-   "pct_from_intraday_high": -22.6
+   "flip_bars_ago": 5,
+   "pct_from_intraday_high": -22.29
   },
   {
    "symbol": "IREDA",
@@ -546,13 +510,13 @@
    "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 111.46,
-   "published_close": 111.33,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 119.65,
+   "published_close": 119.65,
    "closing_high_252": 153.3,
-   "intraday_high_252": 154.75,
-   "flip_bars_ago": 1,
-   "pct_from_intraday_high": -27.97
+   "intraday_high_252": 153.74,
+   "flip_bars_ago": 2,
+   "pct_from_intraday_high": -22.17
   },
   {
    "symbol": "ITC",
@@ -561,149 +525,148 @@
    "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 283.15,
-   "published_close": 283.45,
-   "closing_high_252": 420.35,
-   "intraday_high_252": 426.4,
-   "flip_bars_ago": 3,
-   "pct_from_intraday_high": -33.6
+   "yahoo_last_bar": "2026-11-09",
+   "close": 278.8,
+   "published_close": 278.8,
+   "closing_high_252": 413.95,
+   "intraday_high_252": 421.65,
+   "flip_bars_ago": 4,
+   "pct_from_intraday_high": -33.88
+  },
+  {
+   "symbol": "LICHSGFIN",
+   "kind": "entry",
+   "ok": true,
+   "reasons": [],
+   "published_colour": "green",
+   "recomputed_colour": "green",
+   "yahoo_last_bar": "2026-11-09",
+   "close": 551.9,
+   "published_close": 551.9,
+   "closing_high_252": 586.35,
+   "intraday_high_252": 598.2,
+   "flip_bars_ago": 0,
+   "pct_from_intraday_high": -7.74
   },
   {
    "symbol": "LICI",
    "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "close 394.00 differs from the signal's 396.85"
-   ],
+   "ok": true,
+   "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 394.0,
-   "published_close": 396.85,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 399.0,
+   "published_close": 399.0,
    "closing_high_252": 462.08,
    "intraday_high_252": 468.48,
-   "flip_bars_ago": 2,
-   "pct_from_intraday_high": -15.9
+   "flip_bars_ago": 3,
+   "pct_from_intraday_high": -14.83
   },
   {
    "symbol": "LTF",
    "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "close 277.50 differs from the signal's 272.27"
-   ],
+   "ok": true,
+   "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 277.5,
-   "published_close": 272.27,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 273.7,
+   "published_close": 273.7,
    "closing_high_252": 335.6,
    "intraday_high_252": 338.6,
-   "flip_bars_ago": 2,
-   "pct_from_intraday_high": -18.04
+   "flip_bars_ago": 3,
+   "pct_from_intraday_high": -19.17
   },
   {
    "symbol": "M&M",
    "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "close 3287.20 differs from the signal's 3267.8"
-   ],
+   "ok": true,
+   "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 3287.2,
-   "published_close": 3267.8,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 3290.6,
+   "published_close": 3290.6,
    "closing_high_252": 3802.4,
    "intraday_high_252": 3839.9,
-   "flip_bars_ago": 2,
-   "pct_from_intraday_high": -14.39
+   "flip_bars_ago": 3,
+   "pct_from_intraday_high": -14.31
   },
   {
    "symbol": "MARUTI",
    "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "close 12750.00 differs from the signal's 12815.0"
-   ],
+   "ok": true,
+   "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 12750.0,
-   "published_close": 12815.0,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 12928.0,
+   "published_close": 12928.0,
    "closing_high_252": 17292.0,
    "intraday_high_252": 17370.0,
-   "flip_bars_ago": 2,
-   "pct_from_intraday_high": -26.6
+   "flip_bars_ago": 3,
+   "pct_from_intraday_high": -25.57
   },
   {
    "symbol": "MAXHEALTH",
    "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "close 934.00 differs from the signal's 926.0"
-   ],
+   "ok": true,
+   "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 934.0,
-   "published_close": 926.0,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 915.0,
+   "published_close": 915.0,
    "closing_high_252": 1181.1,
    "intraday_high_252": 1185.4,
-   "flip_bars_ago": 3,
-   "pct_from_intraday_high": -21.21
+   "flip_bars_ago": 4,
+   "pct_from_intraday_high": -22.81
   },
   {
    "symbol": "MCX",
    "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "close 3528.00 differs from the signal's 3557.0"
-   ],
+   "ok": true,
+   "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 3528.0,
-   "published_close": 3557.0,
-   "closing_high_252": 3528.0,
-   "intraday_high_252": 3550.0,
-   "flip_bars_ago": 3,
-   "pct_from_intraday_high": -0.62
+   "yahoo_last_bar": "2026-11-09",
+   "close": 3545.0,
+   "published_close": 3545.0,
+   "closing_high_252": 3545.0,
+   "intraday_high_252": 3581.5,
+   "flip_bars_ago": 4,
+   "pct_from_intraday_high": -1.02
   },
   {
    "symbol": "MOTHERSON",
    "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "close 158.55 differs from the signal's 159.4"
-   ],
+   "ok": true,
+   "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 158.55,
-   "published_close": 159.4,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 161.91,
+   "published_close": 161.91,
    "closing_high_252": 170.68,
    "intraday_high_252": 173.27,
-   "flip_bars_ago": 1,
-   "pct_from_intraday_high": -8.5
+   "flip_bars_ago": 2,
+   "pct_from_intraday_high": -6.56
   },
   {
    "symbol": "MOTILALOFS",
    "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "close 1102.00 differs from the signal's 1144.0"
-   ],
+   "ok": true,
+   "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 1102.0,
-   "published_close": 1144.0,
-   "closing_high_252": 1102.0,
-   "intraday_high_252": 1105.0,
-   "flip_bars_ago": 1,
-   "pct_from_intraday_high": -0.27
+   "yahoo_last_bar": "2026-11-09",
+   "close": 1147.3,
+   "published_close": 1147.3,
+   "closing_high_252": 1147.3,
+   "intraday_high_252": 1153.95,
+   "flip_bars_ago": 2,
+   "pct_from_intraday_high": -0.58
   },
   {
    "symbol": "MUTHOOTFIN",
@@ -712,13 +675,31 @@
    "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 2869.0,
-   "published_close": 2855.0,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 2917.6,
+   "published_close": 2917.6,
    "closing_high_252": 4091.7,
    "intraday_high_252": 4149.5,
-   "flip_bars_ago": 2,
-   "pct_from_intraday_high": -30.86
+   "flip_bars_ago": 3,
+   "pct_from_intraday_high": -29.69
+  },
+  {
+   "symbol": "NATIONALUM",
+   "kind": "entry",
+   "ok": false,
+   "reasons": [
+    "Supertrend is RED on complete data (signal says green)",
+    "no red-to-green Supertrend flip in the last 6 trading bars on complete data (last flip 67 bars ago)"
+   ],
+   "published_colour": "green",
+   "recomputed_colour": "red",
+   "yahoo_last_bar": "2026-11-09",
+   "close": 329.0,
+   "published_close": 329.0,
+   "closing_high_252": 441.5,
+   "intraday_high_252": 445.15,
+   "flip_bars_ago": 67,
+   "pct_from_intraday_high": -26.09
   },
   {
    "symbol": "NBCC",
@@ -727,13 +708,13 @@
    "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 78.0,
-   "published_close": 78.25,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 80.4,
+   "published_close": 80.4,
    "closing_high_252": 122.67,
    "intraday_high_252": 125.85,
-   "flip_bars_ago": 4,
-   "pct_from_intraday_high": -38.02
+   "flip_bars_ago": 5,
+   "pct_from_intraday_high": -36.11
   },
   {
    "symbol": "NTPC",
@@ -742,13 +723,13 @@
    "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 323.45,
-   "published_close": 322.7,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 328.75,
+   "published_close": 328.75,
    "closing_high_252": 410.2,
    "intraday_high_252": 414.4,
-   "flip_bars_ago": 4,
-   "pct_from_intraday_high": -21.95
+   "flip_bars_ago": 5,
+   "pct_from_intraday_high": -20.67
   },
   {
    "symbol": "OBEROIRLTY",
@@ -757,64 +738,58 @@
    "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 1739.0,
-   "published_close": 1737.1,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 1775.0,
+   "published_close": 1775.0,
    "closing_high_252": 1953.4,
    "intraday_high_252": 1986.1,
-   "flip_bars_ago": 1,
-   "pct_from_intraday_high": -12.44
+   "flip_bars_ago": 2,
+   "pct_from_intraday_high": -10.63
   },
   {
    "symbol": "ONGC",
    "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "close 231.76 differs from the signal's 234.8"
-   ],
+   "ok": true,
+   "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 231.76,
-   "published_close": 234.8,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 233.5,
+   "published_close": 233.5,
    "closing_high_252": 301.4,
    "intraday_high_252": 307.5,
-   "flip_bars_ago": 4,
-   "pct_from_intraday_high": -24.63
+   "flip_bars_ago": 5,
+   "pct_from_intraday_high": -24.07
   },
   {
-   "symbol": "POWERGRID",
+   "symbol": "PAGEIND",
    "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "close 259.90 differs from the signal's 261.35"
-   ],
+   "ok": true,
+   "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 259.9,
-   "published_close": 261.35,
-   "closing_high_252": 320.9,
-   "intraday_high_252": 324.95,
-   "flip_bars_ago": 5,
-   "pct_from_intraday_high": -20.02
+   "yahoo_last_bar": "2026-11-09",
+   "close": 36380.0,
+   "published_close": 36380.0,
+   "closing_high_252": 43610.0,
+   "intraday_high_252": 43855.0,
+   "flip_bars_ago": 0,
+   "pct_from_intraday_high": -17.04
   },
   {
    "symbol": "PRESTIGE",
    "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "close 1629.00 differs from the signal's 1604.9"
-   ],
+   "ok": true,
+   "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 1629.0,
-   "published_close": 1604.9,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 1597.5,
+   "published_close": 1597.5,
    "closing_high_252": 1780.7,
    "intraday_high_252": 1805.2,
-   "flip_bars_ago": 3,
-   "pct_from_intraday_high": -9.76
+   "flip_bars_ago": 4,
+   "pct_from_intraday_high": -11.51
   },
   {
    "symbol": "RELIANCE",
@@ -823,13 +798,28 @@
    "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 1320.0,
-   "published_close": 1324.0,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 1324.4,
+   "published_close": 1324.4,
    "closing_high_252": 1592.3,
    "intraday_high_252": 1611.8,
-   "flip_bars_ago": 4,
-   "pct_from_intraday_high": -18.1
+   "flip_bars_ago": 5,
+   "pct_from_intraday_high": -17.83
+  },
+  {
+   "symbol": "RVNL",
+   "kind": "entry",
+   "ok": true,
+   "reasons": [],
+   "published_colour": "green",
+   "recomputed_colour": "green",
+   "yahoo_last_bar": "2026-11-09",
+   "close": 201.7,
+   "published_close": 201.7,
+   "closing_high_252": 387.95,
+   "intraday_high_252": 400.7,
+   "flip_bars_ago": 0,
+   "pct_from_intraday_high": -49.66
   },
   {
    "symbol": "SBICARD",
@@ -838,13 +828,13 @@
    "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 585.0,
-   "published_close": 582.5,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 590.15,
+   "published_close": 590.15,
    "closing_high_252": 901.55,
    "intraday_high_252": 906.4,
-   "flip_bars_ago": 1,
-   "pct_from_intraday_high": -35.46
+   "flip_bars_ago": 2,
+   "pct_from_intraday_high": -34.89
   },
   {
    "symbol": "TATAPOWER",
@@ -853,30 +843,28 @@
    "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 352.5,
-   "published_close": 353.4,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 360.0,
+   "published_close": 360.0,
    "closing_high_252": 461.8,
    "intraday_high_252": 464.9,
-   "flip_bars_ago": 1,
-   "pct_from_intraday_high": -24.18
+   "flip_bars_ago": 2,
+   "pct_from_intraday_high": -22.56
   },
   {
    "symbol": "TATASTEEL",
    "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "close 186.30 differs from the signal's 190.2"
-   ],
+   "ok": true,
+   "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 186.3,
-   "published_close": 190.2,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 184.85,
+   "published_close": 184.85,
    "closing_high_252": 221.13,
    "intraday_high_252": 224.4,
-   "flip_bars_ago": 1,
-   "pct_from_intraday_high": -16.98
+   "flip_bars_ago": 2,
+   "pct_from_intraday_high": -17.62
   },
   {
    "symbol": "TIINDIA",
@@ -885,47 +873,28 @@
    "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 2170.0,
-   "published_close": 2175.4,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 2209.5,
+   "published_close": 2209.5,
    "closing_high_252": 3307.9,
    "intraday_high_252": 3335.2,
-   "flip_bars_ago": 1,
-   "pct_from_intraday_high": -34.94
+   "flip_bars_ago": 2,
+   "pct_from_intraday_high": -33.75
   },
   {
    "symbol": "TMPV",
    "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "close 292.00 differs from the signal's 295.3"
-   ],
+   "ok": true,
+   "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 292.0,
-   "published_close": 295.3,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 295.0,
+   "published_close": 295.0,
    "closing_high_252": 417.0,
    "intraday_high_252": 417.85,
-   "flip_bars_ago": 1,
-   "pct_from_intraday_high": -30.12
-  },
-  {
-   "symbol": "TRENT",
-   "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "close 3079.00 differs from the signal's 3057.5"
-   ],
-   "published_colour": "green",
-   "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 3079.0,
-   "published_close": 3057.5,
-   "closing_high_252": 4713.4,
-   "intraday_high_252": 4748.9,
-   "flip_bars_ago": 5,
-   "pct_from_intraday_high": -35.16
+   "flip_bars_ago": 2,
+   "pct_from_intraday_high": -29.4
   },
   {
    "symbol": "ULTRACEMCO",
@@ -934,47 +903,43 @@
    "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 12450.0,
-   "published_close": 12499.0,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 12275.0,
+   "published_close": 12275.0,
    "closing_high_252": 13052.0,
    "intraday_high_252": 13110.0,
-   "flip_bars_ago": 4,
-   "pct_from_intraday_high": -5.03
+   "flip_bars_ago": 5,
+   "pct_from_intraday_high": -6.37
   },
   {
    "symbol": "UNOMINDA",
    "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "close 1326.00 differs from the signal's 1316.7"
-   ],
+   "ok": true,
+   "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 1326.0,
-   "published_close": 1316.7,
-   "closing_high_252": 1336.6,
-   "intraday_high_252": 1355.0,
-   "flip_bars_ago": 2,
-   "pct_from_intraday_high": -2.14
+   "yahoo_last_bar": "2026-11-09",
+   "close": 1353.8,
+   "published_close": 1353.8,
+   "closing_high_252": 1353.8,
+   "intraday_high_252": 1368.0,
+   "flip_bars_ago": 3,
+   "pct_from_intraday_high": -1.04
   },
   {
    "symbol": "VBL",
    "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "close 438.00 differs from the signal's 435.0"
-   ],
+   "ok": true,
+   "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 438.0,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 435.0,
    "published_close": 435.0,
    "closing_high_252": 544.05,
    "intraday_high_252": 555.8,
-   "flip_bars_ago": 1,
-   "pct_from_intraday_high": -21.19
+   "flip_bars_ago": 2,
+   "pct_from_intraday_high": -21.73
   },
   {
    "symbol": "VEDL",
@@ -983,45 +948,43 @@
    "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 261.75,
-   "published_close": 261.0,
+   "yahoo_last_bar": "2026-11-09",
+   "close": 262.0,
+   "published_close": 262.0,
    "closing_high_252": 787.5,
    "intraday_high_252": 795.0,
-   "flip_bars_ago": 2,
-   "pct_from_intraday_high": -67.08
+   "flip_bars_ago": 3,
+   "pct_from_intraday_high": -67.04
   },
   {
    "symbol": "YESBANK",
-   "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "close 17.20 differs from the signal's 17.3"
-   ],
-   "published_colour": "green",
-   "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 17.2,
-   "published_close": 17.3,
-   "closing_high_252": 25.48,
-   "intraday_high_252": 25.78,
-   "flip_bars_ago": 0,
-   "pct_from_intraday_high": -33.28
-  },
-  {
-   "symbol": "ZYDUSLIFE",
    "kind": "entry",
    "ok": true,
    "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-06",
-   "close": 1197.9,
-   "published_close": 1199.5,
-   "closing_high_252": 1245.5,
-   "intraday_high_252": 1266.6,
-   "flip_bars_ago": 5,
-   "pct_from_intraday_high": -5.42
+   "yahoo_last_bar": "2026-11-09",
+   "close": 17.03,
+   "published_close": 17.03,
+   "closing_high_252": 25.48,
+   "intraday_high_252": 25.78,
+   "flip_bars_ago": 1,
+   "pct_from_intraday_high": -33.94
+  },
+  {
+   "symbol": "MPHASIS",
+   "kind": "addon",
+   "ok": true,
+   "reasons": [],
+   "published_colour": "green",
+   "recomputed_colour": "green",
+   "yahoo_last_bar": "2026-11-09",
+   "close": 2455.0,
+   "published_close": 2455.0,
+   "closing_high_252": 2953.6,
+   "intraday_high_252": 2975.0,
+   "flip_bars_ago": 18,
+   "pct_from_intraday_high": -17.48
   }
  ]
 }

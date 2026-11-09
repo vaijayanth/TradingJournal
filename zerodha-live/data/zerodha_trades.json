@@ -1,0 +1,19 @@
+{
+ "_note": "Zerodha trades after the baseline cut-off. closed[] feeds the dashboard's realised P&L and trade count; last_buy{} drives the weekly add cooldown; entry_dates{} = entry date of positions opened after the cut-off.",
+ "closed": [
+  {
+   "symbol": "BHARTIARTL",
+   "entry_date": null,
+   "exit_date": "2026-11-09",
+   "qty": 10,
+   "entry": 1967.1,
+   "exit": 2079.6,
+   "pl_rs": 1125.0,
+   "pl_pct": 5.72,
+   "hold_days": null
+  }
+ ],
+ "last_buy": {},
+ "entry_dates": {},
+ "pending_exits": []
+}
