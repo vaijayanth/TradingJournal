@@ -8755,7 +8755,7 @@ const WORKSPACES = {
                      entryHint: 'Supertrend flipped to green within the last 3 trading days · no open position in the stock · Nifty F&O stocks only · 🔥 = top-3 sector by Supertrend turnarounds',
                      posHint: 'Every Nifty F&O holding', hideEntryCols: true,
                      entryFilter: ['All flips', '🔥 Hot sectors only', 'Flipped today'], entryEmpty: 'No Supertrend flips to green in the last 3 trading days.', flipTodayMode: true,
-                     otherOrderKind: 'Outside this dashboard', closedHint: 'Round trips closed through this dashboard (none yet)',
+                     otherOrderKind: 'Outside this dashboard', hideOtherOrders: true, closedHint: 'Round trips closed through this dashboard (none yet)',
                      closedSrc: 'trades closed through this dashboard (it starts with none; closed trades from the old sheet are not included)',
                      entryRule: 'Enter on a fresh Supertrend flip to green (last 3 trading days)', lossTitle: 'Positions in loss' },
              // 'sheet' = the old Google-Sheet dashboard, kept as one tab; every other page reads the MCP snapshot
@@ -9255,7 +9255,7 @@ function dhLiveRender(d) {
     dd.positions.forEach(p => { if (p.signal === 'EXIT') p.ord = dhOrderState(ex, p.symbol, 'SELL', p.qty); else if (p.signal === 'ADD-ON') p.ord = dhOrderState(ex, p.symbol, 'BUY', p.addQty); });
     const kindOf = o => o.side === 'SELL' ? (dd.positions.some(p => p.signal === 'EXIT' && p.symbol === o.symbol) ? 'Exit' : 'Sell')
       : dd.positions.some(p => p.signal === 'ADD-ON' && p.symbol === o.symbol) ? 'Add-on' : dd.signals.entry.some(e => e.symbol === o.symbol) ? 'Entry' : (dd.positions.some(p => p.symbol === o.symbol) ? 'Buy' : (dhCopy().otherOrderKind || 'Buy'));
-    dd.orders = ex.orders.map(o => ({ id: o.order_id, symbol: o.symbol, side: o.side, qty: o.qty, type: o.order_type + (o.amo === false ? ' (today, lapses)' : ' · after-market'), price: o.price, status: o.status === 'PENDING' ? 'Pending' : o.status, kind: kindOf(o) }));
+    dd.orders = ex.orders.filter(o => dhOwnOrder(o, dd)).map(o => ({ id: o.order_id, symbol: o.symbol, side: o.side, qty: o.qty, type: o.order_type + (o.amo === false ? ' (today, lapses)' : ' · after-market'), price: o.price, status: o.status === 'PENDING' ? 'Pending' : o.status, kind: kindOf(o) }));
     const cnt = st => dd.signals.entry.filter(e => e.ord && e.ord.st === st).length;
     const sub = (id, t) => { const el = document.getElementById(id); if (el) el.textContent = t; };
     const eo = cnt('ok'), eb = cnt('blk'), en = dd.signals.entry.length;
@@ -9387,6 +9387,11 @@ function dhExtras(force) {
   });
   return window._dhXs[WS.id];
 }
+// AZ (user, 2026-11-09): orders for stocks that are not part of this dashboard (the old sheet dashboard's own orders) are ignored everywhere on the page.
+function dhOwnOrder(o, d) {
+  if (!dhCopy().hideOtherOrders || !d) return true;
+  return (d.signals.entry || []).some(e => e.symbol === o.symbol) || (d.positions || []).some(p => p.symbol === o.symbol);
+}
 // 'ok' = a pending after-market order covers the signal quantity, 'blk' = blocked by the cross-check, 'none' = nothing placed
 function dhOrderState(ex, sym, side, qty) {
   if (!ex) return { st: '', why: '' };
@@ -9452,7 +9457,7 @@ function dhStaleAlerts(d, ex) {
   // Orders that should have executed at a session open since they were placed, with no refresh after that open
   if (ex && ex.hasOrders) {
     const byDay = {};
-    ex.orders.filter(o => o.status === 'PENDING' && o.amo !== false && o.placed).forEach(o => { (byDay[o.placed] = byDay[o.placed] || []).push(o); });
+    ex.orders.filter(o => o.status === 'PENDING' && o.amo !== false && o.placed && dhOwnOrder(o, dhLiveData())).forEach(o => { (byDay[o.placed] = byDay[o.placed] || []).push(o); });
     const snapAt = ex.fetchedAt ? String(ex.fetchedAt).slice(0, 10) : '';
     Object.keys(byDay).sort().forEach(p => {
       const n = dhNextWeekday(p), opened = now.iso > n || (now.iso === n && now.mins >= 9 * 60 + 30);
