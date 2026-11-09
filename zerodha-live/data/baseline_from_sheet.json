@@ -588,13 +588,11 @@
   "JIOFIN": "2026-08-06",
   "JSWENERGY": "2026-08-10",
   "JUBLFOOD": "2026-08-13",
-  "KALYANKJIL": "2026-07-29",
   "KEI": "2026-08-06",
   "KFINTECH": "2026-08-21",
   "LODHA": "2026-07-28",
   "LTM": "2026-08-10",
   "MANAPPURAM": "2026-07-27",
-  "MANKIND": "2026-07-29",
   "MAZDOCK": "2026-08-10",
   "NAM-INDIA": "2026-08-24",
   "NESTLEIND": "2026-07-29",
@@ -649,13 +647,11 @@
   "JIOFIN": "2026-08-06",
   "JSWENERGY": "2026-08-10",
   "JUBLFOOD": "2026-08-13",
-  "KALYANKJIL": "2026-07-29",
   "KEI": "2026-08-06",
   "KFINTECH": "2026-08-21",
   "LODHA": "2026-07-28",
   "LTM": "2026-08-10",
   "MANAPPURAM": "2026-07-27",
-  "MANKIND": "2026-07-29",
   "MAZDOCK": "2026-08-10",
   "NAM-INDIA": "2026-08-24",
   "NESTLEIND": "2026-07-29",
@@ -710,13 +706,11 @@
   "JIOFIN": 78,
   "JSWENERGY": 35,
   "JUBLFOOD": 40,
-  "KALYANKJIL": 36,
   "KEI": 4,
   "KFINTECH": 21,
   "LODHA": 16,
   "LTM": 5,
   "MANAPPURAM": 56,
-  "MANKIND": 8,
   "MAZDOCK": 8,
   "NAM-INDIA": 18,
   "NESTLEIND": 13,
@@ -741,7 +735,7 @@
   "RBLBANK": 59
  },
  "moved_out": {
-  "note": "The 19 trades the user moved to the new dashboard (2026-11-09) were removed from this baseline; their entry dates / quantities now live in moved_from_sheet.json.",
+  "note": "The 21 trades the user moved to the new dashboard (19 on 2026-11-09, KALYANKJIL and MANKIND added 2026-11-09 evening) were removed from this baseline; their entry dates / quantities now live in moved_from_sheet.json.",
   "symbols": [
    "ANANDRATHI",
    "ANGELONE",
@@ -761,7 +755,9 @@
    "NYKAA",
    "PERSISTENT",
    "TVSMOTOR",
-   "UNIONBANK"
+   "UNIONBANK",
+   "KALYANKJIL",
+   "MANKIND"
   ],
   "removed_at": "2026-11-09"
  }

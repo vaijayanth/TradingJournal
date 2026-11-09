@@ -14,7 +14,7 @@ default also does not adjust for dividends). The intraday 52-week high is report
 
 Output: data/signal_crosscheck.json (read by build_order_ticket.py, which blocks flagged signals).
 Usage:  python zerodha-live/scripts/crosscheck_signals.py [--signals PATH] [--out PATH] [--mode dh252|flip]
-  --mode flip (Zerodha, Nifty F&O): an entry needs Supertrend GREEN and a red->green flip within the last 6 trading bars
+  --mode flip (Zerodha, Nifty F&O): an entry needs Supertrend GREEN and a red->green flip within the last 3 trading bars
   (recomputed from Yahoo); the 252-session closing-high test is not applied. Add-ons and exits are checked as above.
 """
 import argparse
@@ -116,8 +116,8 @@ def main():
             res["reasons"].append(f"Supertrend is {colour.upper()} on complete data (signal says {published}) - not an exit")
         if kind == "entry" and args.mode == "dh252" and round(close, 2) < round(hi_close, 2):
             res["reasons"].append(f"close {close:.2f} is below the 252-session closing high {hi_close:.2f}")
-        if kind == "entry" and args.mode == "flip" and (flip_bars is None or flip_bars > 6):
-            res["reasons"].append(f"no red-to-green Supertrend flip in the last 6 trading bars on complete data (last flip {flip_bars} bars ago)")
+        if kind == "entry" and args.mode == "flip" and (flip_bars is None or flip_bars > 3):
+            res["reasons"].append(f"no red-to-green Supertrend flip in the last 3 trading bars on complete data (last flip {flip_bars} bars ago)")
         res["ok"] = not res["reasons"]
         results.append(res)
 

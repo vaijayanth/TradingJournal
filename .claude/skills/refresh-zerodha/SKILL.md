@@ -9,7 +9,7 @@ Run from the repo root of TradingJournal on branch `claude/beautiful-hamilton-fw
 
 ## The strategy this skill feeds (user, 2026-11-09)
 - Universe: Nifty F&O stocks (`data/fno_universe.json`, re-downloaded from NSE whenever the stored list is from an earlier month). Holdings in any other stock are ignored completely.
-- Entry: Supertrend flipped to green within the last 6 trading days and no open position in the stock. Size Rs 20,000 per position, +Rs 5,000 for every 100 trades (open + closed), floored to whole shares (min 1).
+- Entry: Supertrend flipped to green within the last 3 trading days and no open position in the stock. Size Rs 20,000 per position, +Rs 5,000 for every 100 trades (open + closed), floored to whole shares (min 1).
 - Exit: Supertrend red, any profit or loss, whole position. Grandfathered: a position held at the baseline cut-off (`baseline_from_sheet.json` -> `cutoff_date`) only gets an exit signal once its Supertrend turns red AFTER that date.
 - Add: Supertrend green and the position in loss -> 1/10 of the current quantity (min 1), once every 7 days.
 - Fixed capital base Rs 30,00,000. Closed-trade P&L is gross of charges.
@@ -30,7 +30,7 @@ Run from the repo root of TradingJournal on branch `claude/beautiful-hamilton-fw
 6. **Rebuild.** `python zerodha-live/scripts/refresh_zerodha.py` (monthly F&O list refresh, backtester screens, signal engine, covered-call signals; it appends today's point to `data/equity_history.json`, which is what the Performance equity curve is built from).
 7. **Verify before committing - report these to the user:**
    - Market data date is the latest trading day (not older than the previous session).
-   - Counts: holdings in scope vs total, exits / add-ons / entries, trades -> tier size, realised + unrealised P&L. Flag anything surprising (an exit that is not Supertrend red, an add-on that is not in loss, an entry with a flip older than 6 trading days = a bug; investigate, do not publish).
+   - Counts: holdings in scope vs total, exits / add-ons / entries, trades -> tier size, realised + unrealised P&L. Flag anything surprising (an exit that is not Supertrend red, an add-on that is not in loss, an entry with a flip older than 3 trading days = a bug; investigate, do not publish).
    - The reconciliation line: stocks whose Zerodha holdings quantity differs from the sheet's open quantity at the cut-off (`reconciliation.differences`) - informational; the holdings are the truth.
    - `no_data` stocks (no backtester price/Supertrend) and whether the F&O list changed this month (added/removed names).
    - If many entry signals appear at once, say how much capital they would need versus the Rs 30,00,000 base and how much is already deployed.

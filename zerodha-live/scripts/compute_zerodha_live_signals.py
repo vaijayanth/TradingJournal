@@ -7,7 +7,7 @@ Rules (user, 2026-11-09):
   scope    : the dashboard's OPEN POSITIONS are only the stocks the user moved from the old sheet (data/moved_from_sheet.json)
              plus positions it opened itself since (zerodha_trades.json). Every other Zerodha holding - including the other
              old-sheet trades - is ignored, but still blocks a new ENTRY in that stock (you cannot enter what you already hold).
-  entry    : Supertrend flipped to GREEN within the last 6 trading days, currently green, and no open position in the stock.
+  entry    : Supertrend flipped to GREEN within the last 3 trading days, currently green, and no open position in the stock.
              Quantity = floor(position size / close), minimum 1.
   exit     : Supertrend RED, whatever the profit or loss -> sell the whole position. GRANDFATHERED: a position held at the
              baseline cut-off only gets an exit signal once its Supertrend turns red AFTER the cut-off (a stock that was
@@ -38,7 +38,7 @@ STARTING_CAPITAL = 3_000_000
 BASE_POSITION_RS = 20_000
 POSITION_INCREMENT_RS = 5_000
 POSITION_INCREMENT_TRADES = 100
-ENTRY_WINDOW_TRADING_DAYS = 6
+ENTRY_WINDOW_TRADING_DAYS = 3
 ADD_FRACTION = 0.10
 ADD_COOLDOWN_DAYS = 7
 
