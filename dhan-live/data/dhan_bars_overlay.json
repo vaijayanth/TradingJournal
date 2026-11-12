@@ -1,6 +1,6 @@
 {
  "_note": "Daily bars pulled from the Dhan MCP historical_data_agent_tool (unadjusted). crosscheck_signals.py appends a bar here only when it is dated after the last Yahoo bar and not after the signals' market_data_date, so Yahoo history is never overwritten. SHREMINVIT has no 11-Nov candle at Dhan (no trades), so Yahoo's 11-09 bar is its last session.",
- "fetched_at": "2026-11-12T09:20:00+05:30",
+ "fetched_at": "2026-11-12T09:45:00+05:30",
  "source": "mcp__dhan_mcp__historical_data_agent_tool (historical)",
  "bars": {
   "AIMTRON": [
@@ -161,6 +161,16 @@
     "low": 88.09,
     "close": 88.09,
     "volume": 120349
+   }
+  ],
+  "NIFTYIETF": [
+   {
+    "date": "2026-11-11",
+    "open": 289.4,
+    "high": 289.4,
+    "low": 284.71,
+    "close": 285.17,
+    "volume": 3609489
    }
   ]
  }
