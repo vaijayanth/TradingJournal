@@ -1,92 +1,28 @@
 {
- "generated_at": "2026-11-12T08:48:51+05:30",
+ "generated_at": "2026-11-12T08:55:46+05:30",
  "broker": "dhan",
  "market_data_date": "2026-11-11",
- "signals_generated_at": "2026-11-12T03:18:47.726985+00:00",
+ "signals_generated_at": "2026-11-12T03:25:43.486513+00:00",
  "status": "BLOCK",
  "global_block": true,
  "counts": {
-  "block": 8,
+  "block": 1,
   "warn": 6,
   "info": 0
  },
- "per_symbol_blocks": {
-  "GAIL": [
-   "S3: GAIL: entry signal for a stock already held"
-  ],
-  "GLENMARK": [
-   "S3: GLENMARK: entry signal for a stock already held"
-  ],
-  "KPL": [
-   "S3: KPL: entry signal for a stock already held"
-  ],
-  "MARICO": [
-   "S3: MARICO: entry signal for a stock already held"
-  ],
-  "SAILIFE": [
-   "S3: SAILIFE: entry signal for a stock already held"
-  ],
-  "TVSMOTOR": [
-   "S3: TVSMOTOR: entry signal for a stock already held"
-  ],
-  "UNOMINDA": [
-   "S3: UNOMINDA: entry signal for a stock already held"
-  ]
- },
+ "per_symbol_blocks": {},
  "findings": [
   {
    "id": "F5",
    "level": "BLOCK",
    "symbol": null,
-   "msg": "the cross-check disagrees with 21 of 41 signals - prices are suspect (a partial same-day bar while the market is open, a hole in the price history, or a bad feed). Do not order until the close-of-day data is published and the refresh re-run."
-  },
-  {
-   "id": "S3",
-   "level": "BLOCK",
-   "symbol": "GAIL",
-   "msg": "GAIL: entry signal for a stock already held"
-  },
-  {
-   "id": "S3",
-   "level": "BLOCK",
-   "symbol": "GLENMARK",
-   "msg": "GLENMARK: entry signal for a stock already held"
-  },
-  {
-   "id": "S3",
-   "level": "BLOCK",
-   "symbol": "KPL",
-   "msg": "KPL: entry signal for a stock already held"
-  },
-  {
-   "id": "S3",
-   "level": "BLOCK",
-   "symbol": "MARICO",
-   "msg": "MARICO: entry signal for a stock already held"
-  },
-  {
-   "id": "S3",
-   "level": "BLOCK",
-   "symbol": "SAILIFE",
-   "msg": "SAILIFE: entry signal for a stock already held"
-  },
-  {
-   "id": "S3",
-   "level": "BLOCK",
-   "symbol": "TVSMOTOR",
-   "msg": "TVSMOTOR: entry signal for a stock already held"
-  },
-  {
-   "id": "S3",
-   "level": "BLOCK",
-   "symbol": "UNOMINDA",
-   "msg": "UNOMINDA: entry signal for a stock already held"
+   "msg": "the cross-check disagrees with 18 of 34 signals - prices are suspect (a partial same-day bar while the market is open, a hole in the price history, or a bad feed). Do not order until the close-of-day data is published and the refresh re-run."
   },
   {
    "id": "S4",
    "level": "WARN",
    "symbol": null,
-   "msg": "4 entries cost more than 3x the tier (Rs1,000) because the minimum is 1 share; largest FLUOROCHEM Rs4,824. Check before ordering."
+   "msg": "2 entries cost more than 3x the tier (Rs1,000) because the minimum is 1 share; largest FLUOROCHEM Rs4,824. Check before ordering."
   },
   {
    "id": "P3",

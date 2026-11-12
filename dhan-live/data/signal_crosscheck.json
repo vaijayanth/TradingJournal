@@ -1,13 +1,13 @@
 {
- "generated_at": "2026-11-12T03:18:51.130835+00:00",
+ "generated_at": "2026-11-12T03:25:46.360971+00:00",
  "market_data_date": "2026-11-11",
  "yahoo_last_bars": [
   "2026-11-09",
   "2026-11-11"
  ],
  "bars_after_signal_date_ignored": [],
- "checked": 41,
- "flagged": 21,
+ "checked": 34,
+ "flagged": 18,
  "results": [
   {
    "symbol": "AIMTRON",
@@ -130,21 +130,6 @@
    "pct_from_intraday_high": -2.71
   },
   {
-   "symbol": "GAIL",
-   "kind": "entry",
-   "ok": true,
-   "reasons": [],
-   "published_colour": "green",
-   "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-11",
-   "close": 189.9,
-   "published_close": 189.9,
-   "closing_high_252": 189.9,
-   "intraday_high_252": 189.9,
-   "flip_bars_ago": 6,
-   "pct_from_intraday_high": 0.0
-  },
-  {
    "symbol": "GALAPREC",
    "kind": "entry",
    "ok": false,
@@ -162,23 +147,6 @@
    "intraday_high_252": 1260.0,
    "flip_bars_ago": 31,
    "pct_from_intraday_high": -7.63
-  },
-  {
-   "symbol": "GLENMARK",
-   "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "Yahoo's last bar is 2026-11-09, signals are dated 2026-11-11"
-   ],
-   "published_colour": "green",
-   "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-09",
-   "close": 2671.1,
-   "published_close": 2677.2,
-   "closing_high_252": 2671.1,
-   "intraday_high_252": 2714.0,
-   "flip_bars_ago": 5,
-   "pct_from_intraday_high": -1.58
   },
   {
    "symbol": "ICIL",
@@ -234,25 +202,6 @@
    "pct_from_intraday_high": -1.7
   },
   {
-   "symbol": "KPL",
-   "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "Yahoo's last bar is 2026-11-09, signals are dated 2026-11-11",
-    "close 3856.40 differs from the signal's 3983.8"
-   ],
-   "note": "recent listing: only 57 sessions of history (closing high taken over those)",
-   "published_colour": "green",
-   "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-09",
-   "close": 3856.4,
-   "published_close": 3983.8,
-   "closing_high_252": 3856.4,
-   "intraday_high_252": 3949.0,
-   "flip_bars_ago": 33,
-   "pct_from_intraday_high": -2.34
-  },
-  {
    "symbol": "KTKBANK",
    "kind": "entry",
    "ok": true,
@@ -266,21 +215,6 @@
    "intraday_high_252": 352.5,
    "flip_bars_ago": 0,
    "pct_from_intraday_high": -0.85
-  },
-  {
-   "symbol": "MARICO",
-   "kind": "entry",
-   "ok": true,
-   "reasons": [],
-   "published_colour": "green",
-   "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-11",
-   "close": 925.0,
-   "published_close": 925.0,
-   "closing_high_252": 925.0,
-   "intraday_high_252": 925.0,
-   "flip_bars_ago": 5,
-   "pct_from_intraday_high": 0.0
   },
   {
    "symbol": "MEESHO",
@@ -483,21 +417,6 @@
    "pct_from_intraday_high": -1.05
   },
   {
-   "symbol": "SAILIFE",
-   "kind": "entry",
-   "ok": true,
-   "reasons": [],
-   "published_colour": "green",
-   "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-11",
-   "close": 1918.6,
-   "published_close": 1918.6,
-   "closing_high_252": 1918.6,
-   "intraday_high_252": 1941.8,
-   "flip_bars_ago": 7,
-   "pct_from_intraday_high": -1.19
-  },
-  {
    "symbol": "SANATHAN",
    "kind": "entry",
    "ok": false,
@@ -600,21 +519,6 @@
    "pct_from_intraday_high": -1.97
   },
   {
-   "symbol": "TVSMOTOR",
-   "kind": "entry",
-   "ok": true,
-   "reasons": [],
-   "published_colour": "green",
-   "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-11",
-   "close": 4560.0,
-   "published_close": 4560.0,
-   "closing_high_252": 4560.0,
-   "intraday_high_252": 4636.1,
-   "flip_bars_ago": 9,
-   "pct_from_intraday_high": -1.64
-  },
-  {
    "symbol": "UNIMECH",
    "kind": "entry",
    "ok": true,
@@ -645,24 +549,6 @@
    "intraday_high_252": 205.49,
    "flip_bars_ago": 13,
    "pct_from_intraday_high": -1.61
-  },
-  {
-   "symbol": "UNOMINDA",
-   "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "Yahoo's last bar is 2026-11-09, signals are dated 2026-11-11",
-    "close 1353.80 differs from the signal's 1373.0"
-   ],
-   "published_colour": "green",
-   "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-09",
-   "close": 1353.8,
-   "published_close": 1373.0,
-   "closing_high_252": 1353.8,
-   "intraday_high_252": 1368.0,
-   "flip_bars_ago": 3,
-   "pct_from_intraday_high": -1.04
   },
   {
    "symbol": "PASHUPATI",
