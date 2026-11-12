@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-12T03:25:46.360971+00:00",
+ "generated_at": "2026-11-12T03:30:55.651929+00:00",
  "market_data_date": "2026-11-11",
  "yahoo_last_bars": [
   "2026-11-09",
@@ -7,44 +7,46 @@
  ],
  "bars_after_signal_date_ignored": [],
  "checked": 34,
- "flagged": 18,
+ "flagged": 4,
  "results": [
   {
    "symbol": "AIMTRON",
    "kind": "entry",
    "ok": false,
    "reasons": [
-    "Yahoo's last bar is 2026-11-09, signals are dated 2026-11-11"
+    "close 1987.65 differs from the signal's 1971.6"
+   ],
+   "dhan_bars_added": [
+    "2026-11-11"
    ],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-09",
-   "close": 1971.6,
+   "yahoo_last_bar": "2026-11-11",
+   "close": 1987.65,
    "published_close": 1971.6,
-   "closing_high_252": 1971.6,
-   "intraday_high_252": 2010.0,
-   "flip_bars_ago": 3,
-   "pct_from_intraday_high": -1.91
+   "closing_high_252": 1987.65,
+   "intraday_high_252": 2020.95,
+   "flip_bars_ago": 4,
+   "pct_from_intraday_high": -1.65
   },
   {
    "symbol": "AKCAPIT",
    "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "Yahoo's last bar is 2026-11-09, signals are dated 2026-11-11",
-    "close 1780.40 differs from the signal's 1856.6",
-    "Supertrend is RED on complete data (signal says green)"
+   "ok": true,
+   "reasons": [],
+   "dhan_bars_added": [
+    "2026-11-11"
    ],
-   "note": "recent listing: only 57 sessions of history (closing high taken over those)",
+   "note": "recent listing: only 58 sessions of history (closing high taken over those)",
    "published_colour": "green",
-   "recomputed_colour": "red",
-   "yahoo_last_bar": "2026-11-09",
-   "close": 1780.4,
+   "recomputed_colour": "green",
+   "yahoo_last_bar": "2026-11-11",
+   "close": 1856.6,
    "published_close": 1856.6,
-   "closing_high_252": 1780.4,
-   "intraday_high_252": 1838.0,
-   "flip_bars_ago": null,
-   "pct_from_intraday_high": -3.13
+   "closing_high_252": 1856.6,
+   "intraday_high_252": 1875.0,
+   "flip_bars_ago": 0,
+   "pct_from_intraday_high": -0.98
   },
   {
    "symbol": "ALEMBICLTD",
@@ -79,40 +81,38 @@
   {
    "symbol": "ASAHIINDIA",
    "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "Yahoo's last bar is 2026-11-09, signals are dated 2026-11-11",
-    "close 1055.80 differs from the signal's 1088.05",
-    "close 1055.80 is below the 252-session closing high 1066.40"
+   "ok": true,
+   "reasons": [],
+   "dhan_bars_added": [
+    "2026-11-11"
    ],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-09",
-   "close": 1055.8,
+   "yahoo_last_bar": "2026-11-11",
+   "close": 1088.05,
    "published_close": 1088.05,
-   "closing_high_252": 1066.4,
-   "intraday_high_252": 1074.0,
-   "flip_bars_ago": 4,
-   "pct_from_intraday_high": -1.69
+   "closing_high_252": 1088.05,
+   "intraday_high_252": 1099.15,
+   "flip_bars_ago": 5,
+   "pct_from_intraday_high": -1.01
   },
   {
    "symbol": "CNL",
    "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "Yahoo's last bar is 2026-11-09, signals are dated 2026-11-11",
-    "close 1338.80 differs from the signal's 1466.3",
-    "close 1338.80 is below the 252-session closing high 1388.30"
+   "ok": true,
+   "reasons": [],
+   "dhan_bars_added": [
+    "2026-11-11"
    ],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-09",
-   "close": 1338.8,
+   "yahoo_last_bar": "2026-11-11",
+   "close": 1466.3,
    "published_close": 1466.3,
-   "closing_high_252": 1388.3,
-   "intraday_high_252": 1421.6,
-   "flip_bars_ago": 7,
-   "pct_from_intraday_high": -5.82
+   "closing_high_252": 1466.3,
+   "intraday_high_252": 1472.6,
+   "flip_bars_ago": 8,
+   "pct_from_intraday_high": -0.43
   },
   {
    "symbol": "FLUOROCHEM",
@@ -132,40 +132,38 @@
   {
    "symbol": "GALAPREC",
    "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "Yahoo's last bar is 2026-11-09, signals are dated 2026-11-11",
-    "close 1163.80 differs from the signal's 1248.3",
-    "close 1163.80 is below the 252-session closing high 1234.00"
+   "ok": true,
+   "reasons": [],
+   "dhan_bars_added": [
+    "2026-11-11"
    ],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-09",
-   "close": 1163.8,
+   "yahoo_last_bar": "2026-11-11",
+   "close": 1248.3,
    "published_close": 1248.3,
-   "closing_high_252": 1234.0,
-   "intraday_high_252": 1260.0,
-   "flip_bars_ago": 31,
-   "pct_from_intraday_high": -7.63
+   "closing_high_252": 1248.3,
+   "intraday_high_252": 1319.9,
+   "flip_bars_ago": 32,
+   "pct_from_intraday_high": -5.42
   },
   {
    "symbol": "ICIL",
    "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "Yahoo's last bar is 2026-11-09, signals are dated 2026-11-11",
-    "close 504.60 differs from the signal's 542.8",
-    "close 504.60 is below the 252-session closing high 525.35"
+   "ok": true,
+   "reasons": [],
+   "dhan_bars_added": [
+    "2026-11-11"
    ],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-09",
-   "close": 504.6,
+   "yahoo_last_bar": "2026-11-11",
+   "close": 542.8,
    "published_close": 542.8,
-   "closing_high_252": 525.35,
-   "intraday_high_252": 536.0,
-   "flip_bars_ago": 4,
-   "pct_from_intraday_high": -5.86
+   "closing_high_252": 542.8,
+   "intraday_high_252": 545.0,
+   "flip_bars_ago": 5,
+   "pct_from_intraday_high": -0.4
   },
   {
    "symbol": "KALYANKJIL",
@@ -185,21 +183,20 @@
   {
    "symbol": "KDDL",
    "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "Yahoo's last bar is 2026-11-09, signals are dated 2026-11-11",
-    "close 4197.20 differs from the signal's 4297.5",
-    "close 4197.20 is below the 252-session closing high 4251.90"
+   "ok": true,
+   "reasons": [],
+   "dhan_bars_added": [
+    "2026-11-11"
    ],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-09",
-   "close": 4197.2,
+   "yahoo_last_bar": "2026-11-11",
+   "close": 4297.5,
    "published_close": 4297.5,
-   "closing_high_252": 4251.9,
-   "intraday_high_252": 4270.0,
-   "flip_bars_ago": 2,
-   "pct_from_intraday_high": -1.7
+   "closing_high_252": 4297.5,
+   "intraday_high_252": 4368.8,
+   "flip_bars_ago": 3,
+   "pct_from_intraday_high": -1.63
   },
   {
    "symbol": "KTKBANK",
@@ -281,93 +278,92 @@
   {
    "symbol": "PANACHE",
    "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "Yahoo's last bar is 2026-11-09, signals are dated 2026-11-11",
-    "close 713.70 differs from the signal's 727.95"
+   "ok": true,
+   "reasons": [],
+   "dhan_bars_added": [
+    "2026-11-11"
    ],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-09",
-   "close": 713.7,
+   "yahoo_last_bar": "2026-11-11",
+   "close": 727.95,
    "published_close": 727.95,
-   "closing_high_252": 713.7,
-   "intraday_high_252": 713.7,
-   "flip_bars_ago": 132,
+   "closing_high_252": 727.95,
+   "intraday_high_252": 727.95,
+   "flip_bars_ago": 133,
    "pct_from_intraday_high": 0.0
   },
   {
    "symbol": "PETRONET",
    "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "Yahoo's last bar is 2026-11-09, signals are dated 2026-11-11",
-    "close 320.45 differs from the signal's 329.8",
-    "close 320.45 is below the 252-session closing high 323.40"
+   "ok": true,
+   "reasons": [],
+   "dhan_bars_added": [
+    "2026-11-11"
    ],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-09",
-   "close": 320.45,
+   "yahoo_last_bar": "2026-11-11",
+   "close": 329.8,
    "published_close": 329.8,
-   "closing_high_252": 323.4,
-   "intraday_high_252": 326.4,
-   "flip_bars_ago": 54,
-   "pct_from_intraday_high": -1.82
+   "closing_high_252": 329.8,
+   "intraday_high_252": 329.9,
+   "flip_bars_ago": 55,
+   "pct_from_intraday_high": -0.03
   },
   {
    "symbol": "PGIL",
    "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "Yahoo's last bar is 2026-11-09, signals are dated 2026-11-11",
-    "close 1343.60 differs from the signal's 1391.8"
+   "ok": true,
+   "reasons": [],
+   "dhan_bars_added": [
+    "2026-11-11"
    ],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-09",
-   "close": 1343.6,
+   "yahoo_last_bar": "2026-11-11",
+   "close": 1391.8,
    "published_close": 1391.8,
-   "closing_high_252": 1343.6,
+   "closing_high_252": 1391.8,
    "intraday_high_252": 1413.3,
-   "flip_bars_ago": 141,
-   "pct_from_intraday_high": -4.93
+   "flip_bars_ago": 142,
+   "pct_from_intraday_high": -1.52
   },
   {
    "symbol": "PGINVIT",
    "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "Yahoo's last bar is 2026-11-09, signals are dated 2026-11-11"
+   "ok": true,
+   "reasons": [],
+   "dhan_bars_added": [
+    "2026-11-11"
    ],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-09",
-   "close": 105.64,
+   "yahoo_last_bar": "2026-11-11",
+   "close": 105.68,
    "published_close": 105.64,
-   "closing_high_252": 105.64,
+   "closing_high_252": 105.68,
    "intraday_high_252": 105.98,
-   "flip_bars_ago": 43,
-   "pct_from_intraday_high": -0.32
+   "flip_bars_ago": 44,
+   "pct_from_intraday_high": -0.28
   },
   {
    "symbol": "PHOENIXLTD",
    "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "Yahoo's last bar is 2026-11-09, signals are dated 2026-11-11",
-    "close 2147.00 differs from the signal's 2171.0",
-    "close 2147.00 is below the 252-session closing high 2154.90"
+   "ok": true,
+   "reasons": [],
+   "dhan_bars_added": [
+    "2026-11-11"
    ],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-09",
-   "close": 2147.0,
+   "yahoo_last_bar": "2026-11-11",
+   "close": 2171.0,
    "published_close": 2171.0,
-   "closing_high_252": 2154.9,
-   "intraday_high_252": 2169.8,
-   "flip_bars_ago": 7,
-   "pct_from_intraday_high": -1.05
+   "closing_high_252": 2171.0,
+   "intraday_high_252": 2203.0,
+   "flip_bars_ago": 8,
+   "pct_from_intraday_high": -1.45
   },
   {
    "symbol": "PNB",
@@ -389,17 +385,21 @@
    "kind": "entry",
    "ok": false,
    "reasons": [
-    "Yahoo's last bar is 2026-11-09, signals are dated 2026-11-11"
+    "close 1546.40 differs from the signal's 1614.05",
+    "close 1546.40 is below the 252-session closing high 1614.05"
+   ],
+   "dhan_bars_added": [
+    "2026-11-11"
    ],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-09",
-   "close": 1614.05,
+   "yahoo_last_bar": "2026-11-11",
+   "close": 1546.4,
    "published_close": 1614.05,
    "closing_high_252": 1614.05,
-   "intraday_high_252": 1625.0,
-   "flip_bars_ago": 2,
-   "pct_from_intraday_high": -0.67
+   "intraday_high_252": 1668.9,
+   "flip_bars_ago": 3,
+   "pct_from_intraday_high": -7.34
   },
   {
    "symbol": "RKFORGE",
@@ -419,28 +419,27 @@
   {
    "symbol": "SANATHAN",
    "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "Yahoo's last bar is 2026-11-09, signals are dated 2026-11-11",
-    "close 549.45 differs from the signal's 588.4",
-    "close 549.45 is below the 252-session closing high 570.05"
+   "ok": true,
+   "reasons": [],
+   "dhan_bars_added": [
+    "2026-11-11"
    ],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-09",
-   "close": 549.45,
+   "yahoo_last_bar": "2026-11-11",
+   "close": 588.4,
    "published_close": 588.4,
-   "closing_high_252": 570.05,
-   "intraday_high_252": 594.15,
-   "flip_bars_ago": 96,
-   "pct_from_intraday_high": -7.52
+   "closing_high_252": 588.4,
+   "intraday_high_252": 595.0,
+   "flip_bars_ago": 97,
+   "pct_from_intraday_high": -1.11
   },
   {
    "symbol": "SHREMINVIT",
    "kind": "entry",
    "ok": false,
    "reasons": [
-    "Yahoo's last bar is 2026-11-09, signals are dated 2026-11-11",
+    "last bar is 2026-11-09 (Yahoo), signals are dated 2026-11-11",
     "close 103.00 is below the 252-session closing high 105.00"
    ],
    "published_colour": "green",
@@ -456,21 +455,20 @@
   {
    "symbol": "STEELCAS",
    "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "Yahoo's last bar is 2026-11-09, signals are dated 2026-11-11",
-    "close 374.90 differs from the signal's 382.1",
-    "close 374.90 is below the 252-session closing high 377.20"
+   "ok": true,
+   "reasons": [],
+   "dhan_bars_added": [
+    "2026-11-11"
    ],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-09",
-   "close": 374.9,
+   "yahoo_last_bar": "2026-11-11",
+   "close": 382.1,
    "published_close": 382.1,
-   "closing_high_252": 377.2,
+   "closing_high_252": 382.1,
    "intraday_high_252": 390.9,
-   "flip_bars_ago": 32,
-   "pct_from_intraday_high": -4.09
+   "flip_bars_ago": 33,
+   "pct_from_intraday_high": -2.25
   },
   {
    "symbol": "SUNTV",
@@ -553,20 +551,20 @@
   {
    "symbol": "PASHUPATI",
    "kind": "exit",
-   "ok": false,
-   "reasons": [
-    "Yahoo's last bar is 2026-11-09, signals are dated 2026-11-11",
-    "close 92.72 differs from the signal's 88.09"
+   "ok": true,
+   "reasons": [],
+   "dhan_bars_added": [
+    "2026-11-11"
    ],
    "published_colour": "red",
    "recomputed_colour": "red",
-   "yahoo_last_bar": "2026-11-09",
-   "close": 92.72,
+   "yahoo_last_bar": "2026-11-11",
+   "close": 88.09,
    "published_close": 88.09,
    "closing_high_252": 148.72,
    "intraday_high_252": 155.49,
-   "flip_bars_ago": 14,
-   "pct_from_intraday_high": -40.37
+   "flip_bars_ago": 15,
+   "pct_from_intraday_high": -43.35
   },
   {
    "symbol": "STOVEKRAFT",

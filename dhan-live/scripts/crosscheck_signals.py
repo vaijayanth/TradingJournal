@@ -67,6 +67,10 @@ def main():
     df = yf.download([s + ".NS" for s in syms], period="5y", progress=False, auto_adjust=False, threads=True)
 
     results, last_bars, dropped = [], set(), set()
+    # Dhan daily bars (data/dhan_bars_overlay.json, pulled over the Dhan MCP) fill sessions Yahoo has not published yet; they are only
+    # ever APPENDED after Yahoo's last bar (never overwrite Yahoo) and never past the signals' market_data_date.
+    overlay_path = ROOT / "data" / "dhan_bars_overlay.json"
+    overlay = json.loads(overlay_path.read_text()).get("bars", {}) if overlay_path.exists() else {}
     for kind, r in todo:
         s = r["symbol"]
         res = {"symbol": s, "kind": kind, "ok": False, "reasons": []}
@@ -80,6 +84,15 @@ def main():
             if later:
                 dropped.update(str(d.date()) for d in later)
                 x = x[[str(d.date()) <= md for d in x.index]]
+        if x is not None and md and overlay.get(s):
+            import pandas as pd
+            last_y = str(x.index[-1].date()) if len(x) else ""
+            add = [o for o in overlay[s] if o["date"] > last_y and o["date"] <= md]
+            if add:
+                rows = pd.DataFrame([{"Open": o["open"], "High": o["high"], "Low": o["low"], "Close": o["close"], "Volume": o["volume"]} for o in add],
+                                    index=pd.to_datetime([o["date"] for o in add]))
+                x = pd.concat([x[["Open", "High", "Low", "Close", "Volume"]], rows])
+                res["dhan_bars_added"] = [o["date"] for o in add]
         if x is None or len(x) < PERIOD + 2:
             res["reasons"].append("not enough Yahoo history to verify")
             results.append(res)
@@ -106,8 +119,8 @@ def main():
             "close": round(close, 2), "published_close": pub_close, "closing_high_252": round(hi_close, 2),
             "intraday_high_252": round(hi_intra, 2), "flip_bars_ago": flip_bars, "pct_from_intraday_high": round((close / hi_intra - 1) * 100, 2),
         })
-        if md and np.busday_count(np.datetime64(last_bar) + 1, np.datetime64(md) + 1) > 0:   # a session between Yahoo's last bar and the signal date is missing (a weekend signal date is fine)
-            res["reasons"].append(f"Yahoo's last bar is {last_bar}, signals are dated {md}")
+        if md and np.busday_count(np.datetime64(last_bar) + 1, np.datetime64(md) + 1) > 0:   # a session between the last bar (Yahoo, plus any Dhan overlay) and the signal date is missing (a weekend signal date is fine)
+            res["reasons"].append(f"last bar is {last_bar}" + (" (Yahoo + Dhan)" if res.get("dhan_bars_added") else " (Yahoo)") + f", signals are dated {md}")
         if pub_close and abs(close / pub_close - 1) > 0.005:
             res["reasons"].append(f"close {close:.2f} differs from the signal's {pub_close}")
         if kind in ("entry", "addon") and colour != "green":

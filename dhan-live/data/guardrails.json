@@ -1,22 +1,22 @@
 {
- "generated_at": "2026-11-12T08:55:46+05:30",
+ "generated_at": "2026-11-12T09:00:55+05:30",
  "broker": "dhan",
  "market_data_date": "2026-11-11",
- "signals_generated_at": "2026-11-12T03:25:43.486513+00:00",
- "status": "BLOCK",
- "global_block": true,
+ "signals_generated_at": "2026-11-12T03:30:52.366075+00:00",
+ "status": "WARN",
+ "global_block": false,
  "counts": {
-  "block": 1,
-  "warn": 6,
+  "block": 0,
+  "warn": 7,
   "info": 0
  },
  "per_symbol_blocks": {},
  "findings": [
   {
    "id": "F5",
-   "level": "BLOCK",
+   "level": "WARN",
    "symbol": null,
-   "msg": "the cross-check disagrees with 18 of 34 signals - prices are suspect (a partial same-day bar while the market is open, a hole in the price history, or a bad feed). Do not order until the close-of-day data is published and the refresh re-run."
+   "msg": "the cross-check flagged 4 of 34 signals (they are blocked from orders): AIMTRON, PRIZOR, SHREMINVIT, UNIONBANK"
   },
   {
    "id": "S4",
