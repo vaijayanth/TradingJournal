@@ -1,46 +1,98 @@
 {
- "generated_at": "2026-11-09T18:34:29+05:30",
+ "generated_at": "2026-11-12T08:48:51+05:30",
  "broker": "dhan",
- "market_data_date": "2026-11-09",
- "signals_generated_at": "2026-11-09T12:28:08.174184+00:00",
- "status": "WARN",
- "global_block": false,
+ "market_data_date": "2026-11-11",
+ "signals_generated_at": "2026-11-12T03:18:47.726985+00:00",
+ "status": "BLOCK",
+ "global_block": true,
  "counts": {
-  "block": 0,
-  "warn": 8,
+  "block": 8,
+  "warn": 6,
   "info": 0
  },
- "per_symbol_blocks": {},
+ "per_symbol_blocks": {
+  "GAIL": [
+   "S3: GAIL: entry signal for a stock already held"
+  ],
+  "GLENMARK": [
+   "S3: GLENMARK: entry signal for a stock already held"
+  ],
+  "KPL": [
+   "S3: KPL: entry signal for a stock already held"
+  ],
+  "MARICO": [
+   "S3: MARICO: entry signal for a stock already held"
+  ],
+  "SAILIFE": [
+   "S3: SAILIFE: entry signal for a stock already held"
+  ],
+  "TVSMOTOR": [
+   "S3: TVSMOTOR: entry signal for a stock already held"
+  ],
+  "UNOMINDA": [
+   "S3: UNOMINDA: entry signal for a stock already held"
+  ]
+ },
  "findings": [
   {
    "id": "F5",
-   "level": "WARN",
+   "level": "BLOCK",
    "symbol": null,
-   "msg": "the cross-check flagged 4 of 24 signals (they are blocked from orders): PETRONET, PNB, PRIZOR, UNIONBANK"
+   "msg": "the cross-check disagrees with 21 of 41 signals - prices are suspect (a partial same-day bar while the market is open, a hole in the price history, or a bad feed). Do not order until the close-of-day data is published and the refresh re-run."
   },
   {
-   "id": "I3",
-   "level": "WARN",
-   "symbol": null,
-   "msg": "20 stocks were bought in the last 3 days and are not in Dhan holdings yet (settlement timing); positions and P&L exclude them until holdings catch up: CYIENT (1->2), STOVEKRAFT (1->2), AUROPHARMA (0->1), ENTERO (0->1), MACPOWER (0->1), ROLEXRINGS (0->4), CORONA (0->1), GRWRHITECH (0->1), MANAKCOAT (0->6), NAVINFLUOR (0->1), APLLTD (0->1), EMCURE (0->1) ..."
+   "id": "S3",
+   "level": "BLOCK",
+   "symbol": "GAIL",
+   "msg": "GAIL: entry signal for a stock already held"
+  },
+  {
+   "id": "S3",
+   "level": "BLOCK",
+   "symbol": "GLENMARK",
+   "msg": "GLENMARK: entry signal for a stock already held"
+  },
+  {
+   "id": "S3",
+   "level": "BLOCK",
+   "symbol": "KPL",
+   "msg": "KPL: entry signal for a stock already held"
+  },
+  {
+   "id": "S3",
+   "level": "BLOCK",
+   "symbol": "MARICO",
+   "msg": "MARICO: entry signal for a stock already held"
+  },
+  {
+   "id": "S3",
+   "level": "BLOCK",
+   "symbol": "SAILIFE",
+   "msg": "SAILIFE: entry signal for a stock already held"
+  },
+  {
+   "id": "S3",
+   "level": "BLOCK",
+   "symbol": "TVSMOTOR",
+   "msg": "TVSMOTOR: entry signal for a stock already held"
+  },
+  {
+   "id": "S3",
+   "level": "BLOCK",
+   "symbol": "UNOMINDA",
+   "msg": "UNOMINDA: entry signal for a stock already held"
   },
   {
    "id": "S4",
    "level": "WARN",
    "symbol": null,
-   "msg": "3 entries cost more than 3x the tier (Rs1,000) because the minimum is 1 share; largest TVSMOTOR Rs4,506. Check before ordering."
+   "msg": "4 entries cost more than 3x the tier (Rs1,000) because the minimum is 1 share; largest FLUOROCHEM Rs4,824. Check before ordering."
   },
   {
    "id": "P3",
    "level": "WARN",
    "symbol": null,
-   "msg": "9 open option exit / strike-breach alerts on 9 stocks (BANKINDIA, BPCL, BSE, CGPOWER, DIXON, HCLTECH, INFY, MCX...) - see the Covered Call alerts"
-  },
-  {
-   "id": "P5",
-   "level": "WARN",
-   "symbol": null,
-   "msg": "2 super order stop findings (2 high: likely orphaned stop legs that could BUY a new long) - see Covered Call > Alerts; the dhan-superorder skill can cancel them"
+   "msg": "8 open option exit / strike-breach alerts on 8 stocks (BPCL, BSE, CGPOWER, DIXON, HCLTECH, INFY, MCX, SHRIRAMFIN) - see the Covered Call alerts"
   },
   {
    "id": "P4",
@@ -52,7 +104,13 @@
    "id": "P4",
    "level": "WARN",
    "symbol": "BSE",
-   "msg": "BSE: a short call would not be covered by the shares held (lot 200, held 34)"
+   "msg": "BSE: a short call would not be covered by the shares held (lot 200, held 37)"
+  },
+  {
+   "id": "P4",
+   "level": "WARN",
+   "symbol": "BANKINDIA",
+   "msg": "BANKINDIA: a short call would not be covered by the shares held (lot 5200, held 179)"
   },
   {
    "id": "P4",
