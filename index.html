@@ -108,7 +108,7 @@ nav {
 }
 .btn-icon:hover { background: var(--surface2); color: var(--text-primary); }
 /* ── LAYOUT ── */
-.page { display: none; padding: 20px; max-width: none; margin: 0 auto; }
+.page { display: none; padding: 20px; max-width: 1440px; margin: 0 auto; }
 .page.active { display: block; }
 .eq-spinner { display:inline-block; width:12px; height:12px; border:2px solid var(--border); border-top-color: var(--accent, #3b82f6); border-radius:50%; animation: eq-spin 0.7s linear infinite; }
 @keyframes eq-spin { to { transform: rotate(360deg); } }
@@ -785,7 +785,7 @@ tbody tr:hover { filter: brightness(0.97); }
   font-family: var(--font-mono);
 }
 /* ── DASHBOARD 2.0 ── */
-#page-dashboard2 { max-width: none; }
+#page-dashboard2 { max-width: 1320px; }
 .d2-head { display:flex; justify-content:space-between; align-items:center; padding:2px 0 10px; gap:14px; flex-wrap:wrap; }
 .d2-eyebrow { display:none; }
 .d2-head h1 { font-size:21px; letter-spacing:-.04em; margin:0; }
@@ -890,7 +890,7 @@ tbody tr:hover { filter: brightness(0.97); }
   .d2-recent-s:nth-child(2) { border-right:0; } .d2-recent-s:nth-child(3) { padding-left:0; }
 }
 /* ── PERFORMANCE 2.0 ── */
-#page-performance2 { max-width: none; }
+#page-performance2 { max-width: 1320px; }
 .p2-body { padding: 14px 16px; }
 .p2-grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; margin-top: 13px; }
 .p2-table { width: 100%; border-collapse: collapse; font-size: 12px; }
@@ -924,7 +924,7 @@ tbody tr:hover { filter: brightness(0.97); }
 @media (max-width: 900px) { .p2-grid3 { grid-template-columns: 1fr; } }
 @media (max-width: 600px) { .p2-day small { font-size: 9px; white-space: nowrap; } .p2-day { padding: 6px 1px; } .p2-table td:not(:first-child) { white-space: nowrap; } .p2-cal { gap: 3px; } }
 /* ── ANALYSIS 2.0 ── */
-#page-analysis2 { max-width: none; }
+#page-analysis2 { max-width: 1320px; }
 .a2-view { display: none; } .a2-view.active { display: block; }
 .a2-grid { display: grid; gap: 13px; margin-top: 13px; }
 /* Covered Call page */
@@ -1253,8 +1253,8 @@ th.te-sort { cursor:pointer; user-select:none; } th.te-sort:hover { color:var(--
       <div class="d2-panel-head"><div><div class="d2-title">Portfolio health</div><div class="d2-hint">Open-book exposure and position status</div></div><span class="d2-pill" id="d2-pill-open" style="display:none">—</span></div>
       <div class="d2-health" style="padding-top:10px">
         <div id="d2-h-mtm" style="display:none"></div><div id="d2-h-mtm-n" style="display:none"></div>
-        <div class="d2-meter"><i id="d2-h-meter" style="width:0"></i></div>
-        <div class="d2-health-grid" style="grid-template-columns:repeat(3,1fr);margin-top:12px">
+        <div class="d2-meter" style="display:none"><i id="d2-h-meter" style="width:0"></i></div>
+        <div class="d2-health-grid" style="grid-template-columns:repeat(3,1fr);margin-top:0">
           <div class="d2-hstat"><div class="d2-label">Positions in profit</div><b class="pos" id="d2-h-profit">—</b></div>
           <div class="d2-hstat"><div class="d2-label">Positions in loss</div><b class="neg" id="d2-h-loss">—</b></div>
           <div class="d2-hstat" style="display:none"><b id="d2-h-deployed"></b></div>
