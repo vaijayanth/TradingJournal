@@ -807,6 +807,15 @@ tbody tr:hover { filter: brightness(0.97); }
 .dh-flip-today-inline { background:rgba(224,162,61,.18); color:var(--amber); font-weight:700; padding:1px 6px; border-radius:4px; }
 .dh-flip-today { background:rgba(224,162,61,.18); color:var(--amber); font-weight:700; }
 .dh-hdr .dh-chip-row { margin:0; }
+.cc-dot { font-size:19px; line-height:1; vertical-align:-2px; margin-right:3px; }
+.cc-dot.g { color:#2EE67A; text-shadow:0 0 7px rgba(46,230,122,.55); }
+.cc-dot.r { color:var(--red); }
+.cc-grp td { background:var(--surface2); font-weight:700; font-size:12px; cursor:pointer; padding:7px 12px !important; letter-spacing:.02em; }
+.cc-grp-n { font-weight:600; color:var(--text-muted); margin-left:6px; }
+tr.cc-clk { cursor:pointer; } tr.cc-clk:hover td { background:var(--surface2); }
+tr.cc-det td { background:var(--surface2); white-space:normal !important; padding:10px 14px !important; }
+.cc-dgrid { display:grid; grid-template-columns:repeat(auto-fill,minmax(170px,1fr)); gap:8px 18px; text-align:left; }
+.cc-dgrid b { display:block; font-size:10.5px; letter-spacing:.04em; text-transform:uppercase; color:var(--text-muted); font-weight:600; margin-bottom:1px; }
 .dhm-banner.dhm-banner-slim .dhm-banner-title { display:none; }
 .dhm-banner.dhm-banner-slim { padding:8px 6px; margin-bottom:12px; row-gap:8px; }
 .dhm-banner.dhm-banner-slim .dhm-kpi-val { font-size:20px; }
@@ -838,7 +847,7 @@ tbody tr:hover { filter: brightness(0.97); }
 .ord-pill.ok { background:var(--green-soft); color:var(--green); } .ord-pill.blk { background:var(--amber-soft); color:var(--amber); } .ord-pill.none { color:var(--text-muted); }
 #cc-root .p2-table th, #cc-root .p2-table td { padding-left:10px; padding-right:10px; }
 .dh-blotter thead th, .p2-table th, .a2-t th, .d2-attn-drawer th { text-transform:none; letter-spacing:.005em; font-size:11px; }
-#cc-root .cc-dim td { opacity:.58; } #cc-root .cc-act td:first-child { box-shadow:inset 3px 0 0 var(--accent); }
+#cc-root .cc-dim td { opacity:.8; } #cc-root .cc-act td:first-child { box-shadow:inset 3px 0 0 var(--accent); }
 @media (max-width: 720px) { .d2-act-row { grid-template-columns:1fr; } .d2-act-st { text-align:left; max-width:none; } }
 .d2-layout { display:grid; grid-template-columns:1.55fr 1fr; gap:13px; }
 .d2-panel { background:var(--surface); border:1px solid var(--border); border-radius:9px; overflow:hidden; }
@@ -3487,7 +3496,7 @@ th.te-sort { cursor:pointer; user-select:none; } th.te-sort:hover { color:var(--
     <div>
       <div class="d2-eyebrow">ND workspace · investment portfolio options</div>
       <h1>Covered Call Hedging</h1>
-      <div class="d2-sub">Options: RSI &gt; 70 sell call, RSI &lt; 30 bull put spread, else Supertrend green = bull put spread, red = sell call. Shares: entries, exits and averaging for the investment portfolio.</div>
+      <div class="d2-sub">Options: RSI &gt; 70 sell call, RSI &lt; 30 BPS, else Supertrend green = BPS, red = sell call. Shares: entries, exits and averaging for the investment portfolio.</div>
     </div>
     <div class="d2-filters">
       <span class="d2-chip d2-chip-soft" id="cc-asof">—</span>
@@ -9790,6 +9799,8 @@ const ccTblEsc = s => dhEsc(s).replace(/'/g, '&#39;');
 function ccTbl(id, def) {
   const prev = CC_T[id];
   const st = prev ? prev.st : { q: '', f: 'all', sort: def.sort ? def.sort[0] : null, dir: def.sort ? def.sort[1] : 1 };
+  if (!st.col) { st.col = {}; (def.groups || []).forEach(g => { st.col[g.key] = !!g.collapsed; }); }   // collapsed groups
+  if (!st.open) st.open = {};                                                                         // expanded detail rows
   CC_T[id] = { def, st };
   const filt = def.filters ? `<select onchange="ccTblSet('${id}','f',this.value)">${def.filters.map(([v, l]) => `<option value="${v}"${v === st.f ? ' selected' : ''}>${l}</option>`).join('')}</select>` : '';
   // small tables without filters (10 rows or fewer) need no search / export / row-count line; header click still sorts
@@ -9820,12 +9831,25 @@ function ccTblApply(id) {
   const { def, st } = t, rows = ccTblRows(id);
   document.getElementById('cc-th-' + id).innerHTML = '<tr>' + def.cols.map((c, i) =>
     `<th class="cc-sort${c.num ? ' num' : ''}${c.txt ? ' txt' : ''}" onclick="ccTblSort('${id}',${i})" title="Click to sort">${c.h}${st.sort === i ? (st.dir > 0 ? ' ▲' : ' ▼') : ''}</th>`).join('') + '</tr>';
+  const rowHtml = r => {
+    const k = def.rowKey ? def.rowKey(r) : null, det = !!(def.detail && k != null), ek = det ? encodeURIComponent(k) : '';
+    return `<tr class="${def.rowCls ? def.rowCls(r) : ''}${det ? ' cc-clk' : ''}"${det ? ` onclick="ccTblDet('${id}','${ek}')" title="Click for details"` : ''}>`
+      + def.cols.map(c => `<td${c.num ? ' class="num"' : c.txt ? ' class="txt"' : ''}${c.nw ? ' style="white-space:normal;min-width:' + c.nw + 'px"' : ''}>${c.c(r)}</td>`).join('') + '</tr>'
+      + (det && st.open[k] ? `<tr class="cc-det"><td colspan="${def.cols.length}">${def.detail(r)}</td></tr>` : '');
+  };
+  const grouped = () => def.groups.map(g => {
+    const rs = rows.filter(r => def.group(r) === g.key); if (!rs.length) return '';
+    const closed = st.col[g.key] && !st.q.trim();                                                   // a search always shows its matches
+    return `<tr class="cc-grp"><td colspan="${def.cols.length}" onclick="ccTblGrp('${id}','${g.key}')">${closed ? '▸' : '▾'} ${g.label} <span class="cc-grp-n">${rs.length}</span></td></tr>` + (closed ? '' : rs.map(rowHtml).join(''));
+  }).join('');
   document.getElementById('cc-tb-' + id).innerHTML = rows.length
-    ? rows.map(r => `<tr class="${def.rowCls ? def.rowCls(r) : ''}">` + def.cols.map(c => `<td${c.num ? ' class="num"' : c.txt ? ' class="txt"' : ''}${c.nw ? ' style="white-space:normal;min-width:' + c.nw + 'px"' : ''}>${c.c(r)}</td>`).join('') + '</tr>').join('')
+    ? (def.groups ? grouped() : rows.map(rowHtml).join(''))
     : `<tr><td colspan="${def.cols.length}" style="color:var(--text-muted);white-space:normal;max-width:0;line-height:1.5">${def.rows.length ? 'No rows match the search / filter.' : (def.empty || 'No data.')}</td></tr>`;
   document.getElementById('cc-ft-' + id).textContent = (rows.length === def.rows.length ? `${rows.length} row${rows.length === 1 ? '' : 's'}` : `${rows.length} of ${def.rows.length} rows shown`) + ' · click a column header to sort';
 }
 function ccTblSet(id, k, v) { CC_T[id].st[k] = v; ccTblApply(id); }
+function ccTblGrp(id, key) { const st = CC_T[id].st; st.col[key] = !st.col[key]; ccTblApply(id); }
+function ccTblDet(id, ek) { const st = CC_T[id].st, k = decodeURIComponent(ek); st.open[k] = !st.open[k]; ccTblApply(id); }
 function ccTblSort(id, i) {
   const st = CC_T[id].st;
   if (st.sort === i) st.dir = -st.dir; else { st.sort = i; st.dir = 1; }
@@ -9853,7 +9877,8 @@ function ccTypePill(a) {
 }
 const ccTypeFilters = rows => [['all', 'All alert types', () => true]].concat(CC_TYPE_ORDER.filter(t => rows.some(r => r.type === t)).map(t => [t, t, r => r.type === t]));
 const ccAlertDetail = r => (r.text || '').replace(new RegExp('^' + r.symbol.replace(/[-.]/g, '\$&') + '( \d{4}-\d{2}-\d{2})?( [^:]*)?: '), '');
-function ccShortAlert(r) {
+function ccShortAlert(r) { return ccShortAlert0(r).map(t => String(t).replace(/bull put spread/gi, 'BPS')); }
+function ccShortAlert0(r) {
   const c = r.concern || ccAlertDetail(r) || '', a = r.action || '', m = re => re.exec(c);
   let x;
   switch (r.type) {
@@ -9901,10 +9926,64 @@ function ccAlertsBox(d, pfx, hint) {
 // Option entry priority: stocks that need an option trade (ENTER / FLIP), most recent Supertrend flip first
 const CC_NEW_FLIP_DAYS = 5;
 function ccPrio(S) {
-  const act = S.filter(s => s.status === 'ENTER' || s.status === 'FLIP').sort((a, b) => (a.flip_trading_days ?? 999) - (b.flip_trading_days ?? 999) || a.symbol.localeCompare(b.symbol));
+  const act = S.filter(ccIsAct).sort((a, b) => (a.flip_trading_days ?? 999) - (b.flip_trading_days ?? 999) || a.symbol.localeCompare(b.symbol));
   S.forEach(s => { s.prio = null; }); act.forEach((s, i) => { s.prio = i + 1; });
   return act.length;
 }
+// ── Signals table (ND + AZ): crisp view - what to do, what is open, any event within 2 weeks; extras on click ──
+const CC_EVENT_DAYS = 14;
+const ccIsAct = s => s.status === 'FLIP' || (s.status === 'ENTER' && s.flip_trading_days != null && s.flip_trading_days <= CC_NEW_FLIP_DAYS);   // needs you now: wrong structure open, or a fresh signal
+const ccGroupOf = s => ccIsAct(s) ? 'act' : s.status === 'ENTER' ? 'cand' : 'hold';
+function ccDoThis(s) {
+  const put = s.desired === 'PUT_SPREAD', n = s.note || '';
+  if (s.status === 'ENTER') return put ? 'Open BPS' : 'Sell the call';
+  if (s.status === 'FLIP') {   // follow the engine's own instruction (the exit rule goes by colour only, the RSI override never raises it)
+    if (/open the (bull put spread|BPS)/i.test(n)) return 'Close call, open BPS';
+    if (/sell the call/i.test(n)) return 'Close BPS, sell the call';
+    return put ? 'Close call, open BPS' : 'Close BPS, sell the call';
+  }
+  return 'Hold';
+}
+const ccDoCell = s => { const t = ccDoThis(s), rsi = s.rsi_override ? ' <span title="RSI override decided this structure" style="color:var(--text-muted)">(RSI)</span>' : '';
+  return ccIsAct(s) ? `<b>${dhEsc(t)}</b>${rsi}` : `<span style="color:var(--text-muted)">${dhEsc(t)}</span>`; };
+function ccNearOf(s) {   // nearest open short call / put from the stock's open legs
+  const out = {};
+  (s.legs || []).filter(l => l.side === 'SHORT' && l.dist_pct != null).forEach(l => { if (!out[l.type] || Math.abs(l.dist_pct) < Math.abs(out[l.type].dist_pct)) out[l.type] = l; });
+  return out;
+}
+const ccOpenNow = s => { const n = ccNearOf(s), parts = ['CE', 'PE'].filter(t => n[t]).map(t => `<span class="${Math.abs(n[t].dist_pct) < 5 ? 'neg' : ''}" title="${t} ${ccStrike(n[t].strike)} · ${ccSD(n[t].expiry)}">${t} ${ccSigned(n[t].dist_pct)}</span>`);
+  return parts.length ? parts.join(' · ') : '<span style="color:var(--text-muted)">—</span>'; };
+function ccEventDays(s) {   // days to the nearest upcoming results / ex-dividend date, or null
+  const t0 = new Date(); t0.setHours(0, 0, 0, 0);
+  const ds = (s.events || []).map(e => Math.round((new Date(e.date + 'T00:00:00') - t0) / 86400000)).filter(n => n >= 0);
+  return ds.length ? Math.min(...ds) : null;
+}
+const ccEventCell14 = s => {
+  const n = ccEventDays(s), ev = (s.events || []).slice().sort((a, b) => a.date.localeCompare(b.date)).find(e => new Date(e.date + 'T00:00:00') >= new Date(new Date().setHours(0, 0, 0, 0)));
+  if (n == null || n > CC_EVENT_DAYS || !ev) return `<span style="color:var(--text-muted)" title="${ev ? dhEsc(ev.label + ' ' + dhFmtDate(ev.date)) : 'No upcoming date'}">—</span>`;
+  return `<span style="color:${n <= 7 ? 'var(--red)' : 'var(--amber)'};font-weight:700" title="${dhEsc(ev.label + ' ' + dhFmtDate(ev.date) + (ev.estimated ? ' (est.)' : ''))}">${dhEsc(ev.label)} in ${n}d${ev.estimated ? ' (est.)' : ''}</span>`;
+};
+function ccSigDetail(s, d) {
+  const exps = (d.show_expiries || []).map(dhFmtDate).join(', ') || (s.expiries || []).map(x => dhFmtDate(x.expiry)).join(', ') || '—';
+  const lot = s.lot || ((s.expiries || [])[0] || {}).lot || '—';
+  const evs = (s.events || []).map(e => `${e.label} ${dhFmtDate(e.date)}${e.estimated ? ' (est.)' : ''}`).join(' · ') || 'no date';
+  const sugg = (s.suggestions || []).length ? s.suggestions.map(g => ccSuggest(g, s.lot)).join('<br>') : '';
+  const cell = (l, v) => `<div><b>${l}</b>${v}</div>`;
+  return `<div class="cc-dgrid">${cell('RSI 14', ccRsi(s.rsi))}${cell('Rule', dhEsc(s.basis || ''))}${cell('Expiry', dhEsc(exps))}${cell('Lot size', dhEsc(String(lot)))}${cell('Events', dhEsc(evs))}${sugg ? cell('Suggested trade', sugg) : ''}</div>`;
+}
+const ccSigCols = d => [
+  { h: '#', v: s => s.prio == null ? 9999 : s.prio, c: ccPrioCell, num: true },
+  { h: 'Stock', v: s => s.symbol, c: s => `<b>${dhEsc(s.symbol)}</b>`, txt: true },
+  { h: 'CMP', v: s => s.spot, c: s => ccP(s.spot), num: true },
+  { h: 'Trend · Flip', v: s => s.flip_trading_days, x: s => s.flip_date, c: s => `<span class="cc-dot ${s.colour === 'green' ? 'g' : 'r'}" title="Supertrend ${dhEsc(s.colour || '')}">●</span> ${ccFlip(s.flip_date, s.flip_trading_days)}`, txt: true },
+  { h: 'Do this', v: s => ccDoThis(s), c: ccDoCell, txt: true },
+  { h: 'Open now', v: s => { const n = ccNearOf(s), v = Object.values(n).map(l => Math.abs(l.dist_pct)); return v.length ? Math.min(...v) : null; }, c: ccOpenNow, txt: true },
+  { h: 'Event ≤ 2 wks', v: s => { const n = ccEventDays(s); return n == null ? 999 : n; }, c: ccEventCell14, txt: true },
+];
+const ccSigFilters = rsi => [['all', 'All stocks', () => true], ['call', 'Sell call', s => s.desired === 'CALL'], ['put', 'BPS', s => s.desired === 'PUT_SPREAD'],
+  ['open', 'Has open legs', s => (s.legs || []).length > 0], ['event', 'Event within 2 weeks', s => { const n = ccEventDays(s); return n != null && n <= CC_EVENT_DAYS; }]].concat(rsi ? [['rsi', 'RSI override', s => s.rsi_override]] : []);
+const ccSigGroups = [{ key: 'act', label: 'Act now' }, { key: 'cand', label: 'Candidates · no recent flip', collapsed: true }, { key: 'hold', label: 'Holding', collapsed: true }];
+
 const ccPrioCell = s => s.prio == null ? '<span style="color:var(--text-muted)">—</span>' : `<b>#${s.prio}</b>`;
 const ccFlipCell = s => ccFlip(s.flip_date, s.flip_trading_days) + ((s.status === 'ENTER' || s.status === 'FLIP') && s.flip_trading_days != null && s.flip_trading_days <= CC_NEW_FLIP_DAYS
   ? ' <span class="trend-pill" style="background:var(--accent-soft, var(--surface2));color:var(--accent)">NEW FLIP</span>' : '');
@@ -9917,13 +9996,14 @@ const ccEventCell = s => {
   return s.event_block ? `<span style="color:var(--amber)" title="${dhEsc(s.event_block)}">${dhEsc(t)} · warning</span>` : dhEsc(t);
 };
 const ccRulesCommon = (R, stopRow) => [
+  ['BPS', 'Bull put spread: sell a put and buy a lower put as the hedge (defined risk). The call side is sold unhedged; its protection is the 3× stop and the Supertrend flip'],
   ['Results / ex-dividend', `Close every open option ${R.event_close_days ?? 15} days before the stock's next results or ex-dividend date (alert type Event close); a new option whose expiry reaches that window gets a warning (not a block). Dates come from Yahoo; ex-dividend dates not yet declared are estimates`],
   ['Exit · profit', `Short option premium has decayed ${R.profit_exit_decay_pct ?? 60}% or more since it was sold: book the profit (buy back)`],
   ['Strike alerts', `Near = stock price within ${R.near_strike_pct ?? 2}% of a short strike; Beyond = at or past it (in the money); Through hedge = past the hedge leg too (maximum loss)`],
   ['Expiry risk', `Stock options settle by physical delivery at expiry: any in-the-money leg within ${R.expiry_risk_days ?? 7} days of expiry (urgent in the last 3) is flagged; close it before expiry to avoid delivering or buying shares`],
   ['Hedge check', 'A short leg not covered by long legs of the same type and expiry (plus shares held, for calls) raises No hedge / Partly hedged'],
   stopRow,
-  ['Exit · colour (priority)', 'Open structure opposite to the Supertrend colour (short call while green, short put / put spread while red) raises Exit; the RSI override never does'],
+  ['Exit · colour (priority)', 'Open structure opposite to the Supertrend colour (short call while green, short put / BPS while red) raises Exit; the RSI override never does'],
   ['Entry priority', 'Stocks needing an option trade are ranked by most recent Supertrend flip first; flips within 5 trading days are tagged NEW FLIP'],
 ];
 const ccAlertSort = (a, b) => ccTypeOrd(a) - ccTypeOrd(b) || (a.flip_days ?? 999) - (b.flip_days ?? 999) || a.symbol.localeCompare(b.symbol);
@@ -9951,7 +10031,7 @@ function ccOptionsView(d) {
   const shorts = legs.filter(l => l.side === 'SHORT');
   const nearest = shorts.slice().sort((a, b) => Math.abs(a.dist_pct) - Math.abs(b.dist_pct))[0];
   const kpis = a2Metrics([
-    ['Signals', `${S.filter(s => s.desired === 'CALL').length} call · ${S.filter(s => s.desired === 'PUT_SPREAD').length} put spread`, `${S.length} stocks · red = sell call, green = bull put spread` + ((d.rules || {}).rsi_override === false ? '' : ` · RSI overrides: ${S.filter(s => s.rsi != null && (s.rsi > (d.rules || {}).rsi_sell_call_above || s.rsi < (d.rules || {}).rsi_sell_put_below)).length}`)],
+    ['Signals', `${S.filter(s => s.desired === 'CALL').length} call · ${S.filter(s => s.desired === 'PUT_SPREAD').length} BPS`, `${S.length} stocks · red = sell call, green = BPS` + ((d.rules || {}).rsi_override === false ? '' : ` · RSI overrides: ${S.filter(s => s.rsi != null && (s.rsi > (d.rules || {}).rsi_sell_call_above || s.rsi < (d.rules || {}).rsi_sell_put_below)).length}`)],
     ['Open option legs', legs.length, `${shorts.length} short · ${legs.length - shorts.length} hedge`],
     ['Act now', ccActNow(d), 'Exit, 3× premium, beyond strike, profit exit (other alerts are in the Alerts tab)', ccActNowBad(d) ? 'neg' : ''],
     ['Nearest short strike', nearest ? ccSigned(nearest.dist_pct) : '—', nearest ? `${nearest.symbol} ${ccStrike(nearest.strike)}${nearest.type} · ${ccSD(nearest.expiry)}` : 'No short legs', nearest && Math.abs(nearest.dist_pct) < 5 ? 'neg' : ''],
@@ -9964,31 +10044,11 @@ function ccOptionsView(d) {
   const minDist = s => { const v = [s.near_call, s.near_put].filter(Boolean).map(n => Math.abs(n.dist_pct)); return v.length ? Math.min(...v) : null; };
   ccPrio(S);
   const sigT = ccTbl('signals', {
-    title: 'Signals', hint: 'Priority = stocks needing an option trade, most recent Supertrend flip first; the Supertrend colour alone decides the structure; strikes from the option chain (delta estimated from IV); “Active shorts vs spot” = nearest open short call / put',
-    rows: S.filter(s => s.status !== 'NO_DATA'), search: s => s.symbol + ' ' + s.basis, empty: 'No stock data.',
-    sort: [0, 1], rowCls: s => (s.status === 'HOLD' ? 'cc-dim' : 'cc-act'),
-    filters: [['all', 'All stocks', () => true], ['call', 'Sell call', s => s.desired === 'CALL'], ['put', 'Bull put spread', s => s.desired === 'PUT_SPREAD'],
-              ['green', 'Supertrend green', s => s.colour === 'green'], ['red', 'Supertrend red', s => s.colour === 'red'],
-              ['rsi', 'RSI override (above 70 / below 30)', s => (d.rules || {}).rsi_override !== false && s.rsi != null && (s.rsi > 70 || s.rsi < 30)],
-              ['hold', 'Open structure (hold / flip)', s => s.status === 'HOLD' || s.status === 'FLIP'],
-              ['act', 'Needs an option trade (enter / flip)', s => s.status === 'ENTER' || s.status === 'FLIP'], ['new', 'Recent flips (last ' + CC_NEW_FLIP_DAYS + ' days)', s => s.flip_trading_days != null && s.flip_trading_days <= CC_NEW_FLIP_DAYS]],
-    cols: [
-      { h: 'Priority', v: s => s.prio, c: ccPrioCell, num: true },
-      { h: 'Stock', v: s => s.symbol, c: s => `<b>${dhEsc(s.symbol)}</b>`, txt: true },
-      { h: 'Spot', v: s => s.spot, c: s => ccP(s.spot), num: true },
-      { h: 'Supertrend', v: s => s.colour, c: s => dhTrendPill(s.colour) },
-      { h: 'Flip', v: s => s.flip_trading_days, x: s => s.flip_date, c: s => ccFlipCell(s) },
-      { h: 'RSI 14', v: s => s.rsi, c: s => ccRsi(s.rsi), num: true },
-      { h: 'Rule applied', v: s => s.basis, c: s => `<span style="color:var(--text-muted)">${dhEsc(s.basis)}</span>`, nw: 110 },
-      { h: 'Status', v: s => s.status, c: s => ccPill(s.status) },
-      { h: 'Structure', v: s => s.desired, c: s => `<b>${s.desired === 'PUT_SPREAD' ? 'Bull put spread' : 'Sell call'}</b>` },
-      { h: 'Expiry', v: s => (d.show_expiries || [])[0] || '', c: s => (d.show_expiries || []).map(dhFmtDate).join(', ') || '—' },
-      { h: 'Lot size', v: s => s.lot, c: s => s.lot || '—', num: true },
-      { h: 'Active shorts vs spot', v: minDist, c: s => `<span style="line-height:1.5">CE ${ccNear(s.near_call)}<br>PE ${ccNear(s.near_put)}</span>` },
-      { h: 'Next event', v: s => ((s.events || [])[0] || {}).date, c: ccEventCell, nw: 190 },
-      { h: 'Suggested trade', v: s => (s.suggestions || []).map(ccSuggestText).join(' | ') || s.note,
-        c: s => (s.suggestions || []).length ? s.suggestions.map(g => ccSuggest(g, s.lot)).join('<br>') : `<span style="color:var(--text-muted)">${dhEsc(s.note)}</span>`, nw: 300 },
-    ],
+    title: 'Signals', hint: 'Act now first (most recent flip on top). Click a row for spot, RSI, lot size, expiry and strikes. BPS = bull put spread.',
+    rows: S.filter(s => s.status !== 'NO_DATA'), search: s => s.symbol, empty: 'No stock data.', sort: [0, 1],
+    rowCls: s => (s.status === 'HOLD' ? 'cc-dim' : 'cc-act'), rowKey: s => s.symbol, detail: s => ccSigDetail(s, d), group: ccGroupOf, groups: ccSigGroups,
+    filters: ccSigFilters((d.rules || {}).rsi_override !== false),
+    cols: ccSigCols(d),
   });
 
   const stOrd = { EXIT: 0, BREACH: 1, NEAR: 2, WARN: 2, OK: 3, HEDGE: 4 };
@@ -10018,8 +10078,8 @@ function ccOptionsView(d) {
     a2Rows([
       ...(R.rsi_override === false ? [] : [
         ['RSI above ' + R.rsi_sell_call_above, `Sell the ${R.short_call_delta} delta call, whatever the Supertrend colour`],
-        ['RSI below ' + R.rsi_sell_put_below, `Bull put spread (sell ${R.short_put_delta} delta put, buy ${R.hedge_strikes_below} strikes lower), whatever the colour`]]),
-      [R.rsi_override === false ? 'Supertrend green' : 'Otherwise · green', `Bull put spread (sell the ${R.short_put_delta} delta put, buy ${R.hedge_strikes_below} strikes lower; no flip-age limit for options)`],
+        ['RSI below ' + R.rsi_sell_put_below, `BPS (sell ${R.short_put_delta} delta put, buy ${R.hedge_strikes_below} strikes lower), whatever the colour`]]),
+      [R.rsi_override === false ? 'Supertrend green' : 'Otherwise · green', `BPS (sell the ${R.short_put_delta} delta put, buy ${R.hedge_strikes_below} strikes lower; no flip-age limit for options)`],
       [R.rsi_override === false ? 'Supertrend red' : 'Otherwise · red', `Sell the ${R.short_call_delta} delta call only`],
       ['Expiry', `Current month; after the ${R.show_next_month_after_day}th the next month is shown too (now: ${(d.show_expiries || []).map(dhFmtDate).join(', ') || '—'})`],
       ['Size', '1 lot per signal; lot sizes from NSE’s official F&O lot file, per expiry month'],
@@ -10131,37 +10191,21 @@ function ccZerodhaView(d) {
   const zMtm = zLegs.reduce((a, l) => a + (l.pnl_rs || 0), 0);
   const zNear = zLegs.filter(l => l.side === 'SHORT').sort((a, b) => Math.abs(a.dist_pct) - Math.abs(b.dist_pct))[0];
   const kpis = a2Metrics([
-    ['Signals', `${C.call || 0} call · ${C.put_spread || 0} put spread`, `${S.length} Nifty F&O stocks` + ((d.no_data || []).length ? ' (no data: ' + d.no_data.join(', ') + ')' : '') + ` · RSI overrides: ${C.rsi_override || 0}`],
+    ['Signals', `${C.call || 0} call · ${C.put_spread || 0} BPS`, `${S.length} Nifty F&O stocks` + ((d.no_data || []).length ? ' (no data: ' + d.no_data.join(', ') + ')' : '') + ` · RSI overrides: ${C.rsi_override || 0}`],
     ['Open option legs', (d.positions || {}).legs || 0, 'Expiries from ' + dhFmtDate((d.positions || {}).track_from) + ' · ' + ((d.positions || {}).ignored_legs || 0) + ' earlier legs ignored'],
     ['Act now', ccActNow(d), 'Exit, 3× premium, beyond strike, profit exit (other alerts are in the Alerts tab)', ccActNowBad(d) ? 'neg' : ''],
     ['Nearest short strike', zNear ? ccSigned(zNear.dist_pct) : '—', zNear ? `${zNear.symbol} ${ccStrike(zNear.strike)}${zNear.type} · ${ccSD(zNear.expiry)}` : 'No short legs', zNear && Math.abs(zNear.dist_pct) < 5 ? 'neg' : ''],
     ['Options MTM', (zMtm >= 0 ? '+' : '−') + dhFmtRs(Math.abs(zMtm)), 'Unrealised on the legs (broker P&L)', zMtm >= 0 ? 'pos' : 'neg'],
   ]);
   const S_legs = S.flatMap(s => (s.legs || []).map(l => ({ ...l, stock: s })));
-  const struct = s => s.desired === 'PUT_SPREAD' ? 'Bull put spread' : 'Sell call';
+  const struct = s => s.desired === 'PUT_SPREAD' ? 'BPS' : 'Sell call';
   ccPrio(S);
   const sigT = ccTbl('zsignals', {
-    title: 'Signals', hint: 'Priority = stocks needing an option trade, most recent Supertrend flip first. One row per Nifty F&O stock. Strikes and premiums are not shown: pick the 0.10-delta strike in your broker app.',
-    rows: S, search: s => s.symbol + ' ' + s.basis, empty: 'No stock data.', sort: [0, 1],
-    filters: [['all', 'All stocks', () => true], ['call', 'Sell call', s => s.desired === 'CALL'], ['put', 'Bull put spread', s => s.desired === 'PUT_SPREAD'],
-              ['green', 'Supertrend green', s => s.colour === 'green'], ['red', 'Supertrend red', s => s.colour === 'red'],
-              ['rsi', 'RSI override (above 70 / below 30)', s => s.rsi_override],
-              ['hold', 'Open structure (hold / flip)', s => s.status === 'HOLD' || s.status === 'FLIP'],
-              ['act', 'Needs an option trade (enter / flip)', s => s.status === 'ENTER' || s.status === 'FLIP'], ['new', 'Recent flips (last ' + CC_NEW_FLIP_DAYS + ' days)', s => s.flip_trading_days != null && s.flip_trading_days <= CC_NEW_FLIP_DAYS]],
-    cols: [
-      { h: 'Priority', v: s => s.prio, c: ccPrioCell, num: true },
-      { h: 'Stock', v: s => s.symbol, c: s => `<b>${dhEsc(s.symbol)}</b>`, txt: true },
-      { h: 'Spot', v: s => s.spot, c: s => ccP(s.spot), num: true },
-      { h: 'Supertrend', v: s => s.colour, c: s => dhTrendPill(s.colour) },
-      { h: 'Flip', v: s => s.flip_trading_days, x: s => s.flip_date, c: s => ccFlipCell(s) },
-      { h: 'RSI 14', v: s => s.rsi, c: s => ccRsi(s.rsi), num: true },
-      { h: 'Rule applied', v: s => s.basis, c: s => `<span style="color:var(--text-muted)">${dhEsc(s.basis)}</span>` },
-      { h: 'Status', v: s => s.status, c: s => ccPill(s.status) },
-      { h: 'Structure', v: s => struct(s), c: s => `<b>${struct(s)}</b>` },
-      { h: 'Expiry', v: s => (s.expiries[0] || {}).expiry, c: s => s.expiries.map(x => dhFmtDate(x.expiry)).join(', ') || '—' },
-      { h: 'Lot size', v: s => (s.expiries[0] || {}).lot, c: s => (s.expiries[0] || {}).lot || '<span style="color:var(--text-muted)" title="This expiry is not listed yet in the AZ instrument list">not listed</span>', num: true },
-      { h: 'Next event', v: s => ((s.events || [])[0] || {}).date, c: ccEventCell, nw: 190 },
-    ],
+    title: 'Signals', hint: 'Act now first (most recent flip on top). Click a row for spot, RSI, lot size and expiry. BPS = bull put spread. Strikes and premiums are not shown: pick the 0.10-delta strike in your broker app.',
+    rows: S, search: s => s.symbol, empty: 'No stock data.', sort: [0, 1],
+    rowKey: s => s.symbol, detail: s => ccSigDetail(s, d), group: ccGroupOf, groups: ccSigGroups,
+    filters: ccSigFilters(true),
+    cols: ccSigCols(d),
   });
   const lvlOrd = { EXIT: 0, BREACH: 1, WARN: 2 };
   const alertsT = ccAlertsBox(d, 'zal', 'Alert types: 3× premium, beyond / near strike, through hedge, profit exit, no GTT, no hedge, Exit (colour flipped, opposite position open)');
@@ -10188,8 +10232,8 @@ function ccZerodhaView(d) {
   const rulesPanel = a2Panel('Option rules', 'Edit zerodha-live/data/cc_config.json to change; shown here as applied',
     a2Rows([
       ['RSI above ' + R.rsi_sell_call_above, `Sell the ${R.short_call_delta} delta call, whatever the Supertrend colour`],
-      ['RSI below ' + R.rsi_sell_put_below, `Bull put spread (sell the ${R.short_put_delta} delta put, buy ${R.hedge_strikes_below} listed strikes lower), whatever the colour`],
-      ['Otherwise · green', 'Bull put spread'],
+      ['RSI below ' + R.rsi_sell_put_below, `BPS (sell the ${R.short_put_delta} delta put, buy ${R.hedge_strikes_below} listed strikes lower), whatever the colour`],
+      ['Otherwise · green', 'BPS'],
       ['Otherwise · red', `Sell the ${R.short_call_delta} delta call only`],
       ['Expiry', (d.show_expiries || []).map(dhFmtDate).join(', ') || '—'],
       ['Exit · premium', `Short option price reaches ${R.stop_premium_multiple}× the premium sold`],
@@ -10212,8 +10256,8 @@ function ccRender(d) {
   if (pg) {
     pg.querySelector('.d2-eyebrow').textContent = zer ? 'AZ workspace · Nifty F&O option selling' : 'ND workspace · investment portfolio options';
     pg.querySelector('.d2-sub').textContent = zer
-      ? 'RSI > 70 sell call, RSI < 30 bull put spread, else Supertrend green = bull put spread, red = sell call. Exit at 3× premium or when the Supertrend colour changes. Open legs from the tracking start date (see Alerts) are checked against the live price.'
-      : 'Options: Supertrend red = sell the 0.10-delta call, green = bull put spread (no RSI override). Shares: entries, exits and averaging for the investment portfolio.';
+      ? 'RSI > 70 sell call, RSI < 30 BPS, else Supertrend green = BPS, red = sell call. Exit at 3× premium or when the Supertrend colour changes. Open legs from the tracking start date (see Alerts) are checked against the live price.'
+      : 'Options: Supertrend red = sell the 0.10-delta call, green = BPS (no RSI override). Shares: entries, exits and averaging for the investment portfolio.';
   }
   if (zer) {
     document.getElementById('cc-root').innerHTML = ccZerodhaView(d);
