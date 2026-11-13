@@ -785,7 +785,7 @@ tbody tr:hover { filter: brightness(0.97); }
   font-family: var(--font-mono);
 }
 /* ── DASHBOARD 2.0 ── */
-#page-dashboard2 { max-width: 1600px; }
+#page-dashboard2 { max-width: none; }
 .d2-head { display:flex; justify-content:space-between; align-items:flex-end; padding:6px 0 16px; gap:14px; flex-wrap:wrap; }
 .d2-eyebrow { display:none; }
 .d2-head h1 { font-size:23px; letter-spacing:-.04em; margin:4px 0 2px; }
@@ -805,6 +805,7 @@ tbody tr:hover { filter: brightness(0.97); }
 .dh-stale.high { border-color:var(--red); background:var(--red-soft); }
 .dh-flip-today-inline { background:rgba(224,162,61,.18); color:var(--amber); font-weight:700; padding:1px 6px; border-radius:4px; }
 .dh-flip-today { background:rgba(224,162,61,.18); color:var(--amber); font-weight:700; }
+.dh-hdr .dh-chip-row { margin:0; }
 .dh-chip-row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin:0 0 10px; cursor:pointer; }
 .dh-chip { font-size:11px; font-weight:800; letter-spacing:.04em; padding:3px 9px; border-radius:999px; color:var(--amber); border:1px solid var(--amber); background:transparent; }
 .dh-chip.high { color:var(--red); border-color:var(--red); }
@@ -885,7 +886,7 @@ tbody tr:hover { filter: brightness(0.97); }
   .d2-recent-s:nth-child(2) { border-right:0; } .d2-recent-s:nth-child(3) { padding-left:0; }
 }
 /* ── PERFORMANCE 2.0 ── */
-#page-performance2 { max-width: 1600px; }
+#page-performance2 { max-width: none; }
 .p2-body { padding: 14px 16px; }
 .p2-grid3 { display: grid; grid-template-columns: repeat(3, 1fr); gap: 13px; margin-top: 13px; }
 .p2-table { width: 100%; border-collapse: collapse; font-size: 12px; }
@@ -919,7 +920,7 @@ tbody tr:hover { filter: brightness(0.97); }
 @media (max-width: 900px) { .p2-grid3 { grid-template-columns: 1fr; } }
 @media (max-width: 600px) { .p2-day small { font-size: 9px; white-space: nowrap; } .p2-day { padding: 6px 1px; } .p2-table td:not(:first-child) { white-space: nowrap; } .p2-cal { gap: 3px; } }
 /* ── ANALYSIS 2.0 ── */
-#page-analysis2 { max-width: 1600px; }
+#page-analysis2 { max-width: none; }
 .a2-view { display: none; } .a2-view.active { display: block; }
 .a2-grid { display: grid; gap: 13px; margin-top: 13px; }
 /* Covered Call page */
@@ -1105,7 +1106,7 @@ th.te-sort { cursor:pointer; user-select:none; } th.te-sort:hover { color:var(--
     </div>
     <div class="d2-filters">
       <span class="d2-chip" id="a2-fy">FY 2026–27</span>
-      <span class="d2-chip" id="a2-strat">dh252 strategy</span>
+      <span class="d2-chip" id="a2-strat" style="display:none">dh252 strategy</span>
       <span class="d2-chip d2-chip-soft" id="a2-asof">—</span>
       <button class="d2-chip d2-chip-btn" onclick="wsRefresh()">↻ Refresh</button>
     </div>
@@ -1143,7 +1144,7 @@ th.te-sort { cursor:pointer; user-select:none; } th.te-sort:hover { color:var(--
     </div>
     <div class="d2-filters">
       <span class="d2-chip" id="p2-fy">FY 2026–27</span>
-      <span class="d2-chip" id="p2-ws">ND workspace</span>
+      <span class="d2-chip" id="p2-ws" style="display:none">ND workspace</span>
       <span class="d2-chip d2-chip-soft" id="p2-asof">—</span>
       <button class="d2-chip d2-chip-btn" onclick="wsRefresh()">↻ Refresh</button>
     </div>
@@ -1171,12 +1172,12 @@ th.te-sort { cursor:pointer; user-select:none; } th.te-sort:hover { color:var(--
     </section>
   </div>
 
-  <div class="p2-grid3">
+  <div class="p2-grid3" id="p2-grid3" style="grid-template-columns:1fr 1fr">
     <section class="d2-panel">
       <div class="d2-panel-head"><div><div class="d2-title">Trade quality</div><div class="d2-hint">Closed-trade statistics · not live positions</div></div></div>
       <table class="p2-table" id="p2-quality"></table>
     </section>
-    <section class="d2-panel">
+    <section class="d2-panel" id="p2-compare-panel" style="display:none">
       <div class="d2-panel-head"><div><div class="d2-title">Workspace comparison</div><div class="d2-hint">Compare broker workspaces without mixing live open-book values</div></div></div>
       <table class="p2-table" id="p2-compare"></table>
       <div class="d2-edge-foot">Combined totals need deduplication and a common capital basis — enabled once a second workspace is connected.</div>
@@ -3509,20 +3510,17 @@ th.te-sort { cursor:pointer; user-select:none; } th.te-sort:hover { color:var(--
 
 <div id="page-dhanlive" class="page">
 
-  <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:14px; flex-wrap:wrap; gap:10px">
-    <div>
+  <div class="dh-hdr" style="display:flex; justify-content:space-between; align-items:center; margin-bottom:10px; flex-wrap:wrap; gap:8px 14px">
+    <div style="display:flex;align-items:center;gap:6px 14px;flex-wrap:wrap">
       <div style="font-size:15px; font-weight:700">Strategy monitor <span id="dh-live-title" style="font-weight:500;color:var(--text-muted);font-size:12px">/ ND Live · dh252</span></div>
-      <div id="dh-live-subtitle" style="font-size:12px; color:var(--text-muted); margin-top:2px">Live ND positions vs. backtester's daily Supertrend / 52-week-high signals</div>
+      <div class="dh-stale-slot" style="display:inline-block"></div>
     </div>
     <div style="display:flex;align-items:center;gap:10px">
       <div id="dh-live-asof" style="font-size:12px;color:var(--text-muted)">—</div>
-      <span style="font-size:12px;color:var(--text-muted)">Market data <b id="dh-live-mdate" style="color:var(--text-primary);font-weight:600">—</b></span>
-      <span id="dh-live-status" class="dhm-status stale">—</span>
       <button class="btn-icon" title="Refresh" onclick="dhLiveRefresh(true)">↻</button>
     </div>
   </div>
 
-  <div class="dh-stale-slot"></div>
   <!-- KPI banner -->
   <div class="card dhm-banner">
     <div class="dhm-banner-title">
@@ -3536,9 +3534,6 @@ th.te-sort { cursor:pointer; user-select:none; } th.te-sort:hover { color:var(--
     <div class="dhm-kpi"><div class="dhm-kpi-label">Positions</div><div class="dhm-kpi-val" id="dh-live-holdings-count">—</div></div>
     <div class="dhm-kpi"><div class="dhm-kpi-label">Invested</div><div class="dhm-kpi-val" id="dh-live-invested">—</div></div>
     <div class="dhm-kpi"><div class="dhm-kpi-label">Overall P&amp;L</div><div class="dhm-kpi-val" id="dh-live-combined-pl">—</div></div>
-    <div class="dhm-kpi"><div class="dhm-kpi-label">Entry signals</div><div class="dhm-kpi-val accent" id="dh-live-entry-count">—</div><div class="dhm-kpi-sub" id="dh-live-entry-sub">&nbsp;</div></div>
-    <div class="dhm-kpi"><div class="dhm-kpi-label">Exit now</div><div class="dhm-kpi-val red" id="dh-live-exit-count">—</div><div class="dhm-kpi-sub" id="dh-live-exit-sub">&nbsp;</div></div>
-    <div class="dhm-kpi"><div class="dhm-kpi-label">Add-on eligible</div><div class="dhm-kpi-val green" id="dh-live-addon-count">—</div><div class="dhm-kpi-sub" id="dh-live-addon-sub">&nbsp;</div></div>
     <div class="dhm-kpi"><div class="dhm-kpi-label">Tier size</div><div class="dhm-kpi-val" id="dh-live-tier">—</div><div class="dhm-kpi-sub">per new position</div></div>
   </div>
 
@@ -3563,7 +3558,7 @@ th.te-sort { cursor:pointer; user-select:none; } th.te-sort:hover { color:var(--
     <div class="card" style="padding:0"><div class="table-wrap" style="border:none;border-radius:var(--radius)">
       <table id="dh-live-exit-table" class="dh-blotter">
         <thead><tr>
-          <th>Entry</th><th>Stock</th><th class="num">Qty</th><th class="num">WAC</th><th class="num">CMP</th>
+          <th>Stock</th><th>Entry</th><th class="num">Qty</th><th class="num">WAC</th><th class="num">CMP</th>
           <th>Trend</th><th class="num">Flip</th><th class="num">vs 52WH</th><th class="num">P&amp;L ₹</th><th class="num">P&amp;L%</th>
           <th class="num">Adds</th><th class="num">Age</th><th>Order</th>
         </tr></thead>
@@ -3586,7 +3581,7 @@ th.te-sort { cursor:pointer; user-select:none; } th.te-sort:hover { color:var(--
     <div class="card" style="padding:0"><div class="table-wrap" style="border:none;border-radius:var(--radius)">
       <table id="dh-live-entry-table" class="dh-blotter">
         <thead><tr>
-          <th>Signal date</th><th>Stock</th><th class="num">CMP</th><th class="num">Qty to buy</th><th>Sector</th>
+          <th>Stock</th><th>Signal date</th><th class="num">CMP</th><th class="num">Qty to buy</th><th>Sector</th>
           <th>Trend</th><th class="num">Flip</th><th class="num">vs 52WH</th><th class="num">52WH hit</th><th>Order</th>
         </tr></thead>
         <tbody id="dh-live-entry-tbody"></tbody>
@@ -3620,7 +3615,7 @@ th.te-sort { cursor:pointer; user-select:none; } th.te-sort:hover { color:var(--
   <!-- Open positions -->
   <div class="dhm-panel" id="dh-panel-pos">
     <div class="dhm-toolbar">
-      <div><h3>Open positions</h3><p><span id="dh-pos-hint-t">Every dh252 position</span> · one consolidated view of trend and action · <b id="dh-pos-fetched" style="color:var(--text-primary);font-weight:600">positions fetched: —</b></p></div>
+      <div><h3>Open positions</h3><p><span id="dh-pos-hint-t">Every dh252 position</span> · one consolidated view of trend and action</p></div>
       <div class="dhm-controls">
         <input type="search" id="dh-search-pos" placeholder="Search stock…" oninput="dhLiveApply('pos')">
         <select id="dh-filter-pos" onchange="dhLiveApply('pos')"><option value="all">All positions</option><option value="EXIT">Exit</option><option value="ADD-ON">Add-on</option><option value="HOLD">Hold</option></select>
@@ -3630,7 +3625,7 @@ th.te-sort { cursor:pointer; user-select:none; } th.te-sort:hover { color:var(--
     <div class="card" style="padding:0"><div class="table-wrap" style="border:none;border-radius:var(--radius)">
       <table id="dh-live-pos-table" class="dh-blotter">
         <thead><tr>
-          <th>Entry</th><th>Stock</th><th class="num">Qty</th><th class="num">WAC</th><th class="num">CMP</th>
+          <th>Stock</th><th>Entry</th><th class="num">Qty</th><th class="num">WAC</th><th class="num">CMP</th>
           <th>Trend</th><th class="num">Flip</th><th class="num">vs 52WH</th><th class="num">P&amp;L ₹</th><th class="num">P&amp;L%</th>
           <th class="num">Adds</th><th class="num">Age</th><th>Signal</th>
         </tr></thead>
@@ -9068,8 +9063,8 @@ const DH_FLIP_CELL = ['Flip', r => r.flipDate || '', r => { const t = dhFlipText
 
 // Position columns shared by the Exit and Open positions tabs
 const DH_POS_CELLS = [
-  ['Entry', r => r.entryDate, r => `<td>${dhFmtDate(r.entryDate)}</td>`],
   ['Stock', r => r.symbol, r => `<td class="stock-name">${dhEsc(r.symbol)}</td>`],
+  ['Entry', r => r.entryDate, r => `<td>${dhFmtDate(r.entryDate)}</td>`],
   ['Qty', r => r.qty, r => `<td class="num">${r.qty}</td>`],
   ['WAC', r => r.avgCost, r => `<td class="num">${dhFmtRs(r.avgCost)}</td>`],
   ['CMP', r => r.cmp, r => `<td class="num">${dhFmtRs(r.cmp)}</td>`],
@@ -9096,8 +9091,8 @@ const DH_DEFS = {
     filter: (r, f) => f === 'today' ? (dhCopy().flipTodayMode ? /\(0\)/.test(r.flip || '') : r.hitDays === 0) : f === 'hot' ? (r.hot52wh || r.hotTurn) : true,
     cls: r => (r.hot52wh || r.hotTurn) ? 'row-amber' : '', empty: 'No fresh 52-week-high breakouts right now.', cols: 10,
     cells: [
-      ['Signal date', r => r.date, r => `<td>${dhFmtDate(r.date)}</td>`],
       ['Stock', r => r.symbol, r => `<td class="stock-name">${dhEsc(r.symbol)}</td>`],
+      ['Signal date', r => r.date, r => `<td>${dhFmtDate(r.date)}</td>`],
       ['CMP', r => r.cmp, r => `<td class="num">${dhFmtRs(r.cmp)}</td>`],
       ['Qty to buy', r => r.qtyToBuy, r => `<td class="num" style="font-weight:700">${r.qtyToBuy}</td>`],
       ['Sector', r => dhSectorText(r), r => `<td style="${(r.hot52wh || r.hotTurn) ? 'color:var(--amber);font-weight:700;' : ''}white-space:normal;min-width:150px">${dhEsc(dhSectorText(r))}</td>`],
@@ -9497,7 +9492,7 @@ function dhGuardHtml(g, d) {
     return `<tr title="${dhEsc(x.msg)}"><td><span class="${isB ? 'pnl-neg' : ''}" style="font-weight:700;${isB ? '' : 'color:var(--amber)'}">${isB ? 'Blocked' : 'Check'}</span></td><td><b>${dhEsc(stocksOf(x))}</b></td><td>${dhEsc(s[0])}</td><td>${dhEsc(isB ? 'No order for this stock' : s[1])}</td></tr>`; }).join('');
   const head = (stale ? 'Check is older than the signals - refresh. ' : '') + (g.global_block ? 'ALL ORDERS BLOCKED. ' : '')
     + (bl.length || wa.length ? `Guardrails: ${bl.length} blocked · ${wa.length} to check` : 'Guardrails: all clear');
-  return `<details class="dh-stale ${bl.length || stale ? 'high' : ''}" ><summary style="cursor:pointer;font-weight:700;font-size:13px">${dhEsc(head)}</summary>`
+  return `<details class="dh-stale ${bl.length || stale ? 'high' : ''}" style="padding:8px 14px;margin-bottom:10px"><summary style="cursor:pointer;font-weight:700;font-size:12.5px">${dhEsc(head)}</summary>`
     + `<div class="al-wrap"><table class="al-tbl" data-te="off"><thead><tr><th>Status</th><th>Stock</th><th>Issue</th><th>Action</th></tr></thead><tbody>${rows}</tbody></table></div>`
     + (all.length > 40 ? `<div class="dh-stale-act">+${all.length - 40} more</div>` : '') + '</details>';
 }
@@ -9505,9 +9500,10 @@ function dhRenderStale(d) {
   const slots = document.querySelectorAll('.dh-stale-slot'); if (!slots.length || !d) return;
   const paint = ex => {
     const a = dhStaleAlerts(d, ex);
-    const html = a.length ? `<div class="dh-stale ${a.some(x => x.sev === 'high') ? 'high' : ''}" role="alert">`
-      + a.map(x => `<div class="dh-stale-row"><b>${dhEsc(x.title)}</b><span>${dhEsc(x.text)}</span></div>`).join('')
-      + `<div class="dh-stale-act">In Claude Code, run <code>${dhEsc(dhCopy().refreshCmd || '/refresh-dhan')}</code> <button onclick="navigator.clipboard&&navigator.clipboard.writeText('${dhCopy().refreshCmd || '/refresh-dhan'}');this.textContent='Copied'">Copy command</button></div></div>` : '';
+    // one line: "⚠ title - text ... run /refresh-x [Copy]" (wraps on narrow screens)
+    const html = a.length ? `<div class="dh-stale ${a.some(x => x.sev === 'high') ? 'high' : ''}" role="alert" style="display:flex;flex-wrap:wrap;align-items:center;gap:4px 14px;padding:8px 14px;margin-bottom:10px">`
+      + a.map(x => `<span style="font-size:12.5px"><b>⚠ ${dhEsc(x.title)}</b> <span style="color:var(--text-secondary)">${dhEsc(x.text)}</span></span>`).join('')
+      + `<span style="margin-left:auto;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-secondary);white-space:nowrap">run <code>${dhEsc(dhCopy().refreshCmd || '/refresh-dhan')}</code> <button style="background:var(--surface2);color:var(--text-primary,inherit);border:1px solid var(--border);border-radius:6px;padding:2px 9px;font-size:11px;cursor:pointer" onclick="navigator.clipboard&&navigator.clipboard.writeText('${dhCopy().refreshCmd || '/refresh-dhan'}');this.textContent='Copied'">Copy</button></span></div>` : '';
     // full detail only on the Dashboard; every other tab gets one crisp chip row that jumps to the Dashboard
     const g = ex && ex.guard && ex.guard.findings || [], nb = g.filter(x => x.level === 'BLOCK').length, nw = g.filter(x => x.level === 'WARN').length;
     const chips = [];
@@ -9795,11 +9791,13 @@ function ccTbl(id, def) {
   const st = prev ? prev.st : { q: '', f: 'all', sort: def.sort ? def.sort[0] : null, dir: def.sort ? def.sort[1] : 1 };
   CC_T[id] = { def, st };
   const filt = def.filters ? `<select onchange="ccTblSet('${id}','f',this.value)">${def.filters.map(([v, l]) => `<option value="${v}"${v === st.f ? ' selected' : ''}>${l}</option>`).join('')}</select>` : '';
+  // small tables without filters (10 rows or fewer) need no search / export / row-count line; header click still sorts
+  const small = def.rows.length <= 10 && !def.filters;
   return `<div class="d2-panel"><div class="d2-panel-head"><div><div class="d2-title">${def.title}</div>${def.hint ? `<div class="d2-hint">${def.hint}</div>` : ''}</div>`
-    + `<div class="dhm-controls"><input type="search" placeholder="Search stock…" value="${ccTblEsc(st.q)}" oninput="ccTblSet('${id}','q',this.value)">${filt}`
-    + `<button onclick="ccTblExport('${id}')">Export ↓</button></div></div>`
+    + (small ? '' : `<div class="dhm-controls"><input type="search" placeholder="Search stock…" value="${ccTblEsc(st.q)}" oninput="ccTblSet('${id}','q',this.value)">${filt}`
+    + `<button onclick="ccTblExport('${id}')">Export ↓</button></div>`) + `</div>`
     + `<div class="p2-scroll"><table class="p2-table a2-t"><thead id="cc-th-${id}"></thead><tbody id="cc-tb-${id}"></tbody></table></div>`
-    + `<div class="d2-edge-foot" id="cc-ft-${id}"></div></div>`;
+    + `<div class="d2-edge-foot" id="cc-ft-${id}"${small ? ' style="display:none"' : ''}></div></div>`;
 }
 function ccTblRows(id) {
   const { def, st } = CC_T[id];
@@ -9931,10 +9929,7 @@ function ccOptionsView(d) {
   const shorts = legs.filter(l => l.side === 'SHORT');
   const nearest = shorts.slice().sort((a, b) => Math.abs(a.dist_pct) - Math.abs(b.dist_pct))[0];
   const kpis = a2Metrics([
-    ['Stocks tracked', S.length, 'Covered-call universe stocks with Supertrend data'],
-    ['Sell call', S.filter(s => s.desired === 'CALL').length, 'Supertrend red' + ((d.rules || {}).rsi_override === false ? '' : ', or RSI above ' + (d.rules || {}).rsi_sell_call_above)],
-    ['Bull put spread', S.filter(s => s.desired === 'PUT_SPREAD').length, 'Supertrend green' + ((d.rules || {}).rsi_override === false ? '' : ', or RSI below ' + (d.rules || {}).rsi_sell_put_below)],
-    ['RSI overrides', (d.rules || {}).rsi_override === false ? 0 : S.filter(s => s.rsi != null && (s.rsi > (d.rules || {}).rsi_sell_call_above || s.rsi < (d.rules || {}).rsi_sell_put_below)).length, ((d.rules || {}).rsi_override === false ? 'Switched off: the colour decides' : 'RSI decides the structure instead of the colour')],
+    ['Signals', `${S.filter(s => s.desired === 'CALL').length} call · ${S.filter(s => s.desired === 'PUT_SPREAD').length} put spread`, `${S.length} stocks · red = sell call, green = bull put spread` + ((d.rules || {}).rsi_override === false ? '' : ` · RSI overrides: ${S.filter(s => s.rsi != null && (s.rsi > (d.rules || {}).rsi_sell_call_above || s.rsi < (d.rules || {}).rsi_sell_put_below)).length}`)],
     ['Open option legs', legs.length, `${shorts.length} short · ${legs.length - shorts.length} hedge`],
     ['Act now', ccActNow(d), 'Exit, 3× premium, beyond strike, profit exit (other alerts are in the Alerts tab)', ccActNowBad(d) ? 'neg' : ''],
     ['Nearest short strike', nearest ? ccSigned(nearest.dist_pct) : '—', nearest ? `${nearest.symbol} ${ccStrike(nearest.strike)}${nearest.type} · ${ccSD(nearest.expiry)}` : 'No short legs', nearest && Math.abs(nearest.dist_pct) < 5 ? 'neg' : ''],
@@ -10113,10 +10108,7 @@ function ccZerodhaView(d) {
   const zMtm = zLegs.reduce((a, l) => a + (l.pnl_rs || 0), 0);
   const zNear = zLegs.filter(l => l.side === 'SHORT').sort((a, b) => Math.abs(a.dist_pct) - Math.abs(b.dist_pct))[0];
   const kpis = a2Metrics([
-    ['Stocks tracked', S.length, 'Nifty F&O stocks with Supertrend data' + ((d.no_data || []).length ? ' · no data: ' + d.no_data.join(', ') : '')],
-    ['Sell call', C.call || 0, 'Supertrend red, or RSI above ' + R.rsi_sell_call_above],
-    ['Bull put spread', C.put_spread || 0, 'Supertrend green, or RSI below ' + R.rsi_sell_put_below],
-    ['RSI overrides', C.rsi_override || 0, 'RSI decided the structure instead of the colour'],
+    ['Signals', `${C.call || 0} call · ${C.put_spread || 0} put spread`, `${S.length} Nifty F&O stocks` + ((d.no_data || []).length ? ' (no data: ' + d.no_data.join(', ') + ')' : '') + ` · RSI overrides: ${C.rsi_override || 0}`],
     ['Open option legs', (d.positions || {}).legs || 0, 'Expiries from ' + dhFmtDate((d.positions || {}).track_from) + ' · ' + ((d.positions || {}).ignored_legs || 0) + ' earlier legs ignored'],
     ['Act now', ccActNow(d), 'Exit, 3× premium, beyond strike, profit exit (other alerts are in the Alerts tab)', ccActNowBad(d) ? 'neg' : ''],
     ['Nearest short strike', zNear ? ccSigned(zNear.dist_pct) : '—', zNear ? `${zNear.symbol} ${ccStrike(zNear.strike)}${zNear.type} · ${ccSD(zNear.expiry)}` : 'No short legs', zNear && Math.abs(zNear.dist_pct) < 5 ? 'neg' : ''],
@@ -10296,7 +10288,7 @@ function teScan() {
     if (!t.dataset.te) {
       const cols = t.querySelectorAll('thead th').length || (t.rows[0] ? t.rows[0].cells.length : 0);
       const dataRows = teRows(t).filter(teIsData).length;
-      if (!(t.classList.contains('dh-blotter') || (cols >= 3 && dataRows >= 2))) return;
+      if (!(t.classList.contains('dh-blotter') || (cols >= 3 && dataRows >= 11))) return;
       teAttach(t);
     }
     const sig = teSig(t);
