@@ -1,176 +1,126 @@
 {
  "_note": "Daily bars pulled from the Dhan MCP historical_data_agent_tool (unadjusted). crosscheck_signals.py appends a bar here only when it is dated after the last Yahoo bar and not after the signals' market_data_date, so Yahoo history is never overwritten. SHREMINVIT has no 11-Nov candle at Dhan (no trades), so Yahoo's 11-09 bar is its last session.",
- "fetched_at": "2026-11-12T09:45:00+05:30",
- "source": "mcp__dhan_mcp__historical_data_agent_tool (historical)",
+ "fetched_at": "2026-11-13T12:25:00+05:30",
+ "source": "mcp__dhan__historical_data_agent_tool (historical) - session 2026-11-12; SHREMINVIT returned no data (DH-907)",
  "bars": {
+  "ABDL": [
+   {
+    "date": "2026-11-12",
+    "open": 736.45,
+    "high": 768.0,
+    "low": 730.1,
+    "close": 758.0,
+    "volume": 736621
+   }
+  ],
   "AIMTRON": [
    {
-    "date": "2026-11-11",
-    "open": 1981.6,
-    "high": 2020.95,
-    "low": 1953.0,
-    "close": 1987.65,
-    "volume": 24600
+    "date": "2026-11-12",
+    "open": 2000.0,
+    "high": 2017.0,
+    "low": 1900.5,
+    "close": 1952.05,
+    "volume": 49400
    }
   ],
   "AKCAPIT": [
    {
-    "date": "2026-11-11",
-    "open": 1786.2,
-    "high": 1875.0,
-    "low": 1786.2,
-    "close": 1856.6,
-    "volume": 1564
+    "date": "2026-11-12",
+    "open": 1937.9,
+    "high": 1949.0,
+    "low": 1876.4,
+    "close": 1936.0,
+    "volume": 2229
    }
   ],
   "ASAHIINDIA": [
    {
-    "date": "2026-11-11",
-    "open": 1062.0,
-    "high": 1099.15,
-    "low": 1055.65,
-    "close": 1088.05,
-    "volume": 307229
+    "date": "2026-11-12",
+    "open": 1095.0,
+    "high": 1111.0,
+    "low": 1085.55,
+    "close": 1103.9,
+    "volume": 166398
+   }
+  ],
+  "BEML": [
+   {
+    "date": "2026-11-12",
+    "open": 2112.0,
+    "high": 2143.7,
+    "low": 2090.1,
+    "close": 2125.5,
+    "volume": 439086
    }
   ],
   "CNL": [
    {
-    "date": "2026-11-11",
-    "open": 1365.6,
-    "high": 1472.6,
-    "low": 1360.0,
-    "close": 1466.3,
-    "volume": 58241
+    "date": "2026-11-12",
+    "open": 1485.0,
+    "high": 1550.2,
+    "low": 1422.6,
+    "close": 1475.0,
+    "volume": 91315
    }
   ],
-  "GALAPREC": [
+  "ESAFSFB": [
    {
-    "date": "2026-11-11",
-    "open": 1166.3,
-    "high": 1319.9,
-    "low": 1165.8,
-    "close": 1248.3,
-    "volume": 578977
+    "date": "2026-11-12",
+    "open": 43.4,
+    "high": 45.5,
+    "low": 43.4,
+    "close": 45.08,
+    "volume": 1216931
    }
   ],
   "ICIL": [
    {
-    "date": "2026-11-11",
-    "open": 505.95,
-    "high": 545.0,
-    "low": 505.95,
-    "close": 542.8,
-    "volume": 1284177
+    "date": "2026-11-12",
+    "open": 546.25,
+    "high": 560.0,
+    "low": 535.25,
+    "close": 555.95,
+    "volume": 863522
    }
   ],
-  "KDDL": [
+  "NEOGEN": [
    {
-    "date": "2026-11-11",
-    "open": 4250.0,
-    "high": 4368.8,
-    "low": 4162.4,
-    "close": 4297.5,
-    "volume": 47790
+    "date": "2026-11-12",
+    "open": 2770.0,
+    "high": 2875.0,
+    "low": 2708.1,
+    "close": 2856.3,
+    "volume": 166427
    }
   ],
   "PANACHE": [
    {
-    "date": "2026-11-11",
-    "open": 727.0,
-    "high": 727.95,
-    "low": 727.0,
-    "close": 727.95,
-    "volume": 4898
-   }
-  ],
-  "PETRONET": [
-   {
-    "date": "2026-11-11",
-    "open": 324.35,
-    "high": 329.9,
-    "low": 322.05,
-    "close": 329.8,
-    "volume": 5823724
-   }
-  ],
-  "PGIL": [
-   {
-    "date": "2026-11-11",
-    "open": 1366.2,
-    "high": 1399.8,
-    "low": 1349.8,
-    "close": 1391.8,
-    "volume": 154568
+    "date": "2026-11-12",
+    "open": 737.0,
+    "high": 742.5,
+    "low": 737.0,
+    "close": 742.5,
+    "volume": 16802
    }
   ],
   "PGINVIT": [
    {
-    "date": "2026-11-11",
-    "open": 105.98,
-    "high": 105.98,
-    "low": 105.61,
-    "close": 105.68,
-    "volume": 1520426
+    "date": "2026-11-12",
+    "open": 105.5,
+    "high": 106.0,
+    "low": 105.2,
+    "close": 105.33,
+    "volume": 1882149
    }
   ],
-  "PHOENIXLTD": [
+  "SANSERA": [
    {
-    "date": "2026-11-11",
-    "open": 2098.2,
-    "high": 2203.0,
-    "low": 2098.2,
-    "close": 2171.0,
-    "volume": 628631
-   }
-  ],
-  "PRIZOR": [
-   {
-    "date": "2026-11-11",
-    "open": 1627.0,
-    "high": 1668.9,
-    "low": 1498.9,
-    "close": 1546.4,
-    "volume": 42300
-   }
-  ],
-  "SANATHAN": [
-   {
-    "date": "2026-11-11",
-    "open": 559.0,
-    "high": 595.0,
-    "low": 559.0,
-    "close": 588.4,
-    "volume": 166354
-   }
-  ],
-  "STEELCAS": [
-   {
-    "date": "2026-11-11",
-    "open": 380.0,
-    "high": 388.0,
-    "low": 374.9,
-    "close": 382.1,
-    "volume": 126867
-   }
-  ],
-  "PASHUPATI": [
-   {
-    "date": "2026-11-11",
-    "open": 88.09,
-    "high": 88.09,
-    "low": 88.09,
-    "close": 88.09,
-    "volume": 120349
-   }
-  ],
-  "NIFTYIETF": [
-   {
-    "date": "2026-11-11",
-    "open": 289.4,
-    "high": 289.4,
-    "low": 284.71,
-    "close": 285.17,
-    "volume": 3609489
+    "date": "2026-11-12",
+    "open": 4695.0,
+    "high": 4844.0,
+    "low": 4671.1,
+    "close": 4701.8,
+    "volume": 219871
    }
   ]
  }

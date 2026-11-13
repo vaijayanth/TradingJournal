@@ -1,9 +1,9 @@
 {
-  "generated_at": "2026-11-12T04:04:15.631093+00:00",
-  "market_data_date": "2026-11-11",
-  "live_prices_at": "2026-11-12T09:33:35+05:30",
-  "super_scan_at": "2026-11-12T09:33:36+05:30",
-  "as_of": "2026-11-11",
+  "generated_at": "2026-11-13T06:39:22.997491+00:00",
+  "market_data_date": "2026-11-12",
+  "live_prices_at": "2026-11-13T12:07:32+05:30",
+  "super_scan_at": "2026-11-13T12:07:32+05:30",
+  "as_of": "2026-11-12",
   "rules": {
     "short_call_delta": 0.1,
     "short_put_delta": 0.15,
@@ -20,7 +20,9 @@
     "averaging_cooldown_days": 7,
     "rsi_sell_call_above": 70,
     "rsi_sell_put_below": 30,
-    "share_entry_window_trading_days": 7
+    "share_entry_window_trading_days": 7,
+    "event_close_days": 15,
+    "rsi_override": false
   },
   "show_expiries": [
     "2026-11-23"
@@ -28,36 +30,26 @@
   "stocks": [
     {
       "symbol": "MCX",
-      "spot": 3617.6,
+      "spot": 3624.7,
       "colour": "green",
       "flip_date": "2026-11-03",
-      "flip_trading_days": 6,
-      "rsi": 65.0,
+      "flip_trading_days": 7,
+      "rsi": 65.3,
       "basis": "Supertrend green",
-      "near_call": {
-        "strike": 3900.0,
-        "expiry": "2026-11-23",
-        "dist_pct": 7.9
-      },
+      "near_call": null,
       "near_put": {
         "strike": 3100.0,
         "expiry": "2026-11-23",
-        "dist_pct": -14.23
+        "dist_pct": -15.93
       },
       "shares": 37,
       "lot": 225,
       "covered": false,
       "desired": "PUT_SPREAD",
-      "status": "FLIP",
-      "note": "Supertrend is GREEN: the open short call (3900CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread.",
+      "status": "HOLD",
+      "note": "Open structure matches the rule (Supertrend green).",
       "tagged": false,
-      "suggestions": [
-        {
-          "expiry": "2026-11-23",
-          "structure": "PUT_SPREAD",
-          "missing_chain": true
-        }
-      ],
+      "suggestions": [],
       "legs": [
         {
           "symbol": "MCX",
@@ -68,14 +60,14 @@
           "qty": 225,
           "buy_avg": 27.2,
           "sell_avg": 0.0,
-          "pnl_rs": -5816.25,
-          "ltp": 1.35,
-          "beyond_pct": -29.09,
+          "pnl_rs": -5782.5,
+          "ltp": 1.5,
+          "beyond_pct": -31.69,
           "intrinsic_rs": 0,
           "touched": false,
           "near": false,
           "touched_h": false,
-          "dist_pct": -22.53,
+          "dist_pct": -24.07,
           "lot": 225,
           "lots": 1.0
         },
@@ -88,60 +80,51 @@
           "qty": 225,
           "buy_avg": 0.0,
           "sell_avg": 15.15,
-          "pnl_rs": 2081.25,
-          "ltp": 5.9,
+          "pnl_rs": 2520.0,
+          "ltp": 3.95,
           "stop_at": 45.45,
           "stop_hit": false,
-          "beyond_pct": -16.6,
+          "beyond_pct": -18.95,
           "intrinsic_rs": 0,
           "touched": false,
           "near": false,
           "touched_h": false,
-          "dist_pct": -14.23,
-          "lot": 225,
-          "lots": 1.0
-        },
-        {
-          "symbol": "MCX",
-          "expiry": "2026-11-23",
-          "strike": 3900.0,
-          "type": "CE",
-          "side": "SHORT",
-          "qty": 225,
-          "buy_avg": 0.0,
-          "sell_avg": 16.15,
-          "pnl_rs": -1350.0,
-          "ltp": 22.15,
-          "stop_at": 48.45,
-          "stop_hit": false,
-          "beyond_pct": -7.32,
-          "intrinsic_rs": 0,
-          "touched": false,
-          "near": false,
-          "touched_h": false,
-          "dist_pct": 7.9,
+          "dist_pct": -15.93,
           "lot": 225,
           "lots": 1.0
         }
-      ]
+      ],
+      "events": [
+        {
+          "label": "Results",
+          "date": "2027-01-21",
+          "estimated": false
+        },
+        {
+          "label": "Ex-dividend",
+          "date": "2027-08-28",
+          "estimated": true
+        }
+      ],
+      "event_block": null
     },
     {
       "symbol": "SHRIRAMFIN",
-      "spot": 969.15,
+      "spot": 1003.8,
       "colour": "green",
       "flip_date": "2026-11-05",
-      "flip_trading_days": 4,
-      "rsi": 59.7,
+      "flip_trading_days": 5,
+      "rsi": 65.1,
       "basis": "Supertrend green",
       "near_call": {
         "strike": 1120.0,
         "expiry": "2026-12-29",
-        "dist_pct": 13.06
+        "dist_pct": 15.06
       },
       "near_put": {
         "strike": 880.0,
         "expiry": "2026-11-23",
-        "dist_pct": -11.16
+        "dist_pct": -9.6
       },
       "shares": 117,
       "lot": 825,
@@ -154,7 +137,8 @@
         {
           "expiry": "2026-11-23",
           "structure": "PUT_SPREAD",
-          "missing_chain": true
+          "missing_chain": true,
+          "event_block": null
         }
       ],
       "legs": [
@@ -167,16 +151,16 @@
           "qty": 825,
           "buy_avg": 0.0,
           "sell_avg": 7.85,
-          "pnl_rs": 4331.25,
-          "ltp": 2.6,
+          "pnl_rs": 4042.5,
+          "ltp": 2.95,
           "stop_at": 23.55,
           "stop_hit": false,
-          "beyond_pct": -12.57,
+          "beyond_pct": -10.61,
           "intrinsic_rs": 0,
           "touched": false,
           "near": false,
           "touched_h": false,
-          "dist_pct": -11.16,
+          "dist_pct": -9.6,
           "lot": 825,
           "lots": 1.0
         },
@@ -189,16 +173,16 @@
           "qty": 825,
           "buy_avg": 0.0,
           "sell_avg": 3.1,
-          "pnl_rs": 1485.0,
-          "ltp": 1.3,
+          "pnl_rs": 1402.5,
+          "ltp": 1.4,
           "stop_at": 9.3,
           "stop_hit": false,
-          "beyond_pct": -20.8,
+          "beyond_pct": -18.71,
           "intrinsic_rs": 0,
           "touched": false,
           "near": false,
           "touched_h": false,
-          "dist_pct": -17.22,
+          "dist_pct": -15.76,
           "lot": 825,
           "lots": 1.0
         },
@@ -211,14 +195,14 @@
           "qty": 825,
           "buy_avg": 5.2,
           "sell_avg": 0.0,
-          "pnl_rs": -2640.0,
-          "ltp": 2.0,
-          "beyond_pct": -15.19,
+          "pnl_rs": -2475.0,
+          "ltp": 2.2,
+          "beyond_pct": -13.19,
           "intrinsic_rs": 0,
           "touched": false,
           "near": false,
           "touched_h": false,
-          "dist_pct": -13.18,
+          "dist_pct": -11.65,
           "lot": 825,
           "lots": 1.0
         },
@@ -231,33 +215,46 @@
           "qty": 825,
           "buy_avg": 0.0,
           "sell_avg": 5.6,
-          "pnl_rs": -6022.5,
-          "ltp": 12.9,
+          "pnl_rs": -2145.0,
+          "ltp": 8.2,
           "stop_at": 16.8,
           "stop_hit": false,
-          "beyond_pct": -11.55,
+          "beyond_pct": -13.09,
           "intrinsic_rs": 0,
           "touched": false,
           "near": false,
           "touched_h": false,
-          "dist_pct": 13.06,
+          "dist_pct": 15.06,
           "lot": 825,
           "lots": 1.0
         }
-      ]
+      ],
+      "events": [
+        {
+          "label": "Results",
+          "date": "2027-01-22",
+          "estimated": false
+        },
+        {
+          "label": "Ex-dividend",
+          "date": "2027-07-03",
+          "estimated": true
+        }
+      ],
+      "event_block": null
     },
     {
       "symbol": "CGPOWER",
-      "spot": 822.6,
+      "spot": 821.75,
       "colour": "red",
       "flip_date": "2026-09-16",
-      "flip_trading_days": 38,
-      "rsi": 48.4,
+      "flip_trading_days": 39,
+      "rsi": 48.2,
       "basis": "Supertrend red",
       "near_call": {
         "strike": 900.0,
         "expiry": "2026-12-29",
-        "dist_pct": 8.19
+        "dist_pct": 7.85
       },
       "near_put": null,
       "shares": 184,
@@ -278,14 +275,14 @@
           "qty": 850,
           "buy_avg": 6.4,
           "sell_avg": 0.0,
-          "pnl_rs": -3995.0,
-          "ltp": 1.7,
-          "beyond_pct": -22.34,
+          "pnl_rs": -4675.0,
+          "ltp": 0.9,
+          "beyond_pct": -22.72,
           "intrinsic_rs": 0,
           "touched": false,
           "near": false,
           "touched_h": false,
-          "dist_pct": -18.26,
+          "dist_pct": -18.51,
           "lot": 850,
           "lots": 1.0
         },
@@ -298,16 +295,16 @@
           "qty": 850,
           "buy_avg": 0.0,
           "sell_avg": 3.25,
-          "pnl_rs": -595.0,
-          "ltp": 3.95,
+          "pnl_rs": -892.5,
+          "ltp": 4.3,
           "stop_at": 9.75,
           "stop_hit": false,
-          "beyond_pct": -8.58,
+          "beyond_pct": -8.3,
           "intrinsic_rs": 0,
           "touched": false,
           "near": false,
           "touched_h": false,
-          "dist_pct": 9.39,
+          "dist_pct": 9.05,
           "lot": 850,
           "lots": 1.0
         },
@@ -320,51 +317,65 @@
           "qty": 850,
           "buy_avg": 0.0,
           "sell_avg": 10.45,
-          "pnl_rs": -7692.5,
-          "ltp": 19.5,
+          "pnl_rs": -9477.5,
+          "ltp": 21.6,
           "stop_at": 31.35,
           "stop_hit": false,
-          "beyond_pct": -7.57,
+          "beyond_pct": -7.28,
           "intrinsic_rs": 0,
           "touched": false,
           "near": false,
           "touched_h": false,
-          "dist_pct": 8.19,
+          "dist_pct": 7.85,
           "lot": 850,
           "lots": 1.0
         }
-      ]
+      ],
+      "events": [
+        {
+          "label": "Results",
+          "date": "2027-01-27",
+          "estimated": true
+        },
+        {
+          "label": "Ex-dividend",
+          "date": "2027-01-30",
+          "estimated": true
+        }
+      ],
+      "event_block": null
     },
     {
       "symbol": "BSE",
-      "spot": 3906.0,
+      "spot": 3909.1,
       "colour": "green",
       "flip_date": "2026-10-15",
-      "flip_trading_days": 18,
-      "rsi": 73.8,
-      "basis": "RSI 73.8 > 70",
+      "flip_trading_days": 19,
+      "rsi": 73.9,
+      "basis": "Supertrend green",
       "near_call": {
         "strike": 4200.0,
         "expiry": "2026-11-23",
-        "dist_pct": 6.46
+        "dist_pct": 7.34
       },
       "near_put": {
         "strike": 3400.0,
         "expiry": "2026-11-23",
-        "dist_pct": -13.81
+        "dist_pct": -13.1
       },
       "shares": 37,
       "lot": 200,
       "covered": false,
-      "desired": "CALL",
+      "desired": "PUT_SPREAD",
       "status": "FLIP",
       "note": "Supertrend is GREEN: the open short call (4200CE 2026-11-23, 4200CE 2026-12-29) is the opposite of the colour rule - close it and open the bull put spread.",
       "tagged": false,
       "suggestions": [
         {
           "expiry": "2026-11-23",
-          "structure": "CALL",
-          "missing_chain": true
+          "structure": "PUT_SPREAD",
+          "missing_chain": true,
+          "event_block": null
         }
       ],
       "legs": [
@@ -377,14 +388,14 @@
           "qty": 200,
           "buy_avg": 21.95,
           "sell_avg": 0.0,
-          "pnl_rs": -3890.0,
-          "ltp": 2.5,
-          "beyond_pct": -31.5,
+          "pnl_rs": -3980.0,
+          "ltp": 2.05,
+          "beyond_pct": -30.42,
           "intrinsic_rs": 0,
           "touched": false,
           "near": false,
           "touched_h": false,
-          "dist_pct": -23.95,
+          "dist_pct": -23.33,
           "lot": 200,
           "lots": 1.0
         },
@@ -397,16 +408,16 @@
           "qty": 200,
           "buy_avg": 0.0,
           "sell_avg": 17.9,
-          "pnl_rs": 2180.0,
-          "ltp": 7.0,
+          "pnl_rs": 2620.0,
+          "ltp": 4.8,
           "stop_at": 53.7,
           "stop_hit": false,
-          "beyond_pct": -16.03,
+          "beyond_pct": -15.08,
           "intrinsic_rs": 0,
           "touched": false,
           "near": false,
           "touched_h": false,
-          "dist_pct": -13.81,
+          "dist_pct": -13.1,
           "lot": 200,
           "lots": 1.0
         },
@@ -419,16 +430,16 @@
           "qty": 200,
           "buy_avg": 0.0,
           "sell_avg": 13.35,
-          "pnl_rs": -2070.0,
-          "ltp": 23.7,
+          "pnl_rs": 70.0,
+          "ltp": 13.0,
           "stop_at": 40.05,
           "stop_hit": false,
-          "beyond_pct": -6.07,
+          "beyond_pct": -6.84,
           "intrinsic_rs": 0,
           "touched": false,
           "near": false,
           "touched_h": false,
-          "dist_pct": 6.46,
+          "dist_pct": 7.34,
           "lot": 200,
           "lots": 1.0
         },
@@ -441,16 +452,16 @@
           "qty": 200,
           "buy_avg": 0.0,
           "sell_avg": 23.55,
-          "pnl_rs": 990.0,
-          "ltp": 18.6,
+          "pnl_rs": 1610.0,
+          "ltp": 15.5,
           "stop_at": 70.65,
           "stop_hit": false,
-          "beyond_pct": -23.28,
+          "beyond_pct": -22.27,
           "intrinsic_rs": 0,
           "touched": false,
           "near": false,
           "touched_h": false,
-          "dist_pct": -18.88,
+          "dist_pct": -18.22,
           "lot": 200,
           "lots": 1.0
         },
@@ -463,53 +474,51 @@
           "qty": 200,
           "buy_avg": 0.0,
           "sell_avg": 53.85,
-          "pnl_rs": -10330.0,
-          "ltp": 105.5,
+          "pnl_rs": -7560.0,
+          "ltp": 91.65,
           "stop_at": 161.55,
           "stop_hit": false,
-          "beyond_pct": -6.07,
+          "beyond_pct": -6.84,
           "intrinsic_rs": 0,
           "touched": false,
           "near": false,
           "touched_h": false,
-          "dist_pct": 6.46,
+          "dist_pct": 7.34,
           "lot": 200,
           "lots": 1.0
         }
-      ]
+      ],
+      "events": [
+        {
+          "label": "Ex-dividend",
+          "date": "2027-07-10",
+          "estimated": true
+        }
+      ],
+      "event_block": null
     },
     {
       "symbol": "DIXON",
-      "spot": 12896.0,
+      "spot": 12992.0,
       "colour": "green",
       "flip_date": "2026-11-02",
-      "flip_trading_days": 7,
-      "rsi": 59.0,
+      "flip_trading_days": 8,
+      "rsi": 60.4,
       "basis": "Supertrend green",
-      "near_call": {
-        "strike": 13000.0,
-        "expiry": "2026-11-23",
-        "dist_pct": 0.63
-      },
+      "near_call": null,
       "near_put": {
         "strike": 11500.0,
         "expiry": "2026-12-29",
-        "dist_pct": -10.98
+        "dist_pct": -10.58
       },
       "shares": 9,
       "lot": 50,
       "covered": false,
       "desired": "PUT_SPREAD",
-      "status": "FLIP",
-      "note": "Supertrend is GREEN: the open short call (13000CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread.",
+      "status": "HOLD",
+      "note": "Open structure matches the rule (Supertrend green).",
       "tagged": false,
-      "suggestions": [
-        {
-          "expiry": "2026-11-23",
-          "structure": "PUT_SPREAD",
-          "missing_chain": true
-        }
-      ],
+      "suggestions": [],
       "legs": [
         {
           "symbol": "DIXON",
@@ -520,14 +529,14 @@
           "qty": 50,
           "buy_avg": 120.5,
           "sell_avg": 0.0,
-          "pnl_rs": -1870.0,
-          "ltp": 83.1,
-          "beyond_pct": -17.45,
+          "pnl_rs": -2115.0,
+          "ltp": 78.2,
+          "beyond_pct": -16.91,
           "intrinsic_rs": 0,
           "touched": false,
           "near": false,
           "touched_h": false,
-          "dist_pct": -14.85,
+          "dist_pct": -14.46,
           "lot": 50,
           "lots": 1.0
         },
@@ -540,60 +549,51 @@
           "qty": 50,
           "buy_avg": 0.0,
           "sell_avg": 200.55,
-          "pnl_rs": 3677.5,
-          "ltp": 127.0,
+          "pnl_rs": 2977.5,
+          "ltp": 141.0,
           "stop_at": 601.65,
           "stop_hit": false,
-          "beyond_pct": -12.34,
+          "beyond_pct": -11.83,
           "intrinsic_rs": 0,
           "touched": false,
           "near": false,
           "touched_h": false,
-          "dist_pct": -10.98,
-          "lot": 50,
-          "lots": 1.0
-        },
-        {
-          "symbol": "DIXON",
-          "expiry": "2026-11-23",
-          "strike": 13000.0,
-          "type": "CE",
-          "side": "SHORT",
-          "qty": 50,
-          "buy_avg": 0.0,
-          "sell_avg": 164.85,
-          "pnl_rs": -5077.5,
-          "ltp": 266.4,
-          "stop_at": 494.55,
-          "stop_hit": false,
-          "beyond_pct": -0.62,
-          "intrinsic_rs": 0,
-          "touched": false,
-          "near": true,
-          "touched_h": false,
-          "dist_pct": 0.63,
+          "dist_pct": -10.58,
           "lot": 50,
           "lots": 1.0
         }
-      ]
+      ],
+      "events": [
+        {
+          "label": "Results",
+          "date": "2027-01-28",
+          "estimated": false
+        },
+        {
+          "label": "Ex-dividend",
+          "date": "2027-09-21",
+          "estimated": true
+        }
+      ],
+      "event_block": null
     },
     {
       "symbol": "HCLTECH",
-      "spot": 1395.0,
+      "spot": 1380.8,
       "colour": "green",
       "flip_date": "2026-10-13",
-      "flip_trading_days": 20,
-      "rsi": 55.6,
+      "flip_trading_days": 21,
+      "rsi": 52.4,
       "basis": "Supertrend green",
       "near_call": {
         "strike": 1560.0,
         "expiry": "2026-11-23",
-        "dist_pct": 12.22
+        "dist_pct": 13.77
       },
       "near_put": {
         "strike": 1320.0,
         "expiry": "2026-11-23",
-        "dist_pct": -5.04
+        "dist_pct": -3.73
       },
       "shares": 23,
       "lot": 400,
@@ -605,29 +605,30 @@
       "suggestions": [
         {
           "expiry": "2026-11-23",
-          "days": 12,
+          "days": 11,
           "structure": "PUT_SPREAD",
           "expiry_week": false,
           "short": {
             "type": "PE",
-            "strike": 1300.0,
-            "ltp": 4.75,
-            "iv": 39.7,
-            "delta": -0.148,
-            "oi": 382800
+            "strike": 1280.0,
+            "ltp": 3.75,
+            "iv": 41.6,
+            "delta": -0.133,
+            "oi": 92400
           },
-          "stop_premium": 14.25,
-          "strike_distance_pct": -6.81,
+          "stop_premium": 11.25,
+          "strike_distance_pct": -7.3,
           "hedge": {
             "type": "PE",
-            "strike": 1260.0,
-            "ltp": 3.05,
-            "iv": 43.6
+            "strike": 1240.0,
+            "ltp": 1.7,
+            "iv": 43.3
           },
-          "credit": 1.7,
+          "credit": 2.05,
           "width": 40.0,
-          "credit_rs": 680.0,
-          "max_loss_rs": 15320.0
+          "credit_rs": 820.0,
+          "max_loss_rs": 15180.0,
+          "event_block": null
         }
       ],
       "legs": [
@@ -640,16 +641,16 @@
           "qty": 400,
           "buy_avg": 0.0,
           "sell_avg": 13.05,
-          "pnl_rs": 1980.0,
-          "ltp": 8.1,
+          "pnl_rs": 1580.0,
+          "ltp": 9.1,
           "stop_at": 39.15,
           "stop_hit": false,
-          "beyond_pct": -5.31,
+          "beyond_pct": -3.88,
           "intrinsic_rs": 0,
           "touched": false,
           "near": false,
           "touched_h": false,
-          "dist_pct": -5.04,
+          "dist_pct": -3.73,
           "lot": 400,
           "lots": 1.0
         },
@@ -662,38 +663,51 @@
           "qty": 400,
           "buy_avg": 0.0,
           "sell_avg": 5.5,
-          "pnl_rs": 1140.0,
-          "ltp": 2.65,
+          "pnl_rs": 1720.0,
+          "ltp": 1.2,
           "stop_at": 16.5,
           "stop_hit": false,
-          "beyond_pct": -10.89,
+          "beyond_pct": -12.1,
           "intrinsic_rs": 0,
           "touched": false,
           "near": false,
           "touched_h": false,
-          "dist_pct": 12.22,
+          "dist_pct": 13.77,
           "lot": 400,
           "lots": 1.0
         }
-      ]
+      ],
+      "events": [
+        {
+          "label": "Results",
+          "date": "2027-01-11",
+          "estimated": false
+        },
+        {
+          "label": "Ex-dividend",
+          "date": "2027-01-16",
+          "estimated": true
+        }
+      ],
+      "event_block": null
     },
     {
       "symbol": "INFY",
-      "spot": 1155.0,
+      "spot": 1151.2,
       "colour": "green",
       "flip_date": "2026-10-14",
-      "flip_trading_days": 19,
-      "rsi": 58.3,
+      "flip_trading_days": 20,
+      "rsi": 57.4,
       "basis": "Supertrend green",
       "near_call": {
         "strike": 1334.0,
         "expiry": "2026-12-29",
-        "dist_pct": 16.43
+        "dist_pct": 17.07
       },
       "near_put": {
         "strike": 1034.0,
         "expiry": "2026-12-29",
-        "dist_pct": -9.76
+        "dist_pct": -9.26
       },
       "shares": 23,
       "lot": 400,
@@ -705,7 +719,7 @@
       "suggestions": [
         {
           "expiry": "2026-11-23",
-          "days": 12,
+          "days": 11,
           "structure": "PUT_SPREAD",
           "expiry_week": false,
           "short": {
@@ -713,11 +727,11 @@
             "strike": 1080.0,
             "ltp": 6.15,
             "iv": 38.4,
-            "delta": -0.152,
+            "delta": -0.154,
             "oi": 160000
           },
           "stop_premium": 18.45,
-          "strike_distance_pct": -6.49,
+          "strike_distance_pct": -6.18,
           "hedge": {
             "type": "PE",
             "strike": 1060.0,
@@ -727,7 +741,8 @@
           "credit": 1.8,
           "width": 20.0,
           "credit_rs": 720.0,
-          "max_loss_rs": 7280.0
+          "max_loss_rs": 7280.0,
+          "event_block": null
         }
       ],
       "legs": [
@@ -740,16 +755,16 @@
           "qty": 400,
           "buy_avg": 0.0,
           "sell_avg": 11.5,
-          "pnl_rs": -520.0,
-          "ltp": 12.8,
+          "pnl_rs": -340.0,
+          "ltp": 12.35,
           "stop_at": 34.5,
           "stop_hit": false,
-          "beyond_pct": -10.81,
+          "beyond_pct": -10.2,
           "intrinsic_rs": 0,
           "touched": false,
           "near": false,
           "touched_h": false,
-          "dist_pct": -9.76,
+          "dist_pct": -9.26,
           "lot": 400,
           "lots": 1.0
         },
@@ -762,49 +777,56 @@
           "qty": 400,
           "buy_avg": 0.0,
           "sell_avg": 9.9,
-          "pnl_rs": 820.0,
-          "ltp": 7.85,
+          "pnl_rs": 1340.0,
+          "ltp": 6.55,
           "stop_at": 29.7,
           "stop_hit": false,
-          "beyond_pct": -14.11,
+          "beyond_pct": -14.58,
           "intrinsic_rs": 0,
           "touched": false,
           "near": false,
           "touched_h": false,
-          "dist_pct": 16.43,
+          "dist_pct": 17.07,
           "lot": 400,
           "lots": 1.0
         }
-      ]
+      ],
+      "events": [
+        {
+          "label": "Results",
+          "date": "2027-01-13",
+          "estimated": false
+        },
+        {
+          "label": "Ex-dividend",
+          "date": "2027-06-10",
+          "estimated": true
+        }
+      ],
+      "event_block": null
     },
     {
       "symbol": "BANKINDIA",
-      "spot": 150.6,
+      "spot": 151.41,
       "colour": "green",
       "flip_date": "2026-11-05",
-      "flip_trading_days": 4,
-      "rsi": 70.1,
-      "basis": "RSI 70.1 > 70",
+      "flip_trading_days": 5,
+      "rsi": 70.8,
+      "basis": "Supertrend green",
       "near_call": null,
       "near_put": {
         "strike": 125.0,
         "expiry": "2026-11-23",
-        "dist_pct": -16.72
+        "dist_pct": -18.17
       },
       "shares": 179,
       "lot": 5200,
       "covered": false,
-      "desired": "CALL",
-      "status": "ENTER",
-      "note": "RSI 70.1 > 70 - no short call open",
+      "desired": "PUT_SPREAD",
+      "status": "HOLD",
+      "note": "Open structure matches the rule (Supertrend green).",
       "tagged": false,
-      "suggestions": [
-        {
-          "expiry": "2026-11-23",
-          "structure": "CALL",
-          "missing_chain": true
-        }
-      ],
+      "suggestions": [],
       "legs": [
         {
           "symbol": "BANKINDIA",
@@ -815,14 +837,14 @@
           "qty": 5200,
           "buy_avg": 0.35,
           "sell_avg": 0.0,
-          "pnl_rs": -832.0,
-          "ltp": 0.19,
-          "beyond_pct": -25.08,
+          "pnl_rs": -1144.0,
+          "ltp": 0.13,
+          "beyond_pct": -27.3,
           "intrinsic_rs": 0,
           "touched": false,
           "near": false,
           "touched_h": false,
-          "dist_pct": -20.05,
+          "dist_pct": -21.45,
           "lot": 5200,
           "lots": 1.0
         },
@@ -835,33 +857,41 @@
           "qty": 5200,
           "buy_avg": 0.0,
           "sell_avg": 0.56,
-          "pnl_rs": 1820.0,
-          "ltp": 0.21,
+          "pnl_rs": 1976.0,
+          "ltp": 0.18,
           "stop_at": 1.68,
           "stop_hit": false,
-          "beyond_pct": -20.07,
+          "beyond_pct": -22.21,
           "intrinsic_rs": 0,
           "touched": false,
           "near": false,
           "touched_h": false,
-          "dist_pct": -16.72,
+          "dist_pct": -18.17,
           "lot": 5200,
           "lots": 1.0
         }
-      ]
+      ],
+      "events": [
+        {
+          "label": "Ex-dividend",
+          "date": "2027-05-29",
+          "estimated": true
+        }
+      ],
+      "event_block": null
     },
     {
       "symbol": "BPCL",
-      "spot": 315.25,
+      "spot": 311.5,
       "colour": "green",
       "flip_date": "2026-11-05",
-      "flip_trading_days": 4,
-      "rsi": 62.0,
+      "flip_trading_days": 5,
+      "rsi": 58.1,
       "basis": "Supertrend green",
       "near_call": {
         "strike": 340.0,
         "expiry": "2026-11-23",
-        "dist_pct": 7.89
+        "dist_pct": 11.15
       },
       "near_put": null,
       "shares": 79,
@@ -874,29 +904,30 @@
       "suggestions": [
         {
           "expiry": "2026-11-23",
-          "days": 12,
+          "days": 11,
           "structure": "PUT_SPREAD",
           "expiry_week": false,
           "short": {
             "type": "PE",
-            "strike": 300.0,
-            "ltp": 1.85,
-            "iv": 31.0,
-            "delta": -0.172,
-            "oi": 1096125
+            "strike": 295.0,
+            "ltp": 1.3,
+            "iv": 32.8,
+            "delta": -0.154,
+            "oi": 537200
           },
-          "stop_premium": 5.55,
-          "strike_distance_pct": -4.84,
+          "stop_premium": 3.9,
+          "strike_distance_pct": -5.3,
           "hedge": {
             "type": "PE",
-            "strike": 290.0,
-            "ltp": 1.0,
-            "iv": 35.5
+            "strike": 285.0,
+            "ltp": 0.65,
+            "iv": 36.5
           },
-          "credit": 0.85,
+          "credit": 0.65,
           "width": 10.0,
-          "credit_rs": 1678.75,
-          "max_loss_rs": 18071.25
+          "credit_rs": 1283.75,
+          "max_loss_rs": 18466.25,
+          "event_block": null
         }
       ],
       "legs": [
@@ -909,81 +940,89 @@
           "qty": 1975,
           "buy_avg": 0.0,
           "sell_avg": 1.2,
-          "pnl_rs": -987.5,
-          "ltp": 1.7,
+          "pnl_rs": 1382.5,
+          "ltp": 0.5,
           "stop_at": 3.6,
           "stop_hit": false,
-          "beyond_pct": -7.31,
+          "beyond_pct": -10.03,
           "intrinsic_rs": 0,
           "touched": false,
           "near": false,
           "touched_h": false,
-          "dist_pct": 7.89,
+          "dist_pct": 11.15,
           "lot": 1975,
           "lots": 1.0
         }
-      ]
+      ],
+      "events": [
+        {
+          "label": "Results",
+          "date": "2027-01-21",
+          "estimated": false
+        },
+        {
+          "label": "Ex-dividend",
+          "date": "2027-02-02",
+          "estimated": true
+        }
+      ],
+      "event_block": null
     },
     {
       "symbol": "CUMMINSIND",
-      "spot": 4229.8,
+      "spot": 4258.2,
       "colour": "red",
       "flip_date": "2026-11-05",
-      "flip_trading_days": 4,
-      "rsi": 39.3,
+      "flip_trading_days": 5,
+      "rsi": 40.6,
       "basis": "Supertrend red",
-      "near_call": {
-        "strike": 4550.0,
-        "expiry": "2026-11-23",
-        "dist_pct": 6.76
-      },
+      "near_call": null,
       "near_put": null,
       "shares": 18,
       "lot": 100,
       "covered": false,
       "desired": "CALL",
-      "status": "HOLD",
-      "note": "Open structure matches the rule (Supertrend red).",
+      "status": "ENTER",
+      "note": "Supertrend red - no short call open",
       "tagged": false,
-      "suggestions": [],
-      "legs": [
+      "suggestions": [
         {
-          "symbol": "CUMMINSIND",
           "expiry": "2026-11-23",
-          "strike": 4550.0,
-          "type": "CE",
-          "side": "SHORT",
-          "qty": 100,
-          "buy_avg": 0.0,
-          "sell_avg": 15.75,
-          "pnl_rs": -725.0,
-          "ltp": 23.0,
-          "stop_at": 47.25,
-          "stop_hit": false,
-          "beyond_pct": -6.33,
-          "intrinsic_rs": 0,
-          "touched": false,
-          "near": false,
-          "touched_h": false,
-          "dist_pct": 6.76,
-          "lot": 100,
-          "lots": 1.0
+          "days": 11,
+          "structure": "CALL",
+          "expiry_week": false,
+          "short": {
+            "type": "CE",
+            "strike": 4700.0,
+            "ltp": 8.7,
+            "iv": 40.8,
+            "delta": 0.092,
+            "oi": 163900
+          },
+          "stop_premium": 26.1,
+          "credit": 8.7,
+          "credit_rs": 870.0,
+          "strike_distance_pct": 10.38,
+          "event_block": null
         }
-      ]
+      ],
+      "legs": [],
+      "events": [
+        {
+          "label": "Results",
+          "date": "2027-02-03",
+          "estimated": false
+        },
+        {
+          "label": "Ex-dividend",
+          "date": "2027-02-11",
+          "estimated": true
+        }
+      ],
+      "event_block": null
     }
   ],
   "alerts": [
-    {
-      "expiry": "2026-11-23",
-      "strike": 3900.0,
-      "opt_type": "CE",
-      "level": "EXIT",
-      "type": "Exit",
-      "symbol": "MCX",
-      "concern": "Supertrend GREEN but the short call is still open",
-      "action": "Close it and open the bull put spread",
-      "text": "MCX: Supertrend is GREEN: the open short call (3900CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
-    },
     {
       "expiry": "2026-12-29",
       "strike": 1120.0,
@@ -1005,17 +1044,6 @@
       "concern": "Supertrend GREEN but the short call is still open (2 legs)",
       "action": "Close it and open the bull put spread",
       "text": "BSE: Supertrend is GREEN: the open short call (4200CE 2026-11-23, 4200CE 2026-12-29) is the opposite of the colour rule - close it and open the bull put spread."
-    },
-    {
-      "expiry": "2026-11-23",
-      "strike": 13000.0,
-      "opt_type": "CE",
-      "level": "EXIT",
-      "type": "Exit",
-      "symbol": "DIXON",
-      "concern": "Supertrend GREEN but the short call is still open",
-      "action": "Close it and open the bull put spread",
-      "text": "DIXON: Supertrend is GREEN: the open short call (13000CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
     },
     {
       "expiry": "2026-11-23",
@@ -1051,15 +1079,26 @@
       "text": "BPCL: Supertrend is GREEN: the open short call (340CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
     },
     {
-      "level": "WARN",
-      "type": "Partly hedged",
+      "level": "BREACH",
+      "type": "Invalid stop order",
+      "symbol": "CUMMINSIND",
+      "expiry": null,
+      "strike": null,
+      "opt_type": null,
+      "concern": "Orphan: Likely orphaned: sold 100 @ 15.75 but no open short matches; target 0 still pending: a stop firing would BUY a new long",
+      "action": "Check the position; if closed, cancel the legs (order 2132611092875273)",
+      "text": "CUMMINSIND: Likely orphaned: sold 100 @ 15.75 but no open short matches; target 0 still pending: a stop firing would BUY a new long"
+    },
+    {
+      "level": "BREACH",
+      "type": "Invalid stop order",
       "symbol": "MCX",
-      "expiry": "2026-11-23",
-      "strike": 3900.0,
-      "opt_type": "CE",
-      "concern": "188 of 225 qty uncovered (hedge 0 + 37 shares)",
-      "action": "Buy a hedge or hold shares",
-      "text": "MCX 2026-11-23: short 3900CE 225 qty, hedge 0 qty + 37 shares - 188 qty uncovered"
+      "expiry": null,
+      "strike": null,
+      "opt_type": null,
+      "concern": "Orphan: Likely orphaned: sold 225 @ 16.15 but no open short matches; target 0 still pending: a stop firing would BUY a new long",
+      "action": "Check the position; if closed, cancel the legs (order 2132611061617273)",
+      "text": "MCX: Likely orphaned: sold 225 @ 16.15 but no open short matches; target 0 still pending: a stop firing would BUY a new long"
     },
     {
       "level": "WARN",
@@ -1139,32 +1178,6 @@
       "text": "BSE 2026-12-29: short 4200CE 200 qty, hedge 0 qty + 37 shares - 163 qty uncovered"
     },
     {
-      "expiry": "2026-11-23",
-      "strike": 13000.0,
-      "opt_type": "CE",
-      "qty": 50,
-      "spot": 12919.0,
-      "beyond_pct": -0.62,
-      "intrinsic_rs": 0,
-      "level": "WARN",
-      "type": "Near strike",
-      "symbol": "DIXON",
-      "concern": "Price 0.6% from the short strike",
-      "action": "Watch; plan the roll",
-      "text": "DIXON 2026-11-23: price 12919 is within 0.6% of the short 13000CE"
-    },
-    {
-      "level": "WARN",
-      "type": "Partly hedged",
-      "symbol": "DIXON",
-      "expiry": "2026-11-23",
-      "strike": 13000.0,
-      "opt_type": "CE",
-      "concern": "41 of 50 qty uncovered (hedge 0 + 9 shares)",
-      "action": "Buy a hedge or hold shares",
-      "text": "DIXON 2026-11-23: short 13000CE 50 qty, hedge 0 qty + 9 shares - 41 qty uncovered"
-    },
-    {
       "level": "WARN",
       "type": "No hedge",
       "symbol": "HCLTECH",
@@ -1220,24 +1233,13 @@
       "text": "BPCL 2026-11-23: short 340CE 1975 qty, hedge 0 qty + 79 shares - 1896 qty uncovered"
     },
     {
-      "level": "WARN",
-      "type": "Partly hedged",
-      "symbol": "CUMMINSIND",
-      "expiry": "2026-11-23",
-      "strike": 4550.0,
-      "opt_type": "CE",
-      "concern": "82 of 100 qty uncovered (hedge 0 + 18 shares)",
-      "action": "Buy a hedge or hold shares",
-      "text": "CUMMINSIND 2026-11-23: short 4550CE 100 qty, hedge 0 qty + 18 shares - 82 qty uncovered"
-    },
-    {
       "level": "ENTER",
       "type": "New trade",
-      "symbol": "BANKINDIA",
-      "flip_days": 4,
-      "concern": "RSI 70.1 > 70, flipped 4d ago, no short call open",
+      "symbol": "CUMMINSIND",
+      "flip_days": 5,
+      "concern": "Supertrend red, flipped 5d ago, no short call open",
       "action": "Sell the call",
-      "text": "BANKINDIA: RSI 70.1 > 70 - no short call open - sell call"
+      "text": "CUMMINSIND: Supertrend red - no short call open - sell call"
     },
     {
       "level": "PROFIT",
@@ -1246,9 +1248,9 @@
       "expiry": "2026-11-23",
       "strike": 3100.0,
       "opt_type": "PE",
-      "concern": "Premium decayed 61% (sold 15.15, now 5.9)",
+      "concern": "Premium decayed 74% (sold 15.15, now 3.95)",
       "action": "Book profit: buy back",
-      "text": "MCX 2026-11-23 3100PE: premium decayed 61% (sold 15.15, now 5.9) - book the profit"
+      "text": "MCX 2026-11-23 3100PE: premium decayed 74% (sold 15.15, now 3.95) - book the profit"
     },
     {
       "level": "PROFIT",
@@ -1257,9 +1259,9 @@
       "expiry": "2026-11-23",
       "strike": 880.0,
       "opt_type": "PE",
-      "concern": "Premium decayed 67% (sold 7.85, now 2.6)",
+      "concern": "Premium decayed 62% (sold 7.85, now 2.95)",
       "action": "Book profit: buy back",
-      "text": "SHRIRAMFIN 2026-11-23 880PE: premium decayed 67% (sold 7.85, now 2.6) - book the profit"
+      "text": "SHRIRAMFIN 2026-11-23 880PE: premium decayed 62% (sold 7.85, now 2.95) - book the profit"
     },
     {
       "level": "PROFIT",
@@ -1268,9 +1270,20 @@
       "expiry": "2026-11-23",
       "strike": 3400.0,
       "opt_type": "PE",
-      "concern": "Premium decayed 61% (sold 17.9, now 7)",
+      "concern": "Premium decayed 73% (sold 17.9, now 4.8)",
       "action": "Book profit: buy back",
-      "text": "BSE 2026-11-23 3400PE: premium decayed 61% (sold 17.9, now 7) - book the profit"
+      "text": "BSE 2026-11-23 3400PE: premium decayed 73% (sold 17.9, now 4.8) - book the profit"
+    },
+    {
+      "level": "PROFIT",
+      "type": "Profit Exit",
+      "symbol": "HCLTECH",
+      "expiry": "2026-11-23",
+      "strike": 1560.0,
+      "opt_type": "CE",
+      "concern": "Premium decayed 78% (sold 5.5, now 1.2)",
+      "action": "Book profit: buy back",
+      "text": "HCLTECH 2026-11-23 1560CE: premium decayed 78% (sold 5.5, now 1.2) - book the profit"
     },
     {
       "level": "PROFIT",
@@ -1279,209 +1292,211 @@
       "expiry": "2026-11-23",
       "strike": 125.0,
       "opt_type": "PE",
-      "concern": "Premium decayed 62% (sold 0.56, now 0.21)",
+      "concern": "Premium decayed 68% (sold 0.56, now 0.18)",
       "action": "Book profit: buy back",
-      "text": "BANKINDIA 2026-11-23 125PE: premium decayed 62% (sold 0.56, now 0.21) - book the profit"
+      "text": "BANKINDIA 2026-11-23 125PE: premium decayed 68% (sold 0.56, now 0.18) - book the profit"
     }
   ],
+  "events_file_at": "2026-11-13T06:37:51.128756+00:00",
+  "events_missing": [],
   "shares": {
     "rows": [
       {
         "symbol": "MCX",
-        "spot": 3617.6,
+        "spot": 3624.7,
         "avg_cost": 3292.97,
         "qty": 37,
         "invested": 121839.89,
-        "value": 133851.2,
-        "pl_pct": 9.86,
-        "pl_rs": 12011.31,
+        "value": 134113.9,
+        "pl_pct": 10.07,
+        "pl_rs": 12274.01,
         "colour": "green",
         "flip_date": "2026-11-03",
-        "flip_trading_days": 6,
-        "rsi": 65.0,
+        "flip_trading_days": 7,
+        "rsi": 65.3,
         "avg_status": "NO",
         "add_qty": 4,
-        "add_value_rs": 14470.4,
+        "add_value_rs": 14498.8,
         "last_add": null,
         "days_since_add": null,
-        "avg_note": "P&L +9.9% - needs a loss of 6% or more"
+        "avg_note": "P&L +10.1% - needs a loss of 6% or more"
       },
       {
         "symbol": "SHRIRAMFIN",
-        "spot": 969.15,
+        "spot": 1003.8,
         "avg_cost": 1111.37,
         "qty": 117,
         "invested": 130030.29,
-        "value": 113390.55,
-        "pl_pct": -12.8,
-        "pl_rs": -16639.74,
+        "value": 117444.6,
+        "pl_pct": -9.68,
+        "pl_rs": -12585.69,
         "colour": "green",
         "flip_date": "2026-11-05",
-        "flip_trading_days": 4,
-        "rsi": 59.7,
+        "flip_trading_days": 5,
+        "rsi": 65.1,
         "avg_status": "WAIT",
         "add_qty": 12,
-        "add_value_rs": 11629.8,
+        "add_value_rs": 12045.6,
         "last_add": "2026-11-09",
-        "days_since_add": 2,
-        "avg_note": "added 2d ago - once every 7 days"
+        "days_since_add": 3,
+        "avg_note": "added 3d ago - once every 7 days"
       },
       {
         "symbol": "CGPOWER",
-        "spot": 822.6,
+        "spot": 821.75,
         "avg_cost": 930.9,
         "qty": 184,
         "invested": 171285.6,
-        "value": 151358.4,
-        "pl_pct": -11.63,
-        "pl_rs": -19927.2,
+        "value": 151202.0,
+        "pl_pct": -11.73,
+        "pl_rs": -20083.6,
         "colour": "red",
         "flip_date": "2026-09-16",
-        "flip_trading_days": 38,
-        "rsi": 48.4,
+        "flip_trading_days": 39,
+        "rsi": 48.2,
         "avg_status": "NO",
         "add_qty": 18,
-        "add_value_rs": 14806.8,
+        "add_value_rs": 14791.5,
         "last_add": null,
         "days_since_add": null,
         "avg_note": "Supertrend red"
       },
       {
         "symbol": "BSE",
-        "spot": 3906.0,
+        "spot": 3909.1,
         "avg_cost": 3882.74,
         "qty": 37,
         "invested": 143661.38,
-        "value": 144522.0,
-        "pl_pct": 0.6,
-        "pl_rs": 860.62,
+        "value": 144636.7,
+        "pl_pct": 0.68,
+        "pl_rs": 975.32,
         "colour": "green",
         "flip_date": "2026-10-15",
-        "flip_trading_days": 18,
-        "rsi": 73.8,
+        "flip_trading_days": 19,
+        "rsi": 73.9,
         "avg_status": "NO",
         "add_qty": 4,
-        "add_value_rs": 15624.0,
+        "add_value_rs": 15636.4,
         "last_add": null,
         "days_since_add": null,
-        "avg_note": "P&L +0.6% - needs a loss of 6% or more"
+        "avg_note": "P&L +0.7% - needs a loss of 6% or more"
       },
       {
         "symbol": "DIXON",
-        "spot": 12896.0,
+        "spot": 12992.0,
         "avg_cost": 14421.67,
         "qty": 9,
         "invested": 129795.03,
-        "value": 116064.0,
-        "pl_pct": -10.58,
-        "pl_rs": -13731.03,
+        "value": 116928.0,
+        "pl_pct": -9.91,
+        "pl_rs": -12867.03,
         "colour": "green",
         "flip_date": "2026-11-02",
-        "flip_trading_days": 7,
-        "rsi": 59.0,
+        "flip_trading_days": 8,
+        "rsi": 60.4,
         "avg_status": "WAIT",
         "add_qty": 1,
-        "add_value_rs": 12896.0,
+        "add_value_rs": 12992.0,
         "last_add": "2026-11-09",
-        "days_since_add": 2,
-        "avg_note": "added 2d ago - once every 7 days"
+        "days_since_add": 3,
+        "avg_note": "added 3d ago - once every 7 days"
       },
       {
         "symbol": "HCLTECH",
-        "spot": 1395.0,
+        "spot": 1380.8,
         "avg_cost": 1629.85,
         "qty": 23,
         "invested": 37486.55,
-        "value": 32085.0,
-        "pl_pct": -14.41,
-        "pl_rs": -5401.55,
+        "value": 31758.4,
+        "pl_pct": -15.28,
+        "pl_rs": -5728.15,
         "colour": "green",
         "flip_date": "2026-10-13",
-        "flip_trading_days": 20,
-        "rsi": 55.6,
+        "flip_trading_days": 21,
+        "rsi": 52.4,
         "avg_status": "WAIT",
         "add_qty": 2,
-        "add_value_rs": 2790.0,
+        "add_value_rs": 2761.6,
         "last_add": "2026-11-09",
-        "days_since_add": 2,
-        "avg_note": "added 2d ago - once every 7 days"
+        "days_since_add": 3,
+        "avg_note": "added 3d ago - once every 7 days"
       },
       {
         "symbol": "INFY",
-        "spot": 1155.0,
+        "spot": 1151.2,
         "avg_cost": 1534.24,
         "qty": 23,
         "invested": 35287.52,
-        "value": 26565.0,
-        "pl_pct": -24.72,
-        "pl_rs": -8722.52,
+        "value": 26477.6,
+        "pl_pct": -24.97,
+        "pl_rs": -8809.92,
         "colour": "green",
         "flip_date": "2026-10-14",
-        "flip_trading_days": 19,
-        "rsi": 58.3,
+        "flip_trading_days": 20,
+        "rsi": 57.4,
         "avg_status": "WAIT",
         "add_qty": 2,
-        "add_value_rs": 2310.0,
+        "add_value_rs": 2302.4,
         "last_add": "2026-11-09",
-        "days_since_add": 2,
-        "avg_note": "added 2d ago - once every 7 days"
+        "days_since_add": 3,
+        "avg_note": "added 3d ago - once every 7 days"
       },
       {
         "symbol": "BANKINDIA",
-        "spot": 150.6,
+        "spot": 151.41,
         "avg_cost": 169.04,
         "qty": 179,
         "invested": 30258.16,
-        "value": 26957.4,
-        "pl_pct": -10.91,
-        "pl_rs": -3300.76,
+        "value": 27102.39,
+        "pl_pct": -10.43,
+        "pl_rs": -3155.77,
         "colour": "green",
         "flip_date": "2026-11-05",
-        "flip_trading_days": 4,
-        "rsi": 70.1,
+        "flip_trading_days": 5,
+        "rsi": 70.8,
         "avg_status": "WAIT",
         "add_qty": 18,
-        "add_value_rs": 2710.8,
+        "add_value_rs": 2725.38,
         "last_add": "2026-11-09",
-        "days_since_add": 2,
-        "avg_note": "added 2d ago - once every 7 days"
+        "days_since_add": 3,
+        "avg_note": "added 3d ago - once every 7 days"
       },
       {
         "symbol": "BPCL",
-        "spot": 315.25,
+        "spot": 311.5,
         "avg_cost": 375.4,
         "qty": 79,
         "invested": 29656.6,
-        "value": 24904.75,
-        "pl_pct": -16.02,
-        "pl_rs": -4751.85,
+        "value": 24608.5,
+        "pl_pct": -17.02,
+        "pl_rs": -5048.1,
         "colour": "green",
         "flip_date": "2026-11-05",
-        "flip_trading_days": 4,
-        "rsi": 62.0,
+        "flip_trading_days": 5,
+        "rsi": 58.1,
         "avg_status": "WAIT",
         "add_qty": 8,
-        "add_value_rs": 2522.0,
+        "add_value_rs": 2492.0,
         "last_add": "2026-11-09",
-        "days_since_add": 2,
-        "avg_note": "added 2d ago - once every 7 days"
+        "days_since_add": 3,
+        "avg_note": "added 3d ago - once every 7 days"
       },
       {
         "symbol": "CUMMINSIND",
-        "spot": 4229.8,
+        "spot": 4258.2,
         "avg_cost": 5548.78,
         "qty": 18,
         "invested": 99878.04,
-        "value": 76136.4,
-        "pl_pct": -23.77,
-        "pl_rs": -23741.64,
+        "value": 76647.6,
+        "pl_pct": -23.26,
+        "pl_rs": -23230.44,
         "colour": "red",
         "flip_date": "2026-11-05",
-        "flip_trading_days": 4,
-        "rsi": 39.3,
+        "flip_trading_days": 5,
+        "rsi": 40.6,
         "avg_status": "NO",
         "add_qty": 2,
-        "add_value_rs": 8459.6,
+        "add_value_rs": 8516.4,
         "last_add": null,
         "days_since_add": null,
         "avg_note": "Supertrend red"
@@ -1494,9 +1509,9 @@
   },
   "lots_source": "nse_lots.json",
   "positions_fetched": true,
-  "legs_count": 26,
+  "legs_count": 23,
   "chains_loaded": {
-    "INFY": [
+    "BPCL": [
       "2026-11-23",
       "2026-12-29"
     ],
@@ -1504,21 +1519,16 @@
       "2026-11-23",
       "2026-12-29"
     ],
-    "BPCL": [
-      "2026-11-23",
-      "2026-12-29"
-    ],
     "HCLTECH": [
       "2026-11-23"
+    ],
+    "INFY": [
+      "2026-11-23",
+      "2026-12-29"
     ]
   },
   "other_positions": [],
   "chains_needed": [
-    {
-      "symbol": "MCX",
-      "security_id": 31181,
-      "expiry": "2026-11-23"
-    },
     {
       "symbol": "SHRIRAMFIN",
       "security_id": 4306,
@@ -1527,16 +1537,6 @@
     {
       "symbol": "BSE",
       "security_id": 19585,
-      "expiry": "2026-11-23"
-    },
-    {
-      "symbol": "DIXON",
-      "security_id": 21690,
-      "expiry": "2026-11-23"
-    },
-    {
-      "symbol": "BANKINDIA",
-      "security_id": 4745,
       "expiry": "2026-11-23"
     }
   ]

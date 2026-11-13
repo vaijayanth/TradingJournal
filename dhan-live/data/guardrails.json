@@ -1,13 +1,13 @@
 {
- "generated_at": "2026-11-12T09:34:15+05:30",
+ "generated_at": "2026-11-13T12:09:31+05:30",
  "broker": "dhan",
- "market_data_date": "2026-11-11",
- "signals_generated_at": "2026-11-12T04:04:12.473697+00:00",
+ "market_data_date": "2026-11-12",
+ "signals_generated_at": "2026-11-13T06:39:08.334245+00:00",
  "status": "WARN",
  "global_block": false,
  "counts": {
   "block": 0,
-  "warn": 7,
+  "warn": 6,
   "info": 0
  },
  "per_symbol_blocks": {},
@@ -16,37 +16,31 @@
    "id": "F5",
    "level": "WARN",
    "symbol": null,
-   "msg": "the cross-check flagged 4 of 34 signals (they are blocked from orders): AIMTRON, PRIZOR, SHREMINVIT, UNIONBANK"
+   "msg": "the cross-check flagged 7 of 40 signals (they are blocked from orders): AIMTRON, BEML, LICHSGFIN, NIFTYIETF, PASHUPATI, PGINVIT, SHREMINVIT"
   },
   {
    "id": "S4",
    "level": "WARN",
    "symbol": null,
-   "msg": "2 entries cost more than 3x the tier (Rs1,000) because the minimum is 1 share; largest FLUOROCHEM Rs4,824. Check before ordering."
+   "msg": "3 entries cost more than 3x the tier (Rs1,000) because the minimum is 1 share; largest TASTYBITE Rs10,951. Check before ordering."
   },
   {
    "id": "P3",
    "level": "WARN",
    "symbol": null,
-   "msg": "7 open option exit / strike-breach alerts on 7 stocks (BPCL, BSE, DIXON, HCLTECH, INFY, MCX, SHRIRAMFIN) - see the Covered Call alerts"
+   "msg": "5 open option exit / strike-breach alerts on 5 stocks (BPCL, BSE, HCLTECH, INFY, SHRIRAMFIN) - see the Covered Call alerts"
+  },
+  {
+   "id": "P5",
+   "level": "WARN",
+   "symbol": null,
+   "msg": "2 super order stop findings (2 high: likely orphaned stop legs that could BUY a new long) - see Covered Call > Alerts; the dhan-superorder skill can cancel them"
   },
   {
    "id": "P4",
    "level": "WARN",
    "symbol": "CGPOWER",
    "msg": "CGPOWER: a short call would not be covered by the shares held (lot 850, held 184)"
-  },
-  {
-   "id": "P4",
-   "level": "WARN",
-   "symbol": "BSE",
-   "msg": "BSE: a short call would not be covered by the shares held (lot 200, held 37)"
-  },
-  {
-   "id": "P4",
-   "level": "WARN",
-   "symbol": "BANKINDIA",
-   "msg": "BANKINDIA: a short call would not be covered by the shares held (lot 5200, held 179)"
   },
   {
    "id": "P4",
