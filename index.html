@@ -3575,7 +3575,7 @@ th.te-sort { cursor:pointer; user-select:none; } th.te-sort:hover { color:var(--
     <div class="card" style="padding:0"><div class="table-wrap" style="border:none;border-radius:var(--radius)">
       <table id="dh-live-entry-table" class="dh-blotter">
         <thead><tr>
-          <th>Stock</th><th>Signal date</th><th class="num">CMP</th><th class="num">Qty to buy</th><th>Sector</th>
+          <th>Signal date</th><th>Stock</th><th class="num">CMP</th><th class="num">Qty to buy</th><th>Sector</th>
           <th>Trend</th><th class="num">Flip</th><th class="num">vs 52WH</th><th class="num">52WH hit</th><th>Order</th>
         </tr></thead>
         <tbody id="dh-live-entry-tbody"></tbody>
@@ -3620,8 +3620,8 @@ th.te-sort { cursor:pointer; user-select:none; } th.te-sort:hover { color:var(--
       <table id="dh-live-pos-table" class="dh-blotter">
         <thead><tr>
           <th>Stock</th><th>Entry</th><th class="num">Qty</th><th class="num">WAC</th><th class="num">CMP</th>
-          <th>Trend</th><th class="num">Flip</th><th class="num">vs 52WH</th><th class="num">P&amp;L ₹</th><th class="num">P&amp;L%</th>
-          <th class="num">Adds</th><th class="num">Age</th><th>Signal</th>
+          <th>Trend</th><th class="num">Flip</th><th class="num">P&amp;L ₹</th><th class="num">P&amp;L%</th>
+          <th class="num">Adds</th><th class="num">Age</th><th>Signal</th><th class="num">vs 52WH</th>
         </tr></thead>
         <tbody id="dh-live-pos-tbody"></tbody>
       </table>
@@ -9085,8 +9085,8 @@ const DH_DEFS = {
     filter: (r, f) => f === 'today' ? (dhCopy().flipTodayMode ? /\(0\)/.test(r.flip || '') : r.hitDays === 0) : f === 'hot' ? (r.hot52wh || r.hotTurn) : true,
     cls: r => (r.hot52wh || r.hotTurn) ? 'row-amber' : '', empty: 'No fresh 52-week-high breakouts right now.', cols: 10,
     cells: [
-      ['Stock', r => r.symbol, r => `<td class="stock-name">${dhEsc(r.symbol)}</td>`],
       ['Signal date', r => r.date, r => `<td>${dhFmtDate(r.date)}</td>`],
+      ['Stock', r => r.symbol, r => `<td class="stock-name">${dhEsc(r.symbol)}</td>`],
       ['CMP', r => r.cmp, r => `<td class="num">${dhFmtRs(r.cmp)}</td>`],
       ['Qty to buy', r => r.qtyToBuy, r => `<td class="num" style="font-weight:700">${r.qtyToBuy}</td>`],
       ['Sector', r => dhSectorText(r), r => `<td style="${(r.hot52wh || r.hotTurn) ? 'color:var(--amber);font-weight:700;' : ''}white-space:normal;min-width:150px">${dhEsc(dhSectorText(r))}</td>`],
@@ -9121,7 +9121,7 @@ const DH_DEFS = {
     filter: (r, f) => f === 'all' ? true : r.signal === f,
     cls: r => r.signal === 'EXIT' ? 'row-red' : r.signal === 'ADD-ON' ? 'row-green' : '',
     empty: 'No position data.', cols: 13,
-    cells: [...DH_POS_CELLS, ['Signal', r => r.signal, r => `<td>${dhSignalPill(r.signal)}</td>`]],
+    cells: [...DH_POS_CELLS.filter(c => c[0] !== 'vs 52WH %'), ['Signal', r => r.signal, r => `<td>${dhSignalPill(r.signal)}</td>`], DH_POS_CELLS.find(c => c[0] === 'vs 52WH %')],
   },
   orders: {
     rows: d => (d.orders || []).slice().sort((a, b) => (a.side === b.side ? a.symbol.localeCompare(b.symbol) : a.side === 'SELL' ? -1 : 1)),
@@ -9150,7 +9150,8 @@ function dhLiveVisible(tab) {
   return { all, rows };
 }
 
-function dhCells(tab) { const def = DH_DEFS[tab], hide = tab === 'entry' && dhCopy().hideEntryCols; return hide ? def.cells.filter(c => !/52WH/.test(c[0])) : def.cells; }
+// AZ's rule is flip-based, so it has no 52-week-high columns in the entry, exit or positions tables
+function dhCells(tab) { const def = DH_DEFS[tab], hide = (tab === 'entry' || tab === 'exit' || tab === 'pos') && dhCopy().hideEntryCols; return hide ? def.cells.filter(c => !/52WH/.test(c[0])) : def.cells; }
 function dhLiveApply(tab) {
   const def = DH_DEFS[tab];
   const { all, rows } = dhLiveVisible(tab);
@@ -9166,7 +9167,7 @@ function dhLiveTab(name) {
   if (!DH_TABS.includes(name)) name = 'exit';
   DH_TABS.forEach(t => {
     document.getElementById('dh-panel-' + t).classList.toggle('active', t === name);
-    const btn = document.querySelector('.dhm-tab[data-tab="' + t + '"]');
+    const btn = document.querySelector('#page-dhanlive .dhm-tab[data-tab="' + t + '"]');
     if (btn) btn.classList.toggle('active', t === name);
   });
   try { localStorage.setItem(DH_TAB_KEY, name); } catch (e) {}
@@ -9193,7 +9194,7 @@ function dhLiveRender(d) {
   const cp = dhCopy();
   set('dh-live-title', '/ ' + (cp.liveTitle || '')); set('dh-live-subtitle', cp.liveSub || ''); set('dh-entry-hint', cp.entryHint || ''); set('dh-pos-hint-t', cp.posHint || '');
   { const lg = document.getElementById('dh-logo'); if (lg) lg.innerHTML = `<b>${dhEsc(cp.logoA || '')}${cp.logoB ? `<em>${dhEsc(cp.logoB)}</em>` : ''}</b><span>${dhEsc(cp.logoSub || '')}</span>`; }
-  document.querySelectorAll('#dh-live-entry-table thead th').forEach(th => { th.style.display = (cp.hideEntryCols && /52WH/.test(th.textContent)) ? 'none' : ''; });
+  document.querySelectorAll('#dh-live-entry-table thead th, #dh-live-exit-table thead th, #dh-live-pos-table thead th').forEach(th => { th.style.display = (cp.hideEntryCols && /52WH/.test(th.textContent)) ? 'none' : ''; });
 
   const ranD = new Date(m.computedAt);
   wsPaintFresh();
