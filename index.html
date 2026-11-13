@@ -803,6 +803,8 @@ tbody tr:hover { filter: brightness(0.97); }
 .d2-value.pos, .d2-health-total.pos, .pos { color:var(--green); } .d2-value.neg, .d2-health-total.neg, .neg { color:var(--red); }
 .dh-stale { border:1px solid var(--amber); background:var(--amber-soft); border-radius:9px; padding:11px 15px; margin-bottom:13px; }
 .dh-stale.high { border-color:var(--red); background:var(--red-soft); }
+.dh-flip-today-inline { background:rgba(224,162,61,.18); color:var(--amber); font-weight:700; padding:1px 6px; border-radius:4px; }
+.dh-flip-today { background:rgba(224,162,61,.18); color:var(--amber); font-weight:700; }
 .dh-chip-row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin:0 0 10px; cursor:pointer; }
 .dh-chip { font-size:11px; font-weight:800; letter-spacing:.04em; padding:3px 9px; border-radius:999px; color:var(--amber); border:1px solid var(--amber); background:transparent; }
 .dh-chip.high { color:var(--red); border-color:var(--red); }
@@ -3562,7 +3564,7 @@ th.te-sort { cursor:pointer; user-select:none; } th.te-sort:hover { color:var(--
       <table id="dh-live-exit-table" class="dh-blotter">
         <thead><tr>
           <th>Entry</th><th>Stock</th><th class="num">Qty</th><th class="num">WAC</th><th class="num">CMP</th>
-          <th>Trend</th><th>Flip</th><th class="num">Flip date</th><th class="num">vs 52WH</th><th class="num">P&amp;L ₹</th><th class="num">P&amp;L%</th>
+          <th>Trend</th><th class="num">Flip</th><th class="num">vs 52WH</th><th class="num">P&amp;L ₹</th><th class="num">P&amp;L%</th>
           <th class="num">Adds</th><th class="num">Age</th><th>Order</th>
         </tr></thead>
         <tbody id="dh-live-exit-tbody"></tbody>
@@ -3584,8 +3586,8 @@ th.te-sort { cursor:pointer; user-select:none; } th.te-sort:hover { color:var(--
     <div class="card" style="padding:0"><div class="table-wrap" style="border:none;border-radius:var(--radius)">
       <table id="dh-live-entry-table" class="dh-blotter">
         <thead><tr>
-          <th>Signal date</th><th>Stock</th><th class="num">Qty to buy</th><th>Sector</th><th class="num">CMP</th>
-          <th>Trend</th><th>Flip</th><th class="num">Flip date</th><th class="num">vs 52WH</th><th class="num">52WH hit</th><th>Order</th>
+          <th>Signal date</th><th>Stock</th><th class="num">CMP</th><th class="num">Qty to buy</th><th>Sector</th>
+          <th>Trend</th><th class="num">Flip</th><th class="num">vs 52WH</th><th class="num">52WH hit</th><th>Order</th>
         </tr></thead>
         <tbody id="dh-live-entry-tbody"></tbody>
       </table>
@@ -3607,7 +3609,7 @@ th.te-sort { cursor:pointer; user-select:none; } th.te-sort:hover { color:var(--
       <table id="dh-live-addon-table" class="dh-blotter">
         <thead><tr>
           <th>Stock</th><th class="num">Qty</th><th class="num">WAC</th><th class="num">CMP</th><th class="num">P&amp;L%</th>
-          <th class="num">Add qty</th><th class="num">Days since buy</th><th>Trend</th><th>Flip</th><th class="num">Flip date</th><th class="num">RSI14</th><th>Order</th>
+          <th class="num">Add qty</th><th class="num">Days since buy</th><th>Trend</th><th class="num">Flip</th><th class="num">RSI14</th><th>Order</th>
         </tr></thead>
         <tbody id="dh-live-addon-tbody"></tbody>
       </table>
@@ -3629,7 +3631,7 @@ th.te-sort { cursor:pointer; user-select:none; } th.te-sort:hover { color:var(--
       <table id="dh-live-pos-table" class="dh-blotter">
         <thead><tr>
           <th>Entry</th><th>Stock</th><th class="num">Qty</th><th class="num">WAC</th><th class="num">CMP</th>
-          <th>Trend</th><th>Flip</th><th class="num">Flip date</th><th class="num">vs 52WH</th><th class="num">P&amp;L ₹</th><th class="num">P&amp;L%</th>
+          <th>Trend</th><th class="num">Flip</th><th class="num">vs 52WH</th><th class="num">P&amp;L ₹</th><th class="num">P&amp;L%</th>
           <th class="num">Adds</th><th class="num">Age</th><th>Signal</th>
         </tr></thead>
         <tbody id="dh-live-pos-tbody"></tbody>
@@ -9059,6 +9061,11 @@ function dhFmtHit(r) {
   return r.hitDays === 0 ? 'today' : r.hitDays === 99 ? dhFmtDate(r.date) : `${r.hitDays}d ago (${dhFmtDate(r.hitDate)})`;
 }
 
+// Flip = date of the last Supertrend flip + trading days since it, e.g. "16-Sep-26 (20)"; highlighted when it flipped today (0). The colour lives on the Trend pill.
+function dhFlipDays(r) { const m = /\((\d+)\)\s*$/.exec(r.flip || '') || /(\d+)d\s*$/.exec(r.flip || ''); return m ? +m[1] : null; }
+function dhFlipText(r) { if (!r.flipDate) return ''; const n = dhFlipDays(r); return dhFmtDate(r.flipDate) + (n == null ? '' : ` (${n})`); }
+const DH_FLIP_CELL = ['Flip', r => r.flipDate || '', r => { const t = dhFlipText(r); return t ? `<td class="num${dhFlipDays(r) === 0 ? ' dh-flip-today' : ''}">${t}</td>` : `<td class="num">${dhDash}</td>`; }];
+
 // Position columns shared by the Exit and Open positions tabs
 const DH_POS_CELLS = [
   ['Entry', r => r.entryDate, r => `<td>${dhFmtDate(r.entryDate)}</td>`],
@@ -9067,8 +9074,7 @@ const DH_POS_CELLS = [
   ['WAC', r => r.avgCost, r => `<td class="num">${dhFmtRs(r.avgCost)}</td>`],
   ['CMP', r => r.cmp, r => `<td class="num">${dhFmtRs(r.cmp)}</td>`],
   ['Supertrend', r => r.supertrend, r => `<td>${dhTrendPill(r.supertrend)}</td>`],
-  ['Flip', r => r.flip, r => `<td>${dhFmtFlip(r.flip)}</td>`],
-  ['Flip date', r => r.flipDate, r => `<td class="num">${dhFmtDate(r.flipDate)}</td>`],
+  DH_FLIP_CELL,
   ['vs 52WH %', r => r.pctFromHigh, r => `<td class="num">${dhFmtAway(r.pctFromHigh)}</td>`],
   ['P&L Rs', r => r.plRs, r => `<td class="num ${dhPnlCls(r.plRs)}">${dhFmtRs(r.plRs)}</td>`],
   ['P&L %', r => r.plPct, r => `<td class="num ${dhPnlCls(r.plPct)}">${dhFmtPct(r.plPct)}</td>`],
@@ -9082,22 +9088,21 @@ const DH_DEFS = {
   exit: {
     rows: d => d.positions.filter(p => p.signal === 'EXIT').sort((a, b) => a.plRs - b.plRs),
     filter: (r, f) => f === 'loss' ? r.plRs < 0 : f === 'profit' ? r.plRs >= 0 : true,
-    cls: () => 'row-red', empty: 'No exit signals right now.', cols: 14,
+    cls: () => 'row-red', empty: 'No exit signals right now.', cols: 13,
     cells: [...DH_POS_CELLS, DH_ORDER_CELL],
   },
   entry: {
     rows: d => d.signals.entry.slice().sort((a, b) => a.hitDays - b.hitDays || b.pctFromHigh - a.pctFromHigh),
     filter: (r, f) => f === 'today' ? (dhCopy().flipTodayMode ? /\(0\)/.test(r.flip || '') : r.hitDays === 0) : f === 'hot' ? (r.hot52wh || r.hotTurn) : true,
-    cls: r => (r.hot52wh || r.hotTurn) ? 'row-amber' : '', empty: 'No fresh 52-week-high breakouts right now.', cols: 11,
+    cls: r => (r.hot52wh || r.hotTurn) ? 'row-amber' : '', empty: 'No fresh 52-week-high breakouts right now.', cols: 10,
     cells: [
       ['Signal date', r => r.date, r => `<td>${dhFmtDate(r.date)}</td>`],
       ['Stock', r => r.symbol, r => `<td class="stock-name">${dhEsc(r.symbol)}</td>`],
+      ['CMP', r => r.cmp, r => `<td class="num">${dhFmtRs(r.cmp)}</td>`],
       ['Qty to buy', r => r.qtyToBuy, r => `<td class="num" style="font-weight:700">${r.qtyToBuy}</td>`],
       ['Sector', r => dhSectorText(r), r => `<td style="${(r.hot52wh || r.hotTurn) ? 'color:var(--amber);font-weight:700;' : ''}white-space:normal;min-width:150px">${dhEsc(dhSectorText(r))}</td>`],
-      ['CMP', r => r.cmp, r => `<td class="num">${dhFmtRs(r.cmp)}</td>`],
       ['Supertrend', r => r.supertrend, r => `<td>${dhTrendPill(r.supertrend)}</td>`],
-      ['Flip', r => r.flip, r => `<td>${dhFmtFlip(r.flip)}</td>`],
-      ['Flip date', r => r.flipDate, r => `<td class="num">${dhFmtDate(r.flipDate)}</td>`],
+      DH_FLIP_CELL,
       ['vs 52WH %', r => r.pctFromHigh, r => `<td class="num">${r.pctFromHigh == null ? '—' : dhFmtPct(r.pctFromHigh)}</td>`],
       ['52WH hit', r => r.hitDate, r => `<td class="num">${dhFmtHit(r)}</td>`],
       DH_ORDER_CELL,
@@ -9107,7 +9112,7 @@ const DH_DEFS = {
     rows: d => d.positions.filter(p => p.signal === 'ADD-ON'),
     sort: (rows, f) => rows.sort(f === 'cooldown' ? (a, b) => b.daysSinceBuy - a.daysSinceBuy : (a, b) => a.plPct - b.plPct),
     filter: () => true,
-    cls: () => 'row-green', empty: 'No add-on signals right now.', cols: 12,
+    cls: () => 'row-green', empty: 'No add-on signals right now.', cols: 11,
     cells: [
       ['Stock', r => r.symbol, r => `<td class="stock-name">${dhEsc(r.symbol)}</td>`],
       ['Qty', r => r.qty, r => `<td class="num">${r.qty}</td>`],
@@ -9117,8 +9122,7 @@ const DH_DEFS = {
       ['Add qty', r => r.addQty, r => `<td class="num">${r.addQty}</td>`],
       ['Days since buy', r => r.daysSinceBuy, r => `<td class="num">${r.daysSinceBuy}d</td>`],
       ['Supertrend', r => r.supertrend, r => `<td>${dhTrendPill(r.supertrend)}</td>`],
-      ['Flip', r => r.flip, r => `<td>${dhFmtFlip(r.flip)}</td>`],
-      ['Flip date', r => r.flipDate, r => `<td class="num">${dhFmtDate(r.flipDate)}</td>`],
+      DH_FLIP_CELL,
       ['RSI14', r => r.rsi, r => `<td class="num">${r.rsi != null ? r.rsi.toFixed(1) : '—'}</td>`],
       DH_ORDER_CELL,
     ],
@@ -9127,7 +9131,7 @@ const DH_DEFS = {
     rows: d => d.positions.slice().sort((a, b) => a.plPct - b.plPct),
     filter: (r, f) => f === 'all' ? true : r.signal === f,
     cls: r => r.signal === 'EXIT' ? 'row-red' : r.signal === 'ADD-ON' ? 'row-green' : '',
-    empty: 'No position data.', cols: 14,
+    empty: 'No position data.', cols: 13,
     cells: [...DH_POS_CELLS, ['Signal', r => r.signal, r => `<td>${dhSignalPill(r.signal)}</td>`]],
   },
   orders: {
@@ -9771,7 +9775,7 @@ function ccSTab(name) { ccPick('cc-stabs', 'cc-sv-', CC_STABS, CC_STABS.includes
 
 const ccSD = iso => { const m = /^\d{4}-(\d{2})-(\d{2})/.exec(iso || ''); return m ? m[2] + '-' + P2_MONTHS[+m[1] - 1] : '—'; };
 const ccSigned = v => v == null ? '—' : (v > 0 ? '+' : v < 0 ? '−' : '') + Math.abs(v).toFixed(2) + '%';
-const ccFlip = (date, days) => date ? `${dhFmtDate(date)}${days != null ? ' (' + days + 'd)' : ''}` : '—';
+const ccFlip = (date, days) => date ? (days === 0 ? `<span class="dh-flip-today-inline">${dhFmtDate(date)} (0)</span>` : `${dhFmtDate(date)}${days != null ? ' (' + days + ')' : ''}`) : '—';
 const ccRsi = v => v == null ? '—' : `<span style="color:${v > 70 ? 'var(--amber)' : v < 30 ? 'var(--green)' : 'inherit'}">${v.toFixed(1)}</span>`;
 const ccNear = n => n ? `<span class="${Math.abs(n.dist_pct) < 5 ? 'neg' : ''}">${ccSigned(n.dist_pct)}</span> <span style="color:var(--text-muted)">${ccStrike(n.strike)} · ${ccSD(n.expiry)}</span>` : '<span style="color:var(--text-muted)">none</span>';
 const ccNearText = n => n ? `${ccSigned(n.dist_pct)} ${ccStrike(n.strike)} ${ccSD(n.expiry)}` : '';
@@ -9956,7 +9960,7 @@ function ccOptionsView(d) {
       { h: 'Stock', v: s => s.symbol, c: s => `<b>${dhEsc(s.symbol)}</b>`, txt: true },
       { h: 'Spot', v: s => s.spot, c: s => ccP(s.spot), num: true },
       { h: 'Supertrend', v: s => s.colour, c: s => dhTrendPill(s.colour) },
-      { h: 'Last flip', v: s => s.flip_trading_days, x: s => s.flip_date, c: s => ccFlipCell(s) },
+      { h: 'Flip', v: s => s.flip_trading_days, x: s => s.flip_date, c: s => ccFlipCell(s) },
       { h: 'RSI 14', v: s => s.rsi, c: s => ccRsi(s.rsi), num: true },
       { h: 'Rule applied', v: s => s.basis, c: s => `<span style="color:var(--text-muted)">${dhEsc(s.basis)}</span>`, nw: 110 },
       { h: 'Status', v: s => s.status, c: s => ccPill(s.status) },
@@ -10040,7 +10044,7 @@ function ccSharesView(d) {
       { h: 'Spot', v: r => r.spot, c: r => ccP(r.spot), num: true },
       { h: 'Supertrend', v: r => r.colour, c: r => dhTrendPill(r.colour) },
       { h: 'Profit', v: r => r.pl_rs, c: r => `<span class="pnl-pos">+${dhFmtRs(r.pl_rs)}</span> <span style="color:var(--text-muted)">${ccSigned(r.pl_pct)}</span>`, num: true },
-      { h: 'Red since', v: r => r.flip_date || '', c: r => ccFlip(r.flip_date, r.flip_trading_days) },
+      { h: 'Flip', v: r => r.flip_date || '', c: r => ccFlip(r.flip_date, r.flip_trading_days) },
       { h: 'Sale value', v: r => r.value, c: r => dhFmtRs(r.value), num: true },
     ],
   });
@@ -10069,7 +10073,7 @@ function ccSharesView(d) {
       { h: 'Avg cost', v: r => r.avg_cost, c: r => ccP(r.avg_cost), num: true },
       { h: 'P&amp;L', v: r => r.pl_pct, c: pnl, num: true },
       { h: 'Supertrend', v: r => r.colour, c: r => dhTrendPill(r.colour) },
-      { h: 'Flip date', v: r => r.flip_date || '', c: r => dhFmtDate(r.flip_date) },
+      { h: 'Flip', v: r => r.flip_date || '', c: r => ccFlip(r.flip_date, r.flip_trading_days) },
       { h: 'Last add', v: r => r.last_add || '', c: lastAdd },
       { h: 'Add', v: r => r.add_qty, c: r => `${r.add_qty} sh · ${dhFmtRs(r.add_value_rs)}`, num: true },
       { h: 'Status', v: r => r.avg_status, c: r => ccPill(r.avg_status) },
@@ -10134,7 +10138,7 @@ function ccZerodhaView(d) {
       { h: 'Stock', v: s => s.symbol, c: s => `<b>${dhEsc(s.symbol)}</b>`, txt: true },
       { h: 'Spot', v: s => s.spot, c: s => ccP(s.spot), num: true },
       { h: 'Supertrend', v: s => s.colour, c: s => dhTrendPill(s.colour) },
-      { h: 'Last flip', v: s => s.flip_trading_days, x: s => s.flip_date, c: s => ccFlipCell(s) },
+      { h: 'Flip', v: s => s.flip_trading_days, x: s => s.flip_date, c: s => ccFlipCell(s) },
       { h: 'RSI 14', v: s => s.rsi, c: s => ccRsi(s.rsi), num: true },
       { h: 'Rule applied', v: s => s.basis, c: s => `<span style="color:var(--text-muted)">${dhEsc(s.basis)}</span>` },
       { h: 'Status', v: s => s.status, c: s => ccPill(s.status) },
@@ -10598,7 +10602,7 @@ function a2Loss(d, S) {
   const trig = S.trigger;
   const inLoss = P.filter(p => p.plPct <= trig).sort((a, b) => a.plPct - b.plPct);
   const trigPanel = a2Panel(trig >= 0 ? 'Positions in loss' : `Positions beyond the ${String(trig).replace('-', '−')}% add-on trigger`, 'Held until recovery by design — add when eligible', inLoss.length
-    ? a2Table(['Stock', 'P&L %', 'Age', 'Supertrend', 'Flip date', 'Add-on'], inLoss.map(p => `<tr><td>${dhEsc(p.symbol)}</td><td class="neg">${a2Pct(p.plPct)}</td><td>${p.ageDays}d</td><td>${dhTrendPill(p.supertrend)}</td><td>${dhFmtDate(p.flipDate)}</td><td>${p.signal === 'ADD-ON' ? '<span class="pos">Eligible</span>' : (p.supertrend || '').toLowerCase() === 'red' ? 'Exit rule' : 'Cooldown'}</td></tr>`))
+    ? a2Table(['Stock', 'P&L %', 'Age', 'Trend', 'Flip', 'Add-on'], inLoss.map(p => `<tr><td>${dhEsc(p.symbol)}</td><td class="neg">${a2Pct(p.plPct)}</td><td>${p.ageDays}d</td><td>${dhTrendPill(p.supertrend)}</td><td class="${dhFlipDays(p) === 0 ? 'dh-flip-today' : ''}">${dhFlipText(p) || dhDash}</td><td>${p.signal === 'ADD-ON' ? '<span class="pos">Eligible</span>' : (p.supertrend || '').toLowerCase() === 'red' ? 'Exit rule' : 'Cooldown'}</td></tr>`))
     : a2Pending(trig >= 0 ? 'No position is in loss.' : 'No position is beyond the add-on trigger.', trig >= 0 ? 'Every open position is in profit.' : 'Every open position is above ' + String(trig).replace('-', '−') + '%.'));
   const closed = a2Panel('Closed trades', dhCopy().closedHint || 'Round trips from the imported transaction report', a2ClosedTable(d));
   return a2Grid('a2-g2', dist, trigPanel) + a2Grid('a2-g2', closed, a2Panel('How ' + (dhCopy().strat || 'the strategy') + ' treats losses', 'Strategy rules, not stop-losses', a2Items([
@@ -10624,7 +10628,7 @@ function a2Trend(d, S) {
     const g = P.filter(p => p.rsi != null && p.rsi >= lo && p.rsi < hi); return `<tr><td>${l}</td><td>${g.length}</td><td class="${d2Cls(a2Avg(g, p => p.plPct))}">${a2Pct(a2Avg(g, p => p.plPct))}</td></tr>`; })));
   const flips = P.filter(p => /Flipped/.test(p.flip || '')).sort((a, b) => (a.flip || '').localeCompare(b.flip || ''));
   const flipPanel = a2Panel('Recent Supertrend flips', 'Positions whose trend turned recently', flips.length
-    ? a2Table(['Stock', 'Flip', 'Flip date', 'P&L %'], flips.map(p => `<tr><td>${dhEsc(p.symbol)}</td><td>${dhFmtFlip(p.flip)}</td><td>${dhFmtDate(p.flipDate)}</td><td class="${dhPnlCls(p.plPct)}">${a2Pct(p.plPct)}</td></tr>`))
+    ? a2Table(['Stock', 'Trend', 'Flip', 'P&L %'], flips.map(p => `<tr><td>${dhEsc(p.symbol)}</td><td>${dhTrendPill(p.supertrend)}</td><td class="${dhFlipDays(p) === 0 ? 'dh-flip-today' : ''}">${dhFlipText(p) || dhDash}</td><td class="${dhPnlCls(p.plPct)}">${a2Pct(p.plPct)}</td></tr>`))
     : a2Pending('No recent flips.', 'No open position has flipped Supertrend colour in the recent window.'));
   return a2Grid('a2-g2', trendPanel, away) + a2Grid('a2-g2', rsiPanel, flipPanel);
 }
