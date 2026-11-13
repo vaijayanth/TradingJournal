@@ -9821,7 +9821,7 @@ function ccTblApply(id) {
     `<th class="cc-sort${c.num ? ' num' : ''}${c.txt ? ' txt' : ''}" onclick="ccTblSort('${id}',${i})" title="Click to sort">${c.h}${st.sort === i ? (st.dir > 0 ? ' ▲' : ' ▼') : ''}</th>`).join('') + '</tr>';
   document.getElementById('cc-tb-' + id).innerHTML = rows.length
     ? rows.map(r => `<tr class="${def.rowCls ? def.rowCls(r) : ''}">` + def.cols.map(c => `<td${c.num ? ' class="num"' : c.txt ? ' class="txt"' : ''}${c.nw ? ' style="white-space:normal;min-width:' + c.nw + 'px"' : ''}>${c.c(r)}</td>`).join('') + '</tr>').join('')
-    : `<tr><td colspan="${def.cols.length}" style="color:var(--text-muted)">${def.rows.length ? 'No rows match the search / filter.' : (def.empty || 'No data.')}</td></tr>`;
+    : `<tr><td colspan="${def.cols.length}" style="color:var(--text-muted);white-space:normal;max-width:0;line-height:1.5">${def.rows.length ? 'No rows match the search / filter.' : (def.empty || 'No data.')}</td></tr>`;
   document.getElementById('cc-ft-' + id).textContent = (rows.length === def.rows.length ? `${rows.length} row${rows.length === 1 ? '' : 's'}` : `${rows.length} of ${def.rows.length} rows shown`) + ' · click a column header to sort';
 }
 function ccTblSet(id, k, v) { CC_T[id].st[k] = v; ccTblApply(id); }
@@ -10016,7 +10016,11 @@ function ccSharesView(d) {
   const rows = sh.rows || [];
   const entry = sh.entries || [];
   const exits = sh.exits || [];
-  const addon = rows.filter(r => r.avg_status === 'ADD' || r.avg_status === 'WAIT');
+  const addon = rows.filter(r => r.avg_status === 'ADD');          // only what is due now; stocks in cooldown are summarised in one line, not listed as eligible
+  const waiting = rows.filter(r => r.avg_status === 'WAIT');
+  const cd = R.averaging_cooldown_days || 7;
+  const dueOf = r => { const m = /^(\d{4})-(\d{2})-(\d{2})/.exec(r.last_add || ''); if (!m) return ''; const t = new Date(Date.UTC(+m[1], +m[2] - 1, +m[3] + cd)); return ' (due ' + dhFmtDate(t.toISOString().slice(0, 10)) + ')'; };
+  const waitTxt = waiting.length ? `${waiting.length} more ${waiting.length === 1 ? 'is' : 'are'} green and down ${Math.abs(R.averaging_loss_pct || 6)}%+ but still in the ${cd}-day cooldown: ${waiting.map(r => r.symbol + dueOf(r)).join(', ')}.` : '';
   const invested = rows.reduce((a, r) => a + r.invested, 0), value = rows.reduce((a, r) => a + r.value, 0), pl = value - invested;
   const kpis = a2Metrics([
     ['Invested', dhFmtRs(invested), `${rows.length} stocks · market value ${dhFmtRs(value)}`],
@@ -10060,8 +10064,7 @@ function ccSharesView(d) {
   });
   const addT = ccTbl('addon', {
     title: 'Add-on eligible', hint: `Supertrend green and down ${Math.abs(R.averaging_loss_pct || 6)}%+: buy ${(R.averaging_fraction || 0.1) * 100}% of the open quantity, once every ${R.averaging_cooldown_days || 7} days`,
-    rows: addon, search: r => r.symbol, sort: [3, 1], empty: 'No holding is both green and down enough.',
-    filters: [['all', 'All eligible', () => true], ['ADD', 'Due now', r => r.avg_status === 'ADD'], ['WAIT', 'Waiting (cooldown)', r => r.avg_status === 'WAIT']],
+    rows: addon, search: r => r.symbol, sort: [3, 1], empty: 'Nothing is due to average today.' + (waitTxt ? ' ' + waitTxt : ' No holding is both green and down enough.'),
     cols: [
       { h: 'Stock', v: r => r.symbol, c: r => `<b>${dhEsc(r.symbol)}</b>` },
       { h: 'Spot', v: r => r.spot, c: r => ccP(r.spot), num: true },
@@ -10071,10 +10074,8 @@ function ccSharesView(d) {
       { h: 'Flip', v: r => r.flip_date || '', c: r => ccFlip(r.flip_date, r.flip_trading_days) },
       { h: 'Last add', v: r => r.last_add || '', c: lastAdd },
       { h: 'Add', v: r => r.add_qty, c: r => `${r.add_qty} sh · ${dhFmtRs(r.add_value_rs)}`, num: true },
-      { h: 'Status', v: r => r.avg_status, c: r => ccPill(r.avg_status) },
-      { h: 'Note', v: r => r.avg_note, c: r => `<span style="color:var(--text-muted)">${dhEsc(r.avg_note)}</span>`, nw: 200 },
     ],
-  }) + '<div class="dhm-foot">“Last add” comes from data/cc_adds.json, which /refresh-dhan updates from the tradebook; “none recorded” means no add has been recorded, not that none happened.</div>';
+  }) + (addon.length && waitTxt ? `<div class="dhm-foot">${dhEsc(waitTxt)}</div>` : '') + '<div class="dhm-foot">“Last add” comes from data/cc_adds.json, which /refresh-dhan updates from the tradebook; “none recorded” means no add has been recorded, not that none happened.</div>';
   const exitSet = new Set(exits.map(e => e.symbol)), sig = r => exitSet.has(r.symbol) ? 'EXIT' : r.avg_status === 'ADD' ? 'ADD' : 'HOLD';
   const posT = ccTbl('pos', {
     title: 'Open positions', hint: 'The investment-portfolio holdings from ND',
