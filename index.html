@@ -958,6 +958,9 @@ tr.cc-det td { background:var(--surface2); white-space:normal !important; paddin
 .a2-insight { border-left: 3px solid var(--amber); background: var(--amber-soft); padding: 11px 14px; border-radius: 7px; font-size: 12.5px; color: var(--text-secondary); margin-top: 13px; line-height: 1.55; }
 .a2-insight strong { color: var(--amber); }
 .a2-row { display: flex; justify-content: space-between; gap: 12px; padding: 8px 0; border-bottom: 1px solid var(--border); font-size: 12.5px; }
+#cc-root .a2-row { justify-content: flex-start; gap: 28px; }
+#cc-root .a2-row > span { flex: 0 0 170px; }
+#cc-root .a2-row b { flex: 1; font-family: inherit; font-weight: 400; font-variant-numeric: normal; text-align: left; line-height: 1.5; }
 .a2-row:last-child { border-bottom: 0; } .a2-row > span { color: var(--text-secondary); } .a2-row b { font-family: var(--font-mono); font-variant-numeric: tabular-nums; font-weight: 600; text-align: right; }
 .a2-t td:not(:first-child), .a2-t th:not(:first-child) { text-align: right; font-family: var(--font-mono); }
 .a2-t th:not(:first-child) { font-family: var(--font-ui); }
@@ -9777,7 +9780,7 @@ function ccSuggest(g, lot) {
 
 const CC_TABS = ['options', 'shares'], CC_TAB_KEY = 'tj_cc_tab';
 const CC_OTABS = ['alerts', 'signals', 'legs', 'rules'], CC_OTAB_KEY = 'tj_cc_otab';
-const CC_STABS = ['exit', 'entry', 'addon', 'pos'], CC_STAB_KEY = 'tj_cc_stab';
+const CC_STABS = ['exit', 'entry', 'addon', 'pos', 'rules'], CC_STAB_KEY = 'tj_cc_stab';
 function ccPick(bar, prefix, keys, name, store) {
   keys.forEach(t => {
     const v = document.getElementById(prefix + t); if (v) v.classList.toggle('active', t === name);
@@ -10083,17 +10086,19 @@ const ccAlertSort = (a, b) => ccTypeOrd(a) - ccTypeOrd(b) || (a.flip_days ?? 999
 const ccTypeOrd = a => { const i = CC_TYPE_ORDER.indexOf(a.type); return i < 0 ? 99 : i; };
 // Strike alerts: stock price at/through an open short strike (BREACH), through the hedge too (EXIT) or close to it (WARN)
 function ccStrikeBanner(d) {
+  // one collapsed line (same pattern as the Dashboard status bar); the table opens on click, short Action phrases, details stay in the Alerts tab
   const hot = (d.alerts || []).filter(a => a.type === 'Beyond strike' || a.type === 'Through hedge');
   const near = (d.alerts || []).filter(a => a.type === 'Near strike');
   if (!hot.length && !near.length) return '';
   const row = a => {
-    const dist = a.beyond_pct == null ? '' : (a.beyond_pct >= 0 ? '+' : '−') + Math.abs(a.beyond_pct).toFixed(1) + '%';
-    return `<tr><td>${ccTypePill(a)}</td><td><b class="stk">${dhEsc(a.symbol)}</b></td><td>${a.strike == null ? '' : 'Short ' + ccStrike(a.strike) + ' ' + a.opt_type}${a.hedge_strike ? ' · hedge ' + ccStrike(a.hedge_strike) : ''}</td>`
-      + `<td>${a.expiry ? dhFmtDate(a.expiry) : ''}</td><td class="n">${a.spot == null ? '' : a.spot}</td><td class="n">${dist}</td><td class="n">${a.intrinsic_rs ? dhFmtRs(a.intrinsic_rs) : '—'}</td><td>${a.level === 'EXIT' ? 'Spread at max loss: decide now' : a.level === 'BREACH' ? 'In the money: roll, close or hold' : 'Watch'}</td></tr>`;
+    const dist = a.beyond_pct == null ? '—' : (a.beyond_pct >= 0 ? '+' : '−') + Math.abs(a.beyond_pct).toFixed(1) + '%';
+    return `<tr title="${dhEsc(a.concern || '')}"><td>${ccTypePill(a)}</td><td><b class="stk">${dhEsc(a.symbol)}</b></td><td>${a.strike == null ? '' : 'Short ' + ccStrike(a.strike) + ' ' + a.opt_type}${a.hedge_strike ? ' · hedge ' + ccStrike(a.hedge_strike) : ''}</td>`
+      + `<td>${a.expiry ? dhFmtDate(a.expiry) : ''}</td><td class="n">${a.spot == null ? '' : a.spot}</td><td class="n">${dist}</td><td class="n">${a.intrinsic_rs ? dhFmtRs(a.intrinsic_rs) : '—'}</td><td>${dhEsc(ccShortAlert(a)[1])}</td></tr>`;
   };
-  const head = (hot.length ? `${hot.length} open short strike${hot.length === 1 ? '' : 's'} reached or passed` : '') + (hot.length && near.length ? ' · ' : '') + (near.length ? `${near.length} near` : '');
-  return `<details class="dh-stale ${hot.length ? 'high' : ''}" open role="alert"><summary style="cursor:pointer;font-weight:700;font-size:13px">Strike alert: ${dhEsc(head)} (${d.live_prices_at ? 'live price at ' + dhEsc(String(d.live_prices_at).slice(11, 16)) + ' IST' : 'price = last close'})</summary>`
-    + `<div class="al-wrap"><table class="al-tbl"><thead><tr><th>Alert type</th><th>Stock</th><th>Leg</th><th>Expiry</th><th class="n">Price</th><th class="n">From strike</th><th class="n">Intrinsic</th><th>Action</th></tr></thead><tbody>${hot.concat(near).map(row).join('')}</tbody></table></div></details>`;
+  const head = (hot.length ? `${hot.length} short strike${hot.length === 1 ? '' : 's'} reached or passed` : '') + (hot.length && near.length ? ' · ' : '') + (near.length ? `${near.length} near` : '');
+  const when = d.live_prices_at ? 'live price at ' + dhEsc(String(d.live_prices_at).slice(11, 16)) + ' IST' : 'price = last close';
+  return `<details class="dh-stale ${hot.length ? 'high' : ''}" role="alert" style="padding:8px 14px;margin-bottom:10px"><summary style="cursor:pointer;display:flex;flex-wrap:wrap;align-items:center;gap:4px 14px;font-size:12.5px;list-style:none"><b>⚠ Strike alert: ${dhEsc(head)} ▾</b><span style="color:var(--text-secondary)">${when}</span></summary>`
+    + `<div class="al-wrap"><table class="al-tbl" data-te="off"><thead><tr><th>Alert type</th><th>Stock</th><th>Leg</th><th>Expiry</th><th class="n">Price</th><th class="n">From strike</th><th class="n">Intrinsic</th><th>Action</th></tr></thead><tbody>${hot.concat(near).map(row).join('')}</tbody></table></div></details>`;
 }
 function ccOptionsView(d) {
   const S = d.stocks || [];
@@ -10236,8 +10241,18 @@ function ccSharesView(d) {
       { h: 'Signal', v: r => sig(r), c: r => ccPill(sig(r)) },
     ],
   });
-  const bar = ccTabBar('cc-stabs', [['exit', 'Exit Now', exits.length], ['entry', 'Entry Signals', entry.length], ['addon', 'Add-on Eligible', addon.length], ['pos', 'Open Positions', rows.length]], 'ccSTab');
-  return kpis + bar + `<div id="cc-sv-exit" class="a2-view">${exitP}</div><div id="cc-sv-entry" class="a2-view">${entryT}</div><div id="cc-sv-addon" class="a2-view">${addT}</div><div id="cc-sv-pos" class="a2-view">${posT}</div>`;
+  const cdDays = R.averaging_cooldown_days || 7, lossPct = Math.abs(R.averaging_loss_pct || 6), fracPct = Math.round((R.averaging_fraction || 0.1) * 100);
+  const sharesRules = a2Panel('Share rules', 'The investment-portfolio shares (' + (rows.map(r => r.symbol).join(', ') || '—') + '). Edit dhan-live/data/cc_config.json to change; shown here as applied',
+    a2Rows([
+      ['Exit', 'Supertrend is red AND the position is in profit: sell the whole position. A red stock that is in loss is held, never sold'],
+      ['Entry', `Supertrend flips from red to green (within the last ${sh.entry_window || 7} trading days) on a stock you do not hold. Size = the previous position's capital plus the profit made on that stock last time, rounded down to whole shares (minimum 1). A stock with no recorded previous trade: you set the quantity`],
+      ['Averaging (add)', `Supertrend is green and the open loss is worse than −${lossPct}%: buy ${fracPct}% of the shares held (minimum 1), at most once every ${cdDays} days`],
+      ['Last add date', 'Taken from the tradebook (cc_adds.json), so a missed refresh can show an add as due again'],
+      ['Stop loss', 'None. Losers are held until the Supertrend is red and the position is in profit'],
+      ['Orders', 'Placed after the close as after-market orders for the next open. Buys: limit at the signal day high, capped at close + 2%. Exit: market order at the open (dhan-invest-order-entry / dhan-invest-order-exit skills)'],
+    ]));
+  const bar = ccTabBar('cc-stabs', [['exit', 'Exit Now', exits.length], ['entry', 'Entry Signals', entry.length], ['addon', 'Add-on Eligible', addon.length], ['pos', 'Open Positions', rows.length], ['rules', 'Rules', null]], 'ccSTab');
+  return kpis + bar + `<div id="cc-sv-exit" class="a2-view">${exitP}</div><div id="cc-sv-entry" class="a2-view">${entryT}</div><div id="cc-sv-addon" class="a2-view">${addT}</div><div id="cc-sv-pos" class="a2-view">${posT}</div><div id="cc-sv-rules" class="a2-view">${sharesRules}</div>`;
 }
 
 // Zerodha covered call: signals only (no option quotes / positions are pulled), every Nifty F&O stock
