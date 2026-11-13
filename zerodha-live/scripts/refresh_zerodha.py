@@ -53,6 +53,10 @@ def main():
          "--signals", ROOT / "zerodha_live_signals.json", "--out", DATA / "signal_crosscheck.json"])
     # covered call (signals only): lot sizes / expiries from Zerodha's public instrument list, then the rule per stock
     run([py, SCRIPTS / "update_options_master.py"])
+    try:   # results / ex-dividend dates for the 15-day close rule; cached 2 days, a Yahoo failure must not stop the refresh (the old file is kept)
+        run([py, SCRIPTS / "fetch_option_events.py"])
+    except subprocess.CalledProcessError:
+        print("WARNING: fetch_option_events.py failed - keeping the previous data/option_events.json")
     run([py, SCRIPTS / "compute_covered_call.py"])
     run([py, SCRIPTS / "guardrails.py"])          # checks and balances over everything above
     run([py, SCRIPTS / "test_guardrails.py"])     # the checks themselves must still fire

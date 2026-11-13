@@ -246,6 +246,56 @@ def expiry_alerts(sym, my_legs, spot, shares_held, rules):
     return out
 
 
+def load_events(path):
+    """Upcoming results / ex-dividend dates (fetch_option_events.py). Missing file = no event rule can be applied (the page says so)."""
+    p = Path(path)
+    return json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}
+
+
+def upcoming_events(sym, events, today):
+    """[(label, date, estimated)] for the stock's next results and ex-dividend dates that are still ahead, soonest first."""
+    s = (events.get("stocks") or {}).get(sym) or {}
+    out = []
+    if s.get("earnings"):
+        out.append(("Results", date.fromisoformat(s["earnings"]), s.get("earnings_source") != "yahoo calendar"))
+    if s.get("ex_div"):
+        out.append(("Ex-dividend", date.fromisoformat(s["ex_div"]), bool(s.get("ex_div_estimated"))))
+    return sorted((e for e in out if e[1] >= today), key=lambda e: e[1])
+
+
+def event_alerts(sym, my_legs, events, today, days):
+    """User rule (2026-11-09): close EVERY open option 15 days before the stock's results or ex-dividend date, whatever the expiry or structure.
+    BREACH = already inside the window (close now), WARN = the window opens within 7 days."""
+    ev = upcoming_events(sym, events, today)
+    if not ev or not my_legs:
+        return []
+    label, d, est = ev[0]
+    cutoff = d - timedelta(days=days)
+    to_go = (d - today).days
+    out = []
+    for l in my_legs:
+        if today >= cutoff:
+            lvl, concern, action = "BREACH", f"{label} {d:%d %b}{' (estimated)' if est else ''} is {to_go}d away: inside the {days}-day window", "Close it now (event rule)"
+        elif (cutoff - today).days <= 7:
+            lvl, concern, action = "WARN", f"{label} {d:%d %b}{' (estimated)' if est else ''}: the {days}-day window opens {cutoff:%d %b}", f"Close by {cutoff:%d %b}"
+        else:
+            continue
+        out.append({"level": lvl, "type": "Event close", "symbol": sym, "expiry": l["expiry"], "strike": l["strike"], "opt_type": l["type"], "qty": l.get("qty"),
+                    "concern": concern, "action": action, "text": f"{sym} {l['expiry']} {l['side'].lower()} {l['strike']:g}{l['type']}: {concern} - {action.lower()}"})
+    return out
+
+
+def event_block(sym, expiry, events, today, days):
+    """Reason a NEW option expiring on `expiry` is not allowed: its life would reach the 15-day window before the next results / ex-dividend date."""
+    if not expiry:
+        return None
+    exp = date.fromisoformat(expiry)
+    for label, d, est in upcoming_events(sym, events, today):
+        if exp > d - timedelta(days=days):
+            return f"{label} {d:%d %b %Y}{' (estimated)' if est else ''}: the {days}-day close window starts {d - timedelta(days=days):%d %b}, before this expiry"
+    return None
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--supertrend", required=True)
@@ -296,6 +346,8 @@ def main():
 
     stocks, alerts, shares_rows, share_entries, share_exits = [], [], [], [], []
     mult = rules["stop_premium_multiple"]
+    events = load_events(DATA / "option_events.json")
+    ev_days = rules.get("event_close_days", 15)
     sf = DATA / "super_scan.json"
     scan = json.loads(sf.read_text(encoding="utf-8")) if sf.exists() else {}
     lp_file = DATA / "cc_live_prices.json"
@@ -350,6 +402,7 @@ def main():
         alerts.extend(a for a in strike_alerts(sym, my_legs, spot_now, rules.get("near_strike_pct", 2), None))
         alerts.extend(structure_alerts(sym, my_legs, held.get(sym, 0), None))   # ND: no GTT data, hedge check only
         alerts.extend(expiry_alerts(sym, my_legs, spot_now, held.get(sym, 0), rules))
+        alerts.extend(event_alerts(sym, my_legs, events, today, ev_days))
 
         def has_put_spread():
             sp = [l for l in my_legs if l["type"] == "PE" and l["side"] == "SHORT"]
@@ -359,7 +412,9 @@ def main():
         has_call = any(l["type"] == "CE" and l["side"] == "SHORT" for l in my_legs)
         tag = tags.get(sym)
         flipped = bool(tag and tag.get("entry_colour") and tag["entry_colour"] != colour)
-        if rsi is not None and rsi > rules["rsi_sell_call_above"]:
+        if not rules.get("rsi_override", True):   # user, 2026-11-09 (ND): the Supertrend colour alone decides - red = sell call, green = bull put spread
+            desired, basis = ("PUT_SPREAD", "Supertrend green") if colour == "green" else ("CALL", "Supertrend red")
+        elif rsi is not None and rsi > rules["rsi_sell_call_above"]:
             desired, basis = "CALL", f"RSI {rsi:.1f} > {rules['rsi_sell_call_above']:g}"
         elif rsi is not None and rsi < rules["rsi_sell_put_below"]:
             desired, basis = "PUT_SPREAD", f"RSI {rsi:.1f} < {rules['rsi_sell_put_below']:g}"
@@ -400,7 +455,9 @@ def main():
         suggestions = []
         if status in ("ENTER", "FLIP"):
             for ex in show_exp:
-                suggestions.append(suggest(desired, chains.get(sym, {}).get(ex), ex, today, rules, lot, spot))
+                sg = suggest(desired, chains.get(sym, {}).get(ex), ex, today, rules, lot, spot)
+                sg["event_block"] = event_block(sym, ex, events, today, ev_days)
+                suggestions.append(sg)
             if status == "ENTER":
                 alerts.append({"level": "ENTER", "type": "New trade", "symbol": sym, "flip_days": flip_days, "concern": f"{basis}{f', flipped {flip_days}d ago' if flip_days is not None else ''}, no {'put spread' if desired == 'PUT_SPREAD' else 'short call'} open", "action": "Open bull put spread" if desired == "PUT_SPREAD" else "Sell the call", "text": f"{sym}: {note} - {'bull put spread' if desired == 'PUT_SPREAD' else 'sell call'}"})
         # the shares themselves (Shares sub-tab)
@@ -449,13 +506,15 @@ def main():
             "shares": shares, "lot": lot, "covered": (shares >= lot) if lot else None,
             "desired": desired, "status": status, "note": note,
             "tagged": bool(tag), "suggestions": suggestions, "legs": my_legs,
+            "events": [{"label": a, "date": b.isoformat(), "estimated": c} for a, b, c in upcoming_events(sym, events, today)],
+            "event_block": next((x["event_block"] for x in suggestions if x.get("event_block")), None) if suggestions else None,
         })
 
     order = {"EXIT": 0, "BREACH": 1, "WARN": 2, "ENTER": 3}
     alerts.sort(key=lambda a: order.get(a["level"], 9))
     result = {
         "generated_at": datetime.now(timezone.utc).isoformat(), "market_data_date": market_date, "live_prices_at": live.get("fetched_at") if live_px else None, "super_scan_at": scan.get("fetched_at") if scan_ok else None, "as_of": today.isoformat(),
-        "rules": rules, "show_expiries": show_exp, "stocks": stocks, "alerts": alerts,
+        "rules": rules, "show_expiries": show_exp, "stocks": stocks, "alerts": alerts, "events_file_at": events.get("generated_at"), "events_missing": events.get("missing", []),
         "shares": {"rows": shares_rows, "entries": share_entries, "exits": share_exits,
                    "exit_rule": "Supertrend red and the position is in profit: sell the whole position",
                    "entry_window": rules["share_entry_window_trading_days"]},

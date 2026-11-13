@@ -50,6 +50,10 @@ def main():
     tmp = DATA / "cache"          # gitignored; keeps the last download so --cc-only can reuse it
     tmp.mkdir(exist_ok=True)
     cc = [py, SCRIPTS / "compute_covered_call.py", "--supertrend", tmp / "supertrend_full.json"]
+    try:   # results / ex-dividend dates for the 15-day close rule; cached 2 days, a Yahoo failure must not stop the refresh (the old file is kept)
+        run([py, SCRIPTS / "fetch_option_events.py"])
+    except subprocess.CalledProcessError:
+        print("WARNING: fetch_option_events.py failed - keeping the previous data/option_events.json")
     if args.cc_only:
         run(cc)
         return

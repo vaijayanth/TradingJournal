@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-09T15:49:37.790806+00:00",
+ "generated_at": "2026-11-09T16:12:49.104179+00:00",
  "market_data_date": "2026-11-09",
  "live_prices_at": "2026-11-09T17:59:43+05:30",
  "gtt_scan_at": "2026-11-09T18:06:21+05:30",
@@ -18,7 +18,8 @@
   "risk_free_rate": 0.065,
   "rsi_sell_call_above": 70,
   "rsi_sell_put_below": 30,
-  "expiry_min_days": 30
+  "expiry_min_days": 30,
+  "event_close_days": 15
  },
  "show_expiries": [
   "2026-12-29"
@@ -107,7 +108,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-14",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-04-27",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "ABB",
@@ -192,7 +206,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2026-11-13",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-04-30",
+     "estimated": true
+    }
+   ],
+   "event_block": "Results 13 Nov 2026: the 15-day close window starts 29 Oct, before this expiry"
   },
   {
    "symbol": "ABCAPITAL",
@@ -255,7 +282,15 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-03",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "ADANIENSOL",
@@ -318,7 +353,15 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-21",
+     "estimated": false
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "ADANIENT",
@@ -338,7 +381,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-28",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-06-12",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "ADANIGREEN",
@@ -423,7 +479,15 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-20",
+     "estimated": false
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "ADANIPORTS",
@@ -443,7 +507,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-28",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-06-12",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "ADANIPOWER",
@@ -486,7 +563,15 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-28",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "ALKEM",
@@ -529,7 +614,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2026-11-12",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-02-20",
+     "estimated": true
+    }
+   ],
+   "event_block": "Results 12 Nov 2026: the 15-day close window starts 28 Oct, before this expiry"
   },
   {
    "symbol": "AMBER",
@@ -614,7 +712,9 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [],
+   "event_block": null
   },
   {
    "symbol": "AMBUJACEM",
@@ -634,7 +734,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-28",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-06-12",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "ANANDRATHI",
@@ -654,7 +767,15 @@
    "rsi_override": true,
    "status": "ENTER",
    "note": "RSI 75.6 > 70: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2027-05-15",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "ANGELONE",
@@ -739,7 +860,15 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2027-01-21",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "APLAPOLLO",
@@ -759,7 +888,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-21",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-09-08",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "APOLLOHOSP",
@@ -844,7 +986,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-10",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-02-16",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "ASHOKLEY",
@@ -929,7 +1084,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2026-11-14",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2026-11-18",
+     "estimated": true
+    }
+   ],
+   "event_block": "Results 14 Nov 2026: the 15-day close window starts 30 Oct, before this expiry"
   },
   {
    "symbol": "ASIANPAINT",
@@ -949,7 +1117,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2026-11-18",
+     "estimated": true
+    },
+    {
+     "label": "Results",
+     "date": "2027-01-19",
+     "estimated": false
+    }
+   ],
+   "event_block": "Ex-dividend 18 Nov 2026 (estimated): the 15-day close window starts 03 Nov, before this expiry"
   },
   {
    "symbol": "ASTRAL",
@@ -969,7 +1150,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend red: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2026-11-13",
+     "estimated": false
+    },
+    {
+     "label": "Results",
+     "date": "2027-02-04",
+     "estimated": false
+    }
+   ],
+   "event_block": "Ex-dividend 13 Nov 2026: the 15-day close window starts 29 Oct, before this expiry"
   },
   {
    "symbol": "ATHERENERG",
@@ -1054,7 +1248,9 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [],
+   "event_block": null
   },
   {
    "symbol": "AUBANK",
@@ -1139,7 +1335,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-23",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-07-31",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "AUROPHARMA",
@@ -1159,7 +1368,20 @@
    "rsi_override": true,
    "status": "ENTER",
    "note": "RSI 74.4 > 70: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2026-11-11",
+     "estimated": false
+    },
+    {
+     "label": "Results",
+     "date": "2027-02-09",
+     "estimated": true
+    }
+   ],
+   "event_block": "Ex-dividend 11 Nov 2026: the 15-day close window starts 27 Oct, before this expiry"
   },
   {
    "symbol": "AXISBANK",
@@ -1179,7 +1401,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-25",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-07-10",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "BAJAJ-AUTO",
@@ -1199,7 +1434,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-28",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-05-29",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "BAJAJFINSV",
@@ -1219,7 +1467,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-04",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-06-30",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "BAJFINANCE",
@@ -1282,7 +1543,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-27",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-06-30",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "BANDHANBNK",
@@ -1325,7 +1599,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-21",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-08-17",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "BANKBARODA",
@@ -1345,7 +1632,20 @@
    "rsi_override": true,
    "status": "ENTER",
    "note": "RSI 71.3 > 70: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-29",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-06-05",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "BANKINDIA",
@@ -1388,7 +1688,15 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2027-05-29",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "BDL",
@@ -1431,7 +1739,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2026-11-12",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-02-09",
+     "estimated": true
+    }
+   ],
+   "event_block": "Results 12 Nov 2026: the 15-day close window starts 28 Oct, before this expiry"
   },
   {
    "symbol": "BHARATFORG",
@@ -1474,7 +1795,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-11",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-02-18",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "BHARTIARTL",
@@ -1559,7 +1893,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-03",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-07-24",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "BHEL",
@@ -1644,7 +1991,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-19",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-07-17",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "BIOCON",
@@ -1729,7 +2089,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-04",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-07-03",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "BLUESTARCO",
@@ -1749,7 +2122,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-27",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-07-17",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "BOSCHLTD",
@@ -1814,7 +2200,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-12",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-08-04",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "BPCL",
@@ -1899,7 +2298,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-21",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-02-02",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "BRITANNIA",
@@ -1984,7 +2396,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-09",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-07-31",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "CAMS",
@@ -2069,7 +2494,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2026-11-13",
+     "estimated": false
+    },
+    {
+     "label": "Results",
+     "date": "2027-01-21",
+     "estimated": false
+    }
+   ],
+   "event_block": "Ex-dividend 13 Nov 2026: the 15-day close window starts 29 Oct, before this expiry"
   },
   {
    "symbol": "CANBK",
@@ -2174,7 +2612,20 @@
      "near": true,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-14",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-06-12",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "CDSL",
@@ -2194,7 +2645,15 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2027-07-17",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "CGPOWER",
@@ -2214,7 +2673,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend red: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-27",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-01-30",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "CHOLAFIN",
@@ -2299,7 +2771,20 @@
      "near": true,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-29",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-02-05",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "CIPLA",
@@ -2319,7 +2804,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-21",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-06-05",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "COALINDIA",
@@ -2339,7 +2837,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend red: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-11",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-02-18",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "COCHINSHIP",
@@ -2424,7 +2935,15 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2026-11-18",
+     "estimated": true
+    }
+   ],
+   "event_block": "Ex-dividend 18 Nov 2026 (estimated): the 15-day close window starts 03 Nov, before this expiry"
   },
   {
    "symbol": "COFORGE",
@@ -2489,7 +3008,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-21",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-01-30",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "COLPAL",
@@ -2509,7 +3041,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend red: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-28",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-06-01",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "CONCOR",
@@ -2529,7 +3074,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2026-11-11",
+     "estimated": false
+    },
+    {
+     "label": "Results",
+     "date": "2027-01-28",
+     "estimated": false
+    }
+   ],
+   "event_block": "Ex-dividend 11 Nov 2026: the 15-day close window starts 27 Oct, before this expiry"
   },
   {
    "symbol": "COROMANDEL",
@@ -2549,7 +3107,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-28",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-02-04",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "CROMPTON",
@@ -2569,7 +3140,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-29",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-07-24",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "CUB",
@@ -2589,7 +3173,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend red: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-01",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-07-31",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "CUMMINSIND",
@@ -2632,7 +3229,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-03",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-02-11",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "DABUR",
@@ -2695,7 +3305,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2026-11-09",
+     "estimated": false
+    },
+    {
+     "label": "Results",
+     "date": "2027-01-28",
+     "estimated": false
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "DATAPATTNS",
@@ -2715,7 +3338,15 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend red: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2027-07-24",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "DELHIVERY",
@@ -2735,7 +3366,15 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-28",
+     "estimated": false
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "DIVISLAB",
@@ -2862,7 +3501,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2026-11-09",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-07-24",
+     "estimated": true
+    }
+   ],
+   "event_block": "Results 09 Nov 2026: the 15-day close window starts 25 Oct, before this expiry"
   },
   {
    "symbol": "DIXON",
@@ -2882,7 +3534,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-28",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-09-21",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "DLF",
@@ -2902,7 +3567,20 @@
    "rsi_override": true,
    "status": "ENTER",
    "note": "RSI 73.9 > 70: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-14",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-07-27",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "DMART",
@@ -2987,7 +3665,15 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-07",
+     "estimated": false
+    }
+   ],
+   "event_block": "Results 07 Jan 2027: the 15-day close window starts 23 Dec, before this expiry"
   },
   {
    "symbol": "DRREDDY",
@@ -3030,7 +3716,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-21",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-07-10",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "EICHERMOT",
@@ -3050,7 +3749,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2026-11-12",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-07-31",
+     "estimated": true
+    }
+   ],
+   "event_block": "Results 12 Nov 2026: the 15-day close window starts 28 Oct, before this expiry"
   },
   {
    "symbol": "ENRIN",
@@ -3070,7 +3782,15 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend red: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2027-01-30",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "ETERNAL",
@@ -3113,7 +3833,15 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-21",
+     "estimated": false
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "FEDERALBNK",
@@ -3198,7 +3926,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-14",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-08-14",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "FORCEMOT",
@@ -3218,7 +3959,15 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2027-09-09",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "FORTIS",
@@ -3238,7 +3987,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-12",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-07-24",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "GAIL",
@@ -3258,7 +4020,20 @@
    "rsi_override": true,
    "status": "ENTER",
    "note": "RSI 71.8 > 70: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-28",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-02-05",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "GLENMARK",
@@ -3278,7 +4053,20 @@
    "rsi_override": true,
    "status": "ENTER",
    "note": "RSI 74.7 > 70: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-29",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-08-31",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "GMRAIRPORT",
@@ -3319,7 +4107,15 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-28",
+     "estimated": false
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "GODFRYPHLP",
@@ -3339,7 +4135,15 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend red: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2026-11-10",
+     "estimated": true
+    }
+   ],
+   "event_block": "Ex-dividend 10 Nov 2026 (estimated): the 15-day close window starts 26 Oct, before this expiry"
   },
   {
    "symbol": "GODREJCP",
@@ -3359,7 +4163,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend red: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-22",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-01-30",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "GODREJPROP",
@@ -3379,7 +4196,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-04",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-07-28",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "GRASIM",
@@ -3399,7 +4229,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2026-11-13",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-08-07",
+     "estimated": true
+    }
+   ],
+   "event_block": "Results 13 Nov 2026: the 15-day close window starts 29 Oct, before this expiry"
   },
   {
    "symbol": "GVT&D",
@@ -3419,7 +4262,15 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2027-08-21",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "HAL",
@@ -3439,7 +4290,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2026-11-12",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-02-18",
+     "estimated": true
+    }
+   ],
+   "event_block": "Results 12 Nov 2026: the 15-day close window starts 28 Oct, before this expiry"
   },
   {
    "symbol": "HAVELLS",
@@ -3459,7 +4323,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2027-01-23",
+     "estimated": true
+    },
+    {
+     "label": "Results",
+     "date": "2027-01-26",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "HCLTECH",
@@ -3502,7 +4379,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-11",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-01-16",
+     "estimated": true
+    }
+   ],
+   "event_block": "Results 11 Jan 2027: the 15-day close window starts 27 Dec, before this expiry"
   },
   {
    "symbol": "HDFCAMC",
@@ -3522,7 +4412,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-14",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-06-05",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "HDFCBANK",
@@ -3649,7 +4552,20 @@
      "near": true,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-16",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-06-19",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "HDFCLIFE",
@@ -3669,7 +4585,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-14",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-06-19",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "HEROMOTOCO",
@@ -3712,7 +4641,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-28",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-02-11",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "HINDALCO",
@@ -3732,7 +4674,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-11",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-07-10",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "HINDPETRO",
@@ -3859,7 +4814,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-20",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-08-14",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "HINDUNILVR",
@@ -3879,7 +4847,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2026-11-12",
+     "estimated": false
+    },
+    {
+     "label": "Results",
+     "date": "2027-02-18",
+     "estimated": true
+    }
+   ],
+   "event_block": "Ex-dividend 12 Nov 2026: the 15-day close window starts 28 Oct, before this expiry"
   },
   {
    "symbol": "HINDZINC",
@@ -3942,7 +4923,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-29",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-04-30",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "HYUNDAI",
@@ -3962,7 +4956,15 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2027-08-05",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "ICICIBANK",
@@ -3982,7 +4984,20 @@
    "rsi_override": true,
    "status": "ENTER",
    "note": "RSI 79.8 > 70: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-14",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-08-03",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "ICICIGI",
@@ -4002,7 +5017,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend red: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-12",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-05-29",
+     "estimated": true
+    }
+   ],
+   "event_block": "Results 12 Jan 2027: the 15-day close window starts 28 Dec, before this expiry"
   },
   {
    "symbol": "ICICILIFE",
@@ -4022,7 +5050,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend red: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-12",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-06-05",
+     "estimated": true
+    }
+   ],
+   "event_block": "Results 12 Jan 2027: the 15-day close window starts 28 Dec, before this expiry"
   },
   {
    "symbol": "IDEA",
@@ -4042,7 +5083,15 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2026-11-12",
+     "estimated": false
+    }
+   ],
+   "event_block": "Results 12 Nov 2026: the 15-day close window starts 28 Oct, before this expiry"
   },
   {
    "symbol": "IDFCFIRSTB",
@@ -4062,7 +5111,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend red: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-23",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-08-07",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "IEX",
@@ -4082,7 +5144,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-28",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-02-04",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "INDHOTEL",
@@ -4125,7 +5200,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-14",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-06-23",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "INDIANB",
@@ -4145,7 +5233,20 @@
    "rsi_override": true,
    "status": "ENTER",
    "note": "RSI 71.2 > 70: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-21",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-06-10",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "INDIGO",
@@ -4165,7 +5266,15 @@
    "rsi_override": true,
    "status": "ENTER",
    "note": "RSI 72.2 > 70: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-21",
+     "estimated": false
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "INDUSINDBK",
@@ -4185,7 +5294,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-21",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-06-25",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "INDUSTOWER",
@@ -4205,7 +5327,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend red: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-02",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-08-10",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "INFY",
@@ -4268,7 +5403,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-13",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-06-10",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "INOXWIND",
@@ -4288,7 +5436,9 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [],
+   "event_block": null
   },
   {
    "symbol": "IOC",
@@ -4308,7 +5458,20 @@
    "rsi_override": true,
    "status": "ENTER",
    "note": "RSI 73.6 > 70: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2026-12-18",
+     "estimated": true
+    },
+    {
+     "label": "Results",
+     "date": "2027-02-04",
+     "estimated": true
+    }
+   ],
+   "event_block": "Ex-dividend 18 Dec 2026 (estimated): the 15-day close window starts 03 Dec, before this expiry"
   },
   {
    "symbol": "IREDA",
@@ -4328,7 +5491,15 @@
    "rsi_override": true,
    "status": "ENTER",
    "note": "RSI 72.0 > 70: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2027-04-02",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "IRFC",
@@ -4413,7 +5584,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-18",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-03-13",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "ITC",
@@ -4456,7 +5640,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-28",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-02-04",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "JINDALSTEL",
@@ -4476,7 +5673,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-28",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-08-21",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "JIOFIN",
@@ -4496,7 +5706,15 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2027-08-10",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "JSWENERGY",
@@ -4516,7 +5734,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-21",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-06-05",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "JSWSTEEL",
@@ -4536,7 +5767,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-22",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-07-07",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "JUBLFOOD",
@@ -4556,7 +5800,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-16",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-07-17",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "KALYANKJIL",
@@ -4576,7 +5833,15 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2027-09-11",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "KARURVYSYA",
@@ -4661,7 +5926,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-21",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-07-24",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "KAYNES",
@@ -4681,7 +5959,9 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend red: sell call",
-   "legs": []
+   "legs": [],
+   "events": [],
+   "event_block": null
   },
   {
    "symbol": "KEI",
@@ -4701,7 +5981,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend red: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-27",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-01-28",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "KFINTECH",
@@ -4721,7 +6014,15 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2027-07-15",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "KOTAKBANK",
@@ -4741,7 +6042,20 @@
    "rsi_override": true,
    "status": "ENTER",
    "note": "RSI 71.8 > 70: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-23",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-07-17",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "KPITTECH",
@@ -4761,7 +6075,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-28",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-02-04",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "LAURUSLABS",
@@ -4846,7 +6173,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-22",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-05-08",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "LICHSGFIN",
@@ -4866,7 +6206,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-28",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-08-21",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "LICI",
@@ -4886,7 +6239,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-04",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-06-25",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "LODHA",
@@ -4971,7 +6337,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-28",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-08-07",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "LT",
@@ -4991,7 +6370,20 @@
    "rsi_override": true,
    "status": "ENTER",
    "note": "RSI 77.3 > 70: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-28",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-05-22",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "LTF",
@@ -5011,7 +6403,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-15",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-05-22",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "LTM",
@@ -5031,7 +6436,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-18",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-05-25",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "LUPIN",
@@ -5051,7 +6469,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend red: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-11",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-07-17",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "M&M",
@@ -5071,7 +6502,20 @@
    "rsi_override": true,
    "status": "ENTER",
    "note": "RSI 74.3 > 70: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2026-12-02",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-07-03",
+     "estimated": true
+    }
+   ],
+   "event_block": "Results 02 Dec 2026 (estimated): the 15-day close window starts 17 Nov, before this expiry"
   },
   {
    "symbol": "MAHABANK",
@@ -5198,7 +6642,15 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2027-01-20",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "MANAPPURAM",
@@ -5283,7 +6735,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2026-11-12",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-02-06",
+     "estimated": true
+    }
+   ],
+   "event_block": "Results 12 Nov 2026: the 15-day close window starts 28 Oct, before this expiry"
   },
   {
    "symbol": "MANKIND",
@@ -5303,7 +6768,15 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-26",
+     "estimated": false
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "MARICO",
@@ -5323,7 +6796,20 @@
    "rsi_override": true,
    "status": "ENTER",
    "note": "RSI 76.2 > 70: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-29",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-07-30",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "MARUTI",
@@ -5343,7 +6829,20 @@
    "rsi_override": true,
    "status": "ENTER",
    "note": "RSI 73.4 > 70: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-28",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-08-07",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "MAXHEALTH",
@@ -5363,7 +6862,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-28",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-07-03",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "MAZDOCK",
@@ -5383,7 +6895,15 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend red: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2027-02-13",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "MCX",
@@ -5448,7 +6968,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-21",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-08-28",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "MFSL",
@@ -5468,7 +7001,15 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend red: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-10",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "MOTHERSON",
@@ -5488,7 +7029,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-10",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-03-27",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "MOTILALOFS",
@@ -5551,7 +7105,15 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2027-01-30",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "MPHASIS",
@@ -5571,7 +7133,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-28",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-07-08",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "MUTHOOTFIN",
@@ -5634,7 +7209,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-29",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-04-17",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "NAM-INDIA",
@@ -5719,7 +7307,15 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2027-06-25",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "NATIONALUM",
@@ -5762,7 +7358,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2026-11-14",
+     "estimated": true
+    },
+    {
+     "label": "Results",
+     "date": "2027-01-28",
+     "estimated": false
+    }
+   ],
+   "event_block": "Ex-dividend 14 Nov 2026 (estimated): the 15-day close window starts 30 Oct, before this expiry"
   },
   {
    "symbol": "NAUKRI",
@@ -5805,7 +7414,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2026-11-21",
+     "estimated": true
+    },
+    {
+     "label": "Results",
+     "date": "2027-01-28",
+     "estimated": false
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "NAVINFLUOR",
@@ -5825,7 +7447,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-08",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-06-12",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "NBCC",
@@ -5845,7 +7480,15 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2026-11-11",
+     "estimated": false
+    }
+   ],
+   "event_block": "Ex-dividend 11 Nov 2026: the 15-day close window starts 27 Oct, before this expiry"
   },
   {
    "symbol": "NESTLEIND",
@@ -5930,7 +7573,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-29",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-02-06",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "NHPC",
@@ -5950,7 +7606,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-04",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-02-10",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "NMDC",
@@ -5970,7 +7639,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend red: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2026-11-12",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-02-13",
+     "estimated": true
+    }
+   ],
+   "event_block": "Results 12 Nov 2026: the 15-day close window starts 28 Oct, before this expiry"
   },
   {
    "symbol": "NTPC",
@@ -5990,7 +7672,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-28",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-02-06",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "NYKAA",
@@ -6010,7 +7705,15 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-04",
+     "estimated": false
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "OBEROIRLTY",
@@ -6030,7 +7733,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-18",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-01-23",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "OFSS",
@@ -6073,7 +7789,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-20",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-05-07",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "OIL",
@@ -6093,7 +7822,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend red: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2026-11-12",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2026-11-21",
+     "estimated": true
+    }
+   ],
+   "event_block": "Results 12 Nov 2026: the 15-day close window starts 28 Oct, before this expiry"
   },
   {
    "symbol": "ONGC",
@@ -6113,7 +7855,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2026-11-12",
+     "estimated": false
+    },
+    {
+     "label": "Results",
+     "date": "2027-02-11",
+     "estimated": true
+    }
+   ],
+   "event_block": "Ex-dividend 12 Nov 2026: the 15-day close window starts 28 Oct, before this expiry"
   },
   {
    "symbol": "PAGEIND",
@@ -6133,7 +7888,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2026-11-12",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2026-11-19",
+     "estimated": true
+    }
+   ],
+   "event_block": "Results 12 Nov 2026: the 15-day close window starts 28 Oct, before this expiry"
   },
   {
    "symbol": "PATANJALI",
@@ -6153,7 +7921,20 @@
    "rsi_override": true,
    "status": "ENTER",
    "note": "RSI 75.1 > 70: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2026-11-13",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2026-11-13",
+     "estimated": true
+    }
+   ],
+   "event_block": "Results 13 Nov 2026: the 15-day close window starts 29 Oct, before this expiry"
   },
   {
    "symbol": "PAYTM",
@@ -6173,7 +7954,15 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend red: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-28",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "PERSISTENT",
@@ -6216,7 +8005,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-19",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-01-27",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "PETRONET",
@@ -6236,7 +8038,20 @@
    "rsi_override": true,
    "status": "ENTER",
    "note": "RSI 72.7 > 70: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2026-11-14",
+     "estimated": true
+    },
+    {
+     "label": "Results",
+     "date": "2027-02-11",
+     "estimated": true
+    }
+   ],
+   "event_block": "Ex-dividend 14 Nov 2026 (estimated): the 15-day close window starts 30 Oct, before this expiry"
   },
   {
    "symbol": "PFC",
@@ -6256,7 +8071,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend red: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2026-11-17",
+     "estimated": false
+    },
+    {
+     "label": "Results",
+     "date": "2027-02-04",
+     "estimated": false
+    }
+   ],
+   "event_block": "Ex-dividend 17 Nov 2026: the 15-day close window starts 02 Nov, before this expiry"
   },
   {
    "symbol": "PGEL",
@@ -6276,7 +8104,15 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2027-09-18",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "PHOENIXLTD",
@@ -6296,7 +8132,20 @@
    "rsi_override": true,
    "status": "ENTER",
    "note": "RSI 71.1 > 70: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-28",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-09-11",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "PIDILITIND",
@@ -6316,7 +8165,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-03",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-07-23",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "PIIND",
@@ -6336,7 +8198,20 @@
    "rsi_override": true,
    "status": "ENTER",
    "note": "RSI 25.3 < 30: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-11",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-02-23",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "PNB",
@@ -6356,7 +8231,20 @@
    "rsi_override": true,
    "status": "ENTER",
    "note": "RSI 71.9 > 70: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-19",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-06-12",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "PNBHOUSING",
@@ -6397,7 +8285,15 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2027-07-31",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "POLICYBZR",
@@ -6440,7 +8336,15 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-02",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "POLYCAB",
@@ -6460,7 +8364,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend red: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-14",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-06-19",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "POWERGRID",
@@ -6480,7 +8397,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2026-11-10",
+     "estimated": true
+    },
+    {
+     "label": "Results",
+     "date": "2027-01-28",
+     "estimated": false
+    }
+   ],
+   "event_block": "Ex-dividend 10 Nov 2026 (estimated): the 15-day close window starts 26 Oct, before this expiry"
   },
   {
    "symbol": "POWERINDIA",
@@ -6500,7 +8430,15 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend red: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2027-08-21",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "PREMIERENE",
@@ -6520,7 +8458,15 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend red: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2026-11-11",
+     "estimated": false
+    }
+   ],
+   "event_block": "Ex-dividend 11 Nov 2026: the 15-day close window starts 27 Oct, before this expiry"
   },
   {
    "symbol": "PRESTIGE",
@@ -6540,7 +8486,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-28",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-08-13",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "RADICO",
@@ -6603,7 +8562,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-21",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-07-24",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "RBLBANK",
@@ -6623,7 +8595,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend red: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-14",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-08-14",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "RELIANCE",
@@ -6643,7 +8628,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-15",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-06-05",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "RVNL",
@@ -6663,7 +8661,15 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2027-02-11",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "SAGILITY",
@@ -6683,7 +8689,15 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend red: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2026-11-12",
+     "estimated": true
+    }
+   ],
+   "event_block": "Ex-dividend 12 Nov 2026 (estimated): the 15-day close window starts 28 Oct, before this expiry"
   },
   {
    "symbol": "SAIL",
@@ -6703,7 +8717,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend red: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-29",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-09-30",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "SBICARD",
@@ -6723,7 +8750,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-28",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-03-11",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "SBILIFE",
@@ -6743,7 +8783,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-28",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-03-06",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "SBIN",
@@ -6763,7 +8816,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-04",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-05-15",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "SHREECEM",
@@ -6783,7 +8849,20 @@
    "rsi_override": true,
    "status": "ENTER",
    "note": "RSI 70.5 > 70: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-04",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-07-17",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "SHRIRAMFIN",
@@ -6824,7 +8903,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-22",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-07-03",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "SIEMENS",
@@ -6844,7 +8936,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-03",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-07-29",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "SOLARINDS",
@@ -6864,7 +8969,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend red: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-03",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-07-28",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "SONACOMS",
@@ -6884,7 +9002,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-21",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-01-30",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "SRF",
@@ -6904,7 +9035,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend red: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-20",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-01-27",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "SUNPHARMA",
@@ -6947,7 +9091,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-28",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-02-05",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "SUPREMEIND",
@@ -6967,7 +9124,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend red: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-21",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-06-25",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "SUZLON",
@@ -6987,7 +9157,15 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend red: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-04",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "SWIGGY",
@@ -7007,7 +9185,9 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend red: sell call",
-   "legs": []
+   "legs": [],
+   "events": [],
+   "event_block": null
   },
   {
    "symbol": "SYRMA",
@@ -7092,7 +9272,15 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2027-08-18",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "TATACONSUM",
@@ -7112,7 +9300,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-27",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-05-25",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "TATAELXSI",
@@ -7132,7 +9333,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-12",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-06-10",
+     "estimated": true
+    }
+   ],
+   "event_block": "Results 12 Jan 2027: the 15-day close window starts 28 Dec, before this expiry"
   },
   {
    "symbol": "TATAPOWER",
@@ -7152,7 +9366,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2026-11-11",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-06-23",
+     "estimated": true
+    }
+   ],
+   "event_block": "Results 11 Nov 2026: the 15-day close window starts 27 Oct, before this expiry"
   },
   {
    "symbol": "TATASTEEL",
@@ -7172,7 +9399,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2026-11-09",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-06-12",
+     "estimated": true
+    }
+   ],
+   "event_block": "Results 09 Nov 2026: the 15-day close window starts 25 Oct, before this expiry"
   },
   {
    "symbol": "TCS",
@@ -7215,7 +9455,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-11",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-01-16",
+     "estimated": true
+    }
+   ],
+   "event_block": "Results 11 Jan 2027 (estimated): the 15-day close window starts 27 Dec, before this expiry"
   },
   {
    "symbol": "TECHM",
@@ -7258,7 +9511,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-14",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-07-03",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "TIINDIA",
@@ -7301,7 +9567,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-04",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-02-10",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "TITAN",
@@ -7321,7 +9600,20 @@
    "rsi_override": true,
    "status": "ENTER",
    "note": "RSI 73.5 > 70: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-10",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-07-09",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "TMPV",
@@ -7341,7 +9633,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2026-11-13",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-06-19",
+     "estimated": true
+    }
+   ],
+   "event_block": "Results 13 Nov 2026: the 15-day close window starts 29 Oct, before this expiry"
   },
   {
    "symbol": "TORNTPHARM",
@@ -7361,7 +9666,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend red: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-12",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-02-18",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "TRENT",
@@ -7381,7 +9699,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-04",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-06-12",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "TVSMOTOR",
@@ -7401,7 +9732,20 @@
    "rsi_override": true,
    "status": "ENTER",
    "note": "RSI 71.9 > 70: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-28",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-03-30",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "UJJIVANSFB",
@@ -7421,7 +9765,9 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend red: sell call",
-   "legs": []
+   "legs": [],
+   "events": [],
+   "event_block": null
   },
   {
    "symbol": "ULTRACEMCO",
@@ -7441,7 +9787,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-21",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-07-30",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "UNIONBANK",
@@ -7461,7 +9820,20 @@
    "rsi_override": true,
    "status": "ENTER",
    "note": "RSI 70.9 > 70: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-14",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-07-03",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "UNITDSPR",
@@ -7502,7 +9874,20 @@
      "near": false,
      "touched_h": false
     }
-   ]
+   ],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-20",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-01-27",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "UNOMINDA",
@@ -7522,7 +9907,20 @@
    "rsi_override": true,
    "status": "ENTER",
    "note": "RSI 75.8 > 70: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-04",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-02-11",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "UPL",
@@ -7542,7 +9940,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-01",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-07-17",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "VBL",
@@ -7562,7 +9973,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-02",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-04-08",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "VEDL",
@@ -7582,7 +10006,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-28",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-03-27",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "VMM",
@@ -7602,7 +10039,9 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend red: sell call",
-   "legs": []
+   "legs": [],
+   "events": [],
+   "event_block": null
   },
   {
    "symbol": "VOLTAS",
@@ -7622,7 +10061,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-04",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-06-12",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "WAAREEENER",
@@ -7642,7 +10094,15 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend red: sell call",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2027-09-11",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "WIPRO",
@@ -7662,7 +10122,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-15",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-01-27",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "YESBANK",
@@ -7682,7 +10155,15 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-16",
+     "estimated": false
+    }
+   ],
+   "event_block": null
   },
   {
    "symbol": "ZYDUSLIFE",
@@ -7702,7 +10183,20 @@
    "rsi_override": false,
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
-   "legs": []
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-08",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-07-24",
+     "estimated": true
+    }
+   ],
+   "event_block": null
   }
  ],
  "alerts": [
@@ -8401,6 +10895,90 @@
    "text": "TIINDIA: Supertrend is GREEN: the open short call (2450CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
   },
   {
+   "level": "BREACH",
+   "type": "Event close",
+   "symbol": "ABB",
+   "expiry": "2026-11-23",
+   "strike": 5600.0,
+   "opt_type": "PE",
+   "qty": 125,
+   "concern": "Results 13 Nov is 4d away: inside the 15-day window",
+   "action": "Close it now (event rule)",
+   "text": "ABB 2026-11-23 long 5600PE: Results 13 Nov is 4d away: inside the 15-day window - close it now (event rule)"
+  },
+  {
+   "level": "BREACH",
+   "type": "Event close",
+   "symbol": "ABB",
+   "expiry": "2026-11-23",
+   "strike": 6100.0,
+   "opt_type": "PE",
+   "qty": 125,
+   "concern": "Results 13 Nov is 4d away: inside the 15-day window",
+   "action": "Close it now (event rule)",
+   "text": "ABB 2026-11-23 short 6100PE: Results 13 Nov is 4d away: inside the 15-day window - close it now (event rule)"
+  },
+  {
+   "level": "BREACH",
+   "type": "Event close",
+   "symbol": "ABB",
+   "expiry": "2026-11-23",
+   "strike": 7800.0,
+   "opt_type": "CE",
+   "qty": 125,
+   "concern": "Results 13 Nov is 4d away: inside the 15-day window",
+   "action": "Close it now (event rule)",
+   "text": "ABB 2026-11-23 short 7800CE: Results 13 Nov is 4d away: inside the 15-day window - close it now (event rule)"
+  },
+  {
+   "level": "BREACH",
+   "type": "Event close",
+   "symbol": "ALKEM",
+   "expiry": "2026-11-23",
+   "strike": 6000.0,
+   "opt_type": "CE",
+   "qty": 125,
+   "concern": "Results 12 Nov is 3d away: inside the 15-day window",
+   "action": "Close it now (event rule)",
+   "text": "ALKEM 2026-11-23 short 6000CE: Results 12 Nov is 3d away: inside the 15-day window - close it now (event rule)"
+  },
+  {
+   "level": "BREACH",
+   "type": "Event close",
+   "symbol": "ASHOKLEY",
+   "expiry": "2026-11-23",
+   "strike": 130.0,
+   "opt_type": "PE",
+   "qty": 5000,
+   "concern": "Results 14 Nov is 5d away: inside the 15-day window",
+   "action": "Close it now (event rule)",
+   "text": "ASHOKLEY 2026-11-23 long 130PE: Results 14 Nov is 5d away: inside the 15-day window - close it now (event rule)"
+  },
+  {
+   "level": "BREACH",
+   "type": "Event close",
+   "symbol": "ASHOKLEY",
+   "expiry": "2026-11-23",
+   "strike": 137.5,
+   "opt_type": "PE",
+   "qty": 5000,
+   "concern": "Results 14 Nov is 5d away: inside the 15-day window",
+   "action": "Close it now (event rule)",
+   "text": "ASHOKLEY 2026-11-23 short 137.5PE: Results 14 Nov is 5d away: inside the 15-day window - close it now (event rule)"
+  },
+  {
+   "level": "BREACH",
+   "type": "Event close",
+   "symbol": "ASHOKLEY",
+   "expiry": "2026-11-23",
+   "strike": 200.0,
+   "opt_type": "CE",
+   "qty": 5000,
+   "concern": "Results 14 Nov is 5d away: inside the 15-day window",
+   "action": "Close it now (event rule)",
+   "text": "ASHOKLEY 2026-11-23 short 200CE: Results 14 Nov is 5d away: inside the 15-day window - close it now (event rule)"
+  },
+  {
    "expiry": "2026-11-23",
    "strike": 1820.0,
    "opt_type": "CE",
@@ -8414,6 +10992,234 @@
    "concern": "In the money: price 2.2% past the strike, Rs14,925 intrinsic",
    "action": "Roll, close or hold",
    "text": "ATHERENERG 2026-11-23: price 1859.8 is 2.2% above the short 1820CE (in the money, intrinsic Rs14,925 on 375 qty); decide: roll, close, or hold"
+  },
+  {
+   "level": "BREACH",
+   "type": "Event close",
+   "symbol": "BDL",
+   "expiry": "2026-11-23",
+   "strike": 1240.0,
+   "opt_type": "CE",
+   "qty": 425,
+   "concern": "Results 12 Nov is 3d away: inside the 15-day window",
+   "action": "Close it now (event rule)",
+   "text": "BDL 2026-11-23 short 1240CE: Results 12 Nov is 3d away: inside the 15-day window - close it now (event rule)"
+  },
+  {
+   "level": "BREACH",
+   "type": "Event close",
+   "symbol": "CAMS",
+   "expiry": "2026-11-23",
+   "strike": 640.0,
+   "opt_type": "PE",
+   "qty": 825,
+   "concern": "Ex-dividend 13 Nov is 4d away: inside the 15-day window",
+   "action": "Close it now (event rule)",
+   "text": "CAMS 2026-11-23 long 640PE: Ex-dividend 13 Nov is 4d away: inside the 15-day window - close it now (event rule)"
+  },
+  {
+   "level": "BREACH",
+   "type": "Event close",
+   "symbol": "CAMS",
+   "expiry": "2026-11-23",
+   "strike": 660.0,
+   "opt_type": "PE",
+   "qty": 825,
+   "concern": "Ex-dividend 13 Nov is 4d away: inside the 15-day window",
+   "action": "Close it now (event rule)",
+   "text": "CAMS 2026-11-23 short 660PE: Ex-dividend 13 Nov is 4d away: inside the 15-day window - close it now (event rule)"
+  },
+  {
+   "level": "BREACH",
+   "type": "Event close",
+   "symbol": "CAMS",
+   "expiry": "2026-11-23",
+   "strike": 800.0,
+   "opt_type": "CE",
+   "qty": 825,
+   "concern": "Ex-dividend 13 Nov is 4d away: inside the 15-day window",
+   "action": "Close it now (event rule)",
+   "text": "CAMS 2026-11-23 short 800CE: Ex-dividend 13 Nov is 4d away: inside the 15-day window - close it now (event rule)"
+  },
+  {
+   "level": "BREACH",
+   "type": "Event close",
+   "symbol": "COCHINSHIP",
+   "expiry": "2026-11-23",
+   "strike": 1000.0,
+   "opt_type": "PE",
+   "qty": 400,
+   "concern": "Ex-dividend 18 Nov (estimated) is 9d away: inside the 15-day window",
+   "action": "Close it now (event rule)",
+   "text": "COCHINSHIP 2026-11-23 long 1000PE: Ex-dividend 18 Nov (estimated) is 9d away: inside the 15-day window - close it now (event rule)"
+  },
+  {
+   "level": "BREACH",
+   "type": "Event close",
+   "symbol": "COCHINSHIP",
+   "expiry": "2026-11-23",
+   "strike": 1120.0,
+   "opt_type": "PE",
+   "qty": 400,
+   "concern": "Ex-dividend 18 Nov (estimated) is 9d away: inside the 15-day window",
+   "action": "Close it now (event rule)",
+   "text": "COCHINSHIP 2026-11-23 short 1120PE: Ex-dividend 18 Nov (estimated) is 9d away: inside the 15-day window - close it now (event rule)"
+  },
+  {
+   "level": "BREACH",
+   "type": "Event close",
+   "symbol": "COCHINSHIP",
+   "expiry": "2026-11-23",
+   "strike": 1400.0,
+   "opt_type": "CE",
+   "qty": 400,
+   "concern": "Ex-dividend 18 Nov (estimated) is 9d away: inside the 15-day window",
+   "action": "Close it now (event rule)",
+   "text": "COCHINSHIP 2026-11-23 short 1400CE: Ex-dividend 18 Nov (estimated) is 9d away: inside the 15-day window - close it now (event rule)"
+  },
+  {
+   "level": "BREACH",
+   "type": "Event close",
+   "symbol": "DABUR",
+   "expiry": "2026-11-23",
+   "strike": 345.0,
+   "opt_type": "PE",
+   "qty": 1250,
+   "concern": "Ex-dividend 09 Nov is 0d away: inside the 15-day window",
+   "action": "Close it now (event rule)",
+   "text": "DABUR 2026-11-23 long 345PE: Ex-dividend 09 Nov is 0d away: inside the 15-day window - close it now (event rule)"
+  },
+  {
+   "level": "BREACH",
+   "type": "Event close",
+   "symbol": "DABUR",
+   "expiry": "2026-11-23",
+   "strike": 355.0,
+   "opt_type": "PE",
+   "qty": 1250,
+   "concern": "Ex-dividend 09 Nov is 0d away: inside the 15-day window",
+   "action": "Close it now (event rule)",
+   "text": "DABUR 2026-11-23 short 355PE: Ex-dividend 09 Nov is 0d away: inside the 15-day window - close it now (event rule)"
+  },
+  {
+   "level": "BREACH",
+   "type": "Event close",
+   "symbol": "DIVISLAB",
+   "expiry": "2026-11-23",
+   "strike": 10600.0,
+   "opt_type": "CE",
+   "qty": 100,
+   "concern": "Results 09 Nov is 0d away: inside the 15-day window",
+   "action": "Close it now (event rule)",
+   "text": "DIVISLAB 2026-11-23 short 10600CE: Results 09 Nov is 0d away: inside the 15-day window - close it now (event rule)"
+  },
+  {
+   "level": "BREACH",
+   "type": "Event close",
+   "symbol": "DIVISLAB",
+   "expiry": "2026-11-23",
+   "strike": 10800.0,
+   "opt_type": "CE",
+   "qty": 100,
+   "concern": "Results 09 Nov is 0d away: inside the 15-day window",
+   "action": "Close it now (event rule)",
+   "text": "DIVISLAB 2026-11-23 long 10800CE: Results 09 Nov is 0d away: inside the 15-day window - close it now (event rule)"
+  },
+  {
+   "level": "BREACH",
+   "type": "Event close",
+   "symbol": "DIVISLAB",
+   "expiry": "2026-11-23",
+   "strike": 11300.0,
+   "opt_type": "PE",
+   "qty": 100,
+   "concern": "Results 09 Nov is 0d away: inside the 15-day window",
+   "action": "Close it now (event rule)",
+   "text": "DIVISLAB 2026-11-23 short 11300PE: Results 09 Nov is 0d away: inside the 15-day window - close it now (event rule)"
+  },
+  {
+   "level": "BREACH",
+   "type": "Event close",
+   "symbol": "DIVISLAB",
+   "expiry": "2026-11-23",
+   "strike": 12400.0,
+   "opt_type": "CE",
+   "qty": 100,
+   "concern": "Results 09 Nov is 0d away: inside the 15-day window",
+   "action": "Close it now (event rule)",
+   "text": "DIVISLAB 2026-11-23 short 12400CE: Results 09 Nov is 0d away: inside the 15-day window - close it now (event rule)"
+  },
+  {
+   "level": "BREACH",
+   "type": "Event close",
+   "symbol": "DIVISLAB",
+   "expiry": "2026-11-23",
+   "strike": 8700.0,
+   "opt_type": "PE",
+   "qty": 100,
+   "concern": "Results 09 Nov is 0d away: inside the 15-day window",
+   "action": "Close it now (event rule)",
+   "text": "DIVISLAB 2026-11-23 long 8700PE: Results 09 Nov is 0d away: inside the 15-day window - close it now (event rule)"
+  },
+  {
+   "level": "BREACH",
+   "type": "Event close",
+   "symbol": "MANAPPURAM",
+   "expiry": "2026-11-23",
+   "strike": 280.0,
+   "opt_type": "PE",
+   "qty": 3000,
+   "concern": "Results 12 Nov is 3d away: inside the 15-day window",
+   "action": "Close it now (event rule)",
+   "text": "MANAPPURAM 2026-11-23 long 280PE: Results 12 Nov is 3d away: inside the 15-day window - close it now (event rule)"
+  },
+  {
+   "level": "BREACH",
+   "type": "Event close",
+   "symbol": "MANAPPURAM",
+   "expiry": "2026-11-23",
+   "strike": 290.0,
+   "opt_type": "PE",
+   "qty": 3000,
+   "concern": "Results 12 Nov is 3d away: inside the 15-day window",
+   "action": "Close it now (event rule)",
+   "text": "MANAPPURAM 2026-11-23 short 290PE: Results 12 Nov is 3d away: inside the 15-day window - close it now (event rule)"
+  },
+  {
+   "level": "BREACH",
+   "type": "Event close",
+   "symbol": "MANAPPURAM",
+   "expiry": "2026-11-23",
+   "strike": 360.0,
+   "opt_type": "CE",
+   "qty": 3000,
+   "concern": "Results 12 Nov is 3d away: inside the 15-day window",
+   "action": "Close it now (event rule)",
+   "text": "MANAPPURAM 2026-11-23 short 360CE: Results 12 Nov is 3d away: inside the 15-day window - close it now (event rule)"
+  },
+  {
+   "level": "BREACH",
+   "type": "Event close",
+   "symbol": "NATIONALUM",
+   "expiry": "2026-11-23",
+   "strike": 370.0,
+   "opt_type": "CE",
+   "qty": 1875,
+   "concern": "Ex-dividend 14 Nov (estimated) is 5d away: inside the 15-day window",
+   "action": "Close it now (event rule)",
+   "text": "NATIONALUM 2026-11-23 short 370CE: Ex-dividend 14 Nov (estimated) is 5d away: inside the 15-day window - close it now (event rule)"
+  },
+  {
+   "level": "BREACH",
+   "type": "Event close",
+   "symbol": "NAUKRI",
+   "expiry": "2026-11-23",
+   "strike": 1280.0,
+   "opt_type": "CE",
+   "qty": 550,
+   "concern": "Ex-dividend 21 Nov (estimated) is 12d away: inside the 15-day window",
+   "action": "Close it now (event rule)",
+   "text": "NAUKRI 2026-11-23 short 1280CE: Ex-dividend 21 Nov (estimated) is 12d away: inside the 15-day window - close it now (event rule)"
   },
   {
    "level": "WARN",
@@ -9317,6 +12123,16 @@
    "action": "Book profit: buy back",
    "text": "NESTLEIND 2026-11-23 1190PE: premium decayed 69% (sold 5.6, now 1.75) - book the profit"
   }
+ ],
+ "events_file_at": "2026-11-09T16:11:22.365968+00:00",
+ "events_missing": [
+  "AMBER",
+  "ATHERENERG",
+  "INOXWIND",
+  "KAYNES",
+  "SWIGGY",
+  "UJJIVANSFB",
+  "VMM"
  ],
  "no_data": [],
  "excluded": [

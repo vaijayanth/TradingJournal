@@ -21,6 +21,7 @@ import sys
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
+sys.path.insert(0, str(Path(__file__).resolve().parent))
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
 IST = timezone(timedelta(hours=5, minutes=30))
@@ -118,6 +119,8 @@ def main():
     days = (date.fromisoformat(a.expiry) - datetime.now(IST).date()).days
     if days <= rules.get("expiry_week_days", 5):
         sys.exit(f"REFUSED: {a.expiry} is {days} days away: expiry week, no new option structure (guardrail P1).")
+    from compute_covered_call import event_block, load_events   # same folder; the 15-day results / ex-dividend rule (user, 2026-11-09)
+    ev_block = event_block(sym, a.expiry, load_events(DATA / "option_events.json"), datetime.now(IST).date(), rules.get("event_close_days", 15))
     if not 1 <= a.lots <= MAX_LOTS:
         sys.exit(f"REFUSED: lots must be 1-{MAX_LOTS}.")
     lots_by = (load(DATA / "nse_lots.json", {}) or {}).get("lots", {}).get(sym, {})
@@ -182,6 +185,8 @@ def main():
     print(f"  SHORT {r['strike']:g}{kind}  ({legs[0]['pct_from_spot']:+.1f}% from the price, delta {legs[0]['delta']})  premium (last traded) Rs{prem:g}  OI {legs[0]['oi']:,}  IV {legs[0]['iv']:g}")
     for w in legs[0]["warn"]:
         print(f"    WARNING: {w}")
+    if ev_block:   # a warning only, never a block (user, 2026-11-09): the trader decides
+        print(f"  WARNING (results / ex-dividend rule): {sym} {a.expiry} - {ev_block}. This option would still be open inside the window; the rule says close it 15 days before the event.")
     if hedge:
         print(f"  HEDGE BUY {hedge['strike']:g}PE ({hedge['pct_from_spot']:+.1f}%)  premium Rs{hedge['ltp']:g}  OI {hedge['oi']:,}")
         for w in hedge["warn"]:

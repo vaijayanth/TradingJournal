@@ -123,6 +123,56 @@ def expiry_alerts(sym, my_legs, spot, shares_held, rules):
     return out
 
 
+def load_events(path):
+    """Upcoming results / ex-dividend dates (fetch_option_events.py). Missing file = no event rule can be applied (the page says so)."""
+    p = Path(path)
+    return json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}
+
+
+def upcoming_events(sym, events, today):
+    """[(label, date, estimated)] for the stock's next results and ex-dividend dates that are still ahead, soonest first."""
+    s = (events.get("stocks") or {}).get(sym) or {}
+    out = []
+    if s.get("earnings"):
+        out.append(("Results", date.fromisoformat(s["earnings"]), s.get("earnings_source") != "yahoo calendar"))
+    if s.get("ex_div"):
+        out.append(("Ex-dividend", date.fromisoformat(s["ex_div"]), bool(s.get("ex_div_estimated"))))
+    return sorted((e for e in out if e[1] >= today), key=lambda e: e[1])
+
+
+def event_alerts(sym, my_legs, events, today, days):
+    """User rule (2026-11-09): close EVERY open option 15 days before the stock's results or ex-dividend date, whatever the expiry or structure.
+    BREACH = already inside the window (close now), WARN = the window opens within 7 days."""
+    ev = upcoming_events(sym, events, today)
+    if not ev or not my_legs:
+        return []
+    label, d, est = ev[0]
+    cutoff = d - timedelta(days=days)
+    to_go = (d - today).days
+    out = []
+    for l in my_legs:
+        if today >= cutoff:
+            lvl, concern, action = "BREACH", f"{label} {d:%d %b}{' (estimated)' if est else ''} is {to_go}d away: inside the {days}-day window", "Close it now (event rule)"
+        elif (cutoff - today).days <= 7:
+            lvl, concern, action = "WARN", f"{label} {d:%d %b}{' (estimated)' if est else ''}: the {days}-day window opens {cutoff:%d %b}", f"Close by {cutoff:%d %b}"
+        else:
+            continue
+        out.append({"level": lvl, "type": "Event close", "symbol": sym, "expiry": l["expiry"], "strike": l["strike"], "opt_type": l["type"], "qty": l.get("qty"),
+                    "concern": concern, "action": action, "text": f"{sym} {l['expiry']} {l['side'].lower()} {l['strike']:g}{l['type']}: {concern} - {action.lower()}"})
+    return out
+
+
+def event_block(sym, expiry, events, today, days):
+    """Reason a NEW option expiring on `expiry` is not allowed: its life would reach the 15-day window before the next results / ex-dividend date."""
+    if not expiry:
+        return None
+    exp = date.fromisoformat(expiry)
+    for label, d, est in upcoming_events(sym, events, today):
+        if exp > d - timedelta(days=days):
+            return f"{label} {d:%d %b %Y}{' (estimated)' if est else ''}: the {days}-day close window starts {d - timedelta(days=days):%d %b}, before this expiry"
+    return None
+
+
 def main():
     cfg = load_json(DATA / "cc_config.json"); rules = cfg["rules"]
     st_file = load_json(DATA / "cache" / "supertrend_full.json")
@@ -153,6 +203,8 @@ def main():
     tags_file = DATA / "cc_tags.json"
     tags = load_json(tags_file).get("tags", {}) if tags_file.exists() else {}
     mult = rules["stop_premium_multiple"]
+    events = load_events(DATA / "option_events.json")
+    ev_days = rules.get("event_close_days", 15)
     lp_file = DATA / "cc_live_prices.json"
     live = load_json(lp_file) if lp_file.exists() else {}
     ist_today = datetime.now(timezone(timedelta(hours=5, minutes=30))).strftime("%Y-%m-%d")
@@ -201,6 +253,7 @@ def main():
         alerts.extend(strike_alerts(sym, my, spot_now, rules.get("near_strike_pct", 2), None))
         alerts.extend(structure_alerts(sym, my, held_qty.get(sym, 0), gtt_active))
         alerts.extend(expiry_alerts(sym, my, spot_now, held_qty.get(sym, 0), rules))
+        alerts.extend(event_alerts(sym, my, events, date.fromisoformat(ist_today), ev_days))
         shorts = [l for l in my if l["side"] == "SHORT"]
         has_call = any(l["type"] == "CE" for l in shorts)
         has_put_spread = any(s["type"] == "PE" and any(b["type"] == "PE" and b["side"] == "LONG" and b["expiry"] == s["expiry"] and b["strike"] < s["strike"] for b in my) for s in shorts)
@@ -236,6 +289,8 @@ def main():
             "flip_date": e.get("current_streak_start_date") or e.get("recent_flip_date"), "flip_trading_days": flip_days,
             "expiries": [{"expiry": pick_expiry(list(lots)), "lot": lots.get(pick_expiry(list(lots)))}] if lots else [], "rsi_override": basis.startswith("RSI"),
             "status": status, "note": note, "legs": my,
+            "events": [{"label": a, "date": b.isoformat(), "estimated": c} for a, b, c in upcoming_events(sym, events, date.fromisoformat(ist_today))],
+            "event_block": event_block(sym, pick_expiry(list(lots)) if lots else None, events, date.fromisoformat(ist_today), ev_days) if status in ("ENTER", "FLIP") else None,
         })
     if new_tags:
         tags_file.write_text(json.dumps({"_note": "Supertrend colour when a stock's tracked option legs were first seen = the entry colour for the FLIP exit. Edit by hand if the real entry colour differed.", "tags": tags}, indent=1))
@@ -244,7 +299,7 @@ def main():
     calls = sum(1 for s in stocks if s["desired"] == "CALL")
     n = lambda k: sum(1 for s in stocks if s["status"] == k)
     result = {"generated_at": datetime.now(timezone.utc).isoformat(), "market_data_date": market_date, "live_prices_at": live.get("fetched_at") if live_px else None, "gtt_scan_at": scan.get("fetched_at") if scan_ok else None, "gtt_checked_at": load_json(gf).get("fetched_at") if gtt_active is not None else None, "rules": rules,
-              "show_expiries": expiries, "stocks": stocks, "alerts": alerts, "no_data": no_data, "excluded": sorted(excluded),
+              "show_expiries": expiries, "stocks": stocks, "alerts": alerts, "events_file_at": events.get("generated_at"), "events_missing": events.get("missing", []), "no_data": no_data, "excluded": sorted(excluded),
               "positions": {"fetched_at": pos.get("fetched_at"), "track_from": cfg.get("track_from"), "legs": sum(len(s["legs"]) for s in stocks),
                             "ignored_legs": pos.get("ignored_legs", 0)},
               "counts": {"call": calls, "put_spread": len(stocks) - calls, "rsi_override": sum(1 for s in stocks if s["rsi_override"]),

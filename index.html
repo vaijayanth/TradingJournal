@@ -9806,7 +9806,7 @@ const ccTabBar = (id, tabs, extra) => `<div class="dhm-tabs" id="${id}" role="ta
   `<button class="dhm-tab" data-tab="${k}" onclick="${extra}('${k}')">${l}${n == null ? '' : `<span class="dhm-count">${n}</span>`}</button>`).join('') + '</div>';
 
 // Alert type pill: the label is the alert's own type (3× premium, Near strike, Beyond strike, No GTT placed ...), the colour follows its severity
-const CC_TYPE_ORDER = ['Exit', '3× premium', 'Through hedge', 'Beyond strike', 'Expiry risk', 'Near strike', 'Profit Exit', 'Invalid GTT', 'Invalid stop order', 'No GTT placed', 'No stop placed', 'No hedge', 'Partly hedged', 'New trade'];
+const CC_TYPE_ORDER = ['Exit', '3× premium', 'Through hedge', 'Beyond strike', 'Expiry risk', 'Event close', 'Near strike', 'Profit Exit', 'Invalid GTT', 'Invalid stop order', 'No GTT placed', 'No stop placed', 'No hedge', 'Partly hedged', 'New trade'];
 function ccTypePill(a) {
   const m = { EXIT: ['var(--red-soft)', 'var(--red)'], BREACH: ['var(--red)', '#fff'], WARN: ['var(--amber-soft, var(--surface2))', 'var(--amber)'], ENTER: ['var(--accent-soft, var(--surface2))', 'var(--accent)'], PROFIT: ['var(--green-soft)', 'var(--green)'] };
   const [bg, fg] = m[a.level] || ['var(--surface2)', 'var(--text-muted)'];
@@ -9850,7 +9850,14 @@ const ccFlipCell = s => ccFlip(s.flip_date, s.flip_trading_days) + ((s.status ==
   ? ' <span class="trend-pill" style="background:var(--accent-soft, var(--surface2));color:var(--accent)">NEW FLIP</span>' : '');
 const ccActNow = d => (d.alerts || []).filter(a => ['Exit', '3× premium', 'Through hedge', 'Beyond strike', 'Expiry risk', 'Profit Exit'].includes(a.type)).length;
 const ccActNowBad = d => (d.alerts || []).some(a => ['Exit', '3× premium', 'Through hedge', 'Beyond strike', 'Expiry risk'].includes(a.type));
+const ccEventCell = s => {
+  const ev = (s.events || [])[0];
+  if (!ev) return '<span style="color:var(--text-muted)">no date</span>';
+  const t = `${ev.label} ${dhFmtDate(ev.date)}${ev.estimated ? ' (est.)' : ''}`;
+  return s.event_block ? `<span style="color:var(--amber)" title="${dhEsc(s.event_block)}">${dhEsc(t)} · warning</span>` : dhEsc(t);
+};
 const ccRulesCommon = (R, stopRow) => [
+  ['Results / ex-dividend', `Close every open option ${R.event_close_days ?? 15} days before the stock's next results or ex-dividend date (alert type Event close); a new option whose expiry reaches that window gets a warning (not a block). Dates come from Yahoo; ex-dividend dates not yet declared are estimates`],
   ['Exit · profit', `Short option premium has decayed ${R.profit_exit_decay_pct ?? 60}% or more since it was sold: book the profit (buy back)`],
   ['Strike alerts', `Near = stock price within ${R.near_strike_pct ?? 2}% of a short strike; Beyond = at or past it (in the money); Through hedge = past the hedge leg too (maximum loss)`],
   ['Expiry risk', `Stock options settle by physical delivery at expiry: any in-the-money leg within ${R.expiry_risk_days ?? 7} days of expiry (urgent in the last 3) is flagged; close it before expiry to avoid delivering or buying shares`],
@@ -9885,9 +9892,9 @@ function ccOptionsView(d) {
   const nearest = shorts.slice().sort((a, b) => Math.abs(a.dist_pct) - Math.abs(b.dist_pct))[0];
   const kpis = a2Metrics([
     ['Stocks tracked', S.length, 'Covered-call universe stocks with Supertrend data'],
-    ['Sell call', S.filter(s => s.desired === 'CALL').length, 'Supertrend red, or RSI above ' + (d.rules || {}).rsi_sell_call_above],
-    ['Bull put spread', S.filter(s => s.desired === 'PUT_SPREAD').length, 'Supertrend green, or RSI below ' + (d.rules || {}).rsi_sell_put_below],
-    ['RSI overrides', S.filter(s => s.rsi != null && (s.rsi > (d.rules || {}).rsi_sell_call_above || s.rsi < (d.rules || {}).rsi_sell_put_below)).length, 'RSI decides the structure instead of the colour'],
+    ['Sell call', S.filter(s => s.desired === 'CALL').length, 'Supertrend red' + ((d.rules || {}).rsi_override === false ? '' : ', or RSI above ' + (d.rules || {}).rsi_sell_call_above)],
+    ['Bull put spread', S.filter(s => s.desired === 'PUT_SPREAD').length, 'Supertrend green' + ((d.rules || {}).rsi_override === false ? '' : ', or RSI below ' + (d.rules || {}).rsi_sell_put_below)],
+    ['RSI overrides', (d.rules || {}).rsi_override === false ? 0 : S.filter(s => s.rsi != null && (s.rsi > (d.rules || {}).rsi_sell_call_above || s.rsi < (d.rules || {}).rsi_sell_put_below)).length, ((d.rules || {}).rsi_override === false ? 'Switched off: the colour decides' : 'RSI decides the structure instead of the colour')],
     ['Open option legs', legs.length, `${shorts.length} short · ${legs.length - shorts.length} hedge`],
     ['Act now', ccActNow(d), 'Exit, 3× premium, beyond strike, profit exit (other alerts are in the Alerts tab)', ccActNowBad(d) ? 'neg' : ''],
     ['Nearest short strike', nearest ? ccSigned(nearest.dist_pct) : '—', nearest ? `${nearest.symbol} ${ccStrike(nearest.strike)}${nearest.type} · ${ccSD(nearest.expiry)}` : 'No short legs', nearest && Math.abs(nearest.dist_pct) < 5 ? 'neg' : ''],
@@ -9900,12 +9907,12 @@ function ccOptionsView(d) {
   const minDist = s => { const v = [s.near_call, s.near_put].filter(Boolean).map(n => Math.abs(n.dist_pct)); return v.length ? Math.min(...v) : null; };
   ccPrio(S);
   const sigT = ccTbl('signals', {
-    title: 'Signals', hint: 'Priority = stocks needing an option trade, most recent Supertrend flip first; RSI overrides the colour; strikes from the option chain (delta estimated from IV); “Active shorts vs spot” = nearest open short call / put',
+    title: 'Signals', hint: 'Priority = stocks needing an option trade, most recent Supertrend flip first; the Supertrend colour alone decides the structure; strikes from the option chain (delta estimated from IV); “Active shorts vs spot” = nearest open short call / put',
     rows: S.filter(s => s.status !== 'NO_DATA'), search: s => s.symbol + ' ' + s.basis, empty: 'No stock data.',
     sort: [0, 1], rowCls: s => (s.status === 'HOLD' ? 'cc-dim' : 'cc-act'),
     filters: [['all', 'All stocks', () => true], ['call', 'Sell call', s => s.desired === 'CALL'], ['put', 'Bull put spread', s => s.desired === 'PUT_SPREAD'],
               ['green', 'Supertrend green', s => s.colour === 'green'], ['red', 'Supertrend red', s => s.colour === 'red'],
-              ['rsi', 'RSI override (above 70 / below 30)', s => s.rsi != null && (s.rsi > 70 || s.rsi < 30)],
+              ['rsi', 'RSI override (above 70 / below 30)', s => (d.rules || {}).rsi_override !== false && s.rsi != null && (s.rsi > 70 || s.rsi < 30)],
               ['hold', 'Open structure (hold / flip)', s => s.status === 'HOLD' || s.status === 'FLIP'],
               ['act', 'Needs an option trade (enter / flip)', s => s.status === 'ENTER' || s.status === 'FLIP'], ['new', 'Recent flips (last ' + CC_NEW_FLIP_DAYS + ' days)', s => s.flip_trading_days != null && s.flip_trading_days <= CC_NEW_FLIP_DAYS]],
     cols: [
@@ -9921,6 +9928,7 @@ function ccOptionsView(d) {
       { h: 'Expiry', v: s => (d.show_expiries || [])[0] || '', c: s => (d.show_expiries || []).map(dhFmtDate).join(', ') || '—' },
       { h: 'Lot size', v: s => s.lot, c: s => s.lot || '—', num: true },
       { h: 'Active shorts vs spot', v: minDist, c: s => `<span style="line-height:1.5">CE ${ccNear(s.near_call)}<br>PE ${ccNear(s.near_put)}</span>` },
+      { h: 'Next event', v: s => ((s.events || [])[0] || {}).date, c: ccEventCell, nw: 190 },
       { h: 'Suggested trade', v: s => (s.suggestions || []).map(ccSuggestText).join(' | ') || s.note,
         c: s => (s.suggestions || []).length ? s.suggestions.map(g => ccSuggest(g, s.lot)).join('<br>') : `<span style="color:var(--text-muted)">${dhEsc(s.note)}</span>`, nw: 300 },
     ],
@@ -9951,10 +9959,11 @@ function ccOptionsView(d) {
   const R = d.rules || {};
   const rulesPanel = a2Panel('Option rules', 'Edit dhan-live/data/cc_config.json to change; shown here as applied',
     a2Rows([
-      ['RSI above ' + R.rsi_sell_call_above, `Sell the ${R.short_call_delta} delta call, whatever the Supertrend colour`],
-      ['RSI below ' + R.rsi_sell_put_below, `Bull put spread (sell ${R.short_put_delta} delta put, buy ${R.hedge_strikes_below} strikes lower), whatever the colour`],
-      ['Otherwise · green', 'Bull put spread (no flip-age limit for options)'],
-      ['Otherwise · red', `Sell the ${R.short_call_delta} delta call only`],
+      ...(R.rsi_override === false ? [] : [
+        ['RSI above ' + R.rsi_sell_call_above, `Sell the ${R.short_call_delta} delta call, whatever the Supertrend colour`],
+        ['RSI below ' + R.rsi_sell_put_below, `Bull put spread (sell ${R.short_put_delta} delta put, buy ${R.hedge_strikes_below} strikes lower), whatever the colour`]]),
+      [R.rsi_override === false ? 'Supertrend green' : 'Otherwise · green', `Bull put spread (sell the ${R.short_put_delta} delta put, buy ${R.hedge_strikes_below} strikes lower; no flip-age limit for options)`],
+      [R.rsi_override === false ? 'Supertrend red' : 'Otherwise · red', `Sell the ${R.short_call_delta} delta call only`],
       ['Expiry', `Current month; after the ${R.show_next_month_after_day}th the next month is shown too (now: ${(d.show_expiries || []).map(dhFmtDate).join(', ') || '—'})`],
       ['Size', '1 lot per signal; lot sizes from NSE’s official F&O lot file, per expiry month'],
       ['Exit · premium', `Short option price ≥ ${R.stop_premium_multiple}× the premium sold`],
@@ -10096,6 +10105,7 @@ function ccZerodhaView(d) {
       { h: 'Structure', v: s => struct(s), c: s => `<b>${struct(s)}</b>` },
       { h: 'Expiry', v: s => (s.expiries[0] || {}).expiry, c: s => s.expiries.map(x => dhFmtDate(x.expiry)).join(', ') || '—' },
       { h: 'Lot size', v: s => (s.expiries[0] || {}).lot, c: s => (s.expiries[0] || {}).lot || '<span style="color:var(--text-muted)" title="This expiry is not listed yet in the AZ instrument list">not listed</span>', num: true },
+      { h: 'Next event', v: s => ((s.events || [])[0] || {}).date, c: ccEventCell, nw: 190 },
     ],
   });
   const lvlOrd = { EXIT: 0, BREACH: 1, WARN: 2 };
@@ -10148,7 +10158,7 @@ function ccRender(d) {
     pg.querySelector('.d2-eyebrow').textContent = zer ? 'AZ workspace · Nifty F&O option selling' : 'ND workspace · investment portfolio options';
     pg.querySelector('.d2-sub').textContent = zer
       ? 'RSI > 70 sell call, RSI < 30 bull put spread, else Supertrend green = bull put spread, red = sell call. Exit at 3× premium or when the Supertrend colour changes. Open legs from the tracking start date (see Alerts) are checked against the live price.'
-      : 'Options: RSI > 70 sell call, RSI < 30 bull put spread, else Supertrend green = bull put spread, red = sell call. Shares: entries, exits and averaging for the investment portfolio.';
+      : 'Options: Supertrend red = sell the 0.10-delta call, green = bull put spread (no RSI override). Shares: entries, exits and averaging for the investment portfolio.';
   }
   if (zer) {
     document.getElementById('cc-root').innerHTML = ccZerodhaView(d);
