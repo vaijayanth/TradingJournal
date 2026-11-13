@@ -786,14 +786,15 @@ tbody tr:hover { filter: brightness(0.97); }
 }
 /* ── DASHBOARD 2.0 ── */
 #page-dashboard2 { max-width: none; }
-.d2-head { display:flex; justify-content:space-between; align-items:flex-end; padding:6px 0 16px; gap:14px; flex-wrap:wrap; }
+.d2-head { display:flex; justify-content:space-between; align-items:center; padding:2px 0 10px; gap:14px; flex-wrap:wrap; }
 .d2-eyebrow { display:none; }
-.d2-head h1 { font-size:23px; letter-spacing:-.04em; margin:4px 0 2px; }
-.d2-sub { font-size:11.5px; color:var(--text-muted); }
+.d2-head h1 { font-size:21px; letter-spacing:-.04em; margin:0; }
+.d2-sub { display:none; }
 .d2-filters { display:flex; gap:7px; flex-wrap:wrap; }
 .d2-chip { background:var(--surface2); border:1px solid var(--border); border-radius:6px; color:var(--text-secondary); padding:7px 11px; font:inherit; font-size:11px; }
 .d2-chip-soft { background:transparent; color:var(--text-muted); }
 .d2-chip-btn { cursor:pointer; } .d2-chip-btn:hover { border-color:var(--accent); color:var(--accent); }
+.d2-kpis.d2-kpis6 { grid-template-columns:repeat(6,1fr); }
 .d2-kpis { display:grid; grid-template-columns:repeat(5,1fr); background:var(--surface); border:1px solid var(--border); border-radius:9px; overflow:hidden; margin-bottom:13px; }
 .d2-kpi { padding:13px 16px; border-right:1px solid var(--border); min-height:78px; }
 .d2-kpi:last-child { border-right:0; }
@@ -806,6 +807,9 @@ tbody tr:hover { filter: brightness(0.97); }
 .dh-flip-today-inline { background:rgba(224,162,61,.18); color:var(--amber); font-weight:700; padding:1px 6px; border-radius:4px; }
 .dh-flip-today { background:rgba(224,162,61,.18); color:var(--amber); font-weight:700; }
 .dh-hdr .dh-chip-row { margin:0; }
+.dhm-banner.dhm-banner-slim .dhm-banner-title { display:none; }
+.dhm-banner.dhm-banner-slim { padding:8px 6px; margin-bottom:12px; row-gap:8px; }
+.dhm-banner.dhm-banner-slim .dhm-kpi-val { font-size:20px; }
 .dh-chip-row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin:0 0 10px; cursor:pointer; }
 .dh-chip { font-size:11px; font-weight:800; letter-spacing:.04em; padding:3px 9px; border-radius:999px; color:var(--amber); border:1px solid var(--amber); background:transparent; }
 .dh-chip.high { color:var(--red); border-color:var(--red); }
@@ -874,12 +878,12 @@ tbody tr:hover { filter: brightness(0.97); }
 .d2-recent-s { border-right:1px solid var(--border); padding:2px 15px; } .d2-recent-s:first-child { padding-left:0; } .d2-recent-s:last-child { border-right:0; }
 .d2-foot { font-size:9.5px; color:var(--text-muted); padding:13px 2px; }
 @media (max-width: 900px) {
-  .d2-layout { grid-template-columns:1fr; } .d2-kpis { grid-template-columns:repeat(3,1fr); }
+  .d2-layout { grid-template-columns:1fr; } .d2-kpis, .d2-kpis.d2-kpis6 { grid-template-columns:repeat(3,1fr); }
   .d2-kpi:nth-child(3) { border-right:0; } .d2-kpi:nth-child(n+4) { border-top:1px solid var(--border); }
   .d2-attn-body { grid-template-columns:repeat(2,1fr); }
 }
 @media (max-width: 600px) {
-  .d2-kpis { grid-template-columns:repeat(2,1fr); } .d2-kpi:nth-child(odd) { border-right:1px solid var(--border); } .d2-kpi:nth-child(even) { border-right:0; }
+  .d2-kpis, .d2-kpis.d2-kpis6 { grid-template-columns:repeat(2,1fr); } .d2-kpi:nth-child(odd) { border-right:1px solid var(--border); } .d2-kpi:nth-child(even) { border-right:0; }
   .d2-kpi:nth-child(n+3) { border-top:1px solid var(--border); }
   .d2-edge-body, .d2-recent-body { grid-template-columns:repeat(2,1fr); gap:12px; }
   .d2-edge-m:nth-child(2) { border-right:0; } .d2-edge-m:nth-child(n+3) { border-top:1px solid var(--border); }
@@ -1222,21 +1226,13 @@ th.te-sort { cursor:pointer; user-select:none; } th.te-sort:hover { color:var(--
   </div>
 
   <div class="dh-stale-slot"></div>
-  <section class="d2-panel" style="margin-bottom:13px">
-    <div class="dhm-banner" style="padding:12px 4px;margin-bottom:0">
-      <div class="dhm-kpi"><div class="dhm-kpi-label">Positions</div><div class="dhm-kpi-val" id="d2-a-pos">—</div></div>
-      <div class="dhm-kpi"><div class="dhm-kpi-label">Invested</div><div class="dhm-kpi-val" id="d2-a-inv">—</div></div>
-      <div class="dhm-kpi"><div class="dhm-kpi-label">Overall P&amp;L</div><div class="dhm-kpi-val" id="d2-a-pl">—</div></div>
-      <div class="dhm-kpi"><div class="dhm-kpi-label">Position tier</div><div class="dhm-kpi-val" id="d2-a-tier">—</div><div class="dhm-kpi-sub" id="d2-a-tier-n">—</div></div>
-    </div>
-  </section>
-
-  <section class="d2-kpis" aria-label="Financial snapshot">
-    <div class="d2-kpi"><div class="d2-label">Starting capital</div><div class="d2-value" id="d2-k-deployed">—</div><div class="d2-note" id="d2-k-deployed-n" title="Later deposits are deliberately ignored">—</div></div>
+  <section class="d2-kpis d2-kpis6" aria-label="Financial snapshot">
+    <div class="d2-kpi"><div class="d2-label">Portfolio value</div><div class="d2-value" id="d2-k-value">—</div><div class="d2-note" title="Later deposits are deliberately ignored">Start <span id="d2-k-deployed">—</span> + P&amp;L<span id="d2-k-deployed-n" style="display:none"></span></div></div>
+    <div class="d2-kpi"><div class="d2-label">FY return</div><div class="d2-value" id="d2-k-ret">—</div><div class="d2-note">On starting capital</div></div>
     <div class="d2-kpi"><div class="d2-label">Realised P&amp;L · FY</div><div class="d2-value" id="d2-k-realised">—</div><div class="d2-note" id="d2-k-realised-n">—</div></div>
     <div class="d2-kpi"><div class="d2-label">Unrealised MTM</div><div class="d2-value" id="d2-k-mtm">—</div><div class="d2-note">Open book</div></div>
-    <div class="d2-kpi"><div class="d2-label">FY return</div><div class="d2-value" id="d2-k-ret">—</div><div class="d2-note">Realised + unrealised ÷ starting capital</div></div>
-    <div class="d2-kpi"><div class="d2-label">Portfolio value</div><div class="d2-value" id="d2-k-value">—</div><div class="d2-note">Starting capital + P&amp;L</div></div>
+    <div class="d2-kpi"><div class="d2-label">Invested</div><div class="d2-value" id="d2-a-inv">—</div><div class="d2-note"><span id="d2-a-pos">—</span> open positions</div></div>
+    <div class="d2-kpi"><div class="d2-label">Position tier</div><div class="d2-value" id="d2-a-tier">—</div><div class="d2-note" id="d2-a-tier-n">—</div></div>
   </section>
 
   <section class="d2-panel" id="d2-actions" style="margin-bottom:13px">
@@ -1254,16 +1250,14 @@ th.te-sort { cursor:pointer; user-select:none; } th.te-sort:hover { color:var(--
 
   <div class="d2-layout" style="grid-template-columns:1fr">
     <section class="d2-panel">
-      <div class="d2-panel-head"><div><div class="d2-title">Portfolio health</div><div class="d2-hint">Open-book exposure and position status</div></div><span class="d2-pill" id="d2-pill-open">—</span></div>
-      <div class="d2-health">
-        <div class="d2-label">Unrealised MTM</div>
-        <div class="d2-health-total" id="d2-h-mtm">—</div>
-        <div class="d2-note" id="d2-h-mtm-n">—</div>
+      <div class="d2-panel-head"><div><div class="d2-title">Portfolio health</div><div class="d2-hint">Open-book exposure and position status</div></div><span class="d2-pill" id="d2-pill-open" style="display:none">—</span></div>
+      <div class="d2-health" style="padding-top:10px">
+        <div id="d2-h-mtm" style="display:none"></div><div id="d2-h-mtm-n" style="display:none"></div>
         <div class="d2-meter"><i id="d2-h-meter" style="width:0"></i></div>
-        <div class="d2-health-grid">
+        <div class="d2-health-grid" style="grid-template-columns:repeat(3,1fr);margin-top:12px">
           <div class="d2-hstat"><div class="d2-label">Positions in profit</div><b class="pos" id="d2-h-profit">—</b></div>
           <div class="d2-hstat"><div class="d2-label">Positions in loss</div><b class="neg" id="d2-h-loss">—</b></div>
-          <div class="d2-hstat"><div class="d2-label">Deployed capital</div><b id="d2-h-deployed">—</b></div>
+          <div class="d2-hstat" style="display:none"><b id="d2-h-deployed"></b></div>
           <div class="d2-hstat"><div class="d2-label">Average holding</div><b id="d2-h-hold">—</b></div>
         </div>
       </div>
@@ -3522,7 +3516,7 @@ th.te-sort { cursor:pointer; user-select:none; } th.te-sort:hover { color:var(--
   </div>
 
   <!-- KPI banner -->
-  <div class="card dhm-banner">
+  <div class="card dhm-banner dhm-banner-slim">
     <div class="dhm-banner-title">
       <svg class="dhm-logo" viewBox="0 0 32 32" fill="none" aria-hidden="true">
         <rect x="1" y="1" width="30" height="30" rx="8" fill="var(--accent-soft)" stroke="var(--accent)" stroke-opacity=".45"/>
@@ -9478,11 +9472,13 @@ function dhStaleAlerts(d, ex) {
 const GUARD_TYPES = { F1: 'Old market data', F2: 'Old holdings', F3: 'Signals older than holdings', F4: 'Old order list', F5: 'Price data mismatch', I1: 'Bad numbers in data', I2: 'Position data mismatch', I3: 'Fills vs holdings', I4: 'Stock in two lists', I5: 'Excluded stock signalled', I6: 'Fill data wrong', I7: 'Recent buy not in holdings',
   S1: 'Exit not red', S2: 'Add-on rule broken', S3: 'Entry rule broken', S4: 'Oversized minimum buy', S5: 'Too many entries / mass exit', C1: 'Capital over-deployed', C2: 'Concentration', C3: 'Pending buys too big', O1: 'Sell more than held', O2: 'Duplicate orders', O3: 'Order without signal',
   P1: 'Expiry week', P2: 'No lot size', P3: 'Open option alerts', P4: 'Short call not covered', P5: 'Invalid GTT / stop orders', X1: 'Broker code mix', H1: 'Trading halted' };
-function dhGuardHtml(g, d) {
-  if (!g || !g.findings) return '';
-  const bl = g.findings.filter(x => x.level === 'BLOCK'), wa = g.findings.filter(x => x.level === 'WARN');
-  const stale = d && d.meta && g.market_data_date && d.meta.marketDate && g.market_data_date !== d.meta.marketDate;
-  if (!bl.length && !wa.length && !stale) return '';
+function dhGuardHtml(g, d, alerts) {
+  // ONE status bar for the Dashboard: stale-data alerts + guardrail summary + refresh command; the guardrail table opens on click
+  alerts = alerts || [];
+  const f = (g && g.findings) || [];
+  const bl = f.filter(x => x.level === 'BLOCK'), wa = f.filter(x => x.level === 'WARN');
+  const stale = !!(g && d && d.meta && g.market_data_date && d.meta.marketDate && g.market_data_date !== d.meta.marketDate);
+  if (!bl.length && !wa.length && !stale && !alerts.length) return '';
   // short phrases: issue + what to do (the full engine message stays in the tooltip)
   const SHORT = { F5: ['Price mismatch', 'Held back from orders'], I3: ['Log vs holdings differ', 'Holdings used'], S4: ['1-share buy above tier', 'Check cost'], P3: ['Option near/past strike', 'See Covered Call'],
     P5: ['Stop order problem', 'See Covered Call'], P4: ['Short call not covered', 'Check shares'], F1: ['Market data old', 'Refresh'], F2: ['Holdings old', 'Refresh'], F3: ['Signals older than holdings', 'Refresh'], F4: ['Order list old', 'Refresh'],
@@ -9490,9 +9486,17 @@ function dhGuardHtml(g, d) {
   const stocksOf = x => x.symbol ? x.symbol : (x.id === 'F5' ? (String(x.msg).split(': ').pop() || '—') : '—');
   const all = bl.concat(wa), rows = all.slice(0, 40).map(x => { const s = SHORT[x.id] || [GUARD_TYPES[x.id] || 'Check ' + x.id, 'Review'], isB = x.level === 'BLOCK';
     return `<tr title="${dhEsc(x.msg)}"><td><span class="${isB ? 'pnl-neg' : ''}" style="font-weight:700;${isB ? '' : 'color:var(--amber)'}">${isB ? 'Blocked' : 'Check'}</span></td><td><b>${dhEsc(stocksOf(x))}</b></td><td>${dhEsc(s[0])}</td><td>${dhEsc(isB ? 'No order for this stock' : s[1])}</td></tr>`; }).join('');
-  const head = (stale ? 'Check is older than the signals - refresh. ' : '') + (g.global_block ? 'ALL ORDERS BLOCKED. ' : '')
-    + (bl.length || wa.length ? `Guardrails: ${bl.length} blocked · ${wa.length} to check` : 'Guardrails: all clear');
-  return `<details class="dh-stale ${bl.length || stale ? 'high' : ''}" style="padding:8px 14px;margin-bottom:10px"><summary style="cursor:pointer;font-weight:700;font-size:12.5px">${dhEsc(head)}</summary>`
+  const cmd = dhCopy().refreshCmd || '/refresh-dhan';
+  const high = bl.length || stale || alerts.some(x => x.sev === 'high');
+  const guardTxt = (stale ? 'Check older than signals · ' : '') + (g && g.global_block ? 'ALL ORDERS BLOCKED · ' : '')
+    + (bl.length || wa.length ? `Guardrails: ${bl.length} blocked · ${wa.length} to check` : (g ? 'Guardrails: all clear' : ''));
+  const parts = alerts.map(x => `<span><b>⚠ ${dhEsc(x.title)}</b> <span style="color:var(--text-secondary)">${dhEsc(x.text)}</span></span>`).join('')
+    + (guardTxt ? `<b>${dhEsc(guardTxt)}${all.length ? ' ▾' : ''}</b>` : '');
+  const copy = alerts.length ? `<span style="margin-left:auto;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-secondary);white-space:nowrap">run <code>${dhEsc(cmd)}</code> <button style="background:var(--surface2);color:var(--text-primary,inherit);border:1px solid var(--border);border-radius:6px;padding:2px 9px;font-size:11px;cursor:pointer" onclick="event.preventDefault();event.stopPropagation();navigator.clipboard&&navigator.clipboard.writeText('${cmd}');this.textContent='Copied'">Copy</button></span>` : '';
+  const sumStyle = 'cursor:' + (all.length ? 'pointer' : 'default') + ';display:flex;flex-wrap:wrap;align-items:center;gap:4px 14px;font-size:12.5px;list-style:none';
+  const cls = `dh-stale ${high ? 'high' : ''}`, box = 'padding:8px 14px;margin-bottom:10px';
+  if (!all.length) return `<div class="${cls}" role="alert" style="${box}"><div style="${sumStyle}">${parts}${copy}</div></div>`;
+  return `<details class="${cls}" style="${box}"><summary style="${sumStyle}">${parts}${copy}</summary>`
     + `<div class="al-wrap"><table class="al-tbl" data-te="off"><thead><tr><th>Status</th><th>Stock</th><th>Issue</th><th>Action</th></tr></thead><tbody>${rows}</tbody></table></div>`
     + (all.length > 40 ? `<div class="dh-stale-act">+${all.length - 40} more</div>` : '') + '</details>';
 }
@@ -9500,10 +9504,6 @@ function dhRenderStale(d) {
   const slots = document.querySelectorAll('.dh-stale-slot'); if (!slots.length || !d) return;
   const paint = ex => {
     const a = dhStaleAlerts(d, ex);
-    // one line: "⚠ title - text ... run /refresh-x [Copy]" (wraps on narrow screens)
-    const html = a.length ? `<div class="dh-stale ${a.some(x => x.sev === 'high') ? 'high' : ''}" role="alert" style="display:flex;flex-wrap:wrap;align-items:center;gap:4px 14px;padding:8px 14px;margin-bottom:10px">`
-      + a.map(x => `<span style="font-size:12.5px"><b>⚠ ${dhEsc(x.title)}</b> <span style="color:var(--text-secondary)">${dhEsc(x.text)}</span></span>`).join('')
-      + `<span style="margin-left:auto;display:flex;align-items:center;gap:8px;font-size:12px;color:var(--text-secondary);white-space:nowrap">run <code>${dhEsc(dhCopy().refreshCmd || '/refresh-dhan')}</code> <button style="background:var(--surface2);color:var(--text-primary,inherit);border:1px solid var(--border);border-radius:6px;padding:2px 9px;font-size:11px;cursor:pointer" onclick="navigator.clipboard&&navigator.clipboard.writeText('${dhCopy().refreshCmd || '/refresh-dhan'}');this.textContent='Copied'">Copy</button></span></div>` : '';
     // full detail only on the Dashboard; every other tab gets one crisp chip row that jumps to the Dashboard
     const g = ex && ex.guard && ex.guard.findings || [], nb = g.filter(x => x.level === 'BLOCK').length, nw = g.filter(x => x.level === 'WARN').length;
     const chips = [];
@@ -9511,7 +9511,7 @@ function dhRenderStale(d) {
     if (nb) chips.push(`<span class="dh-chip high">⛔ ${nb} BLOCKED</span>`);
     if (nw) chips.push(`<span class="dh-chip">⚠ ${nw} TO CHECK</span>`);
     const compact = chips.length ? `<div class="dh-chip-row" onclick="const b=document.querySelector('.app-header .nav-tab[data-page=dashboard]');b&&showPage('dashboard',b)" title="Open the Dashboard for details">${chips.join('')}<span class="dh-chip-go">details on Dashboard ›</span></div>` : '';
-    slots.forEach(s => { s.innerHTML = s.closest('#page-dashboard2') ? html + dhGuardHtml(ex && ex.guard, d) : compact; });
+    slots.forEach(s => { s.innerHTML = s.closest('#page-dashboard2') ? dhGuardHtml(ex && ex.guard, d, a) : compact; });
   };
   paint(null); dhExtras().then(paint);
 }
@@ -9622,7 +9622,7 @@ function d2Render(d) {
   const fyRet = base ? (realised + mtm) / base * 100 : null;
   set('d2-k-deployed', base ? dhFmtRs(base) : '—'); set('d2-k-deployed-n', 'Fixed base');
   set('d2-k-realised', closedFy.length ? d2Signed(realised) : '—', closedFy.length ? d2Cls(realised) : '');
-  set('d2-k-realised-n', closedFy.length ? `${closedFy.length} closed trades` : 'No closed trades yet');
+  set('d2-k-realised-n', closedFy.length ? `${closedFy.length} closed trade${closedFy.length === 1 ? '' : 's'}` : 'No closed trades yet');
   set('d2-k-mtm', d2Signed(mtm), d2Cls(mtm));
   set('d2-k-ret', fyRet == null ? '—' : dhFmtPct(fyRet), d2Cls(fyRet));
   set('d2-k-value', base ? dhFmtRs(base + realised + mtm) : '—');
@@ -9649,7 +9649,7 @@ function d2Render(d) {
   document.getElementById('d2-edge-pill').className = 'd2-pill' + (closed.length ? '' : ' muted');
   if (closed.length) {
     const wr = wins.length / closed.length * 100, aw = avg(wins, c => c.plPct), al = avg(losses, c => c.plPct), hold = avg(closed, c => c.holdDays);
-    set('d2-e-wr', wr.toFixed(1) + '%', cfgRef && wr >= cfgRef.winRate ? 'pos' : 'neg'); set('d2-e-wr-n', `${wins.length} wins · ${losses.length} losses`);
+    set('d2-e-wr', wr.toFixed(1) + '%', cfgRef && wr >= cfgRef.winRate ? 'pos' : 'neg'); set('d2-e-wr-n', `${wins.length} win${wins.length === 1 ? '' : 's'} · ${losses.length} loss${losses.length === 1 ? '' : 'es'}`);
     set('d2-e-aw', aw == null ? '—' : dhFmtPct(aw), 'pos'); set('d2-e-al', al == null ? '—' : dhFmtPct(al), 'neg');
     set('d2-e-hold', hold == null ? '—' : Math.round(hold) + ' days');
   } else {
