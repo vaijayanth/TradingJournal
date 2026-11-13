@@ -1,9 +1,9 @@
 {
- "generated_at": "2026-11-13T09:06:48.386929+00:00",
+ "generated_at": "2026-11-13T09:09:20.082613+00:00",
  "market_data_date": "2026-11-12",
  "live_prices_at": "2026-11-13T14:25:40+05:30",
- "gtt_scan_at": "2026-11-13T14:36:48+05:30",
- "gtt_checked_at": "2026-11-13T14:36:47+05:30",
+ "gtt_scan_at": "2026-11-13T14:39:19+05:30",
+ "gtt_checked_at": "2026-11-13T14:39:19+05:30",
  "rules": {
   "short_call_delta": 0.1,
   "short_put_delta": 0.1,
@@ -10437,18 +10437,6 @@
    "concern": "614 of 625 qty uncovered (hedge 0 + 11 shares)",
    "action": "Buy a hedge or hold shares",
    "text": "CHOLAFIN 2026-11-23: short 1800CE 625 qty, hedge 0 qty + 11 shares - 614 qty uncovered"
-  },
-  {
-   "level": "WARN",
-   "type": "No GTT placed",
-   "symbol": "CHOLAFIN",
-   "expiry": "2026-11-23",
-   "strike": 1680.0,
-   "opt_type": "PE",
-   "qty": 625,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 33.6 (3x premium)",
-   "text": "CHOLAFIN 2026-11-23 short 1680PE: no active buy-back GTT (3x premium stop = 33.6)"
   },
   {
    "level": "WARN",

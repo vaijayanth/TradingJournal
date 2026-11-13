@@ -1,6 +1,16 @@
 {
- "fetched_at": "2026-11-13T14:36:47+05:30",
+ "fetched_at": "2026-11-13T14:39:19+05:30",
  "active": {
+  "CHOLAFIN26NOV1680PE": [
+   {
+    "id": 344742877,
+    "type": "single",
+    "trigger_values": [
+     33.6
+    ],
+    "qty": 625
+   }
+  ],
   "RECLTD26NOV310CE": [
    {
     "id": 344060430,
@@ -803,6 +813,26 @@
   ]
  },
  "gtts": [
+  {
+   "id": 344742877,
+   "type": "single",
+   "created_at": "2026-11-13T14:39:10+05:30",
+   "expires_at": "2026-11-24T00:00:00+05:30",
+   "tradingsymbol": "CHOLAFIN26NOV1680PE",
+   "last_price": 3.05,
+   "triggers": [
+    33.6
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 625,
+     "price": 34.65,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
   {
    "id": 344060430,
    "type": "two-leg",
