@@ -1,9 +1,9 @@
 {
- "generated_at": "2026-11-13T18:06:40.353479+00:00",
+ "generated_at": "2026-11-13T19:11:53.256175+00:00",
  "market_data_date": "2026-11-13",
- "live_prices_at": "2026-11-13T23:36:35+05:30",
- "gtt_scan_at": "2026-11-13T23:36:15+05:30",
- "gtt_checked_at": "2026-11-13T23:36:15+05:30",
+ "live_prices_at": "2026-11-14T00:15:30+05:30",
+ "gtt_scan_at": "2026-11-14T00:41:53+05:30",
+ "gtt_checked_at": "2026-11-14T00:41:52+05:30",
  "rules": {
   "short_call_delta": 0.1,
   "short_put_delta": 0.1,
@@ -187,17 +187,12 @@
    ],
    "events": [
     {
-     "label": "Results",
-     "date": "2026-11-13",
-     "estimated": false
-    },
-    {
      "label": "Ex-dividend",
      "date": "2027-04-30",
      "estimated": true
     }
    ],
-   "event_block": "Results 13 Nov 2026: the 15-day close window starts 29 Oct, before this expiry"
+   "event_block": null
   },
   {
    "symbol": "ABCAPITAL",
@@ -1060,17 +1055,12 @@
    "legs": [],
    "events": [
     {
-     "label": "Ex-dividend",
-     "date": "2026-11-13",
-     "estimated": false
-    },
-    {
      "label": "Results",
      "date": "2027-02-04",
      "estimated": false
     }
    ],
-   "event_block": "Ex-dividend 13 Nov 2026: the 15-day close window starts 29 Oct, before this expiry"
+   "event_block": null
   },
   {
    "symbol": "ATHERENERG",
@@ -2221,17 +2211,12 @@
    ],
    "events": [
     {
-     "label": "Ex-dividend",
-     "date": "2026-11-13",
-     "estimated": false
-    },
-    {
      "label": "Results",
      "date": "2027-01-21",
      "estimated": false
     }
    ],
-   "event_block": "Ex-dividend 13 Nov 2026: the 15-day close window starts 29 Oct, before this expiry"
+   "event_block": null
   },
   {
    "symbol": "CANBK",
@@ -3387,17 +3372,12 @@
    "legs": [],
    "events": [
     {
-     "label": "Results",
-     "date": "2026-11-13",
-     "estimated": false
-    },
-    {
      "label": "Ex-dividend",
      "date": "2027-07-31",
      "estimated": true
     }
    ],
-   "event_block": "Results 13 Nov 2026: the 15-day close window starts 29 Oct, before this expiry"
+   "event_block": null
   },
   {
    "symbol": "ENRIN",
@@ -3822,17 +3802,12 @@
    "legs": [],
    "events": [
     {
-     "label": "Results",
-     "date": "2026-11-13",
-     "estimated": false
-    },
-    {
      "label": "Ex-dividend",
      "date": "2027-08-07",
      "estimated": true
     }
    ],
-   "event_block": "Results 13 Nov 2026: the 15-day close window starts 29 Oct, before this expiry"
+   "event_block": null
   },
   {
    "symbol": "GVT&D",
@@ -7282,17 +7257,12 @@
    "legs": [],
    "events": [
     {
-     "label": "Ex-dividend",
-     "date": "2026-11-13",
-     "estimated": true
-    },
-    {
      "label": "Results",
      "date": "2026-11-14",
      "estimated": false
     }
    ],
-   "event_block": "Ex-dividend 13 Nov 2026 (estimated): the 15-day close window starts 29 Oct, before this expiry"
+   "event_block": "Results 14 Nov 2026: the 15-day close window starts 30 Oct, before this expiry"
   },
   {
    "symbol": "PAYTM",
@@ -8925,17 +8895,12 @@
    "legs": [],
    "events": [
     {
-     "label": "Results",
-     "date": "2026-11-13",
-     "estimated": false
-    },
-    {
      "label": "Ex-dividend",
      "date": "2027-06-19",
      "estimated": true
     }
    ],
-   "event_block": "Results 13 Nov 2026: the 15-day close window starts 29 Oct, before this expiry"
+   "event_block": null
   },
   {
    "symbol": "TORNTPHARM",
@@ -9705,7 +9670,7 @@
    "strike": 10600.0,
    "opt_type": "CE",
    "qty": 100,
-   "spot": 11442.0,
+   "spot": 11442,
    "beyond_pct": 7.94,
    "intrinsic_rs": 84200,
    "level": "EXIT",
@@ -9765,7 +9730,7 @@
    "strike": 760.0,
    "opt_type": "CE",
    "qty": 650,
-   "spot": 804.0,
+   "spot": 804,
    "beyond_pct": 5.79,
    "intrinsic_rs": 28600,
    "level": "EXIT",
@@ -10023,50 +9988,14 @@
   {
    "level": "BREACH",
    "type": "Event close",
-   "symbol": "ABB",
-   "expiry": "2026-11-23",
-   "strike": 5600.0,
-   "opt_type": "PE",
-   "qty": 125,
-   "concern": "Results 13 Nov is 0d away: inside the 15-day window",
-   "action": "Close it now (event rule)",
-   "text": "ABB 2026-11-23 long 5600PE: Results 13 Nov is 0d away: inside the 15-day window - close it now (event rule)"
-  },
-  {
-   "level": "BREACH",
-   "type": "Event close",
-   "symbol": "ABB",
-   "expiry": "2026-11-23",
-   "strike": 6100.0,
-   "opt_type": "PE",
-   "qty": 125,
-   "concern": "Results 13 Nov is 0d away: inside the 15-day window",
-   "action": "Close it now (event rule)",
-   "text": "ABB 2026-11-23 short 6100PE: Results 13 Nov is 0d away: inside the 15-day window - close it now (event rule)"
-  },
-  {
-   "level": "BREACH",
-   "type": "Event close",
-   "symbol": "ABB",
-   "expiry": "2026-11-23",
-   "strike": 7800.0,
-   "opt_type": "CE",
-   "qty": 125,
-   "concern": "Results 13 Nov is 0d away: inside the 15-day window",
-   "action": "Close it now (event rule)",
-   "text": "ABB 2026-11-23 short 7800CE: Results 13 Nov is 0d away: inside the 15-day window - close it now (event rule)"
-  },
-  {
-   "level": "BREACH",
-   "type": "Event close",
    "symbol": "ASHOKLEY",
    "expiry": "2026-11-23",
    "strike": 130.0,
    "opt_type": "PE",
    "qty": 5000,
-   "concern": "Results 14 Nov is 1d away: inside the 15-day window",
+   "concern": "Results 14 Nov is 0d away: inside the 15-day window",
    "action": "Close it now (event rule)",
-   "text": "ASHOKLEY 2026-11-23 long 130PE: Results 14 Nov is 1d away: inside the 15-day window - close it now (event rule)"
+   "text": "ASHOKLEY 2026-11-23 long 130PE: Results 14 Nov is 0d away: inside the 15-day window - close it now (event rule)"
   },
   {
    "level": "BREACH",
@@ -10076,52 +10005,16 @@
    "strike": 137.5,
    "opt_type": "PE",
    "qty": 5000,
-   "concern": "Results 14 Nov is 1d away: inside the 15-day window",
+   "concern": "Results 14 Nov is 0d away: inside the 15-day window",
    "action": "Close it now (event rule)",
-   "text": "ASHOKLEY 2026-11-23 short 137.5PE: Results 14 Nov is 1d away: inside the 15-day window - close it now (event rule)"
-  },
-  {
-   "level": "BREACH",
-   "type": "Event close",
-   "symbol": "CAMS",
-   "expiry": "2026-11-23",
-   "strike": 640.0,
-   "opt_type": "PE",
-   "qty": 825,
-   "concern": "Ex-dividend 13 Nov is 0d away: inside the 15-day window",
-   "action": "Close it now (event rule)",
-   "text": "CAMS 2026-11-23 long 640PE: Ex-dividend 13 Nov is 0d away: inside the 15-day window - close it now (event rule)"
-  },
-  {
-   "level": "BREACH",
-   "type": "Event close",
-   "symbol": "CAMS",
-   "expiry": "2026-11-23",
-   "strike": 660.0,
-   "opt_type": "PE",
-   "qty": 825,
-   "concern": "Ex-dividend 13 Nov is 0d away: inside the 15-day window",
-   "action": "Close it now (event rule)",
-   "text": "CAMS 2026-11-23 short 660PE: Ex-dividend 13 Nov is 0d away: inside the 15-day window - close it now (event rule)"
-  },
-  {
-   "level": "BREACH",
-   "type": "Event close",
-   "symbol": "CAMS",
-   "expiry": "2026-11-23",
-   "strike": 800.0,
-   "opt_type": "CE",
-   "qty": 825,
-   "concern": "Ex-dividend 13 Nov is 0d away: inside the 15-day window",
-   "action": "Close it now (event rule)",
-   "text": "CAMS 2026-11-23 short 800CE: Ex-dividend 13 Nov is 0d away: inside the 15-day window - close it now (event rule)"
+   "text": "ASHOKLEY 2026-11-23 short 137.5PE: Results 14 Nov is 0d away: inside the 15-day window - close it now (event rule)"
   },
   {
    "expiry": "2026-11-23",
    "strike": 1800.0,
    "opt_type": "CE",
    "qty": 625,
-   "spot": 1850.0,
+   "spot": 1850,
    "beyond_pct": 2.78,
    "intrinsic_rs": 31250,
    "level": "BREACH",
@@ -10139,9 +10032,9 @@
    "strike": 1000.0,
    "opt_type": "PE",
    "qty": 400,
-   "concern": "Ex-dividend 16 Nov is 3d away: inside the 15-day window",
+   "concern": "Ex-dividend 16 Nov is 2d away: inside the 15-day window",
    "action": "Close it now (event rule)",
-   "text": "COCHINSHIP 2026-11-23 long 1000PE: Ex-dividend 16 Nov is 3d away: inside the 15-day window - close it now (event rule)"
+   "text": "COCHINSHIP 2026-11-23 long 1000PE: Ex-dividend 16 Nov is 2d away: inside the 15-day window - close it now (event rule)"
   },
   {
    "level": "BREACH",
@@ -10151,9 +10044,9 @@
    "strike": 1120.0,
    "opt_type": "PE",
    "qty": 400,
-   "concern": "Ex-dividend 16 Nov is 3d away: inside the 15-day window",
+   "concern": "Ex-dividend 16 Nov is 2d away: inside the 15-day window",
    "action": "Close it now (event rule)",
-   "text": "COCHINSHIP 2026-11-23 short 1120PE: Ex-dividend 16 Nov is 3d away: inside the 15-day window - close it now (event rule)"
+   "text": "COCHINSHIP 2026-11-23 short 1120PE: Ex-dividend 16 Nov is 2d away: inside the 15-day window - close it now (event rule)"
   },
   {
    "expiry": "2026-11-23",
@@ -10175,7 +10068,7 @@
    "strike": 1200.0,
    "opt_type": "CE",
    "qty": 625,
-   "spot": 1220.0,
+   "spot": 1220,
    "beyond_pct": 1.67,
    "intrinsic_rs": 12500,
    "level": "BREACH",
@@ -10193,9 +10086,9 @@
    "strike": 370.0,
    "opt_type": "CE",
    "qty": 1875,
-   "concern": "Ex-dividend 14 Nov (estimated) is 1d away: inside the 15-day window",
+   "concern": "Ex-dividend 14 Nov (estimated) is 0d away: inside the 15-day window",
    "action": "Close it now (event rule)",
-   "text": "NATIONALUM 2026-11-23 short 370CE: Ex-dividend 14 Nov (estimated) is 1d away: inside the 15-day window - close it now (event rule)"
+   "text": "NATIONALUM 2026-11-23 short 370CE: Ex-dividend 14 Nov (estimated) is 0d away: inside the 15-day window - close it now (event rule)"
   },
   {
    "level": "BREACH",
@@ -10205,9 +10098,20 @@
    "strike": 1280.0,
    "opt_type": "CE",
    "qty": 550,
-   "concern": "Ex-dividend 21 Nov (estimated) is 8d away: inside the 15-day window",
+   "concern": "Ex-dividend 21 Nov (estimated) is 7d away: inside the 15-day window",
    "action": "Close it now (event rule)",
-   "text": "NAUKRI 2026-11-23 short 1280CE: Ex-dividend 21 Nov (estimated) is 8d away: inside the 15-day window - close it now (event rule)"
+   "text": "NAUKRI 2026-11-23 short 1280CE: Ex-dividend 21 Nov (estimated) is 7d away: inside the 15-day window - close it now (event rule)"
+  },
+  {
+   "level": "WARN",
+   "type": "Invalid GTT",
+   "symbol": "BANKINDIA",
+   "expiry": "2026-11-23",
+   "strike": 160.0,
+   "opt_type": "CE",
+   "concern": "Trigger: Stop limit 0 is below its trigger 1.63: it may not fill",
+   "action": "Raise the limit above the trigger (GTT 344781626)",
+   "text": "BANKINDIA BANKINDIA26NOV160CE: Stop limit 0 is below its trigger 1.63: it may not fill"
   },
   {
    "level": "WARN",
@@ -10221,23 +10125,11 @@
    "text": "BRITANNIA BRITANNIA26NOV5000CE: Stop is 2.0x the sold price (rule 3x)"
   },
   {
-   "level": "WARN",
-   "type": "No GTT placed",
-   "symbol": "BANKINDIA",
-   "expiry": "2026-11-23",
-   "strike": 160.0,
-   "opt_type": "CE",
-   "qty": 5200,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 1.56 (3x premium)",
-   "text": "BANKINDIA 2026-11-23 short 160CE: no active buy-back GTT (3x premium stop = 1.56)"
-  },
-  {
    "expiry": "2026-11-23",
    "strike": 300.0,
    "opt_type": "PE",
    "qty": 1975,
-   "spot": 302.0,
+   "spot": 302,
    "beyond_pct": -0.67,
    "intrinsic_rs": 0,
    "level": "WARN",
@@ -10279,7 +10171,7 @@
    "strike": 11300.0,
    "opt_type": "PE",
    "qty": 100,
-   "spot": 11442.0,
+   "spot": 11442,
    "beyond_pct": -1.26,
    "intrinsic_rs": 0,
    "level": "WARN",
@@ -10736,7 +10628,7 @@
   "RECLTD"
  ],
  "positions": {
-  "fetched_at": "2026-11-13T18:06:15.102559+00:00",
+  "fetched_at": "2026-11-13T18:59:03.038148+00:00",
   "track_from": "2026-11-01",
   "legs": 125,
   "ignored_legs": 16

@@ -39,6 +39,18 @@ def today_ist():
     return datetime.now(IST).strftime("%Y-%m-%d")
 
 
+def fetched_date_ist(ts):
+    """The IST calendar date of a stored timestamp. The pull scripts store UTC, so comparing the raw date text with today's IST date
+    wrongly refuses fresh files between 00:00 and 05:30 IST."""
+    try:
+        dt = datetime.fromisoformat(str(ts))
+    except ValueError:
+        return ""
+    if dt.tzinfo is None:
+        return dt.strftime("%Y-%m-%d")
+    return dt.astimezone(IST).strftime("%Y-%m-%d")
+
+
 def parse_pick(txt, n):
     if txt.strip().lower() == "all":
         return list(range(1, n + 1))
@@ -66,7 +78,7 @@ def main():
         sys.exit(f"REFUSED: trading halt is ON ({halt.get('reason', 'no reason given')}). Nothing may be placed.")
     pos, gtt = load("cc_positions.json"), load("cc_gtts.json")
     for nm, d in (("positions", pos), ("GTT list", gtt)):
-        if str(d.get("fetched_at", ""))[:10] != today_ist():
+        if fetched_date_ist(d.get("fetched_at")) != today_ist():
             sys.exit(f"REFUSED: the {nm} were not pulled today ({d.get('fetched_at')}). Pull get_positions / get_gtts first, otherwise a leg that already has a GTT could get a second one.")
     cfg = load("cc_config.json")["rules"]
     mult, buf = cfg.get("stop_premium_multiple", 3), cfg.get("gtt_limit_buffer_pct", 3)

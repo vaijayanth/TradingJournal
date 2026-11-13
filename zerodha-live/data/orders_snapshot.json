@@ -1,5 +1,54 @@
 {
- "fetched_at": "2026-11-13T23:36:14+05:30",
+ "fetched_at": "2026-11-14T00:28:18+05:30",
  "source": "mcp Zerodha orders(mode=list)",
- "orders": []
+ "orders": [
+  {
+   "order_id": "261114140050138",
+   "symbol": "PAGEIND",
+   "side": "SELL",
+   "qty": 1,
+   "order_type": "LIMIT",
+   "price": 31242.65,
+   "status": "MODIFY AMO REQ RECEIVED",
+   "amo": true,
+   "placed": "2026-11-14T00:21:51+05:30",
+   "exchange": "BSE"
+  },
+  {
+   "order_id": "261114140050158",
+   "symbol": "ABB",
+   "side": "BUY",
+   "qty": 2,
+   "order_type": "LIMIT",
+   "price": 7120.0,
+   "status": "AMO REQ RECEIVED",
+   "amo": true,
+   "placed": "2026-11-14T00:25:31+05:30",
+   "exchange": "NSE"
+  },
+  {
+   "order_id": "261114140050166",
+   "symbol": "POLICYBZR",
+   "side": "BUY",
+   "qty": 18,
+   "order_type": "LIMIT",
+   "price": 1112.4,
+   "status": "AMO REQ RECEIVED",
+   "amo": true,
+   "placed": "2026-11-14T00:26:23+05:30",
+   "exchange": "NSE"
+  },
+  {
+   "order_id": "261114140050178",
+   "symbol": "POWERINDIA",
+   "side": "BUY",
+   "qty": 1,
+   "order_type": "LIMIT",
+   "price": 32225.0,
+   "status": "AMO REQ RECEIVED",
+   "amo": true,
+   "placed": "2026-11-14T00:28:10+05:30",
+   "exchange": "NSE"
+  }
+ ]
 }

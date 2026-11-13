@@ -1,8 +1,21 @@
 {
- "fetched_at": "2026-11-13T23:36:15+05:30",
- "gtts_fetched_at": "2026-11-13T23:36:15+05:30",
- "checked": 70,
+ "fetched_at": "2026-11-14T00:41:53+05:30",
+ "gtts_fetched_at": "2026-11-14T00:41:52+05:30",
+ "checked": 71,
  "findings": [
+  {
+   "check": "G5",
+   "name": "TRIGGER",
+   "severity": "WARN",
+   "tradingsymbol": "BANKINDIA26NOV160CE",
+   "gtt_id": 344781626,
+   "symbol": "BANKINDIA",
+   "expiry": "2026-11-23",
+   "strike": 160.0,
+   "opt_type": "CE",
+   "concern": "Stop limit 0 is below its trigger 1.63: it may not fill",
+   "action": "Raise the limit above the trigger"
+  },
   {
    "check": "G6",
    "name": "OFF-RULE",

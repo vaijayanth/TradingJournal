@@ -1,6 +1,26 @@
 {
- "fetched_at": "2026-11-13T23:36:15+05:30",
+ "fetched_at": "2026-11-14T00:41:52+05:30",
  "active": {
+  "BANKINDIA26NOV160CE": [
+   {
+    "id": 344781626,
+    "type": "two-leg",
+    "trigger_values": [
+     0.3,
+     1.63
+    ],
+    "qty": 5200
+   },
+   {
+    "id": 344781626,
+    "type": "two-leg",
+    "trigger_values": [
+     0.3,
+     1.63
+    ],
+    "qty": 5200
+   }
+  ],
   "CHOLAFIN26NOV1680PE": [
    {
     "id": 344742877,
@@ -813,6 +833,34 @@
   ]
  },
  "gtts": [
+  {
+   "id": 344781626,
+   "type": "two-leg",
+   "created_at": "2026-11-14T00:41:36+05:30",
+   "expires_at": "2026-11-24T00:00:00+05:30",
+   "tradingsymbol": "BANKINDIA26NOV160CE",
+   "last_price": 1.49,
+   "triggers": [
+    0.3,
+    1.63
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 5200,
+     "price": 0,
+     "product": "NRML",
+     "order_type": "MARKET"
+    },
+    {
+     "side": "BUY",
+     "qty": 5200,
+     "price": 0,
+     "product": "NRML",
+     "order_type": "MARKET"
+    }
+   ]
+  },
   {
    "id": 344742877,
    "type": "single",
