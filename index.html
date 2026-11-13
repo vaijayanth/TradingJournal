@@ -810,6 +810,16 @@ tbody tr:hover { filter: brightness(0.97); }
 .cc-dot { font-size:19px; line-height:1; vertical-align:-2px; margin-right:3px; }
 .cc-dot.g { color:#2EE67A; text-shadow:0 0 7px rgba(46,230,122,.55); }
 .cc-dot.r { color:var(--red); }
+.cc-stk-note{}
+#cc-root td b:not(.stk), #cc-root td strong { font-weight:inherit; }
+#cc-root td b.stk { font-weight:700; }
+/* table values are regular weight (same as the Trade column); colour carries profit / loss / new. Only the Stock column and badge pills stay bold */
+#cc-root td .pnl-pos, #cc-root td .pnl-neg, #cc-root td .pos, #cc-root td .neg, #cc-root td .dh-flip-today-inline,
+.dh-blotter td.pnl-pos, .dh-blotter td.pnl-neg, .dh-blotter td .pnl-pos, .dh-blotter td .pnl-neg, .dh-blotter td.dh-flip-today, .dh-blotter td .dh-flip-today-inline { font-weight:400; }
+.cc-pk { display:inline-flex; align-items:center; gap:7px; }
+.cc-pk i { display:inline-block; width:54px; height:6px; border-radius:3px; background:var(--surface2); position:relative; }
+.cc-pk i b { position:absolute; left:0; top:0; bottom:0; border-radius:3px; }
+.cc-pk i::after { content:''; position:absolute; left:60%; top:-2px; bottom:-2px; width:1px; background:var(--text-muted); }
 .cc-grp td { background:var(--surface2); font-weight:700; font-size:12px; cursor:pointer; padding:7px 12px !important; letter-spacing:.02em; }
 .cc-grp-n { font-weight:600; color:var(--text-muted); margin-left:6px; }
 tr.cc-clk { cursor:pointer; } tr.cc-clk:hover td { background:var(--surface2); }
@@ -9097,8 +9107,8 @@ const DH_DEFS = {
       ['Signal date', r => r.date, r => `<td>${dhFmtDate(r.date)}</td>`],
       ['Stock', r => r.symbol, r => `<td class="stock-name">${dhEsc(r.symbol)}</td>`],
       ['CMP', r => r.cmp, r => `<td class="num">${dhFmtRs(r.cmp)}</td>`],
-      ['Qty to buy', r => r.qtyToBuy, r => `<td class="num" style="font-weight:700">${r.qtyToBuy}</td>`],
-      ['Sector', r => dhSectorText(r), r => `<td style="${(r.hot52wh || r.hotTurn) ? 'color:var(--amber);font-weight:700;' : ''}white-space:normal;min-width:150px">${dhEsc(dhSectorText(r))}</td>`],
+      ['Qty to buy', r => r.qtyToBuy, r => `<td class="num">${r.qtyToBuy}</td>`],
+      ['Sector', r => dhSectorText(r), r => `<td style="${(r.hot52wh || r.hotTurn) ? 'color:var(--amber);' : ''}white-space:normal;min-width:150px">${dhEsc(dhSectorText(r))}</td>`],
       ['Supertrend', r => r.supertrend, r => `<td>${dhTrendPill(r.supertrend)}</td>`],
       DH_FLIP_CELL,
       ['vs 52WH %', r => r.pctFromHigh, r => `<td class="num">${r.pctFromHigh == null ? '—' : dhFmtPct(r.pctFromHigh)}</td>`],
@@ -9900,7 +9910,7 @@ function ccShortAlert0(r) {
   }
 }
 const ccAlertCols = withType => (withType ? [{ h: 'Alert type', v: r => ccTypeOrd(r), c: r => ccTypePill(r) }] : []).concat([
-  { h: 'Stock', v: r => r.symbol, c: r => `<b>${dhEsc(r.symbol)}</b>` },
+  { h: 'Stock', v: r => r.symbol, c: r => `<b class="stk">${dhEsc(r.symbol)}</b>` },
   { h: 'Leg', v: r => r.strike == null ? '' : r.strike, c: r => r.strike == null ? '—' : ccStrike(r.strike) + ' ' + (r.opt_type || '') },
   { h: 'Expiry', v: r => r.expiry || '', c: r => r.expiry ? dhFmtDate(r.expiry) : '—' },
   { h: 'Issue', v: r => ccShortAlert(r)[0], c: r => `<span title="${dhEsc(r.concern || ccAlertDetail(r) || '')}">${dhEsc(ccShortAlert(r)[0])}</span>`, txt: true },
@@ -9961,7 +9971,7 @@ function ccEventDays(s) {   // days to the nearest upcoming results / ex-dividen
 const ccEventCell14 = s => {
   const n = ccEventDays(s), ev = (s.events || []).slice().sort((a, b) => a.date.localeCompare(b.date)).find(e => new Date(e.date + 'T00:00:00') >= new Date(new Date().setHours(0, 0, 0, 0)));
   if (n == null || n > CC_EVENT_DAYS || !ev) return `<span style="color:var(--text-muted)" title="${ev ? dhEsc(ev.label + ' ' + dhFmtDate(ev.date)) : 'No upcoming date'}">—</span>`;
-  return `<span style="color:${n <= 7 ? 'var(--red)' : 'var(--amber)'};font-weight:700" title="${dhEsc(ev.label + ' ' + dhFmtDate(ev.date) + (ev.estimated ? ' (est.)' : ''))}">${dhEsc(ev.label)} in ${n}d${ev.estimated ? ' (est.)' : ''}</span>`;
+  return `<span style="color:${n <= 7 ? 'var(--red)' : 'var(--amber)'};font-weight:inherit" title="${dhEsc(ev.label + ' ' + dhFmtDate(ev.date) + (ev.estimated ? ' (est.)' : ''))}">${dhEsc(ev.label)} in ${n}d${ev.estimated ? ' (est.)' : ''}</span>`;
 };
 function ccSigDetail(s, d) {
   const exps = (d.show_expiries || []).map(dhFmtDate).join(', ') || (s.expiries || []).map(x => dhFmtDate(x.expiry)).join(', ') || '—';
@@ -9973,7 +9983,7 @@ function ccSigDetail(s, d) {
 }
 const ccSigCols = d => [
   { h: '#', v: s => s.prio == null ? 9999 : s.prio, c: ccPrioCell, num: true },
-  { h: 'Stock', v: s => s.symbol, c: s => `<b>${dhEsc(s.symbol)}</b>`, txt: true },
+  { h: 'Stock', v: s => s.symbol, c: s => `<b class="stk">${dhEsc(s.symbol)}</b>`, txt: true },
   { h: 'CMP', v: s => s.spot, c: s => ccP(s.spot), num: true },
   { h: 'Trend · Flip', v: s => s.flip_trading_days, x: s => s.flip_date, c: s => `<span class="cc-dot ${s.colour === 'green' ? 'g' : 'r'}" title="Supertrend ${dhEsc(s.colour || '')}">●</span> ${ccFlip(s.flip_date, s.flip_trading_days)}`, txt: true },
   { h: 'Do this', v: s => ccDoThis(s), c: ccDoCell, txt: true },
@@ -9984,6 +9994,69 @@ const ccSigFilters = rsi => [['all', 'All stocks', () => true], ['call', 'Sell c
   ['open', 'Has open legs', s => (s.legs || []).length > 0], ['event', 'Event within 2 weeks', s => { const n = ccEventDays(s); return n != null && n <= CC_EVENT_DAYS; }]].concat(rsi ? [['rsi', 'RSI override', s => s.rsi_override]] : []);
 const ccSigGroups = [{ key: 'act', label: 'Act now' }, { key: 'cand', label: 'Candidates · no recent flip', collapsed: true }, { key: 'hold', label: 'Holding', collapsed: true }];
 
+// ── Open positions as TRADES (one row per structure, not per leg): % of max profit vs the profit target, distance to the short strike, stop in place, next step ──
+const CC_TRADE_ORDER = ['3× premium', 'Through hedge', 'Expiry risk', 'Event close', 'Exit', 'Beyond strike', 'Profit Exit', 'No stop placed', 'No GTT placed', 'Invalid GTT', 'Near strike'];
+function ccTrades(S, alerts, R) {
+  const t0 = new Date(); t0.setHours(0, 0, 0, 0);
+  const al = {};
+  (alerts || []).forEach(a => { if (a.strike == null || !a.expiry) return; const k = a.symbol + '|' + a.expiry + '|' + Number(a.strike); (al[k] = al[k] || []).push(a); });
+  const groups = {};
+  S.forEach(st => (st.legs || []).forEach(l => { const k = st.symbol + '|' + l.expiry + '|' + l.type; (groups[k] = groups[k] || { key: k, symbol: st.symbol, expiry: l.expiry, type: l.type, legs: [] }).legs.push(l); }));
+  const g = n => (Math.round(n * 100) / 100).toString();
+  return Object.values(groups).map(t => {
+    const shorts = t.legs.filter(l => l.side === 'SHORT'), longs = t.legs.filter(l => l.side === 'LONG');
+    const strikes = a => a.map(l => g(l.strike)).join('+');
+    // a long leg hedges if it is beyond at least one short (puts: lower strike, calls: higher strike); anything else is a leftover and is not called a hedge
+    const sMin = shorts.length ? Math.min(...shorts.map(l => l.strike)) : null, sMax = shorts.length ? Math.max(...shorts.map(l => l.strike)) : null;
+    const hedges = t.type === 'PE' ? longs.filter(l => l.strike < sMax) : longs.filter(l => l.strike > sMin), stray = longs.filter(l => !hedges.includes(l));
+    t.stray = stray;
+    const tail = stray.length ? ` · long ${strikes(stray)} not a hedge` : '';
+    t.label = !shorts.length ? `Long ${strikes(longs)}${t.type}` : t.type === 'PE' ? (hedges.length ? `BPS ${strikes(shorts)}/${strikes(hedges)}` : `Put ${strikes(shorts)}`) + tail : (hedges.length ? `Call ${strikes(shorts)}/${strikes(hedges)}` : `Call ${strikes(shorts)}`) + tail;
+    t.days = Math.round((new Date(t.expiry + 'T00:00:00') - t0) / 86400000);
+    const sold = shorts.reduce((a, l) => a + l.qty * (l.sell_avg ?? l.avg ?? 0), 0), now = shorts.reduce((a, l) => a + l.qty * (l.ltp ?? 0), 0);
+    t.kept = sold > 0 ? (sold - now) / sold * 100 : null;
+    t.pnl = t.legs.reduce((a, l) => a + (l.pnl_rs || 0), 0);
+    t.shortPnl = shorts.reduce((a, l) => a + (l.pnl_rs || 0), 0);
+    const near = shorts.filter(l => l.dist_pct != null).sort((a, b) => Math.abs(a.dist_pct) - Math.abs(b.dist_pct))[0];
+    t.near = near || null;
+    const mine = t.legs.flatMap(l => al[t.symbol + '|' + l.expiry + '|' + Number(l.strike)] || []);
+    t.noStop = mine.some(a => a.type === 'No stop placed' || a.type === 'No GTT placed');
+    const stops = shorts.map(l => l.stop_at).filter(x => x != null);
+    t.stopAt = stops.length ? Math.min(...stops) : null;
+    const hit = shorts.some(l => l.stop_hit);
+    const kinds = mine.map(a => a.type), pick = CC_TRADE_ORDER.find(k => kinds.includes(k));
+    const alert = mine.find(a => a.type === pick);
+    t.step = hit && pick !== '3× premium' ? 'Close now' : alert ? ccShortAlert(alert)[1] : 'Hold';
+    t.prio = hit ? 0 : pick ? CC_TRADE_ORDER.indexOf(pick) : 99;
+    t.needs = !!(hit || (pick && pick !== 'Near strike'));
+    return t;
+  });
+}
+const ccKeptCell = t => {
+  if (t.kept == null) return '<span style="color:var(--text-muted)">—</span>';
+  const k = Math.round(t.kept), cls = k >= 60 ? 'pos' : k < 0 ? 'neg' : '', sp = t.shortPnl;
+  return `<span class="${cls}" style="" title="Share of the premium you collected on the short option that you have already earned (its price has ${k >= 0 ? 'fallen' : 'risen'} by ${Math.abs(k)}%). Profit exit at 60%">${k < -200 ? '&lt; −200' : k}%</span> <span style="color:var(--text-muted)">·</span> <span class="${dhPnlCls(sp)}" style="opacity:.85">${(sp >= 0 ? '+' : '−') + dhFmtRs(Math.abs(sp))}</span>`;
+};
+const ccTradeDetail = t => {
+  const rows = t.legs.slice().sort((a, b) => (a.side === 'SHORT' ? 0 : 1) - (b.side === 'SHORT' ? 0 : 1) || a.strike - b.strike).map(l => {
+    const px = l.side === 'SHORT' ? (l.sell_avg ?? l.avg) : (l.buy_avg ?? l.avg);
+    return `<div><b>${l.side === 'SHORT' ? 'Short' : (t.stray || []).includes(l) ? 'Long (not a hedge)' : 'Hedge'} ${ccStrike(l.strike)} ${l.type}</b>${l.qty}${l.lots ? ' (' + l.lots + ' lot)' : ''} @ ${ccP(px)} → ${ccP(l.ltp)} · <span class="${dhPnlCls(l.pnl_rs)}">${(l.pnl_rs >= 0 ? '+' : '−') + dhFmtRs(Math.abs(l.pnl_rs))}</span>${l.stop_at != null && l.side === 'SHORT' ? ' · 3× = ' + ccP(l.stop_at) : ''}</div>`;
+  }).join('');
+  return `<div class="cc-dgrid" style="grid-template-columns:repeat(auto-fill,minmax(330px,1fr))">${rows}</div>`;
+};
+const ccTradeCols = () => [
+  { h: 'Stock', v: t => t.symbol, c: t => `<b class="stk">${dhEsc(t.symbol)}</b>`, txt: true },
+  { h: 'Trade', v: t => t.label, c: t => dhEsc(t.label), txt: true },
+  { h: 'Expiry', v: t => t.expiry, c: t => `${dhFmtDate(t.expiry)} <span style="color:${t.days <= 7 ? 'var(--red)' : 'var(--text-muted)'}">(${t.days}d)</span>`, txt: true },
+  { h: 'Short leg', v: t => t.kept ?? -999, c: ccKeptCell, txt: true },
+  { h: 'Trade P&amp;L', v: t => t.pnl, c: t => `<span class="${dhPnlCls(t.pnl)}" title="Whole trade, including the hedge leg">${(t.pnl >= 0 ? '+' : '−') + dhFmtRs(Math.abs(t.pnl))}</span>`, num: true },
+  { h: 'To strike', v: t => t.near ? Math.abs(t.near.dist_pct) : 999, c: t => t.near ? `<span class="${t.near.touched || Math.abs(t.near.dist_pct) < 5 ? 'neg' : ''}" title="short ${ccStrike(t.near.strike)} ${t.near.type}">${ccSigned(t.near.dist_pct)}</span>` : '—', num: true },
+  { h: 'Stop 3×', v: t => t.noStop ? 0 : 1, c: t => t.stopAt == null ? '—' : t.noStop ? `<span class="neg" title="No stop order or GTT found">✗ none</span>` : `<span class="pos">✓</span> ${ccP(t.stopAt)}`, txt: true },
+  { h: 'Next step', v: t => t.prio, c: t => t.needs ? `<b>${dhEsc(t.step)}</b>` : `<span style="color:var(--text-muted)">${dhEsc(t.step)}</span>`, txt: true },
+];
+const ccTradeFilters = [['all', 'All trades', () => true], ['bps', 'BPS', t => /^BPS/.test(t.label)], ['call', 'Calls', t => t.type === 'CE'], ['put', 'Puts', t => t.type === 'PE'],
+  ['nostop', 'No stop', t => t.noStop], ['soon', 'Expiry within 7 days', t => t.days <= 7]];
+const ccTradeGroups = [{ key: 'act', label: 'Needs action' }, { key: 'ok', label: 'On track', collapsed: true }];
 const ccPrioCell = s => s.prio == null ? '<span style="color:var(--text-muted)">—</span>' : `<b>#${s.prio}</b>`;
 const ccFlipCell = s => ccFlip(s.flip_date, s.flip_trading_days) + ((s.status === 'ENTER' || s.status === 'FLIP') && s.flip_trading_days != null && s.flip_trading_days <= CC_NEW_FLIP_DAYS
   ? ' <span class="trend-pill" style="background:var(--accent-soft, var(--surface2));color:var(--accent)">NEW FLIP</span>' : '');
@@ -10015,7 +10088,7 @@ function ccStrikeBanner(d) {
   if (!hot.length && !near.length) return '';
   const row = a => {
     const dist = a.beyond_pct == null ? '' : (a.beyond_pct >= 0 ? '+' : '−') + Math.abs(a.beyond_pct).toFixed(1) + '%';
-    return `<tr><td>${ccTypePill(a)}</td><td><b>${dhEsc(a.symbol)}</b></td><td>${a.strike == null ? '' : 'Short ' + ccStrike(a.strike) + ' ' + a.opt_type}${a.hedge_strike ? ' · hedge ' + ccStrike(a.hedge_strike) : ''}</td>`
+    return `<tr><td>${ccTypePill(a)}</td><td><b class="stk">${dhEsc(a.symbol)}</b></td><td>${a.strike == null ? '' : 'Short ' + ccStrike(a.strike) + ' ' + a.opt_type}${a.hedge_strike ? ' · hedge ' + ccStrike(a.hedge_strike) : ''}</td>`
       + `<td>${a.expiry ? dhFmtDate(a.expiry) : ''}</td><td class="n">${a.spot == null ? '' : a.spot}</td><td class="n">${dist}</td><td class="n">${a.intrinsic_rs ? dhFmtRs(a.intrinsic_rs) : '—'}</td><td>${a.level === 'EXIT' ? 'Spread at max loss: decide now' : a.level === 'BREACH' ? 'In the money: roll, close or hold' : 'Watch'}</td></tr>`;
   };
   const head = (hot.length ? `${hot.length} open short strike${hot.length === 1 ? '' : 's'} reached or passed` : '') + (hot.length && near.length ? ' · ' : '') + (near.length ? `${near.length} near` : '');
@@ -10051,26 +10124,11 @@ function ccOptionsView(d) {
     cols: ccSigCols(d),
   });
 
-  const stOrd = { EXIT: 0, BREACH: 1, NEAR: 2, WARN: 2, OK: 3, HEDGE: 4 };
-  const legStatus = l => l.side === 'LONG' ? (l.touched ? 'BREACH' : 'HEDGE') : l.stop_hit ? 'EXIT' : l.touched ? 'BREACH' : l.near ? 'NEAR' : 'OK';
-  const legRows = legs.slice().sort((a, b) => stOrd[legStatus(a)] - stOrd[legStatus(b)] || a.stock.symbol.localeCompare(b.stock.symbol) || a.expiry.localeCompare(b.expiry) || a.strike - b.strike);
+  const R0 = d.rules || {}, trades = ccTrades(S, d.alerts, R0);
   const legT = ccTbl('legs', {
-    title: 'Open option positions', hint: 'From ND positions; current price is derived from each leg’s unrealised P&L; “% from spot” = strike’s distance from the stock price',
-    rows: legRows, search: l => l.symbol, empty: 'Nothing returned by the ND positions call.',
-    filters: [['all', 'All legs', () => true], ['short', 'Short legs', l => l.side === 'SHORT'], ['long', 'Hedge legs', l => l.side === 'LONG'], ['CE', 'Calls', l => l.type === 'CE'], ['PE', 'Puts', l => l.type === 'PE'],
-              ['attn', 'Needs attention', l => ['EXIT', 'BREACH', 'NEAR'].includes(legStatus(l))]],
-    cols: [
-      { h: 'Stock', v: l => l.symbol, c: l => `<b>${dhEsc(l.symbol)}</b>` },
-      { h: 'Expiry', v: l => l.expiry, c: l => dhFmtDate(l.expiry) },
-      { h: 'Leg', v: l => `${l.side} ${l.strike} ${l.type}`, c: l => `${l.side} ${ccStrike(l.strike)} ${l.type}` },
-      { h: 'Qty', v: l => l.qty, c: l => `${l.qty}${l.lots ? ' (' + l.lots + ' lot)' : ''}`, num: true },
-      { h: 'Sold / bought @', v: l => l.side === 'SHORT' ? l.sell_avg : l.buy_avg, c: l => ccP(l.side === 'SHORT' ? l.sell_avg : l.buy_avg), num: true },
-      { h: 'LTP', v: l => l.ltp, c: l => ccP(l.ltp), num: true },
-      { h: 'P&amp;L', v: l => l.pnl_rs, c: l => `<span class="${dhPnlCls(l.pnl_rs)}">${(l.pnl_rs >= 0 ? '+' : '−') + dhFmtRs(Math.abs(l.pnl_rs))}</span>`, num: true },
-      { h: 'Exit at 3×', v: l => l.side === 'SHORT' ? l.stop_at : null, c: l => l.side === 'SHORT' ? ccP(l.stop_at) : '—', num: true },
-      { h: '% from spot', v: l => l.dist_pct, c: l => ccSigned(l.dist_pct), num: true },
-      { h: 'Status', v: l => stOrd[legStatus(l)], c: l => ccPill(legStatus(l)) },
-    ],
+    title: 'Open positions', hint: 'One row per trade. Short leg = the short option only: % of its premium already earned and its own P&L (your 60% profit exit and 3× stop work on this). Trade P&L = the whole trade including the hedge. Book profit at ' + (R0.profit_exit_decay_pct ?? 60) + '%; negative = losing. Click a row for its legs. BPS = bull put spread.',
+    rows: trades, search: t => t.symbol, empty: 'No open option legs from the ND positions call.', sort: [7, 1],
+    rowKey: t => t.key, detail: ccTradeDetail, group: t => t.needs ? 'act' : 'ok', groups: ccTradeGroups, filters: ccTradeFilters, cols: ccTradeCols(),
   });
 
   const R = d.rules || {};
@@ -10089,7 +10147,7 @@ function ccOptionsView(d) {
     ].concat(ccRulesCommon(R, ['Stop protection', 'Each short should have a super order stop leg (about 3× the sold price); an orphaned or missing one raises Invalid stop order / No stop placed (scan_super_orders.py, the dhan-superorder skill)']))));
   const other = (d.other_positions || []).length ? ` Other option positions not in this universe: ${d.other_positions.join(', ')}.` : '';
   const foot = `<div class="d2-edge-foot" style="border:0">Market data ${dhFmtDate(d.market_data_date)} · deltas are estimates (Black-Scholes from the chain’s IV, no dividends) · option chains loaded: ${Object.keys(d.chains_loaded || {}).join(', ') || 'none'}.${other}</div>`;
-  const bar = ccTabBar('cc-otabs', [['alerts', 'Alerts', (d.alerts || []).length], ['signals', 'Signals', CC_T.signals.def.rows.length], ['legs', 'Open positions', legs.length], ['rules', 'Rules', null]], 'ccOTab');
+  const bar = ccTabBar('cc-otabs', [['alerts', 'Alerts', (d.alerts || []).length], ['signals', 'Signals', CC_T.signals.def.rows.length], ['legs', 'Open positions', trades.length], ['rules', 'Rules', null]], 'ccOTab');
   return ccStrikeBanner(d) + kpis + bar + `<div id="cc-ov-alerts" class="a2-view">${alertsT}</div><div id="cc-ov-signals" class="a2-view">${sigT}</div><div id="cc-ov-legs" class="a2-view">${legT}</div><div id="cc-ov-rules" class="a2-view">${rulesPanel}${foot}</div>`;
 }
 
@@ -10119,7 +10177,7 @@ function ccSharesView(d) {
     rows: exits, search: r => r.symbol, sort: [5, -1],
     empty: 'No share is both Supertrend red and in profit. A losing position stays held, even when red.',
     cols: [
-      { h: 'Stock', v: r => r.symbol, c: r => `<b>${dhEsc(r.symbol)}</b>` },
+      { h: 'Stock', v: r => r.symbol, c: r => `<b class="stk">${dhEsc(r.symbol)}</b>` },
       { h: 'Qty', v: r => r.qty, c: r => r.qty, num: true },
       { h: 'Avg cost', v: r => r.avg_cost, c: r => ccP(r.avg_cost), num: true },
       { h: 'Spot', v: r => r.spot, c: r => ccP(r.spot), num: true },
@@ -10134,7 +10192,7 @@ function ccSharesView(d) {
     rows: entry, search: r => r.symbol, sort: [3, 1],
     empty: `All ${rows.length} portfolio stocks are already held, so there is nothing to enter. A stock appears here after you sell it (profit exit) and its Supertrend later flips back to green.`,
     cols: [
-      { h: 'Stock', v: r => r.symbol, c: r => `<b>${dhEsc(r.symbol)}</b>` },
+      { h: 'Stock', v: r => r.symbol, c: r => `<b class="stk">${dhEsc(r.symbol)}</b>` },
       { h: 'Spot', v: r => r.spot, c: r => ccP(r.spot), num: true },
       { h: 'Supertrend', v: r => r.colour, c: r => dhTrendPill(r.colour) },
       { h: 'Flip', v: r => r.flip_trading_days, c: r => ccFlip(r.flip_date, r.flip_trading_days) },
@@ -10148,7 +10206,7 @@ function ccSharesView(d) {
     title: 'Add-on eligible', hint: `Supertrend green and down ${Math.abs(R.averaging_loss_pct || 6)}%+: buy ${(R.averaging_fraction || 0.1) * 100}% of the open quantity, once every ${R.averaging_cooldown_days || 7} days`,
     rows: addon, search: r => r.symbol, sort: [3, 1], empty: 'Nothing is due to average today.' + (waitTxt ? ' ' + waitTxt : ' No holding is both green and down enough.'),
     cols: [
-      { h: 'Stock', v: r => r.symbol, c: r => `<b>${dhEsc(r.symbol)}</b>` },
+      { h: 'Stock', v: r => r.symbol, c: r => `<b class="stk">${dhEsc(r.symbol)}</b>` },
       { h: 'Spot', v: r => r.spot, c: r => ccP(r.spot), num: true },
       { h: 'Avg cost', v: r => r.avg_cost, c: r => ccP(r.avg_cost), num: true },
       { h: 'P&amp;L', v: r => r.pl_pct, c: pnl, num: true },
@@ -10165,7 +10223,7 @@ function ccSharesView(d) {
     filters: [['all', 'All positions', () => true], ['loss', 'In loss', r => r.pl_pct < 0], ['profit', 'In profit', r => r.pl_pct >= 0], ['ADD', 'Add-on due', r => r.avg_status === 'ADD'],
               ['green', 'Supertrend green', r => r.colour === 'green'], ['red', 'Supertrend red', r => r.colour === 'red']],
     cols: [
-      { h: 'Stock', v: r => r.symbol, c: r => `<b>${dhEsc(r.symbol)}</b>` },
+      { h: 'Stock', v: r => r.symbol, c: r => `<b class="stk">${dhEsc(r.symbol)}</b>` },
       { h: 'Qty', v: r => r.qty, c: r => r.qty, num: true },
       { h: 'Avg cost', v: r => r.avg_cost, c: r => ccP(r.avg_cost), num: true },
       { h: 'Spot', v: r => r.spot, c: r => ccP(r.spot), num: true },
@@ -10209,25 +10267,11 @@ function ccZerodhaView(d) {
   });
   const lvlOrd = { EXIT: 0, BREACH: 1, WARN: 2 };
   const alertsT = ccAlertsBox(d, 'zal', 'Alert types: 3× premium, beyond / near strike, through hedge, profit exit, no GTT, no hedge, Exit (colour flipped, opposite position open)');
-  const stOrd = { EXIT: 0, BREACH: 1, NEAR: 2, WARN: 2, OK: 3, HEDGE: 4 };
-  const legStatus = l => l.side === 'LONG' ? (l.touched ? 'BREACH' : 'HEDGE') : l.stop_hit ? 'EXIT' : l.touched ? 'BREACH' : l.near ? 'NEAR' : 'OK';
+  const trades = ccTrades(S, d.alerts, R);
   const legT = ccTbl('zlegs', {
-    title: 'Open option positions', hint: 'From the AZ positions call (expiries from ' + dhFmtDate((d.positions || {}).track_from) + ' onwards); price and P&L are the broker’s own',
-    rows: S_legs.slice().sort((a, b) => stOrd[legStatus(a)] - stOrd[legStatus(b)] || a.symbol.localeCompare(b.symbol) || a.strike - b.strike), search: l => l.symbol,
-    empty: `No open option legs with an expiry from ${dhFmtDate((d.positions || {}).track_from)} onwards in the AZ positions.`,
-    filters: [['all', 'All legs', () => true], ['short', 'Short legs', l => l.side === 'SHORT'], ['long', 'Hedge legs', l => l.side === 'LONG'], ['CE', 'Calls', l => l.type === 'CE'], ['PE', 'Puts', l => l.type === 'PE'], ['attn', 'Needs attention', l => ['EXIT', 'BREACH', 'NEAR'].includes(legStatus(l))]],
-    cols: [
-      { h: 'Stock', v: l => l.symbol, c: l => `<b>${dhEsc(l.symbol)}</b>` },
-      { h: 'Expiry', v: l => l.expiry, c: l => dhFmtDate(l.expiry) },
-      { h: 'Leg', v: l => `${l.side} ${l.strike} ${l.type}`, c: l => `${l.side} ${ccStrike(l.strike)} ${l.type}` },
-      { h: 'Qty', v: l => l.qty, c: l => `${l.qty}${l.lots ? ' (' + l.lots + ' lot)' : ''}`, num: true },
-      { h: 'Avg price', v: l => l.avg, c: l => ccP(l.avg), num: true },
-      { h: 'LTP', v: l => l.ltp, c: l => ccP(l.ltp), num: true },
-      { h: 'P&amp;L', v: l => l.pnl_rs, c: l => `<span class="${dhPnlCls(l.pnl_rs)}">${(l.pnl_rs >= 0 ? '+' : '−') + dhFmtRs(Math.abs(l.pnl_rs))}</span>`, num: true },
-      { h: 'Exit at 3×', v: l => l.side === 'SHORT' ? l.stop_at : null, c: l => l.side === 'SHORT' ? ccP(l.stop_at) : '—', num: true },
-      { h: '% from spot', v: l => l.dist_pct, c: l => ccSigned(l.dist_pct), num: true },
-      { h: 'Status', v: l => stOrd[legStatus(l)], c: l => ccPill(legStatus(l)) },
-    ],
+    title: 'Open positions', hint: 'One row per trade, from the AZ positions call (expiries from ' + dhFmtDate((d.positions || {}).track_from) + ' onwards). Short leg = the short option only: % of its premium already earned and its own P&L (your 60% profit exit and 3× stop work on this). Trade P&L = the whole trade including the hedge. Book profit at ' + (R.profit_exit_decay_pct ?? 60) + '%; negative = losing. Click a row for its legs. BPS = bull put spread.',
+    rows: trades, search: t => t.symbol, empty: `No open option legs with an expiry from ${dhFmtDate((d.positions || {}).track_from)} onwards in the AZ positions.`, sort: [7, 1],
+    rowKey: t => t.key, detail: ccTradeDetail, group: t => t.needs ? 'act' : 'ok', groups: ccTradeGroups, filters: ccTradeFilters, cols: ccTradeCols(),
   });
   const rulesPanel = a2Panel('Option rules', 'Edit zerodha-live/data/cc_config.json to change; shown here as applied',
     a2Rows([
@@ -10242,7 +10286,7 @@ function ccZerodhaView(d) {
       ['Universe', 'All Nifty F&O stocks except ' + ((d.excluded || []).join(', ') || 'none')],
     ].concat(ccRulesCommon(R, ['Stop protection', 'Each short should have a buy-back GTT (stop 3× + profit target); an invalid or missing one raises Invalid GTT / No GTT placed (scan_gtts.py, the zerodha-gtt-order skill)']))));
   const foot = `<div class="d2-edge-foot" style="border:0">Market data ${dhFmtDate(d.market_data_date)} · no option quotes are pulled, so strikes and premiums for new trades are not shown · positions fetched ${(d.positions || {}).fetched_at ? dhFmtDate(String(d.positions.fetched_at).slice(0, 10)) : 'never (run /refresh-zerodha)'}.</div>`;
-  const bar = ccTabBar('cc-otabs', [['alerts', 'Alerts', (d.alerts || []).length], ['signals', 'Signals', S.length], ['legs', 'Open positions', S_legs.length], ['rules', 'Rules', null]], 'ccZTab');
+  const bar = ccTabBar('cc-otabs', [['alerts', 'Alerts', (d.alerts || []).length], ['signals', 'Signals', S.length], ['legs', 'Open positions', trades.length], ['rules', 'Rules', null]], 'ccZTab');
   return ccStrikeBanner(d) + kpis + bar + `<div id="cc-ov-alerts" class="a2-view">${alertsT}</div><div id="cc-ov-signals" class="a2-view">${sigT}</div><div id="cc-ov-legs" class="a2-view">${legT}</div><div id="cc-ov-rules" class="a2-view">${rulesPanel}${foot}</div>`;
 }
 
