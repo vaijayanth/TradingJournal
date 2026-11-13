@@ -1233,7 +1233,8 @@ th.te-sort { cursor:pointer; user-select:none; } th.te-sort:hover { color:var(--
   </section>
 
   <section class="d2-panel" id="d2-actions" style="margin-bottom:13px">
-    <div class="d2-panel-head"><div><div class="d2-title">At the next open</div><div class="d2-hint" id="d2-act-hint">What the rules ask for, and whether the order is already in. Click a stock to open its tab.</div></div><span class="d2-pill" id="d2-act-pill">…</span></div>
+    <div class="d2-panel-head" style="cursor:pointer" onclick="d2ToggleActions()"><div><div class="d2-title"><span id="d2-act-chev" style="display:inline-block;width:14px;color:var(--text-muted)">▸</span>At the next open</div><div class="d2-hint" id="d2-act-sum">…</div></div><span class="d2-pill" id="d2-act-pill">…</span></div>
+    <div id="d2-act-body" style="display:none">
     <div class="d2-act-row"><div class="d2-act-lab"><b>Sell</b><span>Supertrend turned red</span></div><div class="d2-act-chips" id="d2-r-exit"></div><div class="d2-act-st" id="d2-r-exit-s"></div></div>
     <div class="d2-act-row"><div class="d2-act-lab"><b>Buy: new entries</b><span id="d2-lab-entry">52-week high, trend green</span></div><div class="d2-act-chips" id="d2-r-entry"></div><div class="d2-act-st" id="d2-r-entry-s"></div></div>
     <div class="d2-act-row"><div class="d2-act-lab"><b>Buy: add-ons</b><span id="d2-lab-addon">Down 6%+, trend green</span></div><div class="d2-act-chips" id="d2-r-addon"></div><div class="d2-act-st" id="d2-r-addon-s"></div></div>
@@ -1241,6 +1242,7 @@ th.te-sort { cursor:pointer; user-select:none; } th.te-sort:hover { color:var(--
     <div class="d2-act-row"><div class="d2-act-lab"><b>Shares: sell</b><span>Red and in profit</span></div><div class="d2-act-chips" id="d2-r-shx"></div><div class="d2-act-st" id="d2-r-shx-s"></div></div>
     <div class="d2-act-row"><div class="d2-act-lab"><b>Shares: buy</b><span>Flip to green, averaging</span></div><div class="d2-act-chips" id="d2-r-shr"></div><div class="d2-act-st" id="d2-r-shr-s"></div></div>
     <div class="d2-legend2"><span><i style="background:var(--green)"></i>Order placed</span><span><i style="border:1.5px solid var(--text-muted)"></i>No order yet</span><span><i style="background:var(--amber)"></i>Blocked by the price cross-check</span><span id="d2-ord-sync"></span></div>
+    </div>
   </section>
 
   <div class="d2-layout" style="grid-template-columns:1fr">
@@ -9512,8 +9514,21 @@ function d2Go(page, tab) {
     else { const [a, b] = tab.split('-'); ccTab(a); if (a === 'options') ccOTab(b); else ccSTab(b); }
   }, 60);
 }
+function d2ToggleActions() {
+  const b = document.getElementById('d2-act-body'), c = document.getElementById('d2-act-chev'); if (!b) return;
+  const open = b.style.display === 'none'; b.style.display = open ? '' : 'none'; if (c) c.textContent = open ? '▾' : '▸';
+}
+// one-line header for the collapsed "At the next open" panel: counts per action so you can decide whether to expand
+function d2ActSummary() {
+  const s = window._d2Sum || {}, el = document.getElementById('d2-act-sum'); if (!el) return;
+  const part = (label, n, extra) => `${label} <b>${n == null ? '—' : n}</b>${extra ? ' (' + extra + ')' : ''}`;
+  const parts = [part('Sell', s.exit), part('Entries', s.entry, s.entryNote), part('Add-ons', s.addon)];
+  if (s.hasCC) parts.push(part('Options', s.opt, s.optNote), part('Shares sell', s.shx), part('Shares buy', s.shr));
+  el.innerHTML = parts.join(' · ');
+}
 function d2RenderActions(d) {
   const set = (id, v) => { const el = document.getElementById(id); if (el) el.innerHTML = v; };
+  window._d2Sum = { hasCC: !!dhCopy().hasCC };
   const P = d.positions, cap = d.capital || {};
   const exits = P.filter(p => p.signal === 'EXIT'), addons = P.filter(p => p.signal === 'ADD-ON'), entries = d.signals.entry;
   set('d2-a-pos', P.length); set('d2-a-inv', P.length ? dhFmtRs(cap.invested) : '—');
@@ -9545,6 +9560,8 @@ function d2RenderActions(d) {
     set('d2-r-addon', addons.length ? as.map(x => chip(x.o.st === 'ok' ? 'ok' : '', `${x.p.symbol} ×${x.p.addQty}`, `${x.p.plPct.toFixed(1)}% vs average cost`, "d2Go('dhanlive','addon')")).join('') : none('No add-on signals'));
     set('d2-r-addon-s', !addons.length || !ex ? '' : `${na} ordered · ${addons.length - na} not ordered`);
     const total = entries.length + addons.length + exits.length;
+    Object.assign(window._d2Sum, { exit: exits.length, entry: entries.length, addon: addons.length, entryNote: !entries.length ? '' : !ex ? '' : `${n.ok} ordered${n.blk ? ', ' + n.blk + ' blocked' : ''}` });
+    d2ActSummary();
     set('d2-act-pill', ex && ex.hasOrders ? `${n.ok + na + exOrd} of ${total} ordered` : `${total} signals`);
     const sync = document.getElementById('d2-ord-sync');
     if (sync) sync.textContent = ex && ex.hasOrders && !ex.fetchedAt ? 'No orders recorded yet' : ex && ex.hasOrders ? 'Order status as of ' + (ex.fetchedAt ? new Date(ex.fetchedAt).toLocaleString('en-IN', { day: 'numeric', month: 'short', hour: 'numeric', minute: '2-digit' }) : 'unknown time') : (ex ? 'Order status unavailable' : '');
@@ -9555,6 +9572,7 @@ function d2RenderActions(d) {
     const shEnt = (cc.shares || {}).entries || [];
     set('d2-r-opt', enter.length + risk.length ? enter.map(a => chip('', a.symbol, a.text, "d2Go('covcall','options-alerts')")).join('') + risk.map(a => chip('blk', a.symbol + ' ' + a.level.toLowerCase(), a.text, "d2Go('covcall','options-alerts')")).join('') : none('No option actions'));
     set('d2-r-opt-s', `${enter.length} to open${risk.length ? ' · ' + risk.length + ' exit, flip or warning' : ' · no exit or warning'}`);
+    Object.assign(window._d2Sum, { opt: enter.length + risk.length, optNote: enter.length + risk.length ? `${enter.length} to open, ${risk.length} to watch` : '' }); d2ActSummary();
     const shx = (cc.shares || {}).exits || [];
     const shDraw = ex => {
       const stOf = (sym, side, qty) => dhOrderState(ex, sym, side, qty);
@@ -9564,6 +9582,7 @@ function d2RenderActions(d) {
         .concat(avg.map(r => ({ sym: r.symbol, qty: r.add_qty, tip: `${r.pl_pct}% vs average cost`, go: "d2Go('covcall','shares-addon')" })));
       set('d2-r-shr', buys.length ? buys.map(b => chip(b.qty != null && stOf(b.sym, 'BUY', b.qty).st === 'ok' ? 'ok' : '', b.qty != null ? `${b.sym} ×${b.qty}` : `${b.sym} (set qty)`, b.tip, b.go)).join('') : none('No share buys'));
       set('d2-r-shr-s', `${shEnt.length} new ${shEnt.length === 1 ? 'entry' : 'entries'} · ${avg.length} averaging`);
+      Object.assign(window._d2Sum, { shx: shx.length, shr: shEnt.length + avg.length }); d2ActSummary();
     };
     shDraw(null); dhExtras().then(shDraw);
   };
