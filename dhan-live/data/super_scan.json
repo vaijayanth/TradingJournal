@@ -1,6 +1,6 @@
 {
- "fetched_at": "2026-11-13T23:45:00+05:30",
- "orders_checked": 19,
+ "fetched_at": "2026-11-14T00:11:52+05:30",
+ "orders_checked": 26,
  "shorts": 15,
  "findings": [
   {
@@ -26,90 +26,6 @@
    "opt_type": null,
    "concern": "Likely orphaned: sold 225 @ 16.15 but no open short matches; target 0 still pending: a stop firing would BUY a new long",
    "action": "Check the position; if closed, cancel the legs (order 2132611061617273)"
-  },
-  {
-   "check": "S2",
-   "name": "NO STOP",
-   "severity": "WARN",
-   "order_id": null,
-   "symbol": "BANKINDIA",
-   "expiry": "2026-11-23",
-   "strike": 145.0,
-   "opt_type": "PE",
-   "concern": "No super order matches this short (5200 @ 0.88): no stop protects it",
-   "action": "Close and re-enter as a super order, or use a daily stop order"
-  },
-  {
-   "check": "S2",
-   "name": "NO STOP",
-   "severity": "WARN",
-   "order_id": null,
-   "symbol": "BPCL",
-   "expiry": "2026-12-29",
-   "strike": 280.0,
-   "opt_type": "PE",
-   "concern": "No super order matches this short (1975 @ 2.7): no stop protects it",
-   "action": "Close and re-enter as a super order, or use a daily stop order"
-  },
-  {
-   "check": "S2",
-   "name": "NO STOP",
-   "severity": "WARN",
-   "order_id": null,
-   "symbol": "BSE",
-   "expiry": "2026-12-29",
-   "strike": 3500.0,
-   "opt_type": "PE",
-   "concern": "No super order matches this short (200 @ 38.3): no stop protects it",
-   "action": "Close and re-enter as a super order, or use a daily stop order"
-  },
-  {
-   "check": "S2",
-   "name": "NO STOP",
-   "severity": "WARN",
-   "order_id": null,
-   "symbol": "CUMMINSIND",
-   "expiry": "2026-12-29",
-   "strike": 5300.0,
-   "opt_type": "CE",
-   "concern": "No super order matches this short (100 @ 21.75): no stop protects it",
-   "action": "Close and re-enter as a super order, or use a daily stop order"
-  },
-  {
-   "check": "S2",
-   "name": "NO STOP",
-   "severity": "WARN",
-   "order_id": null,
-   "symbol": "HCLTECH",
-   "expiry": "2026-12-29",
-   "strike": 1240.0,
-   "opt_type": "PE",
-   "concern": "No super order matches this short (400 @ 11.65): no stop protects it",
-   "action": "Close and re-enter as a super order, or use a daily stop order"
-  },
-  {
-   "check": "S2",
-   "name": "NO STOP",
-   "severity": "WARN",
-   "order_id": null,
-   "symbol": "MCX",
-   "expiry": "2026-12-29",
-   "strike": 3300.0,
-   "opt_type": "PE",
-   "concern": "No super order matches this short (225 @ 39): no stop protects it",
-   "action": "Close and re-enter as a super order, or use a daily stop order"
-  },
-  {
-   "check": "S2",
-   "name": "NO STOP",
-   "severity": "WARN",
-   "order_id": null,
-   "symbol": "SHRIRAMFIN",
-   "expiry": "2026-12-29",
-   "strike": 880.0,
-   "opt_type": "PE",
-   "concern": "No super order matches this short (825 @ 11.2): no stop protects it",
-   "action": "Close and re-enter as a super order, or use a daily stop order"
   }
  ]
 }
