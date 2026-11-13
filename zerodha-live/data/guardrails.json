@@ -1,13 +1,13 @@
 {
- "generated_at": "2026-11-13T12:33:33+05:30",
+ "generated_at": "2026-11-13T14:25:49+05:30",
  "broker": "zerodha",
  "market_data_date": "2026-11-12",
- "signals_generated_at": "2026-11-13T07:03:28.193527+00:00",
+ "signals_generated_at": "2026-11-13T08:55:42.035148+00:00",
  "status": "WARN",
  "global_block": false,
  "counts": {
   "block": 0,
-  "warn": 1,
+  "warn": 2,
   "info": 0
  },
  "per_symbol_blocks": {},
@@ -16,7 +16,13 @@
    "id": "P3",
    "level": "WARN",
    "symbol": null,
-   "msg": "65 open option exit / strike-breach alerts on 40 stocks (ABB, ADANIENSOL, ADANIGREEN, ADANIPOWER, ALKEM, ANGELONE, APOLLOHOSP, ASHOKLEY...) - see the Covered Call alerts"
+   "msg": "64 open option exit / strike-breach alerts on 40 stocks (ABB, ADANIENSOL, ADANIGREEN, ADANIPOWER, ALKEM, ANGELONE, APOLLOHOSP, ASHOKLEY...) - see the Covered Call alerts"
+  },
+  {
+   "id": "P5",
+   "level": "WARN",
+   "symbol": null,
+   "msg": "2 invalid GTT orders (1 high: e.g. buy GTTs on contracts you no longer hold) - see Covered Call > Alerts > Invalid GTT; the zerodha-gtt-order skill can delete them"
   }
  ]
 }
