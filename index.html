@@ -9853,12 +9853,33 @@ function ccTypePill(a) {
 }
 const ccTypeFilters = rows => [['all', 'All alert types', () => true]].concat(CC_TYPE_ORDER.filter(t => rows.some(r => r.type === t)).map(t => [t, t, r => r.type === t]));
 const ccAlertDetail = r => (r.text || '').replace(new RegExp('^' + r.symbol.replace(/[-.]/g, '\$&') + '( \d{4}-\d{2}-\d{2})?( [^:]*)?: '), '');
+function ccShortAlert(r) {
+  const c = r.concern || ccAlertDetail(r) || '', a = r.action || '', m = re => re.exec(c);
+  let x;
+  switch (r.type) {
+    case '3× premium': x = m(/Premium ([\d.]+) is ([\d.]+)x the ([\d.]+) sold/); return [x ? `${x[2]}× sold price (${x[1]} vs ${x[3]})` : 'Premium 3× sold', 'Close now'];
+    case 'Profit Exit': x = m(/decayed (\d+)%/); return [x ? `${x[1]}% decayed` : 'Premium decayed', 'Buy back'];
+    case 'Beyond strike': x = m(/price ([\d.]+)% past the strike, Rs([\d,]+)/); return [x ? `${x[1]}% in the money · ₹${x[2]}` : 'In the money', 'Roll, close or hold'];
+    case 'Through hedge': x = m(/Rs([\d,]+) intrinsic/); return [x ? `Past hedge · max loss ₹${x[1]}` : 'Past hedge', 'Close or roll'];
+    case 'Near strike': x = m(/([\d.]+)% from/); return [x ? `${x[1]}% from strike` : 'Near strike', 'Watch'];
+    case 'No hedge': case 'Partly hedged': x = m(/(\d+) of (\d+) qty uncovered/); return [x ? `${x[1]} of ${x[2]} uncovered` : 'Not fully hedged', /shares/i.test(a) ? 'Buy hedge or hold shares' : 'Buy hedge'];
+    case 'Expiry risk': x = m(/(\d+)d before expiry/); return [x ? `In the money · ${x[1]}d to expiry` : 'In the money near expiry', /today/i.test(a) ? 'Close today' : 'Close before expiry'];
+    case 'No GTT placed': x = /Place GTT at ([\d.]+)/.exec(a); return ['No buy-back GTT', x ? `Place GTT at ${x[1]}` : 'Place GTT'];
+    case 'Invalid stop order': return [/orphan/i.test(c) ? 'Orphan stop (could buy a long)' : /quantity/i.test(c) ? 'Stop quantity differs' : 'Stop order problem', 'Cancel or fix the legs'];
+    case 'No stop placed': return ['No stop on this short', 'Add a stop or close'];
+    case 'Invalid GTT': return [/stale|no open position|no position/i.test(c) ? 'GTT on a closed contract' : /2\.0x|off-rule|stop is/i.test(c) ? 'Stop not at 3×' : 'GTT problem', /Re-set to ([\d.]+)/.exec(a) ? 'Re-set to ' + /Re-set to ([\d.]+)/.exec(a)[1] : 'Fix or delete'];
+    case 'Exit': x = /open the (.+)$|sell the call/i.exec(a); return ['Colour flipped, old leg open', /sell the call/i.test(a) ? 'Close, sell the call' : `Close, open ${(x && x[1]) || 'new position'}`];
+    case 'New trade': x = m(/flipped (\d+)d ago/); return [x ? `Flipped ${x[1]}d ago, none open` : 'Signal, none open', a];
+    case 'Event close': x = m(/^(Results|Ex-dividend).*?(\d+)d away/i); return [x ? `${x[1]} in ${x[2]}d` : c.split(':')[0], /now/i.test(a) ? 'Close now' : 'Close before it'];
+    default: { const t = c.split(/[:;]/)[0]; return [t.length > 46 ? t.slice(0, 44) + '…' : t, a.length > 36 ? a.slice(0, 34) + '…' : a]; }
+  }
+}
 const ccAlertCols = withType => (withType ? [{ h: 'Alert type', v: r => ccTypeOrd(r), c: r => ccTypePill(r) }] : []).concat([
   { h: 'Stock', v: r => r.symbol, c: r => `<b>${dhEsc(r.symbol)}</b>` },
   { h: 'Leg', v: r => r.strike == null ? '' : r.strike, c: r => r.strike == null ? '—' : ccStrike(r.strike) + ' ' + (r.opt_type || '') },
   { h: 'Expiry', v: r => r.expiry || '', c: r => r.expiry ? dhFmtDate(r.expiry) : '—' },
-  { h: 'Concern', v: r => r.concern || r.text, c: r => dhEsc(r.concern || ccAlertDetail(r)), nw: 260, txt: true },
-  { h: 'Action', v: r => r.action || '', c: r => `<b>${dhEsc(r.action || '')}</b>`, nw: 190, txt: true },
+  { h: 'Issue', v: r => ccShortAlert(r)[0], c: r => `<span title="${dhEsc(r.concern || ccAlertDetail(r) || '')}">${dhEsc(ccShortAlert(r)[0])}</span>`, txt: true },
+  { h: 'Action', v: r => ccShortAlert(r)[1], c: r => `<b title="${dhEsc(r.action || '')}">${dhEsc(ccShortAlert(r)[1])}</b>`, txt: true },
 ]);
 // Alerts box with one sub-tab per alert type (count badge each), so nothing needs scrolling past unrelated alerts
 window._ccAlertSub = window._ccAlertSub || null;
@@ -9867,14 +9888,14 @@ function ccAlertsBox(d, pfx, hint) {
   const rows = (d.alerts || []).slice().sort(ccAlertSort);
   if (!rows.length) return `<div class="d2-panel"><div class="d2-panel-head"><div><div class="d2-title">Alerts</div></div></div><div class="d2-edge-foot" style="border:0">No alerts on the open option legs.</div></div>`;
   const types = CC_TYPE_ORDER.filter(t => rows.some(r => r.type === t));
-  const keys = ['All'].concat(types);
-  const cur = keys.includes(window._ccAlertSub) ? window._ccAlertSub : (types[0] || 'All');
+  const keys = types;   // one tab per alert type; no 'All' tab
+  const cur = keys.includes(window._ccAlertSub) ? window._ccAlertSub : keys[0];
   const sev = t => { const r = rows.find(x => x.type === t); return r ? r.level : ''; };
-  const bar = `<div class="dhm-tabs" id="cc-alert-subs" style="margin:10px 0 0">` + keys.map(k => { const n = k === 'All' ? rows.length : rows.filter(r => r.type === k).length;
+  const bar = `<div class="dhm-tabs" id="cc-alert-subs" style="margin:10px 0 0">` + keys.map(k => { const n = rows.filter(r => r.type === k).length;
     return `<button class="dhm-tab${k === cur ? ' active' : ''}" data-k="${dhEsc(k)}" onclick="ccAlertSub(this.dataset.k)">${dhEsc(k)}<span class="dhm-count">${n}</span></button>`; }).join('') + '</div>';
-  const body = keys.map(k => { const rs = k === 'All' ? rows : rows.filter(r => r.type === k);
+  const body = keys.map(k => { const rs = rows.filter(r => r.type === k);
     return `<div class="cc-asub" data-k="${dhEsc(k)}" style="${k === cur ? '' : 'display:none'}">` + ccTbl(pfx + '_' + k.replace(/\W/g, ''), {
-      title: k === 'All' ? 'All alerts' : k, hint: k === 'All' ? hint : '', rows: rs, search: r => r.symbol + ' ' + (r.concern || r.text), empty: 'None.', cols: ccAlertCols(k === 'All') }) + '</div>'; }).join('');
+      title: k, hint: '', rows: rs, search: r => r.symbol + ' ' + (r.concern || r.text), empty: 'None.', cols: ccAlertCols(false) }) + '</div>'; }).join('');
   return bar + body;
 }
 // Option entry priority: stocks that need an option trade (ENTER / FLIP), most recent Supertrend flip first
