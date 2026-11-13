@@ -803,6 +803,10 @@ tbody tr:hover { filter: brightness(0.97); }
 .d2-value.pos, .d2-health-total.pos, .pos { color:var(--green); } .d2-value.neg, .d2-health-total.neg, .neg { color:var(--red); }
 .dh-stale { border:1px solid var(--amber); background:var(--amber-soft); border-radius:9px; padding:11px 15px; margin-bottom:13px; }
 .dh-stale.high { border-color:var(--red); background:var(--red-soft); }
+.dh-chip-row { display:flex; align-items:center; gap:8px; flex-wrap:wrap; margin:0 0 10px; cursor:pointer; }
+.dh-chip { font-size:11px; font-weight:800; letter-spacing:.04em; padding:3px 9px; border-radius:999px; color:var(--amber); border:1px solid var(--amber); background:transparent; }
+.dh-chip.high { color:var(--red); border-color:var(--red); }
+.dh-chip-go { font-size:11px; color:var(--text-muted); }
 .dh-stale-row { display:flex; flex-direction:column; gap:1px; padding:3px 0; } .dh-stale-row b { font-size:13px; } .dh-stale-row span { font-size:12px; color:var(--text-secondary); }
 .al-tbl { width:100%; border-collapse:collapse; margin-top:8px; font-size:12px; } .al-tbl th { text-align:left; font:600 10.5px var(--font-ui); letter-spacing:.04em; text-transform:uppercase; color:var(--text-muted); padding:5px 10px 5px 0; border-bottom:1px solid var(--border); white-space:nowrap; }
 .al-tbl td { font-family:var(--font-ui); padding:6px 10px 6px 0; border-bottom:1px solid var(--border); vertical-align:top; color:var(--text-secondary); } .al-tbl tr:last-child td { border-bottom:0; } .al-tbl td.n, .al-tbl th.n { text-align:right; } .al-tbl td b { color:var(--text-primary); } .al-wrap { overflow-x:auto; }
@@ -9500,7 +9504,14 @@ function dhRenderStale(d) {
     const html = a.length ? `<div class="dh-stale ${a.some(x => x.sev === 'high') ? 'high' : ''}" role="alert">`
       + a.map(x => `<div class="dh-stale-row"><b>${dhEsc(x.title)}</b><span>${dhEsc(x.text)}</span></div>`).join('')
       + `<div class="dh-stale-act">In Claude Code, run <code>${dhEsc(dhCopy().refreshCmd || '/refresh-dhan')}</code> <button onclick="navigator.clipboard&&navigator.clipboard.writeText('${dhCopy().refreshCmd || '/refresh-dhan'}');this.textContent='Copied'">Copy command</button></div></div>` : '';
-    slots.forEach(s => { s.innerHTML = html + dhGuardHtml(ex && ex.guard, d); });
+    // full detail only on the Dashboard; every other tab gets one crisp chip row that jumps to the Dashboard
+    const g = ex && ex.guard && ex.guard.findings || [], nb = g.filter(x => x.level === 'BLOCK').length, nw = g.filter(x => x.level === 'WARN').length;
+    const chips = [];
+    if (a.length) chips.push(`<span class="dh-chip ${a.some(x => x.sev === 'high') ? 'high' : ''}" title="${dhEsc(a.map(x => x.title + ': ' + x.text).join(' | '))}">⚠ STALE</span>`);
+    if (nb) chips.push(`<span class="dh-chip high">⛔ ${nb} BLOCKED</span>`);
+    if (nw) chips.push(`<span class="dh-chip">⚠ ${nw} TO CHECK</span>`);
+    const compact = chips.length ? `<div class="dh-chip-row" onclick="const b=document.querySelector('.app-header .nav-tab[data-page=dashboard]');b&&showPage('dashboard',b)" title="Open the Dashboard for details">${chips.join('')}<span class="dh-chip-go">details on Dashboard ›</span></div>` : '';
+    slots.forEach(s => { s.innerHTML = s.closest('#page-dashboard2') ? html + dhGuardHtml(ex && ex.guard, d) : compact; });
   };
   paint(null); dhExtras().then(paint);
 }
