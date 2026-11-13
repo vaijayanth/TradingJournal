@@ -1,28 +1,22 @@
 {
- "generated_at": "2026-11-13T22:43:57+05:30",
+ "generated_at": "2026-11-13T23:33:41+05:30",
  "broker": "dhan",
- "market_data_date": "2026-11-12",
- "signals_generated_at": "2026-11-13T08:38:34.464742+00:00",
+ "market_data_date": "2026-11-13",
+ "signals_generated_at": "2026-11-13T18:03:37.508862+00:00",
  "status": "WARN",
  "global_block": false,
  "counts": {
   "block": 0,
-  "warn": 7,
+  "warn": 6,
   "info": 0
  },
  "per_symbol_blocks": {},
  "findings": [
   {
-   "id": "F1",
-   "level": "WARN",
-   "symbol": null,
-   "msg": "market data 2026-11-12 is 1 session behind the last published session (2026-11-13)"
-  },
-  {
    "id": "F5",
    "level": "WARN",
    "symbol": null,
-   "msg": "the cross-check flagged 6 of 38 signals (they are blocked from orders): AIMTRON, BEML, LICHSGFIN, NIFTYIETF, PGINVIT, SHREMINVIT"
+   "msg": "the cross-check flagged 4 of 25 signals (they are blocked from orders): HONASA, LICHSGFIN, MSTCLTD, SHREMINVIT"
   },
   {
    "id": "I3",
@@ -40,7 +34,7 @@
    "id": "S4",
    "level": "WARN",
    "symbol": null,
-   "msg": "3 entries cost more than 3x the tier (Rs1,000) because the minimum is 1 share; largest TASTYBITE Rs10,951. Check before ordering."
+   "msg": "3 entries cost more than 3x the tier (Rs1,000) because the minimum is 1 share; largest TASTYBITE Rs11,441. Check before ordering."
   },
   {
    "id": "P3",

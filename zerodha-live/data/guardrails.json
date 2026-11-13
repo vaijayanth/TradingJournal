@@ -1,28 +1,22 @@
 {
- "generated_at": "2026-11-13T22:43:58+05:30",
+ "generated_at": "2026-11-13T23:37:14+05:30",
  "broker": "zerodha",
- "market_data_date": "2026-11-12",
- "signals_generated_at": "2026-11-13T08:55:42.035148+00:00",
+ "market_data_date": "2026-11-13",
+ "signals_generated_at": "2026-11-13T18:06:36.985038+00:00",
  "status": "WARN",
  "global_block": false,
  "counts": {
   "block": 0,
-  "warn": 3,
+  "warn": 2,
   "info": 0
  },
  "per_symbol_blocks": {},
  "findings": [
   {
-   "id": "F1",
-   "level": "WARN",
-   "symbol": null,
-   "msg": "market data 2026-11-12 is 1 session behind the last published session (2026-11-13)"
-  },
-  {
    "id": "P3",
    "level": "WARN",
    "symbol": null,
-   "msg": "64 open option exit / strike-breach alerts on 40 stocks (ABB, ADANIENSOL, ADANIGREEN, ADANIPOWER, ALKEM, ANGELONE, APOLLOHOSP, ASHOKLEY...) - see the Covered Call alerts"
+   "msg": "63 open option exit / strike-breach alerts on 40 stocks (ABB, ADANIENSOL, ADANIGREEN, ADANIPOWER, ALKEM, ANGELONE, APOLLOHOSP, ASHOKLEY...) - see the Covered Call alerts"
   },
   {
    "id": "P5",
