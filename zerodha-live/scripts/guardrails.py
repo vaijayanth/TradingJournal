@@ -16,7 +16,7 @@ Groups (ids)
                    flip + not held, S4 min-1-share overspend, S5 signal-count spikes (mass-exit = suspect data)
   C  capital       C1 deployed vs base, C2 single-stock / sector concentration, C3 planned + pending buys vs base
   O  orders        O1 pending SELL > held (oversell), O2 duplicate pending orders, O3 pending order with no signal
-  P  options       P1 expiry week, P2 no lot size, P3 exit alerts open, P4 short call not covered by shares
+  P  options       P1 expiry week, P2 no lot size, P3 exit alerts open (P4 removed 2026-11-13: the call side is intentionally unhedged)
   X  separation    X1 no code shared with the Dhan (ND) workspace
   H  halt          H1 data/trading_halt.json {"halt": true} blocks everything (the kill switch)
 
@@ -329,8 +329,6 @@ def evaluate(ctx, now):
                     out.append(f("WARN", "P1", f"{s['symbol']}: expiry {ex['expiry']} is {dte} days away (expiry week) - do not open a new option structure", s["symbol"]))
                 if not ex.get("lot"):
                     out.append(f("WARN", "P2", f"{s['symbol']}: no lot size for {ex['expiry']} - cannot size the option trade", s["symbol"]))
-            if s.get("covered") is False and s.get("desired") == "CALL":
-                out.append(f("WARN", "P4", f"{s['symbol']}: a short call would not be covered by the shares held (lot {s.get('lot')}, held {s.get('shares')})", s["symbol"]))
 
     # X separation
     for v in ctx.get("import_violations", []):

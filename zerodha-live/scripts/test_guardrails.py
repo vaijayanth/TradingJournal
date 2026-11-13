@@ -142,7 +142,6 @@ r = run(c)
 check("P5 invalid GTT = WARN", has(r, "P5", "WARN"))
 check("P3 ignores Invalid GTT findings", not has(r, "P3", "WARN"))
 c = base(); c["cc"] = {"market_data_date": TODAY, "alerts": [], "stocks": [{"symbol": "AAA", "status": "ENTER", "lot": 500, "shares": 10, "covered": False, "desired": "CALL", "suggestions": []}]}
-check("P4 uncovered short call = WARN", has(run(c), "P4", "WARN", "AAA"))
 # X1
 c = base(); c["import_violations"] = ["x.py:1 imports from other"]
 check("X1 cross-broker import = BLOCK", has(run(c), "X1", "BLOCK"))

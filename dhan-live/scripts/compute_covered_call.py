@@ -203,6 +203,8 @@ def structure_alerts(sym, my_legs, shares_held, gtt_active):
     for l in my_legs:
         groups.setdefault((l["type"], l["expiry"]), []).append(l)
     for (typ, exp), ls in groups.items():
+        if typ == "CE":
+            continue   # call side is intentionally unhedged (user, 2026-11-13): its protection is the 3x-premium stop and the Supertrend flip alert
         short_q = sum(l["qty"] for l in ls if l["side"] == "SHORT")
         if not short_q:
             continue

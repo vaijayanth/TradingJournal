@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-13T16:02:25+05:30",
+ "generated_at": "2026-11-13T22:43:57+05:30",
  "broker": "dhan",
  "market_data_date": "2026-11-12",
  "signals_generated_at": "2026-11-13T08:38:34.464742+00:00",
@@ -7,11 +7,17 @@
  "global_block": false,
  "counts": {
   "block": 0,
-  "warn": 8,
+  "warn": 7,
   "info": 0
  },
  "per_symbol_blocks": {},
  "findings": [
+  {
+   "id": "F1",
+   "level": "WARN",
+   "symbol": null,
+   "msg": "market data 2026-11-12 is 1 session behind the last published session (2026-11-13)"
+  },
   {
    "id": "F5",
    "level": "WARN",
@@ -47,18 +53,6 @@
    "level": "WARN",
    "symbol": null,
    "msg": "9 super order stop findings (2 high: likely orphaned stop legs that could BUY a new long) - see Covered Call > Alerts; the dhan-superorder skill can cancel them"
-  },
-  {
-   "id": "P4",
-   "level": "WARN",
-   "symbol": "CGPOWER",
-   "msg": "CGPOWER: a short call would not be covered by the shares held (lot 850, held 184)"
-  },
-  {
-   "id": "P4",
-   "level": "WARN",
-   "symbol": "CUMMINSIND",
-   "msg": "CUMMINSIND: a short call would not be covered by the shares held (lot 100, held 18)"
   }
  ]
 }

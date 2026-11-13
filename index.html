@@ -9472,7 +9472,7 @@ function dhStaleAlerts(d, ex) {
 // Guardrails (scripts/guardrails.py): BLOCK = no order may be placed (whole workspace, or the named stocks); WARN = look before ordering
 const GUARD_TYPES = { F1: 'Old market data', F2: 'Old holdings', F3: 'Signals older than holdings', F4: 'Old order list', F5: 'Price data mismatch', I1: 'Bad numbers in data', I2: 'Position data mismatch', I3: 'Fills vs holdings', I4: 'Stock in two lists', I5: 'Excluded stock signalled', I6: 'Fill data wrong', I7: 'Recent buy not in holdings',
   S1: 'Exit not red', S2: 'Add-on rule broken', S3: 'Entry rule broken', S4: 'Oversized minimum buy', S5: 'Too many entries / mass exit', C1: 'Capital over-deployed', C2: 'Concentration', C3: 'Pending buys too big', O1: 'Sell more than held', O2: 'Duplicate orders', O3: 'Order without signal',
-  P1: 'Expiry week', P2: 'No lot size', P3: 'Open option alerts', P4: 'Short call not covered', P5: 'Invalid GTT / stop orders', X1: 'Broker code mix', H1: 'Trading halted' };
+  P1: 'Expiry week', P2: 'No lot size', P3: 'Open option alerts', P5: 'Invalid GTT / stop orders', X1: 'Broker code mix', H1: 'Trading halted' };
 function dhGuardHtml(g, d, alerts) {
   // ONE status bar for the Dashboard: stale-data alerts + guardrail summary + refresh command; the guardrail table opens on click
   alerts = alerts || [];
@@ -9482,7 +9482,7 @@ function dhGuardHtml(g, d, alerts) {
   if (!bl.length && !wa.length && !stale && !alerts.length) return '';
   // short phrases: issue + what to do (the full engine message stays in the tooltip)
   const SHORT = { F5: ['Price mismatch', 'Held back from orders'], I3: ['Log vs holdings differ', 'Holdings used'], S4: ['1-share buy above tier', 'Check cost'], P3: ['Option near/past strike', 'See Covered Call'],
-    P5: ['Stop order problem', 'See Covered Call'], P4: ['Short call not covered', 'Check shares'], F1: ['Market data old', 'Refresh'], F2: ['Holdings old', 'Refresh'], F3: ['Signals older than holdings', 'Refresh'], F4: ['Order list old', 'Refresh'],
+    P5: ['Stop order problem', 'See Covered Call'], F1: ['Market data old', 'Refresh'], F2: ['Holdings old', 'Refresh'], F3: ['Signals older than holdings', 'Refresh'], F4: ['Order list old', 'Refresh'],
     C1: ['Over-deployed', 'Review'], C2: ['Too concentrated', 'Review'], C3: ['Pending buys too big', 'Review'], H1: ['Trading halted', 'Switch off halt to order'] };
   const stocksOf = x => x.symbol ? x.symbol : (x.id === 'F5' ? (String(x.msg).split(': ').pop() || '—') : '—');
   const all = bl.concat(wa), rows = all.slice(0, 40).map(x => { const s = SHORT[x.id] || [GUARD_TYPES[x.id] || 'Check ' + x.id, 'Review'], isB = x.level === 'BLOCK';
