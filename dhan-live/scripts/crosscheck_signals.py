@@ -86,12 +86,13 @@ def main():
                 x = x[[str(d.date()) <= md for d in x.index]]
         if x is not None and md and overlay.get(s):
             import pandas as pd
-            last_y = str(x.index[-1].date()) if len(x) else ""
-            add = [o for o in overlay[s] if o["date"] > last_y and o["date"] <= md]
+            # Dhan's own prices are final (user, 2026-11-13): a Dhan bar REPLACES Yahoo's bar for the same date, and fills later dates
+            add = [o for o in overlay[s] if o["date"] <= md]
             if add:
                 rows = pd.DataFrame([{"Open": o["open"], "High": o["high"], "Low": o["low"], "Close": o["close"], "Volume": o["volume"]} for o in add],
                                     index=pd.to_datetime([o["date"] for o in add]))
-                x = pd.concat([x[["Open", "High", "Low", "Close", "Volume"]], rows])
+                x = x[["Open", "High", "Low", "Close", "Volume"]]
+                x = pd.concat([x[~x.index.isin(rows.index)], rows]).sort_index()
                 res["dhan_bars_added"] = [o["date"] for o in add]
         if x is None or len(x) < PERIOD + 2:
             res["reasons"].append("not enough Yahoo history to verify")

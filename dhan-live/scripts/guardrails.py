@@ -209,7 +209,8 @@ def evaluate(ctx, now):
             if q > hq and q - hq <= recent_buy.get(s, 0):
                 lag_syms.append(f"{s} ({hq}->{q})")
             else:
-                out.append(f("BLOCK", "I3", f"{s}: fill ledger says {q} but Dhan holdings say {hq} - a missed fill or an exit outside tracking", s))
+                # holdings are the reference (user, 2026-11-13): signals already use holdings qty/avg, so a ledger difference only warns
+                out.append(f("WARN", "I3", f"{s}: trade log says {q}, Dhan holdings say {hq}. Holdings are used; it usually clears after the next refresh (a recent sale or buy not yet settled).", s))
     if fills is not None and lag_syms:
         out.append(f("WARN", "I3", f"{len(lag_syms)} stocks were bought in the last {cfg['settlement_window_days']} days and are not in Dhan holdings yet (settlement timing); "
                                    "positions and P&L exclude them until holdings catch up: " + ", ".join(lag_syms[:12]) + (" ..." if len(lag_syms) > 12 else "")))

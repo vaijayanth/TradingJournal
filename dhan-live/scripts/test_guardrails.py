@@ -88,7 +88,7 @@ check("I2 qty differs from holdings = BLOCK", has(run(c), "I2", "BLOCK", "BBB"))
 c = base(); c["fills"].append({"symbol": "AAA", "date": "2026-11-10", "action": "BUY", "qty": 5, "price": 100})
 check("I3 recent unsettled buy = WARN (timing), not BLOCK", has(run(c), "I3", "WARN") and not has(run(c), "I3", "BLOCK"))
 c = base(); c["fills"].append({"symbol": "AAA", "date": "2026-09-01", "action": "BUY", "qty": 5, "price": 100})
-check("I3 old unexplained difference = BLOCK", has(run(c), "I3", "BLOCK", "AAA"))
+check("I3 old unexplained difference = WARN (holdings are the reference)", has(run(c), "I3", "WARN", "AAA") and not has(run(c), "I3", "BLOCK"))
 # I4 / I5
 c = base(); c["signals"]["exits"] = [pos("AAA", color="red")]; c["signals"]["addons"] = [pos("AAA", avg=130, cmp=100, num_adds=0, add_qty=1, cooldown_days_since_last_buy=20)]
 check("I4 stock in two lists = BLOCK", has(run(c), "I4", "BLOCK", "AAA"))

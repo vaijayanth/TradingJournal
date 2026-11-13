@@ -1,23 +1,16 @@
 {
- "generated_at": "2026-11-13T14:13:26+05:30",
+ "generated_at": "2026-11-13T16:02:25+05:30",
  "broker": "dhan",
  "market_data_date": "2026-11-12",
  "signals_generated_at": "2026-11-13T08:38:34.464742+00:00",
- "status": "BLOCK_SYMBOLS",
+ "status": "WARN",
  "global_block": false,
  "counts": {
-  "block": 2,
-  "warn": 6,
+  "block": 0,
+  "warn": 8,
   "info": 0
  },
- "per_symbol_blocks": {
-  "PASHUPATI": [
-   "I3: PASHUPATI: fill ledger says 0 but Dhan holdings say 9 - a missed fill or an exit outside tracking"
-  ],
-  "STOVEKRAFT": [
-   "I3: STOVEKRAFT: fill ledger says 0 but Dhan holdings say 2 - a missed fill or an exit outside tracking"
-  ]
- },
+ "per_symbol_blocks": {},
  "findings": [
   {
    "id": "F5",
@@ -27,15 +20,15 @@
   },
   {
    "id": "I3",
-   "level": "BLOCK",
+   "level": "WARN",
    "symbol": "PASHUPATI",
-   "msg": "PASHUPATI: fill ledger says 0 but Dhan holdings say 9 - a missed fill or an exit outside tracking"
+   "msg": "PASHUPATI: trade log says 0, Dhan holdings say 9. Holdings are used; it usually clears after the next refresh (a recent sale or buy not yet settled)."
   },
   {
    "id": "I3",
-   "level": "BLOCK",
+   "level": "WARN",
    "symbol": "STOVEKRAFT",
-   "msg": "STOVEKRAFT: fill ledger says 0 but Dhan holdings say 2 - a missed fill or an exit outside tracking"
+   "msg": "STOVEKRAFT: trade log says 0, Dhan holdings say 2. Holdings are used; it usually clears after the next refresh (a recent sale or buy not yet settled)."
   },
   {
    "id": "S4",

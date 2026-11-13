@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-13T14:39:20+05:30",
+ "generated_at": "2026-11-13T17:10:14+05:30",
  "broker": "zerodha",
  "market_data_date": "2026-11-12",
  "signals_generated_at": "2026-11-13T08:55:42.035148+00:00",
@@ -7,11 +7,17 @@
  "global_block": false,
  "counts": {
   "block": 0,
-  "warn": 2,
+  "warn": 3,
   "info": 0
  },
  "per_symbol_blocks": {},
  "findings": [
+  {
+   "id": "F1",
+   "level": "WARN",
+   "symbol": null,
+   "msg": "market data 2026-11-12 is 1 session behind the last published session (2026-11-13)"
+  },
   {
    "id": "P3",
    "level": "WARN",

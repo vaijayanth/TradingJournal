@@ -1,23 +1,56 @@
 {
- "_note": "Daily bars pulled from the Dhan MCP historical_data_agent_tool (unadjusted). crosscheck_signals.py appends a bar here only when it is dated after the last Yahoo bar and not after the signals' market_data_date, so Yahoo history is never overwritten. SHREMINVIT has no 11-Nov candle at Dhan (no trades), so Yahoo's 11-09 bar is its last session.",
- "fetched_at": "2026-11-13T12:25:00+05:30",
- "source": "mcp__dhan__historical_data_agent_tool (historical) - session 2026-11-12; SHREMINVIT returned no data (DH-907)",
+ "fetched_at": "2026-11-13T15:00:00+05:30",
+ "source": "mcp__dhan__historical_data_agent_tool (last candles; dates inferred: last candle = 2026-11-12 matched to published close)",
  "bars": {
+  "AARTIPHARM": [
+   {
+    "date": "2026-11-11",
+    "open": 936,
+    "high": 941.85,
+    "low": 920.05,
+    "close": 923.5,
+    "volume": 353214
+   },
+   {
+    "date": "2026-11-12",
+    "open": 929,
+    "high": 1019,
+    "low": 924.8,
+    "close": 1010.5,
+    "volume": 1779924
+   }
+  ],
   "ABDL": [
+   {
+    "date": "2026-11-11",
+    "open": 725,
+    "high": 738.5,
+    "low": 723.3,
+    "close": 736.5,
+    "volume": 465995
+   },
    {
     "date": "2026-11-12",
     "open": 736.45,
-    "high": 768.0,
+    "high": 768,
     "low": 730.1,
-    "close": 758.0,
+    "close": 758,
     "volume": 736621
    }
   ],
   "AIMTRON": [
    {
+    "date": "2026-11-11",
+    "open": 1981.6,
+    "high": 2020.95,
+    "low": 1953,
+    "close": 1987.65,
+    "volume": 24600
+   },
+   {
     "date": "2026-11-12",
-    "open": 2000.0,
-    "high": 2017.0,
+    "open": 2000,
+    "high": 2017,
     "low": 1900.5,
     "close": 1952.05,
     "volume": 49400
@@ -25,19 +58,53 @@
   ],
   "AKCAPIT": [
    {
+    "date": "2026-11-11",
+    "open": 1786.2,
+    "high": 1875,
+    "low": 1786.2,
+    "close": 1856.6,
+    "volume": 1564
+   },
+   {
     "date": "2026-11-12",
     "open": 1937.9,
-    "high": 1949.0,
+    "high": 1949,
     "low": 1876.4,
-    "close": 1936.0,
+    "close": 1936,
     "volume": 2229
+   }
+  ],
+  "AMANTA": [
+   {
+    "date": "2026-11-11",
+    "open": 204.49,
+    "high": 204.5,
+    "low": 194.85,
+    "close": 196.04,
+    "volume": 98913
+   },
+   {
+    "date": "2026-11-12",
+    "open": 198.24,
+    "high": 235.24,
+    "low": 195.14,
+    "close": 228.37,
+    "volume": 2699204
    }
   ],
   "ASAHIINDIA": [
    {
+    "date": "2026-11-11",
+    "open": 1062,
+    "high": 1099.15,
+    "low": 1055.65,
+    "close": 1088.05,
+    "volume": 307229
+   },
+   {
     "date": "2026-11-12",
-    "open": 1095.0,
-    "high": 1111.0,
+    "open": 1095,
+    "high": 1111,
     "low": 1085.55,
     "close": 1103.9,
     "volume": 166398
@@ -45,8 +112,16 @@
   ],
   "BEML": [
    {
+    "date": "2026-11-11",
+    "open": 2005,
+    "high": 2236,
+    "low": 2005,
+    "close": 2112,
+    "volume": 4651400
+   },
+   {
     "date": "2026-11-12",
-    "open": 2112.0,
+    "open": 2112,
     "high": 2143.7,
     "low": 2090.1,
     "close": 2125.5,
@@ -55,15 +130,67 @@
   ],
   "CNL": [
    {
+    "date": "2026-11-11",
+    "open": 1365.6,
+    "high": 1472.6,
+    "low": 1360,
+    "close": 1466.3,
+    "volume": 58241
+   },
+   {
     "date": "2026-11-12",
-    "open": 1485.0,
+    "open": 1485,
     "high": 1550.2,
     "low": 1422.6,
-    "close": 1475.0,
+    "close": 1475,
     "volume": 91315
    }
   ],
+  "CUPID": [
+   {
+    "date": "2026-11-11",
+    "open": 345,
+    "high": 357,
+    "low": 343.25,
+    "close": 354,
+    "volume": 8183292
+   },
+   {
+    "date": "2026-11-12",
+    "open": 360,
+    "high": 389,
+    "low": 356,
+    "close": 384.8,
+    "volume": 50614379
+   }
+  ],
+  "DLF": [
+   {
+    "date": "2026-11-11",
+    "open": 750.25,
+    "high": 759.4,
+    "low": 734.15,
+    "close": 742.65,
+    "volume": 4897648
+   },
+   {
+    "date": "2026-11-12",
+    "open": 740,
+    "high": 770.45,
+    "low": 740,
+    "close": 769.3,
+    "volume": 4656145
+   }
+  ],
   "ESAFSFB": [
+   {
+    "date": "2026-11-11",
+    "open": 42.51,
+    "high": 44.5,
+    "low": 42.51,
+    "close": 43.43,
+    "volume": 842802
+   },
    {
     "date": "2026-11-12",
     "open": 43.4,
@@ -73,54 +200,472 @@
     "volume": 1216931
    }
   ],
+  "GABRIEL": [
+   {
+    "date": "2026-11-11",
+    "open": 1436,
+    "high": 1436,
+    "low": 1406,
+    "close": 1408.4,
+    "volume": 123033
+   },
+   {
+    "date": "2026-11-12",
+    "open": 1415,
+    "high": 1690,
+    "low": 1408.4,
+    "close": 1641.2,
+    "volume": 8058518
+   }
+  ],
   "ICIL": [
+   {
+    "date": "2026-11-11",
+    "open": 505.95,
+    "high": 545,
+    "low": 505.95,
+    "close": 542.8,
+    "volume": 1284177
+   },
    {
     "date": "2026-11-12",
     "open": 546.25,
-    "high": 560.0,
+    "high": 560,
     "low": 535.25,
     "close": 555.95,
     "volume": 863522
    }
   ],
-  "NEOGEN": [
+  "KALYANKJIL": [
+   {
+    "date": "2026-11-11",
+    "open": 630,
+    "high": 689,
+    "low": 620,
+    "close": 663.75,
+    "volume": 64553190
+   },
    {
     "date": "2026-11-12",
-    "open": 2770.0,
-    "high": 2875.0,
+    "open": 675,
+    "high": 717,
+    "low": 669,
+    "close": 710.9,
+    "volume": 51316917
+   }
+  ],
+  "KOVAI": [
+   {
+    "date": "2026-11-11",
+    "open": 6010,
+    "high": 6150,
+    "low": 6010,
+    "close": 6129,
+    "volume": 6170
+   },
+   {
+    "date": "2026-11-12",
+    "open": 6415,
+    "high": 6750,
+    "low": 6385,
+    "close": 6529.5,
+    "volume": 66506
+   }
+  ],
+  "KTKBANK": [
+   {
+    "date": "2026-11-11",
+    "open": 337,
+    "high": 352.5,
+    "low": 336.1,
+    "close": 349.5,
+    "volume": 7476795
+   },
+   {
+    "date": "2026-11-12",
+    "open": 350,
+    "high": 368,
+    "low": 349,
+    "close": 366,
+    "volume": 4324311
+   }
+  ],
+  "LICHSGFIN": [
+   {
+    "date": "2026-11-11",
+    "open": 555.05,
+    "high": 578.8,
+    "low": 554.65,
+    "close": 565,
+    "volume": 3974951
+   },
+   {
+    "date": "2026-11-12",
+    "open": 565.75,
+    "high": 581.5,
+    "low": 565,
+    "close": 579,
+    "volume": 2265812
+   }
+  ],
+  "MEESHO": [
+   {
+    "date": "2026-11-11",
+    "open": 239.5,
+    "high": 250.77,
+    "low": 238.57,
+    "close": 248.16,
+    "volume": 31104684
+   },
+   {
+    "date": "2026-11-12",
+    "open": 249,
+    "high": 259,
+    "low": 246.48,
+    "close": 254.11,
+    "volume": 25841561
+   }
+  ],
+  "NEOGEN": [
+   {
+    "date": "2026-11-11",
+    "open": 2665.2,
+    "high": 2810,
+    "low": 2632.6,
+    "close": 2770.2,
+    "volume": 180146
+   },
+   {
+    "date": "2026-11-12",
+    "open": 2770,
+    "high": 2875,
     "low": 2708.1,
     "close": 2856.3,
     "volume": 166427
    }
   ],
-  "PANACHE": [
+  "NIFTYIETF": [
+   {
+    "date": "2026-11-11",
+    "open": 289.4,
+    "high": 289.4,
+    "low": 284.71,
+    "close": 285.17,
+    "volume": 3609489
+   },
    {
     "date": "2026-11-12",
-    "open": 737.0,
+    "open": 285.91,
+    "high": 287.83,
+    "low": 283.44,
+    "close": 286.45,
+    "volume": 2372406
+   }
+  ],
+  "PANACHE": [
+   {
+    "date": "2026-11-11",
+    "open": 727,
+    "high": 727.95,
+    "low": 727,
+    "close": 727.95,
+    "volume": 4898
+   },
+   {
+    "date": "2026-11-12",
+    "open": 737,
     "high": 742.5,
-    "low": 737.0,
+    "low": 737,
     "close": 742.5,
     "volume": 16802
    }
   ],
+  "PAYTM": [
+   {
+    "date": "2026-11-11",
+    "open": 1790,
+    "high": 1829.6,
+    "low": 1771.9,
+    "close": 1793.8,
+    "volume": 3108272
+   },
+   {
+    "date": "2026-11-12",
+    "open": 1790,
+    "high": 1925,
+    "low": 1778.7,
+    "close": 1925,
+    "volume": 8924897
+   }
+  ],
+  "PETRONET": [
+   {
+    "date": "2026-11-11",
+    "open": 324.35,
+    "high": 329.9,
+    "low": 322.05,
+    "close": 329.8,
+    "volume": 5823724
+   },
+   {
+    "date": "2026-11-12",
+    "open": 330.05,
+    "high": 336.3,
+    "low": 327.3,
+    "close": 335,
+    "volume": 5283869
+   }
+  ],
   "PGINVIT": [
+   {
+    "date": "2026-11-11",
+    "open": 105.98,
+    "high": 105.98,
+    "low": 105.61,
+    "close": 105.68,
+    "volume": 1520426
+   },
    {
     "date": "2026-11-12",
     "open": 105.5,
-    "high": 106.0,
+    "high": 106,
     "low": 105.2,
     "close": 105.33,
     "volume": 1882149
    }
   ],
-  "SANSERA": [
+  "PHOENIXLTD": [
+   {
+    "date": "2026-11-11",
+    "open": 2098.2,
+    "high": 2203,
+    "low": 2098.2,
+    "close": 2171,
+    "volume": 628631
+   },
    {
     "date": "2026-11-12",
-    "open": 4695.0,
-    "high": 4844.0,
+    "open": 2164.9,
+    "high": 2292,
+    "low": 2158.5,
+    "close": 2292,
+    "volume": 758895
+   }
+  ],
+  "PNB": [
+   {
+    "date": "2026-11-11",
+    "open": 132.17,
+    "high": 139,
+    "low": 132.17,
+    "close": 138.48,
+    "volume": 82355494
+   },
+   {
+    "date": "2026-11-12",
+    "open": 138.7,
+    "high": 143.8,
+    "low": 137.76,
+    "close": 141.79,
+    "volume": 62142239
+   }
+  ],
+  "PRINCEPIPE": [
+   {
+    "date": "2026-11-11",
+    "open": 315.3,
+    "high": 321.85,
+    "low": 312.35,
+    "close": 314.5,
+    "volume": 413140
+   },
+   {
+    "date": "2026-11-12",
+    "open": 313.5,
+    "high": 323.9,
+    "low": 313,
+    "close": 318.9,
+    "volume": 675427
+   }
+  ],
+  "RKFORGE": [
+   {
+    "date": "2026-11-11",
+    "open": 722.4,
+    "high": 770,
+    "low": 717.5,
+    "close": 764.7,
+    "volume": 2271260
+   },
+   {
+    "date": "2026-11-12",
+    "open": 777,
+    "high": 796.3,
+    "low": 771.85,
+    "close": 785.6,
+    "volume": 1959684
+   }
+  ],
+  "ROTO": [
+   {
+    "date": "2026-11-11",
+    "open": 66,
+    "high": 68,
+    "low": 65.3,
+    "close": 67.24,
+    "volume": 976332
+   },
+   {
+    "date": "2026-11-12",
+    "open": 75.99,
+    "high": 79.9,
+    "low": 74.35,
+    "close": 76.96,
+    "volume": 23188695
+   }
+  ],
+  "SANATHAN": [
+   {
+    "date": "2026-11-11",
+    "open": 559,
+    "high": 595,
+    "low": 559,
+    "close": 588.4,
+    "volume": 166354
+   },
+   {
+    "date": "2026-11-12",
+    "open": 599.95,
+    "high": 608,
+    "low": 584.35,
+    "close": 593.4,
+    "volume": 152501
+   }
+  ],
+  "SANSERA": [
+   {
+    "date": "2026-11-11",
+    "open": 4680,
+    "high": 4696.6,
+    "low": 4572.1,
+    "close": 4655.1,
+    "volume": 363223
+   },
+   {
+    "date": "2026-11-12",
+    "open": 4695,
+    "high": 4844,
     "low": 4671.1,
     "close": 4701.8,
     "volume": 219871
+   }
+  ],
+  "SATIN": [
+   {
+    "date": "2026-11-11",
+    "open": 263.95,
+    "high": 270,
+    "low": 262.16,
+    "close": 266.05,
+    "volume": 540926
+   },
+   {
+    "date": "2026-11-12",
+    "open": 271,
+    "high": 272.99,
+    "low": 265.1,
+    "close": 269.88,
+    "volume": 463263
+   }
+  ],
+  "STYLEBAAZA": [
+   {
+    "date": "2026-11-11",
+    "open": 429,
+    "high": 436.9,
+    "low": 425.05,
+    "close": 430.95,
+    "volume": 3112160
+   },
+   {
+    "date": "2026-11-12",
+    "open": 432,
+    "high": 452.3,
+    "low": 424.35,
+    "close": 443.5,
+    "volume": 2705855
+   }
+  ],
+  "SUNTV": [
+   {
+    "date": "2026-11-11",
+    "open": 611.2,
+    "high": 663,
+    "low": 611.2,
+    "close": 653.9,
+    "volume": 2998558
+   },
+   {
+    "date": "2026-11-12",
+    "open": 652,
+    "high": 672,
+    "low": 639.95,
+    "close": 668.45,
+    "volume": 720818
+   }
+  ],
+  "TASTYBITE": [
+   {
+    "date": "2026-11-11",
+    "open": 10249,
+    "high": 10260,
+    "low": 9990,
+    "close": 10008.5,
+    "volume": 1364
+   },
+   {
+    "date": "2026-11-12",
+    "open": 10098.5,
+    "high": 11148.5,
+    "low": 10050,
+    "close": 10951,
+    "volume": 31037
+   }
+  ],
+  "UNIMECH": [
+   {
+    "date": "2026-11-11",
+    "open": 1823.3,
+    "high": 1936,
+    "low": 1823.3,
+    "close": 1916.8,
+    "volume": 433315
+   },
+   {
+    "date": "2026-11-12",
+    "open": 1949,
+    "high": 2025.6,
+    "low": 1927.6,
+    "close": 1980.6,
+    "volume": 539732
+   }
+  ],
+  "UNIONBANK": [
+   {
+    "date": "2026-11-11",
+    "open": 200.44,
+    "high": 202.19,
+    "low": 197.1,
+    "close": 202.19,
+    "volume": 33103439
+   },
+   {
+    "date": "2026-11-12",
+    "open": 202.2,
+    "high": 204.4,
+    "low": 199.46,
+    "close": 204.4,
+    "volume": 16328309
    }
   ]
  }

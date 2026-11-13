@@ -9478,11 +9478,17 @@ function dhGuardHtml(g, d) {
   const bl = g.findings.filter(x => x.level === 'BLOCK'), wa = g.findings.filter(x => x.level === 'WARN');
   const stale = d && d.meta && g.market_data_date && d.meta.marketDate && g.market_data_date !== d.meta.marketDate;
   if (!bl.length && !wa.length && !stale) return '';
-  const all = bl.concat(wa), rows = all.slice(0, 40).map(x => `<tr><td>${ccTypePill({ level: x.level === 'BLOCK' ? 'BREACH' : 'WARN', type: (x.level === 'BLOCK' ? 'Blocked: ' : '') + (GUARD_TYPES[x.id] || 'Check ' + x.id) })}</td><td>${x.symbol ? '<b>' + dhEsc(x.symbol) + '</b>' : 'All'}</td><td>${dhEsc(x.msg)}</td></tr>`).join('');
-  const head = (stale ? 'Guardrail check is older than the signals - run the refresh. ' : '') + (g.global_block ? 'ALL ORDERS BLOCKED. ' : '')
-    + `Guardrails: ${bl.length} blocking · ${wa.length} warning${wa.length === 1 ? '' : 's'}`;
-  return `<details class="dh-stale ${bl.length || stale ? 'high' : ''}" ${bl.length ? 'open' : ''}><summary style="cursor:pointer;font-weight:700;font-size:13px">${dhEsc(head)}</summary>`
-    + `<div class="al-wrap"><table class="al-tbl"><thead><tr><th>Alert type</th><th>Stock</th><th>Detail</th></tr></thead><tbody>${rows}</tbody></table></div>`
+  // short phrases: issue + what to do (the full engine message stays in the tooltip)
+  const SHORT = { F5: ['Price mismatch', 'Held back from orders'], I3: ['Log vs holdings differ', 'Holdings used'], S4: ['1-share buy above tier', 'Check cost'], P3: ['Option near/past strike', 'See Covered Call'],
+    P5: ['Stop order problem', 'See Covered Call'], P4: ['Short call not covered', 'Check shares'], F1: ['Market data old', 'Refresh'], F2: ['Holdings old', 'Refresh'], F3: ['Signals older than holdings', 'Refresh'], F4: ['Order list old', 'Refresh'],
+    C1: ['Over-deployed', 'Review'], C2: ['Too concentrated', 'Review'], C3: ['Pending buys too big', 'Review'], H1: ['Trading halted', 'Switch off halt to order'] };
+  const stocksOf = x => x.symbol ? x.symbol : (x.id === 'F5' ? (String(x.msg).split(': ').pop() || '—') : '—');
+  const all = bl.concat(wa), rows = all.slice(0, 40).map(x => { const s = SHORT[x.id] || [GUARD_TYPES[x.id] || 'Check ' + x.id, 'Review'], isB = x.level === 'BLOCK';
+    return `<tr title="${dhEsc(x.msg)}"><td><span class="${isB ? 'pnl-neg' : ''}" style="font-weight:700;${isB ? '' : 'color:var(--amber)'}">${isB ? 'Blocked' : 'Check'}</span></td><td><b>${dhEsc(stocksOf(x))}</b></td><td>${dhEsc(s[0])}</td><td>${dhEsc(isB ? 'No order for this stock' : s[1])}</td></tr>`; }).join('');
+  const head = (stale ? 'Check is older than the signals - refresh. ' : '') + (g.global_block ? 'ALL ORDERS BLOCKED. ' : '')
+    + (bl.length || wa.length ? `Guardrails: ${bl.length} blocked · ${wa.length} to check` : 'Guardrails: all clear');
+  return `<details class="dh-stale ${bl.length || stale ? 'high' : ''}" ><summary style="cursor:pointer;font-weight:700;font-size:13px">${dhEsc(head)}</summary>`
+    + `<div class="al-wrap"><table class="al-tbl" data-te="off"><thead><tr><th>Status</th><th>Stock</th><th>Issue</th><th>Action</th></tr></thead><tbody>${rows}</tbody></table></div>`
     + (all.length > 40 ? `<div class="dh-stale-act">+${all.length - 40} more</div>` : '') + '</details>';
 }
 function dhRenderStale(d) {
@@ -10252,7 +10258,7 @@ function teAttach(t) {
 }
 function teScan() {
   document.querySelectorAll(TE_SCOPES).forEach(scope => scope.querySelectorAll('table').forEach(t => {
-    if (t.closest('#cc-root') || t.closest('.d2-attn-drawer') && !t.closest('.d2-attn-drawer').offsetParent) return;
+    if (t.dataset.te === 'off' || t.closest('#cc-root') || t.closest('.d2-attn-drawer') && !t.closest('.d2-attn-drawer').offsetParent) return;
     if (!t.dataset.te) {
       const cols = t.querySelectorAll('thead th').length || (t.rows[0] ? t.rows[0].cells.length : 0);
       const dataRows = teRows(t).filter(teIsData).length;
