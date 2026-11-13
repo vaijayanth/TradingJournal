@@ -225,6 +225,36 @@ def structure_alerts(sym, my_legs, shares_held, gtt_active):
     return out
 
 
+def leftover_hedge_alerts(sym, my_legs, today):
+    """A LONG option leg that hedges nothing (user, 2026-11-14): no short in the same stock, expiry and type (the short was closed or expired and the
+    hedge was left open), or a long that is not on the protective side of any short (put: not below it, call: not above it). It is the same rule the
+    Open positions table uses for 'Long ...' and 'long N not a hedge'. Informational: sell it or let it expire (a profitable one: book it or hold)."""
+    out = []
+    groups = {}
+    for l in my_legs:
+        groups.setdefault((l["type"], l["expiry"]), []).append(l)
+    for (typ, exp), ls in groups.items():
+        shorts = [l for l in ls if l["side"] == "SHORT"]
+        longs = [l for l in ls if l["side"] == "LONG"]
+        if not longs:
+            continue
+        if shorts:
+            s_min, s_max = min(l["strike"] for l in shorts), max(l["strike"] for l in shorts)
+            stray = [l for l in longs if (l["strike"] >= s_max if typ == "PE" else l["strike"] <= s_min)]
+        else:
+            stray = longs
+        days = (date.fromisoformat(exp) - today).days
+        for l in stray:
+            pnl = l.get("pnl_rs") or 0
+            sh = "/".join("%g" % s["strike"] for s in shorts)
+            why = (f"is not beyond the short {sh}{typ}: it hedges nothing" if shorts else "has no short against it")
+            concern = f"Long {l['strike']:g}{typ} ({l['qty']} qty) {why} - P&L Rs{pnl:,.0f}, {days}d to expiry"
+            action = "In profit: book it or let it run" if pnl > 0 else "Sell it or let it expire"
+            out.append({"level": "WARN", "type": "Leftover hedge", "symbol": sym, "expiry": exp, "strike": l["strike"], "opt_type": typ, "qty": l["qty"],
+                        "concern": concern, "action": action, "text": f"{sym} {exp}: {concern} - {action.lower()}"})
+    return out
+
+
 def expiry_alerts(sym, my_legs, spot, shares_held, rules):
     """Stock options are settled by physical delivery at expiry: an in-the-money leg close to expiry means shares to deliver (short call, long put)
     or to buy and pay for (short put, long call). Flag every in-the-money leg within expiry_risk_days of expiry; closing it earlier avoids the delivery."""
@@ -403,6 +433,7 @@ def main():
                                "text": f"{sym} {l['expiry']} {l['strike']:g}{l['type']}: premium decayed {(1 - l['ltp'] / l['sell_avg']) * 100:.0f}% (sold {l['sell_avg']:g}, now {l['ltp']:g}) - book the profit"})
         alerts.extend(a for a in strike_alerts(sym, my_legs, spot_now, rules.get("near_strike_pct", 2), None))
         alerts.extend(structure_alerts(sym, my_legs, held.get(sym, 0), None))   # ND: no GTT data, hedge check only
+        alerts.extend(leftover_hedge_alerts(sym, my_legs, today))
         alerts.extend(expiry_alerts(sym, my_legs, spot_now, held.get(sym, 0), rules))
         alerts.extend(event_alerts(sym, my_legs, events, today, ev_days))
 

@@ -9882,7 +9882,7 @@ const ccTabBar = (id, tabs, extra) => `<div class="dhm-tabs" id="${id}" role="ta
   `<button class="dhm-tab" data-tab="${k}" onclick="${extra}('${k}')">${l}${n == null ? '' : `<span class="dhm-count">${n}</span>`}</button>`).join('') + '</div>';
 
 // Alert type pill: the label is the alert's own type (3× premium, Near strike, Beyond strike, No GTT placed ...), the colour follows its severity
-const CC_TYPE_ORDER = ['Exit', '3× premium', 'Through hedge', 'Beyond strike', 'Expiry risk', 'Event close', 'Near strike', 'Profit Exit', 'Invalid GTT', 'Invalid stop order', 'No GTT placed', 'No stop placed', 'No hedge', 'Partly hedged', 'New trade'];
+const CC_TYPE_ORDER = ['Exit', '3× premium', 'Through hedge', 'Beyond strike', 'Expiry risk', 'Event close', 'Near strike', 'Profit Exit', 'Invalid GTT', 'Invalid stop order', 'No GTT placed', 'No stop placed', 'No hedge', 'Partly hedged', 'Leftover hedge', 'New trade'];
 function ccTypePill(a) {
   const m = { EXIT: ['var(--red-soft)', 'var(--red)'], BREACH: ['var(--red)', '#fff'], WARN: ['var(--amber-soft, var(--surface2))', 'var(--amber)'], ENTER: ['var(--accent-soft, var(--surface2))', 'var(--accent)'], PROFIT: ['var(--green-soft)', 'var(--green)'] };
   const [bg, fg] = m[a.level] || ['var(--surface2)', 'var(--text-muted)'];
@@ -9901,6 +9901,7 @@ function ccShortAlert0(r) {
     case 'Through hedge': x = m(/Rs([\d,]+) intrinsic/); return [x ? `Past hedge · max loss ₹${x[1]}` : 'Past hedge', 'Close or roll'];
     case 'Near strike': x = m(/([\d.]+)% from/); return [x ? `${x[1]}% from strike` : 'Near strike', 'Watch'];
     case 'No hedge': case 'Partly hedged': x = m(/(\d+) of (\d+) qty uncovered/); return [x ? `${x[1]} of ${x[2]} uncovered` : 'Not fully hedged', /shares/i.test(a) ? 'Buy hedge or hold shares' : 'Buy hedge'];
+    case 'Leftover hedge': x = m(/Long ([\d.]+)(PE|CE) \((\d+) qty\) (has no short|is not beyond)/); return [x ? (x[4] === 'has no short' ? `Long ${x[1]}${x[2]} · no short` : `Long ${x[1]}${x[2]} · hedges nothing`) : 'Long leg hedges nothing', a || 'Sell it or let it expire'];
     case 'Expiry risk': x = m(/(\d+)d before expiry/); return [x ? `In the money · ${x[1]}d to expiry` : 'In the money near expiry', /today/i.test(a) ? 'Close today' : 'Close before expiry'];
     case 'No GTT placed': x = /Place GTT at ([\d.]+)/.exec(a); return ['No buy-back GTT', x ? `Place GTT at ${x[1]}` : 'Place GTT'];
     case 'Invalid stop order': return [/orphan/i.test(c) ? 'Orphan stop (could buy a long)' : /quantity/i.test(c) ? 'Stop quantity differs' : 'Stop order problem', 'Cancel or fix the legs'];
@@ -9998,7 +9999,7 @@ const ccSigFilters = rsi => [['all', 'All stocks', () => true], ['call', 'Sell c
 const ccSigGroups = [{ key: 'act', label: 'Act now' }, { key: 'cand', label: 'Candidates · no recent flip', collapsed: true }, { key: 'hold', label: 'Holding', collapsed: true }];
 
 // ── Open positions as TRADES (one row per structure, not per leg): % of max profit vs the profit target, distance to the short strike, stop in place, next step ──
-const CC_TRADE_ORDER = ['3× premium', 'Through hedge', 'Expiry risk', 'Event close', 'Exit', 'Beyond strike', 'Profit Exit', 'No stop placed', 'No GTT placed', 'Invalid GTT', 'Near strike'];
+const CC_TRADE_ORDER = ['3× premium', 'Through hedge', 'Expiry risk', 'Event close', 'Exit', 'Beyond strike', 'Profit Exit', 'No stop placed', 'No GTT placed', 'Invalid GTT', 'Near strike', 'Leftover hedge'];
 function ccTrades(S, alerts, R) {
   const t0 = new Date(); t0.setHours(0, 0, 0, 0);
   const al = {};
@@ -10077,7 +10078,7 @@ const ccRulesCommon = (R, stopRow) => [
   ['Exit · profit', `Short option premium has decayed ${R.profit_exit_decay_pct ?? 60}% or more since it was sold: book the profit (buy back)`],
   ['Strike alerts', `Near = stock price within ${R.near_strike_pct ?? 2}% of a short strike; Beyond = at or past it (in the money); Through hedge = past the hedge leg too (maximum loss)`],
   ['Expiry risk', `Stock options settle by physical delivery at expiry: any in-the-money leg within ${R.expiry_risk_days ?? 7} days of expiry (urgent in the last 3) is flagged; close it before expiry to avoid delivering or buying shares`],
-  ['Hedge check', 'A short leg not covered by long legs of the same type and expiry (plus shares held, for calls) raises No hedge / Partly hedged'],
+  ['Hedge check', 'A short leg not covered by long legs of the same type and expiry (plus shares held, for calls) raises No hedge / Partly hedged; a long leg with no short against it (or not on the protective side of one) raises Leftover hedge'],
   stopRow,
   ['Exit · colour (priority)', 'Open structure opposite to the Supertrend colour (short call while green, short put / BPS while red) raises Exit; the RSI override never does'],
   ['Entry priority', 'Stocks needing an option trade are ranked by most recent Supertrend flip first; flips within 5 trading days are tagged NEW FLIP'],

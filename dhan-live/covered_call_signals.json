@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-13T18:41:53.220123+00:00",
+  "generated_at": "2026-11-13T19:19:26.163716+00:00",
   "market_data_date": "2026-11-13",
   "live_prices_at": null,
   "super_scan_at": "2026-11-14T00:11:52+05:30",
@@ -1038,6 +1038,30 @@
     },
     {
       "level": "WARN",
+      "type": "Leftover hedge",
+      "symbol": "SHRIRAMFIN",
+      "expiry": "2026-11-23",
+      "strike": 860.0,
+      "opt_type": "PE",
+      "qty": 825,
+      "concern": "Long 860PE (825 qty) is not beyond the short 820PE: it hedges nothing - P&L Rs-2,516, 10d to expiry",
+      "action": "Sell it or let it expire",
+      "text": "SHRIRAMFIN 2026-11-23: Long 860PE (825 qty) is not beyond the short 820PE: it hedges nothing - P&L Rs-2,516, 10d to expiry - sell it or let it expire"
+    },
+    {
+      "level": "WARN",
+      "type": "Leftover hedge",
+      "symbol": "CGPOWER",
+      "expiry": "2026-11-23",
+      "strike": 680.0,
+      "opt_type": "PE",
+      "qty": 850,
+      "concern": "Long 680PE (850 qty) has no short against it - P&L Rs-4,548, 10d to expiry",
+      "action": "Sell it or let it expire",
+      "text": "CGPOWER 2026-11-23: Long 680PE (850 qty) has no short against it - P&L Rs-4,548, 10d to expiry - sell it or let it expire"
+    },
+    {
+      "level": "WARN",
       "type": "Partly hedged",
       "symbol": "BSE",
       "expiry": "2026-12-29",
@@ -1046,6 +1070,18 @@
       "concern": "200 of 400 qty uncovered (hedge 200)",
       "action": "Buy a hedge",
       "text": "BSE 2026-12-29: short 3200/3500PE 400 qty, hedge 200 qty - 200 qty uncovered"
+    },
+    {
+      "level": "WARN",
+      "type": "Leftover hedge",
+      "symbol": "BSE",
+      "expiry": "2026-11-23",
+      "strike": 3000.0,
+      "opt_type": "PE",
+      "qty": 200,
+      "concern": "Long 3000PE (200 qty) has no short against it - P&L Rs-4,020, 10d to expiry",
+      "action": "Sell it or let it expire",
+      "text": "BSE 2026-11-23: Long 3000PE (200 qty) has no short against it - P&L Rs-4,020, 10d to expiry - sell it or let it expire"
     }
   ],
   "events_file_at": "2026-11-13T06:37:51.128756+00:00",

@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-13T19:11:53.256175+00:00",
+ "generated_at": "2026-11-13T19:19:25.946968+00:00",
  "market_data_date": "2026-11-13",
  "live_prices_at": "2026-11-14T00:15:30+05:30",
  "gtt_scan_at": "2026-11-14T00:41:53+05:30",
@@ -10125,6 +10125,42 @@
    "text": "BRITANNIA BRITANNIA26NOV5000CE: Stop is 2.0x the sold price (rule 3x)"
   },
   {
+   "level": "WARN",
+   "type": "Leftover hedge",
+   "symbol": "ADANIENSOL",
+   "expiry": "2026-11-23",
+   "strike": 1100.0,
+   "opt_type": "PE",
+   "qty": 675,
+   "concern": "Long 1100PE (675 qty) has no short against it - P&L Rs-3,982, 9d to expiry",
+   "action": "Sell it or let it expire",
+   "text": "ADANIENSOL 2026-11-23: Long 1100PE (675 qty) has no short against it - P&L Rs-3,982, 9d to expiry - sell it or let it expire"
+  },
+  {
+   "level": "WARN",
+   "type": "Leftover hedge",
+   "symbol": "APOLLOHOSP",
+   "expiry": "2026-11-23",
+   "strike": 7000.0,
+   "opt_type": "PE",
+   "qty": 125,
+   "concern": "Long 7000PE (125 qty) has no short against it - P&L Rs-4,031, 9d to expiry",
+   "action": "Sell it or let it expire",
+   "text": "APOLLOHOSP 2026-11-23: Long 7000PE (125 qty) has no short against it - P&L Rs-4,031, 9d to expiry - sell it or let it expire"
+  },
+  {
+   "level": "WARN",
+   "type": "Leftover hedge",
+   "symbol": "AUBANK",
+   "expiry": "2026-11-23",
+   "strike": 790.0,
+   "opt_type": "PE",
+   "qty": 1000,
+   "concern": "Long 790PE (1000 qty) has no short against it - P&L Rs-4,000, 9d to expiry",
+   "action": "Sell it or let it expire",
+   "text": "AUBANK 2026-11-23: Long 790PE (1000 qty) has no short against it - P&L Rs-4,000, 9d to expiry - sell it or let it expire"
+  },
+  {
    "expiry": "2026-11-23",
    "strike": 300.0,
    "opt_type": "PE",
@@ -10153,6 +10189,18 @@
    "concern": "Price 1.1% from the short strike",
    "action": "Watch; plan the roll",
    "text": "BRITANNIA 2026-11-23: price 4750.5 is within 1.1% of the short 4700PE"
+  },
+  {
+   "level": "WARN",
+   "type": "Leftover hedge",
+   "symbol": "CANBK",
+   "expiry": "2026-11-23",
+   "strike": 125.0,
+   "opt_type": "CE",
+   "qty": 6750,
+   "concern": "Long 125CE (6750 qty) has no short against it - P&L Rs24,030, 9d to expiry",
+   "action": "In profit: book it or let it run",
+   "text": "CANBK 2026-11-23: Long 125CE (6750 qty) has no short against it - P&L Rs24,030, 9d to expiry - in profit: book it or let it run"
   },
   {
    "level": "WARN",
@@ -10195,6 +10243,18 @@
   },
   {
    "level": "WARN",
+   "type": "Leftover hedge",
+   "symbol": "GMRAIRPORT",
+   "expiry": "2026-11-23",
+   "strike": 85.0,
+   "opt_type": "PE",
+   "qty": 6975,
+   "concern": "Long 85PE (6975 qty) has no short against it - P&L Rs-1,744, 9d to expiry",
+   "action": "Sell it or let it expire",
+   "text": "GMRAIRPORT 2026-11-23: Long 85PE (6975 qty) has no short against it - P&L Rs-1,744, 9d to expiry - sell it or let it expire"
+  },
+  {
+   "level": "WARN",
    "type": "No GTT placed",
    "symbol": "HDFCBANK",
    "expiry": "2026-11-23",
@@ -10216,6 +10276,18 @@
    "concern": "No buy-back GTT on this short",
    "action": "Place GTT at 3.9 (3x premium)",
    "text": "HINDPETRO 2026-11-23 short 380CE: no active buy-back GTT (3x premium stop = 3.9)"
+  },
+  {
+   "level": "WARN",
+   "type": "Leftover hedge",
+   "symbol": "INFY",
+   "expiry": "2026-11-23",
+   "strike": 894.0,
+   "opt_type": "PE",
+   "qty": 800,
+   "concern": "Long 894PE (800 qty) has no short against it - P&L Rs-4,980, 9d to expiry",
+   "action": "Sell it or let it expire",
+   "text": "INFY 2026-11-23: Long 894PE (800 qty) has no short against it - P&L Rs-4,980, 9d to expiry - sell it or let it expire"
   },
   {
    "level": "WARN",
@@ -10267,6 +10339,42 @@
    "concern": "No buy-back GTT on this short",
    "action": "Place GTT at 11.55 (3x premium)",
    "text": "NAM-INDIA 2026-11-23 short 1100CE: no active buy-back GTT (3x premium stop = 11.55)"
+  },
+  {
+   "level": "WARN",
+   "type": "Leftover hedge",
+   "symbol": "PNBHOUSING",
+   "expiry": "2026-11-23",
+   "strike": 1300.0,
+   "opt_type": "CE",
+   "qty": 650,
+   "concern": "Long 1300CE (650 qty) has no short against it - P&L Rs-1,560, 9d to expiry",
+   "action": "Sell it or let it expire",
+   "text": "PNBHOUSING 2026-11-23: Long 1300CE (650 qty) has no short against it - P&L Rs-1,560, 9d to expiry - sell it or let it expire"
+  },
+  {
+   "level": "WARN",
+   "type": "Leftover hedge",
+   "symbol": "SHRIRAMFIN",
+   "expiry": "2026-11-23",
+   "strike": 780.0,
+   "opt_type": "PE",
+   "qty": 825,
+   "concern": "Long 780PE (825 qty) has no short against it - P&L Rs-1,402, 9d to expiry",
+   "action": "Sell it or let it expire",
+   "text": "SHRIRAMFIN 2026-11-23: Long 780PE (825 qty) has no short against it - P&L Rs-1,402, 9d to expiry - sell it or let it expire"
+  },
+  {
+   "level": "WARN",
+   "type": "Leftover hedge",
+   "symbol": "UNITDSPR",
+   "expiry": "2026-11-23",
+   "strike": 1480.0,
+   "opt_type": "CE",
+   "qty": 400,
+   "concern": "Long 1480CE (400 qty) has no short against it - P&L Rs-1,520, 9d to expiry",
+   "action": "Sell it or let it expire",
+   "text": "UNITDSPR 2026-11-23: Long 1480CE (400 qty) has no short against it - P&L Rs-1,520, 9d to expiry - sell it or let it expire"
   },
   {
    "level": "PROFIT",
