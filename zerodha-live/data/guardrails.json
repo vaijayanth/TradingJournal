@@ -1,34 +1,22 @@
 {
- "generated_at": "2026-11-09T21:42:49+05:30",
+ "generated_at": "2026-11-13T12:14:01+05:30",
  "broker": "zerodha",
- "market_data_date": "2026-11-09",
- "signals_generated_at": "2026-11-09T15:49:35.536429+00:00",
+ "market_data_date": "2026-11-12",
+ "signals_generated_at": "2026-11-13T06:43:04.682591+00:00",
  "status": "WARN",
  "global_block": false,
  "counts": {
   "block": 0,
-  "warn": 3,
+  "warn": 1,
   "info": 0
  },
  "per_symbol_blocks": {},
  "findings": [
   {
-   "id": "F5",
-   "level": "WARN",
-   "symbol": null,
-   "msg": "the cross-check flagged 1 of 7 signals (they are blocked from orders): NATIONALUM"
-  },
-  {
-   "id": "C2",
-   "level": "WARN",
-   "symbol": "TVSMOTOR",
-   "msg": "TVSMOTOR is 22% of deployed capital"
-  },
-  {
    "id": "P3",
    "level": "WARN",
    "symbol": null,
-   "msg": "89 open option exit / strike-breach alerts on 54 stocks (360ONE, ABB, ADANIENSOL, ADANIGREEN, ADANIPOWER, ALKEM, AMBER, ANGELONE...) - see the Covered Call alerts"
+   "msg": "64 open option exit / strike-breach alerts on 40 stocks (ABB, ADANIENSOL, ADANIGREEN, ADANIPOWER, ALKEM, ANGELONE, APOLLOHOSP, ASHOKLEY...) - see the Covered Call alerts"
   }
  ]
 }
