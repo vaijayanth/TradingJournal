@@ -1,56 +1,8 @@
 {
- "fetched_at": "2026-11-13T14:08:22+05:30",
+ "fetched_at": "2026-11-13T14:13:26+05:30",
  "orders_checked": 19,
  "shorts": 15,
  "findings": [
-  {
-   "check": "S1",
-   "name": "ORPHAN",
-   "severity": "HIGH",
-   "order_id": "3132611061597573",
-   "symbol": "BANKINDIA",
-   "expiry": null,
-   "strike": null,
-   "opt_type": null,
-   "concern": "Likely orphaned: sold 5200 @ 0.56 but no open short matches; stop_loss 1.7 + target 0 still pending: a stop firing would BUY a new long",
-   "action": "Check the position; if closed, cancel the legs (order 3132611061597573)"
-  },
-  {
-   "check": "S1",
-   "name": "ORPHAN",
-   "severity": "HIGH",
-   "order_id": "2132611092874973",
-   "symbol": "BPCL",
-   "expiry": null,
-   "strike": null,
-   "opt_type": null,
-   "concern": "Likely orphaned: sold 1975 @ 1.2 but no open short matches; stop_loss 3.6 + target 0 still pending: a stop firing would BUY a new long",
-   "action": "Check the position; if closed, cancel the legs (order 2132611092874973)"
-  },
-  {
-   "check": "S1",
-   "name": "ORPHAN",
-   "severity": "HIGH",
-   "order_id": "3132611061583373",
-   "symbol": "BSE",
-   "expiry": null,
-   "strike": null,
-   "opt_type": null,
-   "concern": "Likely orphaned: sold 200 @ 13.35 but no open short matches; stop_loss 39 + target 0 still pending: a stop firing would BUY a new long",
-   "action": "Check the position; if closed, cancel the legs (order 3132611061583373)"
-  },
-  {
-   "check": "S1",
-   "name": "ORPHAN",
-   "severity": "HIGH",
-   "order_id": "2132611061586773",
-   "symbol": "BSE",
-   "expiry": null,
-   "strike": null,
-   "opt_type": null,
-   "concern": "Likely orphaned: sold 200 @ 17.9 but no open short matches; stop_loss 54 + target 0 still pending: a stop firing would BUY a new long",
-   "action": "Check the position; if closed, cancel the legs (order 2132611061586773)"
-  },
   {
    "check": "S1",
    "name": "ORPHAN",
@@ -67,42 +19,6 @@
    "check": "S1",
    "name": "ORPHAN",
    "severity": "HIGH",
-   "order_id": "2132611092653173",
-   "symbol": "HCLTECH",
-   "expiry": null,
-   "strike": null,
-   "opt_type": null,
-   "concern": "Likely orphaned: sold 400 @ 5.5 but no open short matches; stop_loss 12 + target 0 still pending: a stop firing would BUY a new long",
-   "action": "Check the position; if closed, cancel the legs (order 2132611092653173)"
-  },
-  {
-   "check": "S1",
-   "name": "ORPHAN",
-   "severity": "HIGH",
-   "order_id": "3132611042326573",
-   "symbol": "HCLTECH",
-   "expiry": null,
-   "strike": null,
-   "opt_type": null,
-   "concern": "Likely orphaned: sold 400 @ 13.05 but no open short matches; stop_loss 27 + target 0 still pending: a stop firing would BUY a new long",
-   "action": "Check the position; if closed, cancel the legs (order 3132611042326573)"
-  },
-  {
-   "check": "S1",
-   "name": "ORPHAN",
-   "severity": "HIGH",
-   "order_id": "2132611061628873",
-   "symbol": "INFY",
-   "expiry": null,
-   "strike": null,
-   "opt_type": null,
-   "concern": "Likely orphaned: sold 400 @ 9.9 but no open short matches; stop_loss 30 + target 0 still pending: a stop firing would BUY a new long",
-   "action": "Check the position; if closed, cancel the legs (order 2132611061628873)"
-  },
-  {
-   "check": "S1",
-   "name": "ORPHAN",
-   "severity": "HIGH",
    "order_id": "2132611061617273",
    "symbol": "MCX",
    "expiry": null,
@@ -110,30 +26,6 @@
    "opt_type": null,
    "concern": "Likely orphaned: sold 225 @ 16.15 but no open short matches; target 0 still pending: a stop firing would BUY a new long",
    "action": "Check the position; if closed, cancel the legs (order 2132611061617273)"
-  },
-  {
-   "check": "S1",
-   "name": "ORPHAN",
-   "severity": "HIGH",
-   "order_id": "3132611061610573",
-   "symbol": "MCX",
-   "expiry": null,
-   "strike": null,
-   "opt_type": null,
-   "concern": "Likely orphaned: sold 225 @ 15.15 but no open short matches; stop_loss 45 + target 0 still pending: a stop firing would BUY a new long",
-   "action": "Check the position; if closed, cancel the legs (order 3132611061610573)"
-  },
-  {
-   "check": "S1",
-   "name": "ORPHAN",
-   "severity": "HIGH",
-   "order_id": "2132611061640373",
-   "symbol": "SHRIRAMFIN",
-   "expiry": null,
-   "strike": null,
-   "opt_type": null,
-   "concern": "Likely orphaned: sold 825 @ 7.85 but no open short matches; stop_loss 24 + target 0 still pending: a stop firing would BUY a new long",
-   "action": "Check the position; if closed, cancel the legs (order 2132611061640373)"
   },
   {
    "check": "S2",

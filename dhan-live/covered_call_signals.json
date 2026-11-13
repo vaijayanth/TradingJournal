@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-11-13T08:38:37.619387+00:00",
+  "generated_at": "2026-11-13T08:43:26.491800+00:00",
   "market_data_date": "2026-11-12",
   "live_prices_at": "2026-11-13T14:08:22+05:30",
-  "super_scan_at": "2026-11-13T14:08:22+05:30",
+  "super_scan_at": "2026-11-13T14:13:26+05:30",
   "as_of": "2026-11-12",
   "rules": {
     "short_call_delta": 0.1,
@@ -1017,50 +1017,6 @@
     {
       "level": "BREACH",
       "type": "Invalid stop order",
-      "symbol": "BANKINDIA",
-      "expiry": null,
-      "strike": null,
-      "opt_type": null,
-      "concern": "Orphan: Likely orphaned: sold 5200 @ 0.56 but no open short matches; stop_loss 1.7 + target 0 still pending: a stop firing would BUY a new long",
-      "action": "Check the position; if closed, cancel the legs (order 3132611061597573)",
-      "text": "BANKINDIA: Likely orphaned: sold 5200 @ 0.56 but no open short matches; stop_loss 1.7 + target 0 still pending: a stop firing would BUY a new long"
-    },
-    {
-      "level": "BREACH",
-      "type": "Invalid stop order",
-      "symbol": "BPCL",
-      "expiry": null,
-      "strike": null,
-      "opt_type": null,
-      "concern": "Orphan: Likely orphaned: sold 1975 @ 1.2 but no open short matches; stop_loss 3.6 + target 0 still pending: a stop firing would BUY a new long",
-      "action": "Check the position; if closed, cancel the legs (order 2132611092874973)",
-      "text": "BPCL: Likely orphaned: sold 1975 @ 1.2 but no open short matches; stop_loss 3.6 + target 0 still pending: a stop firing would BUY a new long"
-    },
-    {
-      "level": "BREACH",
-      "type": "Invalid stop order",
-      "symbol": "BSE",
-      "expiry": null,
-      "strike": null,
-      "opt_type": null,
-      "concern": "Orphan: Likely orphaned: sold 200 @ 13.35 but no open short matches; stop_loss 39 + target 0 still pending: a stop firing would BUY a new long",
-      "action": "Check the position; if closed, cancel the legs (order 3132611061583373)",
-      "text": "BSE: Likely orphaned: sold 200 @ 13.35 but no open short matches; stop_loss 39 + target 0 still pending: a stop firing would BUY a new long"
-    },
-    {
-      "level": "BREACH",
-      "type": "Invalid stop order",
-      "symbol": "BSE",
-      "expiry": null,
-      "strike": null,
-      "opt_type": null,
-      "concern": "Orphan: Likely orphaned: sold 200 @ 17.9 but no open short matches; stop_loss 54 + target 0 still pending: a stop firing would BUY a new long",
-      "action": "Check the position; if closed, cancel the legs (order 2132611061586773)",
-      "text": "BSE: Likely orphaned: sold 200 @ 17.9 but no open short matches; stop_loss 54 + target 0 still pending: a stop firing would BUY a new long"
-    },
-    {
-      "level": "BREACH",
-      "type": "Invalid stop order",
       "symbol": "CUMMINSIND",
       "expiry": null,
       "strike": null,
@@ -1072,39 +1028,6 @@
     {
       "level": "BREACH",
       "type": "Invalid stop order",
-      "symbol": "HCLTECH",
-      "expiry": null,
-      "strike": null,
-      "opt_type": null,
-      "concern": "Orphan: Likely orphaned: sold 400 @ 5.5 but no open short matches; stop_loss 12 + target 0 still pending: a stop firing would BUY a new long",
-      "action": "Check the position; if closed, cancel the legs (order 2132611092653173)",
-      "text": "HCLTECH: Likely orphaned: sold 400 @ 5.5 but no open short matches; stop_loss 12 + target 0 still pending: a stop firing would BUY a new long"
-    },
-    {
-      "level": "BREACH",
-      "type": "Invalid stop order",
-      "symbol": "HCLTECH",
-      "expiry": null,
-      "strike": null,
-      "opt_type": null,
-      "concern": "Orphan: Likely orphaned: sold 400 @ 13.05 but no open short matches; stop_loss 27 + target 0 still pending: a stop firing would BUY a new long",
-      "action": "Check the position; if closed, cancel the legs (order 3132611042326573)",
-      "text": "HCLTECH: Likely orphaned: sold 400 @ 13.05 but no open short matches; stop_loss 27 + target 0 still pending: a stop firing would BUY a new long"
-    },
-    {
-      "level": "BREACH",
-      "type": "Invalid stop order",
-      "symbol": "INFY",
-      "expiry": null,
-      "strike": null,
-      "opt_type": null,
-      "concern": "Orphan: Likely orphaned: sold 400 @ 9.9 but no open short matches; stop_loss 30 + target 0 still pending: a stop firing would BUY a new long",
-      "action": "Check the position; if closed, cancel the legs (order 2132611061628873)",
-      "text": "INFY: Likely orphaned: sold 400 @ 9.9 but no open short matches; stop_loss 30 + target 0 still pending: a stop firing would BUY a new long"
-    },
-    {
-      "level": "BREACH",
-      "type": "Invalid stop order",
       "symbol": "MCX",
       "expiry": null,
       "strike": null,
@@ -1112,28 +1035,6 @@
       "concern": "Orphan: Likely orphaned: sold 225 @ 16.15 but no open short matches; target 0 still pending: a stop firing would BUY a new long",
       "action": "Check the position; if closed, cancel the legs (order 2132611061617273)",
       "text": "MCX: Likely orphaned: sold 225 @ 16.15 but no open short matches; target 0 still pending: a stop firing would BUY a new long"
-    },
-    {
-      "level": "BREACH",
-      "type": "Invalid stop order",
-      "symbol": "MCX",
-      "expiry": null,
-      "strike": null,
-      "opt_type": null,
-      "concern": "Orphan: Likely orphaned: sold 225 @ 15.15 but no open short matches; stop_loss 45 + target 0 still pending: a stop firing would BUY a new long",
-      "action": "Check the position; if closed, cancel the legs (order 3132611061610573)",
-      "text": "MCX: Likely orphaned: sold 225 @ 15.15 but no open short matches; stop_loss 45 + target 0 still pending: a stop firing would BUY a new long"
-    },
-    {
-      "level": "BREACH",
-      "type": "Invalid stop order",
-      "symbol": "SHRIRAMFIN",
-      "expiry": null,
-      "strike": null,
-      "opt_type": null,
-      "concern": "Orphan: Likely orphaned: sold 825 @ 7.85 but no open short matches; stop_loss 24 + target 0 still pending: a stop firing would BUY a new long",
-      "action": "Check the position; if closed, cancel the legs (order 2132611061640373)",
-      "text": "SHRIRAMFIN: Likely orphaned: sold 825 @ 7.85 but no open short matches; stop_loss 24 + target 0 still pending: a stop firing would BUY a new long"
     },
     {
       "level": "WARN",
