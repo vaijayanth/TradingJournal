@@ -1,21 +1,8 @@
 {
- "fetched_at": "2026-11-13T14:25:40+05:30",
- "gtts_fetched_at": "2026-11-13T14:25:24+05:30",
- "checked": 70,
+ "fetched_at": "2026-11-13T14:36:48+05:30",
+ "gtts_fetched_at": "2026-11-13T14:36:47+05:30",
+ "checked": 69,
  "findings": [
-  {
-   "check": "G1",
-   "name": "STALE",
-   "severity": "HIGH",
-   "tradingsymbol": "MCX26NOV3100PE",
-   "gtt_id": 343699756,
-   "symbol": "MCX",
-   "expiry": "2026-11-23",
-   "strike": 3100.0,
-   "opt_type": "PE",
-   "concern": "No open position on this contract (closed or expired): if it triggers it BUYS a new long position",
-   "action": "Delete this GTT"
-  },
   {
    "check": "G6",
    "name": "OFF-RULE",

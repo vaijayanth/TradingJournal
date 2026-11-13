@@ -1,5 +1,5 @@
 {
- "fetched_at": "2026-11-13T14:25:24+05:30",
+ "fetched_at": "2026-11-13T14:36:47+05:30",
  "active": {
   "RECLTD26NOV310CE": [
    {
@@ -399,16 +399,6 @@
      11
     ],
     "qty": 775
-   }
-  ],
-  "MCX26NOV3100PE": [
-   {
-    "id": 343699756,
-    "type": "trailing-single",
-    "trigger_values": [
-     38
-    ],
-    "qty": 225
    }
   ],
   "MAHABANK26NOV79PE": [
@@ -1488,26 +1478,6 @@
      "side": "BUY",
      "qty": 775,
      "price": 12,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
-   "id": 343699756,
-   "type": "trailing-single",
-   "created_at": "2026-11-06T11:31:36+05:30",
-   "expires_at": "2026-11-24T00:00:00+05:30",
-   "tradingsymbol": "MCX26NOV3100PE",
-   "last_price": 17.75,
-   "triggers": [
-    38
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 225,
-     "price": 39,
      "product": "NRML",
      "order_type": "LIMIT"
     }
