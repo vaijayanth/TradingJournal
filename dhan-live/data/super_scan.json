@@ -1,7 +1,7 @@
 {
- "fetched_at": "2026-11-13T13:31:42+05:30",
+ "fetched_at": "2026-11-13T14:08:22+05:30",
  "orders_checked": 19,
- "shorts": 13,
+ "shorts": 15,
  "findings": [
   {
    "check": "S1",
@@ -193,6 +193,30 @@
    "strike": 1240.0,
    "opt_type": "PE",
    "concern": "No super order matches this short (400 @ 11.65): no stop protects it",
+   "action": "Close and re-enter as a super order, or use a daily stop order"
+  },
+  {
+   "check": "S2",
+   "name": "NO STOP",
+   "severity": "WARN",
+   "order_id": null,
+   "symbol": "MCX",
+   "expiry": "2026-12-29",
+   "strike": 3300.0,
+   "opt_type": "PE",
+   "concern": "No super order matches this short (225 @ 39): no stop protects it",
+   "action": "Close and re-enter as a super order, or use a daily stop order"
+  },
+  {
+   "check": "S2",
+   "name": "NO STOP",
+   "severity": "WARN",
+   "order_id": null,
+   "symbol": "SHRIRAMFIN",
+   "expiry": "2026-12-29",
+   "strike": 880.0,
+   "opt_type": "PE",
+   "concern": "No super order matches this short (825 @ 11.2): no stop protects it",
    "action": "Close and re-enter as a super order, or use a daily stop order"
   }
  ]
