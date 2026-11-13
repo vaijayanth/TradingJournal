@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-11-13T06:39:22.997491+00:00",
+  "generated_at": "2026-11-13T06:45:59.124503+00:00",
   "market_data_date": "2026-11-12",
-  "live_prices_at": "2026-11-13T12:07:32+05:30",
-  "super_scan_at": "2026-11-13T12:07:32+05:30",
+  "live_prices_at": "2026-11-13T12:15:44+05:30",
+  "super_scan_at": "2026-11-13T12:15:45+05:30",
   "as_of": "2026-11-12",
   "rules": {
     "short_call_delta": 0.1,
@@ -37,19 +37,22 @@
       "rsi": 65.3,
       "basis": "Supertrend green",
       "near_call": null,
-      "near_put": {
-        "strike": 3100.0,
-        "expiry": "2026-11-23",
-        "dist_pct": -15.93
-      },
+      "near_put": null,
       "shares": 37,
       "lot": 225,
       "covered": false,
       "desired": "PUT_SPREAD",
-      "status": "HOLD",
-      "note": "Open structure matches the rule (Supertrend green).",
+      "status": "ENTER",
+      "note": "Supertrend green - no put spread open",
       "tagged": false,
-      "suggestions": [],
+      "suggestions": [
+        {
+          "expiry": "2026-11-23",
+          "structure": "PUT_SPREAD",
+          "missing_chain": true,
+          "event_block": null
+        }
+      ],
       "legs": [
         {
           "symbol": "MCX",
@@ -62,34 +65,12 @@
           "sell_avg": 0.0,
           "pnl_rs": -5782.5,
           "ltp": 1.5,
-          "beyond_pct": -31.69,
+          "beyond_pct": -31.4,
           "intrinsic_rs": 0,
           "touched": false,
           "near": false,
           "touched_h": false,
-          "dist_pct": -24.07,
-          "lot": 225,
-          "lots": 1.0
-        },
-        {
-          "symbol": "MCX",
-          "expiry": "2026-11-23",
-          "strike": 3100.0,
-          "type": "PE",
-          "side": "SHORT",
-          "qty": 225,
-          "buy_avg": 0.0,
-          "sell_avg": 15.15,
-          "pnl_rs": 2520.0,
-          "ltp": 3.95,
-          "stop_at": 45.45,
-          "stop_hit": false,
-          "beyond_pct": -18.95,
-          "intrinsic_rs": 0,
-          "touched": false,
-          "near": false,
-          "touched_h": false,
-          "dist_pct": -15.93,
+          "dist_pct": -23.9,
           "lot": 225,
           "lots": 1.0
         }
@@ -119,12 +100,12 @@
       "near_call": {
         "strike": 1120.0,
         "expiry": "2026-12-29",
-        "dist_pct": 15.06
+        "dist_pct": 15.36
       },
       "near_put": {
-        "strike": 880.0,
+        "strike": 820.0,
         "expiry": "2026-11-23",
-        "dist_pct": -9.6
+        "dist_pct": -15.54
       },
       "shares": 117,
       "lot": 825,
@@ -145,28 +126,6 @@
         {
           "symbol": "SHRIRAMFIN",
           "expiry": "2026-11-23",
-          "strike": 880.0,
-          "type": "PE",
-          "side": "SHORT",
-          "qty": 825,
-          "buy_avg": 0.0,
-          "sell_avg": 7.85,
-          "pnl_rs": 4042.5,
-          "ltp": 2.95,
-          "stop_at": 23.55,
-          "stop_hit": false,
-          "beyond_pct": -10.61,
-          "intrinsic_rs": 0,
-          "touched": false,
-          "near": false,
-          "touched_h": false,
-          "dist_pct": -9.6,
-          "lot": 825,
-          "lots": 1.0
-        },
-        {
-          "symbol": "SHRIRAMFIN",
-          "expiry": "2026-11-23",
           "strike": 820.0,
           "type": "PE",
           "side": "SHORT",
@@ -177,12 +136,12 @@
           "ltp": 1.4,
           "stop_at": 9.3,
           "stop_hit": false,
-          "beyond_pct": -18.71,
+          "beyond_pct": -18.4,
           "intrinsic_rs": 0,
           "touched": false,
           "near": false,
           "touched_h": false,
-          "dist_pct": -15.76,
+          "dist_pct": -15.54,
           "lot": 825,
           "lots": 1.0
         },
@@ -197,12 +156,12 @@
           "sell_avg": 0.0,
           "pnl_rs": -2475.0,
           "ltp": 2.2,
-          "beyond_pct": -13.19,
+          "beyond_pct": -12.89,
           "intrinsic_rs": 0,
           "touched": false,
           "near": false,
           "touched_h": false,
-          "dist_pct": -11.65,
+          "dist_pct": -11.42,
           "lot": 825,
           "lots": 1.0
         },
@@ -215,16 +174,16 @@
           "qty": 825,
           "buy_avg": 0.0,
           "sell_avg": 5.6,
-          "pnl_rs": -2145.0,
-          "ltp": 8.2,
+          "pnl_rs": -1856.25,
+          "ltp": 7.85,
           "stop_at": 16.8,
           "stop_hit": false,
-          "beyond_pct": -13.09,
+          "beyond_pct": -13.32,
           "intrinsic_rs": 0,
           "touched": false,
           "near": false,
           "touched_h": false,
-          "dist_pct": 15.06,
+          "dist_pct": 15.36,
           "lot": 825,
           "lots": 1.0
         }
@@ -254,7 +213,7 @@
       "near_call": {
         "strike": 900.0,
         "expiry": "2026-12-29",
-        "dist_pct": 7.85
+        "dist_pct": 7.97
       },
       "near_put": null,
       "shares": 184,
@@ -277,12 +236,12 @@
           "sell_avg": 0.0,
           "pnl_rs": -4675.0,
           "ltp": 0.9,
-          "beyond_pct": -22.72,
+          "beyond_pct": -22.59,
           "intrinsic_rs": 0,
           "touched": false,
           "near": false,
           "touched_h": false,
-          "dist_pct": -18.51,
+          "dist_pct": -18.43,
           "lot": 850,
           "lots": 1.0
         },
@@ -295,16 +254,16 @@
           "qty": 850,
           "buy_avg": 0.0,
           "sell_avg": 3.25,
-          "pnl_rs": -892.5,
-          "ltp": 4.3,
+          "pnl_rs": -850.0,
+          "ltp": 4.25,
           "stop_at": 9.75,
           "stop_hit": false,
-          "beyond_pct": -8.3,
+          "beyond_pct": -8.4,
           "intrinsic_rs": 0,
           "touched": false,
           "near": false,
           "touched_h": false,
-          "dist_pct": 9.05,
+          "dist_pct": 9.17,
           "lot": 850,
           "lots": 1.0
         },
@@ -317,16 +276,16 @@
           "qty": 850,
           "buy_avg": 0.0,
           "sell_avg": 10.45,
-          "pnl_rs": -9477.5,
-          "ltp": 21.6,
+          "pnl_rs": -9392.5,
+          "ltp": 21.5,
           "stop_at": 31.35,
           "stop_hit": false,
-          "beyond_pct": -7.28,
+          "beyond_pct": -7.38,
           "intrinsic_rs": 0,
           "touched": false,
           "near": false,
           "touched_h": false,
-          "dist_pct": 7.85,
+          "dist_pct": 7.97,
           "lot": 850,
           "lots": 1.0
         }
@@ -356,12 +315,12 @@
       "near_call": {
         "strike": 4200.0,
         "expiry": "2026-11-23",
-        "dist_pct": 7.34
+        "dist_pct": 7.56
       },
       "near_put": {
-        "strike": 3400.0,
-        "expiry": "2026-11-23",
-        "dist_pct": -13.1
+        "strike": 3200.0,
+        "expiry": "2026-12-29",
+        "dist_pct": -18.05
       },
       "shares": 37,
       "lot": 200,
@@ -388,36 +347,14 @@
           "qty": 200,
           "buy_avg": 21.95,
           "sell_avg": 0.0,
-          "pnl_rs": -3980.0,
-          "ltp": 2.05,
-          "beyond_pct": -30.42,
+          "pnl_rs": -3970.0,
+          "ltp": 2.1,
+          "beyond_pct": -30.16,
           "intrinsic_rs": 0,
           "touched": false,
           "near": false,
           "touched_h": false,
-          "dist_pct": -23.33,
-          "lot": 200,
-          "lots": 1.0
-        },
-        {
-          "symbol": "BSE",
-          "expiry": "2026-11-23",
-          "strike": 3400.0,
-          "type": "PE",
-          "side": "SHORT",
-          "qty": 200,
-          "buy_avg": 0.0,
-          "sell_avg": 17.9,
-          "pnl_rs": 2620.0,
-          "ltp": 4.8,
-          "stop_at": 53.7,
-          "stop_hit": false,
-          "beyond_pct": -15.08,
-          "intrinsic_rs": 0,
-          "touched": false,
-          "near": false,
-          "touched_h": false,
-          "dist_pct": -13.1,
+          "dist_pct": -23.17,
           "lot": 200,
           "lots": 1.0
         },
@@ -430,16 +367,16 @@
           "qty": 200,
           "buy_avg": 0.0,
           "sell_avg": 13.35,
-          "pnl_rs": 70.0,
-          "ltp": 13.0,
+          "pnl_rs": 380.0,
+          "ltp": 11.45,
           "stop_at": 40.05,
           "stop_hit": false,
-          "beyond_pct": -6.84,
+          "beyond_pct": -7.03,
           "intrinsic_rs": 0,
           "touched": false,
           "near": false,
           "touched_h": false,
-          "dist_pct": 7.34,
+          "dist_pct": 7.56,
           "lot": 200,
           "lots": 1.0
         },
@@ -452,16 +389,16 @@
           "qty": 200,
           "buy_avg": 0.0,
           "sell_avg": 23.55,
-          "pnl_rs": 1610.0,
-          "ltp": 15.5,
+          "pnl_rs": 1570.0,
+          "ltp": 15.7,
           "stop_at": 70.65,
           "stop_hit": false,
-          "beyond_pct": -22.27,
+          "beyond_pct": -22.03,
           "intrinsic_rs": 0,
           "touched": false,
           "near": false,
           "touched_h": false,
-          "dist_pct": -18.22,
+          "dist_pct": -18.05,
           "lot": 200,
           "lots": 1.0
         },
@@ -474,16 +411,16 @@
           "qty": 200,
           "buy_avg": 0.0,
           "sell_avg": 53.85,
-          "pnl_rs": -7560.0,
-          "ltp": 91.65,
+          "pnl_rs": -6730.0,
+          "ltp": 87.5,
           "stop_at": 161.55,
           "stop_hit": false,
-          "beyond_pct": -6.84,
+          "beyond_pct": -7.03,
           "intrinsic_rs": 0,
           "touched": false,
           "near": false,
           "touched_h": false,
-          "dist_pct": 7.34,
+          "dist_pct": 7.56,
           "lot": 200,
           "lots": 1.0
         }
@@ -509,7 +446,7 @@
       "near_put": {
         "strike": 11500.0,
         "expiry": "2026-12-29",
-        "dist_pct": -10.58
+        "dist_pct": -10.26
       },
       "shares": 9,
       "lot": 50,
@@ -529,14 +466,14 @@
           "qty": 50,
           "buy_avg": 120.5,
           "sell_avg": 0.0,
-          "pnl_rs": -2115.0,
-          "ltp": 78.2,
-          "beyond_pct": -16.91,
+          "pnl_rs": -1875.0,
+          "ltp": 83.0,
+          "beyond_pct": -16.5,
           "intrinsic_rs": 0,
           "touched": false,
           "near": false,
           "touched_h": false,
-          "dist_pct": -14.46,
+          "dist_pct": -14.16,
           "lot": 50,
           "lots": 1.0
         },
@@ -549,16 +486,16 @@
           "qty": 50,
           "buy_avg": 0.0,
           "sell_avg": 200.55,
-          "pnl_rs": 2977.5,
-          "ltp": 141.0,
+          "pnl_rs": 2702.5,
+          "ltp": 146.5,
           "stop_at": 601.65,
           "stop_hit": false,
-          "beyond_pct": -11.83,
+          "beyond_pct": -11.43,
           "intrinsic_rs": 0,
           "touched": false,
           "near": false,
           "touched_h": false,
-          "dist_pct": -10.58,
+          "dist_pct": -10.26,
           "lot": 50,
           "lots": 1.0
         }
@@ -585,22 +522,18 @@
       "flip_trading_days": 21,
       "rsi": 52.4,
       "basis": "Supertrend green",
-      "near_call": {
-        "strike": 1560.0,
-        "expiry": "2026-11-23",
-        "dist_pct": 13.77
-      },
+      "near_call": null,
       "near_put": {
         "strike": 1320.0,
         "expiry": "2026-11-23",
-        "dist_pct": -3.73
+        "dist_pct": -3.61
       },
       "shares": 23,
       "lot": 400,
       "covered": false,
       "desired": "PUT_SPREAD",
-      "status": "FLIP",
-      "note": "Supertrend is GREEN: the open short call (1560CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread.",
+      "status": "ENTER",
+      "note": "Supertrend green - no put spread open",
       "tagged": false,
       "suggestions": [
         {
@@ -641,38 +574,16 @@
           "qty": 400,
           "buy_avg": 0.0,
           "sell_avg": 13.05,
-          "pnl_rs": 1580.0,
-          "ltp": 9.1,
+          "pnl_rs": 1500.0,
+          "ltp": 9.3,
           "stop_at": 39.15,
           "stop_hit": false,
-          "beyond_pct": -3.88,
+          "beyond_pct": -3.75,
           "intrinsic_rs": 0,
           "touched": false,
           "near": false,
           "touched_h": false,
-          "dist_pct": -3.73,
-          "lot": 400,
-          "lots": 1.0
-        },
-        {
-          "symbol": "HCLTECH",
-          "expiry": "2026-11-23",
-          "strike": 1560.0,
-          "type": "CE",
-          "side": "SHORT",
-          "qty": 400,
-          "buy_avg": 0.0,
-          "sell_avg": 5.5,
-          "pnl_rs": 1720.0,
-          "ltp": 1.2,
-          "stop_at": 16.5,
-          "stop_hit": false,
-          "beyond_pct": -12.1,
-          "intrinsic_rs": 0,
-          "touched": false,
-          "near": false,
-          "touched_h": false,
-          "dist_pct": 13.77,
+          "dist_pct": -3.61,
           "lot": 400,
           "lots": 1.0
         }
@@ -702,12 +613,12 @@
       "near_call": {
         "strike": 1334.0,
         "expiry": "2026-12-29",
-        "dist_pct": 17.07
+        "dist_pct": 17.2
       },
       "near_put": {
         "strike": 1034.0,
         "expiry": "2026-12-29",
-        "dist_pct": -9.26
+        "dist_pct": -9.15
       },
       "shares": 23,
       "lot": 400,
@@ -755,16 +666,16 @@
           "qty": 400,
           "buy_avg": 0.0,
           "sell_avg": 11.5,
-          "pnl_rs": -340.0,
-          "ltp": 12.35,
+          "pnl_rs": -380.0,
+          "ltp": 12.45,
           "stop_at": 34.5,
           "stop_hit": false,
-          "beyond_pct": -10.2,
+          "beyond_pct": -10.08,
           "intrinsic_rs": 0,
           "touched": false,
           "near": false,
           "touched_h": false,
-          "dist_pct": -9.26,
+          "dist_pct": -9.15,
           "lot": 400,
           "lots": 1.0
         },
@@ -777,16 +688,16 @@
           "qty": 400,
           "buy_avg": 0.0,
           "sell_avg": 9.9,
-          "pnl_rs": 1340.0,
-          "ltp": 6.55,
+          "pnl_rs": 1420.0,
+          "ltp": 6.35,
           "stop_at": 29.7,
           "stop_hit": false,
-          "beyond_pct": -14.58,
+          "beyond_pct": -14.68,
           "intrinsic_rs": 0,
           "touched": false,
           "near": false,
           "touched_h": false,
-          "dist_pct": 17.07,
+          "dist_pct": 17.2,
           "lot": 400,
           "lots": 1.0
         }
@@ -814,19 +725,22 @@
       "rsi": 70.8,
       "basis": "Supertrend green",
       "near_call": null,
-      "near_put": {
-        "strike": 125.0,
-        "expiry": "2026-11-23",
-        "dist_pct": -18.17
-      },
+      "near_put": null,
       "shares": 179,
       "lot": 5200,
       "covered": false,
       "desired": "PUT_SPREAD",
-      "status": "HOLD",
-      "note": "Open structure matches the rule (Supertrend green).",
+      "status": "ENTER",
+      "note": "Supertrend green - no put spread open",
       "tagged": false,
-      "suggestions": [],
+      "suggestions": [
+        {
+          "expiry": "2026-11-23",
+          "structure": "PUT_SPREAD",
+          "missing_chain": true,
+          "event_block": null
+        }
+      ],
       "legs": [
         {
           "symbol": "BANKINDIA",
@@ -839,34 +753,12 @@
           "sell_avg": 0.0,
           "pnl_rs": -1144.0,
           "ltp": 0.13,
-          "beyond_pct": -27.3,
+          "beyond_pct": -26.57,
           "intrinsic_rs": 0,
           "touched": false,
           "near": false,
           "touched_h": false,
-          "dist_pct": -21.45,
-          "lot": 5200,
-          "lots": 1.0
-        },
-        {
-          "symbol": "BANKINDIA",
-          "expiry": "2026-11-23",
-          "strike": 125.0,
-          "type": "PE",
-          "side": "SHORT",
-          "qty": 5200,
-          "buy_avg": 0.0,
-          "sell_avg": 0.56,
-          "pnl_rs": 1976.0,
-          "ltp": 0.18,
-          "stop_at": 1.68,
-          "stop_hit": false,
-          "beyond_pct": -22.21,
-          "intrinsic_rs": 0,
-          "touched": false,
-          "near": false,
-          "touched_h": false,
-          "dist_pct": -18.17,
+          "dist_pct": -20.99,
           "lot": 5200,
           "lots": 1.0
         }
@@ -891,7 +783,7 @@
       "near_call": {
         "strike": 340.0,
         "expiry": "2026-11-23",
-        "dist_pct": 11.15
+        "dist_pct": 11.27
       },
       "near_put": null,
       "shares": 79,
@@ -940,16 +832,16 @@
           "qty": 1975,
           "buy_avg": 0.0,
           "sell_avg": 1.2,
-          "pnl_rs": 1382.5,
-          "ltp": 0.5,
+          "pnl_rs": 1481.25,
+          "ltp": 0.45,
           "stop_at": 3.6,
           "stop_hit": false,
-          "beyond_pct": -10.03,
+          "beyond_pct": -10.13,
           "intrinsic_rs": 0,
           "touched": false,
           "near": false,
           "touched_h": false,
-          "dist_pct": 11.15,
+          "dist_pct": 11.27,
           "lot": 1975,
           "lots": 1.0
         }
@@ -1046,17 +938,6 @@
       "text": "BSE: Supertrend is GREEN: the open short call (4200CE 2026-11-23, 4200CE 2026-12-29) is the opposite of the colour rule - close it and open the bull put spread."
     },
     {
-      "expiry": "2026-11-23",
-      "strike": 1560.0,
-      "opt_type": "CE",
-      "level": "EXIT",
-      "type": "Exit",
-      "symbol": "HCLTECH",
-      "concern": "Supertrend GREEN but the short call is still open",
-      "action": "Close it and open the bull put spread",
-      "text": "HCLTECH: Supertrend is GREEN: the open short call (1560CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
-    },
-    {
       "expiry": "2026-12-29",
       "strike": 1334.0,
       "opt_type": "CE",
@@ -1081,6 +962,28 @@
     {
       "level": "BREACH",
       "type": "Invalid stop order",
+      "symbol": "BANKINDIA",
+      "expiry": null,
+      "strike": null,
+      "opt_type": null,
+      "concern": "Orphan: Likely orphaned: sold 5200 @ 0.56 but no open short matches; stop_loss 1.7 + target 0 still pending: a stop firing would BUY a new long",
+      "action": "Check the position; if closed, cancel the legs (order 3132611061597573)",
+      "text": "BANKINDIA: Likely orphaned: sold 5200 @ 0.56 but no open short matches; stop_loss 1.7 + target 0 still pending: a stop firing would BUY a new long"
+    },
+    {
+      "level": "BREACH",
+      "type": "Invalid stop order",
+      "symbol": "BSE",
+      "expiry": null,
+      "strike": null,
+      "opt_type": null,
+      "concern": "Orphan: Likely orphaned: sold 200 @ 17.9 but no open short matches; stop_loss 54 + target 0 still pending: a stop firing would BUY a new long",
+      "action": "Check the position; if closed, cancel the legs (order 2132611061586773)",
+      "text": "BSE: Likely orphaned: sold 200 @ 17.9 but no open short matches; stop_loss 54 + target 0 still pending: a stop firing would BUY a new long"
+    },
+    {
+      "level": "BREACH",
+      "type": "Invalid stop order",
       "symbol": "CUMMINSIND",
       "expiry": null,
       "strike": null,
@@ -1088,6 +991,17 @@
       "concern": "Orphan: Likely orphaned: sold 100 @ 15.75 but no open short matches; target 0 still pending: a stop firing would BUY a new long",
       "action": "Check the position; if closed, cancel the legs (order 2132611092875273)",
       "text": "CUMMINSIND: Likely orphaned: sold 100 @ 15.75 but no open short matches; target 0 still pending: a stop firing would BUY a new long"
+    },
+    {
+      "level": "BREACH",
+      "type": "Invalid stop order",
+      "symbol": "HCLTECH",
+      "expiry": null,
+      "strike": null,
+      "opt_type": null,
+      "concern": "Orphan: Likely orphaned: sold 400 @ 5.5 but no open short matches; stop_loss 12 + target 0 still pending: a stop firing would BUY a new long",
+      "action": "Check the position; if closed, cancel the legs (order 2132611092653173)",
+      "text": "HCLTECH: Likely orphaned: sold 400 @ 5.5 but no open short matches; stop_loss 12 + target 0 still pending: a stop firing would BUY a new long"
     },
     {
       "level": "BREACH",
@@ -1101,15 +1015,26 @@
       "text": "MCX: Likely orphaned: sold 225 @ 16.15 but no open short matches; target 0 still pending: a stop firing would BUY a new long"
     },
     {
-      "level": "WARN",
-      "type": "Partly hedged",
+      "level": "BREACH",
+      "type": "Invalid stop order",
+      "symbol": "MCX",
+      "expiry": null,
+      "strike": null,
+      "opt_type": null,
+      "concern": "Orphan: Likely orphaned: sold 225 @ 15.15 but no open short matches; stop_loss 45 + target 0 still pending: a stop firing would BUY a new long",
+      "action": "Check the position; if closed, cancel the legs (order 3132611061610573)",
+      "text": "MCX: Likely orphaned: sold 225 @ 15.15 but no open short matches; stop_loss 45 + target 0 still pending: a stop firing would BUY a new long"
+    },
+    {
+      "level": "BREACH",
+      "type": "Invalid stop order",
       "symbol": "SHRIRAMFIN",
-      "expiry": "2026-11-23",
-      "strike": 880.0,
-      "opt_type": "PE",
-      "concern": "825 of 1650 qty uncovered (hedge 825)",
-      "action": "Buy a hedge",
-      "text": "SHRIRAMFIN 2026-11-23: short 880/820PE 1650 qty, hedge 825 qty - 825 qty uncovered"
+      "expiry": null,
+      "strike": null,
+      "opt_type": null,
+      "concern": "Orphan: Likely orphaned: sold 825 @ 7.85 but no open short matches; stop_loss 24 + target 0 still pending: a stop firing would BUY a new long",
+      "action": "Check the position; if closed, cancel the legs (order 2132611061640373)",
+      "text": "SHRIRAMFIN: Likely orphaned: sold 825 @ 7.85 but no open short matches; stop_loss 24 + target 0 still pending: a stop firing would BUY a new long"
     },
     {
       "level": "WARN",
@@ -1190,17 +1115,6 @@
     },
     {
       "level": "WARN",
-      "type": "Partly hedged",
-      "symbol": "HCLTECH",
-      "expiry": "2026-11-23",
-      "strike": 1560.0,
-      "opt_type": "CE",
-      "concern": "377 of 400 qty uncovered (hedge 0 + 23 shares)",
-      "action": "Buy a hedge or hold shares",
-      "text": "HCLTECH 2026-11-23: short 1560CE 400 qty, hedge 0 qty + 23 shares - 377 qty uncovered"
-    },
-    {
-      "level": "WARN",
       "type": "No hedge",
       "symbol": "INFY",
       "expiry": "2026-12-29",
@@ -1235,6 +1149,33 @@
     {
       "level": "ENTER",
       "type": "New trade",
+      "symbol": "MCX",
+      "flip_days": 7,
+      "concern": "Supertrend green, flipped 7d ago, no put spread open",
+      "action": "Open bull put spread",
+      "text": "MCX: Supertrend green - no put spread open - bull put spread"
+    },
+    {
+      "level": "ENTER",
+      "type": "New trade",
+      "symbol": "HCLTECH",
+      "flip_days": 21,
+      "concern": "Supertrend green, flipped 21d ago, no put spread open",
+      "action": "Open bull put spread",
+      "text": "HCLTECH: Supertrend green - no put spread open - bull put spread"
+    },
+    {
+      "level": "ENTER",
+      "type": "New trade",
+      "symbol": "BANKINDIA",
+      "flip_days": 5,
+      "concern": "Supertrend green, flipped 5d ago, no put spread open",
+      "action": "Open bull put spread",
+      "text": "BANKINDIA: Supertrend green - no put spread open - bull put spread"
+    },
+    {
+      "level": "ENTER",
+      "type": "New trade",
       "symbol": "CUMMINSIND",
       "flip_days": 5,
       "concern": "Supertrend red, flipped 5d ago, no short call open",
@@ -1244,57 +1185,13 @@
     {
       "level": "PROFIT",
       "type": "Profit Exit",
-      "symbol": "MCX",
+      "symbol": "BPCL",
       "expiry": "2026-11-23",
-      "strike": 3100.0,
-      "opt_type": "PE",
-      "concern": "Premium decayed 74% (sold 15.15, now 3.95)",
-      "action": "Book profit: buy back",
-      "text": "MCX 2026-11-23 3100PE: premium decayed 74% (sold 15.15, now 3.95) - book the profit"
-    },
-    {
-      "level": "PROFIT",
-      "type": "Profit Exit",
-      "symbol": "SHRIRAMFIN",
-      "expiry": "2026-11-23",
-      "strike": 880.0,
-      "opt_type": "PE",
-      "concern": "Premium decayed 62% (sold 7.85, now 2.95)",
-      "action": "Book profit: buy back",
-      "text": "SHRIRAMFIN 2026-11-23 880PE: premium decayed 62% (sold 7.85, now 2.95) - book the profit"
-    },
-    {
-      "level": "PROFIT",
-      "type": "Profit Exit",
-      "symbol": "BSE",
-      "expiry": "2026-11-23",
-      "strike": 3400.0,
-      "opt_type": "PE",
-      "concern": "Premium decayed 73% (sold 17.9, now 4.8)",
-      "action": "Book profit: buy back",
-      "text": "BSE 2026-11-23 3400PE: premium decayed 73% (sold 17.9, now 4.8) - book the profit"
-    },
-    {
-      "level": "PROFIT",
-      "type": "Profit Exit",
-      "symbol": "HCLTECH",
-      "expiry": "2026-11-23",
-      "strike": 1560.0,
+      "strike": 340.0,
       "opt_type": "CE",
-      "concern": "Premium decayed 78% (sold 5.5, now 1.2)",
+      "concern": "Premium decayed 62% (sold 1.2, now 0.45)",
       "action": "Book profit: buy back",
-      "text": "HCLTECH 2026-11-23 1560CE: premium decayed 78% (sold 5.5, now 1.2) - book the profit"
-    },
-    {
-      "level": "PROFIT",
-      "type": "Profit Exit",
-      "symbol": "BANKINDIA",
-      "expiry": "2026-11-23",
-      "strike": 125.0,
-      "opt_type": "PE",
-      "concern": "Premium decayed 68% (sold 0.56, now 0.18)",
-      "action": "Book profit: buy back",
-      "text": "BANKINDIA 2026-11-23 125PE: premium decayed 68% (sold 0.56, now 0.18) - book the profit"
+      "text": "BPCL 2026-11-23 340CE: premium decayed 62% (sold 1.2, now 0.45) - book the profit"
     }
   ],
   "events_file_at": "2026-11-13T06:37:51.128756+00:00",
@@ -1509,7 +1406,7 @@
   },
   "lots_source": "nse_lots.json",
   "positions_fetched": true,
-  "legs_count": 23,
+  "legs_count": 18,
   "chains_loaded": {
     "BPCL": [
       "2026-11-23",
@@ -1530,6 +1427,11 @@
   "other_positions": [],
   "chains_needed": [
     {
+      "symbol": "MCX",
+      "security_id": 31181,
+      "expiry": "2026-11-23"
+    },
+    {
       "symbol": "SHRIRAMFIN",
       "security_id": 4306,
       "expiry": "2026-11-23"
@@ -1537,6 +1439,11 @@
     {
       "symbol": "BSE",
       "security_id": 19585,
+      "expiry": "2026-11-23"
+    },
+    {
+      "symbol": "BANKINDIA",
+      "security_id": 4745,
       "expiry": "2026-11-23"
     }
   ]
