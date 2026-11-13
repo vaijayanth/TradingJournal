@@ -1,18 +1,21 @@
 {
- "generated_at": "2026-11-13T12:15:59+05:30",
+ "generated_at": "2026-11-13T12:17:54+05:30",
  "broker": "dhan",
  "market_data_date": "2026-11-12",
- "signals_generated_at": "2026-11-13T06:45:54.942582+00:00",
+ "signals_generated_at": "2026-11-13T06:47:51.546601+00:00",
  "status": "BLOCK_SYMBOLS",
  "global_block": false,
  "counts": {
-  "block": 1,
+  "block": 2,
   "warn": 6,
   "info": 0
  },
  "per_symbol_blocks": {
   "PASHUPATI": [
    "I3: PASHUPATI: fill ledger says 0 but Dhan holdings say 9 - a missed fill or an exit outside tracking"
+  ],
+  "STOVEKRAFT": [
+   "I3: STOVEKRAFT: fill ledger says 0 but Dhan holdings say 2 - a missed fill or an exit outside tracking"
   ]
  },
  "findings": [
@@ -20,13 +23,19 @@
    "id": "F5",
    "level": "WARN",
    "symbol": null,
-   "msg": "the cross-check flagged 6 of 39 signals (they are blocked from orders): AIMTRON, BEML, LICHSGFIN, NIFTYIETF, PGINVIT, SHREMINVIT"
+   "msg": "the cross-check flagged 6 of 38 signals (they are blocked from orders): AIMTRON, BEML, LICHSGFIN, NIFTYIETF, PGINVIT, SHREMINVIT"
   },
   {
    "id": "I3",
    "level": "BLOCK",
    "symbol": "PASHUPATI",
    "msg": "PASHUPATI: fill ledger says 0 but Dhan holdings say 9 - a missed fill or an exit outside tracking"
+  },
+  {
+   "id": "I3",
+   "level": "BLOCK",
+   "symbol": "STOVEKRAFT",
+   "msg": "STOVEKRAFT: fill ledger says 0 but Dhan holdings say 2 - a missed fill or an exit outside tracking"
   },
   {
    "id": "S4",
