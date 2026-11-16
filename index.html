@@ -3625,6 +3625,7 @@ b.stk, #cc-root td b.stk, #page-dashboard-di b.stk { font-weight:700; }
       <div class="dhm-controls">
         <input type="search" id="dh-search-entry" placeholder="Search stock…" oninput="dhLiveApply('entry')">
         <select id="dh-filter-entry" onchange="dhLiveApply('entry')"><option value="all">All breakouts</option><option value="hot">🔥 Hot sectors only</option><option value="today">Hit today only</option></select>
+        <label id="dh-blk-wrap" style="display:none;align-items:center;gap:5px;font-size:12px;color:var(--text-muted);cursor:pointer;white-space:nowrap" title="Signals held back by the price cross-check. Hidden by default: they cannot be ordered."><input type="checkbox" id="dh-show-blk" onchange="dhLiveApply('entry')"><span id="dh-blk-label">Show blocked</span></label>
         <button onclick="dhLiveExportCsv('entry')">Export ↓</button>
       </div>
     </div>
@@ -9146,7 +9147,9 @@ const DH_DEFS = {
   },
   entry: {
     rows: d => d.signals.entry.slice().sort((a, b) => a.hitDays - b.hitDays || b.pctFromHigh - a.pctFromHigh),
-    filter: (r, f) => f === 'today' ? (dhCopy().flipTodayMode ? /\(0\)/.test(r.flip || '') : r.hitDays === 0) : f === 'hot' ? (r.hot52wh || r.hotTurn) : true,
+    // signals blocked by the price cross-check are hidden unless "Show blocked" is ticked
+    filter: (r, f) => (f === 'today' ? (dhCopy().flipTodayMode ? /\(0\)/.test(r.flip || '') : r.hitDays === 0) : f === 'hot' ? (r.hot52wh || r.hotTurn) : true)
+      && (!(r.ord && r.ord.st === 'blk') || !!(document.getElementById('dh-show-blk') || {}).checked),
     cls: r => (r.hot52wh || r.hotTurn) ? 'row-amber' : '', empty: 'No fresh 52-week-high breakouts right now.', cols: 10,
     cells: [
       ['Signal date', r => r.date, r => `<td>${dhFmtDate(r.date)}</td>`],
@@ -9225,6 +9228,12 @@ function dhLiveApply(tab) {
     : `<tr><td colspan="${def.cols}" style="color:var(--text-muted)">${all.length ? 'No rows match the search / filter.' : def.empty}</td></tr>`;
   const foot = document.getElementById('dh-foot-' + tab);
   if (foot) foot.textContent = rows.length === all.length ? `${all.length} row${all.length === 1 ? '' : 's'}` : `${rows.length} of ${all.length} rows shown`;
+  if (tab === 'entry') { // blocked-signal toggle: label with the count, hidden when there are none
+    const nb = all.filter(r => r.ord && r.ord.st === 'blk').length, wrap = document.getElementById('dh-blk-wrap'), lab = document.getElementById('dh-blk-label');
+    if (wrap) wrap.style.display = nb ? 'inline-flex' : 'none';
+    if (lab) lab.textContent = `Show blocked (${nb})`;
+    if (foot && nb && !(document.getElementById('dh-show-blk') || {}).checked) foot.textContent = rows.length === all.length - nb ? `${rows.length} row${rows.length === 1 ? '' : 's'} · ${nb} blocked hidden` : foot.textContent + ` · ${nb} blocked hidden`;
+  }
 }
 
 function dhLiveTab(name) {
