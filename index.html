@@ -9514,13 +9514,13 @@ function dhStaleAlerts(d, ex) {
 }
 // Guardrails (scripts/guardrails.py): BLOCK = no order may be placed (whole workspace, or the named stocks); WARN = look before ordering
 const GUARD_TYPES = { F1: 'Old market data', F2: 'Old holdings', F3: 'Signals older than holdings', F4: 'Old order list', F5: 'Price data mismatch', I1: 'Bad numbers in data', I2: 'Position data mismatch', I3: 'Fills vs holdings', I4: 'Stock in two lists', I5: 'Excluded stock signalled', I6: 'Fill data wrong', I7: 'Recent buy not in holdings',
-  S1: 'Exit not red', S2: 'Add-on rule broken', S3: 'Entry rule broken', S4: 'Oversized minimum buy', S5: 'Too many entries / mass exit', C1: 'Capital over-deployed', C2: 'Concentration', C3: 'Pending buys too big', O1: 'Sell more than held', O2: 'Duplicate orders', O3: 'Order without signal',
+  S1: 'Exit not red', S2: 'Add-on rule broken', S3: 'Entry rule broken', S5: 'Too many entries / mass exit', C1: 'Capital over-deployed', C2: 'Concentration', C3: 'Pending buys too big', O1: 'Sell more than held', O2: 'Duplicate orders', O3: 'Order without signal',
   P1: 'Expiry week', P2: 'No lot size', P3: 'Open option alerts', P5: 'Invalid GTT / stop orders', X1: 'Broker code mix', H1: 'Trading halted' };
 // Click a guardrail row to open the page and section it is about (user, 2026-11-16). page = nav tab; tab = Live Trading tab; alertTypes = Covered Call alert sub-tabs to prefer.
 const GUARD_GO = {
   P3: { page: 'covcall', label: 'Covered Call alerts', alertTypes: ['3× premium', 'Through hedge', 'Beyond strike', 'Expiry risk', 'Exit', 'Event close', 'Near strike'] },
   P5: { page: 'covcall', label: 'Covered Call stop / GTT alerts', alertTypes: ['Invalid stop order', 'Invalid GTT', 'No stop placed', 'No GTT placed'] },
-  F5: { page: 'dhanlive', tab: 'entry', label: 'Live Trading entry signals' }, S3: { page: 'dhanlive', tab: 'entry', label: 'Live Trading entry signals' }, S4: { page: 'dhanlive', tab: 'entry', label: 'Live Trading entry signals' },
+  F5: { page: 'dhanlive', tab: 'entry', label: 'Live Trading entry signals' }, S3: { page: 'dhanlive', tab: 'entry', label: 'Live Trading entry signals' },
   S1: { page: 'dhanlive', tab: 'exit', label: 'Live Trading exits' }, S2: { page: 'dhanlive', tab: 'addon', label: 'Live Trading add-ons' },
   I2: { page: 'dhanlive', tab: 'pos', label: 'Live Trading open positions' }, I3: { page: 'dhanlive', tab: 'pos', label: 'Live Trading open positions' },
   C1: { page: 'dhanlive', tab: 'pos', label: 'Live Trading open positions' }, C2: { page: 'dhanlive', tab: 'pos', label: 'Live Trading open positions' },
@@ -9562,7 +9562,6 @@ function dhGuardHtml(g, d, alerts) {
   const rc = dhCopy().refreshCmd || '/refresh-dhan', fixOpt = WS.id === 'zerodha' ? '/zerodha-gtt-order' : '/dhan-superorder';
   const SHORT = { F5: ['Price mismatch', 'Not ordered. Clears when the next refresh agrees, or ask Claude to override a stock by name'],
     I3: ['Log vs holdings differ', 'Settlement lag: clears after ' + rc + ' next session (holdings are used meanwhile)'],
-    S4: ['1-share buy above tier', 'Expected for expensive stocks: check the cost, no fix needed'],
     P3: ['Option near/past strike', 'Decide in the broker app: close, roll or hold (click to open the alerts)'],
     P5: ['Stop order problem', 'Open the alerts, confirm in the broker app, then fix with ' + fixOpt],
     F1: ['Market data old', 'Run ' + rc + ' after the close'], F2: ['Holdings old', 'Run ' + rc], F3: ['Signals older than holdings', 'Run ' + rc], F4: ['Order list old', 'Run ' + rc],

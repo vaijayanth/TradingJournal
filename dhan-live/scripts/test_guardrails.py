@@ -121,7 +121,7 @@ check("S3 entry on red = BLOCK", has(run(c), "S3", "BLOCK", "NEW"))
 c = base(); c["signals"]["entries"] = [{"symbol": "NEW", "close": 100, "supertrend_color": "green", "pct_from_high": -5, "qty_to_buy": 1}]
 check("S3 entry 5% below the high = BLOCK", has(run(c), "S3", "BLOCK", "NEW"))
 c = base(); c["signals"]["entries"] = [{"symbol": "BIG", "close": 9000, "supertrend_color": "green", "pct_from_high": 0, "qty_to_buy": 1}]
-check("S4 1-share overspend = WARN", has(run(c), "S4", "WARN"))
+check("S4 removed: a 1-share entry above the tier is NOT flagged", not has(run(c), "S4", "WARN"))
 c = base(); c["signals"]["entries"] = [{"symbol": f"E{i}", "close": 10, "supertrend_color": "green", "pct_from_high": 0, "qty_to_buy": 1} for i in range(70)]
 check("S5 70 entries = WARN", has(run(c), "S5", "WARN"))
 c = base(); c["signals"]["exits"] = [pos(f"X{i}", color="red") for i in range(3)]

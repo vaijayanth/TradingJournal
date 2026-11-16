@@ -13,7 +13,7 @@ Groups (ids)
                    I4 a stock in two signal lists, I5 hedge / out-of-scope stock in a signal list, I6 fills sanity,
                    I7 bought in the last days but not yet in holdings -> never re-enter / add
   S  signal logic  S1 exits are red, S2 add-ons are green + in loss + cooled down, S3 entries are green + at the high / fresh
-                   flip + not held, S4 min-1-share overspend, S5 signal-count spikes (mass-exit = suspect data)
+                   flip + not held, S5 signal-count spikes (mass-exit = suspect data)
   C  capital       C1 deployed vs base, C2 single-stock / sector concentration, C3 planned + pending buys vs base
   O  orders        O1 pending SELL > held (oversell), O2 duplicate pending orders, O3 pending order with no signal
   P  options       P1 expiry week, P2 no lot size, P3 exit alerts open (P4 removed 2026-11-13: the call side is intentionally unhedged)
@@ -38,7 +38,7 @@ BROKER = {"id": "dhan", "label": "ND", "other_dir": "zerodha-live", "base": 2_00
 DEFAULTS = {
     "max_market_lag_warn_days": 1, "max_market_lag_block_days": 3, "max_holdings_age_warn_days": 1, "max_holdings_age_block_days": 3,
     "settlement_window_days": 3, "crosscheck_block_ratio": 0.25, "crosscheck_min_signals": 4, "pl_tolerance_pct": 0.05, "fill_price_dev_warn_pct": 25,
-    "max_entries_warn": 60, "mass_exit_min": 5, "mass_exit_pct_of_positions": 20, "overspend_x_tier": 3,
+    "max_entries_warn": 60, "mass_exit_min": 5, "mass_exit_pct_of_positions": 20,
     "single_stock_warn_pct": 20, "sector_warn_pct": 40, "deployed_warn_pct_of_base": 100, "pending_buy_warn_pct_of_base": 25,
     "expiry_week_days": 5, "add_trigger_pct": -6.0, "add_cooldown_days": 7, "entry_max_pct_below_high": 0.5,
 }
@@ -237,7 +237,6 @@ def evaluate(ctx, now):
             out.append(f("BLOCK", "S2", f"{s}: add-on inside the {cfg['add_cooldown_days']}-day cooldown ({cd}d)", s))
         if (r.get("add_qty") or 0) < 1:
             out.append(f("BLOCK", "S2", f"{s}: add-on quantity < 1", s))
-    big = []
     for r in lists["entry"]:
         s = r["symbol"]
         if r.get("supertrend_color") != "green":
@@ -253,12 +252,7 @@ def evaluate(ctx, now):
                 out.append(f("BLOCK", "S3", f"{s}: entry but the Supertrend flip is {d} trading days old (window {w})", s))
         if (r.get("qty_to_buy") or 0) < 1:
             out.append(f("BLOCK", "S3", f"{s}: entry quantity < 1", s))
-        elif tier and r["qty_to_buy"] * r["close"] > cfg["overspend_x_tier"] * tier:
-            big.append((s, r["qty_to_buy"] * r["close"]))
-    if big:
-        big.sort(key=lambda x: -x[1])
-        out.append(f("WARN", "S4", f"{len(big)} entries cost more than {cfg['overspend_x_tier']}x the tier (Rs{tier:,.0f}) because the minimum is 1 share; largest "
-                                   f"{big[0][0]} Rs{big[0][1]:,.0f}. Check before ordering."))
+    # S4 (a 1-share entry costing more than 3x the tier) was removed 2026-11-16: the user is fine with a position above the tier size
     if len(lists["entry"]) > cfg["max_entries_warn"]:
         out.append(f("WARN", "S5", f"{len(lists['entry'])} entry signals at once (limit {cfg['max_entries_warn']}) - a market-wide surge or a data problem"))
     npos = max(1, len(positions))

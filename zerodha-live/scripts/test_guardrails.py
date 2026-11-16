@@ -107,7 +107,7 @@ check("S3 entry far below the 52-week high is fine for AZ (no high rule)", not h
 c = base(); c["signals"]["entries"] = [{"symbol": "NEW", "close": 100, "supertrend_color": "green", "pct_from_high": 0, "qty_to_buy": 5, "recent_bullish_flip_days_ago": 9}]
 check("S3 entry whose flip is 9 trading days old = BLOCK (window 0)", has(run(c), "S3", "BLOCK", "NEW"))
 c = base(); c["signals"]["entries"] = [{"symbol": "BIG", "close": 90000, "supertrend_color": "green", "pct_from_high": 0, "qty_to_buy": 1, "recent_bullish_flip_days_ago": 2}]
-check("S4 1-share overspend = WARN", has(run(c), "S4", "WARN"))
+check("S4 removed: a 1-share entry above the tier is NOT flagged", not has(run(c), "S4", "WARN"))
 c = base(); c["signals"]["entries"] = [{"symbol": f"E{i}", "close": 10, "supertrend_color": "green", "pct_from_high": 0, "qty_to_buy": 1, "recent_bullish_flip_days_ago": 2} for i in range(70)]
 check("S5 70 entries = WARN", has(run(c), "S5", "WARN"))
 c = base(); c["signals"]["exits"] = [pos(f"X{i}", color="red") for i in range(3)]

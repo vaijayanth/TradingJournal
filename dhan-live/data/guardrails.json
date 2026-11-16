@@ -1,13 +1,13 @@
 {
- "generated_at": "2026-11-14T00:49:26+05:30",
+ "generated_at": "2026-11-16T07:13:05+05:30",
  "broker": "dhan",
  "market_data_date": "2026-11-13",
- "signals_generated_at": "2026-11-13T18:15:08.751584+00:00",
+ "signals_generated_at": "2026-11-16T01:41:46.803890+00:00",
  "status": "WARN",
  "global_block": false,
  "counts": {
   "block": 0,
-  "warn": 6,
+  "warn": 4,
   "info": 0
  },
  "per_symbol_blocks": {},
@@ -16,7 +16,7 @@
    "id": "F5",
    "level": "WARN",
    "symbol": null,
-   "msg": "the cross-check flagged 4 of 25 signals (they are blocked from orders): HONASA, LICHSGFIN, MSTCLTD, SHREMINVIT"
+   "msg": "the cross-check flagged 3 of 25 signals (they are blocked from orders): HONASA, LICHSGFIN, MSTCLTD"
   },
   {
    "id": "I3",
@@ -31,22 +31,10 @@
    "msg": "STOVEKRAFT: trade log says 0, Dhan holdings say 2. Holdings are used; it usually clears after the next refresh (a recent sale or buy not yet settled)."
   },
   {
-   "id": "S4",
-   "level": "WARN",
-   "symbol": null,
-   "msg": "3 entries cost more than 3x the tier (Rs1,000) because the minimum is 1 share; largest TASTYBITE Rs11,441. Check before ordering."
-  },
-  {
    "id": "P3",
    "level": "WARN",
    "symbol": null,
    "msg": "2 open option exit / strike-breach alerts on 2 stocks (BSE, SHRIRAMFIN) - see the Covered Call alerts"
-  },
-  {
-   "id": "P5",
-   "level": "WARN",
-   "symbol": null,
-   "msg": "2 super order stop findings (2 high: likely orphaned stop legs that could BUY a new long) - see Covered Call > Alerts; the dhan-superorder skill can cancel them"
   }
  ]
 }
