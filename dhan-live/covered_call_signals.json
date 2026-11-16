@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-11-13T19:19:26.163716+00:00",
+  "generated_at": "2026-11-16T01:41:50.098059+00:00",
   "market_data_date": "2026-11-13",
   "live_prices_at": null,
-  "super_scan_at": "2026-11-14T00:11:52+05:30",
+  "super_scan_at": null,
   "as_of": "2026-11-13",
   "rules": {
     "short_call_delta": 0.1,
@@ -1015,28 +1015,6 @@
       "text": "BSE: Supertrend is GREEN: the open short call (4200CE 2026-12-29) is the opposite of the colour rule - close it and open the bull put spread."
     },
     {
-      "level": "BREACH",
-      "type": "Invalid stop order",
-      "symbol": "CUMMINSIND",
-      "expiry": null,
-      "strike": null,
-      "opt_type": null,
-      "concern": "Orphan: Likely orphaned: sold 100 @ 15.75 but no open short matches; target 0 still pending: a stop firing would BUY a new long",
-      "action": "Check the position; if closed, cancel the legs (order 2132611092875273)",
-      "text": "CUMMINSIND: Likely orphaned: sold 100 @ 15.75 but no open short matches; target 0 still pending: a stop firing would BUY a new long"
-    },
-    {
-      "level": "BREACH",
-      "type": "Invalid stop order",
-      "symbol": "MCX",
-      "expiry": null,
-      "strike": null,
-      "opt_type": null,
-      "concern": "Orphan: Likely orphaned: sold 225 @ 16.15 but no open short matches; target 0 still pending: a stop firing would BUY a new long",
-      "action": "Check the position; if closed, cancel the legs (order 2132611061617273)",
-      "text": "MCX: Likely orphaned: sold 225 @ 16.15 but no open short matches; target 0 still pending: a stop firing would BUY a new long"
-    },
-    {
       "level": "WARN",
       "type": "Leftover hedge",
       "symbol": "SHRIRAMFIN",
@@ -1084,7 +1062,7 @@
       "text": "BSE 2026-11-23: Long 3000PE (200 qty) has no short against it - P&L Rs-4,020, 10d to expiry - sell it or let it expire"
     }
   ],
-  "events_file_at": "2026-11-13T06:37:51.128756+00:00",
+  "events_file_at": "2026-11-16T01:41:45.373609+00:00",
   "events_missing": [],
   "shares": {
     "rows": [

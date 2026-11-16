@@ -71,6 +71,19 @@ POSITION_INCREMENT_TRADES = 100
 SIZE_DOUBLE_POSITIONS_THRESHOLD = 100
 
 
+def load_excluded_universe():
+    """ND universe exclusions (data/excluded_universe.json): InvITs / REITs are not wanted (user, 2026-11-16)."""
+    p = Path(__file__).resolve().parent.parent / "data" / "excluded_universe.json"
+    d = json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}
+    return tuple(x.upper() for x in d.get("suffixes", [])), {x.upper() for x in d.get("symbols", [])}
+
+
+def is_excluded_universe(symbol, rules=None):
+    suffixes, names = rules if rules is not None else load_excluded_universe()
+    s = strip_suffix(symbol).upper()
+    return s in names or any(s.endswith(x) for x in suffixes)
+
+
 def strip_suffix(symbol):
     for suf in (".NS", ".BO"):
         if symbol.endswith(suf):
@@ -334,13 +347,16 @@ def build_signals(holdings, week52, stmap, rsimap, entry_signals, trade_log, tod
                   f"(fills vs holdings out of sync, or a missing close)")
     eff_tier = effective_tier_size(base_tier, total_positions_ever_opened, combined_pl_rs)
 
-    entries = []
+    entries, excluded_entries = [], []
     for e in entry_signals.get("entries", []):
         symbol = e["symbol"]
         if symbol in dh252_symbols:
             continue  # already a dh252 position - not "any Dhan holding"
         if symbol in DHAN_OPTION_HEDGE_PORTFOLIO:
             continue  # permanent exclusion - separate unrelated portfolio, never dh252
+        if is_excluded_universe(symbol):
+            excluded_entries.append(symbol)
+            continue  # no InvITs / REITs in the ND universe (data/excluded_universe.json)
         qty_to_buy = max(1, int(eff_tier // e["close"]))
         entries.append({**{k: v for k, v in e.items() if k != "qty_at_base_tier"}, "qty_to_buy": qty_to_buy})
 
@@ -374,6 +390,7 @@ def build_signals(holdings, week52, stmap, rsimap, entry_signals, trade_log, tod
         },
         "dh252_position_count": len(dh252_symbols),
         "option_hedge_portfolio": sorted(DHAN_OPTION_HEDGE_PORTFOLIO),
+        "excluded_universe_entries": sorted(excluded_entries),
         "dhan_holdings_count_total": len(holdings),
         "dhan_holdings_out_of_scope": len(holdings) - len(dh252_symbols & set(holdings_by_symbol)),
         "no_data": no_data,

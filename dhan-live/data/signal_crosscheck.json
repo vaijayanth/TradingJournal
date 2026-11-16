@@ -1,13 +1,12 @@
 {
- "generated_at": "2026-11-13T18:15:10.814917+00:00",
+ "generated_at": "2026-11-16T01:41:48.848579+00:00",
  "market_data_date": "2026-11-13",
  "yahoo_last_bars": [
-  "2026-11-12",
   "2026-11-13"
  ],
  "bars_after_signal_date_ignored": [],
  "checked": 25,
- "flagged": 4,
+ "flagged": 3,
  "results": [
   {
    "symbol": "ALICON",
@@ -358,24 +357,6 @@
    "pct_from_intraday_high": -1.59
   },
   {
-   "symbol": "SHREMINVIT",
-   "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "last bar is 2026-11-12 (Yahoo), signals are dated 2026-11-13",
-    "close 103.00 is below the 252-session closing high 105.00"
-   ],
-   "published_colour": "green",
-   "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-12",
-   "close": 103.0,
-   "published_close": 103.0,
-   "closing_high_252": 105.0,
-   "intraday_high_252": 107.95,
-   "flip_bars_ago": 2,
-   "pct_from_intraday_high": -4.59
-  },
-  {
    "symbol": "STEELCAS",
    "kind": "entry",
    "ok": true,
@@ -442,6 +423,22 @@
    "intraday_high_252": 348.25,
    "flip_bars_ago": 7,
    "pct_from_intraday_high": -2.34
+  },
+  {
+   "symbol": "CORONA",
+   "kind": "addon",
+   "ok": true,
+   "reasons": [],
+   "note": "recent listing: only 226 sessions of history (closing high taken over those)",
+   "published_colour": "green",
+   "recomputed_colour": "green",
+   "yahoo_last_bar": "2026-11-13",
+   "close": 2329.7,
+   "published_close": 2329.7,
+   "closing_high_252": 2539.4,
+   "intraday_high_252": 2719.3,
+   "flip_bars_ago": 11,
+   "pct_from_intraday_high": -14.33
   }
  ]
 }
