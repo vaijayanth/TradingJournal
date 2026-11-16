@@ -42,6 +42,16 @@ EQ_LONGTERM_EXCLUDE = {
     "JUNIORBEES", "MASPTOP50", "MON100", "BANKBEES", "NIFTYBEES",
 }
 
+# ETFs are never dh252 candidates (user, 2026-11-16): names ending ETF / IETF / BEES, plus the known ETF / liquid-fund tickers
+# that do not follow that pattern. (InvITs / REITs are trusts, not ETFs, and are NOT excluded here.)
+EXTRA_ETF_SYMBOLS = {"LIQUIDCASE", "GOLDBEES", "MIDCAPETF", "NIFTYIETF", "MON100", "MASPTOP50", "MAFANG", "MOM100", "SILVERBEES"}
+
+
+def is_etf(symbol):
+    s = symbol.upper()
+    return s in EXTRA_ETF_SYMBOLS or s.endswith(("ETF", "IETF", "BEES"))
+
+
 DH252_BASE_POSITION_RS = 1000
 
 
@@ -76,7 +86,7 @@ def build_entry_signals(market_screens_path, supertrend_path):
     for symbol, w in week52.items():
         if w.get("pct_from_high") is None or w["pct_from_high"] < 0:
             continue
-        if symbol in EQ_LONGTERM_EXCLUDE:
+        if symbol in EQ_LONGTERM_EXCLUDE or is_etf(symbol):
             continue
         st = stmap.get(symbol)
         if not st or not st.get("color") or st["color"].lower() != "green":
