@@ -11,12 +11,12 @@
   "LAURUSLABS26NOV2200PE",
   "BANKINDIA26NOV160CE"
  ],
- "fetched_at": "2026-11-16T13:44:13+05:30",
+ "fetched_at": "2026-11-16T13:57:34+05:30",
  "inputs": {
-  "positions": "2026-11-16T08:12:19.907837+00:00",
-  "gtts": "2026-11-16T13:42:20+05:30",
+  "positions": "2026-11-16T08:23:54.307471+00:00",
+  "gtts": "2026-11-16T13:57:33+05:30",
   "orders": "2026-11-16T13:42:20+05:30",
-  "gtt_scan": "2026-11-16T13:42:20+05:30"
+  "gtt_scan": "2026-11-16T13:57:33+05:30"
  },
  "stale_inputs": [],
  "open_legs": 128,
@@ -35,7 +35,7 @@
    "severity": "WARN",
    "symbol": "APOLLOHOSP",
    "tradingsymbol": "APOLLOHOSP26NOV7000PE",
-   "concern": "Long 7000PE (125 qty) no short against it; P&L Rs-4,031, expiry 2026-11-23",
+   "concern": "Long 7000PE (125 qty) no short against it; P&L Rs-4,062, expiry 2026-11-23",
    "action": "Sell it or let it expire"
   },
   {
@@ -59,7 +59,7 @@
    "severity": "WARN",
    "symbol": "CANBK",
    "tradingsymbol": "CANBK26NOV125CE",
-   "concern": "Long 125CE (6750 qty) no short against it; P&L Rs27,945, expiry 2026-11-23",
+   "concern": "Long 125CE (6750 qty) no short against it; P&L Rs26,055, expiry 2026-11-23",
    "action": "In profit: book it or let it run"
   },
   {
@@ -107,7 +107,7 @@
    "severity": "WARN",
    "symbol": "RECLTD",
    "tradingsymbol": "RECLTD26NOV300CE",
-   "concern": "Long 300CE (1575 qty) no short against it; P&L Rs-7,481, expiry 2026-11-23",
+   "concern": "Long 300CE (1575 qty) no short against it; P&L Rs-8,111, expiry 2026-11-23",
    "action": "Sell it or let it expire"
   },
   {
@@ -115,7 +115,7 @@
    "severity": "WARN",
    "symbol": "SHRIRAMFIN",
    "tradingsymbol": "SHRIRAMFIN26NOV780PE",
-   "concern": "Long 780PE (825 qty) no short against it; P&L Rs-1,609, expiry 2026-11-23",
+   "concern": "Long 780PE (825 qty) no short against it; P&L Rs-1,691, expiry 2026-11-23",
    "action": "Sell it or let it expire"
   },
   {
@@ -123,7 +123,7 @@
    "severity": "WARN",
    "symbol": "UNITDSPR",
    "tradingsymbol": "UNITDSPR26NOV1480CE",
-   "concern": "Long 1480CE (400 qty) no short against it; P&L Rs-1,480, expiry 2026-11-23",
+   "concern": "Long 1480CE (400 qty) no short against it; P&L Rs-1,500, expiry 2026-11-23",
    "action": "Sell it or let it expire"
   },
   {
@@ -427,7 +427,7 @@
    "severity": "HIGH",
    "symbol": "DIVISLAB",
    "tradingsymbol": "DIVISLAB26NOV10600CE",
-   "concern": "No active buy-back GTT (premium 481.25, sold 116.95, already 4.1x: a GTT would fire at once)",
+   "concern": "No active buy-back GTT (premium 485.55, sold 116.95, already 4.2x: a GTT would fire at once)",
    "action": "Close it now (a GTT would fire at once)"
   },
   {
@@ -443,7 +443,7 @@
    "severity": "HIGH",
    "symbol": "HINDPETRO",
    "tradingsymbol": "HINDPETRO26NOV380CE",
-   "concern": "No active buy-back GTT (premium 7.4, sold 1.3, already 5.7x: a GTT would fire at once)",
+   "concern": "No active buy-back GTT (premium 7.65, sold 1.3, already 5.9x: a GTT would fire at once)",
    "action": "Close it now (a GTT would fire at once)"
   },
   {
@@ -459,120 +459,8 @@
    "severity": "HIGH",
    "symbol": "NAM-INDIA",
    "tradingsymbol": "NAM-INDIA26NOV1100CE",
-   "concern": "No active buy-back GTT (premium 12.9, sold 3.85, already 3.4x: a GTT would fire at once)",
+   "concern": "No active buy-back GTT (premium 13.75, sold 3.85, already 3.6x: a GTT would fire at once)",
    "action": "Close it now (a GTT would fire at once)"
-  },
-  {
-   "section": "C",
-   "severity": "WARN",
-   "symbol": "ASTRAL",
-   "tradingsymbol": "ASTRAL26DEC1440CE",
-   "concern": "No active buy-back GTT (premium 8.45, sold 8.45)",
-   "action": "Place the protective GTT (zerodha-gtt-order)"
-  },
-  {
-   "section": "C",
-   "severity": "WARN",
-   "symbol": "BANDHANBNK",
-   "tradingsymbol": "BANDHANBNK26DEC150PE",
-   "concern": "No active buy-back GTT (premium 1.92, sold 1.92)",
-   "action": "Place the protective GTT (zerodha-gtt-order)"
-  },
-  {
-   "section": "C",
-   "severity": "WARN",
-   "symbol": "BDL",
-   "tradingsymbol": "BDL26DEC900PE",
-   "concern": "No active buy-back GTT (premium 11.55, sold 11.55)",
-   "action": "Place the protective GTT (zerodha-gtt-order)"
-  },
-  {
-   "section": "C",
-   "severity": "WARN",
-   "symbol": "CGPOWER",
-   "tradingsymbol": "CGPOWER26DEC960CE",
-   "concern": "No active buy-back GTT (premium 6.3, sold 6.3)",
-   "action": "Place the protective GTT (zerodha-gtt-order)"
-  },
-  {
-   "section": "C",
-   "severity": "WARN",
-   "symbol": "COALINDIA",
-   "tradingsymbol": "COALINDIA26DEC440CE",
-   "concern": "No active buy-back GTT (premium 1.9, sold 1.7)",
-   "action": "Place the protective GTT (zerodha-gtt-order)"
-  },
-  {
-   "section": "C",
-   "severity": "WARN",
-   "symbol": "LAURUSLABS",
-   "tradingsymbol": "LAURUSLABS26NOV2100PE",
-   "concern": "No active buy-back GTT (premium 9.6, sold 6.55)",
-   "action": "Place the protective GTT (zerodha-gtt-order)"
-  },
-  {
-   "section": "C",
-   "severity": "WARN",
-   "symbol": "MAZDOCK",
-   "tradingsymbol": "MAZDOCK26DEC2200CE",
-   "concern": "No active buy-back GTT (premium 11.6, sold 11.6)",
-   "action": "Place the protective GTT (zerodha-gtt-order)"
-  },
-  {
-   "section": "C",
-   "severity": "WARN",
-   "symbol": "NAUKRI",
-   "tradingsymbol": "NAUKRI26DEC1300CE",
-   "concern": "No active buy-back GTT (premium 11.75, sold 12)",
-   "action": "Place the protective GTT (zerodha-gtt-order)"
-  },
-  {
-   "section": "C",
-   "severity": "WARN",
-   "symbol": "OIL",
-   "tradingsymbol": "OIL26DEC500CE",
-   "concern": "No active buy-back GTT (premium 3.1, sold 2.8)",
-   "action": "Place the protective GTT (zerodha-gtt-order)"
-  },
-  {
-   "section": "C",
-   "severity": "WARN",
-   "symbol": "POLICYBZR",
-   "tradingsymbol": "POLICYBZR26DEC900PE",
-   "concern": "No active buy-back GTT (premium 20.35, sold 19.3)",
-   "action": "Place the protective GTT (zerodha-gtt-order)"
-  },
-  {
-   "section": "C",
-   "severity": "WARN",
-   "symbol": "POWERINDIA",
-   "tradingsymbol": "POWERINDIA26DEC28000PE",
-   "concern": "No active buy-back GTT (premium 520, sold 531)",
-   "action": "Place the protective GTT (zerodha-gtt-order)"
-  },
-  {
-   "section": "C",
-   "severity": "WARN",
-   "symbol": "SOLARINDS",
-   "tradingsymbol": "SOLARINDS26DEC22000CE",
-   "concern": "No active buy-back GTT (premium 140, sold 137.375)",
-   "action": "Place the protective GTT (zerodha-gtt-order)"
-  },
-  {
-   "section": "C",
-   "severity": "WARN",
-   "symbol": "SWIGGY",
-   "tradingsymbol": "SWIGGY26DEC250CE",
-   "concern": "No active buy-back GTT (premium 1.18, sold 1.18)",
-   "action": "Place the protective GTT (zerodha-gtt-order)"
-  },
-  {
-   "section": "F",
-   "severity": "HIGH",
-   "symbol": "LAURUSLABS",
-   "tradingsymbol": "LAURUSLABS26NOV2680CE",
-   "concern": "G1 STALE: No open position on this contract (closed or expired): if it triggers it BUYS a new long position (GTT 343974508)",
-   "action": "Delete this GTT"
   }
  ]
 }
