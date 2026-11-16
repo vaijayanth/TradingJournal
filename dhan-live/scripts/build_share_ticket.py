@@ -75,6 +75,7 @@ def main():
     ap.add_argument("--qty", default="", help="SYMBOL=N,... required for entry and exit")
     ap.add_argument("--signals", default=str(ROOT / "covered_call_signals.json"))
     ap.add_argument("--allow-big-batch", action="store_true", help="user-approved: skip the batch size / value caps")
+    ap.add_argument("--include-ordered", action="store_true", help="also list signals that already have a pending order (default: skipped)")
     args = ap.parse_args()
 
     cc = json.loads(Path(args.signals).read_text())
@@ -112,6 +113,16 @@ def main():
             cands.append({"symbol": e["symbol"], "side": "SELL", "qty": int(e["qty"]), "ref_price": e["spot"], "held": e["qty"],
                           "avg_cost": e["avg_cost"], "capital": e["invested"], "profit_est": e["pl_rs"],
                           "reason": f"Supertrend red since {e['flip_date']}, in profit {e['pl_pct']:.1f}% ({e['pl_rs']:,.0f} Rs) - sell the whole position"})
+    pend_p = ROOT / "data" / "orders_snapshot.json"   # pending orders at the broker: never order the same thing twice
+    pend = {}
+    if pend_p.exists():
+        for o in json.loads(pend_p.read_text(encoding="utf-8")).get("orders", []):
+            if str(o.get("status", "")).upper() in ("PENDING", "TRANSIT", "OPEN", "AMO REQ RECEIVED"):
+                pend[(o["symbol"], o["side"])] = o.get("order_id")
+    if not args.include_ordered:
+        for c in [c for c in cands if (c["symbol"], c["side"]) in pend]:
+            print(f"  skipped {c['symbol']}: already has a pending {c['side']} order ({pend[(c['symbol'], c['side'])]}) - not listed again (--include-ordered shows it)")
+        cands = [c for c in cands if (c["symbol"], c["side"]) not in pend]
     for i, c in enumerate(cands, 1):
         c["no"] = i
 

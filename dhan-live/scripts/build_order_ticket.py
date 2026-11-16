@@ -61,6 +61,7 @@ def main():
     ap.add_argument("--holdings", default=str(ROOT / "data" / "holdings_snapshot.json"))
     ap.add_argument("--all-days", action="store_true", help="include entry signals whose 52-week-high day is not the latest session (default: today's only)")
     ap.add_argument("--allow-big-batch", action="store_true", help="user-approved: skip the batch size / value caps")
+    ap.add_argument("--include-ordered", action="store_true", help="also list signals that already have a pending order (default: skipped, so nothing is ordered twice)")
     args = ap.parse_args()
 
     sig = json.loads(Path(args.signals).read_text())
@@ -73,6 +74,12 @@ def main():
         sys.exit(2)
 
     gate_blocks, gate_cfg = load_gate(sig)   # guardrails: halt / stale data / mass exit ... refuse everything; per-stock blocks below
+    pend_p = ROOT / "data" / "orders_snapshot.json"   # orders still pending at the broker (the order skills refresh it): never order the same thing twice
+    pending = {}
+    if pend_p.exists():
+        for o in json.loads(pend_p.read_text(encoding="utf-8")).get("orders", []):
+            if str(o.get("status", "")).upper() in ("PENDING", "TRANSIT", "OPEN", "AMO REQ RECEIVED"):
+                pending[(o["symbol"], o["side"])] = o.get("order_id")
 
     cc_path = Path(args.crosscheck)
     if not cc_path.exists():
@@ -121,6 +128,8 @@ def main():
                 side, ref, why = "SELL", r["cmp"], f"Supertrend red ({r.get('flip_label')}), P&L {r['pl_pct']:.1f}% - exit the whole position"
             if qty < 1:
                 skipped.append((s, "quantity < 1 share")); continue
+            if (s, side) in pending and not args.include_ordered:
+                skipped.append((s, f"already has a pending {side} order ({pending[(s, side)]}) - not listed again (--include-ordered shows it)")); continue
             if s in gate_blocks:
                 blocked.append((kind, s, "guardrail: " + "; ".join(gate_blocks[s]))); continue
             bad = flagged.get((kind, s))

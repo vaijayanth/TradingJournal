@@ -1,5 +1,5 @@
 {
- "fetched_at": "2026-11-16T07:17:07+05:30",
+ "fetched_at": "2026-11-16T07:43:46+05:30",
  "source": "mcp__dhan__orderbook_agent_tool (list)",
  "orders": [
   {
@@ -189,6 +189,16 @@
    "qty": 2,
    "order_type": "LIMIT",
    "price": 342.4,
+   "status": "PENDING",
+   "amo": true
+  },
+  {
+   "order_id": "3252611167278",
+   "symbol": "CORONA",
+   "side": "BUY",
+   "qty": 1,
+   "order_type": "LIMIT",
+   "price": 2376.25,
    "status": "PENDING",
    "amo": true
   }
