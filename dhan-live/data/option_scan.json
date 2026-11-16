@@ -1,0 +1,84 @@
+{
+ "fetched_at": "2026-11-16T14:40:51+05:30",
+ "stale_inputs": [],
+ "open_legs": 26,
+ "shorts": 14,
+ "super_orders": 15,
+ "fired_cleanly": [
+  "CGPOWER @ 3.25"
+ ],
+ "findings": [
+  {
+   "section": "A",
+   "severity": "WARN",
+   "symbol": "BSE",
+   "leg": "BSE 3000PE 2026-11-23",
+   "concern": "Long 3000PE (200 qty) no short against it; P&L Rs-4,090, expiry 2026-11-23",
+   "action": "Sell it or let it expire"
+  },
+  {
+   "section": "A",
+   "severity": "WARN",
+   "symbol": "CGPOWER",
+   "leg": "CGPOWER 680PE 2026-11-23",
+   "concern": "Long 680PE (850 qty) no short against it; P&L Rs-4,802, expiry 2026-11-23",
+   "action": "Sell it or let it expire"
+  },
+  {
+   "section": "A",
+   "severity": "WARN",
+   "symbol": "SHRIRAMFIN",
+   "leg": "SHRIRAMFIN 860PE 2026-11-23",
+   "concern": "Long 860PE (825 qty) not on the protective side of any short; P&L Rs-3,011, expiry 2026-11-23",
+   "action": "Sell it or let it expire"
+  },
+  {
+   "section": "B",
+   "severity": "HIGH",
+   "symbol": "BSE",
+   "leg": "BSE 3200PE 2026-12-29",
+   "concern": "Short 3200PE: 200 of 200 qty has no put hedge below it (expiry 2026-12-29)",
+   "action": "Buy the hedge put or close the short"
+  },
+  {
+   "section": "B",
+   "severity": "HIGH",
+   "symbol": "SHRIRAMFIN",
+   "leg": "SHRIRAMFIN 820PE 2026-11-23",
+   "concern": "Short 820PE: 825 of 825 qty has no put hedge below it (expiry 2026-11-23)",
+   "action": "Buy the hedge put or close the short"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "BSE",
+   "leg": "BSE 4200CE 2026-12-29",
+   "concern": "Short 4200CE (200 qty) is a naked call (by design; covered by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "CGPOWER",
+   "leg": "CGPOWER 900CE 2026-12-29",
+   "concern": "Short 900CE (850 qty) is a naked call (by design; covered by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "CUMMINSIND",
+   "leg": "CUMMINSIND 5300CE 2026-12-29",
+   "concern": "Short 5300CE (100 qty) is a naked call (by design; covered by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "SHRIRAMFIN",
+   "leg": "SHRIRAMFIN 1120CE 2026-12-29",
+   "concern": "Short 1120CE (825 qty) is a naked call (by design; covered by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  }
+ ]
+}
