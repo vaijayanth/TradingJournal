@@ -9558,9 +9558,15 @@ function dhGuardHtml(g, d, alerts) {
   const stale = !!(g && d && d.meta && g.market_data_date && d.meta.marketDate && g.market_data_date !== d.meta.marketDate);
   if (!bl.length && !wa.length && !stale && !alerts.length) return '';
   // short phrases: issue + what to do (the full engine message stays in the tooltip)
-  const SHORT = { F5: ['Price mismatch', 'Held back from orders'], I3: ['Log vs holdings differ', 'Holdings used'], S4: ['1-share buy above tier', 'Check cost'], P3: ['Option near/past strike', 'See Covered Call'],
-    P5: ['Stop order problem', 'See Covered Call'], F1: ['Market data old', 'Refresh'], F2: ['Holdings old', 'Refresh'], F3: ['Signals older than holdings', 'Refresh'], F4: ['Order list old', 'Refresh'],
-    C1: ['Over-deployed', 'Review'], C2: ['Too concentrated', 'Review'], C3: ['Pending buys too big', 'Review'], H1: ['Trading halted', 'Switch off halt to order'] };
+  // each action says what resolves the row (user, 2026-11-16: "how can I resolve these")
+  const rc = dhCopy().refreshCmd || '/refresh-dhan', fixOpt = WS.id === 'zerodha' ? '/zerodha-gtt-order' : '/dhan-superorder';
+  const SHORT = { F5: ['Price mismatch', 'Not ordered. Clears when the next refresh agrees, or ask Claude to override a stock by name'],
+    I3: ['Log vs holdings differ', 'Settlement lag: clears after ' + rc + ' next session (holdings are used meanwhile)'],
+    S4: ['1-share buy above tier', 'Expected for expensive stocks: check the cost, no fix needed'],
+    P3: ['Option near/past strike', 'Decide in the broker app: close, roll or hold (click to open the alerts)'],
+    P5: ['Stop order problem', 'Open the alerts, confirm in the broker app, then fix with ' + fixOpt],
+    F1: ['Market data old', 'Run ' + rc + ' after the close'], F2: ['Holdings old', 'Run ' + rc], F3: ['Signals older than holdings', 'Run ' + rc], F4: ['Order list old', 'Run ' + rc],
+    C1: ['Over-deployed', 'Review the open positions'], C2: ['Too concentrated', 'Review the open positions'], C3: ['Pending buys too big', 'Review the pending orders'], H1: ['Trading halted', 'Switch off the halt to order'] };
   // a finding about the whole book has no single stock: show how many it covers instead of an empty cell (user, 2026-11-16)
   const stocksOf = x => {
     if (x.symbol) return x.symbol;
