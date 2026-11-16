@@ -1065,6 +1065,15 @@ th.te-sort { cursor:pointer; user-select:none; } th.te-sort:hover { color:var(--
   .dhm-kpi { padding:0; border-right:none; } .dhm-kpi-val { font-size:20px; } .dhm-kpi-val.sm { font-size:12.5px; white-space:normal; padding-top:4px; }
   .dhm-controls input { min-width:0; flex:1; }
 }
+/* ── LEGIBLE WEIGHTS (user, 2026-11-16): the heavy white bold titles and numbers were hard to read; use a plain medium weight on the redesigned pages (Stock names stay bold) ── */
+#page-dashboard2 h1, #page-performance2 h1, #page-analysis2 h1, #page-dashboard-di h1, #page-dhanlive h1, #page-covcall h1 { font-weight:500; }
+.d2-title, .d2-name, .d2-act-lab b, .dhm-toolbar h3, .d2-label, .dhm-kpi-label { font-weight:500; }
+.d2-value, .d2-health-total, .d2-count, .d2-edge-m b, .d2-recent-s b, .d2-hstat b, .dhm-kpi-val, .d2-kpi b, .d2-act-st b { font-weight:500; }
+.d2-tag { font-weight:600; }
+.dh-stale b, .dh-stale summary b, .dh-chip { font-weight:500; }
+#page-dashboard2 b:not(.stk), #page-performance2 b:not(.stk), #page-analysis2 b:not(.stk), #page-dashboard-di b:not(.stk), #page-dhanlive b:not(.stk), #page-covcall b:not(.stk),
+#page-dashboard2 strong, #page-performance2 strong, #page-analysis2 strong, #page-dashboard-di strong, #page-dhanlive strong, #page-covcall strong { font-weight:500; }
+b.stk, #cc-root td b.stk, #page-dashboard-di b.stk { font-weight:700; }
 </style>
 </head>
 <body>
@@ -1116,10 +1125,6 @@ th.te-sort { cursor:pointer; user-select:none; } th.te-sort:hover { color:var(--
       <button class="nav-tab" data-page="performance" onclick="showPage('performance', this)"><span class="nav-label-full">Performance</span><span class="nav-label-short">Perf</span></button>
       <button class="nav-tab" data-page="analysis" onclick="showPage('analysis', this)"><span class="nav-label-full">Analysis</span><span class="nav-label-short">Analysis</span></button>
       <button class="nav-tab" data-page="sheet" style="display:none" onclick="showPage('sheet', this)" title="The original Google-Sheet dashboard"><span class="nav-label-full">Sheet Dashboard</span><span class="nav-label-short">Sheet</span></button>
-    </div>
-    <div class="mode-chip" title="Trading mode (applies to every workspace)">
-      <button class="sw-btn active" id="sw-swing" onclick="switchStrategy('swing')">Swing</button>
-      <button class="sw-btn" id="sw-fno" onclick="switchStrategy('fno')">F&amp;O</button>
     </div>
   </nav>
 </div>
@@ -9543,13 +9548,20 @@ function wsFresh(meta, extra) {
   const tip = ['Market data date: ' + (m.marketDate || '?'), m.sourceAt ? 'Prices published by the source: ' + wsFmtT(m.sourceAt, true) + ' IST' : null,
     m.fetchedAt ? 'Holdings pulled: ' + wsFmtT(m.fetchedAt, true) + ' IST' : null, m.computedAt ? 'Signals computed: ' + wsFmtT(m.computedAt, true) + ' IST' : null,
     live ? 'Live prices (options): ' + wsFmtT(live, true) + ' IST' : 'Live prices: not pulled today'].filter(Boolean).join('\n');
-  return { text: parts.join(' · ') + (stale ? ' · refresh overdue' : ''), tip, stale };
+  // green = market data is from the last session whose close is published AND the holdings were pulled after that close; red otherwise (user, 2026-11-16)
+  const nowI = dhNowIst(), exp = dhExpectedSession(nowI);
+  const mdOk = !!m.marketDate && m.marketDate >= exp;
+  const hOk = !m.fetchedAt || new Date(m.fetchedAt) >= new Date(exp + 'T15:30:00+05:30');
+  const ok = mdOk && hOk && !stale;
+  const why = [!mdOk ? `Market data is ${m.marketDate ? dhFmtDate(m.marketDate) : 'unknown'}; the latest published close is ${dhFmtDate(exp)}` : null,
+    !hOk ? `Holdings were pulled before the ${dhFmtDate(exp)} close` : null, stale ? 'The market is open and the last refresh is over an hour old' : null].filter(Boolean);
+  return { text: parts.join(' · ') + (stale ? ' · refresh overdue' : ''), tip: tip + String.fromCharCode(10) + (ok ? 'Up to date as of the last market close' : 'NOT up to date: ' + why.join('; ')), stale, ok };
 }
 function wsPaintFresh() {
   const d = WS.data && WS.data[WS.id]; if (!d || !d.meta) return;
   const f = wsFresh(d.meta);
   ['d2-asof', 'p2-asof', 'a2-asof', 'cc-asof', 'dh-live-asof'].forEach(id => { const el = document.getElementById(id); if (!el) return;
-    el.textContent = f.text; el.title = f.tip; el.style.color = f.stale ? 'var(--amber)' : ''; el.style.whiteSpace = 'normal'; });
+    el.textContent = f.text; el.title = f.tip; el.style.color = f.ok ? 'var(--green)' : 'var(--red)'; el.style.borderColor = f.ok ? 'var(--green)' : 'var(--red)'; el.style.whiteSpace = 'normal'; });
 }
 setInterval(() => { try { wsPaintFresh(); } catch (e) {} }, 60000);
 function dhStaleAlerts(d, ex) {
@@ -9880,6 +9892,7 @@ function d2Ensure() {
   wsLoad(id).then(d2Render).catch(e => console.error('Dashboard load error:', e));
 }
 
+const diFreshPaint = (el, marketDate) => { if (!el) return; const ok = !!marketDate && marketDate >= dhExpectedSession(dhNowIst()); el.style.color = ok ? 'var(--green)' : 'var(--red)'; el.style.borderColor = ok ? 'var(--green)' : 'var(--red)'; el.title = ok ? 'Up to date as of the last market close' : 'NOT up to date: the latest published close is ' + dhFmtDate(dhExpectedSession(dhNowIst())); };
 // ── DI (ICICI) DASHBOARD — dividend portfolio: universe view, dividends, 52-week-low entry signals (icici-live/icici_live_signals.json) ──
 const diNum = (v, d = 2) => v == null ? '—' : Number(v).toLocaleString('en-IN', { minimumFractionDigits: d, maximumFractionDigits: d });
 async function diLoad(force) {
@@ -9903,7 +9916,7 @@ function diRender(d) {
   const root = document.getElementById('di-root'); if (!root) return;
   const S = d.stocks || [], R = d.rules || {}, tier = R.position_rs || 20000;
   const asof = document.getElementById('di-asof');
-  if (asof) asof.textContent = 'Market data ' + dhFmtDate(d.market_data_date) + ' · built ' + (wsFmtT(d.generated_at, true) || '') + ' IST · ' + wsAgo(d.generated_at);
+  if (asof) { asof.textContent = 'Market data ' + dhFmtDate(d.market_data_date) + ' · built ' + (wsFmtT(d.generated_at, true) || '') + ' IST · ' + wsAgo(d.generated_at); diFreshPaint(asof, d.market_data_date); }
   const entries = S.filter(s => s.signal === 'ENTRY'), cool = S.filter(s => s.signal === 'COOLDOWN');
   const near = S.filter(s => !s.short_history_days && s.pct_above_low != null && s.pct_above_low <= 10);
   const payers = S.filter(s => (s.div_ttm || 0) > 0 && s.div_yield_pct != null);
@@ -10507,7 +10520,7 @@ function ccSharesView(d) {
       ['Averaging (add)', `Supertrend is green and the open loss is worse than −${lossPct}%: buy ${fracPct}% of the shares held (minimum 1), at most once every ${cdDays} days`],
       ['Last add date', 'Taken from the tradebook (cc_adds.json), so a missed refresh can show an add as due again'],
       ['Stop loss', 'None. Losers are held until the Supertrend is red and the position is in profit'],
-      ['Orders', 'Placed after the close as after-market orders for the next open. Buys: limit at the signal day high, capped at close + 2%. Exit: market order at the open (dhan-invest-order-entry / dhan-invest-order-exit skills)'],
+      ['Orders', 'Placed after the close as after-market orders for the next open. Buys: limit at the signal day high, capped at close + 2%. Exit: market order at the open (all through the /dhan-order skill)'],
     ]));
   const bar = ccTabBar('cc-stabs', [['exit', 'Exit Now', exits.length], ['entry', 'Entry Signals', entry.length], ['addon', 'Add-on Eligible', addon.length], ['pos', 'Open Positions', rows.length], ['rules', 'Rules', null]], 'ccSTab');
   return kpis + bar + `<div id="cc-sv-exit" class="a2-view">${exitP}</div><div id="cc-sv-entry" class="a2-view">${entryT}</div><div id="cc-sv-addon" class="a2-view">${addT}</div><div id="cc-sv-pos" class="a2-view">${posT}</div><div id="cc-sv-rules" class="a2-view">${sharesRules}</div>`;
@@ -10575,7 +10588,7 @@ function ccRender(d) {
   wsPaintFresh();
   const di = WS.id === 'icici', zer = WS.id === 'zerodha' || di, tabs = document.getElementById('cc-tabs');
   if (tabs) tabs.style.display = zer ? 'none' : '';
-  if (di && asof) asof.textContent = 'Market data ' + dhFmtDate(d.market_data_date) + ' · built ' + (wsFmtT(d.generated_at, true) || '') + ' IST · ' + wsAgo(d.generated_at);
+  if (di && asof) { asof.textContent = 'Market data ' + dhFmtDate(d.market_data_date) + ' · built ' + (wsFmtT(d.generated_at, true) || '') + ' IST · ' + wsAgo(d.generated_at); diFreshPaint(asof, d.market_data_date); }
   const pg = document.getElementById('page-covcall');
   if (pg) {
     pg.querySelector('.d2-eyebrow').textContent = di ? 'DI workspace · dividend portfolio options' : zer ? 'AZ workspace · Nifty F&O option selling' : 'ND workspace · investment portfolio options';
