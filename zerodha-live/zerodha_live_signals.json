@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-16T12:22:21.951136+00:00",
+  "generated_at": "2026-11-16T12:27:09.934318+00:00",
   "market_data_date": "2026-11-16",
   "source_generated_at": {
     "supertrend": "2026-11-16T10:12:53.777648+00:00",
@@ -8,18 +8,18 @@
   "sizing": {
     "closed_trades_count": 2,
     "base_tier_rs": 20000,
-    "total_positions_ever_opened": 32,
+    "total_positions_ever_opened": 33,
     "realized_pl_rs": -3517.05,
-    "unrealized_pl_rs": 23838.58,
-    "combined_pl_rs": 20321.53,
+    "unrealized_pl_rs": 23848.08,
+    "combined_pl_rs": 20331.03,
     "effective_tier_rs": 20000,
     "doubled": false,
-    "tier_note": "32 trades (open + closed) \u00b7 next +5,000 at 100"
+    "tier_note": "33 trades (open + closed) \u00b7 next +5,000 at 100"
   },
-  "dh252_position_count": 30,
+  "dh252_position_count": 31,
   "option_hedge_portfolio": [],
   "holdings_count_total": 188,
-  "holdings_out_of_scope": 158,
+  "holdings_out_of_scope": 157,
   "no_data": [],
   "exited_outside_tracking": [],
   "rules": {
@@ -65,10 +65,10 @@
     },
     {
       "date": "2026-11-16",
-      "pnl": 20321.53,
+      "pnl": 20331.03,
       "realised": -3517.05,
-      "invested": 729659.37,
-      "equity": 3020321.53
+      "invested": 750369.37,
+      "equity": 3020331.03
     }
   ],
   "closed_trades": [
@@ -584,6 +584,23 @@
       "sector": "Industrials"
     },
     {
+      "entry_date": "2026-08-07",
+      "symbol": "SBIN",
+      "qty": 19,
+      "avg_cost": 1090,
+      "cmp": 1090.5,
+      "pl_pct": 0.0459,
+      "notional_pl_rs": 9.5,
+      "supertrend_color": "green",
+      "flip_label": "GREEN 7d",
+      "flip_date": "2026-11-05",
+      "pct_from_52w_high": -9.58,
+      "num_adds": 0,
+      "age_days": 101,
+      "rsi14": 73.9,
+      "sector": "Financial Services"
+    },
+    {
       "entry_date": "2026-08-26",
       "symbol": "TVSMOTOR",
       "qty": 26,
@@ -677,7 +694,8 @@
       "BAJFINANCE",
       "INDIGO",
       "360ONE",
-      "RADICO"
+      "RADICO",
+      "SBIN"
     ],
     "moved_at": "2026-11-09"
   },
