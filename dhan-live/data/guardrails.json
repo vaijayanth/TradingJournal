@@ -1,12 +1,12 @@
 {
- "generated_at": "2026-11-16T07:29:49+05:30",
+ "generated_at": "2026-11-16T11:16:57+05:30",
  "broker": "dhan",
  "market_data_date": "2026-11-13",
- "signals_generated_at": "2026-11-16T01:59:46.514533+00:00",
- "status": "WARN",
- "global_block": false,
+ "signals_generated_at": "2026-11-16T05:46:55.415761+00:00",
+ "status": "BLOCK",
+ "global_block": true,
  "counts": {
-  "block": 0,
+  "block": 1,
   "warn": 3,
   "info": 0
  },
@@ -14,15 +14,21 @@
  "findings": [
   {
    "id": "F5",
-   "level": "WARN",
+   "level": "BLOCK",
    "symbol": null,
-   "msg": "the cross-check flagged 3 of 25 signals (they are blocked from orders): HONASA, LICHSGFIN, MSTCLTD"
+   "msg": "the cross-check disagrees with 3 of 7 signals - prices are suspect (a partial same-day bar while the market is open, a hole in the price history, or a bad feed). Do not order until the close-of-day data is published and the refresh re-run."
   },
   {
    "id": "I8",
    "level": "WARN",
    "symbol": "PASHUPATI",
    "msg": "PASHUPATI: a 2.5-for-1 split / bonus on 2026-11-13 came after 1 of your fill(s) and is not recorded in data/corporate_actions.json, so this stock's cost, quantity and P&L can be wrong (a fake gain or loss)"
+  },
+  {
+   "id": "I3",
+   "level": "WARN",
+   "symbol": null,
+   "msg": "18 stocks were bought in the last 3 days and are not in Dhan holdings yet (settlement timing); positions and P&L exclude them until holdings catch up: ALICON (0->1), AMANTA (0->4), ASAHIINDIA (0->1), NAZARA (0->2), STYLEBAAZA (0->2), APOLLO (0->2), DCBBANK (0->4), ESAFSFB (0->21), MMFL (0->1), NILKAMAL (0->1), PAYTM (0->1), SANSERA (0->1) ..."
   },
   {
    "id": "P3",
