@@ -3685,7 +3685,7 @@ b.stk, #cc-root td b.stk, #page-dashboard-di b.stk { font-weight:700; }
         <thead><tr>
           <th>Stock</th><th>Entry</th><th class="num">Qty</th><th class="num">WAC</th><th class="num">CMP</th>
           <th>Trend</th><th class="num">Flip</th><th class="num">P&amp;L ₹</th><th class="num">P&amp;L%</th>
-          <th class="num">Adds</th><th class="num">Age</th><th>Signal</th><th class="num">vs 52WH</th>
+          <th class="num">Adds</th><th class="num">Age</th><th>Signal</th><th class="opt-col">Option trade</th><th class="num">vs 52WH</th>
         </tr></thead>
         <tbody id="dh-live-pos-tbody"></tbody>
       </table>
@@ -8810,7 +8810,7 @@ const WORKSPACES = {
              ordersUrl: 'zerodha-live/data/orders_snapshot.json', crosscheckUrl: 'zerodha-live/data/signal_crosscheck.json', guardUrl: 'zerodha-live/data/guardrails.json',
              ccUrl: 'zerodha-live/covered_call_signals.json',
              cfg: { staleDays: 3, addTriggerPct: -6, addCooldownDays: 7, addFraction: 0.1 },
-             copy: { refreshCmd: '/refresh-zerodha', hasCC: false, strat: 'F&O Supertrend', liveTitle: 'AZ Live · Nifty F&O',
+             copy: { refreshCmd: '/refresh-zerodha', hasCC: false, optCol: true, strat: 'F&O Supertrend', liveTitle: 'AZ Live · Nifty F&O',
                      liveSub: "AZ holdings in Nifty F&O stocks vs. the backtester's daily Supertrend signals", logoA: 'F&O', logoB: '', logoSub: 'Supertrend swing',
                      entryShort: 'Supertrend flipped to green today', addShort: 'Down 6% or more, trend green',
                      entryHint: 'Supertrend flipped to green today · no open position in the stock · Nifty F&O stocks only · 🔥 = top-3 sector by Supertrend turnarounds',
@@ -9128,6 +9128,31 @@ function dhFlipText(r) { if (!r.flipDate) return ''; const n = dhFlipDays(r); re
 const DH_FLIP_CELL = ['Flip', r => r.flipDate || '', r => { const t = dhFlipText(r); return t ? `<td class="num${dhFlipDays(r) === 0 ? ' dh-flip-today' : ''}">${t}</td>` : `<td class="num">${dhDash}</td>`; }];
 
 // Position columns shared by the Exit and Open positions tabs
+// The option trade open on a share position (AZ only, user 2026-11-16): is there a bull put spread (green) or a short call (red), and does it match the Supertrend colour?
+function dhOptText(r) {
+  const c = WS.cc && WS.cc[WS.id]; if (!c) return null;
+  const st = (c.stocks || []).find(s => s.symbol === r.symbol), legs = (st && st.legs) || [];
+  const out = [], exps = [...new Set(legs.map(l => l.expiry))].sort();
+  exps.forEach(e => {
+    const L = legs.filter(l => l.expiry === e), sp = L.filter(l => l.side === 'SHORT' && l.type === 'PE'), lp = L.filter(l => l.side === 'LONG' && l.type === 'PE');
+    const sc = L.filter(l => l.side === 'SHORT' && l.type === 'CE');
+    const d = dhFmtDate(e).replace(/-\d\d$/, '');
+    sp.forEach(s => { const h = lp.filter(l => l.strike < s.strike).sort((a, b) => b.strike - a.strike)[0]; out.push({ k: h ? 'BPS' : 'PUT', t: h ? `BPS ${s.strike}/${h.strike} · ${d}` : `Short put ${s.strike} · ${d} (no hedge)` }); });
+    sc.forEach(s => out.push({ k: 'CALL', t: `Short call ${s.strike} · ${d}` }));
+  });
+  return out;
+}
+const dhOptCell = r => {
+  const o = dhOptText(r);
+  if (o == null) return '<td style="color:var(--text-muted)">…</td>';
+  const g = r.supertrend === 'green', rd = r.supertrend === 'red';
+  if (!o.length) return `<td style="color:var(--text-muted)" title="No open option trade on this stock">${g ? 'No BPS' : rd ? 'No call' : 'None'}</td>`;
+  return '<td style="white-space:normal;min-width:150px">' + o.map(x => {
+    const ok = (g && x.k === 'BPS') || (rd && x.k === 'CALL'), bad = (g && x.k === 'CALL') || (rd && x.k !== 'CALL');
+    return `<div title="${ok ? 'Matches the Supertrend colour' : bad ? 'Opposite of what the Supertrend colour wants (green = bull put spread, red = short call)' : ''}">${dhEsc(x.t)} <span style="color:${ok ? 'var(--green)' : bad ? 'var(--amber)' : 'var(--text-muted)'}">${ok ? '✓' : bad ? '≠' : ''}</span></div>`;
+  }).join('') + '</td>';
+};
+const DH_OPT_CELL = ['Option trade', r => { const o = dhOptText(r); return o == null ? '' : o.length ? o.map(x => x.t).join('; ') : 'none'; }, dhOptCell];
 const DH_POS_CELLS = [
   ['Stock', r => r.symbol, r => `<td class="stock-name">${dhEsc(r.symbol)}</td>`],
   ['Entry', r => r.entryDate, r => `<td>${dhFmtDate(r.entryDate)}</td>`],
@@ -9195,7 +9220,7 @@ const DH_DEFS = {
     filter: (r, f) => f === 'all' ? true : r.signal === f,
     cls: r => r.signal === 'EXIT' ? 'row-red' : r.signal === 'ADD-ON' ? 'row-green' : '',
     empty: 'No position data.', cols: 13,
-    cells: [...DH_POS_CELLS.filter(c => c[0] !== 'vs 52WH %'), ['Signal', r => r.signal, r => `<td>${dhSignalPill(r.signal)}</td>`], DH_POS_CELLS.find(c => c[0] === 'vs 52WH %')],
+    cells: [...DH_POS_CELLS.filter(c => c[0] !== 'vs 52WH %'), ['Signal', r => r.signal, r => `<td>${dhSignalPill(r.signal)}</td>`], DH_OPT_CELL, DH_POS_CELLS.find(c => c[0] === 'vs 52WH %')],
   },
   orders: {
     rows: d => (d.orders || []).slice().sort((a, b) => (a.side === b.side ? a.symbol.localeCompare(b.symbol) : a.side === 'SELL' ? -1 : 1)),
@@ -9225,7 +9250,7 @@ function dhLiveVisible(tab) {
 }
 
 // AZ's rule is flip-based, so it has no 52-week-high columns in the entry, exit or positions tables
-function dhCells(tab) { const def = DH_DEFS[tab], hide = (tab === 'entry' || tab === 'exit' || tab === 'pos') && dhCopy().hideEntryCols; return hide ? def.cells.filter(c => !/52WH/.test(c[0])) : def.cells; }
+function dhCells(tab) { const def = DH_DEFS[tab], hide = (tab === 'entry' || tab === 'exit' || tab === 'pos') && dhCopy().hideEntryCols; let cells = hide ? def.cells.filter(c => !/52WH/.test(c[0])) : def.cells; if (!dhCopy().optCol) cells = cells.filter(c => c !== DH_OPT_CELL); return cells; }
 function dhLiveApply(tab) {
   const def = DH_DEFS[tab];
   const { all, rows } = dhLiveVisible(tab);
@@ -9274,7 +9299,7 @@ function dhLiveRender(d) {
   const cp = dhCopy();
   set('dh-live-title', '/ ' + (cp.liveTitle || '')); set('dh-live-subtitle', cp.liveSub || ''); set('dh-entry-hint', cp.entryHint || ''); set('dh-pos-hint-t', cp.posHint || '');
   { const lg = document.getElementById('dh-logo'); if (lg) lg.innerHTML = `<b>${dhEsc(cp.logoA || '')}${cp.logoB ? `<em>${dhEsc(cp.logoB)}</em>` : ''}</b><span>${dhEsc(cp.logoSub || '')}</span>`; }
-  document.querySelectorAll('#dh-live-entry-table thead th, #dh-live-exit-table thead th, #dh-live-pos-table thead th').forEach(th => { th.style.display = (cp.hideEntryCols && /52WH/.test(th.textContent)) ? 'none' : ''; });
+  document.querySelectorAll('#dh-live-entry-table thead th, #dh-live-exit-table thead th, #dh-live-pos-table thead th').forEach(th => { th.style.display = ((cp.hideEntryCols && /52WH/.test(th.textContent)) || (th.classList.contains('opt-col') && !cp.optCol)) ? 'none' : ''; });
 
   const ranD = new Date(m.computedAt);
   wsPaintFresh();
@@ -10063,7 +10088,7 @@ async function ccPrefetch(ws) {   // load a workspace's covered-call file in the
   try {
     const res = await fetch(ccUrlFor(ws) + '?t=' + Date.now()); if (!res.ok) return null;
     ccPut(ws, await res.json());
-    if (ws === WS.id) { try { wsPaintFresh(); } catch (e) {} }
+    if (ws === WS.id) { try { wsPaintFresh(); } catch (e) {} try { if (dhCopy().optCol && dhLiveData()) dhLiveApply('pos'); } catch (e) {} }   // the Open positions table shows each stock's option trade
     return WS.cc[ws];
   } catch (e) { return null; }
 }
