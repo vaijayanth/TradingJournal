@@ -1,0 +1,28 @@
+---
+name: dhan-option-entry-signal
+description: Read-only scan of the ND (Dhan) option ENTRY signals, in 5 tiers by how recently the Supertrend flipped (Tier 1 flipped on the latest session, Tier 2 within the last trading week, Tier 3 within 30 days, Tier 4 within 90 days, Tier 5 older than 90 days), Supertrend only (no RSI), on the 10 covered-call stocks, with stocks that have open option legs left out and a clear results / ex-dividend alert on every row. Places nothing. Use when the user says "Dhan option entry signals", "/dhan-option-entry-signal", "what Dhan options should I open", or wants the ND option signals before placing. Placing is the separate user-invoked skill dhan-superorder (Part 3).
+---
+
+# dhan-option-entry-signal - ND option entry signals in tiers (read-only)
+
+This skill only READS and REPORTS. It never places, modifies or cancels an order. A new option position is `/dhan-superorder` Part 3 (user-invoked only, names the contract, hedge first, SELL super order with a 3x stop and a 40% target); the open book is checked by `/dhan-option-scan-signal`; the exit side is the Covered Call page's alerts and the same scan. ND only: AZ (Zerodha) has its own entry signals (`/zerodha-option-entry-signal`) and shares no code or data with this skill; never read from `zerodha-live/`.
+
+## The rules (user, 2026-11-16; the same tiers as AZ, ND's own universe)
+- **Universe:** the covered-call stocks in `dhan-live/data/cc_config.json` (MCX, SHRIRAMFIN, CGPOWER, BSE, DIXON, HCLTECH, INFY, BANKINDIA, BPCL, CUMMINSIND): the investment-portfolio stocks that have listed options. Only these 10 can appear.
+- **Supertrend only. RSI is NOT used** (`rsi_override` is false for ND). Green = BULL PUT SPREAD (sell the 0.15-delta put, buy the hedge 2 listed strikes lower); red = SELL CALL (0.10 delta, covered by the shares held; say so if the shares are fewer than the lot).
+- **Tiers** (by when the CURRENT Supertrend colour began; each stock once, in the freshest tier it fits): Tier 1 flipped on the latest published session; Tier 2 1 to 5 trading days ago; Tier 3 within 30 calendar days; Tier 4 within 90 days; Tier 5 more than 90 days ago (the weakest signal).
+- **Open positions are excluded:** any stock with an open option leg is left out, so a stock whose old structure is still open (a FLIP: the Covered Call page shows it as an Exit alert) never appears here; close it first. With 10 stocks and most of them already in a spread, the list is often empty: that is the correct answer.
+- **Expiry and lot:** the first expiry in `cc_config.json` at least 15 days away (expiry week is never placed, guardrail P1); the lot size from `data/nse_lots.json` for that expiry's month. If no listed expiry is 15 days away the script says to add the next series to `expiries` first.
+- **Results / ex-dividend alert on every row:** every open option is closed 15 days (`event_close_days`) before the stock's results or ex-dividend date. `!!` = the event is inside that window NOW (do not open); `!` = the window opens before the expiry (the trade must be closed early on the stated date); plain text = an event within 60 days; `(est.)` = estimated date. A warning, never a block, but say it plainly.
+
+## Steps
+1. **Freshness (read-only).** The script prints a `!!` line when `covered_call_signals.json` is not from today. Positions and flips come from the last `/refresh-dhan`: if it is not from today, or the market data is older than the previous session, say the tiers and the exclusion list may be wrong and that the fix is `/refresh-dhan`. Never present stale data as current.
+2. **Run** `python dhan-live/scripts/option_entry_tiers.py` (add `--tier 1,2`, or `--json`). It prints the universe size, the stocks left out for open legs (named), and one table per tier: number, stock, structure, price, flip date, flip age (trading days / calendar days), expiry, lot, ALERT. `--ignore-legs` previews who WOULD qualify if the open legs were closed (use it only to answer "what would I trade after closing X", never as a signal).
+3. **Report the tiers** as printed. If every tier is empty because all stocks have open legs, say exactly that, name the stocks and which of them have an Exit alert (their old structure should be closed before a new one is opened), and stop: nothing is wrong. Then call out `!!` and `!` rows.
+4. **Say what is not known:** the premium, credit and margin are not in the signal (they come from a live option chain). `/dhan-superorder` Part 3 saves the chain, runs `build_option_ticket.py` (strike nearest 10% away this month, 15% for a later month, 1 to 4 lots, stop 3x, target 40%, trailing 0.05) and shows the credit and margin before anything is placed. Never invent a number.
+5. **Hand-off, always.** ND only: to place any of these, run `/dhan-superorder` and name the contract(s) (market hours only, up to 4 per instruction; it places the hedge first and waits for it to fill, then the short as a super order, each with an explicit "yes, place this"). A FLIP stock needs its old legs closed in the Dhan app first. After placing, `/dhan-option-scan-signal` or the next `/refresh-dhan` checks that the new short has its stop.
+
+## Rules
+- Read-only: no order, no file edit other than refreshing local data through `/refresh-dhan`, and only if the user agrees.
+- Facts, alerts and the next command only; the user chooses the contracts. Never call a signal certain.
+- ND and AZ stay separate: do not mention Zerodha stocks or signals unless asked.
