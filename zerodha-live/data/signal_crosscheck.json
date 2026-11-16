@@ -1,11 +1,13 @@
 {
- "generated_at": "2026-11-13T18:46:29.138671+00:00",
+ "generated_at": "2026-11-16T05:46:15.242165+00:00",
  "market_data_date": "2026-11-13",
  "yahoo_last_bars": [
   "2026-11-13"
  ],
- "bars_after_signal_date_ignored": [],
- "checked": 4,
+ "bars_after_signal_date_ignored": [
+  "2026-11-16"
+ ],
+ "checked": 3,
  "flagged": 0,
  "results": [
   {
@@ -70,27 +72,6 @@
    "intraday_high_252": 38785.0,
    "flip_bars_ago": 0,
    "pct_from_intraday_high": -18.54
-  },
-  {
-   "symbol": "PAGEIND",
-   "kind": "exit",
-   "ok": true,
-   "reasons": [],
-   "zerodha_bars_added": [
-    "2026-11-09",
-    "2026-11-11",
-    "2026-11-12",
-    "2026-11-13"
-   ],
-   "published_colour": "red",
-   "recomputed_colour": "red",
-   "yahoo_last_bar": "2026-11-13",
-   "close": 31325.0,
-   "published_close": 31325.0,
-   "closing_high_252": 43610.0,
-   "intraday_high_252": 43855.0,
-   "flip_bars_ago": 3,
-   "pct_from_intraday_high": -28.57
   }
  ]
 }

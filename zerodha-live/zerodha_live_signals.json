@@ -1,24 +1,24 @@
 {
-  "generated_at": "2026-11-16T01:04:17.984738+00:00",
+  "generated_at": "2026-11-16T05:46:12.466486+00:00",
   "market_data_date": "2026-11-13",
   "source_generated_at": {
-    "supertrend": "2026-11-13T18:05:42.858921+00:00",
-    "market_screens": "2026-11-13T18:05:34.598764+00:00"
+    "supertrend": "2026-11-13T21:00:57.855107+00:00",
+    "market_screens": "2026-11-13T21:00:49.786395+00:00"
   },
   "sizing": {
-    "closed_trades_count": 1,
+    "closed_trades_count": 2,
     "base_tier_rs": 20000,
     "total_positions_ever_opened": 32,
-    "realized_pl_rs": 1125.0,
-    "unrealized_pl_rs": 20214.3,
-    "combined_pl_rs": 21339.3,
+    "realized_pl_rs": -3517.05,
+    "unrealized_pl_rs": 25389.3,
+    "combined_pl_rs": 21872.25,
     "effective_tier_rs": 20000,
     "doubled": false,
     "tier_note": "32 trades (open + closed) \u00b7 next +5,000 at 100"
   },
-  "dh252_position_count": 31,
+  "dh252_position_count": 30,
   "option_hedge_portfolio": [],
-  "holdings_count_total": 189,
+  "holdings_count_total": 188,
   "holdings_out_of_scope": 158,
   "no_data": [],
   "exited_outside_tracking": [],
@@ -58,10 +58,10 @@
     },
     {
       "date": "2026-11-13",
-      "pnl": 21339.3,
-      "realised": 1125.0,
-      "invested": 766159.37,
-      "equity": 3021339.3
+      "pnl": 21872.25,
+      "realised": -3517.05,
+      "invested": 729659.37,
+      "equity": 3021872.25
     }
   ],
   "closed_trades": [
@@ -75,6 +75,17 @@
       "pl_rs": 1125.0,
       "pl_pct": 5.72,
       "hold_days": 101
+    },
+    {
+      "symbol": "PAGEIND",
+      "entry_date": "2026-11-10",
+      "exit_date": "2026-11-16",
+      "qty": 1,
+      "entry_price": 36500.0,
+      "exit_price": 31857.95,
+      "pl_rs": -4642.05,
+      "pl_pct": -12.72,
+      "hold_days": 6
     }
   ],
   "hot_sectors": {
@@ -141,25 +152,7 @@
       "hot_turn": true
     }
   ],
-  "exits": [
-    {
-      "entry_date": "2026-11-10",
-      "symbol": "PAGEIND",
-      "qty": 1,
-      "avg_cost": 36500,
-      "cmp": 31325.0,
-      "pl_pct": -14.1781,
-      "notional_pl_rs": -5175.0,
-      "supertrend_color": "red",
-      "flip_label": "Flipped to RED (1)",
-      "flip_date": "2026-11-12",
-      "pct_from_52w_high": -27.77,
-      "num_adds": 0,
-      "age_days": 6,
-      "rsi14": 29.8,
-      "sector": "Consumer Cyclical"
-    }
-  ],
+  "exits": [],
   "addons": [],
   "holds": [
     {
@@ -688,17 +681,13 @@
         "holdings_qty": 36,
         "sheet_qty_at_cutoff": 0
       },
-      "PAGEIND": {
-        "holdings_qty": 1,
-        "sheet_qty_at_cutoff": 0
-      },
       "RVNL": {
         "holdings_qty": 99,
         "sheet_qty_at_cutoff": 0
       }
     }
   },
-  "holdings_fetched_at": "2026-11-14T00:14:49+05:30",
+  "holdings_fetched_at": "2026-11-16T11:15:18+05:30",
   "universe": {
     "month": "2026-11",
     "count": 215,

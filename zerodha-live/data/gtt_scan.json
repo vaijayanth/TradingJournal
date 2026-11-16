@@ -1,21 +1,8 @@
 {
- "fetched_at": "2026-11-14T00:41:53+05:30",
- "gtts_fetched_at": "2026-11-14T00:41:52+05:30",
- "checked": 71,
+ "fetched_at": "2026-11-16T11:16:10+05:30",
+ "gtts_fetched_at": "2026-11-16T11:15:47+05:30",
+ "checked": 63,
  "findings": [
-  {
-   "check": "G5",
-   "name": "TRIGGER",
-   "severity": "WARN",
-   "tradingsymbol": "BANKINDIA26NOV160CE",
-   "gtt_id": 344781626,
-   "symbol": "BANKINDIA",
-   "expiry": "2026-11-23",
-   "strike": 160.0,
-   "opt_type": "CE",
-   "concern": "Stop limit 0 is below its trigger 1.63: it may not fill",
-   "action": "Raise the limit above the trigger"
-  },
   {
    "check": "G6",
    "name": "OFF-RULE",
@@ -26,8 +13,34 @@
    "expiry": "2026-11-23",
    "strike": 5000.0,
    "opt_type": "CE",
-   "concern": "Stop is 2.0x the sold price (rule 3x)",
+   "concern": "Stop is 1.7x the sold price (rule 3x)",
    "action": "Re-set to 56.40"
+  },
+  {
+   "check": "G6",
+   "name": "OFF-RULE",
+   "severity": "WARN",
+   "tradingsymbol": "HDFCBANK26NOV780PE",
+   "gtt_id": 343691959,
+   "symbol": "HDFCBANK",
+   "expiry": "2026-11-23",
+   "strike": 780.0,
+   "opt_type": "PE",
+   "concern": "Stop is 2.0x the sold price (rule 3x)",
+   "action": "Re-set to 61.95"
+  },
+  {
+   "check": "G6",
+   "name": "OFF-RULE",
+   "severity": "WARN",
+   "tradingsymbol": "KARURVYSYA26NOV340PE",
+   "gtt_id": 343697032,
+   "symbol": "KARURVYSYA",
+   "expiry": "2026-11-23",
+   "strike": 340.0,
+   "opt_type": "PE",
+   "concern": "Stop is 1.8x the sold price (rule 3x)",
+   "action": "Re-set to 9.75"
   }
  ]
 }
