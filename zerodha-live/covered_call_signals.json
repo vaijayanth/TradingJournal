@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-16T08:14:13.470749+00:00",
+ "generated_at": "2026-11-16T08:22:08.773338+00:00",
  "market_data_date": "2026-11-13",
  "live_prices_at": "2026-11-16T13:44:06+05:30",
  "gtt_scan_at": "2026-11-16T13:44:07+05:30",
@@ -1049,8 +1049,8 @@
     }
    ],
    "rsi_override": false,
-   "status": "FLIP",
-   "note": "Supertrend turned GREEN since entry (red): close the short call and open the bull put spread.",
+   "status": "ENTER",
+   "note": "Supertrend green: bull put spread (you hold other legs in this stock)",
    "legs": [
     {
      "symbol": "AUBANK",
@@ -1311,8 +1311,8 @@
     }
    ],
    "rsi_override": false,
-   "status": "FLIP",
-   "note": "Supertrend turned GREEN since entry (red): close the short call and open the bull put spread.",
+   "status": "HOLD",
+   "note": "Open structure matches the rule (Supertrend green).",
    "legs": [
     {
      "symbol": "BANDHANBNK",
@@ -1448,8 +1448,8 @@
     }
    ],
    "rsi_override": false,
-   "status": "FLIP",
-   "note": "Supertrend turned GREEN since entry (red): close the short call and open the bull put spread.",
+   "status": "HOLD",
+   "note": "Open structure matches the rule (Supertrend green).",
    "legs": [
     {
      "symbol": "BDL",
@@ -2146,8 +2146,8 @@
     }
    ],
    "rsi_override": false,
-   "status": "FLIP",
-   "note": "Supertrend turned GREEN since entry (red): close the short call and open the bull put spread.",
+   "status": "HOLD",
+   "note": "Open structure matches the rule (Supertrend green).",
    "legs": [
     {
      "symbol": "CANBK",
@@ -2491,8 +2491,8 @@
     }
    ],
    "rsi_override": false,
-   "status": "FLIP",
-   "note": "Supertrend turned GREEN since entry (red): close the short call and open the bull put spread.",
+   "status": "HOLD",
+   "note": "Open structure matches the rule (Supertrend green).",
    "legs": [
     {
      "symbol": "COCHINSHIP",
@@ -2544,7 +2544,7 @@
      "estimated": false
     }
    ],
-   "event_block": "Ex-dividend 16 Nov 2026: the 15-day close window starts 01 Nov, before this expiry"
+   "event_block": null
   },
   {
    "symbol": "COFORGE",
@@ -7579,8 +7579,8 @@
     }
    ],
    "rsi_override": false,
-   "status": "FLIP",
-   "note": "Supertrend turned GREEN since entry (red): close the short call and open the bull put spread.",
+   "status": "HOLD",
+   "note": "Open structure matches the rule (Supertrend green).",
    "legs": [
     {
      "symbol": "POLICYBZR",
@@ -7848,8 +7848,8 @@
     }
    ],
    "rsi_override": false,
-   "status": "FLIP",
-   "note": "Supertrend turned GREEN since entry (red): close the short call and open the bull put spread.",
+   "status": "HOLD",
+   "note": "Open structure matches the rule (Supertrend green).",
    "legs": [
     {
      "symbol": "RADICO",
@@ -9576,30 +9576,6 @@
    "text": "APOLLOHOSP: Supertrend is GREEN: the open short call (9100CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
   },
   {
-   "level": "EXIT",
-   "type": "Exit",
-   "symbol": "AUBANK",
-   "concern": "Supertrend turned GREEN since entry",
-   "action": "Close it and open the bull put spread",
-   "text": "AUBANK: Supertrend turned GREEN since entry (red): close the short call and open the bull put spread."
-  },
-  {
-   "level": "EXIT",
-   "type": "Exit",
-   "symbol": "BANDHANBNK",
-   "concern": "Supertrend turned GREEN since entry",
-   "action": "Close it and open the bull put spread",
-   "text": "BANDHANBNK: Supertrend turned GREEN since entry (red): close the short call and open the bull put spread."
-  },
-  {
-   "level": "EXIT",
-   "type": "Exit",
-   "symbol": "BDL",
-   "concern": "Supertrend turned GREEN since entry",
-   "action": "Close it and open the bull put spread",
-   "text": "BDL: Supertrend turned GREEN since entry (red): close the short call and open the bull put spread."
-  },
-  {
    "expiry": "2026-11-23",
    "strike": 380.0,
    "opt_type": "PE",
@@ -9631,22 +9607,6 @@
    "concern": "Supertrend GREEN but the short call is still open",
    "action": "Close it and open the bull put spread",
    "text": "CAMS: Supertrend is GREEN: the open short call (800CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
-  },
-  {
-   "level": "EXIT",
-   "type": "Exit",
-   "symbol": "CANBK",
-   "concern": "Supertrend turned GREEN since entry",
-   "action": "Close it and open the bull put spread",
-   "text": "CANBK: Supertrend turned GREEN since entry (red): close the short call and open the bull put spread."
-  },
-  {
-   "level": "EXIT",
-   "type": "Exit",
-   "symbol": "COCHINSHIP",
-   "concern": "Supertrend turned GREEN since entry",
-   "action": "Close it and open the bull put spread",
-   "text": "COCHINSHIP: Supertrend turned GREEN since entry (red): close the short call and open the bull put spread."
   },
   {
    "level": "EXIT",
@@ -9904,22 +9864,6 @@
    "concern": "Supertrend GREEN but the short call is still open",
    "action": "Close it and open the bull put spread",
    "text": "PERSISTENT: Supertrend is GREEN: the open short call (6500CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
-  },
-  {
-   "level": "EXIT",
-   "type": "Exit",
-   "symbol": "POLICYBZR",
-   "concern": "Supertrend turned GREEN since entry",
-   "action": "Close it and open the bull put spread",
-   "text": "POLICYBZR: Supertrend turned GREEN since entry (red): close the short call and open the bull put spread."
-  },
-  {
-   "level": "EXIT",
-   "type": "Exit",
-   "symbol": "RADICO",
-   "concern": "Supertrend turned GREEN since entry",
-   "action": "Close it and open the bull put spread",
-   "text": "RADICO: Supertrend turned GREEN since entry (red): close the short call and open the bull put spread."
   },
   {
    "expiry": "2026-12-29",
@@ -10855,8 +10799,8 @@
   "call": 54,
   "put_spread": 161,
   "rsi_override": 29,
-  "enter": 160,
-  "hold": 24,
-  "flip": 31
+  "enter": 161,
+  "hold": 30,
+  "flip": 24
  }
 }
