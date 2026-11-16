@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-16T12:06:13.311822+00:00",
+ "generated_at": "2026-11-16T12:40:10.166849+00:00",
  "market_data_date": "2026-11-16",
  "yahoo_last_bars": [
   "2026-11-13",
@@ -26,12 +26,13 @@
    "closing_high_252": 784.25,
    "intraday_high_252": 792.0,
    "flip_bars_ago": 39,
-   "pct_from_intraday_high": -0.98
+   "pct_from_intraday_high": -0.98,
+   "flagged": false
   },
   {
    "symbol": "BHARTIARTL",
    "kind": "entry",
-   "ok": false,
+   "ok": true,
    "reasons": [
     "close 2153.50 is below the 252-session closing high 2162.70"
    ],
@@ -43,7 +44,8 @@
    "closing_high_252": 2162.7,
    "intraday_high_252": 2174.5,
    "flip_bars_ago": 20,
-   "pct_from_intraday_high": -0.97
+   "pct_from_intraday_high": -0.97,
+   "flagged": true
   },
   {
    "symbol": "HINDOILEXP",
@@ -58,7 +60,8 @@
    "closing_high_252": 212.66,
    "intraday_high_252": 216.7,
    "flip_bars_ago": 3,
-   "pct_from_intraday_high": -1.86
+   "pct_from_intraday_high": -1.86,
+   "flagged": false
   },
   {
    "symbol": "LICHSGFIN",
@@ -77,19 +80,21 @@
    "closing_high_252": 605.5,
    "intraday_high_252": 608.55,
    "flip_bars_ago": 4,
-   "pct_from_intraday_high": -0.5
+   "pct_from_intraday_high": -0.5,
+   "flagged": false
   },
   {
    "symbol": "NIFTYIETF",
    "kind": "entry",
-   "ok": false,
+   "ok": true,
    "reasons": [
     "not enough Yahoo history to verify"
    ],
    "dhan_bars_added": [
     "2026-11-11",
     "2026-11-12"
-   ]
+   ],
+   "flagged": true
   },
   {
    "symbol": "PANACHE",
@@ -108,12 +113,13 @@
    "closing_high_252": 772.45,
    "intraday_high_252": 772.45,
    "flip_bars_ago": 136,
-   "pct_from_intraday_high": 0.0
+   "pct_from_intraday_high": 0.0,
+   "flagged": false
   },
   {
    "symbol": "PRIZOR",
    "kind": "entry",
-   "ok": false,
+   "ok": true,
    "reasons": [
     "last bar is 2026-11-13 (Yahoo), signals are dated 2026-11-16"
    ],
@@ -125,7 +131,8 @@
    "closing_high_252": 1620.7,
    "intraday_high_252": 1668.9,
    "flip_bars_ago": 5,
-   "pct_from_intraday_high": -2.89
+   "pct_from_intraday_high": -2.89,
+   "flagged": true
   },
   {
    "symbol": "RKFORGE",
@@ -144,7 +151,8 @@
    "closing_high_252": 791.85,
    "intraday_high_252": 798.95,
    "flip_bars_ago": 11,
-   "pct_from_intraday_high": -0.89
+   "pct_from_intraday_high": -0.89,
+   "flagged": false
   },
   {
    "symbol": "SANATHAN",
@@ -163,7 +171,8 @@
    "closing_high_252": 605.0,
    "intraday_high_252": 609.8,
    "flip_bars_ago": 100,
-   "pct_from_intraday_high": -0.79
+   "pct_from_intraday_high": -0.79,
+   "flagged": false
   },
   {
    "symbol": "SHALPAINTS",
@@ -178,7 +187,8 @@
    "closing_high_252": 100.58,
    "intraday_high_252": 104.79,
    "flip_bars_ago": 1,
-   "pct_from_intraday_high": -4.02
+   "pct_from_intraday_high": -4.02,
+   "flagged": false
   },
   {
    "symbol": "UNIONBANK",
@@ -197,7 +207,8 @@
    "closing_high_252": 205.6,
    "intraday_high_252": 206.49,
    "flip_bars_ago": 16,
-   "pct_from_intraday_high": -0.43
+   "pct_from_intraday_high": -0.43,
+   "flagged": false
   },
   {
    "symbol": "CORONA",
@@ -213,7 +224,8 @@
    "closing_high_252": 2539.4,
    "intraday_high_252": 2719.3,
    "flip_bars_ago": 12,
-   "pct_from_intraday_high": -15.83
+   "pct_from_intraday_high": -15.83,
+   "flagged": false
   },
   {
    "symbol": "SHREEPUSHK",
@@ -228,7 +240,8 @@
    "closing_high_252": 623.1,
    "intraday_high_252": 653.0,
    "flip_bars_ago": 56,
-   "pct_from_intraday_high": -18.44
+   "pct_from_intraday_high": -18.44,
+   "flagged": false
   },
   {
    "symbol": "MATRIMONY",
@@ -243,7 +256,8 @@
    "closing_high_252": 609.9,
    "intraday_high_252": 655.95,
    "flip_bars_ago": 7,
-   "pct_from_intraday_high": -19.27
+   "pct_from_intraday_high": -19.27,
+   "flagged": false
   }
  ]
 }
