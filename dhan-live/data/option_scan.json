@@ -1,5 +1,5 @@
 {
- "fetched_at": "2026-11-16T17:36:20+05:30",
+ "fetched_at": "2026-11-16T18:32:18+05:30",
  "stale_inputs": [],
  "open_legs": 22,
  "shorts": 13,
@@ -47,6 +47,110 @@
    "leg": "SHRIRAMFIN 1120CE 2026-12-29",
    "concern": "Short 1120CE (825 qty) is a naked call (by design; covered by shares you hold)",
    "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "G",
+   "severity": "WARN",
+   "symbol": "BANKINDIA",
+   "leg": "BANKINDIA 145PE 2026-11-23",
+   "concern": "Order 2132611132429673 has a stop (2.65) but no profit target (target leg PENDING @ 0); sold 0.88",
+   "action": "Set the target to about 0.35 (the 60% decay rule) in the Dhan app"
+  },
+  {
+   "section": "G",
+   "severity": "WARN",
+   "symbol": "BPCL",
+   "leg": "BPCL 280PE 2026-12-29",
+   "concern": "Order 3132611132160573 has a stop (8.35) but no profit target (target leg PENDING @ 0); sold 2.7",
+   "action": "Set the target to about 1.08 (the 60% decay rule) in the Dhan app"
+  },
+  {
+   "section": "G",
+   "severity": "WARN",
+   "symbol": "BSE",
+   "leg": "BSE 3200PE 2026-12-29",
+   "concern": "Order 3132611061652573 has a stop (66) but no profit target (target leg PENDING @ 0); sold 23.55",
+   "action": "Set the target to about 9.42 (the 60% decay rule) in the Dhan app"
+  },
+  {
+   "section": "G",
+   "severity": "WARN",
+   "symbol": "BSE",
+   "leg": "BSE 3500PE 2026-12-29",
+   "concern": "Order 2132611132429773 has a stop (115) but no profit target (target leg PENDING @ 0); sold 38.3",
+   "action": "Set the target to about 15.32 (the 60% decay rule) in the Dhan app"
+  },
+  {
+   "section": "G",
+   "severity": "WARN",
+   "symbol": "BSE",
+   "leg": "BSE 4200CE 2026-12-29",
+   "concern": "Order 3132611061655873 has a stop (162) but no profit target (target leg PENDING @ 0); sold 53.85",
+   "action": "Set the target to about 21.54 (the 60% decay rule) in the Dhan app"
+  },
+  {
+   "section": "G",
+   "severity": "WARN",
+   "symbol": "CGPOWER",
+   "leg": "CGPOWER 900CE 2026-12-29",
+   "concern": "Order 2132611061661673 has a stop (31) but no profit target (target leg PENDING @ 0); sold 10.45",
+   "action": "Set the target to about 4.18 (the 60% decay rule) in the Dhan app"
+  },
+  {
+   "section": "G",
+   "severity": "WARN",
+   "symbol": "CUMMINSIND",
+   "leg": "CUMMINSIND 5300CE 2026-12-29",
+   "concern": "Order 3132611132160673 has a stop (65) but no profit target (target leg PENDING @ 0); sold 21.75",
+   "action": "Set the target to about 8.7 (the 60% decay rule) in the Dhan app"
+  },
+  {
+   "section": "G",
+   "severity": "WARN",
+   "symbol": "DIXON",
+   "leg": "DIXON 11500PE 2026-12-29",
+   "concern": "Order 3132611061924373 has a stop (600) but no profit target (target leg PENDING @ 0); sold 200.55",
+   "action": "Set the target to about 80.22 (the 60% decay rule) in the Dhan app"
+  },
+  {
+   "section": "G",
+   "severity": "WARN",
+   "symbol": "HCLTECH",
+   "leg": "HCLTECH 1240PE 2026-12-29",
+   "concern": "Order 2132611132429873 has a stop (34) but no profit target (target leg PENDING @ 0); sold 11.65",
+   "action": "Set the target to about 4.66 (the 60% decay rule) in the Dhan app"
+  },
+  {
+   "section": "G",
+   "severity": "WARN",
+   "symbol": "INFY",
+   "leg": "INFY 1034PE 2026-12-29",
+   "concern": "Order 3132611061623873 has a stop (33) but no profit target (target leg PENDING @ 0); sold 11.5",
+   "action": "Set the target to about 4.6 (the 60% decay rule) in the Dhan app"
+  },
+  {
+   "section": "G",
+   "severity": "WARN",
+   "symbol": "MCX",
+   "leg": "MCX 3300PE 2026-12-29",
+   "concern": "Order 3132611132160773 has a stop (117) but no profit target (target leg PENDING @ 0); sold 39",
+   "action": "Set the target to about 15.6 (the 60% decay rule) in the Dhan app"
+  },
+  {
+   "section": "G",
+   "severity": "WARN",
+   "symbol": "SHRIRAMFIN",
+   "leg": "SHRIRAMFIN 1120CE 2026-12-29",
+   "concern": "Order 2132611092656873 has a stop (17) but no profit target (target leg PENDING @ 0); sold 5.6",
+   "action": "Set the target to about 2.24 (the 60% decay rule) in the Dhan app"
+  },
+  {
+   "section": "G",
+   "severity": "WARN",
+   "symbol": "SHRIRAMFIN",
+   "leg": "SHRIRAMFIN 880PE 2026-12-29",
+   "concern": "Order 2132611132429973 has a stop (33.6) but no profit target (target leg PENDING @ 0); sold 11.2",
+   "action": "Set the target to about 4.48 (the 60% decay rule) in the Dhan app"
   }
  ]
 }

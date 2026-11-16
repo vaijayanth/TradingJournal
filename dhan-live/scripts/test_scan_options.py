@@ -54,7 +54,7 @@ def has(res, sec, sev=None, text=None):
 
 
 spread = [leg("AAA", 100, "PE", "SHORT", 100, 5.0, 4.0), leg("AAA", 90, "PE", "LONG", 100, 1.0, 1.0)]
-good = sup("1", "AAA", 100, 5.0)
+good = sup("1", "AAA", 100, 5.0, tgp=2.0)   # stop 15 (3x) and target 2.0 (40% of the sold price)
 r = run(spread, good)
 check("clean spread with a pending stop raises nothing", not [f for f in r["findings"] if f["severity"] != "INFO"])
 check("A orphaned long", has(run([leg("BBB", 50, "PE", "LONG", 100, 2.0, 1.0)]), "A", "WARN", "no short against it"))
@@ -73,6 +73,10 @@ check("E premium past the target price = WARN", has(run([leg("GGG", 100, "CE", "
 check("E premium between target and stop is fine", not has(run([leg("GGG", 100, "CE", "SHORT", 100, 5.0, 6.0)], sup("9", "GGG", 100, 5.0, tgp=2.0)), "E"))
 r = run([], scan=[{"check": "S1", "name": "ORPHAN", "severity": "HIGH", "symbol": "HHH", "order_id": "9", "strike": None, "opt_type": None, "concern": "likely orphaned", "action": "cancel"}])
 check("F stop hygiene findings are passed through", has(r, "F", "HIGH"))
+check("G stop with the target leg pending at 0.00 = no profit target", has(run(spread, sup("11", "AAA", 100, 5.0)), "G", "WARN", "no profit target"))
+check("G suggests 40% of the sold price", any("about 2" in f["action"] for f in run(spread, sup("11", "AAA", 100, 5.0))["findings"] if f["section"] == "G"))
+check("G a real target is not flagged", not has(run(spread, sup("12", "AAA", 100, 5.0, tgp=2.0)), "G"))
+check("G a fired target is not flagged", not has(run(spread, sup("13", "AAA", 100, 5.0, tg="TRADED", tgp=2.0)), "G"))
 check("matching uses the sold average (a different average does not match)", has(run([leg("III", 100, "CE", "SHORT", 100, 5.0, 4.0)], sup("10", "III", 100, 7.0)), "C", "WARN"))
 
 print("\nALL ND SCAN_OPTIONS TESTS PASSED" if not fails else f"\n{len(fails)} FAILED: {fails}")

@@ -15,6 +15,8 @@ Sections:
   D  STOP FIRED, NOT FIXED  the stop leg fired (TRADED / TRIGGERED) but a short is still open, or the stop leg is CANCELLED / REJECTED while the short is open
   E  TRIGGER PASSED      the premium is at or above the stop price but the stop leg is still PENDING (or at / below the target price with the target pending)
   F  STOP HYGIENE        the scan_super_orders.py findings: orphaned stop legs, off-rule stops, quantity mismatches
+  G  NO PROFIT TARGET    an open short whose super order has a live stop but no profit target (target leg missing, or pending at price 0.00); suggests the target at
+                         the profit_exit_decay_pct rule (60% decay = 40% of the sold price). The MCP cannot attach a target to a held position: set it in the Dhan app
 Writes data/option_scan.json {fetched_at, inputs, findings[...]}.
 """
 import json
@@ -30,7 +32,7 @@ if "--data-dir" in sys.argv:   # used by test_scan_options.py: a folder holding 
     DATA = ROOT / "data"
 IST = timezone(timedelta(hours=5, minutes=30))
 TITLES = {"A": "ORPHANED LONG (bought leg that hedges nothing)", "B": "UNHEDGED SHORT PUT / NAKED CALL", "C": "SHORT WITH NO STOP ORDER", "D": "STOP FIRED BUT NOT FIXED",
-          "E": "TRIGGER ALREADY PASSED, STOP STILL PENDING", "F": "STOP-ORDER HYGIENE (orphaned / off-rule / quantity)"}
+          "E": "TRIGGER ALREADY PASSED, STOP STILL PENDING", "F": "STOP-ORDER HYGIENE (orphaned / off-rule / quantity)", "G": "STOP BUT NO PROFIT TARGET"}
 HEAD = re.compile(r"^(\d+)\s*\|\s*(BUY|SELL)\s+(\S+)\s*\|\s*(\S+)")
 ENTRY = re.compile(r"Qty:\s*(\d+)\s*\(remaining\s*(\d+)\)\s*@\s*₹([\d,.]+)")
 LEG = re.compile(r"(STOP_LOSS_LEG|TARGET_LEG|ENTRY_LEG):\s*(\S+)\s+qty\s*(\S+)\s*@\s*₹([\d,.]+)\s*\(trail\s*([\d.]+)\)")
@@ -63,7 +65,8 @@ def main():
     today = datetime.now(IST).date().isoformat()
     cfg = json.loads((DATA / "cc_config.json").read_text(encoding="utf-8")) if (DATA / "cc_config.json").exists() else {"rules": {}}
     mult = cfg["rules"].get("stop_premium_multiple", 3)
-    cc = json.loads((ROOT / "covered_call_signals.json").read_text(encoding="utf-8"))
+    decay = cfg["rules"].get("profit_exit_decay_pct", 60)
+    cc =json.loads((ROOT / "covered_call_signals.json").read_text(encoding="utf-8"))
     so_file = DATA / "cc_raw" / "super_orders.txt"
     scan_file = DATA / "super_scan.json"
     stale = []
@@ -142,6 +145,11 @@ def main():
             add("E", "HIGH", s["symbol"], lab, f"Premium {s['ltp']:g} is at or above the stop price {sl['price']:g} (order {o['order_id']}) but the stop leg is still PENDING: it has not fired", "Close it by hand in Dhan now")
         elif tg and tg["status"] == "PENDING" and 0 < tg["price"] and s["ltp"] <= tg["price"]:
             add("E", "WARN", s["symbol"], lab, f"Premium {s['ltp']:g} is at or below the target price {tg['price']:g} (order {o['order_id']}) but the target is still PENDING", "Book the profit or check the order")
+        # G: a live stop but no real profit target (user, 2026-11-16): the book shows TARGET_LEG ... @ 0.00 when none is set
+        if sl and sl["status"] == "PENDING" and not (tg and tg["status"] == "PENDING" and tg["price"] > 0) and not (tg and tg["status"] == "TRADED"):
+            want = round(o["entry"] * (1 - decay / 100), 2)
+            add("G", "WARN", s["symbol"], lab, f"Order {o['order_id']} has a stop ({sl['price']:g}) but no profit target (target leg {tg['status'] + ' @ ' + format(tg['price'], 'g') if tg else 'missing'}); sold {o['entry']:g}",
+                f"Set the target to about {want:g} (the {decay:g}% decay rule) in the Dhan app")
     for j, s in enumerate(shorts):
         if j not in used:
             hit = s["ltp"] >= mult * s["sell_avg"]
@@ -164,7 +172,7 @@ def main():
     for s in stale:
         print(f"  !! STALE INPUT - {s}")
     print("  (the super order book has no strike or expiry: matching to a short is by symbol + sold average, so verify before acting)")
-    for sec in "ABCDEF":
+    for sec in "ABCDEFG":
         rows = [f for f in findings if f["section"] == sec]
         high = sum(1 for f in rows if f["severity"] == "HIGH")
         info = [f for f in rows if f["severity"] == "INFO"]
