@@ -1,69 +1,95 @@
 {
- "generated_at": "2026-11-16T09:19:32.018463+00:00",
- "market_data_date": "2026-11-13",
+ "generated_at": "2026-11-16T12:06:13.311822+00:00",
+ "market_data_date": "2026-11-16",
  "yahoo_last_bars": [
-  "2026-11-13"
- ],
- "bars_after_signal_date_ignored": [
+  "2026-11-13",
   "2026-11-16"
  ],
- "checked": 7,
+ "bars_after_signal_date_ignored": [],
+ "checked": 14,
  "flagged": 3,
  "results": [
   {
-   "symbol": "HONASA",
+   "symbol": "ABDL",
    "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "close 501.95 is below the 252-session closing high 502.80"
-   ],
-   "published_colour": "green",
-   "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-13",
-   "close": 501.95,
-   "published_close": 501.95,
-   "closing_high_252": 502.8,
-   "intraday_high_252": 516.95,
-   "flip_bars_ago": 26,
-   "pct_from_intraday_high": -2.9
-  },
-  {
-   "symbol": "LICHSGFIN",
-   "kind": "entry",
-   "ok": false,
-   "reasons": [
-    "close 585.10 is below the 252-session closing high 586.35"
-   ],
+   "ok": true,
+   "reasons": [],
    "dhan_bars_added": [
     "2026-11-11",
     "2026-11-12"
    ],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-13",
-   "close": 585.1,
-   "published_close": 585.1,
-   "closing_high_252": 586.35,
-   "intraday_high_252": 598.2,
-   "flip_bars_ago": 3,
-   "pct_from_intraday_high": -2.19
+   "yahoo_last_bar": "2026-11-16",
+   "close": 784.25,
+   "published_close": 784.25,
+   "closing_high_252": 784.25,
+   "intraday_high_252": 792.0,
+   "flip_bars_ago": 39,
+   "pct_from_intraday_high": -0.98
   },
   {
-   "symbol": "MSTCLTD",
+   "symbol": "BHARTIARTL",
    "kind": "entry",
    "ok": false,
    "reasons": [
-    "close 783.35 is below the 252-session closing high 785.65"
+    "close 2153.50 is below the 252-session closing high 2162.70"
    ],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-13",
-   "close": 783.35,
-   "published_close": 783.35,
-   "closing_high_252": 785.65,
-   "intraday_high_252": 805.0,
-   "flip_bars_ago": 2,
-   "pct_from_intraday_high": -2.69
+   "yahoo_last_bar": "2026-11-16",
+   "close": 2153.5,
+   "published_close": 2153.5,
+   "closing_high_252": 2162.7,
+   "intraday_high_252": 2174.5,
+   "flip_bars_ago": 20,
+   "pct_from_intraday_high": -0.97
+  },
+  {
+   "symbol": "HINDOILEXP",
+   "kind": "entry",
+   "ok": true,
+   "reasons": [],
+   "published_colour": "green",
+   "recomputed_colour": "green",
+   "yahoo_last_bar": "2026-11-16",
+   "close": 212.66,
+   "published_close": 212.66,
+   "closing_high_252": 212.66,
+   "intraday_high_252": 216.7,
+   "flip_bars_ago": 3,
+   "pct_from_intraday_high": -1.86
+  },
+  {
+   "symbol": "LICHSGFIN",
+   "kind": "entry",
+   "ok": true,
+   "reasons": [],
+   "dhan_bars_added": [
+    "2026-11-11",
+    "2026-11-12"
+   ],
+   "published_colour": "green",
+   "recomputed_colour": "green",
+   "yahoo_last_bar": "2026-11-16",
+   "close": 605.5,
+   "published_close": 605.5,
+   "closing_high_252": 605.5,
+   "intraday_high_252": 608.55,
+   "flip_bars_ago": 4,
+   "pct_from_intraday_high": -0.5
+  },
+  {
+   "symbol": "NIFTYIETF",
+   "kind": "entry",
+   "ok": false,
+   "reasons": [
+    "not enough Yahoo history to verify"
+   ],
+   "dhan_bars_added": [
+    "2026-11-11",
+    "2026-11-12"
+   ]
   },
   {
    "symbol": "PANACHE",
@@ -76,31 +102,33 @@
    ],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-13",
-   "close": 757.35,
-   "published_close": 757.35,
-   "closing_high_252": 757.35,
-   "intraday_high_252": 757.35,
-   "flip_bars_ago": 135,
+   "yahoo_last_bar": "2026-11-16",
+   "close": 772.45,
+   "published_close": 772.45,
+   "closing_high_252": 772.45,
+   "intraday_high_252": 772.45,
+   "flip_bars_ago": 136,
    "pct_from_intraday_high": 0.0
   },
   {
-   "symbol": "SHALPAINTS",
+   "symbol": "PRIZOR",
    "kind": "entry",
-   "ok": true,
-   "reasons": [],
+   "ok": false,
+   "reasons": [
+    "last bar is 2026-11-13 (Yahoo), signals are dated 2026-11-16"
+   ],
    "published_colour": "green",
    "recomputed_colour": "green",
    "yahoo_last_bar": "2026-11-13",
-   "close": 95.93,
-   "published_close": 95.93,
-   "closing_high_252": 95.93,
-   "intraday_high_252": 97.48,
-   "flip_bars_ago": 0,
-   "pct_from_intraday_high": -1.59
+   "close": 1620.7,
+   "published_close": 1620.7,
+   "closing_high_252": 1620.7,
+   "intraday_high_252": 1668.9,
+   "flip_bars_ago": 5,
+   "pct_from_intraday_high": -2.89
   },
   {
-   "symbol": "TASTYBITE",
+   "symbol": "RKFORGE",
    "kind": "entry",
    "ok": true,
    "reasons": [],
@@ -110,29 +138,112 @@
    ],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-13",
-   "close": 11441.0,
-   "published_close": 11441.0,
-   "closing_high_252": 11441.0,
-   "intraday_high_252": 11693.0,
-   "flip_bars_ago": 9,
-   "pct_from_intraday_high": -2.16
+   "yahoo_last_bar": "2026-11-16",
+   "close": 791.85,
+   "published_close": 791.85,
+   "closing_high_252": 791.85,
+   "intraday_high_252": 798.95,
+   "flip_bars_ago": 11,
+   "pct_from_intraday_high": -0.89
+  },
+  {
+   "symbol": "SANATHAN",
+   "kind": "entry",
+   "ok": true,
+   "reasons": [],
+   "dhan_bars_added": [
+    "2026-11-11",
+    "2026-11-12"
+   ],
+   "published_colour": "green",
+   "recomputed_colour": "green",
+   "yahoo_last_bar": "2026-11-16",
+   "close": 605.0,
+   "published_close": 605.0,
+   "closing_high_252": 605.0,
+   "intraday_high_252": 609.8,
+   "flip_bars_ago": 100,
+   "pct_from_intraday_high": -0.79
+  },
+  {
+   "symbol": "SHALPAINTS",
+   "kind": "entry",
+   "ok": true,
+   "reasons": [],
+   "published_colour": "green",
+   "recomputed_colour": "green",
+   "yahoo_last_bar": "2026-11-16",
+   "close": 100.58,
+   "published_close": 100.58,
+   "closing_high_252": 100.58,
+   "intraday_high_252": 104.79,
+   "flip_bars_ago": 1,
+   "pct_from_intraday_high": -4.02
+  },
+  {
+   "symbol": "UNIONBANK",
+   "kind": "entry",
+   "ok": true,
+   "reasons": [],
+   "dhan_bars_added": [
+    "2026-11-11",
+    "2026-11-12"
+   ],
+   "published_colour": "green",
+   "recomputed_colour": "green",
+   "yahoo_last_bar": "2026-11-16",
+   "close": 205.6,
+   "published_close": 205.6,
+   "closing_high_252": 205.6,
+   "intraday_high_252": 206.49,
+   "flip_bars_ago": 16,
+   "pct_from_intraday_high": -0.43
   },
   {
    "symbol": "CORONA",
    "kind": "addon",
    "ok": true,
    "reasons": [],
-   "note": "recent listing: only 226 sessions of history (closing high taken over those)",
+   "note": "recent listing: only 227 sessions of history (closing high taken over those)",
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-13",
-   "close": 2329.7,
-   "published_close": 2329.7,
+   "yahoo_last_bar": "2026-11-16",
+   "close": 2288.8,
+   "published_close": 2288.8,
    "closing_high_252": 2539.4,
    "intraday_high_252": 2719.3,
-   "flip_bars_ago": 11,
-   "pct_from_intraday_high": -14.33
+   "flip_bars_ago": 12,
+   "pct_from_intraday_high": -15.83
+  },
+  {
+   "symbol": "SHREEPUSHK",
+   "kind": "addon",
+   "ok": true,
+   "reasons": [],
+   "published_colour": "green",
+   "recomputed_colour": "green",
+   "yahoo_last_bar": "2026-11-16",
+   "close": 532.6,
+   "published_close": 532.6,
+   "closing_high_252": 623.1,
+   "intraday_high_252": 653.0,
+   "flip_bars_ago": 56,
+   "pct_from_intraday_high": -18.44
+  },
+  {
+   "symbol": "MATRIMONY",
+   "kind": "exit",
+   "ok": true,
+   "reasons": [],
+   "published_colour": "red",
+   "recomputed_colour": "red",
+   "yahoo_last_bar": "2026-11-16",
+   "close": 529.55,
+   "published_close": 529.55,
+   "closing_high_252": 609.9,
+   "intraday_high_252": 655.95,
+   "flip_bars_ago": 7,
+   "pct_from_intraday_high": -19.27
   }
  ]
 }

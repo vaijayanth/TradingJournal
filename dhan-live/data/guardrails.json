@@ -1,22 +1,22 @@
 {
- "generated_at": "2026-11-16T14:49:32+05:30",
+ "generated_at": "2026-11-16T17:36:14+05:30",
  "broker": "dhan",
- "market_data_date": "2026-11-13",
- "signals_generated_at": "2026-11-16T09:19:30.380576+00:00",
- "status": "BLOCK",
- "global_block": true,
+ "market_data_date": "2026-11-16",
+ "signals_generated_at": "2026-11-16T12:06:11.737836+00:00",
+ "status": "WARN",
+ "global_block": false,
  "counts": {
-  "block": 1,
-  "warn": 3,
+  "block": 0,
+  "warn": 4,
   "info": 0
  },
  "per_symbol_blocks": {},
  "findings": [
   {
    "id": "F5",
-   "level": "BLOCK",
+   "level": "WARN",
    "symbol": null,
-   "msg": "the cross-check disagrees with 3 of 7 signals - prices are suspect (a partial same-day bar while the market is open, a hole in the price history, or a bad feed). Do not order until the close-of-day data is published and the refresh re-run."
+   "msg": "the cross-check flagged 3 of 14 signals (they are blocked from orders): BHARTIARTL, NIFTYIETF, PRIZOR"
   },
   {
    "id": "I8",
