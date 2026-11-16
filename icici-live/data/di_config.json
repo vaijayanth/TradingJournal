@@ -1,0 +1,7 @@
+{
+ "_note": "ICICI (DI) rules, user 2026-11-16: dividend portfolio; add a Rs20,000 position when a stock hits a 52-week low, at most once a week per stock; no other stock trading. The signal uses the 252-session CLOSING low (the same closing convention as ND). Option rules for the Covered Call page are the ND rules (Supertrend colour only).",
+ "position_rs": 20000,
+ "cooldown_days": 7,
+ "window_sessions": 252,
+ "yahoo_overrides": {"NSDL": "NSDL.BO"}
+}

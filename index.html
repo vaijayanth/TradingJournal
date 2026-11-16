@@ -1232,6 +1232,23 @@ th.te-sort { cursor:pointer; user-select:none; } th.te-sort:hover { color:var(--
 </div>
 
 <!-- ════ DASHBOARD 2.0 (contract-driven; used by workspaces whose pages.dashboard === 'v2') ════ -->
+<div id="page-dashboard-di" class="page page-alt" style="display:none">
+
+  <div class="d2-head">
+    <div>
+      <div class="d2-eyebrow">Dividend portfolio · <span>DI</span> workspace</div>
+      <h1>Dashboard</h1>
+      <div class="d2-sub">Add a ₹20,000 position whenever a stock in the universe closes at a new 52-week low (once a week per stock): averaging in at the bottom improves the dividend yield.</div>
+    </div>
+    <div class="d2-filters">
+      <span class="d2-chip d2-chip-soft" id="di-asof">—</span>
+      <button class="d2-chip d2-chip-btn" onclick="wsRefresh()">↻ Refresh</button>
+    </div>
+  </div>
+
+  <div id="di-root"><div class="a2-pending">Loading DI data…</div></div>
+</div>
+
 <div id="page-dashboard2" class="page page-alt" style="display:none">
 
   <div class="d2-head">
@@ -8779,8 +8796,11 @@ const WORKSPACES = {
                      entryRule: 'Enter on a fresh Supertrend flip to green (today only)', lossTitle: 'Positions in loss' },
              // 'sheet' = the old Google-Sheet dashboard, kept as one tab; every other page reads the MCP snapshot
              pages: { sheet: true, live: true, covcall: true, dashboard: 'v2', performance: 'v2', analysis: 'v2' } },
-  icici:   { id: 'icici',   label: 'DI',      strategy: null,    source: 'not connected', status: 'pending',
-             pages: {} },
+  icici:   { id: 'icici',   label: 'DI',      strategy: 'Dividend · 52-week-low averaging', source: 'Yahoo + uploads', status: 'live',
+             snapshotUrl: 'icici-live/icici_live_signals.json', ccUrl: 'icici-live/covered_call_signals.json',
+             copy: { refreshCmd: '/refresh-icici' },
+             alt: { dashboard: { el: 'page-dashboard-di', fn: 'diEnsure' } },   // DI has its own Dashboard (universe, dividends, entry signals)
+             pages: { dashboard: 'v2', covcall: true } },                      // no Live Trading / Performance / Analysis: a dividend-only portfolio
 };
 const WS_PAGE_ORDER = ['dashboard', 'dhanlive', 'covcall', 'performance', 'analysis', 'sheet'];
 const WS = { id: 'dhan' }; // default workspace (a saved choice in localStorage overrides it)
@@ -8813,8 +8833,9 @@ function wsGate(pageId) {
   const page = document.getElementById('page-' + pageId);
   if (!swing || !page) return;
   const ok = wsHasPage(WS.id, pageId);
-  const alt = WS_ALT[pageId], altEl = alt && document.getElementById(alt.el);
+  const alt = (((WORKSPACES[WS.id] || {}).alt || {})[pageId]) || WS_ALT[pageId], altEl = alt && document.getElementById(alt.el);
   const useAlt = !!altEl && WORKSPACES[WS.id].pages[wsPageKey(pageId)] === 'v2';
+  if (pageId === 'dashboard') ['page-dashboard2', 'page-dashboard-di'].forEach(i => { const e = document.getElementById(i); if (e && e !== altEl) e.style.display = 'none'; });
   page.style.display = (ok && !useAlt) ? '' : 'none';
   if (altEl) altEl.style.display = (ok && useAlt) ? 'block' : 'none';
   if (ok && useAlt && typeof window[alt.fn] === 'function') window[alt.fn]();
@@ -9760,9 +9781,102 @@ function d2Ensure() {
   wsLoad(id).then(d2Render).catch(e => console.error('Dashboard load error:', e));
 }
 
+// ── DI (ICICI) DASHBOARD — dividend portfolio: universe view, dividends, 52-week-low entry signals (icici-live/icici_live_signals.json) ──
+const diNum = (v, d = 2) => v == null ? '—' : Number(v).toLocaleString('en-IN', { minimumFractionDigits: d, maximumFractionDigits: d });
+async function diLoad(force) {
+  if (window._di && !force) return window._di;
+  const res = await fetch(((WORKSPACES.icici || {}).snapshotUrl) + '?t=' + Date.now());
+  if (!res.ok) throw new Error('HTTP ' + res.status);
+  window._di = await res.json();
+  return window._di;
+}
+function diEnsure() {
+  diLoad(false).then(diRender).catch(e => { const r = document.getElementById('di-root'); if (r) r.innerHTML = `<div class="a2-pending"><b>Could not load DI data.</b><br>${dhEsc(e.message)} — run /refresh-icici to generate icici-live/icici_live_signals.json.</div>`; console.error('DI load error:', e); });
+}
+function diSigPill(s) {
+  if (s.short_history_days) return '<span class="trend-pill" style="background:var(--surface2);color:var(--text-muted)" title="Too little price history on Yahoo to judge a 52-week low">NO HISTORY</span>';
+  if (s.signal === 'ENTRY') return '<span class="trend-pill" style="background:var(--green-soft);color:var(--green);font-weight:700">ENTRY</span>';
+  if (s.signal === 'COOLDOWN') return '<span class="trend-pill" style="background:var(--amber-soft, var(--surface2));color:var(--amber)" title="New 52-week low, but a buy was recorded in the last 7 days">COOLDOWN</span>';
+  if (s.pct_above_low != null && s.pct_above_low <= 5) return '<span class="trend-pill" style="background:var(--amber-soft, var(--surface2));color:var(--amber)" title="Within 5% of the 52-week closing low">NEAR LOW</span>';
+  return '';
+}
+function diRender(d) {
+  const root = document.getElementById('di-root'); if (!root) return;
+  const S = d.stocks || [], R = d.rules || {}, tier = R.position_rs || 20000;
+  const asof = document.getElementById('di-asof');
+  if (asof) asof.textContent = 'Market data ' + dhFmtDate(d.market_data_date) + ' · built ' + (wsFmtT(d.generated_at, true) || '') + ' IST · ' + wsAgo(d.generated_at);
+  const entries = S.filter(s => s.signal === 'ENTRY'), cool = S.filter(s => s.signal === 'COOLDOWN');
+  const near = S.filter(s => !s.short_history_days && s.pct_above_low != null && s.pct_above_low <= 10);
+  const payers = S.filter(s => (s.div_ttm || 0) > 0 && s.div_yield_pct != null);
+  const best = payers.slice().sort((a, b) => b.div_yield_pct - a.div_yield_pct)[0];
+  const cost = entries.reduce((a, s) => a + (s.cost_at_signal || 0), 0);
+  const kpis = a2Metrics([
+    ['Entry signals today', entries.length, entries.length ? 'New 52-week closing low · ₹' + diNum(cost, 0) + ' to deploy' : 'No stock closed at a new 52-week low', entries.length ? 'pos' : ''],
+    ['Universe', S.length, `${S.filter(s => s.has_options).length} have options · ${S.filter(s => (s.div_ttm || 0) > 0).length} pay a dividend`],
+    ['Average yield', ((d.summary || {}).avg_yield_pct != null ? d.summary.avg_yield_pct + '%' : '—'), 'Trailing 12-month dividends ÷ price (stocks with history)'],
+    ['Highest yield', best ? best.div_yield_pct + '%' : '—', best ? best.symbol + (best.div_yield_pct > 12 ? ' · check for a one-off dividend' : '') : '', best && best.div_yield_pct > 12 ? 'neg' : ''],
+    ['Within 10% of a low', near.length, near.slice().sort((a, b) => a.pct_above_low - b.pct_above_low).slice(0, 3).map(s => s.symbol + ' +' + s.pct_above_low.toFixed(1) + '%').join(' · ') || 'None'],
+  ]);
+  // entry banner: the thing to act on, highlighted
+  let banner;
+  if (entries.length) {
+    banner = `<div class="d2-panel" style="border:2px solid var(--green);background:var(--green-soft)"><div class="d2-panel-head"><div><div class="d2-title" style="color:var(--green)">ENTRY SIGNAL${entries.length > 1 ? 'S' : ''} · ${entries.length}</div>`
+      + `<div class="d2-hint">Each stock closed at a new 52-week low: add a ₹${diNum(tier, 0)} position (at most once a week per stock). Averaging in at the bottom lifts the dividend yield.</div></div></div>`
+      + `<div class="p2-scroll"><table class="p2-table a2-t"><thead><tr><th class="txt">Stock</th><th class="num">Price</th><th class="num">Buy qty</th><th class="num">Cost</th><th class="num">Yield now</th><th class="num">Yield on the new cost</th><th class="txt">Last buy</th></tr></thead><tbody>`
+      + entries.map(s => `<tr><td class="txt"><b class="stk">${dhEsc(s.symbol)}</b></td><td class="num">₹${diNum(s.price)}</td><td class="num">${s.qty_to_buy}</td><td class="num">₹${diNum(s.cost_at_signal, 0)}</td><td class="num">${s.div_yield_pct != null ? s.div_yield_pct + '%' : '—'}</td><td class="num">${s.div_ttm ? diNum(s.div_ttm / s.price * 100) + '%' : '—'}</td><td class="txt">${s.last_buy ? dhFmtDate(s.last_buy) : 'none recorded'}</td></tr>`).join('')
+      + `</tbody></table></div>${cool.length ? `<div class="d2-edge-foot" style="border:0">In cooldown (bought in the last 7 days): ${cool.map(s => dhEsc(s.symbol)).join(', ')}</div>` : ''}</div>`;
+  } else {
+    const nearest = S.filter(s => !s.short_history_days).slice().sort((a, b) => a.pct_above_low - b.pct_above_low).slice(0, 5);
+    banner = `<div class="d2-panel"><div class="d2-panel-head"><div><div class="d2-title">No entry signal today</div><div class="d2-hint">A signal needs a close at a new 52-week closing low. Nearest to one: `
+      + nearest.map(s => `<b>${dhEsc(s.symbol)}</b> +${s.pct_above_low.toFixed(1)}%`).join(' · ') + `.</div></div></div></div>`;
+  }
+  const dueSoon = S.filter(s => s.next_exdiv_est).slice().sort((a, b) => a.next_exdiv_est.localeCompare(b.next_exdiv_est));
+  const tbl = ccTbl('di_uni', {
+    title: 'Universe', hint: 'All stocks in the DI universe. ENTRY rows first. Yield = trailing 12-month dividends ÷ price; next ex-dividend is the same date a year later (an estimate). Prices are unadjusted closes.',
+    rows: S, search: s => s.symbol, empty: 'No data.', sort: [3, 1], rowCls: s => s.signal === 'ENTRY' ? 'row-green' : '',
+    group: s => s.signal === 'ENTRY' ? 'sig' : 'rest', groups: [{ key: 'sig', label: 'Entry signals today' }, { key: 'rest', label: 'Universe' }],
+    filters: [['all', 'All stocks', () => true], ['entry', 'Entry signal', s => s.signal === 'ENTRY'], ['near', 'Within 10% of the low', s => !s.short_history_days && s.pct_above_low <= 10],
+      ['div', 'Pays a dividend', s => (s.div_ttm || 0) > 0], ['opt', 'Has options', s => s.has_options], ['ex', 'Ex-dividend within 30 days', s => { const x = s.next_exdiv_est; return !!x && (new Date(x) - new Date()) / 86400000 <= 30; }]],
+    cols: [
+      { h: 'Stock', txt: true, v: s => s.symbol, c: s => `<b class="stk">${dhEsc(s.symbol)}</b>${s.yahoo_symbol && /\.BO$/.test(s.yahoo_symbol) ? ' <span title="Priced from BSE: Yahoo has no NSE price" style="color:var(--text-muted)">(BSE)</span>' : ''}` },
+      { h: 'Price', num: true, v: s => s.price, c: s => '₹' + diNum(s.price) },
+      { h: '52w low', num: true, v: s => s.low_52w_close, c: s => s.low_52w_close != null ? '₹' + diNum(s.low_52w_close) : '—' },
+      { h: '% above low', num: true, v: s => s.pct_above_low, c: s => s.pct_above_low != null ? `<span class="${s.pct_above_low <= 5 ? 'neg' : ''}">${s.pct_above_low.toFixed(1)}%</span>` : '—' },
+      { h: '% below high', num: true, v: s => s.pct_below_high, c: s => s.pct_below_high != null ? s.pct_below_high.toFixed(1) + '%' : '—' },
+      { h: 'Yield', num: true, v: s => s.div_yield_pct, c: s => s.div_yield_pct == null ? '—' : (s.div_yield_pct > 12 ? `<span class="neg" title="Unusually high: check for a one-off or special dividend">${s.div_yield_pct}% ⚠</span>` : s.div_yield_pct + '%') },
+      { h: 'Dividend / yr', num: true, v: s => s.div_ttm, c: s => s.div_ttm ? '₹' + diNum(s.div_ttm) + (s.div_count_12m ? ` <span style="color:var(--text-muted)">(${s.div_count_12m}×)</span>` : '') : '—' },
+      { h: '₹/yr on ₹20k', num: true, v: s => s.div_yield_pct == null ? null : s.div_yield_pct * tier / 100, c: s => s.div_yield_pct == null ? '—' : '₹' + diNum(s.div_yield_pct * tier / 100, 0) },
+      { h: 'Last ex-div', txt: true, v: s => s.last_exdiv, c: s => s.last_exdiv ? `<span style="white-space:nowrap">${dhFmtDate(s.last_exdiv)}${s.last_div_amount ? ` · ₹${diNum(s.last_div_amount)}` : ''}</span>` : '—' },
+      { h: 'Next ex-div (est.)', txt: true, v: s => s.next_exdiv_est, c: s => s.next_exdiv_est ? `<span style="white-space:nowrap">${dhFmtDate(s.next_exdiv_est)}</span>` : '—' },
+      { h: 'Supertrend', txt: true, v: s => s.colour, c: s => s.colour ? `<span style="color:var(--${s.colour === 'green' ? 'green' : 'red'})">● ${s.colour}</span>${s.flip_date ? ' <span style="color:var(--text-muted)">since ' + dhFmtDate(s.flip_date) + '</span>' : ''}` : '—' },
+      { h: 'RSI', num: true, v: s => s.rsi, c: s => s.rsi == null ? '—' : s.rsi.toFixed(1) },
+      { h: 'Options', txt: true, v: s => s.has_options ? 1 : 0, c: s => s.has_options ? 'Yes' + (s.lot ? ` <span style="color:var(--text-muted)">lot ${s.lot}</span>` : '') : '—' },
+      { h: 'Signal', txt: true, v: s => s.signal === 'ENTRY' ? 0 : s.signal === 'COOLDOWN' ? 1 : 2, c: s => diSigPill(s) },
+    ],
+  });
+  const cal = dueSoon.length ? a2Panel('Next ex-dividend dates', 'Estimates: last year\'s ex-dividend date moved forward. Confirm the real date before relying on it.',
+    `<div class="p2-scroll"><table class="p2-table a2-t"><thead><tr><th class="txt">Stock</th><th class="txt">Estimated ex-date</th><th class="num">In days</th><th class="num">Last amount</th><th class="num">Yield</th></tr></thead><tbody>`
+    + dueSoon.slice(0, 8).map(s => { const n = Math.round((new Date(s.next_exdiv_est) - new Date()) / 86400000); return `<tr><td class="txt"><b class="stk">${dhEsc(s.symbol)}</b></td><td class="txt">${dhFmtDate(s.next_exdiv_est)}</td><td class="num">${n}</td><td class="num">${s.last_div_amount ? '₹' + diNum(s.last_div_amount) : '—'}</td><td class="num">${s.div_yield_pct != null ? s.div_yield_pct + '%' : '—'}</td></tr>`; }).join('')
+    + '</tbody></table></div>') : '';
+  const sm = d.summary || {};
+  const notes = [];
+  if ((sm.short_history || []).length) notes.push(`${sm.short_history.join(', ')}: too little price history on Yahoo, so no 52-week low or signal`);
+  if (S.some(s => /\.BO$/.test(s.yahoo_symbol || ''))) notes.push(`${S.filter(s => /\.BO$/.test(s.yahoo_symbol || '')).map(s => s.symbol).join(', ')}: priced from BSE (no NSE price on Yahoo)`);
+  if ((d.failed || []).length) notes.push('no data: ' + d.failed.join(', '));
+  const foot = `<div class="d2-edge-foot" style="border:0">Signal rule: today's close is the lowest close of the last ${R.window_sessions || 252} sessions (unadjusted prices), at most one ₹${diNum(tier, 0)} buy per stock per ${R.cooldown_days || 7} days. Source: Yahoo Finance (daily bars and dividend history)${notes.length ? ' · ' + dhEsc(notes.join(' · ')) : ''}. Holdings and tradebook uploads are not connected yet, so positions and the weekly cooldown are not tracked automatically.</div>`;
+  root.innerHTML = banner + kpis + tbl + cal + foot;
+  ccTblApply('di_uni');
+}
+
 // Header ↻ — refresh whatever the active workspace/page is showing
 async function wsRefresh() {
   if (window._strategy === 'fno') return refreshFnoData();
+  if (WS.id === 'icici') {   // DI reads its own JSON files (no broker snapshot adapter)
+    const c = wsActivePageId();
+    try { if (c === 'covcall') await ccRefresh(true); else { await diLoad(true); diEnsure(); } if (typeof showToast === 'function') showToast('Refreshed DI data', 'green'); }
+    catch (e) { if (typeof showToast === 'function') showToast('Refresh failed: ' + e.message, 'red'); }
+    return;
+  }
   const cur = wsActivePageId(), ws = WORKSPACES[WS.id];
   if (WS_ADAPTERS[WS.id] && cur && cur !== 'config' && ws.pages[wsPageKey(cur)]) {
     try {
@@ -10305,11 +10419,12 @@ const CCZ_TABS = ['alerts', 'signals', 'legs', 'rules'];
 function ccZTab(name) { ccPick('cc-otabs', 'cc-ov-', CCZ_TABS, CCZ_TABS.includes(name) ? name : 'signals', 'tj_ccz_tab'); }
 function ccZerodhaView(d) {
   const S = d.stocks || [], R = d.rules || {}, C = d.counts || {};
+  const di = WS.id === 'icici', rcmd = di ? '/refresh-icici' : '/refresh-zerodha', dir = di ? 'icici-live' : 'zerodha-live', who = di ? 'DI' : 'AZ';
   const zLegs = S.flatMap(s => (s.legs || []).map(l => ({ ...l, symbol: l.symbol || s.symbol })));
   const zMtm = zLegs.reduce((a, l) => a + (l.pnl_rs || 0), 0);
   const zNear = zLegs.filter(l => l.side === 'SHORT').sort((a, b) => Math.abs(a.dist_pct) - Math.abs(b.dist_pct))[0];
   const kpis = a2Metrics([
-    ['Signals', `${C.call || 0} call · ${C.put_spread || 0} BPS`, `${S.length} Nifty F&O stocks` + ((d.no_data || []).length ? ' (no data: ' + d.no_data.join(', ') + ')' : '') + ` · RSI overrides: ${C.rsi_override || 0}`],
+    ['Signals', `${C.call || 0} call · ${C.put_spread || 0} BPS`, (di ? `${S.length} DI stocks with options` : `${S.length} Nifty F&O stocks`) + ((d.no_data || []).length ? ' (no data: ' + d.no_data.join(', ') + ')' : '') + (di ? ((d.no_options || []).length ? ` · no options: ${d.no_options.join(', ')}` : '') : ` · RSI overrides: ${C.rsi_override || 0}`)],
     ['Open option legs', (d.positions || {}).legs || 0, 'Expiries from ' + dhFmtDate((d.positions || {}).track_from) + ' · ' + ((d.positions || {}).ignored_legs || 0) + ' earlier legs ignored'],
     ['Act now', ccActNow(d), 'Exit, 3× premium, beyond strike, profit exit (other alerts are in the Alerts tab)', ccActNowBad(d) ? 'neg' : ''],
     ['Nearest short strike', zNear ? ccSigned(zNear.dist_pct) : '—', zNear ? `${zNear.symbol} ${ccStrike(zNear.strike)}${zNear.type} · ${ccSD(zNear.expiry)}` : 'No short legs', zNear && Math.abs(zNear.dist_pct) < 5 ? 'neg' : ''],
@@ -10329,23 +10444,28 @@ function ccZerodhaView(d) {
   const alertsT = ccAlertsBox(d, 'zal', 'Alert types: 3× premium, beyond / near strike, through hedge, profit exit, no GTT, no hedge, Exit (colour flipped, opposite position open)');
   const trades = ccTrades(S, d.alerts, R);
   const legT = ccTbl('zlegs', {
-    title: 'Open positions', hint: 'One row per trade, from the AZ positions call (expiries from ' + dhFmtDate((d.positions || {}).track_from) + ' onwards). Short leg = the short option only: % of its premium already earned and its own P&L (your 60% profit exit and 3× stop work on this). Trade P&L = the whole trade including the hedge. Book profit at ' + (R.profit_exit_decay_pct ?? 60) + '%; negative = losing. Click a row for its legs. BPS = bull put spread.',
-    rows: trades, search: t => t.symbol, empty: `No open option legs with an expiry from ${dhFmtDate((d.positions || {}).track_from)} onwards in the AZ positions.`, sort: [7, 1],
+    title: 'Open positions', hint: 'One row per trade, from the ' + who + ' positions' + (di ? ' (uploaded ICICIdirect export, none yet)' : ' call') + ' (expiries from ' + dhFmtDate((d.positions || {}).track_from) + ' onwards). Short leg = the short option only: % of its premium already earned and its own P&L (your 60% profit exit and 3× stop work on this). Trade P&L = the whole trade including the hedge. Book profit at ' + (R.profit_exit_decay_pct ?? 60) + '%; negative = losing. Click a row for its legs. BPS = bull put spread.',
+    rows: trades, search: t => t.symbol, empty: `No open option legs with an expiry from ${dhFmtDate((d.positions || {}).track_from)} onwards in the ${who} positions.`, sort: [7, 1],
     rowKey: t => t.key, detail: ccTradeDetail, group: t => t.needs ? 'act' : 'ok', groups: ccTradeGroups, filters: ccTradeFilters, cols: ccTradeCols(),
   });
-  const rulesPanel = a2Panel('Option rules', 'Edit zerodha-live/data/cc_config.json to change; shown here as applied',
-    a2Rows([
+  const rulesPanel = a2Panel('Option rules', 'Edit ' + dir + '/data/cc_config.json to change; shown here as applied',
+    a2Rows((R.rsi_override === false ? [
+      ['Green', `BPS (sell a put, buy ${R.hedge_strikes_below} listed strikes lower)`],
+      ['Red', 'Sell the call only'],
+      ['RSI', 'No RSI override: the Supertrend colour alone decides'],
+    ] : [
       ['RSI above ' + R.rsi_sell_call_above, `Sell the ${R.short_call_delta} delta call, whatever the Supertrend colour`],
       ['RSI below ' + R.rsi_sell_put_below, `BPS (sell the ${R.short_put_delta} delta put, buy ${R.hedge_strikes_below} listed strikes lower), whatever the colour`],
       ['Otherwise · green', 'BPS'],
       ['Otherwise · red', `Sell the ${R.short_call_delta} delta call only`],
+    ]).concat([
       ['Expiry', (d.show_expiries || []).map(dhFmtDate).join(', ') || '—'],
       ['Exit · premium', `Short option price reaches ${R.stop_premium_multiple}× the premium sold`],
       ['Exit · colour', 'Supertrend colour changes against the colour at entry (the colour when the legs were first seen): close the structure and open the opposite one'],
-      ['Positions', 'Open legs with an expiry on/after ' + dhFmtDate((d.positions || {}).track_from) + ' come from the AZ MCP positions call; earlier expiries are ignored'],
-      ['Universe', 'All Nifty F&O stocks except ' + ((d.excluded || []).join(', ') || 'none')],
-    ].concat(ccRulesCommon(R, ['Stop protection', 'Each short should have a buy-back GTT (stop 3× + profit target); an invalid or missing one raises Invalid GTT / No GTT placed (scan_gtts.py, the zerodha-gtt-order skill)']))));
-  const foot = `<div class="d2-edge-foot" style="border:0">Market data ${dhFmtDate(d.market_data_date)} · no option quotes are pulled, so strikes and premiums for new trades are not shown · positions fetched ${(d.positions || {}).fetched_at ? dhFmtDate(String(d.positions.fetched_at).slice(0, 10)) : 'never (run /refresh-zerodha)'}.</div>`;
+      ['Positions', di ? 'Open legs come from the uploaded ICICIdirect positions export (not connected yet): until then every stock shows as a signal and no alerts are raised' : 'Open legs with an expiry on/after ' + dhFmtDate((d.positions || {}).track_from) + ' come from the AZ MCP positions call; earlier expiries are ignored'],
+      ['Universe', di ? 'The DI dividend universe: only the stocks with listed options appear here' : 'All Nifty F&O stocks except ' + ((d.excluded || []).join(', ') || 'none')],
+    ]).concat(ccRulesCommon(R, di ? ['Stop protection', 'Not tracked for DI: place and watch the 3× stop in ICICIdirect'] : ['Stop protection', 'Each short should have a buy-back GTT (stop 3× + profit target); an invalid or missing one raises Invalid GTT / No GTT placed (scan_gtts.py, the zerodha-gtt-order skill)']))));
+  const foot = `<div class="d2-edge-foot" style="border:0">Market data ${dhFmtDate(d.market_data_date)} · no option quotes are pulled, so strikes and premiums for new trades are not shown · positions fetched ${(d.positions || {}).fetched_at ? dhFmtDate(String(d.positions.fetched_at).slice(0, 10)) : (di ? 'never (upload not connected yet)' : 'never (run /refresh-zerodha)')}.</div>`;
   const bar = ccTabBar('cc-otabs', [['alerts', 'Alerts', (d.alerts || []).length], ['signals', 'Signals', S.length], ['legs', 'Open positions', trades.length], ['rules', 'Rules', null]], 'ccZTab');
   return ccStrikeBanner(d) + kpis + bar + `<div id="cc-ov-alerts" class="a2-view">${alertsT}</div><div id="cc-ov-signals" class="a2-view">${sigT}</div><div id="cc-ov-legs" class="a2-view">${legT}</div><div id="cc-ov-rules" class="a2-view">${rulesPanel}${foot}</div>`;
 }
@@ -10354,12 +10474,14 @@ function ccRender(d) {
   try { const c = WS.data[WS.id]; if (c) dhRenderStale(c); } catch (e) {}
   const asof = document.getElementById('cc-asof');
   wsPaintFresh();
-  const zer = WS.id === 'zerodha', tabs = document.getElementById('cc-tabs');
+  const di = WS.id === 'icici', zer = WS.id === 'zerodha' || di, tabs = document.getElementById('cc-tabs');
   if (tabs) tabs.style.display = zer ? 'none' : '';
+  if (di && asof) asof.textContent = 'Market data ' + dhFmtDate(d.market_data_date) + ' · built ' + (wsFmtT(d.generated_at, true) || '') + ' IST · ' + wsAgo(d.generated_at);
   const pg = document.getElementById('page-covcall');
   if (pg) {
-    pg.querySelector('.d2-eyebrow').textContent = zer ? 'AZ workspace · Nifty F&O option selling' : 'ND workspace · investment portfolio options';
-    pg.querySelector('.d2-sub').textContent = zer
+    pg.querySelector('.d2-eyebrow').textContent = di ? 'DI workspace · dividend portfolio options' : zer ? 'AZ workspace · Nifty F&O option selling' : 'ND workspace · investment portfolio options';
+    pg.querySelector('.d2-sub').textContent = di ? 'Supertrend red = sell the call, green = BPS (no RSI override), on the DI stocks that have listed options. Exit at 3× premium or when the Supertrend colour changes. Open legs come from the uploaded ICICIdirect positions (not connected yet).'
+      : zer
       ? 'RSI > 70 sell call, RSI < 30 BPS, else Supertrend green = BPS, red = sell call. Exit at 3× premium or when the Supertrend colour changes. Open legs from the tracking start date (see Alerts) are checked against the live price.'
       : 'Options: Supertrend red = sell the 0.10-delta call, green = BPS (no RSI override). Shares: entries, exits and averaging for the investment portfolio.';
   }

@@ -1,0 +1,811 @@
+{
+ "generated_at": "2026-11-16T01:32:31.520560+00:00",
+ "market_data_date": "2026-11-13",
+ "live_prices_at": null,
+ "gtt_scan_at": null,
+ "gtt_checked_at": null,
+ "rules": {
+  "short_call_delta": 0.1,
+  "short_put_delta": 0.1,
+  "hedge_strikes_below": 2,
+  "stop_premium_multiple": 3,
+  "near_strike_pct": 2,
+  "profit_exit_decay_pct": 60,
+  "expiry_risk_days": 7,
+  "gtt_limit_buffer_pct": 3,
+  "show_next_month_after_day": 15,
+  "expiry_week_days": 5,
+  "risk_free_rate": 0.065,
+  "rsi_sell_call_above": 70,
+  "rsi_sell_put_below": 30,
+  "expiry_min_days": 30,
+  "event_close_days": 15,
+  "rsi_override": false
+ },
+ "show_expiries": [
+  "2026-12-29"
+ ],
+ "stocks": [
+  {
+   "symbol": "BANKBARODA",
+   "spot": 273.84,
+   "colour": "green",
+   "rsi": 76.1,
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
+   "flip_date": "2026-10-29",
+   "flip_trading_days": 11,
+   "expiries": [
+    {
+     "expiry": "2026-12-29",
+     "lot": 2925
+    }
+   ],
+   "rsi_override": false,
+   "status": "ENTER",
+   "note": "Supertrend green: bull put spread",
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-29",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-06-05",
+     "estimated": true
+    }
+   ],
+   "event_block": null
+  },
+  {
+   "symbol": "BPCL",
+   "spot": 302.0,
+   "colour": "green",
+   "rsi": 50.4,
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
+   "flip_date": "2026-11-05",
+   "flip_trading_days": 6,
+   "expiries": [
+    {
+     "expiry": "2026-12-29",
+     "lot": 1975
+    }
+   ],
+   "rsi_override": false,
+   "status": "ENTER",
+   "note": "Supertrend green: bull put spread",
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-21",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-02-02",
+     "estimated": true
+    }
+   ],
+   "event_block": null
+  },
+  {
+   "symbol": "CDSL",
+   "spot": 1447.0,
+   "colour": "green",
+   "rsi": 72.1,
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
+   "flip_date": "2026-11-03",
+   "flip_trading_days": 8,
+   "expiries": [
+    {
+     "expiry": "2026-12-29",
+     "lot": 475
+    }
+   ],
+   "rsi_override": false,
+   "status": "ENTER",
+   "note": "Supertrend green: bull put spread",
+   "legs": [],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2027-07-17",
+     "estimated": true
+    }
+   ],
+   "event_block": null
+  },
+  {
+   "symbol": "COALINDIA",
+   "spot": 403.5,
+   "colour": "red",
+   "rsi": 48.5,
+   "basis": "Supertrend red",
+   "desired": "CALL",
+   "flip_date": "2026-10-12",
+   "flip_trading_days": 24,
+   "expiries": [
+    {
+     "expiry": "2026-12-29",
+     "lot": 1350
+    }
+   ],
+   "rsi_override": false,
+   "status": "ENTER",
+   "note": "Supertrend red: sell call",
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-11",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-02-18",
+     "estimated": true
+    }
+   ],
+   "event_block": null
+  },
+  {
+   "symbol": "CAMS",
+   "spot": 726.05,
+   "colour": "green",
+   "rsi": 57.6,
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
+   "flip_date": "2026-11-05",
+   "flip_trading_days": 6,
+   "expiries": [
+    {
+     "expiry": "2026-12-29",
+     "lot": 825
+    }
+   ],
+   "rsi_override": false,
+   "status": "ENTER",
+   "note": "Supertrend green: bull put spread",
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-21",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-01-30",
+     "estimated": true
+    }
+   ],
+   "event_block": null
+  },
+  {
+   "symbol": "GAIL",
+   "spot": 188.0,
+   "colour": "green",
+   "rsi": 70.0,
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
+   "flip_date": "2026-11-02",
+   "flip_trading_days": 9,
+   "expiries": [
+    {
+     "expiry": "2026-12-29",
+     "lot": 3550
+    }
+   ],
+   "rsi_override": false,
+   "status": "ENTER",
+   "note": "Supertrend green: bull put spread",
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-28",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-02-05",
+     "estimated": true
+    }
+   ],
+   "event_block": null
+  },
+  {
+   "symbol": "HDFCAMC",
+   "spot": 2663.0,
+   "colour": "green",
+   "rsi": 66.6,
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
+   "flip_date": "2026-11-03",
+   "flip_trading_days": 8,
+   "expiries": [
+    {
+     "expiry": "2026-12-29",
+     "lot": 300
+    }
+   ],
+   "rsi_override": false,
+   "status": "ENTER",
+   "note": "Supertrend green: bull put spread",
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-14",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-06-05",
+     "estimated": true
+    }
+   ],
+   "event_block": null
+  },
+  {
+   "symbol": "HAL",
+   "spot": 4809.8,
+   "colour": "green",
+   "rsi": 45.6,
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
+   "flip_date": "2026-10-16",
+   "flip_trading_days": 20,
+   "expiries": [
+    {
+     "expiry": "2026-12-29",
+     "lot": 150
+    }
+   ],
+   "rsi_override": false,
+   "status": "ENTER",
+   "note": "Supertrend green: bull put spread",
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-11",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-02-18",
+     "estimated": true
+    }
+   ],
+   "event_block": null
+  },
+  {
+   "symbol": "HINDZINC",
+   "spot": 554.85,
+   "colour": "green",
+   "rsi": 52.9,
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
+   "flip_date": "2026-11-04",
+   "flip_trading_days": 7,
+   "expiries": [
+    {
+     "expiry": "2026-12-29",
+     "lot": 1225
+    }
+   ],
+   "rsi_override": false,
+   "status": "ENTER",
+   "note": "Supertrend green: bull put spread",
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-29",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-04-30",
+     "estimated": true
+    }
+   ],
+   "event_block": null
+  },
+  {
+   "symbol": "ICICIBANK",
+   "spot": 1583.6,
+   "colour": "green",
+   "rsi": 75.8,
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
+   "flip_date": "2026-10-07",
+   "flip_trading_days": 27,
+   "expiries": [
+    {
+     "expiry": "2026-12-29",
+     "lot": 700
+    }
+   ],
+   "rsi_override": false,
+   "status": "ENTER",
+   "note": "Supertrend green: bull put spread",
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-14",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-08-03",
+     "estimated": true
+    }
+   ],
+   "event_block": null
+  },
+  {
+   "symbol": "INDHOTEL",
+   "spot": 890.3,
+   "colour": "green",
+   "rsi": 76.0,
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
+   "flip_date": "2026-04-15",
+   "flip_trading_days": 152,
+   "expiries": [
+    {
+     "expiry": "2026-12-29",
+     "lot": 1000
+    }
+   ],
+   "rsi_override": false,
+   "status": "ENTER",
+   "note": "Supertrend green: bull put spread",
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-14",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-06-23",
+     "estimated": true
+    }
+   ],
+   "event_block": null
+  },
+  {
+   "symbol": "IOC",
+   "spot": 144.04,
+   "colour": "green",
+   "rsi": 64.3,
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
+   "flip_date": "2026-11-02",
+   "flip_trading_days": 9,
+   "expiries": [
+    {
+     "expiry": "2026-12-29",
+     "lot": 4875
+    }
+   ],
+   "rsi_override": false,
+   "status": "ENTER",
+   "note": "Supertrend green: bull put spread",
+   "legs": [],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2026-12-18",
+     "estimated": true
+    },
+    {
+     "label": "Results",
+     "date": "2027-02-04",
+     "estimated": true
+    }
+   ],
+   "event_block": "Ex-dividend 18 Dec 2026 (estimated): the 15-day close window starts 03 Dec, before this expiry"
+  },
+  {
+   "symbol": "ITC",
+   "spot": 285.0,
+   "colour": "green",
+   "rsi": 66.5,
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
+   "flip_date": "2026-11-03",
+   "flip_trading_days": 8,
+   "expiries": [
+    {
+     "expiry": "2026-12-29",
+     "lot": 1725
+    }
+   ],
+   "rsi_override": false,
+   "status": "ENTER",
+   "note": "Supertrend green: bull put spread",
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-28",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-02-04",
+     "estimated": true
+    }
+   ],
+   "event_block": null
+  },
+  {
+   "symbol": "LICI",
+   "spot": 399.3,
+   "colour": "green",
+   "rsi": 52.1,
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
+   "flip_date": "2026-11-04",
+   "flip_trading_days": 7,
+   "expiries": [
+    {
+     "expiry": "2026-12-29",
+     "lot": 1400
+    }
+   ],
+   "rsi_override": false,
+   "status": "ENTER",
+   "note": "Supertrend green: bull put spread",
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-04",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-06-25",
+     "estimated": true
+    }
+   ],
+   "event_block": null
+  },
+  {
+   "symbol": "MCX",
+   "spot": 3720.0,
+   "colour": "green",
+   "rsi": 68.6,
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
+   "flip_date": "2026-11-03",
+   "flip_trading_days": 8,
+   "expiries": [
+    {
+     "expiry": "2026-12-29",
+     "lot": 225
+    }
+   ],
+   "rsi_override": false,
+   "status": "ENTER",
+   "note": "Supertrend green: bull put spread",
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-21",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-08-28",
+     "estimated": true
+    }
+   ],
+   "event_block": null
+  },
+  {
+   "symbol": "NATIONALUM",
+   "spot": 330.0,
+   "colour": "green",
+   "rsi": 51.4,
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
+   "flip_date": "2026-11-12",
+   "flip_trading_days": 1,
+   "expiries": [
+    {
+     "expiry": "2026-12-29",
+     "lot": 1875
+    }
+   ],
+   "rsi_override": false,
+   "status": "ENTER",
+   "note": "Supertrend green: bull put spread",
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-28",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-02-06",
+     "estimated": true
+    }
+   ],
+   "event_block": null
+  },
+  {
+   "symbol": "NMDC",
+   "spot": 69.8,
+   "colour": "green",
+   "rsi": 43.7,
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
+   "flip_date": "2026-11-11",
+   "flip_trading_days": 2,
+   "expiries": [
+    {
+     "expiry": "2026-12-29",
+     "lot": 6750
+    }
+   ],
+   "rsi_override": false,
+   "status": "ENTER",
+   "note": "Supertrend green: bull put spread",
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-03",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-02-13",
+     "estimated": true
+    }
+   ],
+   "event_block": null
+  },
+  {
+   "symbol": "ONGC",
+   "spot": 225.0,
+   "colour": "green",
+   "rsi": 44.6,
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
+   "flip_date": "2026-11-02",
+   "flip_trading_days": 9,
+   "expiries": [
+    {
+     "expiry": "2026-12-29",
+     "lot": 2250
+    }
+   ],
+   "rsi_override": false,
+   "status": "ENTER",
+   "note": "Supertrend green: bull put spread",
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-11",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-02-18",
+     "estimated": true
+    }
+   ],
+   "event_block": null
+  },
+  {
+   "symbol": "PETRONET",
+   "spot": 324.05,
+   "colour": "green",
+   "rsi": 65.3,
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
+   "flip_date": "2026-08-20",
+   "flip_trading_days": 61,
+   "expiries": [
+    {
+     "expiry": "2026-12-29",
+     "lot": 1900
+    }
+   ],
+   "rsi_override": false,
+   "status": "ENTER",
+   "note": "Supertrend green: bull put spread",
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-11",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-06-12",
+     "estimated": true
+    }
+   ],
+   "event_block": null
+  },
+  {
+   "symbol": "PFC",
+   "spot": 334.25,
+   "colour": "green",
+   "rsi": 52.8,
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
+   "flip_date": "2026-11-11",
+   "flip_trading_days": 2,
+   "expiries": [
+    {
+     "expiry": "2026-12-29",
+     "lot": 1300
+    }
+   ],
+   "rsi_override": false,
+   "status": "ENTER",
+   "note": "Supertrend green: bull put spread",
+   "legs": [],
+   "events": [
+    {
+     "label": "Ex-dividend",
+     "date": "2026-11-17",
+     "estimated": false
+    },
+    {
+     "label": "Results",
+     "date": "2027-02-04",
+     "estimated": false
+    }
+   ],
+   "event_block": "Ex-dividend 17 Nov 2026: the 15-day close window starts 02 Nov, before this expiry"
+  },
+  {
+   "symbol": "RECLTD",
+   "spot": 301.85,
+   "colour": "green",
+   "rsi": 51.5,
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
+   "flip_date": "2026-11-11",
+   "flip_trading_days": 2,
+   "expiries": [
+    {
+     "expiry": "2026-12-29",
+     "lot": 1575
+    }
+   ],
+   "rsi_override": false,
+   "status": "ENTER",
+   "note": "Supertrend green: bull put spread",
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-28",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-02-06",
+     "estimated": true
+    }
+   ],
+   "event_block": null
+  },
+  {
+   "symbol": "SBIN",
+   "spot": 1080.0,
+   "colour": "green",
+   "rsi": 72.3,
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
+   "flip_date": "2026-11-05",
+   "flip_trading_days": 6,
+   "expiries": [
+    {
+     "expiry": "2026-12-29",
+     "lot": 750
+    }
+   ],
+   "rsi_override": false,
+   "status": "ENTER",
+   "note": "Supertrend green: bull put spread",
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-02-04",
+     "estimated": false
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-05-15",
+     "estimated": true
+    }
+   ],
+   "event_block": null
+  },
+  {
+   "symbol": "TCS",
+   "spot": 2407.5,
+   "colour": "green",
+   "rsi": 50.4,
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
+   "flip_date": "2026-10-13",
+   "flip_trading_days": 23,
+   "expiries": [
+    {
+     "expiry": "2026-12-29",
+     "lot": 225
+    }
+   ],
+   "rsi_override": false,
+   "status": "ENTER",
+   "note": "Supertrend green: bull put spread",
+   "legs": [],
+   "events": [
+    {
+     "label": "Results",
+     "date": "2027-01-11",
+     "estimated": true
+    },
+    {
+     "label": "Ex-dividend",
+     "date": "2027-01-16",
+     "estimated": true
+    }
+   ],
+   "event_block": "Results 11 Jan 2027 (estimated): the 15-day close window starts 27 Dec, before this expiry"
+  }
+ ],
+ "alerts": [],
+ "events_file_at": "2026-11-16T01:32:31.191837+00:00",
+ "events_missing": [],
+ "no_data": [],
+ "no_options": [
+  "GOLDBEES",
+  "NIFTYIETF",
+  "IRCON",
+  "NSDL",
+  "PTC",
+  "TATAINVEST"
+ ],
+ "excluded": [],
+ "positions": {
+  "fetched_at": null,
+  "track_from": "2026-11-01",
+  "legs": 0,
+  "ignored_legs": 0
+ },
+ "counts": {
+  "call": 1,
+  "put_spread": 22,
+  "rsi_override": 0,
+  "enter": 23,
+  "hold": 0,
+  "flip": 0
+ }
+}
