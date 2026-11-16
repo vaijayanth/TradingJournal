@@ -64,7 +64,8 @@ def main():
     todo = ([("entry", r) for r in sig.get("entries", [])] + [("addon", r) for r in sig.get("addons", [])]
             + [("exit", r) for r in sig.get("exits", [])])
     syms = sorted({r["symbol"] for _, r in todo})
-    df = yf.download([s + ".NS" for s in syms], period="5y", progress=False, auto_adjust=False, threads=True)
+    # no signals today = nothing to cross-check (yf.download([]) raises "No objects to concatenate")
+    df = yf.download([s + ".NS" for s in syms], period="5y", progress=False, auto_adjust=False, threads=True) if syms else None
 
     results, last_bars, dropped = [], set(), set()
     # Daily bars from the Zerodha MCP (data/zerodha_bars_overlay.json) fill sessions Yahoo has not published yet; they are only ever
