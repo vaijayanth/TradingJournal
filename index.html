@@ -8873,6 +8873,7 @@ function wsGate(pageId) {
 
 function wsApply() {
   const ws = WORKSPACES[WS.id];
+  document.querySelectorAll('.dh-stale-slot').forEach(s => { s.innerHTML = ''; });   // stale / guardrail chips belong to one broker: clear them, the page render repaints this broker's (DI has none)
   document.querySelectorAll('#ws-switch .ws-btn').forEach(b => {
     const on = b.dataset.ws === WS.id;
     b.classList.toggle('active', on);
@@ -8896,6 +8897,7 @@ function wsSelect(id) {
   if (!WORKSPACES[id]) return;
   WS.id = id;
   try { localStorage.setItem(WS_KEY, id); } catch (e) {}
+  ccAlias(); ccPrefetch(id);   // covered-call cache is per workspace: point the alias at this broker and load its file in the background
   // If the page we're on has no data for this workspace, hop to the first page that does
   const cur = wsActivePageId();
   if (cur && !wsHasPage(id, cur)) {
@@ -8920,6 +8922,7 @@ function wsInit() {
     if (btn) showPage(next, btn);
   }
   wsApply();
+  ccPrefetch(WS.id);
 }
 document.addEventListener('DOMContentLoaded', wsInit);
 
@@ -9537,7 +9540,7 @@ const wsFmtT = (iso, withDate) => { const x = new Date(iso); if (!iso || isNaN(x
   return (day === today && !withDate ? '' : dhFmtDate(day) + ' ') + t; };
 const wsAgo = iso => { const m = Math.round((Date.now() - new Date(iso)) / 60000); return isNaN(m) ? '' : m < 1 ? 'just now' : m < 60 ? m + ' min ago' : m < 1440 ? Math.floor(m / 60) + 'h ' + (m % 60) + 'm ago' : Math.floor(m / 1440) + ' d ago'; };
 function wsFresh(meta, extra) {
-  const m = meta || {}, cc = (window._cc && window._ccWs === WS.id) ? window._cc : null, live = (extra && extra.livePricesAt) || (cc && cc.live_prices_at) || null;
+  const m = meta || {}, cc = WS.cc[WS.id] || null, live = (extra && extra.livePricesAt) || (cc && cc.live_prices_at) || null;
   const stamps = [m.fetchedAt, m.computedAt, live].filter(x => x && !isNaN(new Date(x)));
   const last = stamps.length ? stamps.reduce((a, b) => (new Date(a) > new Date(b) ? a : b)) : null;
   const mins = last ? Math.round((Date.now() - new Date(last)) / 60000) : null;
@@ -9771,8 +9774,8 @@ function d2RenderActions(d) {
   draw(null);
   dhExtras(true).then(draw);
   if (!cp.hasCC) return;
-  if (window._cc && window._ccWs === WS.id) drawCc(window._cc);
-  else { const ws0 = WS.id; fetch(ccUrl() + '?t=' + Date.now()).then(r => r.ok ? r.json() : Promise.reject()).then(j => { if (ws0 !== WS.id) return; window._cc = j; window._ccWs = ws0; drawCc(j); })   // this workspace's own file, stamped with the workspace it was fetched for (was ND's file stamped as whichever broker was open: AZ then showed ND option data)
+  if (ccAlias()) drawCc(window._cc);
+  else { const ws0 = WS.id; fetch(ccUrl() + '?t=' + Date.now()).then(r => r.ok ? r.json() : Promise.reject()).then(j => { ccPut(ws0, j); if (ws0 !== WS.id) return; drawCc(j); })   // this workspace's own file, stamped with the workspace it was fetched for (was ND's file stamped as whichever broker was open: AZ then showed ND option data)
     .catch(() => { set('d2-r-opt', none('Covered-call data not loaded')); set('d2-r-shr', none('Covered-call data not loaded')); }); }
 }
 
@@ -10013,7 +10016,21 @@ function ccPill(st) {
   const [bg, fg] = m[st] || m.HOLD;
   return `<span class="trend-pill" style="background:${bg};color:${fg}">${st}</span>`;
 }
-const ccUrl = () => (WORKSPACES[WS.id] || {}).ccUrl || CC_URL;
+const ccUrlFor = id => (WORKSPACES[id] || {}).ccUrl || CC_URL;
+const ccUrl = () => ccUrlFor(WS.id);
+// Covered-call data is cached PER WORKSPACE (WS.cc[id]); window._cc / _ccWs are only an alias of the active workspace's entry, kept in step on every switch.
+WS.cc = WS.cc || {};
+function ccAlias() { const c = WS.cc[WS.id] || null; window._cc = c; window._ccWs = c ? WS.id : null; return c; }
+function ccPut(ws, j) { WS.cc[ws] = j; if (ws === WS.id) ccAlias(); }
+async function ccPrefetch(ws) {   // load a workspace's covered-call file in the background so the freshness chip (live-price time) never depends on having opened Covered Call
+  if (WS.cc[ws]) return WS.cc[ws];
+  try {
+    const res = await fetch(ccUrlFor(ws) + '?t=' + Date.now()); if (!res.ok) return null;
+    ccPut(ws, await res.json());
+    if (ws === WS.id) { try { wsPaintFresh(); } catch (e) {} }
+    return WS.cc[ws];
+  } catch (e) { return null; }
+}
 async function ccRefresh(spin) {
   const root = document.getElementById('cc-root'), asof = document.getElementById('cc-asof');
   if (spin && asof) asof.textContent = 'Loading…';
@@ -10021,8 +10038,8 @@ async function ccRefresh(spin) {
     const ws = WS.id, res = await fetch(ccUrl() + '?t=' + Date.now());
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const j = await res.json();
+    ccPut(ws, j);                       // always cache it under the workspace it was fetched for
     if (ws !== WS.id) return;           // workspace switched while loading: never paint another broker's data
-    window._cc = j; window._ccWs = ws;
     ccRender(window._cc);
   } catch (e) {
     if (asof) asof.textContent = 'Could not load';
@@ -10030,7 +10047,7 @@ async function ccRefresh(spin) {
     console.error('Covered call load error:', e);
   }
 }
-function ccEnsure() { if (window._cc && window._ccWs === WS.id) ccRender(window._cc); else { window._cc = null; ccRefresh(false); } }
+function ccEnsure() { const c = ccAlias(); if (c) ccRender(c); else ccRefresh(false); }
 
 function ccSuggest(g, lot) {
   const x = dhFmtDate(g.expiry), tag = `<b>${x}</b>${g.expiry_week ? ' <span class="neg">expiry week</span>' : ''} · `;
