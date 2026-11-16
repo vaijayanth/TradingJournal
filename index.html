@@ -10273,11 +10273,13 @@ const ccSigGroups = [{ key: 'act', label: 'Act now' }, { key: 'cand', label: 'Ca
 // ── AZ ENTRY SIGNALS IN TIERS (user, 2026-11-16): Supertrend only (no RSI), by when the CURRENT colour began; stocks with open option legs are left out ──
 // Tier 1 = flipped on the latest session; Tier 2 = 1-5 trading days ago; Tier 3 = within 30 days; Tier 4 = within 90 days (each stock in its freshest tier).
 // Mirrors zerodha-live/scripts/option_entry_tiers.py (the read-only skill zerodha-option-entry-signal); change both together.
-const CC_TIER_GROUPS = [
-  { key: 't1', label: 'Tier 1 · flipped on the latest session' },
-  { key: 't2', label: 'Tier 2 · flipped in the last trading week (1–5 trading days ago)' },
-  { key: 't3', label: 'Tier 3 · flipped in the last 30 days', collapsed: true },
-  { key: 't4', label: 'Tier 4 · flipped in the last 90 days', collapsed: true }];
+// one sub-tab per tier: [key, tab label, table title]
+const CC_TIER_TABS = [
+  ['1', 'Tier 1 · today', 'Tier 1 · flipped on the latest session'],
+  ['2', 'Tier 2 · last week', 'Tier 2 · flipped 1–5 trading days ago (the last trading week)'],
+  ['3', 'Tier 3 · 30 days', 'Tier 3 · flipped in the last 30 days'],
+  ['4', 'Tier 4 · 90 days', 'Tier 4 · flipped in the last 90 days']];
+function ccTierTab(name) { ccPick('cc-tiertabs', 'cc-tv-', ['1', '2', '3', '4'], ['1', '2', '3', '4'].includes(name) ? name : '1', 'tj_cctier'); }
 function ccTierRows(d) {
   const R = d.rules || {}, close = R.event_close_days ?? 15, minDays = R.expiry_min_days ?? 30;
   const t0 = new Date(); t0.setHours(0, 0, 0, 0);
@@ -10619,11 +10621,13 @@ function ccZerodhaView(d) {
     filters: ccSigFilters(true),
     cols: ccSigCols(d),
   });
-  const tierT = di ? '' : ccTbl('ztiers', {
-    title: 'Entry signals', hint: 'Supertrend only, no RSI: green = BPS (bull put spread), red = sell call. Tiers = when the current colour began (each stock once, freshest tier). Stocks that already have open option legs are not listed. The last column warns of results / ex-dividend dates: <b>✕ Do not open</b> = inside the ' + (R.event_close_days ?? 15) + '-day close window now, <b>⚠ Close by</b> = the window opens before the expiry. Click a row for details. Place with /zerodha-option-order (strikes and premiums come from live quotes there).',
-    rows: tierRows, search: r => r.symbol, empty: 'No entry signals: every flipped stock already has open option legs, or no flip within 90 days.', sort: [3, 1],
-    rowKey: r => r.symbol, detail: ccTierDetail, group: r => 't' + r.tier, groups: CC_TIER_GROUPS, showEmpty: true, filters: ccTierFilters, cols: ccTierCols(),
-  });
+  const tierIntro = 'Supertrend only, no RSI: green = BPS (bull put spread), red = sell call. Each stock sits in the freshest tier that fits (tier = when the current colour began). Stocks that already have open option legs are not listed. The last column warns of results / ex-dividend dates: <b>✕ Do not open</b> = inside the ' + (R.event_close_days ?? 15) + '-day close window now, <b>⚠ Close by</b> = the window opens before the expiry. Click a row for details. Place with /zerodha-option-order (strikes and premiums come from live quotes there).';
+  const tierT = di ? '' : `<div class="d2-hint" style="margin:6px 2px 0;line-height:1.5">${tierIntro}</div>`
+    + ccTabBar('cc-tiertabs', CC_TIER_TABS.map(([k, l]) => [k, l, tn(+k)]), 'ccTierTab')
+    + CC_TIER_TABS.map(([k, l, full]) => `<div id="cc-tv-${k}" class="a2-view">` + ccTbl('ztier' + k, {
+      title: full, hint: '', rows: tierRows.filter(r => r.tier === +k), search: r => r.symbol, empty: 'No stocks in this tier: none flipped in this window, or those that did already have open option legs.', sort: [3, 1],
+      rowKey: r => r.symbol, detail: ccTierDetail, filters: ccTierFilters, cols: ccTierCols(),
+    }) + '</div>').join('');
   const lvlOrd = { EXIT: 0, BREACH: 1, WARN: 2 };
   const alertsT = ccAlertsBox(d, 'zal', 'Alert types: 3× premium, beyond / near strike, through hedge, profit exit, no GTT, no hedge, Exit (colour flipped, opposite position open)');
   const trades = ccTrades(S, d.alerts, R);
@@ -10675,6 +10679,7 @@ function ccRender(d) {
     Object.keys(CC_T).forEach(ccTblApply);
     let zt = null; try { zt = localStorage.getItem('tj_ccz_tab'); } catch (e) {}
     ccZTab(zt || 'signals');
+    if (!di) { let tt = null; try { tt = localStorage.getItem('tj_cctier'); } catch (e) {} ccTierTab(tt || '1'); }
     return;
   }
   document.getElementById('cc-root').innerHTML =
