@@ -1,13 +1,13 @@
 {
- "generated_at": "2026-11-16T07:13:05+05:30",
+ "generated_at": "2026-11-16T07:17:14+05:30",
  "broker": "dhan",
  "market_data_date": "2026-11-13",
- "signals_generated_at": "2026-11-16T01:41:46.803890+00:00",
+ "signals_generated_at": "2026-11-16T01:47:09.798373+00:00",
  "status": "WARN",
  "global_block": false,
  "counts": {
   "block": 0,
-  "warn": 4,
+  "warn": 2,
   "info": 0
  },
  "per_symbol_blocks": {},
@@ -17,18 +17,6 @@
    "level": "WARN",
    "symbol": null,
    "msg": "the cross-check flagged 3 of 25 signals (they are blocked from orders): HONASA, LICHSGFIN, MSTCLTD"
-  },
-  {
-   "id": "I3",
-   "level": "WARN",
-   "symbol": "PASHUPATI",
-   "msg": "PASHUPATI: trade log says 0, Dhan holdings say 9. Holdings are used; it usually clears after the next refresh (a recent sale or buy not yet settled)."
-  },
-  {
-   "id": "I3",
-   "level": "WARN",
-   "symbol": "STOVEKRAFT",
-   "msg": "STOVEKRAFT: trade log says 0, Dhan holdings say 2. Holdings are used; it usually clears after the next refresh (a recent sale or buy not yet settled)."
   },
   {
    "id": "P3",

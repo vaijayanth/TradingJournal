@@ -1,31 +1,6 @@
 {
- "fetched_at": "2026-11-14T00:11:52+05:30",
- "orders_checked": 26,
+ "fetched_at": "2026-11-16T07:16:57+05:30",
+ "orders_checked": 15,
  "shorts": 15,
- "findings": [
-  {
-   "check": "S1",
-   "name": "ORPHAN",
-   "severity": "HIGH",
-   "order_id": "2132611092875273",
-   "symbol": "CUMMINSIND",
-   "expiry": null,
-   "strike": null,
-   "opt_type": null,
-   "concern": "Likely orphaned: sold 100 @ 15.75 but no open short matches; target 0 still pending: a stop firing would BUY a new long",
-   "action": "Check the position; if closed, cancel the legs (order 2132611092875273)"
-  },
-  {
-   "check": "S1",
-   "name": "ORPHAN",
-   "severity": "HIGH",
-   "order_id": "2132611061617273",
-   "symbol": "MCX",
-   "expiry": null,
-   "strike": null,
-   "opt_type": null,
-   "concern": "Likely orphaned: sold 225 @ 16.15 but no open short matches; target 0 still pending: a stop firing would BUY a new long",
-   "action": "Check the position; if closed, cancel the legs (order 2132611061617273)"
-  }
- ]
+ "findings": []
 }
