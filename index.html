@@ -9523,7 +9523,7 @@ function dhStaleAlerts(d, ex) {
   return out;
 }
 // Guardrails (scripts/guardrails.py): BLOCK = no order may be placed (whole workspace, or the named stocks); WARN = look before ordering
-const GUARD_TYPES = { F1: 'Old market data', F2: 'Old holdings', F3: 'Signals older than holdings', F4: 'Old order list', F5: 'Price data mismatch', I1: 'Bad numbers in data', I2: 'Position data mismatch', I3: 'Fills vs holdings', I4: 'Stock in two lists', I5: 'Excluded stock signalled', I6: 'Fill data wrong', I7: 'Recent buy not in holdings',
+const GUARD_TYPES = { F1: 'Old market data', F2: 'Old holdings', F3: 'Signals older than holdings', F4: 'Old order list', F5: 'Price data mismatch', I1: 'Bad numbers in data', I2: 'Position data mismatch', I3: 'Fills vs holdings', I8: 'Split not recorded', I4: 'Stock in two lists', I5: 'Excluded stock signalled', I6: 'Fill data wrong', I7: 'Recent buy not in holdings',
   S1: 'Exit not red', S2: 'Add-on rule broken', S3: 'Entry rule broken', S5: 'Too many entries / mass exit', C1: 'Capital over-deployed', C2: 'Concentration', C3: 'Pending buys too big', O1: 'Sell more than held', O2: 'Duplicate orders', O3: 'Order without signal',
   P1: 'Expiry week', P2: 'No lot size', P3: 'Open option alerts', P5: 'Invalid GTT / stop orders', X1: 'Broker code mix', H1: 'Trading halted' };
 // Click a guardrail row to open the page and section it is about (user, 2026-11-16). page = nav tab; tab = Live Trading tab; alertTypes = Covered Call alert sub-tabs to prefer.
@@ -9571,6 +9571,7 @@ function dhGuardHtml(g, d, alerts) {
   // each action says what resolves the row (user, 2026-11-16: "how can I resolve these")
   const rc = dhCopy().refreshCmd || '/refresh-dhan', fixOpt = WS.id === 'zerodha' ? '/zerodha-gtt-order' : '/dhan-superorder';
   const SHORT = { F5: ['Price mismatch', 'Not ordered. Clears when the next refresh agrees, or ask Claude to override a stock by name'],
+    I8: ['Split not recorded', 'A split / bonus came after your buys: tell Claude what happened so it can be added to corporate_actions.json'],
     I3: ['Log vs holdings differ', 'Settlement lag: clears after ' + rc + ' next session (holdings are used meanwhile)'],
     P3: ['Option near/past strike', 'Decide in the broker app: close, roll or hold (click to open the alerts)'],
     P5: ['Stop order problem', 'Open the alerts, confirm in the broker app, then fix with ' + fixOpt],

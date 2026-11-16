@@ -67,6 +67,7 @@ def main():
     if not args.skip_closes:
         run([py, SCRIPTS / "build_dh252_daily_closes.py",
              "--trade-log", DATA / "dh252_trade_log.json", "--out", DATA / "dh252_daily_closes.json"])
+    run([py, SCRIPTS / "check_splits.py"])      # splits / bonus issues after your buys that are not in data/corporate_actions.json (guardrail I8)
     run([py, SCRIPTS / "compute_dh252_live_signals.py",
          "--holdings", DATA / "holdings_snapshot.json",
          "--market-screens", tmp / "market_screens_full.json",

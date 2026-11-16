@@ -124,6 +124,10 @@ c = base(); c["signals"]["entries"] = [{"symbol": "BIG", "close": 9000, "supertr
 check("S4 removed: a 1-share entry above the tier is NOT flagged", not has(run(c), "S4", "WARN"))
 c = base(); c["signals"]["entries"] = [{"symbol": f"E{i}", "close": 10, "supertrend_color": "green", "pct_from_high": 0, "qty_to_buy": 1} for i in range(70)]
 check("S5 70 entries = WARN", has(run(c), "S5", "WARN"))
+c = base(); c["split_check"] = {"unrecorded": [{"symbol": "AAA", "ex_date": "2026-11-05", "ratio": 2.5, "fills_before": 1}]}
+check("I8 unrecorded split after your buys = WARN", has(run(c), "I8", "WARN", "AAA"))
+c = base(); c["split_check"] = {"unrecorded": []}
+check("I8 quiet when every split is recorded", not has(run(c), "I8"))
 c = base(); c["signals"]["exits"] = [pos(f"X{i}", color="red") for i in range(3)]
 c["signals"]["holds"] = [pos("AAA")]; c["holdings"] = [{"symbol": s["symbol"], "qty": 10, "avg_cost": 100} for s in c["signals"]["exits"] + c["signals"]["holds"]]; c["fills"] = None
 c["config"] = {"mass_exit_min": 3}

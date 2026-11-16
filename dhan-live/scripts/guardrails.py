@@ -10,7 +10,7 @@ Groups (ids)
   F  freshness     F1 market data lag, F2 holdings age, F3 signals older than holdings, F4 order snapshot age,
                    F5 cross-check (independent Yahoo recompute) disagrees with most signals = suspect prices / partial same-day bar
   I  integrity     I1 NaN/inf/None numerics, I2 position rows sane, I3 holdings vs fill ledger (settlement lag vs real drift),
-                   I4 a stock in two signal lists, I5 hedge / out-of-scope stock in a signal list, I6 fills sanity,
+                   I4 a stock in two signal lists, I5 hedge / out-of-scope stock in a signal list, I6 fills sanity, I8 unrecorded split / bonus after your buys,
                    I7 bought in the last days but not yet in holdings -> never re-enter / add
   S  signal logic  S1 exits are red, S2 add-ons are green + in loss + cooled down, S3 entries are green + at the high / fresh
                    flip + not held, S5 signal-count spikes (mass-exit = suspect data)
@@ -30,6 +30,9 @@ import re
 import sys
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from corp_actions import adjust_fills  # noqa: E402  (splits / bonus issues from data/corporate_actions.json)
 
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
@@ -181,6 +184,11 @@ def evaluate(ctx, now):
         if s in forbidden:
             out.append(f("BLOCK", "I5", f"{s} is a hedge / excluded / out-of-scope stock and must never be a signal", s))
 
+    # I8 a split / bonus after your buys that is not recorded in data/corporate_actions.json (check_splits.py): the ledger would compare pre- and post-event prices
+    sc = ctx.get("split_check") or {}
+    for u in sc.get("unrecorded", []):
+        out.append(f("WARN", "I8", f"{u['symbol']}: a {u['ratio']:g}-for-1 split / bonus on {u['ex_date']} came after {u['fills_before']} of your fill(s) and is not recorded in "
+                                   f"data/corporate_actions.json, so this stock's cost, quantity and P&L can be wrong (a fake gain or loss)", u["symbol"]))
     # I3 + I6 + I7 fills ledger
     recent_buy, led = {}, {}
     if fills is not None:
@@ -356,7 +364,7 @@ def build_ctx():
     cfg = load(DATA / "guardrails_config.json", {})
     return {
         "signals": sig, "signals_generated_at": sig.get("generated_at"), "holdings": hs["holdings"], "holdings_fetched_at": hs.get("fetched_at"),
-        "orders": osn.get("orders", []), "orders_fetched_at": osn.get("fetched_at"), "fills": log.get("fills", []),
+        "orders": osn.get("orders", []), "orders_fetched_at": osn.get("fetched_at"), "fills": adjust_fills(log.get("fills", [])), "split_check": load(DATA / "split_check.json"),
         "crosscheck": load(DATA / "signal_crosscheck.json"), "cc": load(ROOT / "covered_call_signals.json"), "config": cfg, "halt": load(DATA / "trading_halt.json", {}),
         "sectors": load(DATA / "equity_sectors.json", {}), "excluded": [], "is_inv_stock": lambda s: s in inv,
         "import_violations": separation_violations(),

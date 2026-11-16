@@ -1,0 +1,4 @@
+{
+ "_note": "Stock splits and bonus issues for the ND fill ledger (user, 2026-11-16). ratio = new shares per old share (2.5-for-1 split = 2.5, 1:1 bonus = 2). Fills dated BEFORE ex_date are rewritten to post-event units (qty x ratio, price / ratio) by scripts/corp_actions.py. scripts/check_splits.py lists splits after your buys that are not recorded here (guardrail I8). PASHUPATI 2.5:1 on 2026-11-13 is deliberately NOT recorded yet: the user is checking whether the extra shares were ever credited.",
+ "actions": []
+}

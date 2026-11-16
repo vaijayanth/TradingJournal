@@ -1,13 +1,13 @@
 {
- "generated_at": "2026-11-16T07:17:14+05:30",
+ "generated_at": "2026-11-16T07:29:49+05:30",
  "broker": "dhan",
  "market_data_date": "2026-11-13",
- "signals_generated_at": "2026-11-16T01:47:09.798373+00:00",
+ "signals_generated_at": "2026-11-16T01:59:46.514533+00:00",
  "status": "WARN",
  "global_block": false,
  "counts": {
   "block": 0,
-  "warn": 2,
+  "warn": 3,
   "info": 0
  },
  "per_symbol_blocks": {},
@@ -17,6 +17,12 @@
    "level": "WARN",
    "symbol": null,
    "msg": "the cross-check flagged 3 of 25 signals (they are blocked from orders): HONASA, LICHSGFIN, MSTCLTD"
+  },
+  {
+   "id": "I8",
+   "level": "WARN",
+   "symbol": "PASHUPATI",
+   "msg": "PASHUPATI: a 2.5-for-1 split / bonus on 2026-11-13 came after 1 of your fill(s) and is not recorded in data/corporate_actions.json, so this stock's cost, quantity and P&L can be wrong (a fake gain or loss)"
   },
   {
    "id": "P3",

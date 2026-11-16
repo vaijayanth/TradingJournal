@@ -46,8 +46,12 @@ Usage:
 
 import argparse
 import json
+import sys
 from datetime import datetime, timezone
 from pathlib import Path
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from corp_actions import adjust_fills  # noqa: E402  (splits / bonus issues recorded in data/corporate_actions.json)
 
 # Permanent, named exclusion - the user's explicit instruction (2026-11-08):
 # "keep this list as Dhan Option Hedge Portfolio ... never include in dh252
@@ -283,7 +287,7 @@ def build_signals(holdings, week52, stmap, rsimap, entry_signals, trade_log, tod
     # backtester's map uses an em dash for "sector unknown" - treat as no sector
     sectors = {k: v for k, v in (sectors or {}).items() if v and v.strip() not in ("—", "-")}
     holdings_by_symbol = {h["symbol"]: h for h in holdings}
-    dh252_positions, closed_trades, cycles = build_ledger(trade_log.get("fills", []))
+    dh252_positions, closed_trades, cycles = build_ledger(adjust_fills(trade_log.get("fills", [])))
     dh252_symbols = set(dh252_positions)
 
     closed_trades_count = len(closed_trades)
@@ -339,7 +343,7 @@ def build_signals(holdings, week52, stmap, rsimap, entry_signals, trade_log, tod
 
     combined_pl_rs = round(realized_pl_rs + unrealized_pl_rs, 2)
     initial_capital = trade_log.get("initial_capital")
-    equity_curve = build_equity_curve(trade_log.get("fills", []), closes, initial_capital) if initial_capital else []
+    equity_curve = build_equity_curve(adjust_fills(trade_log.get("fills", [])), closes, initial_capital) if initial_capital else []
     if equity_curve:
         drift = round(equity_curve[-1]["pnl"] - realized_pl_rs - unrealized_pl_rs, 2)
         if abs(drift) > 1:
@@ -438,7 +442,7 @@ def main():
 
     load_sectors = load_json(args.sectors) if Path(args.sectors).exists() else {}
     closes_doc = load_json(args.daily_closes) if Path(args.daily_closes).exists() else None
-    open_syms = sorted(build_ledger(trade_log.get("fills", []))[0])
+    open_syms = sorted(build_ledger(adjust_fills(trade_log.get("fills", [])))[0])
     # SMAs: --ohlc-dir (backtester cache) if given, else the ones computed from fresh yfinance history
     smas = (load_smas(args.ohlc_dir, open_syms) if args.ohlc_dir
             else {s: v for s, v in (closes_doc or {}).get("smas", {}).items() if s in open_syms})
