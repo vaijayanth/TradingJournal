@@ -41,3 +41,6 @@ Re-run Part 1 steps 1-3 so the alerts clear; nothing is committed ("push" handle
 
 ## Reporting
 Plain: scanned / cancelled / modified / placed / failed (with the verbatim error). A pending order is not a fill; an unconfirmed leg field name is reported, not guessed.
+
+## Next-step nudge (user, 2026-11-16)
+When done, say what is left on tonight's checklist and the next command: close any flagged leg in the Dhan app, `/dhan-order` if it has not been run tonight, and tomorrow's `/refresh-dhan`. If the refresh checklist is not in this conversation, run `python scripts/action_items.py` to rebuild it.
