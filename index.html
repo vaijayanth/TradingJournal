@@ -882,6 +882,12 @@ tr.cc-det td { background:var(--surface2); white-space:normal !important; paddin
 .d2-edge-m { padding:15px; border-right:1px solid var(--border); } .d2-edge-m:last-child { border-right:0; }
 .d2-edge-m b, .d2-recent-s b { display:block; font-family:var(--font-mono); font-variant-numeric:tabular-nums; font-size:20px; margin-top:4px; }
 .d2-edge-foot { border-top:1px solid var(--border); padding:9px 15px; color:var(--text-muted); font-size:10px; }
+.d2-edge-split { display:grid; grid-template-columns:1fr 1fr; border-top:1px solid var(--border); }
+.d2-edge-sub { padding:13px 15px; } .d2-edge-sub:first-child { border-right:1px solid var(--border); }
+.d2-edge-t { width:100%; border-collapse:collapse; font-size:12px; margin-top:7px; } .d2-edge-t td, .d2-edge-t th { padding:4px 0; text-align:right; font-weight:400; }
+.d2-edge-t td:first-child, .d2-edge-t th:first-child { text-align:left; color:var(--text-secondary); } .d2-edge-t th { color:var(--text-muted); font-size:10px; text-transform:uppercase; letter-spacing:.04em; }
+.d2-edge-t td { font-family:var(--font-mono); font-variant-numeric:tabular-nums; } .d2-edge-t td:first-child { font-family:inherit; }
+@media (max-width:640px) { .d2-edge-split { grid-template-columns:1fr; } .d2-edge-sub:first-child { border-right:0; border-bottom:1px solid var(--border); } }
 .d2-attn-body { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; padding:12px; }
 .d2-attn-item { display:block; width:100%; background:var(--surface2); border:1px solid var(--border); border-radius:7px; padding:11px 12px; cursor:pointer; text-align:left; color:inherit; font:inherit; min-height:82px; }
 .d2-attn-item:hover, .d2-attn-item.open { border-color:var(--accent); }
@@ -1304,12 +1310,16 @@ th.te-sort { cursor:pointer; user-select:none; } th.te-sort:hover { color:var(--
   </div>
 
   <section class="d2-panel d2-edge">
-    <div class="d2-panel-head"><div><div class="d2-title">System edge</div><div class="d2-hint">A compact read on strategy quality and recent execution</div></div><span class="d2-pill" id="d2-edge-pill">0 closed trades</span></div>
+    <div class="d2-panel-head"><div><div class="d2-title">System edge</div><div class="d2-hint">Closed and open trades together. This system exits only when the Supertrend turns red, so closed trades alone are just the ones that went wrong first.</div></div><span class="d2-pill" id="d2-edge-pill">0 closed trades</span></div>
     <div class="d2-edge-body">
-      <div class="d2-edge-m"><div class="d2-label">Win rate</div><b id="d2-e-wr">—</b><div class="d2-note" id="d2-e-wr-n">—</div></div>
-      <div class="d2-edge-m"><div class="d2-label">Average winning trade</div><b id="d2-e-aw">—</b><div class="d2-note">Closed winners</div></div>
-      <div class="d2-edge-m"><div class="d2-label">Average losing trade</div><b id="d2-e-al">—</b><div class="d2-note">Closed losers</div></div>
-      <div class="d2-edge-m"><div class="d2-label">Average hold</div><b id="d2-e-hold">—</b><div class="d2-note">Closed positions</div></div>
+      <div class="d2-edge-m"><div class="d2-label">Win rate (all trades)</div><b id="d2-e-wr">—</b><div class="d2-note" id="d2-e-wr-n">—</div></div>
+      <div class="d2-edge-m"><div class="d2-label">Average return per trade</div><b id="d2-e-avg">—</b><div class="d2-note" id="d2-e-avg-n">—</div></div>
+      <div class="d2-edge-m"><div class="d2-label">Combined P&amp;L</div><b id="d2-e-pl">—</b><div class="d2-note" id="d2-e-pl-n">—</div></div>
+      <div class="d2-edge-m"><div class="d2-label">How mature is the book</div><b id="d2-e-hold">—</b><div class="d2-note" id="d2-e-hold-n">—</div></div>
+    </div>
+    <div class="d2-edge-split">
+      <div class="d2-edge-sub"><div class="d2-label">Closed so far (positions that turned red)</div><table class="d2-edge-t" id="d2-e-closed"></table></div>
+      <div class="d2-edge-sub"><div class="d2-label">Open book by age</div><table class="d2-edge-t" id="d2-e-age"></table></div>
     </div>
     <div class="d2-edge-foot" id="d2-edge-foot">—</div>
   </section>
@@ -9734,23 +9744,49 @@ function d2Render(d) {
   set('d2-h-loss', `${loss} <span class="d2-note">(${Math.round(loss / n * 100)}%)</span>`);
   set('d2-h-deployed', d2Compact(inv)); set('d2-h-hold', holdAvg == null ? '—' : holdAvg + ' days');
 
-  // System edge — closed trades only; empty until exits are recorded
+  // System edge — closed AND open together (user, 2026-11-16): the only exit is a red Supertrend, so every winner is still open and the
+  // closed-only win rate is biased down by design. Closed trades are shown separately and flagged until there are enough of them.
   const cfgRef = ws.cfg && ws.cfg.ref;
-  const wins = closed.filter(c => c.plRs > 0), losses = closed.filter(c => c.plRs < 0);
   const avg = (a, f) => a.length ? a.reduce((s, x) => s + f(x), 0) / a.length : null;
-  set('d2-edge-pill', `${closed.length} closed trades`);
-  document.getElementById('d2-edge-pill').className = 'd2-pill' + (closed.length ? '' : ' muted');
-  if (closed.length) {
-    const wr = wins.length / closed.length * 100, aw = avg(wins, c => c.plPct), al = avg(losses, c => c.plPct), hold = avg(closed, c => c.holdDays);
-    set('d2-e-wr', wr.toFixed(1) + '%', cfgRef && wr >= cfgRef.winRate ? 'pos' : 'neg'); set('d2-e-wr-n', `${wins.length} win${wins.length === 1 ? '' : 's'} · ${losses.length} loss${losses.length === 1 ? '' : 'es'}`);
-    set('d2-e-aw', aw == null ? '—' : dhFmtPct(aw), 'pos'); set('d2-e-al', al == null ? '—' : dhFmtPct(al), 'neg');
-    set('d2-e-hold', hold == null ? '—' : Math.round(hold) + ' days');
+  const EDGE_MATURE = 30;
+  const cW = closed.filter(c => c.plRs > 0), cL = closed.filter(c => c.plRs < 0);
+  const oW = P.filter(p => p.plPct > 0), oL = P.filter(p => p.plPct <= 0);
+  const allN = closed.length + P.length, allW = cW.length + oW.length;
+  const realisedRs = closed.reduce((s2, c) => s2 + (c.plRs || 0), 0), combined = realisedRs + mtm;
+  const allPl = closed.map(c => c.plPct).concat(P.map(p => p.plPct)).filter(x => x != null);
+  const winPl = closed.filter(c => c.plRs > 0).map(c => c.plPct).concat(oW.map(p => p.plPct)), lossPl = closed.filter(c => c.plRs <= 0).map(c => c.plPct).concat(oL.map(p => p.plPct));
+  const mean = a => a.length ? a.reduce((x, y) => x + y, 0) / a.length : null;
+  set('d2-edge-pill', `${closed.length} closed · ${P.length} open`);
+  document.getElementById('d2-edge-pill').className = 'd2-pill' + (allN ? '' : ' muted');
+  if (allN) {
+    const wr = allW / allN * 100;
+    set('d2-e-wr', wr.toFixed(1) + '%', cfgRef ? (wr >= cfgRef.winRate ? 'pos' : 'neg') : (wr >= 50 ? 'pos' : ''));
+    set('d2-e-wr-n', `${allW} of ${allN} trades (closed wins + open in profit)`);
+    const m = mean(allPl);
+    set('d2-e-avg', m == null ? '—' : dhFmtPct(m), m != null && m >= 0 ? 'pos' : 'neg');
+    set('d2-e-avg-n', `winners ${winPl.length ? dhFmtPct(mean(winPl)) : '—'} · losers ${lossPl.length ? dhFmtPct(mean(lossPl)) : '—'}`);
+    set('d2-e-pl', d2Signed(combined), d2Cls(combined));
+    set('d2-e-pl-n', `realised ${d2Signed(realisedRs)} · open ${d2Signed(mtm)}`);
   } else {
-    ['d2-e-wr', 'd2-e-aw', 'd2-e-al', 'd2-e-hold'].forEach(id => set(id, '—', ''));
-    set('d2-e-wr-n', 'No closed trades yet');
+    ['d2-e-wr', 'd2-e-avg', 'd2-e-pl'].forEach(id => set(id, '—', ''));
+    set('d2-e-wr-n', 'No trades yet'); set('d2-e-avg-n', '—'); set('d2-e-pl-n', '—');
   }
-  set('d2-edge-foot', (cfgRef ? `Reference — ${cfgRef.label}: ${cfgRef.winRate}% win rate · +${cfgRef.avgPlPct}% average P&L · ${cfgRef.trades.toLocaleString('en-IN')} trades. ` : '')
-    + (closed.length ? '' : 'Closed-trade metrics fill in as exits are recorded. ') + `Open book today: ${prof} of ${P.length} positions in profit.`);
+  const ages = P.map(p => p.ageDays || 0), oldest = ages.length ? Math.max(...ages) : null;
+  set('d2-e-hold', holdAvg == null ? '—' : holdAvg + ' days');
+  set('d2-e-hold-n', oldest == null ? '—' : `average open age · oldest ${oldest} days`);
+  const cl = (lab, v, cls) => `<tr><td>${lab}</td><td class="${cls || ''}">${v}</td></tr>`;
+  document.getElementById('d2-e-closed').innerHTML = closed.length
+    ? cl('Closed trades', closed.length) + cl('Win rate', (cW.length / closed.length * 100).toFixed(0) + '%', '') + cl('Average win', cW.length ? dhFmtPct(avg(cW, c => c.plPct)) : '—', 'pos')
+      + cl('Average loss', cL.length ? dhFmtPct(avg(cL, c => c.plPct)) : '—', 'neg') + cl('Average hold', Math.round(avg(closed, c => c.holdDays)) + ' days') + cl('Realised', d2Signed(realisedRs), d2Cls(realisedRs))
+    : '<tr><td colspan="2" style="color:var(--text-muted)">No closed trades yet.</td></tr>';
+  const bands = [[0, 7, '0–7 days'], [8, 14, '8–14 days'], [15, 30, '15–30 days'], [31, 90, '31–90 days'], [91, 99999, 'Over 90 days']];
+  const rowsAge = bands.map(([lo, hi, lab]) => { const g = P.filter(p => (p.ageDays || 0) >= lo && (p.ageDays || 0) <= hi); if (!g.length) return '';
+    const w = g.filter(p => p.plPct > 0).length, a = mean(g.map(p => p.plPct));
+    return `<tr><td>${lab}</td><td>${g.length}</td><td>${Math.round(w / g.length * 100)}% in profit</td><td class="${a >= 0 ? 'pos' : 'neg'}">${dhFmtPct(a)}</td></tr>`; }).join('');
+  document.getElementById('d2-e-age').innerHTML = rowsAge ? '<tr><th>Age</th><th>Positions</th><th>Profit</th><th>Average</th></tr>' + rowsAge : '<tr><td style="color:var(--text-muted)">No open positions.</td></tr>';
+  set('d2-edge-foot', (closed.length < EDGE_MATURE ? `Too early to judge from closed trades alone: ${closed.length} closed so far, they become meaningful after about ${EDGE_MATURE}. ` : '')
+    + (cfgRef ? `Reference — ${cfgRef.label}: ${cfgRef.winRate}% win rate · +${cfgRef.avgPlPct}% average P&L · ${cfgRef.trades.toLocaleString('en-IN')} trades, all closed, so not comparable until your winners have also closed. ` : '')
+    + `Marked to market at the last close.`);
 
   // Attention queues
   const q = d2Queues(d);
