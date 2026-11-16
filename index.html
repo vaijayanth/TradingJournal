@@ -8905,6 +8905,7 @@ function wsSelect(id) {
   }
   wsApply();
   if (wsActivePageId() === 'dhanlive') dhLiveEnsure();
+  if (wsActivePageId() === 'covcall') ccEnsure();   // switching broker while on Covered Call: load that broker's data (it used to keep the old broker's view)
   // Zerodha is still sheet-backed: load the Google Sheet feed the first time it's selected
 }
 
@@ -9771,8 +9772,8 @@ function d2RenderActions(d) {
   dhExtras(true).then(draw);
   if (!cp.hasCC) return;
   if (window._cc && window._ccWs === WS.id) drawCc(window._cc);
-  else fetch(CC_URL + '?t=' + Date.now()).then(r => r.ok ? r.json() : Promise.reject()).then(j => { window._cc = j; window._ccWs = WS.id; drawCc(j); })
-    .catch(() => { set('d2-r-opt', none('Covered-call data not loaded')); set('d2-r-shr', none('Covered-call data not loaded')); });
+  else { const ws0 = WS.id; fetch(ccUrl() + '?t=' + Date.now()).then(r => r.ok ? r.json() : Promise.reject()).then(j => { if (ws0 !== WS.id) return; window._cc = j; window._ccWs = ws0; drawCc(j); })   // this workspace's own file, stamped with the workspace it was fetched for (was ND's file stamped as whichever broker was open: AZ then showed ND option data)
+    .catch(() => { set('d2-r-opt', none('Covered-call data not loaded')); set('d2-r-shr', none('Covered-call data not loaded')); }); }
 }
 
 function d2Render(d) {
@@ -10654,6 +10655,7 @@ function ccZerodhaView(d) {
 }
 
 function ccRender(d) {
+  if (window._ccWs && window._ccWs !== WS.id) { window._cc = null; ccRefresh(false); return; }   // never paint another broker's data in this broker's view
   try { const c = WS.data[WS.id]; if (c) dhRenderStale(c); } catch (e) {}
   const asof = document.getElementById('cc-asof');
   wsPaintFresh();
