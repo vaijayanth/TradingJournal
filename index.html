@@ -10121,7 +10121,8 @@ function ccTblApply(id) {
       + (det && st.open[k] ? `<tr class="cc-det"><td colspan="${def.cols.length}">${def.detail(r)}</td></tr>` : '');
   };
   const grouped = () => def.groups.map(g => {
-    const rs = rows.filter(r => def.group(r) === g.key); if (!rs.length) return '';
+    const rs = rows.filter(r => def.group(r) === g.key);
+    if (!rs.length) return def.showEmpty && !st.q.trim() ? `<tr class="cc-grp"><td colspan="${def.cols.length}" style="cursor:default;opacity:.75">${g.label} <span class="cc-grp-n">0</span> <span style="font-weight:400;color:var(--text-muted)">· none</span></td></tr>` : '';
     const closed = st.col[g.key] && !st.q.trim();                                                   // a search always shows its matches
     return `<tr class="cc-grp"><td colspan="${def.cols.length}" onclick="ccTblGrp('${id}','${g.key}')">${closed ? '▸' : '▾'} ${g.label} <span class="cc-grp-n">${rs.length}</span></td></tr>` + (closed ? '' : rs.map(rowHtml).join(''));
   }).join('');
@@ -10267,6 +10268,69 @@ const ccSigCols = d => [
 const ccSigFilters = rsi => [['all', 'All stocks', () => true], ['call', 'Sell call', s => s.desired === 'CALL'], ['put', 'BPS', s => s.desired === 'PUT_SPREAD'],
   ['open', 'Has open legs', s => (s.legs || []).length > 0], ['event', 'Event within 2 weeks', s => { const n = ccEventDays(s); return n != null && n <= CC_EVENT_DAYS; }]].concat(rsi ? [['rsi', 'RSI override', s => s.rsi_override]] : []);
 const ccSigGroups = [{ key: 'act', label: 'Act now' }, { key: 'cand', label: 'Candidates · no recent flip', collapsed: true }, { key: 'hold', label: 'Holding', collapsed: true }];
+
+// ── AZ ENTRY SIGNALS IN TIERS (user, 2026-11-16): Supertrend only (no RSI), by when the CURRENT colour began; stocks with open option legs are left out ──
+// Tier 1 = flipped on the latest session; Tier 2 = 1-5 trading days ago; Tier 3 = within 30 days; Tier 4 = within 90 days (each stock in its freshest tier).
+// Mirrors zerodha-live/scripts/option_entry_tiers.py (the read-only skill zerodha-option-entry-signal); change both together.
+const CC_TIER_GROUPS = [
+  { key: 't1', label: 'Tier 1 · flipped on the latest session' },
+  { key: 't2', label: 'Tier 2 · flipped in the last trading week (1–5 trading days ago)' },
+  { key: 't3', label: 'Tier 3 · flipped in the last 30 days', collapsed: true },
+  { key: 't4', label: 'Tier 4 · flipped in the last 90 days', collapsed: true }];
+function ccTierRows(d) {
+  const R = d.rules || {}, close = R.event_close_days ?? 15, minDays = R.expiry_min_days ?? 30;
+  const t0 = new Date(); t0.setHours(0, 0, 0, 0);
+  const md = new Date(d.market_data_date + 'T00:00:00'), day = x => new Date(x + 'T00:00:00'), diff = (a, b) => Math.round((a - b) / 86400000);
+  const out = [];
+  (d.stocks || []).forEach(s => {
+    if ((s.legs || []).length || s.flip_date == null || s.flip_trading_days == null) return;   // open option legs: not an entry candidate
+    const e = (s.expiries || [])[0]; if (!e || !e.lot) return;
+    const td = s.flip_trading_days, cal = diff(md, day(s.flip_date));
+    const tier = td === 0 ? 1 : td <= 5 ? 2 : cal <= 30 ? 3 : cal <= 90 ? 4 : null; if (!tier) return;
+    const exp = day(e.expiry), dte = diff(exp, t0), evs = [];
+    let lvl = 0, main = null;
+    (s.events || []).slice().sort((a, b) => a.date.localeCompare(b.date)).forEach(ev => {
+      const days = diff(day(ev.date), t0); if (days < 0) return;
+      const start = new Date(day(ev.date)); start.setDate(start.getDate() - close);
+      const nm = /^result/i.test(ev.label) ? 'Results' : 'Ex-div', est = ev.estimated ? ' (est.)' : '';
+      let l = 0, txt = '';
+      if (start <= t0) { l = 3; txt = `${nm} ${dhFmtDate(ev.date)}${est} in ${days}d`; }
+      else if (start < exp) { l = 2; txt = `${nm} ${dhFmtDate(ev.date)}${est}`; }
+      else if (days <= 60) { l = 1; txt = `${nm} ${dhFmtDate(ev.date)}${est} · ${days}d`; }
+      else return;
+      evs.push({ l, txt, start });
+      if (l > lvl) { lvl = l; main = { l, txt, start }; }
+    });
+    const short = dte < minDays;
+    out.push({ symbol: s.symbol, tier, desired: s.colour === 'green' ? 'PUT_SPREAD' : 'CALL', colour: s.colour, spot: s.spot, flip_date: s.flip_date, td, cal,
+      expiry: e.expiry, lot: e.lot, dte, short, evs, lvl: Math.max(lvl, short ? 2 : 0), main, events: s.events || [] });
+  });
+  return out;
+}
+const ccTierAlert = r => {
+  const chip = (bg, fg, t, tip) => `<span class="trend-pill" style="background:${bg};color:${fg};white-space:nowrap" title="${dhEsc(tip || '')}">${t}</span>`;
+  const parts = [];
+  if (r.main && r.main.l === 3) parts.push(chip('var(--red)', '#fff', '✕ Do not open · ' + dhEsc(r.main.txt), 'This event is inside the ' + 'close window right now: a new option would have to be closed at once'));
+  else if (r.main && r.main.l === 2) parts.push(chip('var(--amber-soft, var(--surface2))', 'var(--amber)', '⚠ Close by ' + dhFmtDate(r.main.start.getFullYear() + '-' + String(r.main.start.getMonth() + 1).padStart(2, '0') + '-' + String(r.main.start.getDate()).padStart(2, '0')) + ' · ' + dhEsc(r.main.txt), 'The close window opens before the expiry: the trade must be closed early'));
+  else if (r.main) parts.push(`<span style="color:var(--text-muted)">${dhEsc(r.main.txt)}</span>`);
+  if (r.short) parts.push(chip('var(--amber-soft, var(--surface2))', 'var(--amber)', '⚠ Short expiry ' + r.dte + 'd', 'Only a near expiry is listed for this stock'));
+  return parts.length ? parts.join(' ') : '<span style="color:var(--text-muted)">—</span>';
+};
+const ccTierCols = () => [
+  { h: 'Stock', v: r => r.symbol, c: r => `<b class="stk">${dhEsc(r.symbol)}</b>`, txt: true },
+  { h: 'Structure', v: r => r.desired, c: r => r.desired === 'PUT_SPREAD' ? '<span class="trend-pill" style="background:var(--green-soft);color:var(--green)">BPS</span>' : '<span class="trend-pill" style="background:var(--red-soft);color:var(--red)">Sell call</span>', txt: true },
+  { h: 'CMP', v: r => r.spot, c: r => ccP(r.spot), num: true },
+  { h: 'Flipped', v: r => r.td, x: r => r.flip_date, c: r => `<span class="cc-dot ${r.colour === 'green' ? 'g' : 'r'}" title="Supertrend ${dhEsc(r.colour)}">●</span> ${r.td === 0 ? '<b>today</b>' : dhFmtDate(r.flip_date) + ' <span style="color:var(--text-muted)">· ' + r.td + 'td</span>'}`, txt: true },
+  { h: 'Expiry · lot', v: r => r.expiry, x: r => r.expiry + ' lot ' + r.lot, c: r => `${dhFmtDate(r.expiry)} <span style="color:var(--text-muted)">· ${r.lot}</span>`, txt: true },
+  { h: 'Results / ex-dividend', v: r => -r.lvl, x: r => (r.evs.map(e => e.txt).join('; ')) + (r.short ? '; short expiry' : ''), c: ccTierAlert, txt: true, nw: 230 },
+];
+const ccTierDetail = r => {
+  const evs = r.events.map(e => `${e.label} ${dhFmtDate(e.date)}${e.estimated ? ' (est.)' : ''}`).join(' · ') || 'no date';
+  const cell = (l, v) => `<div><b>${l}</b>${v}</div>`;
+  return `<div class="cc-dgrid">${cell('Supertrend', `${dhEsc(r.colour)} since ${dhFmtDate(r.flip_date)} (${r.td} trading days, ${r.cal} calendar days)`)}${cell('Structure', r.desired === 'PUT_SPREAD' ? 'Sell a put, buy the hedge 2 listed strikes lower' : 'Sell a call (no hedge)')}${cell('Expiry', dhFmtDate(r.expiry) + ' · ' + r.dte + 'd · lot ' + r.lot)}${cell('Events', dhEsc(evs))}${cell('To place', '/zerodha-option-order with --structure ' + (r.desired === 'PUT_SPREAD' ? 'put-spread' : 'call') + ' (market hours)')}</div>`;
+};
+const ccTierFilters = [['all', 'All entry signals', () => true], ['put', 'BPS', r => r.desired === 'PUT_SPREAD'], ['call', 'Sell call', r => r.desired === 'CALL'],
+  ['clear', 'Clear to open (no event alert)', r => r.lvl < 2], ['alert', 'Has an event alert', r => r.lvl >= 2]];
 
 // ── Open positions as TRADES (one row per structure, not per leg): % of max profit vs the profit target, distance to the short strike, stop in place, next step ──
 const CC_TRADE_ORDER = ['3× premium', 'Through hedge', 'Expiry risk', 'Event close', 'Exit', 'Beyond strike', 'Profit Exit', 'No stop placed', 'No GTT placed', 'Invalid GTT', 'Near strike', 'Leftover hedge'];
@@ -10535,8 +10599,10 @@ function ccZerodhaView(d) {
   const zLegs = S.flatMap(s => (s.legs || []).map(l => ({ ...l, symbol: l.symbol || s.symbol })));
   const zMtm = zLegs.reduce((a, l) => a + (l.pnl_rs || 0), 0);
   const zNear = zLegs.filter(l => l.side === 'SHORT').sort((a, b) => Math.abs(a.dist_pct) - Math.abs(b.dist_pct))[0];
+  const tierRows = di ? [] : ccTierRows(d), tn = k => tierRows.filter(r => r.tier === k).length;
   const kpis = a2Metrics([
-    ['Signals', `${C.call || 0} call · ${C.put_spread || 0} BPS`, (di ? `${S.length} DI stocks with options` : `${S.length} Nifty F&O stocks`) + ((d.no_data || []).length ? ' (no data: ' + d.no_data.join(', ') + ')' : '') + (di ? ((d.no_options || []).length ? ` · no options: ${d.no_options.join(', ')}` : '') : ` · RSI overrides: ${C.rsi_override || 0}`)],
+    di ? ['Signals', `${C.call || 0} call · ${C.put_spread || 0} BPS`, `${S.length} DI stocks with options` + ((d.no_data || []).length ? ' (no data: ' + d.no_data.join(', ') + ')' : '') + ((d.no_options || []).length ? ` · no options: ${d.no_options.join(', ')}` : '')]
+      : ['Entry signals', tierRows.length, `Tier 1: ${tn(1)} · Tier 2: ${tn(2)} · Tier 3: ${tn(3)} · Tier 4: ${tn(4)} · Supertrend only, open-leg stocks left out`],
     ['Open option legs', (d.positions || {}).legs || 0, 'Expiries from ' + dhFmtDate((d.positions || {}).track_from) + ' · ' + ((d.positions || {}).ignored_legs || 0) + ' earlier legs ignored'],
     ['Act now', ccActNow(d), 'Exit, 3× premium, beyond strike, profit exit (other alerts are in the Alerts tab)', ccActNowBad(d) ? 'neg' : ''],
     ['Nearest short strike', zNear ? ccSigned(zNear.dist_pct) : '—', zNear ? `${zNear.symbol} ${ccStrike(zNear.strike)}${zNear.type} · ${ccSD(zNear.expiry)}` : 'No short legs', zNear && Math.abs(zNear.dist_pct) < 5 ? 'neg' : ''],
@@ -10552,6 +10618,11 @@ function ccZerodhaView(d) {
     filters: ccSigFilters(true),
     cols: ccSigCols(d),
   });
+  const tierT = di ? '' : ccTbl('ztiers', {
+    title: 'Entry signals', hint: 'Supertrend only, no RSI: green = BPS (bull put spread), red = sell call. Tiers = when the current colour began (each stock once, freshest tier). Stocks that already have open option legs are not listed. The last column warns of results / ex-dividend dates: <b>✕ Do not open</b> = inside the ' + (R.event_close_days ?? 15) + '-day close window now, <b>⚠ Close by</b> = the window opens before the expiry. Click a row for details. Place with /zerodha-option-order (strikes and premiums come from live quotes there).',
+    rows: tierRows, search: r => r.symbol, empty: 'No entry signals: every flipped stock already has open option legs, or no flip within 90 days.', sort: [3, 1],
+    rowKey: r => r.symbol, detail: ccTierDetail, group: r => 't' + r.tier, groups: CC_TIER_GROUPS, showEmpty: true, filters: ccTierFilters, cols: ccTierCols(),
+  });
   const lvlOrd = { EXIT: 0, BREACH: 1, WARN: 2 };
   const alertsT = ccAlertsBox(d, 'zal', 'Alert types: 3× premium, beyond / near strike, through hedge, profit exit, no GTT, no hedge, Exit (colour flipped, opposite position open)');
   const trades = ccTrades(S, d.alerts, R);
@@ -10561,11 +10632,11 @@ function ccZerodhaView(d) {
     rowKey: t => t.key, detail: ccTradeDetail, group: t => t.needs ? 'act' : 'ok', groups: ccTradeGroups, filters: ccTradeFilters, cols: ccTradeCols(),
   });
   const rulesPanel = a2Panel('Option rules', 'Edit ' + dir + '/data/cc_config.json to change; shown here as applied',
-    a2Rows((R.rsi_override === false ? [
+    a2Rows((R.rsi_override === false || !di ? [
       ['Green', `BPS (sell a put, buy ${R.hedge_strikes_below} listed strikes lower)`],
       ['Red', 'Sell the call only'],
       ['RSI', 'No RSI override: the Supertrend colour alone decides'],
-    ] : [
+    ].concat(di ? [] : [['Entry tiers', 'Tier 1 flipped on the latest session · Tier 2 flipped 1–5 trading days ago · Tier 3 within 30 days · Tier 4 within 90 days. Stocks with open option legs are left out']]) : [
       ['RSI above ' + R.rsi_sell_call_above, `Sell the ${R.short_call_delta} delta call, whatever the Supertrend colour`],
       ['RSI below ' + R.rsi_sell_put_below, `BPS (sell the ${R.short_put_delta} delta put, buy ${R.hedge_strikes_below} listed strikes lower), whatever the colour`],
       ['Otherwise · green', 'BPS'],
@@ -10578,8 +10649,8 @@ function ccZerodhaView(d) {
       ['Universe', di ? 'The DI dividend universe: only the stocks with listed options appear here' : 'All Nifty F&O stocks except ' + ((d.excluded || []).join(', ') || 'none')],
     ]).concat(ccRulesCommon(R, di ? ['Stop protection', 'Not tracked for DI: place and watch the 3× stop in ICICIdirect'] : ['Stop protection', 'Each short should have a buy-back GTT (stop 3× + profit target); an invalid or missing one raises Invalid GTT / No GTT placed (scan_gtts.py, the zerodha-gtt-order skill)']))));
   const foot = `<div class="d2-edge-foot" style="border:0">Market data ${dhFmtDate(d.market_data_date)} · no option quotes are pulled, so strikes and premiums for new trades are not shown · positions fetched ${(d.positions || {}).fetched_at ? dhFmtDate(String(d.positions.fetched_at).slice(0, 10)) : (di ? 'never (upload not connected yet)' : 'never (run /refresh-zerodha)')}.</div>`;
-  const bar = ccTabBar('cc-otabs', [['alerts', 'Alerts', (d.alerts || []).length], ['signals', 'Signals', S.length], ['legs', 'Open positions', trades.length], ['rules', 'Rules', null]], 'ccZTab');
-  return ccStrikeBanner(d) + kpis + bar + `<div id="cc-ov-alerts" class="a2-view">${alertsT}</div><div id="cc-ov-signals" class="a2-view">${sigT}</div><div id="cc-ov-legs" class="a2-view">${legT}</div><div id="cc-ov-rules" class="a2-view">${rulesPanel}${foot}</div>`;
+  const bar = ccTabBar('cc-otabs', [['alerts', 'Alerts', (d.alerts || []).length], ['signals', di ? 'Signals' : 'Entry signals', di ? S.length : tierRows.length], ['legs', 'Open positions', trades.length], ['rules', 'Rules', null]], 'ccZTab');
+  return ccStrikeBanner(d) + kpis + bar + `<div id="cc-ov-alerts" class="a2-view">${alertsT}</div><div id="cc-ov-signals" class="a2-view">${di ? sigT : tierT}</div><div id="cc-ov-legs" class="a2-view">${legT}</div><div id="cc-ov-rules" class="a2-view">${rulesPanel}${foot}</div>`;
 }
 
 function ccRender(d) {
@@ -10594,7 +10665,7 @@ function ccRender(d) {
     pg.querySelector('.d2-eyebrow').textContent = di ? 'DI workspace · dividend portfolio options' : zer ? 'AZ workspace · Nifty F&O option selling' : 'ND workspace · investment portfolio options';
     pg.querySelector('.d2-sub').textContent = di ? 'Supertrend red = sell the call, green = BPS (no RSI override), on the DI stocks that have listed options. Exit at 3× premium or when the Supertrend colour changes. Open legs come from the uploaded ICICIdirect positions (not connected yet).'
       : zer
-      ? 'RSI > 70 sell call, RSI < 30 BPS, else Supertrend green = BPS, red = sell call. Exit at 3× premium or when the Supertrend colour changes. Open legs from the tracking start date (see Alerts) are checked against the live price.'
+      ? 'Supertrend only (no RSI): green = BPS, red = sell call, in 4 tiers by how recently the colour flipped. Exit at 3× premium or when the Supertrend colour changes. Open legs from the tracking start date (see Alerts) are checked against the live price.'
       : 'Options: Supertrend red = sell the 0.10-delta call, green = BPS (no RSI override). Shares: entries, exits and averaging for the investment portfolio.';
   }
   if (zer) {
