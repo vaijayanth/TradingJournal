@@ -1230,8 +1230,8 @@ b.stk, #cc-root td b.stk, #page-dashboard-di b.stk { font-weight:700; }
   <div class="d2-layout" style="margin-top:13px">
     <section class="d2-panel">
       <div class="d2-panel-head">
-        <div><div class="d2-title">P&amp;L calendar</div><div class="d2-hint">Daily change in total P&amp;L (realised + open-book)</div></div>
-        <div class="p2-calnav"><button onclick="p2CalNav(-1)" aria-label="Previous month">‹</button><span id="p2-cal-label">—</span><button onclick="p2CalNav(1)" aria-label="Next month">›</button></div>
+        <div><div class="d2-title">P&amp;L calendar</div><div class="d2-hint">Realised P&amp;L per day (closed trades, by exit date)</div></div>
+        <div class="p2-calnav"><span id="p2-cal-sum" style="margin-right:10px;font-family:var(--font-mono);font-size:11.5px"></span><button onclick="p2CalNav(-1)" aria-label="Previous month">‹</button><span id="p2-cal-label">—</span><button onclick="p2CalNav(1)" aria-label="Next month">›</button></div>
       </div>
       <div class="p2-body"><div class="p2-cal" id="p2-cal"></div></div>
     </section>
@@ -10886,13 +10886,18 @@ function p2RenderCal(d) {
   const first = ser[0].date.slice(0, 7), lastK = ser[ser.length - 1].date.slice(0, 7);
   if (!window._p2Cal || window._p2Cal.ws !== WS.id) window._p2Cal = { ws: WS.id, key: lastK };
   const key = window._p2Cal.key, [y, m] = key.split('-').map(Number);
-  const byDate = {}; ser.forEach(s => { byDate[s.date] = s.delta; });
+  // realised P&L per day (user, 2026-11-16): sum of the closed trades' P&L on their exit date, like the old sheet dashboard; days with no exit stay blank
+  const byDate = {}, cnt = {}, names = {};
+  (d.closed || []).forEach(c => { if (!c.exitDate) return; byDate[c.exitDate] = (byDate[c.exitDate] || 0) + (c.plRs || 0); cnt[c.exitDate] = (cnt[c.exitDate] || 0) + 1; (names[c.exitDate] = names[c.exitDate] || []).push(c.symbol); });
   const offset = (new Date(y, m - 1, 1).getDay() + 6) % 7, days = new Date(y, m, 0).getDate();
+  const mk = `${y}-${String(m).padStart(2, '0')}`, mDates = Object.keys(byDate).filter(k => k.startsWith(mk));
+  const sumEl = document.getElementById('p2-cal-sum'), mSum = mDates.reduce((s, k) => s + byDate[k], 0), mN = mDates.reduce((s, k) => s + cnt[k], 0);
+  if (sumEl) sumEl.innerHTML = mN ? `${mN} closed · <b class="${mSum >= 0 ? 'pnl-pos' : 'pnl-neg'}">${p2SignedK(mSum)}</b>` : '<span style="color:var(--text-muted)">No closed trades</span>';
   let html = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(h => `<div class="h">${h}</div>`).join('') + '<div class="p2-day blank"></div>'.repeat(offset);
   for (let day = 1; day <= days; day++) {
     const iso = `${y}-${String(m).padStart(2, '0')}-${String(day).padStart(2, '0')}`, v = byDate[iso];
     const wd = (offset + day - 1) % 7, we = wd >= 5;
-    html += `<div class="p2-day ${v == null ? '' : v >= 0 ? 'pos' : 'neg'}${we ? ' we' : ''}">${day}<small>${v == null ? '&nbsp;' : p2SignedK(v)}</small></div>`;
+    html += `<div class="p2-day ${v == null ? '' : v >= 0 ? 'pos' : 'neg'}${we ? ' we' : ''}"${v == null ? '' : ` title="${dhEsc((names[iso] || []).join(', '))} (${cnt[iso]} closed)"`}>${day}<small>${v == null ? '&nbsp;' : p2SignedK(v)}</small></div>`;
   }
   el.innerHTML = html;
   document.getElementById('p2-cal-label').textContent = `${P2_MONTHS[m - 1]} ${y}`;
