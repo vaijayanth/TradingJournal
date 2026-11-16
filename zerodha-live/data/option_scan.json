@@ -11,15 +11,15 @@
   "LAURUSLABS26NOV2200PE",
   "BANKINDIA26NOV160CE"
  ],
- "fetched_at": "2026-11-16T12:58:15+05:30",
+ "fetched_at": "2026-11-16T13:44:13+05:30",
  "inputs": {
-  "positions": "2026-11-16T07:27:52.045079+00:00",
-  "gtts": "2026-11-16T12:57:52+05:30",
-  "orders": "2026-11-16T12:57:52+05:30",
-  "gtt_scan": "2026-11-16T12:57:52+05:30"
+  "positions": "2026-11-16T08:12:19.907837+00:00",
+  "gtts": "2026-11-16T13:42:20+05:30",
+  "orders": "2026-11-16T13:42:20+05:30",
+  "gtt_scan": "2026-11-16T13:42:20+05:30"
  },
  "stale_inputs": [],
- "open_legs": 112,
+ "open_legs": 128,
  "triggered_gtts": 10,
  "findings": [
   {
@@ -27,7 +27,7 @@
    "severity": "WARN",
    "symbol": "ANGELONE",
    "tradingsymbol": "ANGELONE26NOV250PE",
-   "concern": "Long 250PE (2500 qty) no short against it; P&L Rs-6,875, expiry 2026-11-23",
+   "concern": "Long 250PE (2500 qty) no short against it; P&L Rs-7,000, expiry 2026-11-23",
    "action": "Sell it or let it expire"
   },
   {
@@ -59,7 +59,7 @@
    "severity": "WARN",
    "symbol": "CANBK",
    "tradingsymbol": "CANBK26NOV125CE",
-   "concern": "Long 125CE (6750 qty) no short against it; P&L Rs29,430, expiry 2026-11-23",
+   "concern": "Long 125CE (6750 qty) no short against it; P&L Rs27,945, expiry 2026-11-23",
    "action": "In profit: book it or let it run"
   },
   {
@@ -67,7 +67,7 @@
    "severity": "WARN",
    "symbol": "GMRAIRPORT",
    "tradingsymbol": "GMRAIRPORT26NOV85PE",
-   "concern": "Long 85PE (6975 qty) no short against it; P&L Rs-1,883, expiry 2026-11-23",
+   "concern": "Long 85PE (6975 qty) no short against it; P&L Rs-1,953, expiry 2026-11-23",
    "action": "Sell it or let it expire"
   },
   {
@@ -75,7 +75,7 @@
    "severity": "WARN",
    "symbol": "INFY",
    "tradingsymbol": "INFY26NOV894PE",
-   "concern": "Long 894PE (800 qty) no short against it; P&L Rs-4,980, expiry 2026-11-23",
+   "concern": "Long 894PE (800 qty) no short against it; P&L Rs-5,140, expiry 2026-11-23",
    "action": "Sell it or let it expire"
   },
   {
@@ -99,7 +99,7 @@
    "severity": "WARN",
    "symbol": "PNBHOUSING",
    "tradingsymbol": "PNBHOUSING26NOV1300CE",
-   "concern": "Long 1300CE (650 qty) no short against it; P&L Rs-1,690, expiry 2026-11-23",
+   "concern": "Long 1300CE (650 qty) no short against it; P&L Rs-1,625, expiry 2026-11-23",
    "action": "Sell it or let it expire"
   },
   {
@@ -107,7 +107,7 @@
    "severity": "WARN",
    "symbol": "RECLTD",
    "tradingsymbol": "RECLTD26NOV300CE",
-   "concern": "Long 300CE (1575 qty) no short against it; P&L Rs-6,851, expiry 2026-11-23",
+   "concern": "Long 300CE (1575 qty) no short against it; P&L Rs-7,481, expiry 2026-11-23",
    "action": "Sell it or let it expire"
   },
   {
@@ -123,7 +123,7 @@
    "severity": "WARN",
    "symbol": "UNITDSPR",
    "tradingsymbol": "UNITDSPR26NOV1480CE",
-   "concern": "Long 1480CE (400 qty) no short against it; P&L Rs-780, expiry 2026-11-23",
+   "concern": "Long 1480CE (400 qty) no short against it; P&L Rs-1,480, expiry 2026-11-23",
    "action": "Sell it or let it expire"
   },
   {
@@ -169,6 +169,14 @@
   {
    "section": "B",
    "severity": "INFO",
+   "symbol": "ASTRAL",
+   "tradingsymbol": "ASTRAL26DEC1440CE",
+   "concern": "Short 1440CE (425 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
    "symbol": "BHARATFORG",
    "tradingsymbol": "BHARATFORG26NOV1900CE",
    "concern": "Short 1900CE (500 qty) is a naked call (by design; covered only by shares you hold)",
@@ -196,6 +204,22 @@
    "symbol": "CAMS",
    "tradingsymbol": "CAMS26NOV800CE",
    "concern": "Short 800CE (825 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "CGPOWER",
+   "tradingsymbol": "CGPOWER26DEC960CE",
+   "concern": "Short 960CE (850 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "COALINDIA",
+   "tradingsymbol": "COALINDIA26DEC440CE",
+   "concern": "Short 440CE (1350 qty) is a naked call (by design; covered only by shares you hold)",
    "action": "Watch the 3x stop and the Supertrend colour"
   },
   {
@@ -297,6 +321,14 @@
   {
    "section": "B",
    "severity": "INFO",
+   "symbol": "MAZDOCK",
+   "tradingsymbol": "MAZDOCK26DEC2200CE",
+   "concern": "Short 2200CE (225 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
    "symbol": "NAM-INDIA",
    "tradingsymbol": "NAM-INDIA26NOV1100CE",
    "concern": "Short 1100CE (625 qty) is a naked call (by design; covered only by shares you hold)",
@@ -308,6 +340,14 @@
    "symbol": "NATIONALUM",
    "tradingsymbol": "NATIONALUM26NOV370CE",
    "concern": "Short 370CE (1875 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "NAUKRI",
+   "tradingsymbol": "NAUKRI26DEC1300CE",
+   "concern": "Short 1300CE (550 qty) is a naked call (by design; covered only by shares you hold)",
    "action": "Watch the 3x stop and the Supertrend colour"
   },
   {
@@ -329,6 +369,14 @@
   {
    "section": "B",
    "severity": "INFO",
+   "symbol": "OIL",
+   "tradingsymbol": "OIL26DEC500CE",
+   "concern": "Short 500CE (1400 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
    "symbol": "PERSISTENT",
    "tradingsymbol": "PERSISTENT26NOV6500CE",
    "concern": "Short 6500CE (125 qty) is a naked call (by design; covered only by shares you hold)",
@@ -337,9 +385,25 @@
   {
    "section": "B",
    "severity": "INFO",
+   "symbol": "SOLARINDS",
+   "tradingsymbol": "SOLARINDS26DEC22000CE",
+   "concern": "Short 22000CE (50 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
    "symbol": "SUNPHARMA",
    "tradingsymbol": "SUNPHARMA26DEC2100CE",
    "concern": "Short 2100CE (350 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "SWIGGY",
+   "tradingsymbol": "SWIGGY26DEC250CE",
+   "concern": "Short 250CE (1825 qty) is a naked call (by design; covered only by shares you hold)",
    "action": "Watch the 3x stop and the Supertrend colour"
   },
   {
@@ -363,7 +427,7 @@
    "severity": "HIGH",
    "symbol": "DIVISLAB",
    "tradingsymbol": "DIVISLAB26NOV10600CE",
-   "concern": "No active buy-back GTT (premium 600, sold 116.95, already 5.1x: a GTT would fire at once)",
+   "concern": "No active buy-back GTT (premium 481.25, sold 116.95, already 4.1x: a GTT would fire at once)",
    "action": "Close it now (a GTT would fire at once)"
   },
   {
@@ -371,7 +435,7 @@
    "severity": "HIGH",
    "symbol": "HDFCBANK",
    "tradingsymbol": "HDFCBANK26NOV760CE",
-   "concern": "No active buy-back GTT (premium 55, sold 2.8, already 19.6x: a GTT would fire at once)",
+   "concern": "No active buy-back GTT (premium 54.2, sold 2.8, already 19.4x: a GTT would fire at once)",
    "action": "Close it now (a GTT would fire at once)"
   },
   {
@@ -379,7 +443,7 @@
    "severity": "HIGH",
    "symbol": "HINDPETRO",
    "tradingsymbol": "HINDPETRO26NOV380CE",
-   "concern": "No active buy-back GTT (premium 8, sold 1.3, already 6.2x: a GTT would fire at once)",
+   "concern": "No active buy-back GTT (premium 7.4, sold 1.3, already 5.7x: a GTT would fire at once)",
    "action": "Close it now (a GTT would fire at once)"
   },
   {
@@ -395,15 +459,111 @@
    "severity": "HIGH",
    "symbol": "NAM-INDIA",
    "tradingsymbol": "NAM-INDIA26NOV1100CE",
-   "concern": "No active buy-back GTT (premium 15.4, sold 3.85, already 4.0x: a GTT would fire at once)",
+   "concern": "No active buy-back GTT (premium 12.9, sold 3.85, already 3.4x: a GTT would fire at once)",
    "action": "Close it now (a GTT would fire at once)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "ASTRAL",
+   "tradingsymbol": "ASTRAL26DEC1440CE",
+   "concern": "No active buy-back GTT (premium 8.45, sold 8.45)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "BANDHANBNK",
+   "tradingsymbol": "BANDHANBNK26DEC150PE",
+   "concern": "No active buy-back GTT (premium 1.92, sold 1.92)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "BDL",
+   "tradingsymbol": "BDL26DEC900PE",
+   "concern": "No active buy-back GTT (premium 11.55, sold 11.55)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "CGPOWER",
+   "tradingsymbol": "CGPOWER26DEC960CE",
+   "concern": "No active buy-back GTT (premium 6.3, sold 6.3)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "COALINDIA",
+   "tradingsymbol": "COALINDIA26DEC440CE",
+   "concern": "No active buy-back GTT (premium 1.9, sold 1.7)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
   },
   {
    "section": "C",
    "severity": "WARN",
    "symbol": "LAURUSLABS",
    "tradingsymbol": "LAURUSLABS26NOV2100PE",
-   "concern": "No active buy-back GTT (premium 5.8, sold 6.55)",
+   "concern": "No active buy-back GTT (premium 9.6, sold 6.55)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "MAZDOCK",
+   "tradingsymbol": "MAZDOCK26DEC2200CE",
+   "concern": "No active buy-back GTT (premium 11.6, sold 11.6)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "NAUKRI",
+   "tradingsymbol": "NAUKRI26DEC1300CE",
+   "concern": "No active buy-back GTT (premium 11.75, sold 12)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "OIL",
+   "tradingsymbol": "OIL26DEC500CE",
+   "concern": "No active buy-back GTT (premium 3.1, sold 2.8)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "POLICYBZR",
+   "tradingsymbol": "POLICYBZR26DEC900PE",
+   "concern": "No active buy-back GTT (premium 20.35, sold 19.3)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "POWERINDIA",
+   "tradingsymbol": "POWERINDIA26DEC28000PE",
+   "concern": "No active buy-back GTT (premium 520, sold 531)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "SOLARINDS",
+   "tradingsymbol": "SOLARINDS26DEC22000CE",
+   "concern": "No active buy-back GTT (premium 140, sold 137.375)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "SWIGGY",
+   "tradingsymbol": "SWIGGY26DEC250CE",
+   "concern": "No active buy-back GTT (premium 1.18, sold 1.18)",
    "action": "Place the protective GTT (zerodha-gtt-order)"
   },
   {
