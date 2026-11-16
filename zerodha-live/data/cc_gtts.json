@@ -1,6 +1,36 @@
 {
- "fetched_at": "2026-11-16T11:42:41+05:30",
+ "fetched_at": "2026-11-16T11:58:29+05:30",
  "active": {
+  "KARURVYSYA26NOV370PE": [
+   {
+    "id": 344936095,
+    "type": "two-leg",
+    "trigger_values": [
+     0.7,
+     5.4
+    ],
+    "qty": 1550
+   },
+   {
+    "id": 344936095,
+    "type": "two-leg",
+    "trigger_values": [
+     0.7,
+     5.4
+    ],
+    "qty": 1550
+   }
+  ],
+  "BRITANNIA26NOV5000CE": [
+   {
+    "id": 343664213,
+    "type": "trailing-single",
+    "trigger_values": [
+     54
+    ],
+    "qty": 125
+   }
+  ],
   "MAHABANK26NOV88PE": [
    {
     "id": 344931565,
@@ -371,16 +401,6 @@
     "qty": 775
    }
   ],
-  "KARURVYSYA26NOV340PE": [
-   {
-    "id": 343697032,
-    "type": "trailing-single",
-    "trigger_values": [
-     6
-    ],
-    "qty": 1550
-   }
-  ],
   "HINDPETRO26NOV360PE": [
    {
     "id": 343695983,
@@ -431,16 +451,6 @@
     "qty": 100
    }
   ],
-  "BRITANNIA26NOV5000CE": [
-   {
-    "id": 343664213,
-    "type": "trailing-single",
-    "trigger_values": [
-     32.5
-    ],
-    "qty": 125
-   }
-  ],
   "BHARTIARTL26NOV1980PE": [
    {
     "id": 343638098,
@@ -469,16 +479,6 @@
      8
     ],
     "qty": 750
-   }
-  ],
-  "ANGELONE26NOV295PE": [
-   {
-    "id": 343436780,
-    "type": "trailing-single",
-    "trigger_values": [
-     3.5
-    ],
-    "qty": 2500
    }
   ],
   "ADANIGREEN26NOV1260PE": [
@@ -641,16 +641,6 @@
     "qty": 825
    }
   ],
-  "ASHOKLEY26NOV137.5PE": [
-   {
-    "id": 342978503,
-    "type": "single",
-    "trigger_values": [
-     1.7
-    ],
-    "qty": 5000
-   }
-  ],
   "TECHM26NOV1960CE": [
    {
     "id": 342126871,
@@ -713,6 +703,54 @@
   ]
  },
  "gtts": [
+  {
+   "id": 344936095,
+   "type": "two-leg",
+   "created_at": "2026-11-16T11:58:20+05:30",
+   "expires_at": "2026-11-24T00:00:00+05:30",
+   "tradingsymbol": "KARURVYSYA26NOV370PE",
+   "last_price": 1.9,
+   "triggers": [
+    0.7,
+    5.4
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 1550,
+     "price": 0.75,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 1550,
+     "price": 5.6,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 343664213,
+   "type": "trailing-single",
+   "created_at": "2026-11-06T10:06:54+05:30",
+   "expires_at": "2026-11-24T00:00:00+05:30",
+   "tradingsymbol": "BRITANNIA26NOV5000CE",
+   "last_price": 10.1,
+   "triggers": [
+    54
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 125,
+     "price": 55,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
   {
    "id": 344931565,
    "type": "two-leg",
@@ -1322,26 +1360,6 @@
    ]
   },
   {
-   "id": 343697032,
-   "type": "trailing-single",
-   "created_at": "2026-11-06T11:23:05+05:30",
-   "expires_at": "2026-11-24T00:00:00+05:30",
-   "tradingsymbol": "KARURVYSYA26NOV340PE",
-   "last_price": 3.25,
-   "triggers": [
-    6
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 1550,
-     "price": 6.5,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
    "id": 343695983,
    "type": "trailing-single",
    "created_at": "2026-11-06T11:19:58+05:30",
@@ -1442,26 +1460,6 @@
    ]
   },
   {
-   "id": 343664213,
-   "type": "trailing-single",
-   "created_at": "2026-11-06T10:06:54+05:30",
-   "expires_at": "2026-11-24T00:00:00+05:30",
-   "tradingsymbol": "BRITANNIA26NOV5000CE",
-   "last_price": 75.9,
-   "triggers": [
-    32.5
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 125,
-     "price": 33.5,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
    "id": 343638098,
    "type": "trailing-single",
    "created_at": "2026-11-06T09:30:16+05:30",
@@ -1516,26 +1514,6 @@
      "side": "BUY",
      "qty": 750,
      "price": 8.5,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
-   "id": 343436780,
-   "type": "trailing-single",
-   "created_at": "2026-11-05T10:10:31+05:30",
-   "expires_at": "2026-11-24T00:00:00+05:30",
-   "tradingsymbol": "ANGELONE26NOV295PE",
-   "last_price": 1.55,
-   "triggers": [
-    3.5
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 2500,
-     "price": 3.6,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -1856,26 +1834,6 @@
      "side": "BUY",
      "qty": 825,
      "price": 13.5,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
-   "id": 342978503,
-   "type": "single",
-   "created_at": "2026-11-03T09:31:37+05:30",
-   "expires_at": "2026-11-24T00:00:00+05:30",
-   "tradingsymbol": "ASHOKLEY26NOV137.5PE",
-   "last_price": 0.57,
-   "triggers": [
-    1.7
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 5000,
-     "price": 1.71,
      "product": "NRML",
      "order_type": "LIMIT"
     }
