@@ -1,6 +1,66 @@
 {
- "fetched_at": "2026-11-16T17:52:06+05:30",
+ "fetched_at": "2026-11-16T18:24:55+05:30",
  "active": {
+  "SHRIRAMFIN26NOV900PE": [
+   {
+    "id": 345008347,
+    "type": "two-leg",
+    "trigger_values": [
+     1.1,
+     8.1
+    ],
+    "qty": 825
+   },
+   {
+    "id": 345008347,
+    "type": "two-leg",
+    "trigger_values": [
+     1.1,
+     8.1
+    ],
+    "qty": 825
+   }
+  ],
+  "ANGELONE26NOV325PE": [
+   {
+    "id": 345008345,
+    "type": "two-leg",
+    "trigger_values": [
+     0.4,
+     2.85
+    ],
+    "qty": 2500
+   },
+   {
+    "id": 345008345,
+    "type": "two-leg",
+    "trigger_values": [
+     0.4,
+     2.85
+    ],
+    "qty": 2500
+   }
+  ],
+  "ABB26NOV6000PE": [
+   {
+    "id": 345008320,
+    "type": "two-leg",
+    "trigger_values": [
+     1.4,
+     10.65
+    ],
+    "qty": 125
+   },
+   {
+    "id": 345008320,
+    "type": "two-leg",
+    "trigger_values": [
+     1.4,
+     10.65
+    ],
+    "qty": 125
+   }
+  ],
   "PREMIERENE26DEC1000CE": [
    {
     "id": 344976353,
@@ -741,26 +801,6 @@
     "qty": 600
    }
   ],
-  "ABCAPITAL26NOV365PE": [
-   {
-    "id": 343404788,
-    "type": "trailing-single",
-    "trigger_values": [
-     3.2
-    ],
-    "qty": 3100
-   }
-  ],
-  "ABB26NOV6100PE": [
-   {
-    "id": 343301161,
-    "type": "trailing-single",
-    "trigger_values": [
-     80
-    ],
-    "qty": 125
-   }
-  ],
   "MANAPPURAM26NOV290PE": [
    {
     "id": 343272946,
@@ -953,6 +993,90 @@
   ]
  },
  "gtts": [
+  {
+   "id": 345008347,
+   "type": "two-leg",
+   "created_at": "2026-11-16T18:24:46+05:30",
+   "expires_at": "2026-11-24T00:00:00+05:30",
+   "tradingsymbol": "SHRIRAMFIN26NOV900PE",
+   "last_price": 2.45,
+   "triggers": [
+    1.1,
+    8.1
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 825,
+     "price": 1.15,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 825,
+     "price": 8.35,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 345008345,
+   "type": "two-leg",
+   "created_at": "2026-11-16T18:24:45+05:30",
+   "expires_at": "2026-11-24T00:00:00+05:30",
+   "tradingsymbol": "ANGELONE26NOV325PE",
+   "last_price": 1,
+   "triggers": [
+    0.4,
+    2.85
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 2500,
+     "price": 0.45,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 2500,
+     "price": 2.95,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 345008320,
+   "type": "two-leg",
+   "created_at": "2026-11-16T18:24:26+05:30",
+   "expires_at": "2026-11-24T00:00:00+05:30",
+   "tradingsymbol": "ABB26NOV6000PE",
+   "last_price": 3.2,
+   "triggers": [
+    1.4,
+    10.65
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 125,
+     "price": 1.45,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 125,
+     "price": 11,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
   {
    "id": 344976353,
    "type": "two-leg",
@@ -2128,46 +2252,6 @@
      "side": "BUY",
      "qty": 600,
      "price": 16,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
-   "id": 343404788,
-   "type": "trailing-single",
-   "created_at": "2026-11-05T09:28:49+05:30",
-   "expires_at": "2026-11-24T00:00:00+05:30",
-   "tradingsymbol": "ABCAPITAL26NOV365PE",
-   "last_price": 1.45,
-   "triggers": [
-    3.2
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 3100,
-     "price": 3.3,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
-   "id": 343301161,
-   "type": "trailing-single",
-   "created_at": "2026-11-04T14:15:10+05:30",
-   "expires_at": "2026-11-24T00:00:00+05:30",
-   "tradingsymbol": "ABB26NOV6100PE",
-   "last_price": 38.5,
-   "triggers": [
-    80
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 125,
-     "price": 81,
      "product": "NRML",
      "order_type": "LIMIT"
     }

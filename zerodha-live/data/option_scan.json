@@ -13,12 +13,12 @@
   "LAURUSLABS26NOV2200PE",
   "BANKINDIA26NOV160CE"
  ],
- "fetched_at": "2026-11-16T17:52:20+05:30",
+ "fetched_at": "2026-11-16T18:24:56+05:30",
  "inputs": {
   "positions": "2026-11-16T12:22:06.757739+00:00",
-  "gtts": "2026-11-16T17:52:06+05:30",
+  "gtts": "2026-11-16T18:24:55+05:30",
   "orders": "2026-11-16T17:52:06+05:30",
-  "gtt_scan": "2026-11-16T17:52:06+05:30"
+  "gtt_scan": "2026-11-16T18:24:55+05:30"
  },
  "stale_inputs": [],
  "open_legs": 120,
@@ -399,46 +399,6 @@
    "tradingsymbol": "NAM-INDIA26NOV1100CE",
    "concern": "No active buy-back GTT (premium 12.35, sold 3.85, already 3.2x: a GTT would fire at once)",
    "action": "Close it now (a GTT would fire at once)"
-  },
-  {
-   "section": "C",
-   "severity": "WARN",
-   "symbol": "ABB",
-   "tradingsymbol": "ABB26NOV6000PE",
-   "concern": "No active buy-back GTT (premium 3.2, sold 3.55)",
-   "action": "Place the protective GTT (zerodha-gtt-order)"
-  },
-  {
-   "section": "C",
-   "severity": "WARN",
-   "symbol": "ANGELONE",
-   "tradingsymbol": "ANGELONE26NOV325PE",
-   "concern": "No active buy-back GTT (premium 1, sold 0.95)",
-   "action": "Place the protective GTT (zerodha-gtt-order)"
-  },
-  {
-   "section": "C",
-   "severity": "WARN",
-   "symbol": "SHRIRAMFIN",
-   "tradingsymbol": "SHRIRAMFIN26NOV900PE",
-   "concern": "No active buy-back GTT (premium 2.45, sold 2.7)",
-   "action": "Place the protective GTT (zerodha-gtt-order)"
-  },
-  {
-   "section": "F",
-   "severity": "HIGH",
-   "symbol": "ABB",
-   "tradingsymbol": "ABB26NOV6100PE",
-   "concern": "G1 STALE: No open position on this contract (closed or expired): if it triggers it BUYS a new long position (GTT 343301161)",
-   "action": "Delete this GTT"
-  },
-  {
-   "section": "F",
-   "severity": "HIGH",
-   "symbol": "ABCAPITAL",
-   "tradingsymbol": "ABCAPITAL26NOV365PE",
-   "concern": "G1 STALE: No open position on this contract (closed or expired): if it triggers it BUYS a new long position (GTT 343404788)",
-   "action": "Delete this GTT"
   }
  ]
 }

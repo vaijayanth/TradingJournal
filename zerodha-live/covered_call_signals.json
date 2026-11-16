@@ -1,9 +1,9 @@
 {
- "generated_at": "2026-11-16T12:27:13.334077+00:00",
+ "generated_at": "2026-11-16T12:54:56.179341+00:00",
  "market_data_date": "2026-11-16",
  "live_prices_at": "2026-11-16T17:52:20+05:30",
- "gtt_scan_at": "2026-11-16T17:52:20+05:30",
- "gtt_checked_at": "2026-11-16T17:52:06+05:30",
+ "gtt_scan_at": "2026-11-16T18:24:55+05:30",
+ "gtt_checked_at": "2026-11-16T18:24:55+05:30",
  "rules": {
   "short_call_delta": 0.1,
   "short_put_delta": 0.1,
@@ -9743,28 +9743,6 @@
   },
   {
    "level": "BREACH",
-   "type": "Invalid GTT",
-   "symbol": "ABB",
-   "expiry": "2026-11-23",
-   "strike": 6100.0,
-   "opt_type": "PE",
-   "concern": "Stale: No open position on this contract (closed or expired): if it triggers it BUYS a new long position",
-   "action": "Delete this GTT (GTT 343301161)",
-   "text": "ABB ABB26NOV6100PE: No open position on this contract (closed or expired): if it triggers it BUYS a new long position"
-  },
-  {
-   "level": "BREACH",
-   "type": "Invalid GTT",
-   "symbol": "ABCAPITAL",
-   "expiry": "2026-11-23",
-   "strike": 365.0,
-   "opt_type": "PE",
-   "concern": "Stale: No open position on this contract (closed or expired): if it triggers it BUYS a new long position",
-   "action": "Delete this GTT (GTT 343404788)",
-   "text": "ABCAPITAL ABCAPITAL26NOV365PE: No open position on this contract (closed or expired): if it triggers it BUYS a new long position"
-  },
-  {
-   "level": "BREACH",
    "type": "Event close",
    "symbol": "COCHINSHIP",
    "expiry": "2026-11-23",
@@ -9825,30 +9803,6 @@
    "concern": "Ex-dividend 20 Nov is 4d away: inside the 15-day window",
    "action": "Close it now (event rule)",
    "text": "OIL 2026-12-29 short 500CE: Ex-dividend 20 Nov is 4d away: inside the 15-day window - close it now (event rule)"
-  },
-  {
-   "level": "WARN",
-   "type": "No GTT placed",
-   "symbol": "ABB",
-   "expiry": "2026-11-23",
-   "strike": 6000.0,
-   "opt_type": "PE",
-   "qty": 125,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 10.65 (3x premium)",
-   "text": "ABB 2026-11-23 short 6000PE: no active buy-back GTT (3x premium stop = 10.65)"
-  },
-  {
-   "level": "WARN",
-   "type": "No GTT placed",
-   "symbol": "ANGELONE",
-   "expiry": "2026-11-23",
-   "strike": 325.0,
-   "opt_type": "PE",
-   "qty": 2500,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 2.85 (3x premium)",
-   "text": "ANGELONE 2026-11-23 short 325PE: no active buy-back GTT (3x premium stop = 2.85)"
   },
   {
    "level": "WARN",
@@ -10086,18 +10040,6 @@
    "concern": "No buy-back GTT on this short",
    "action": "Place GTT at 11.55 (3x premium)",
    "text": "NAM-INDIA 2026-11-23 short 1100CE: no active buy-back GTT (3x premium stop = 11.55)"
-  },
-  {
-   "level": "WARN",
-   "type": "No GTT placed",
-   "symbol": "SHRIRAMFIN",
-   "expiry": "2026-11-23",
-   "strike": 900.0,
-   "opt_type": "PE",
-   "qty": 825,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 8.1 (3x premium)",
-   "text": "SHRIRAMFIN 2026-11-23 short 900PE: no active buy-back GTT (3x premium stop = 8.1)"
   },
   {
    "level": "PROFIT",
