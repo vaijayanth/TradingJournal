@@ -1,7 +1,7 @@
 {
- "fetched_at": "2026-11-16T11:16:10+05:30",
- "gtts_fetched_at": "2026-11-16T11:15:47+05:30",
- "checked": 63,
+ "fetched_at": "2026-11-16T11:42:41+05:30",
+ "gtts_fetched_at": "2026-11-16T11:42:41+05:30",
+ "checked": 60,
  "findings": [
   {
    "check": "G6",
@@ -15,19 +15,6 @@
    "opt_type": "CE",
    "concern": "Stop is 1.7x the sold price (rule 3x)",
    "action": "Re-set to 56.40"
-  },
-  {
-   "check": "G6",
-   "name": "OFF-RULE",
-   "severity": "WARN",
-   "tradingsymbol": "HDFCBANK26NOV780PE",
-   "gtt_id": 343691959,
-   "symbol": "HDFCBANK",
-   "expiry": "2026-11-23",
-   "strike": 780.0,
-   "opt_type": "PE",
-   "concern": "Stop is 2.0x the sold price (rule 3x)",
-   "action": "Re-set to 61.95"
   },
   {
    "check": "G6",

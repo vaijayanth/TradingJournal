@@ -1,14 +1,144 @@
 {
- "fetched_at": "2026-11-16T11:15:47+05:30",
+ "fetched_at": "2026-11-16T11:42:41+05:30",
  "active": {
-  "CHOLAFIN26NOV1680PE": [
+  "MAHABANK26NOV88PE": [
    {
-    "id": 344742877,
-    "type": "single",
+    "id": 344931565,
+    "type": "two-leg",
     "trigger_values": [
-     33.6
+     0.25,
+     2
+    ],
+    "qty": 6500
+   },
+   {
+    "id": 344931565,
+    "type": "two-leg",
+    "trigger_values": [
+     0.25,
+     2
+    ],
+    "qty": 6500
+   }
+  ],
+  "LAURUSLABS26NOV2220PE": [
+   {
+    "id": 344931525,
+    "type": "two-leg",
+    "trigger_values": [
+     3.2,
+     24.15
+    ],
+    "qty": 850
+   },
+   {
+    "id": 344931525,
+    "type": "two-leg",
+    "trigger_values": [
+     3.2,
+     24.15
+    ],
+    "qty": 850
+   }
+  ],
+  "HDFCBANK26NOV800PE": [
+   {
+    "id": 344931498,
+    "type": "two-leg",
+    "trigger_values": [
+     2.5,
+     18.9
+    ],
+    "qty": 650
+   },
+   {
+    "id": 344931498,
+    "type": "two-leg",
+    "trigger_values": [
+     2.5,
+     18.9
+    ],
+    "qty": 650
+   }
+  ],
+  "DIVISLAB26NOV11300CE": [
+   {
+    "id": 344931476,
+    "type": "two-leg",
+    "trigger_values": [
+     60.45,
+     453.45
+    ],
+    "qty": 100
+   },
+   {
+    "id": 344931476,
+    "type": "two-leg",
+    "trigger_values": [
+     60.45,
+     453.45
+    ],
+    "qty": 100
+   }
+  ],
+  "CHOLAFIN26NOV1740PE": [
+   {
+    "id": 344931431,
+    "type": "two-leg",
+    "trigger_values": [
+     1.95,
+     14.55
     ],
     "qty": 625
+   },
+   {
+    "id": 344931431,
+    "type": "two-leg",
+    "trigger_values": [
+     1.95,
+     14.55
+    ],
+    "qty": 625
+   }
+  ],
+  "CANBK26NOV124PE": [
+   {
+    "id": 344931399,
+    "type": "two-leg",
+    "trigger_values": [
+     0.15,
+     1.1
+    ],
+    "qty": 6750
+   },
+   {
+    "id": 344931399,
+    "type": "two-leg",
+    "trigger_values": [
+     0.15,
+     1.1
+    ],
+    "qty": 6750
+   }
+  ],
+  "ADANIENSOL26NOV1320PE": [
+   {
+    "id": 344931350,
+    "type": "two-leg",
+    "trigger_values": [
+     1.6,
+     11.85
+    ],
+    "qty": 675
+   },
+   {
+    "id": 344931350,
+    "type": "two-leg",
+    "trigger_values": [
+     1.6,
+     11.85
+    ],
+    "qty": 675
    }
   ],
   "HEROMOTOCO26NOV5650CE": [
@@ -151,26 +281,6 @@
     "qty": 2625
    }
   ],
-  "ALKEM26NOV6000CE": [
-   {
-    "id": 344007556,
-    "type": "trailing-single",
-    "trigger_values": [
-     46
-    ],
-    "qty": 125
-   }
-  ],
-  "DIVISLAB26NOV12400CE": [
-   {
-    "id": 343990565,
-    "type": "trailing-single",
-    "trigger_values": [
-     217.5
-    ],
-    "qty": 100
-   }
-  ],
   "INDHOTEL26NOV960CE": [
    {
     "id": 343982769,
@@ -191,16 +301,6 @@
     "qty": 275
    }
   ],
-  "LODHA26NOV1060PE": [
-   {
-    "id": 343976441,
-    "type": "trailing-single",
-    "trigger_values": [
-     12
-    ],
-    "qty": 625
-   }
-  ],
   "LAURUSLABS26NOV2680CE": [
    {
     "id": 343974508,
@@ -219,16 +319,6 @@
      5.1
     ],
     "qty": 2500
-   }
-  ],
-  "CANBK26NOV115PE": [
-   {
-    "id": 343955480,
-    "type": "single",
-    "trigger_values": [
-     1.3
-    ],
-    "qty": 6750
    }
   ],
   "ATHERENERG26NOV1620PE": [
@@ -281,16 +371,6 @@
     "qty": 775
    }
   ],
-  "MAHABANK26NOV79PE": [
-   {
-    "id": 343698741,
-    "type": "single",
-    "trigger_values": [
-     1.8
-    ],
-    "qty": 6500
-   }
-  ],
   "KARURVYSYA26NOV340PE": [
    {
     "id": 343697032,
@@ -309,16 +389,6 @@
      9
     ],
     "qty": 2025
-   }
-  ],
-  "HDFCBANK26NOV780PE": [
-   {
-    "id": 343691959,
-    "type": "trailing-single",
-    "trigger_values": [
-     41
-    ],
-    "qty": 650
    }
   ],
   "BRITANNIA26NOV4700PE": [
@@ -401,16 +471,6 @@
     "qty": 750
    }
   ],
-  "ADANIENSOL26NOV1600CE": [
-   {
-    "id": 343478779,
-    "type": "single",
-    "trigger_values": [
-     22
-    ],
-    "qty": 675
-   }
-  ],
   "ANGELONE26NOV295PE": [
    {
     "id": 343436780,
@@ -439,16 +499,6 @@
      3.2
     ],
     "qty": 3100
-   }
-  ],
-  "360ONE26NOV1020PE": [
-   {
-    "id": 343402598,
-    "type": "trailing-single",
-    "trigger_values": [
-     9
-    ],
-    "qty": 500
    }
   ],
   "ABB26NOV6100PE": [
@@ -601,26 +651,6 @@
     "qty": 5000
    }
   ],
-  "BIOCON26NOV385CE": [
-   {
-    "id": 342467343,
-    "type": "two-leg",
-    "trigger_values": [
-     0.7,
-     6
-    ],
-    "qty": 2500
-   },
-   {
-    "id": 342467343,
-    "type": "two-leg",
-    "trigger_values": [
-     0.7,
-     6
-    ],
-    "qty": 2500
-   }
-  ],
   "TECHM26NOV1960CE": [
    {
     "id": 342126871,
@@ -684,20 +714,196 @@
  },
  "gtts": [
   {
-   "id": 344742877,
-   "type": "single",
-   "created_at": "2026-11-13T14:39:10+05:30",
+   "id": 344931565,
+   "type": "two-leg",
+   "created_at": "2026-11-16T11:42:32+05:30",
    "expires_at": "2026-11-24T00:00:00+05:30",
-   "tradingsymbol": "CHOLAFIN26NOV1680PE",
-   "last_price": 3.05,
+   "tradingsymbol": "MAHABANK26NOV88PE",
+   "last_price": 0.73,
    "triggers": [
-    33.6
+    0.25,
+    2
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 6500,
+     "price": 0.3,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 6500,
+     "price": 2.1,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 344931525,
+   "type": "two-leg",
+   "created_at": "2026-11-16T11:42:24+05:30",
+   "expires_at": "2026-11-24T00:00:00+05:30",
+   "tradingsymbol": "LAURUSLABS26NOV2220PE",
+   "last_price": 13.65,
+   "triggers": [
+    3.2,
+    24.15
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 850,
+     "price": 3.3,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 850,
+     "price": 24.9,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 344931498,
+   "type": "two-leg",
+   "created_at": "2026-11-16T11:42:18+05:30",
+   "expires_at": "2026-11-24T00:00:00+05:30",
+   "tradingsymbol": "HDFCBANK26NOV800PE",
+   "last_price": 6.15,
+   "triggers": [
+    2.5,
+    18.9
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 650,
+     "price": 2.6,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 650,
+     "price": 19.5,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 344931476,
+   "type": "two-leg",
+   "created_at": "2026-11-16T11:42:12+05:30",
+   "expires_at": "2026-11-24T00:00:00+05:30",
+   "tradingsymbol": "DIVISLAB26NOV11300CE",
+   "last_price": 154,
+   "triggers": [
+    60.45,
+    453.45
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 100,
+     "price": 62.3,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 100,
+     "price": 467.1,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 344931431,
+   "type": "two-leg",
+   "created_at": "2026-11-16T11:42:03+05:30",
+   "expires_at": "2026-11-24T00:00:00+05:30",
+   "tradingsymbol": "CHOLAFIN26NOV1740PE",
+   "last_price": 4.8,
+   "triggers": [
+    1.95,
+    14.55
    ],
    "orders": [
     {
      "side": "BUY",
      "qty": 625,
-     "price": 34.65,
+     "price": 2.05,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 625,
+     "price": 15,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 344931399,
+   "type": "two-leg",
+   "created_at": "2026-11-16T11:41:56+05:30",
+   "expires_at": "2026-11-24T00:00:00+05:30",
+   "tradingsymbol": "CANBK26NOV124PE",
+   "last_price": 0.36,
+   "triggers": [
+    0.15,
+    1.1
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 6750,
+     "price": 0.2,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 6750,
+     "price": 1.15,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 344931350,
+   "type": "two-leg",
+   "created_at": "2026-11-16T11:41:44+05:30",
+   "expires_at": "2026-11-24T00:00:00+05:30",
+   "tradingsymbol": "ADANIENSOL26NOV1320PE",
+   "last_price": 3.5,
+   "triggers": [
+    1.6,
+    11.85
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 675,
+     "price": 1.65,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 675,
+     "price": 12.25,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -936,46 +1142,6 @@
    ]
   },
   {
-   "id": 344007556,
-   "type": "trailing-single",
-   "created_at": "2026-11-09T11:37:42+05:30",
-   "expires_at": "2026-11-24T00:00:00+05:30",
-   "tradingsymbol": "ALKEM26NOV6000CE",
-   "last_price": 22.2,
-   "triggers": [
-    46
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 125,
-     "price": 47,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
-   "id": 343990565,
-   "type": "trailing-single",
-   "created_at": "2026-11-09T10:58:59+05:30",
-   "expires_at": "2026-11-24T00:00:00+05:30",
-   "tradingsymbol": "DIVISLAB26NOV12400CE",
-   "last_price": 98.7,
-   "triggers": [
-    217.5
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 100,
-     "price": 218.5,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
    "id": 343982769,
    "type": "trailing-single",
    "created_at": "2026-11-09T10:42:59+05:30",
@@ -1016,26 +1182,6 @@
    ]
   },
   {
-   "id": 343976441,
-   "type": "trailing-single",
-   "created_at": "2026-11-09T10:30:16+05:30",
-   "expires_at": "2026-11-24T00:00:00+05:30",
-   "tradingsymbol": "LODHA26NOV1060PE",
-   "last_price": 5.15,
-   "triggers": [
-    12
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 625,
-     "price": 13,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
    "id": 343974508,
    "type": "trailing-single",
    "created_at": "2026-11-09T10:26:28+05:30",
@@ -1070,26 +1216,6 @@
      "side": "BUY",
      "qty": 2500,
      "price": 5.2,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
-   "id": 343955480,
-   "type": "single",
-   "created_at": "2026-11-09T09:47:47+05:30",
-   "expires_at": "2026-11-24T00:00:00+05:30",
-   "tradingsymbol": "CANBK26NOV115PE",
-   "last_price": 0.45,
-   "triggers": [
-    1.3
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 6750,
-     "price": 1.4,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -1196,26 +1322,6 @@
    ]
   },
   {
-   "id": 343698741,
-   "type": "single",
-   "created_at": "2026-11-06T11:28:21+05:30",
-   "expires_at": "2026-11-24T00:00:00+05:30",
-   "tradingsymbol": "MAHABANK26NOV79PE",
-   "last_price": 0.65,
-   "triggers": [
-    1.8
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 6500,
-     "price": 1.9,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
    "id": 343697032,
    "type": "trailing-single",
    "created_at": "2026-11-06T11:23:05+05:30",
@@ -1250,26 +1356,6 @@
      "side": "BUY",
      "qty": 2025,
      "price": 9.5,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
-   "id": 343691959,
-   "type": "trailing-single",
-   "created_at": "2026-11-06T11:07:50+05:30",
-   "expires_at": "2026-11-24T00:00:00+05:30",
-   "tradingsymbol": "HDFCBANK26NOV780PE",
-   "last_price": 20.85,
-   "triggers": [
-    41
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 650,
-     "price": 42,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -1436,26 +1522,6 @@
    ]
   },
   {
-   "id": 343478779,
-   "type": "single",
-   "created_at": "2026-11-05T11:51:13+05:30",
-   "expires_at": "2026-11-24T00:00:00+05:30",
-   "tradingsymbol": "ADANIENSOL26NOV1600CE",
-   "last_price": 7.4,
-   "triggers": [
-    22
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 675,
-     "price": 22.5,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
    "id": 343436780,
    "type": "trailing-single",
    "created_at": "2026-11-05T10:10:31+05:30",
@@ -1510,26 +1576,6 @@
      "side": "BUY",
      "qty": 3100,
      "price": 3.3,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
-   "id": 343402598,
-   "type": "trailing-single",
-   "created_at": "2026-11-05T09:26:14+05:30",
-   "expires_at": "2026-11-24T00:00:00+05:30",
-   "tradingsymbol": "360ONE26NOV1020PE",
-   "last_price": 4.15,
-   "triggers": [
-    9
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 500,
-     "price": 9.5,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -1830,34 +1876,6 @@
      "side": "BUY",
      "qty": 5000,
      "price": 1.71,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
-   "id": 342467343,
-   "type": "two-leg",
-   "created_at": "2026-10-29T15:18:47+05:30",
-   "expires_at": "2026-11-24T00:00:00+05:30",
-   "tradingsymbol": "BIOCON26NOV385CE",
-   "last_price": 2.05,
-   "triggers": [
-    0.7,
-    6
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 2500,
-     "price": 0.8,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    },
-    {
-     "side": "BUY",
-     "qty": 2500,
-     "price": 6.5,
      "product": "NRML",
      "order_type": "LIMIT"
     }
