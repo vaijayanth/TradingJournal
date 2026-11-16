@@ -10364,6 +10364,7 @@ const ccTierFilters = [['all', 'All entry signals', () => true], ['put', 'BPS', 
 // ── Open positions as TRADES (one row per structure, not per leg): % of max profit vs the profit target, distance to the short strike, stop in place, next step ──
 const CC_TRADE_ORDER = ['3× premium', 'Through hedge', 'Expiry risk', 'Event close', 'Exit', 'Beyond strike', 'Profit Exit', 'No stop placed', 'No GTT placed', 'Invalid GTT', 'Near strike', 'Leftover hedge'];
 function ccTrades(S, alerts, R) {
+  window._ccTrend = Object.fromEntries((S || []).filter(s => s.colour).map(s => [s.symbol, s.colour]));   // this broker's Supertrend colours (Trend / Right position columns)
   const t0 = new Date(); t0.setHours(0, 0, 0, 0);
   const al = {};
   (alerts || []).forEach(a => { if (a.strike == null || !a.expiry) return; const k = a.symbol + '|' + a.expiry + '|' + Number(a.strike); (al[k] = al[k] || []).push(a); });
@@ -10384,6 +10385,7 @@ function ccTrades(S, alerts, R) {
     t.kept = sold > 0 ? (sold - now) / sold * 100 : null;
     t.pnl = t.legs.reduce((a, l) => a + (l.pnl_rs || 0), 0);
     t.shortPnl = shorts.reduce((a, l) => a + (l.pnl_rs || 0), 0);
+    t.shorts_n = shorts.length;
     const near = shorts.filter(l => l.dist_pct != null).sort((a, b) => Math.abs(a.dist_pct) - Math.abs(b.dist_pct))[0];
     t.near = near || null;
     const mine = t.legs.flatMap(l => al[t.symbol + '|' + l.expiry + '|' + Number(l.strike)] || []);
@@ -10411,8 +10413,12 @@ const ccTradeDetail = t => {
   }).join('');
   return `<div class="cc-dgrid" style="grid-template-columns:repeat(auto-fill,minmax(330px,1fr))">${rows}</div>`;
 };
+// Does the structure held in this trade row match what the Supertrend colour wants? (green wants a bull put spread / put side, red wants the call side)
+const ccHeldMatch = t => { const c = ccTrendOf(t.symbol); if (!c || !t.shorts_n) return null; return c === 'green' ? t.type === 'PE' : t.type === 'CE'; };
 const ccTradeCols = () => [
   { h: 'Stock', v: t => t.symbol, c: t => `<b class="stk">${dhEsc(t.symbol)}</b>`, txt: true },
+  { h: 'Trend', v: t => ccTrendOf(t.symbol), c: t => ccTrendCell(t), txt: true },
+  { h: 'Right position', v: t => ccRightPos(t), c: t => { const p = ccRightPos(t), m = ccHeldMatch(t); const mk = m == null ? '' : m ? ' <span class="pos" title="This trade is the structure the colour wants">✓</span>' : ' <span class="neg" title="This trade is the opposite of what the colour wants">≠</span>'; return p === '—' ? '<span style="color:var(--text-muted)">—</span>' : `<b>${p}</b>${mk}`; }, txt: true },
   { h: 'Trade', v: t => t.label, c: t => dhEsc(t.label), txt: true },
   { h: 'Expiry', v: t => t.expiry, c: t => `${dhFmtDate(t.expiry)} <span style="color:${t.days <= 7 ? 'var(--red)' : 'var(--text-muted)'}">(${t.days}d)</span>`, txt: true },
   { h: 'Short leg', v: t => t.kept ?? -999, c: ccKeptCell, txt: true },
