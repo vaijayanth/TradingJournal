@@ -22,7 +22,13 @@
   "NYKAA",
   "PERSISTENT",
   "TVSMOTOR",
-  "UNIONBANK"
+  "UNIONBANK",
+  "DLF",
+  "CDSL",
+  "BAJFINANCE",
+  "INDIGO",
+  "360ONE",
+  "RADICO"
  ],
  "include_baseline_closed": false,
  "kept_on_sheet": {
@@ -49,7 +55,13 @@
   "TVSMOTOR": "2026-08-26",
   "UNIONBANK": "2026-08-10",
   "KALYANKJIL": "2026-07-29",
-  "MANKIND": "2026-07-29"
+  "MANKIND": "2026-07-29",
+  "DLF": "2026-08-24",
+  "CDSL": "2026-08-24",
+  "BAJFINANCE": "2026-07-31",
+  "INDIGO": "2026-08-06",
+  "360ONE": "2026-08-04",
+  "RADICO": "2026-08-13"
  },
  "last_buy": {
   "ANANDRATHI": "2026-08-13",
@@ -72,7 +84,13 @@
   "TVSMOTOR": "2026-08-26",
   "UNIONBANK": "2026-08-10",
   "KALYANKJIL": "2026-07-29",
-  "MANKIND": "2026-07-29"
+  "MANKIND": "2026-07-29",
+  "DLF": "2026-08-24",
+  "CDSL": "2026-08-24",
+  "BAJFINANCE": "2026-07-31",
+  "INDIGO": "2026-08-06",
+  "360ONE": "2026-08-04",
+  "RADICO": "2026-08-13"
  },
  "sheet_qty": {
   "ANANDRATHI": 9,
@@ -95,6 +113,24 @@
   "TVSMOTOR": 26,
   "UNIONBANK": 111,
   "KALYANKJIL": 36,
-  "MANKIND": 8
+  "MANKIND": 8,
+  "DLF": 30,
+  "CDSL": 15,
+  "BAJFINANCE": 19,
+  "INDIGO": 4,
+  "360ONE": 17,
+  "RADICO": 4
+ },
+ "moved_batch_2": {
+  "date": "2026-11-16",
+  "symbols": [
+   "DLF",
+   "CDSL",
+   "BAJFINANCE",
+   "INDIGO",
+   "360ONE",
+   "RADICO"
+  ],
+  "rule": "user 2026-11-16: every old-sheet position that is Supertrend green AND profitable (any size) AND in the Nifty F&O universe; profit measured at the 2026-11-13 close"
  }
 }

@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-13T18:46:26.645716+00:00",
+  "generated_at": "2026-11-16T01:04:17.984738+00:00",
   "market_data_date": "2026-11-13",
   "source_generated_at": {
     "supertrend": "2026-11-13T18:05:42.858921+00:00",
@@ -8,18 +8,18 @@
   "sizing": {
     "closed_trades_count": 1,
     "base_tier_rs": 20000,
-    "total_positions_ever_opened": 26,
+    "total_positions_ever_opened": 32,
     "realized_pl_rs": 1125.0,
-    "unrealized_pl_rs": 16288.8,
-    "combined_pl_rs": 17413.8,
+    "unrealized_pl_rs": 20214.3,
+    "combined_pl_rs": 21339.3,
     "effective_tier_rs": 20000,
     "doubled": false,
-    "tier_note": "26 trades (open + closed) \u00b7 next +5,000 at 100"
+    "tier_note": "32 trades (open + closed) \u00b7 next +5,000 at 100"
   },
-  "dh252_position_count": 25,
+  "dh252_position_count": 31,
   "option_hedge_portfolio": [],
   "holdings_count_total": 189,
-  "holdings_out_of_scope": 164,
+  "holdings_out_of_scope": 158,
   "no_data": [],
   "exited_outside_tracking": [],
   "rules": {
@@ -58,10 +58,10 @@
     },
     {
       "date": "2026-11-13",
-      "pnl": 17413.8,
+      "pnl": 21339.3,
       "realised": 1125.0,
-      "invested": 643619.57,
-      "equity": 3017413.8
+      "invested": 766159.37,
+      "equity": 3021339.3
     }
   ],
   "closed_trades": [
@@ -155,13 +155,30 @@
       "flip_date": "2026-11-12",
       "pct_from_52w_high": -27.77,
       "num_adds": 0,
-      "age_days": 3,
+      "age_days": 6,
       "rsi14": 29.8,
       "sector": "Consumer Cyclical"
     }
   ],
   "addons": [],
   "holds": [
+    {
+      "entry_date": "2026-08-04",
+      "symbol": "360ONE",
+      "qty": 17,
+      "avg_cost": 1170,
+      "cmp": 1176.8,
+      "pl_pct": 0.5812,
+      "notional_pl_rs": 115.6,
+      "supertrend_color": "green",
+      "flip_label": "GREEN 7d",
+      "flip_date": "2026-11-04",
+      "pct_from_52w_high": -2.04,
+      "num_adds": 0,
+      "age_days": 104,
+      "rsi14": 66.7,
+      "sector": "Financial Services"
+    },
     {
       "entry_date": "2026-08-13",
       "symbol": "ANANDRATHI",
@@ -175,7 +192,7 @@
       "flip_date": "2026-10-23",
       "pct_from_52w_high": -0.16,
       "num_adds": 0,
-      "age_days": 92,
+      "age_days": 95,
       "rsi14": 75.7,
       "sector": "Financial Services"
     },
@@ -192,7 +209,7 @@
       "flip_date": "2026-11-05",
       "pct_from_52w_high": -0.86,
       "num_adds": 0,
-      "age_days": 29,
+      "age_days": 32,
       "rsi14": 73.6,
       "sector": "Financial Services"
     },
@@ -209,7 +226,7 @@
       "flip_date": "2026-10-27",
       "pct_from_52w_high": -0.9,
       "num_adds": 0,
-      "age_days": 78,
+      "age_days": 81,
       "rsi14": 61.5,
       "sector": "Basic Materials"
     },
@@ -226,7 +243,7 @@
       "flip_date": "2026-11-05",
       "pct_from_52w_high": -18.8,
       "num_adds": 0,
-      "age_days": 102,
+      "age_days": 105,
       "rsi14": 62.9,
       "sector": "Industrials"
     },
@@ -243,8 +260,42 @@
       "flip_date": "2026-10-15",
       "pct_from_52w_high": -5.06,
       "num_adds": 0,
-      "age_days": 7,
+      "age_days": 10,
       "rsi14": 65.9,
+      "sector": "Financial Services"
+    },
+    {
+      "entry_date": "2026-07-31",
+      "symbol": "BAJFINANCE",
+      "qty": 19,
+      "avg_cost": 1090.2,
+      "cmp": 1117.0,
+      "pl_pct": 2.4583,
+      "notional_pl_rs": 509.2,
+      "supertrend_color": "green",
+      "flip_label": "GREEN 7d",
+      "flip_date": "2026-11-04",
+      "pct_from_52w_high": -3.61,
+      "num_adds": 0,
+      "age_days": 108,
+      "rsi14": 72.1,
+      "sector": "Financial Services"
+    },
+    {
+      "entry_date": "2026-08-24",
+      "symbol": "CDSL",
+      "qty": 15,
+      "avg_cost": 1404.08,
+      "cmp": 1447.0,
+      "pl_pct": 3.0568,
+      "notional_pl_rs": 643.8,
+      "supertrend_color": "green",
+      "flip_label": "GREEN 8d",
+      "flip_date": "2026-11-03",
+      "pct_from_52w_high": -11.79,
+      "num_adds": 0,
+      "age_days": 84,
+      "rsi14": 72.6,
       "sector": "Financial Services"
     },
     {
@@ -260,7 +311,7 @@
       "flip_date": "2026-11-09",
       "pct_from_52w_high": -35.01,
       "num_adds": 0,
-      "age_days": 3,
+      "age_days": 6,
       "rsi14": 43.2,
       "sector": "Industrials"
     },
@@ -277,9 +328,26 @@
       "flip_date": "2026-11-09",
       "pct_from_52w_high": -29.15,
       "num_adds": 0,
-      "age_days": 3,
+      "age_days": 6,
       "rsi14": 51.9,
       "sector": "Consumer Cyclical"
+    },
+    {
+      "entry_date": "2026-08-24",
+      "symbol": "DLF",
+      "qty": 30,
+      "avg_cost": 685,
+      "cmp": 758.75,
+      "pl_pct": 10.7664,
+      "notional_pl_rs": 2212.5,
+      "supertrend_color": "green",
+      "flip_label": "GREEN 35d",
+      "flip_date": "2026-09-23",
+      "pct_from_52w_high": -1.37,
+      "num_adds": 0,
+      "age_days": 84,
+      "rsi14": 67.9,
+      "sector": "Real Estate"
     },
     {
       "entry_date": "2026-07-28",
@@ -294,7 +362,7 @@
       "flip_date": "2026-11-02",
       "pct_from_52w_high": -1.0,
       "num_adds": 0,
-      "age_days": 108,
+      "age_days": 111,
       "rsi14": 68.9,
       "sector": "Utilities"
     },
@@ -311,7 +379,7 @@
       "flip_date": "2026-10-13",
       "pct_from_52w_high": -17.24,
       "num_adds": 0,
-      "age_days": 101,
+      "age_days": 104,
       "rsi14": 51.8,
       "sector": "Technology"
     },
@@ -328,9 +396,26 @@
       "flip_date": "2026-10-19",
       "pct_from_52w_high": -3.92,
       "num_adds": 0,
-      "age_days": 98,
+      "age_days": 101,
       "rsi14": 67.7,
       "sector": "Financial Services"
+    },
+    {
+      "entry_date": "2026-08-06",
+      "symbol": "INDIGO",
+      "qty": 4,
+      "avg_cost": 5478.5,
+      "cmp": 5587.3,
+      "pl_pct": 1.9859,
+      "notional_pl_rs": 435.2,
+      "supertrend_color": "green",
+      "flip_label": "GREEN 9d",
+      "flip_date": "2026-11-02",
+      "pct_from_52w_high": -5.6,
+      "num_adds": 0,
+      "age_days": 102,
+      "rsi14": 72.3,
+      "sector": "Industrials"
     },
     {
       "entry_date": "2026-08-20",
@@ -345,7 +430,7 @@
       "flip_date": "2026-11-04",
       "pct_from_52w_high": -10.0,
       "num_adds": 0,
-      "age_days": 85,
+      "age_days": 88,
       "rsi14": 64.3,
       "sector": "Basic Materials"
     },
@@ -362,7 +447,7 @@
       "flip_date": "2026-10-26",
       "pct_from_52w_high": -0.67,
       "num_adds": 0,
-      "age_days": 106,
+      "age_days": 109,
       "rsi14": 64.6,
       "sector": "Basic Materials"
     },
@@ -379,7 +464,7 @@
       "flip_date": "2026-11-05",
       "pct_from_52w_high": -1.96,
       "num_adds": 0,
-      "age_days": 107,
+      "age_days": 110,
       "rsi14": 75.3,
       "sector": "Consumer Cyclical"
     },
@@ -396,7 +481,7 @@
       "flip_date": "2026-11-09",
       "pct_from_52w_high": 0.0,
       "num_adds": 0,
-      "age_days": 3,
+      "age_days": 6,
       "rsi14": 69.7,
       "sector": "Financial Services"
     },
@@ -413,7 +498,7 @@
       "flip_date": "2026-10-30",
       "pct_from_52w_high": -5.29,
       "num_adds": 0,
-      "age_days": 99,
+      "age_days": 102,
       "rsi14": 70.2,
       "sector": "Industrials"
     },
@@ -430,7 +515,7 @@
       "flip_date": "2026-11-05",
       "pct_from_52w_high": -2.29,
       "num_adds": 0,
-      "age_days": 79,
+      "age_days": 82,
       "rsi14": 69.2,
       "sector": "Financial Services"
     },
@@ -447,7 +532,7 @@
       "flip_date": "2026-10-27",
       "pct_from_52w_high": -1.06,
       "num_adds": 0,
-      "age_days": 107,
+      "age_days": 110,
       "rsi14": 65.3,
       "sector": "Healthcare"
     },
@@ -464,7 +549,7 @@
       "flip_date": "2026-11-03",
       "pct_from_52w_high": -2.7,
       "num_adds": 0,
-      "age_days": 108,
+      "age_days": 111,
       "rsi14": 68.3,
       "sector": "Consumer Defensive"
     },
@@ -481,7 +566,7 @@
       "flip_date": "2026-10-13",
       "pct_from_52w_high": -14.65,
       "num_adds": 0,
-      "age_days": 95,
+      "age_days": 98,
       "rsi14": 49.6,
       "sector": "Technology"
     },
@@ -498,7 +583,7 @@
       "flip_date": "2026-10-29",
       "pct_from_52w_high": 0.0,
       "num_adds": 0,
-      "age_days": 105,
+      "age_days": 108,
       "rsi14": 64.7,
       "sector": "Consumer Cyclical"
     },
@@ -515,9 +600,26 @@
       "flip_date": "2026-10-09",
       "pct_from_52w_high": -7.89,
       "num_adds": 0,
-      "age_days": 32,
+      "age_days": 35,
       "rsi14": 58.1,
       "sector": "Technology"
+    },
+    {
+      "entry_date": "2026-08-13",
+      "symbol": "RADICO",
+      "qty": 4,
+      "avg_cost": 4602.7,
+      "cmp": 4605.0,
+      "pl_pct": 0.05,
+      "notional_pl_rs": 9.2,
+      "supertrend_color": "green",
+      "flip_label": "Flipped to GREEN (3)",
+      "flip_date": "2026-11-09",
+      "pct_from_52w_high": -2.7,
+      "num_adds": 0,
+      "age_days": 95,
+      "rsi14": 58.5,
+      "sector": "Consumer Defensive"
     },
     {
       "entry_date": "2026-11-10",
@@ -532,7 +634,7 @@
       "flip_date": "2026-11-09",
       "pct_from_52w_high": -48.26,
       "num_adds": 0,
-      "age_days": 3,
+      "age_days": 6,
       "rsi14": 54.0,
       "sector": "Industrials"
     },
@@ -549,7 +651,7 @@
       "flip_date": "2026-10-28",
       "pct_from_52w_high": -1.43,
       "num_adds": 0,
-      "age_days": 79,
+      "age_days": 82,
       "rsi14": 67.4,
       "sector": "Consumer Cyclical"
     },
@@ -566,7 +668,7 @@
       "flip_date": "2026-10-22",
       "pct_from_52w_high": -0.68,
       "num_adds": 0,
-      "age_days": 95,
+      "age_days": 98,
       "rsi14": 73.1,
       "sector": "Financial Services"
     }
@@ -628,7 +730,13 @@
       "NYKAA",
       "PERSISTENT",
       "TVSMOTOR",
-      "UNIONBANK"
+      "UNIONBANK",
+      "DLF",
+      "CDSL",
+      "BAJFINANCE",
+      "INDIGO",
+      "360ONE",
+      "RADICO"
     ],
     "moved_at": "2026-11-09"
   },
