@@ -6,6 +6,8 @@ disable-model-invocation: true
 
 # dhan-invest-order-exit - real-money after-market SELL orders for investment-portfolio shares
 
+**Tool names.** The Dhan tools appear as `mcp__dhan__*_agent_tool` or `mcp__claude_ai_dhan_mcp__*_agent_tool` depending on how the connector is attached: they are the same tools, use whichever is connected (a skill text that names one prefix is not wrong if only the other is present).
+
 This places REAL orders on the user's Dhan account through the Dhan MCP. It covers only the investment-portfolio shares in `dhan-live/data/cc_config.json` (`universe`; currently MCX, SHRIRAMFIN, CGPOWER, BSE, DIXON, HCLTECH, INFY, BANKINDIA, BPCL, CUMMINSIND). dh252 exits use `dhan-order`; option orders have their own skill. Orders go in after the close as AFTER-MARKET (AMO) orders for the NEXT trading day.
 
 ## Strategy (user, 2026-11-08)

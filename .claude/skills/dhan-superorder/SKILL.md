@@ -5,6 +5,8 @@ description: Scan the user's Dhan (ND) super orders against the open option posi
 
 # dhan-superorder - scan, fix and place protective super orders for Dhan options (ND)
 
+**Tool names.** The Dhan tools appear as `mcp__dhan__*_agent_tool` or `mcp__claude_ai_dhan_mcp__*_agent_tool` depending on how the connector is attached: they are the same tools, use whichever is connected (a skill text that names one prefix is not wrong if only the other is present).
+
 This works on REAL orders on the user's Dhan account through the Dhan MCP. Dhan has no GTT / Forever-order tool; the user's equivalent is a SUPER ORDER on each short option: a SELL entry plus a STOP_LOSS leg (about 3x the sold price, trailing jump 0.05) and sometimes a TARGET leg (about 40% of the sold price). Facts about the MCP (read 2026-11-09): `trading_agent_tool` has `place`, `modify`, `cancel`, `super_place`, `super_modify`, `super_cancel`; `orderbook_agent_tool` `super_list` shows the super order book (symbol and entry price only, no strike or expiry); the alerts tool is equities and indices only (no option premiums); a plain STOP_LOSS order is DAY validity only; a super order's legs belong to its entry, so a stop cannot be attached to a position you already hold. Zerodha (AZ) has its own skill, `zerodha-gtt-order`.
 
 ## Part 1 - scan (always first, read-only)
@@ -28,6 +30,11 @@ Real money, opens a short. Do it only when the user names the contract(s) in thi
 - **Super order.** `trading_agent_tool` `super_place`: `transactionType: "SELL"`, `exchangeSegment: "NSE_FNO"`, `securityId`, `quantity`, `orderType: "LIMIT"`, `productType: "MARGIN"`, `price` = the limit the user approves, `stopLossPrice` = 3x the price, `targetPrice` = 40% of the price (the 60% profit rule), `trailingJump` 0.05 (the user's usual; ask if different). Show the full ticket first: contract, qty, price, stop, target, trailing jump, margin from `margin_agent_tool` `single`, and the line "This OPENS a short option position." Wait for "yes, place this". The MCP's own pre-trade funds check has been wrong before (sign-flipped shortfall): if it blocks and the margin check shows the funds are fine, tell the user and only after their yes add `"preflight": false`.
 - Place one at a time; after it, check `orderbook_agent_tool` `super_list` (entry traded or pending, both legs PENDING with the right prices). Report plainly; a pending order is not a fill.
 - Maximum 4 contracts per instruction. Never retry a rejected order.
+
+## Learned 2026-11-14
+- `super_cancel` of a TARGET_LEG answers "Cancelled successful" but `super_list` keeps showing it PENDING for a long time (it was still PENDING a day later). The Dhan APP is the truth: its Super Orders page has three tabs, **Active** (entry done, an exit leg still live), **Closed** (the stop leg fired, nothing live) and **Cancel** (legs cancelled before doing anything). A stop-fired order whose leftover target the API still lists is already under Closed in the app, so do not cancel it again; confirm in the app or after the next session's open.
+- An open short with no stop can be given one in the app (the user did this for 7 shorts and the book grew from 19 to 26 orders, matched by the scan with stops about 3x). The MCP still cannot attach a stop to an existing position.
+- Leftover LONG legs (hedges whose short is gone) are not an order problem: the Covered Call page raises the `Leftover hedge` alert for them (sell or let expire).
 
 ## After any change
 Re-run Part 1 steps 1-3 so the alerts clear; nothing is committed ("push" handles that). Record fills the next trading day through `/refresh-dhan` as usual (the Dhan tradebook is today-only).

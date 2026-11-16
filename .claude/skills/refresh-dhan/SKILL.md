@@ -5,6 +5,8 @@ description: Refresh the VJ TradeIQ Dhan (dh252) workspace - pull holdings and t
 
 # Refresh Dhan (dh252)
 
+**Tool names.** The Dhan tools appear as `mcp__dhan__*_agent_tool` or `mcp__claude_ai_dhan_mcp__*_agent_tool` depending on how the connector is attached: they are the same tools, use whichever is connected (a skill text that names one prefix is not wrong if only the other is present).
+
 Run from the repo root of TradingJournal on branch `claude/beautiful-hamilton-fwa55n`. Needs Python 3.10+ with pandas + yfinance, and the Dhan MCP connector (claude.ai account). Everything lives under `dhan-live/`.
 
 ## Steps

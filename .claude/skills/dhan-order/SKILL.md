@@ -6,10 +6,14 @@ disable-model-invocation: true
 
 # dhan-order - real-money after-market orders for the Dhan (dh252) signals, one group at a time
 
+**Tool names.** The Dhan tools appear as `mcp__dhan__*_agent_tool` or `mcp__claude_ai_dhan_mcp__*_agent_tool` depending on how the connector is attached: they are the same tools, use whichever is connected (a skill text that names one prefix is not wrong if only the other is present).
+
 This skill places REAL orders on the user's Dhan account through the Dhan MCP (`mcp__claude_ai_dhan_mcp__*`). Signals are computed after the close and orders go in as AMO (after-market) orders for the NEXT trading day. It works in three **stages, in this order**: **1) EXITS** (SELL), **2) ADD-ONS** (BUY), **3) ENTRIES** (BUY). Each stage is listed, the user may exclude stocks, the user confirms, the orders are placed and VERIFIED, and only then does the next stage start. It replaces `dhan-order-entry` and `dhan-order-exit` and is the ND twin of `zerodha-order`; ND and AZ share no code or data. The investment-portfolio shares have their own skills (`dhan-invest-order-entry` / `dhan-invest-order-exit`); option super orders are `dhan-superorder`.
 
 ## The dh252 rules these orders come from
 - Entry: 52-week high (closing high) + Supertrend green, not held; size = the effective tier (base Rs1,000, +tiers, doubling milestone), floored to whole shares, minimum 1 (a stock priced above the tier costs more than the tier). Add-on: P&L at -6% or worse, 1/10 of the open quantity (minimum 1), once every 7 days. Exit: Supertrend RED, the whole position, any profit or loss. Fixed capital base Rs20,00,000. All of it is computed by the engine; this skill never recomputes or overrides it.
+
+**Exercised 2026-11-13:** 19 AMO BUY LIMIT CNC orders went in with the payload below (each first rejected by the broken pre-trade funds check, then accepted with `preflight: false` after the user's explicit yes) and all showed PENDING in the order book. Dhan's `place` response says `TRANSIT`; confirm in `orderbook_agent_tool` `list` before telling the user it is accepted.
 
 ## Scope (hard limits)
 - Stocks only. Never options, futures, ETFs, the option-hedge / investment portfolio, or a stock the engine does not list. A discretionary or partial sell is out of scope: refuse and say why.

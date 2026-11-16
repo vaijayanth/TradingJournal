@@ -5,6 +5,8 @@ description: Scan the user's existing Zerodha (AZ) option GTT orders for invalid
 
 # zerodha-gtt-order - scan and place protective GTT orders for open short options (AZ)
 
+**Tool names.** The Zerodha connector exposes grouped tools in current sessions: `mcp__claude_ai_Zerodha_Mcp__portfolio` (modes holdings / positions / margins), `orders` (list / all_trades / history / place / approval_status), `market` (ltp / ohlc / quote / historical / search / option_chain) and `gtt` (list / place / modify / delete). The older names used below (`get_holdings`, `get_positions`, `get_margins`, `get_orders`, `get_trades` = orders `all_trades`, `get_ltp`, `get_ohlc`, `get_gtts`, `place_order`, `place_gtt_order`, `delete_gtt_order`) mean the same calls; use whichever the session exposes.
+
 This works on REAL GTT orders on the user's Zerodha account through the Zerodha MCP. A GTT here is a buy-back on a short option you already hold. The user's own pattern is a TWO-LEG (one-cancels-other) GTT: a lower trigger = profit target (premium decayed 60%, i.e. 40% of the sold price) and an upper trigger = the 3x-premium stop (`stop_premium_multiple`, `profit_exit_decay_pct` in `zerodha-live/data/cc_config.json`). It never opens a new position. Dhan (ND) has no GTT tool; this skill is AZ only.
 
 ## Part 1 - scan the existing GTTs (always first)
