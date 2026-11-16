@@ -25,7 +25,7 @@ Run from the repo root of TradingJournal on branch `claude/beautiful-hamilton-fw
    - Covered call: signal counts (call / BPS), stocks without options, events that block or warn. No positions are tracked yet, so there are no option alerts.
 4. **After the user buys:** record it so the weekly cooldown works: set `last_buy[SYMBOL] = YYYY-MM-DD` in `icici-live/data/di_trades.json` (ask for the date). The ICICIdirect holdings/tradebook upload is not connected yet; when it is, it fills this file and `holdings_snapshot.json` / `cc_positions.json`.
 5. **Next skill to tell the user:** DI has no order skill. Say that the signals are for them to act on in ICICIdirect, and that `/refresh-icici` should be run again after the close the next trading day.
-6. **Commit + push only after the user says push.** Stage only `icici-live/` files (and `index.html`/`.claude/skills` if they changed; never `.playwright-mcp/`). Message: `DI refresh <market date>`.
+6. **Commit + push the data refresh automatically (standing permission, user 2026-11-16: read-only work and data refreshes may be pushed without asking; any ACTION needs permission).** Stage only the refreshed `icici-live/` data files (never `.playwright-mcp/`, never code or skill edits). Message: `DI refresh <market date>`. If the verify step found something surprising, report it and ask first. Say in the report that it was pushed.
 
 ## Rules (do not change without the user)
 - Never invent numbers; if a source is missing, say so. Never place an order from this skill.
