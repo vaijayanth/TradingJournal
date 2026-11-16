@@ -1,6 +1,33 @@
 {
- "fetched_at": "2026-11-16T14:23:02+05:30",
- "gtts_fetched_at": "2026-11-16T14:23:01+05:30",
- "checked": 71,
- "findings": []
+ "fetched_at": "2026-11-16T17:31:02+05:30",
+ "gtts_fetched_at": "2026-11-16T17:29:46+05:30",
+ "checked": 70,
+ "findings": [
+  {
+   "check": "G1",
+   "name": "STALE",
+   "severity": "HIGH",
+   "tradingsymbol": "ABB26NOV6100PE",
+   "gtt_id": 343301161,
+   "symbol": "ABB",
+   "expiry": "2026-11-23",
+   "strike": 6100.0,
+   "opt_type": "PE",
+   "concern": "No open position on this contract (closed or expired): if it triggers it BUYS a new long position",
+   "action": "Delete this GTT"
+  },
+  {
+   "check": "G1",
+   "name": "STALE",
+   "severity": "HIGH",
+   "tradingsymbol": "ABCAPITAL26NOV365PE",
+   "gtt_id": 343404788,
+   "symbol": "ABCAPITAL",
+   "expiry": "2026-11-23",
+   "strike": 365.0,
+   "opt_type": "PE",
+   "concern": "No open position on this contract (closed or expired): if it triggers it BUYS a new long position",
+   "action": "Delete this GTT"
+  }
+ ]
 }

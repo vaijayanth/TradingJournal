@@ -1,5 +1,5 @@
 {
- "fetched_at": "2026-11-16T14:23:01+05:30",
+ "fetched_at": "2026-11-16T17:29:46+05:30",
  "active": {
   "PREMIERENE26DEC1000CE": [
    {
@@ -199,26 +199,6 @@
      34.8
     ],
     "qty": 225
-   }
-  ],
-  "LAURUSLABS26NOV2100PE": [
-   {
-    "id": 344968196,
-    "type": "two-leg",
-    "trigger_values": [
-     2.6,
-     19.65
-    ],
-    "qty": 850
-   },
-   {
-    "id": 344968196,
-    "type": "two-leg",
-    "trigger_values": [
-     2.6,
-     19.65
-    ],
-    "qty": 850
    }
   ],
   "COALINDIA26DEC440CE": [
@@ -776,7 +756,7 @@
     "id": 343301161,
     "type": "trailing-single",
     "trigger_values": [
-     82
+     80
     ],
     "qty": 125
    }
@@ -816,7 +796,7 @@
     "id": 343210899,
     "type": "trailing-single",
     "trigger_values": [
-     39
+     38
     ],
     "qty": 150
    }
@@ -1248,34 +1228,6 @@
      "side": "BUY",
      "qty": 225,
      "price": 35.85,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
-   "id": 344968196,
-   "type": "two-leg",
-   "created_at": "2026-11-16T13:56:28+05:30",
-   "expires_at": "2026-11-24T00:00:00+05:30",
-   "tradingsymbol": "LAURUSLABS26NOV2100PE",
-   "last_price": 10.1,
-   "triggers": [
-    2.6,
-    19.65
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 850,
-     "price": 2.7,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    },
-    {
-     "side": "BUY",
-     "qty": 850,
-     "price": 20.25,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -2209,13 +2161,13 @@
    "tradingsymbol": "ABB26NOV6100PE",
    "last_price": 38.5,
    "triggers": [
-    82
+    80
    ],
    "orders": [
     {
      "side": "BUY",
      "qty": 125,
-     "price": 83,
+     "price": 81,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -2289,13 +2241,13 @@
    "tradingsymbol": "DMART26NOV3200PE",
    "last_price": 17.8,
    "triggers": [
-    39
+    38
    ],
    "orders": [
     {
      "side": "BUY",
      "qty": 150,
-     "price": 39.5,
+     "price": 38.5,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -2603,6 +2555,28 @@
   }
  ],
  "triggered": [
+  {
+   "id": 344968196,
+   "type": "two-leg",
+   "tradingsymbol": "LAURUSLABS26NOV2100PE",
+   "triggers": [
+    2.6,
+    19.65
+   ],
+   "triggered_at": "2026-11-16T14:39:11+05:30",
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 850,
+     "price": 2.7
+    },
+    {
+     "side": "BUY",
+     "qty": 850,
+     "price": 20.25
+    }
+   ]
+  },
   {
    "id": 344059789,
    "type": "two-leg",
