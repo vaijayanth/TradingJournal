@@ -1,5 +1,5 @@
 {
- "fetched_at": "2026-11-16T11:58:29+05:30",
+ "fetched_at": "2026-11-16T12:57:52+05:30",
  "active": {
   "KARURVYSYA26NOV370PE": [
    {
@@ -49,26 +49,6 @@
      2
     ],
     "qty": 6500
-   }
-  ],
-  "LAURUSLABS26NOV2220PE": [
-   {
-    "id": 344931525,
-    "type": "two-leg",
-    "trigger_values": [
-     3.2,
-     24.15
-    ],
-    "qty": 850
-   },
-   {
-    "id": 344931525,
-    "type": "two-leg",
-    "trigger_values": [
-     3.2,
-     24.15
-    ],
-    "qty": 850
    }
   ],
   "HDFCBANK26NOV800PE": [
@@ -774,34 +754,6 @@
      "side": "BUY",
      "qty": 6500,
      "price": 2.1,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
-   "id": 344931525,
-   "type": "two-leg",
-   "created_at": "2026-11-16T11:42:24+05:30",
-   "expires_at": "2026-11-24T00:00:00+05:30",
-   "tradingsymbol": "LAURUSLABS26NOV2220PE",
-   "last_price": 13.65,
-   "triggers": [
-    3.2,
-    24.15
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 850,
-     "price": 3.3,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    },
-    {
-     "side": "BUY",
-     "qty": 850,
-     "price": 24.9,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -1956,6 +1908,222 @@
      "price": 20,
      "product": "NRML",
      "order_type": "LIMIT"
+    }
+   ]
+  }
+ ],
+ "triggered": [
+  {
+   "id": 344931525,
+   "type": "two-leg",
+   "tradingsymbol": "LAURUSLABS26NOV2220PE",
+   "triggers": [
+    3.2,
+    24.15
+   ],
+   "triggered_at": "2026-11-16T12:50:27+05:30",
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 850,
+     "price": 3.3
+    },
+    {
+     "side": "BUY",
+     "qty": 850,
+     "price": 24.9
+    }
+   ]
+  },
+  {
+   "id": 342467343,
+   "type": "two-leg",
+   "tradingsymbol": "BIOCON26NOV385CE",
+   "triggers": [
+    0.7,
+    6
+   ],
+   "triggered_at": "2026-11-16T11:13:08+05:30",
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 2500,
+     "price": 0.8
+    },
+    {
+     "side": "BUY",
+     "qty": 2500,
+     "price": 6.5
+    }
+   ]
+  },
+  {
+   "id": 344059436,
+   "type": "two-leg",
+   "tradingsymbol": "BOSCHLTD26NOV51500CE",
+   "triggers": [
+    157.25,
+    1179.45
+   ],
+   "triggered_at": "2026-11-16T10:50:14+05:30",
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 25,
+     "price": 162
+    },
+    {
+     "side": "BUY",
+     "qty": 25,
+     "price": 1214.85
+    }
+   ]
+  },
+  {
+   "id": 344060196,
+   "type": "two-leg",
+   "tradingsymbol": "IRFC26NOV74PE",
+   "triggers": [
+    0.1,
+    0.9
+   ],
+   "triggered_at": "2026-11-16T09:32:29+05:30",
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 5425,
+     "price": 0.15
+    },
+    {
+     "side": "BUY",
+     "qty": 5425,
+     "price": 0.95
+    }
+   ]
+  },
+  {
+   "id": 344060293,
+   "type": "two-leg",
+   "tradingsymbol": "NAUKRI26NOV1280CE",
+   "triggers": [
+    1.85,
+    13.8
+   ],
+   "triggered_at": "2026-11-16T09:29:28+05:30",
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 550,
+     "price": 1.95
+    },
+    {
+     "side": "BUY",
+     "qty": 550,
+     "price": 14.25
+    }
+   ]
+  },
+  {
+   "id": 344011319,
+   "type": "trailing-single",
+   "tradingsymbol": "BHARTIARTL26DEC2280CE",
+   "triggers": [
+    18
+   ],
+   "triggered_at": "2026-11-16T09:25:26+05:30",
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 475,
+     "price": 19
+    }
+   ]
+  },
+  {
+   "id": 344060430,
+   "type": "two-leg",
+   "tradingsymbol": "RECLTD26NOV310CE",
+   "triggers": [
+    1.75,
+    13.05
+   ],
+   "triggered_at": "2026-11-16T09:22:39+05:30",
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 1575,
+     "price": 1.85
+    },
+    {
+     "side": "BUY",
+     "qty": 1575,
+     "price": 13.45
+    }
+   ]
+  },
+  {
+   "id": 344059088,
+   "type": "two-leg",
+   "tradingsymbol": "ADANIGREEN26NOV1600CE",
+   "triggers": [
+    1.8,
+    13.5
+   ],
+   "triggered_at": "2026-11-16T09:18:11+05:30",
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 600,
+     "price": 1.9
+    },
+    {
+     "side": "BUY",
+     "qty": 600,
+     "price": 13.95
+    }
+   ]
+  },
+  {
+   "id": 344060237,
+   "type": "two-leg",
+   "tradingsymbol": "LAURUSLABS26NOV2200PE",
+   "triggers": [
+    3.55,
+    26.7
+   ],
+   "triggered_at": "2026-11-16T09:15:16+05:30",
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 850,
+     "price": 3.7
+    },
+    {
+     "side": "BUY",
+     "qty": 850,
+     "price": 27.55
+    }
+   ]
+  },
+  {
+   "id": 344781626,
+   "type": "two-leg",
+   "tradingsymbol": "BANKINDIA26NOV160CE",
+   "triggers": [
+    0.3,
+    1.63
+   ],
+   "triggered_at": "2026-11-16T09:15:14+05:30",
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 5200,
+     "price": 0
+    },
+    {
+     "side": "BUY",
+     "qty": 5200,
+     "price": 0
     }
    ]
   }
