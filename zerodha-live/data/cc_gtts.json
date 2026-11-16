@@ -1,6 +1,66 @@
 {
- "fetched_at": "2026-11-16T13:57:33+05:30",
+ "fetched_at": "2026-11-16T14:23:01+05:30",
  "active": {
+  "PREMIERENE26DEC1000CE": [
+   {
+    "id": 344976353,
+    "type": "two-leg",
+    "trigger_values": [
+     1.6,
+     12
+    ],
+    "qty": 650
+   },
+   {
+    "id": 344976353,
+    "type": "two-leg",
+    "trigger_values": [
+     1.6,
+     12
+    ],
+    "qty": 650
+   }
+  ],
+  "PIIND26DEC2000CE": [
+   {
+    "id": 344976351,
+    "type": "two-leg",
+    "trigger_values": [
+     4.5,
+     33.9
+    ],
+    "qty": 175
+   },
+   {
+    "id": 344976351,
+    "type": "two-leg",
+    "trigger_values": [
+     4.5,
+     33.9
+    ],
+    "qty": 175
+   }
+  ],
+  "LUPIN26DEC2240CE": [
+   {
+    "id": 344976267,
+    "type": "two-leg",
+    "trigger_values": [
+     3.15,
+     23.55
+    ],
+    "qty": 425
+   },
+   {
+    "id": 344976267,
+    "type": "two-leg",
+    "trigger_values": [
+     3.15,
+     23.55
+    ],
+    "qty": 425
+   }
+  ],
   "SWIGGY26DEC250CE": [
    {
     "id": 344968460,
@@ -429,26 +489,6 @@
      49.95
     ],
     "qty": 150
-   }
-  ],
-  "DRREDDY26NOV1450CE": [
-   {
-    "id": 344059789,
-    "type": "two-leg",
-    "trigger_values": [
-     1.75,
-     13.2
-    ],
-    "qty": 625
-   },
-   {
-    "id": 344059789,
-    "type": "two-leg",
-    "trigger_values": [
-     1.75,
-     13.2
-    ],
-    "qty": 625
    }
   ],
   "DIVISLAB26NOV11300PE": [
@@ -916,7 +956,7 @@
     "id": 340515021,
     "type": "trailing-single",
     "trigger_values": [
-     68
+     67
     ],
     "qty": 125
    }
@@ -933,6 +973,90 @@
   ]
  },
  "gtts": [
+  {
+   "id": 344976353,
+   "type": "two-leg",
+   "created_at": "2026-11-16T14:22:53+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "PREMIERENE26DEC1000CE",
+   "last_price": 4,
+   "triggers": [
+    1.6,
+    12
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 650,
+     "price": 1.65,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 650,
+     "price": 12.4,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 344976351,
+   "type": "two-leg",
+   "created_at": "2026-11-16T14:22:52+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "PIIND26DEC2000CE",
+   "last_price": 11.3,
+   "triggers": [
+    4.5,
+    33.9
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 175,
+     "price": 4.65,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 175,
+     "price": 34.95,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 344976267,
+   "type": "two-leg",
+   "created_at": "2026-11-16T14:22:33+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "LUPIN26DEC2240CE",
+   "last_price": 7.9,
+   "triggers": [
+    3.15,
+    23.55
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 425,
+     "price": 3.25,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 425,
+     "price": 24.3,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
   {
    "id": 344968460,
    "type": "two-leg",
@@ -1536,34 +1660,6 @@
      "side": "BUY",
      "qty": 150,
      "price": 51.45,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
-   "id": 344059789,
-   "type": "two-leg",
-   "created_at": "2026-11-09T13:58:38+05:30",
-   "expires_at": "2026-11-24T00:00:00+05:30",
-   "tradingsymbol": "DRREDDY26NOV1450CE",
-   "last_price": 4.7,
-   "triggers": [
-    1.75,
-    13.2
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 625,
-     "price": 1.85,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    },
-    {
-     "side": "BUY",
-     "qty": 625,
-     "price": 13.6,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -2473,13 +2569,13 @@
    "tradingsymbol": "PERSISTENT26NOV6500CE",
    "last_price": 32.05,
    "triggers": [
-    68
+    67
    ],
    "orders": [
     {
      "side": "BUY",
      "qty": 125,
-     "price": 69,
+     "price": 68,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -2507,6 +2603,28 @@
   }
  ],
  "triggered": [
+  {
+   "id": 344059789,
+   "type": "two-leg",
+   "tradingsymbol": "DRREDDY26NOV1450CE",
+   "triggers": [
+    1.75,
+    13.2
+   ],
+   "triggered_at": "2026-11-16T14:04:31+05:30",
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 625,
+     "price": 1.85
+    },
+    {
+     "side": "BUY",
+     "qty": 625,
+     "price": 13.6
+    }
+   ]
+  },
   {
    "id": 344931525,
    "type": "two-leg",
