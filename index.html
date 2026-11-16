@@ -1324,6 +1324,8 @@ th.te-sort { cursor:pointer; user-select:none; } th.te-sort:hover { color:var(--
     <div class="d2-edge-foot" id="d2-edge-foot">—</div>
   </section>
 
+  <div id="d2-shares-wrap" style="display:none;margin-top:13px"></div>
+
   <section class="d2-panel d2-attn">
     <div class="d2-panel-head"><div><div class="d2-title">Attention required</div><div class="d2-hint">Consolidated watchlists — open a category for the full detail</div></div><span class="d2-hint" style="margin:0">4 review queues</span></div>
     <div class="d2-attn-body">
@@ -9400,7 +9402,9 @@ function d2Queues(d) {
 
 function d2Attn(kind) {
   const d = WS.data[WS.id]; if (!d) return;
-  if (kind === 'addon') { // full detail already lives on Live Trading
+  if (kind === 'addon') { // full detail already lives on Live Trading (swing) and Covered Call > Shares (averaging)
+    const sh = d2ShareStats();
+    if (!d2Queues(d).addon.length && sh && (sh.due || sh.wait)) { d2Go('covcall', 'shares-addon'); return; }
     const btn = document.querySelector('.app-header .nav-tab[data-page="dhanlive"]');
     if (btn && wsHasPage(WS.id, 'dhanlive')) { showPage('dhanlive', btn); dhLiveTab('addon'); }
     return;
@@ -9423,6 +9427,51 @@ function d2Attn(kind) {
     dr.innerHTML = !q.reentry.length ? '<div class="d2-none">No exited stock has completed its 6-trading-day cooldown (no exits recorded yet).</div>'
       : `<div class="d2-none" style="padding:0 0 8px"><b>No action.</b> These exits are allowed to come back after the 6-trading-day cooldown, but only through the normal entry rule: ${d2ReentryRule()}. They appear in Live Trading entry signals when they qualify.</div>` + tbl(['Stock', 'Last closed', 'Days since', 'Last P&L %'], q.reentry.map(c => `<tr><td>${dhEsc(c.symbol)}</td><td>${dhFmtDate(c.exitDate)}</td><td>${c.days}</td><td class="${dhPnlCls(c.plPct)}">${dhFmtPct(c.plPct)}</td></tr>`));
   }
+}
+
+// ── Investment shares (the covered-call universe) on the ND Dashboard: signals, averaging, cooldown (user, 2026-11-16) ──
+function d2ShareStats() {
+  const cc = (window._cc && window._ccWs === WS.id) ? window._cc : null, rows = cc && cc.shares && cc.shares.rows;
+  if (!rows) return null;
+  const sh = cc.shares;
+  return { rows, exits: sh.exits || [], entries: sh.entries || [], cool: ((cc.rules || {}).averaging_cooldown_days) || 7,
+           due: rows.filter(r => r.avg_status === 'ADD').length, wait: rows.filter(r => r.avg_status === 'WAIT').length };
+}
+function d2AddonCard() {
+  const st = d2ShareStats(), d = WS.data[WS.id], el = document.getElementById('d2-a-addon'), dd = document.getElementById('d2-a-addon-d');
+  if (!st || !d || !el || !dd) return;
+  const swing = d2Queues(d).addon.length;
+  el.innerHTML = swing + st.due;
+  dd.innerHTML = `${swing} swing · ${st.due} share${st.due === 1 ? '' : 's'} due` + (st.wait ? ` · ${st.wait} waiting (cooldown)` : '') + ' →';
+}
+function d2SharesPanel(cc) {
+  const wrap = document.getElementById('d2-shares-wrap'), st = d2ShareStats();
+  if (!wrap || !st) return;
+  const R = st.rows, cool = st.cool, exitSyms = new Set(st.exits.map(e => e.symbol));
+  const dueDate = r => { if (!r.last_add) return null; const [yy, mm, dd] = r.last_add.split('-').map(Number); return new Date(Date.UTC(yy, mm - 1, dd + cool)).toISOString().slice(0, 10); };
+  const status = r => exitSyms.has(r.symbol) ? ['SELL', 'Sell all: red and in profit', 0]
+    : r.avg_status === 'ADD' ? ['ADD', `Add ${r.add_qty} share${r.add_qty === 1 ? '' : 's'} (₹${diNum(r.add_value_rs, 0)})`, 1]
+    : r.avg_status === 'WAIT' ? ['WAIT', 'Cooldown · due ' + (dueDate(r) ? dhFmtDate(dueDate(r)) : '—'), 2]
+    : r.colour === 'red' ? ['NO', 'Red: hold, no averaging', 3] : r.pl_pct > 0 ? ['NO', 'In profit: nothing to average', 3] : ['NO', 'Not down enough to average', 3];
+  const pill = (k, t) => { const c = { SELL: 'var(--red)', ADD: 'var(--green)', WAIT: 'var(--amber)', NO: 'var(--text-muted)' }[k]; return `<span style="color:${c};${k === 'ADD' || k === 'SELL' ? 'font-weight:700' : ''}">${dhEsc(t)}</span>`; };
+  const tbl = ccTbl('d2_shares', {
+    title: 'Investment shares', hint: `The covered-call universe: exit when the Supertrend is red and the position is in profit; average (1/10 of the holding) when green and down 6% or more, once every ${cool} days. Cooldown dates are counted from your last averaging buy.`,
+    rows: R, search: r => r.symbol, empty: 'No data.', sort: [7, 1], rowCls: r => (status(r)[0] === 'ADD' || status(r)[0] === 'SELL') ? 'row-green' : '',
+    cols: [
+      { h: 'Stock', txt: true, v: r => r.symbol, c: r => `<b class="stk">${dhEsc(r.symbol)}</b>` },
+      { h: 'Qty', num: true, v: r => r.qty, c: r => r.qty },
+      { h: 'Avg cost', num: true, v: r => r.avg_cost, c: r => '₹' + diNum(r.avg_cost) },
+      { h: 'Price', num: true, v: r => r.spot, c: r => '₹' + diNum(r.spot) },
+      { h: 'P&L %', num: true, v: r => r.pl_pct, c: r => `<span class="${r.pl_pct >= 0 ? 'pos' : 'neg'}">${r.pl_pct >= 0 ? '+' : ''}${r.pl_pct.toFixed(1)}%</span>` },
+      { h: 'P&L ₹', num: true, v: r => r.pl_rs, c: r => `<span class="${r.pl_rs >= 0 ? 'pos' : 'neg'}">${r.pl_rs >= 0 ? '+' : '−'}₹${diNum(Math.abs(r.pl_rs), 0)}</span>` },
+      { h: 'Supertrend', txt: true, v: r => r.colour, c: r => `<span style="color:var(--${r.colour === 'green' ? 'green' : 'red'})">● ${r.colour}</span>${r.flip_date ? ' <span style="color:var(--text-muted)">since ' + dhFmtDate(r.flip_date) + '</span>' : ''}` },
+      { h: 'Signal', txt: true, v: r => status(r)[2] * 1000 + (status(r)[0] === 'WAIT' && dueDate(r) ? new Date(dueDate(r)).getTime() / 1e11 : 0), c: r => pill(status(r)[0], status(r)[1]) },
+    ],
+  });
+  const ent = st.entries.length ? `<div class="d2-edge-foot" style="border:0;color:var(--green)"><b>Entry signals:</b> ${st.entries.map(e => dhEsc(e.symbol) + (e.qty_to_buy ? ' ×' + e.qty_to_buy : '')).join(', ')}</div>` : '';
+  wrap.innerHTML = tbl + ent;
+  wrap.style.display = '';
+  ccTblApply('d2_shares');
 }
 
 // Re-entry is a watchlist, not an alert: a stock you exited is only bought again through the normal entry rule (user, 2026-11-16)
@@ -9659,6 +9708,7 @@ function d2RenderActions(d) {
     : ever == null ? '' : ever >= thr ? `${ever} opened · P&L must be ≥ 0 to double` : `${ever} of ${thr} positions · doubles to ${dhFmtRs((cap.baseTier || 0) * 2)}`);
   const cp = dhCopy();
   set('d2-lab-entry', dhEsc(cp.entryShort || '')); set('d2-lab-addon', dhEsc(cp.addShort || ''));
+  { const sw = document.getElementById('d2-shares-wrap'); if (sw && !cp.hasCC) sw.style.display = 'none'; }   // the investment-shares panel is ND only
   ['d2-r-opt', 'd2-r-shx', 'd2-r-shr'].forEach(id => { const row = document.getElementById(id) && document.getElementById(id).closest('.d2-act-row'); if (row) row.style.display = cp.hasCC ? '' : 'none'; });
   const chip = (cls, label, tip, go) => `<button class="d2-ch ${cls}" onclick="${go}" title="${dhEsc(tip || '')}">${dhEsc(label)}</button>`;
   const none = t => `<span class="d2-none-chip">${t}</span>`;
@@ -9703,6 +9753,7 @@ function d2RenderActions(d) {
       Object.assign(window._d2Sum, { shx: shx.length, shr: shEnt.length + avg.length }); d2ActSummary();
     };
     shDraw(null); dhExtras().then(shDraw);
+    d2SharesPanel(cc); d2AddonCard();
   };
   draw(null);
   dhExtras(true).then(draw);
@@ -9798,6 +9849,7 @@ function d2Render(d) {
   set('d2-a-reentry', q.reentry.length); set('d2-a-addon', q.addon.length);
   set('d2-a-reentry-d', q.reentry.length ? 'No action: ' + d2ReentryRule() + ' →' : 'None past the cooldown →');
   set('d2-a-addon-d', q.addon.length ? 'Open in Live Trading →' : 'None eligible right now');
+  d2AddonCard();
   document.getElementById('d2-a-sma200').className = 'd2-count' + (q.sma200.length ? ' neg' : '');
   document.getElementById('d2-a-longloss').className = 'd2-count' + (q.longloss.length ? ' neg' : '');
   const dr = document.getElementById('d2-attn-drawer'); dr.style.display = 'none'; dr.dataset.kind = '';
