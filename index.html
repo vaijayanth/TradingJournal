@@ -1336,11 +1336,11 @@ th.te-sort { cursor:pointer; user-select:none; } th.te-sort:hover { color:var(--
   </section>
 
   <section class="d2-panel d2-recent">
-    <div class="d2-panel-head"><div><div class="d2-title">Recent trading summary</div><div class="d2-hint">Current financial-year activity</div></div><span class="d2-hint" style="margin:0">Detailed calendar and rankings → Performance</span></div>
+    <div class="d2-panel-head"><div><div class="d2-title">Recent trading summary</div><div class="d2-hint">Closed trades are only the positions that turned red; the open book is where the winners are</div></div><span class="d2-hint" style="margin:0">Detailed calendar and rankings → Performance</span></div>
     <div class="d2-recent-body">
-      <div class="d2-recent-s"><div class="d2-label">Closed trades</div><b id="d2-r-closed">—</b><div class="d2-note">FY to date</div></div>
-      <div class="d2-recent-s"><div class="d2-label">Winning trades</div><b class="pos" id="d2-r-win">—</b><div class="d2-note" id="d2-r-win-n">—</div></div>
-      <div class="d2-recent-s"><div class="d2-label">Losing trades</div><b class="neg" id="d2-r-loss">—</b><div class="d2-note" id="d2-r-loss-n">—</div></div>
+      <div class="d2-recent-s"><div class="d2-label">Closed trades</div><b id="d2-r-closed">—</b><div class="d2-note" id="d2-r-closed-n">FY to date</div></div>
+      <div class="d2-recent-s"><div class="d2-label">Open in profit</div><b class="pos" id="d2-r-win">—</b><div class="d2-note" id="d2-r-win-n">—</div></div>
+      <div class="d2-recent-s"><div class="d2-label">Open in loss</div><b class="neg" id="d2-r-loss">—</b><div class="d2-note" id="d2-r-loss-n">—</div></div>
       <div class="d2-recent-s"><div class="d2-label">Monthly realised P&amp;L</div><b id="d2-r-month">—</b><div class="d2-note" id="d2-r-month-n">—</div></div>
     </div>
   </section>
@@ -9803,11 +9803,12 @@ function d2Render(d) {
   const monthClosed = closed.filter(c => c.exitDate && new Date(c.exitDate + 'T00:00:00') >= mStart);
   const monthPl = monthClosed.reduce((s, c) => s + (c.plRs || 0), 0);
   set('d2-r-closed', closedFy.length ? closedFy.length : '—');
-  const fw = closedFy.filter(c => c.plRs > 0).length, fl = closedFy.filter(c => c.plRs < 0).length;
-  set('d2-r-win', closedFy.length ? fw : '—', closedFy.length ? 'pos' : ''); set('d2-r-win-n', closedFy.length ? `${(fw / closedFy.length * 100).toFixed(1)}% win rate` : 'No closed trades yet');
-  set('d2-r-loss', closedFy.length ? fl : '—', closedFy.length ? 'neg' : ''); set('d2-r-loss-n', closedFy.length ? `${(fl / closedFy.length * 100).toFixed(1)}% of closed trades` : 'No closed trades yet');
+  set('d2-r-closed-n', closedFy.length ? `FY to date · turned red, ${closedFy.filter(c => c.plRs > 0).length} in profit` : 'None closed yet: a position only exits when the Supertrend turns red');
+  const oProf = P.filter(p => p.plPct > 0), oLoss = P.filter(p => p.plPct <= 0), oAvg = a => a.length ? a.reduce((x, p) => x + p.plPct, 0) / a.length : null;
+  set('d2-r-win', P.length ? oProf.length : '—', P.length ? 'pos' : ''); set('d2-r-win-n', P.length ? `${(oProf.length / P.length * 100).toFixed(0)}% of open positions · average ${oProf.length ? dhFmtPct(oAvg(oProf)) : '—'}` : 'No open positions');
+  set('d2-r-loss', P.length ? oLoss.length : '—', P.length ? 'neg' : ''); set('d2-r-loss-n', P.length ? `${(oLoss.length / P.length * 100).toFixed(0)}% of open positions · average ${oLoss.length ? dhFmtPct(oAvg(oLoss)) : '—'} · held, not cut` : 'No open positions');
   set('d2-r-month', monthClosed.length ? d2Signed(monthPl) : '—', monthClosed.length ? d2Cls(monthPl) : '');
-  set('d2-r-month-n', new Date().toLocaleDateString('en-IN', { month: 'long', year: 'numeric' }));
+  set('d2-r-month-n', new Date().toLocaleDateString('en-IN', { month: 'long', year: 'numeric' }) + ' · open P&L ' + d2Signed(mtm) + ' not included');
 
   const sma = P.find(p => p.smaAsOf);
   set('d2-foot', `${ws.label} workspace · ${ws.strategy} · fixed starting capital of ${d.capital.initial ? dhFmtRs(d.capital.initial) : '—'} (deposits ignored). `
