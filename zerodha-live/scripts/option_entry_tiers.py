@@ -4,7 +4,7 @@ Rules (user, 2026-11-16):
   * Supertrend only - RSI is NOT used. Green = bull put spread, red = sell call.
   * Tier 1 = the current Supertrend colour began on the latest session (flipped "today", i.e. the last published session).
     Tier 2 = flipped 1-5 trading days ago (the last trading week). Tier 3 = flipped within the last 30 calendar days.
-    Tier 4 = flipped within the last 90 calendar days. Each stock appears once, in the freshest tier it fits. Older flips are not listed.
+    Tier 4 = flipped within the last 90 calendar days. Tier 5 = flipped more than 90 days ago (oldest, weakest signal). Each stock appears once, in the freshest tier it fits.
   * Stocks with ANY tracked open option leg (expiry on/after track_from in cc_config.json) are left out, so FLIP stocks never appear here.
   * Every row carries a results / ex-dividend ALERT (event_close_days before an event = the window in which an option must be closed).
 
@@ -19,7 +19,7 @@ from pathlib import Path
 HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 TIER_NAMES = {1: "Tier 1 - flipped on the latest session", 2: "Tier 2 - flipped 1-5 trading days ago (last trading week)",
-              3: "Tier 3 - flipped within 30 days", 4: "Tier 4 - flipped within 90 days"}
+              3: "Tier 3 - flipped within 30 days", 4: "Tier 4 - flipped within 90 days", 5: "Tier 5 - flipped more than 90 days ago (oldest, weakest)"}
 
 
 def load(p):
@@ -39,7 +39,7 @@ def tier_of(trading_days, cal_days):
         return 3
     if cal_days <= 90:
         return 4
-    return None
+    return 5   # older than 90 days: the weakest entry signal, kept in its own tab
 
 
 def event_alert(events, expiry, today, close_days):
@@ -71,7 +71,7 @@ def event_alert(events, expiry, today, close_days):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--max-per-tier", type=int, default=40)
-    ap.add_argument("--tier", default="1,2,3,4")
+    ap.add_argument("--tier", default="1,2,3,4,5")
     ap.add_argument("--json", action="store_true")
     a = ap.parse_args()
     want = {int(x) for x in a.tier.split(",")}
@@ -86,8 +86,8 @@ def main():
     mdate = date.fromisoformat(c["market_data_date"])
     today = ist_today()
 
-    tiers = {1: [], 2: [], 3: [], 4: []}
-    skipped = {"open option legs": 0, "no expiry/lot": 0, "older than 90 days": 0}
+    tiers = {1: [], 2: [], 3: [], 4: [], 5: []}
+    skipped = {"open option legs": 0, "no expiry/lot": 0}
     for s in c["stocks"]:
         if s["symbol"] in held:
             skipped["open option legs"] += 1
@@ -97,9 +97,6 @@ def main():
             continue
         cal = (mdate - date.fromisoformat(fd)).days
         t = tier_of(td, cal)
-        if t is None:
-            skipped["older than 90 days"] += 1
-            continue
         if not s.get("expiries") or not s["expiries"][0].get("lot"):
             skipped["no expiry/lot"] += 1
             continue
@@ -119,9 +116,9 @@ def main():
         print(json.dumps({"market_data_date": c["market_data_date"], "positions_fetched_at": pos.get("fetched_at"), "tiers": tiers, "skipped": skipped, "held_stocks": sorted(held)}, indent=1))
         return
     print(f"AZ option entry signals - Supertrend flips only (no RSI). Market data {c['market_data_date']}; open option legs fetched {pos.get('fetched_at')}.")
-    print(f"Left out: {len(held)} stocks with open option legs; {skipped['older than 90 days']} flipped more than 90 days ago; {skipped['no expiry/lot']} with no listed expiry/lot.")
+    print(f"Left out: {len(held)} stocks with open option legs; {skipped['no expiry/lot']} with no listed expiry/lot.")
     print(f"ALERT: '!!' = event inside the {close_days}-day close window now; '!' = window opens before the expiry (close early); plain = event within 60 days. (est.) = date estimated.\n")
-    for t in (1, 2, 3, 4):
+    for t in (1, 2, 3, 4, 5):
         rows = tiers[t]
         if t not in want:
             continue

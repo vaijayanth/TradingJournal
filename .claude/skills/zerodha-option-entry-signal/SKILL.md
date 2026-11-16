@@ -1,6 +1,6 @@
 ---
 name: zerodha-option-entry-signal
-description: Read-only scan of the AZ (Zerodha) option ENTRY signals, in 4 tiers by how recently the Supertrend flipped (Tier 1 flipped on the latest session, Tier 2 within the last trading week, Tier 3 within 30 days, Tier 4 within 90 days), Supertrend only (no RSI), stocks with open option legs left out, with a clear results / ex-dividend alert on every row. Places nothing. Use when the user says "option entry signals", "/zerodha-option-entry-signal", "what options should I open", or wants the Zerodha option signals before placing. Placing is the separate user-invoked skill zerodha-option-order.
+description: Read-only scan of the AZ (Zerodha) option ENTRY signals, in 5 tiers by how recently the Supertrend flipped (Tier 1 flipped on the latest session, Tier 2 within the last trading week, Tier 3 within 30 days, Tier 4 within 90 days, Tier 5 older than 90 days), Supertrend only (no RSI), stocks with open option legs left out, with a clear results / ex-dividend alert on every row. Places nothing. Use when the user says "option entry signals", "/zerodha-option-entry-signal", "what options should I open", or wants the Zerodha option signals before placing. Placing is the separate user-invoked skill zerodha-option-order.
 ---
 
 # zerodha-option-entry-signal - AZ option entry signals in tiers (read-only)
@@ -13,7 +13,8 @@ This skill only READS and REPORTS. It never places, modifies or cancels an order
   - **Tier 1:** flipped on the latest published session ("today").
   - **Tier 2:** flipped 1 to 5 trading days ago (the last trading week).
   - **Tier 3:** flipped within the last 30 calendar days (older than Tier 2).
-  - **Tier 4:** flipped within the last 90 calendar days (older than Tier 3). Anything older than 90 days is not listed.
+  - **Tier 4:** flipped within the last 90 calendar days (older than Tier 3).
+  - **Tier 5:** flipped more than 90 days ago (the oldest and weakest signal, added 2026-11-16). Every stock without open option legs now sits in one of the five tiers.
 - **Open positions are excluded:** any stock with a tracked open option leg (expiry on/after `track_from` in `zerodha-live/data/cc_config.json`) is left out, so a stock needing its old structure closed (a FLIP) never appears here; close it first, then it can show up on a later run. (Option legs with an expiry before `track_from` are not tracked and cannot be excluded.)
 - **Universe:** Nifty F&O stocks (`data/fno_universe.json`) minus `data/excluded_symbols.json` (BSE, BEL, RECLTD). Expiry = the engine's first monthly expiry at least 30 days away; if only a nearer one is listed the row says SHORT EXPIRY. Expiry week is never placed (guardrail P1).
 - **Results / ex-dividend alert on every row:** options are closed 15 days (`event_close_days`) before a stock's results or ex-dividend date. `!!` = the event is inside that 15-day window NOW (a new option would have to be closed immediately: do not open); `!` = the window opens before the expiry (the trade must be closed early on the stated date); plain text = an event within 60 days; `(est.)` = the date is an estimate. This is a warning, never a block (user rule 2026-11-09), but say it plainly.

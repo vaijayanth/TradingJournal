@@ -10295,8 +10295,9 @@ const CC_TIER_TABS = [
   ['1', 'Tier 1 · today', 'Tier 1 · flipped on the latest session'],
   ['2', 'Tier 2 · last week', 'Tier 2 · flipped 1–5 trading days ago (the last trading week)'],
   ['3', 'Tier 3 · 30 days', 'Tier 3 · flipped in the last 30 days'],
-  ['4', 'Tier 4 · 90 days', 'Tier 4 · flipped in the last 90 days']];
-function ccTierTab(name) { ccPick('cc-tiertabs', 'cc-tv-', ['1', '2', '3', '4'], ['1', '2', '3', '4'].includes(name) ? name : '1', 'tj_cctier'); }
+  ['4', 'Tier 4 · 90 days', 'Tier 4 · flipped in the last 90 days'],
+  ['5', 'Tier 5 · older', 'Tier 5 · flipped more than 90 days ago (the oldest, weakest signal)']];
+function ccTierTab(name) { ccPick('cc-tiertabs', 'cc-tv-', ['1', '2', '3', '4', '5'], ['1', '2', '3', '4', '5'].includes(name) ? name : '1', 'tj_cctier'); }
 function ccTierRows(d) {
   const R = d.rules || {}, close = R.event_close_days ?? 15, minDays = R.expiry_min_days ?? 30;
   const t0 = new Date(); t0.setHours(0, 0, 0, 0);
@@ -10306,7 +10307,7 @@ function ccTierRows(d) {
     if ((s.legs || []).length || s.flip_date == null || s.flip_trading_days == null) return;   // open option legs: not an entry candidate
     const e = (s.expiries || [])[0]; if (!e || !e.lot) return;
     const td = s.flip_trading_days, cal = diff(md, day(s.flip_date));
-    const tier = td === 0 ? 1 : td <= 5 ? 2 : cal <= 30 ? 3 : cal <= 90 ? 4 : null; if (!tier) return;
+    const tier = td === 0 ? 1 : td <= 5 ? 2 : cal <= 30 ? 3 : cal <= 90 ? 4 : 5;   // tier 5 = flipped more than 90 days ago
     const exp = day(e.expiry), dte = diff(exp, t0), evs = [];
     let lvl = 0, main = null;
     (s.events || []).slice().sort((a, b) => a.date.localeCompare(b.date)).forEach(ev => {
@@ -10622,7 +10623,7 @@ function ccZerodhaView(d) {
   const tierRows = di ? [] : ccTierRows(d), tn = k => tierRows.filter(r => r.tier === k).length;
   const kpis = a2Metrics([
     di ? ['Signals', `${C.call || 0} call · ${C.put_spread || 0} BPS`, `${S.length} DI stocks with options` + ((d.no_data || []).length ? ' (no data: ' + d.no_data.join(', ') + ')' : '') + ((d.no_options || []).length ? ` · no options: ${d.no_options.join(', ')}` : '')]
-      : ['Entry signals', tierRows.length, `Tier 1: ${tn(1)} · Tier 2: ${tn(2)} · Tier 3: ${tn(3)} · Tier 4: ${tn(4)} · Supertrend only, open-leg stocks left out`],
+      : ['Entry signals', tierRows.length, `Tier 1: ${tn(1)} · Tier 2: ${tn(2)} · Tier 3: ${tn(3)} · Tier 4: ${tn(4)} · Tier 5: ${tn(5)} · Supertrend only, open-leg stocks left out`],
     ['Open option legs', (d.positions || {}).legs || 0, 'Expiries from ' + dhFmtDate((d.positions || {}).track_from) + ' · ' + ((d.positions || {}).ignored_legs || 0) + ' earlier legs ignored'],
     ['Act now', ccActNow(d), 'Exit, 3× premium, beyond strike, profit exit (other alerts are in the Alerts tab)', ccActNowBad(d) ? 'neg' : ''],
     ['Nearest short strike', zNear ? ccSigned(zNear.dist_pct) : '—', zNear ? `${zNear.symbol} ${ccStrike(zNear.strike)}${zNear.type} · ${ccSD(zNear.expiry)}` : 'No short legs', zNear && Math.abs(zNear.dist_pct) < 5 ? 'neg' : ''],
@@ -10658,7 +10659,7 @@ function ccZerodhaView(d) {
       ['Green', `BPS (sell a put, buy ${R.hedge_strikes_below} listed strikes lower)`],
       ['Red', 'Sell the call only'],
       ['RSI', 'No RSI override: the Supertrend colour alone decides'],
-    ].concat(di ? [] : [['Entry tiers', 'Tier 1 flipped on the latest session · Tier 2 flipped 1–5 trading days ago · Tier 3 within 30 days · Tier 4 within 90 days. Stocks with open option legs are left out']]) : [
+    ].concat(di ? [] : [['Entry tiers', 'Tier 1 flipped on the latest session · Tier 2 flipped 1–5 trading days ago · Tier 3 within 30 days · Tier 4 within 90 days · Tier 5 older than 90 days. Stocks with open option legs are left out']]) : [
       ['RSI above ' + R.rsi_sell_call_above, `Sell the ${R.short_call_delta} delta call, whatever the Supertrend colour`],
       ['RSI below ' + R.rsi_sell_put_below, `BPS (sell the ${R.short_put_delta} delta put, buy ${R.hedge_strikes_below} listed strikes lower), whatever the colour`],
       ['Otherwise · green', 'BPS'],
