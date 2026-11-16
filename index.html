@@ -1329,7 +1329,7 @@ th.te-sort { cursor:pointer; user-select:none; } th.te-sort:hover { color:var(--
     <div class="d2-attn-body">
       <button class="d2-attn-item" onclick="d2Attn('sma200')"><div class="d2-tag">Risk monitor</div><div class="d2-name">Below 200 SMA</div><div class="d2-count" id="d2-a-sma200">—</div><div class="d2-detail">Positions requiring technical review →</div></button>
       <button class="d2-attn-item" onclick="d2Attn('longloss')"><div class="d2-tag">Ageing positions</div><div class="d2-name">Long-held losers</div><div class="d2-count" id="d2-a-longloss">—</div><div class="d2-detail">In loss for more than 90 days →</div></button>
-      <button class="d2-attn-item" onclick="d2Attn('reentry')"><div class="d2-tag">Opportunity</div><div class="d2-name">Re-entry eligible</div><div class="d2-count" id="d2-a-reentry">—</div><div class="d2-detail">Cooldown completed →</div></button>
+      <button class="d2-attn-item" onclick="d2Attn('reentry')"><div class="d2-tag">Opportunity</div><div class="d2-name">Re-entry eligible</div><div class="d2-count" id="d2-a-reentry">—</div><div class="d2-detail" id="d2-a-reentry-d">Cooldown completed →</div></button>
       <button class="d2-attn-item" onclick="d2Attn('addon')"><div class="d2-tag">Opportunity</div><div class="d2-name">Add-on candidates</div><div class="d2-count" id="d2-a-addon">—</div><div class="d2-detail" id="d2-a-addon-d">Awaiting add-on confirmation →</div></button>
     </div>
     <div class="d2-attn-drawer" id="d2-attn-drawer" style="display:none"></div>
@@ -9421,9 +9421,12 @@ function d2Attn(kind) {
       : tbl(['Stock', 'Age', 'P&L %', 'P&L ₹'], q.longloss.map(p => `<tr><td>${dhEsc(p.symbol)}</td><td>${p.ageDays}d</td><td class="neg">${dhFmtPct(p.plPct)}</td><td class="neg">${dhFmtRs(p.plRs)}</td></tr>`));
   } else {
     dr.innerHTML = !q.reentry.length ? '<div class="d2-none">No exited stock has completed its 6-trading-day cooldown (no exits recorded yet).</div>'
-      : tbl(['Stock', 'Last closed', 'Days since', 'Last P&L %'], q.reentry.map(c => `<tr><td>${dhEsc(c.symbol)}</td><td>${dhFmtDate(c.exitDate)}</td><td>${c.days}</td><td class="${dhPnlCls(c.plPct)}">${dhFmtPct(c.plPct)}</td></tr>`));
+      : `<div class="d2-none" style="padding:0 0 8px"><b>No action.</b> These exits are allowed to come back after the 6-trading-day cooldown, but only through the normal entry rule: ${d2ReentryRule()}. They appear in Live Trading entry signals when they qualify.</div>` + tbl(['Stock', 'Last closed', 'Days since', 'Last P&L %'], q.reentry.map(c => `<tr><td>${dhEsc(c.symbol)}</td><td>${dhFmtDate(c.exitDate)}</td><td>${c.days}</td><td class="${dhPnlCls(c.plPct)}">${dhFmtPct(c.plPct)}</td></tr>`));
   }
 }
+
+// Re-entry is a watchlist, not an alert: a stock you exited is only bought again through the normal entry rule (user, 2026-11-16)
+const d2ReentryRule = () => WS.id === 'zerodha' ? 're-enter only when the Supertrend flips to green' : 're-enter only on a fresh 52-week high with green Supertrend';
 
 // Order status + cross-check, read from the committed snapshots (a browser cannot call the Dhan MCP)
 function dhCopy() { return (WORKSPACES[WS.id] || {}).copy || {}; }
@@ -9793,6 +9796,7 @@ function d2Render(d) {
   const q = d2Queues(d);
   set('d2-a-sma200', q.hasSma ? q.sma200.length : '—'); set('d2-a-longloss', q.longloss.length);
   set('d2-a-reentry', q.reentry.length); set('d2-a-addon', q.addon.length);
+  set('d2-a-reentry-d', q.reentry.length ? 'No action: ' + d2ReentryRule() + ' →' : 'None past the cooldown →');
   set('d2-a-addon-d', q.addon.length ? 'Open in Live Trading →' : 'None eligible right now');
   document.getElementById('d2-a-sma200').className = 'd2-count' + (q.sma200.length ? ' neg' : '');
   document.getElementById('d2-a-longloss').className = 'd2-count' + (q.longloss.length ? ' neg' : '');
