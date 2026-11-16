@@ -9495,6 +9495,40 @@ function dhStaleAlerts(d, ex) {
 const GUARD_TYPES = { F1: 'Old market data', F2: 'Old holdings', F3: 'Signals older than holdings', F4: 'Old order list', F5: 'Price data mismatch', I1: 'Bad numbers in data', I2: 'Position data mismatch', I3: 'Fills vs holdings', I4: 'Stock in two lists', I5: 'Excluded stock signalled', I6: 'Fill data wrong', I7: 'Recent buy not in holdings',
   S1: 'Exit not red', S2: 'Add-on rule broken', S3: 'Entry rule broken', S4: 'Oversized minimum buy', S5: 'Too many entries / mass exit', C1: 'Capital over-deployed', C2: 'Concentration', C3: 'Pending buys too big', O1: 'Sell more than held', O2: 'Duplicate orders', O3: 'Order without signal',
   P1: 'Expiry week', P2: 'No lot size', P3: 'Open option alerts', P5: 'Invalid GTT / stop orders', X1: 'Broker code mix', H1: 'Trading halted' };
+// Click a guardrail row to open the page and section it is about (user, 2026-11-16). page = nav tab; tab = Live Trading tab; alertTypes = Covered Call alert sub-tabs to prefer.
+const GUARD_GO = {
+  P3: { page: 'covcall', label: 'Covered Call alerts', alertTypes: ['3× premium', 'Through hedge', 'Beyond strike', 'Expiry risk', 'Exit', 'Event close', 'Near strike'] },
+  P5: { page: 'covcall', label: 'Covered Call stop / GTT alerts', alertTypes: ['Invalid stop order', 'Invalid GTT', 'No stop placed', 'No GTT placed'] },
+  F5: { page: 'dhanlive', tab: 'entry', label: 'Live Trading entry signals' }, S3: { page: 'dhanlive', tab: 'entry', label: 'Live Trading entry signals' }, S4: { page: 'dhanlive', tab: 'entry', label: 'Live Trading entry signals' },
+  S1: { page: 'dhanlive', tab: 'exit', label: 'Live Trading exits' }, S2: { page: 'dhanlive', tab: 'addon', label: 'Live Trading add-ons' },
+  I2: { page: 'dhanlive', tab: 'pos', label: 'Live Trading open positions' }, I3: { page: 'dhanlive', tab: 'pos', label: 'Live Trading open positions' },
+  C1: { page: 'dhanlive', tab: 'pos', label: 'Live Trading open positions' }, C2: { page: 'dhanlive', tab: 'pos', label: 'Live Trading open positions' },
+  O1: { page: 'dhanlive', tab: 'orders', label: 'Live Trading orders' }, O2: { page: 'dhanlive', tab: 'orders', label: 'Live Trading orders' }, O3: { page: 'dhanlive', tab: 'orders', label: 'Live Trading orders' }
+};
+function dhGuardGo(id) {
+  const g = GUARD_GO[id]; if (!g) return;
+  const btn = document.querySelector('.app-header .nav-tab[data-page="' + g.page + '"]'); if (!btn) return;
+  showPage(g.page, btn);
+  let tries = 0;
+  const step = () => {   // the page renders from the loaded snapshot; wait for its section to exist, then pick the tab
+    tries++;
+    if (g.page === 'covcall') {
+      const bar = document.getElementById('cc-alert-subs');
+      if (!bar && tries < 25) return setTimeout(step, 150);
+      try { ccTab('options'); ccOTab('alerts'); } catch (e) {}
+      if (bar) {
+        const have = [...bar.querySelectorAll('button')].map(b => b.dataset.k);
+        const pick = (g.alertTypes || []).find(t => have.includes(t)) || have[0];
+        if (pick) ccAlertSub(pick);
+        bar.scrollIntoView({ block: 'center', behavior: 'smooth' });
+      }
+    } else if (g.tab) {
+      if (typeof dhLiveTab === 'function') { try { dhLiveTab(g.tab); } catch (e) {} }
+      const t = document.getElementById('page-dhanlive'); if (t) t.scrollIntoView({ block: 'start', behavior: 'smooth' });
+    }
+  };
+  setTimeout(step, 150);
+}
 function dhGuardHtml(g, d, alerts) {
   // ONE status bar for the Dashboard: stale-data alerts + guardrail summary + refresh command; the guardrail table opens on click
   alerts = alerts || [];
@@ -9506,9 +9540,19 @@ function dhGuardHtml(g, d, alerts) {
   const SHORT = { F5: ['Price mismatch', 'Held back from orders'], I3: ['Log vs holdings differ', 'Holdings used'], S4: ['1-share buy above tier', 'Check cost'], P3: ['Option near/past strike', 'See Covered Call'],
     P5: ['Stop order problem', 'See Covered Call'], F1: ['Market data old', 'Refresh'], F2: ['Holdings old', 'Refresh'], F3: ['Signals older than holdings', 'Refresh'], F4: ['Order list old', 'Refresh'],
     C1: ['Over-deployed', 'Review'], C2: ['Too concentrated', 'Review'], C3: ['Pending buys too big', 'Review'], H1: ['Trading halted', 'Switch off halt to order'] };
-  const stocksOf = x => x.symbol ? x.symbol : (x.id === 'F5' ? (String(x.msg).split(': ').pop() || '—') : '—');
+  // a finding about the whole book has no single stock: show how many it covers instead of an empty cell (user, 2026-11-16)
+  const stocksOf = x => {
+    if (x.symbol) return x.symbol;
+    const m = String(x.msg || ''); let r;
+    if (x.id === 'F5') return m.split(': ').pop() || '—';
+    if (x.id === 'P3' && (r = / on (\d+) stocks?/.exec(m))) return r[1] + (r[1] === '1' ? ' stock' : ' stocks');
+    if (x.id === 'P5' && (r = /^(\d+) /.exec(m))) return r[1] + (r[1] === '1' ? ' finding' : ' findings');
+    if ((r = /^(\d+) (entries|orders|signals|positions|stocks)/.exec(m))) return r[1] + ' ' + r[2];
+    return '—';
+  };
   const all = bl.concat(wa), rows = all.slice(0, 40).map(x => { const s = SHORT[x.id] || [GUARD_TYPES[x.id] || 'Check ' + x.id, 'Review'], isB = x.level === 'BLOCK';
-    return `<tr title="${dhEsc(x.msg)}"><td><span class="${isB ? 'pnl-neg' : ''}" style="font-weight:700;${isB ? '' : 'color:var(--amber)'}">${isB ? 'Blocked' : 'Check'}</span></td><td><b>${dhEsc(stocksOf(x))}</b></td><td>${dhEsc(s[0])}</td><td>${dhEsc(isB ? 'No order for this stock' : s[1])}</td></tr>`; }).join('');
+    const go = GUARD_GO[x.id];
+    return `<tr title="${dhEsc(x.msg + (go ? ' — click to open ' + go.label : ''))}"${go ? ` style="cursor:pointer" onclick="dhGuardGo('${x.id}')"` : ''}><td><span class="${isB ? 'pnl-neg' : ''}" style="font-weight:700;${isB ? '' : 'color:var(--amber)'}">${isB ? 'Blocked' : 'Check'}</span></td><td><b>${dhEsc(stocksOf(x))}</b></td><td>${dhEsc(s[0])}</td><td>${dhEsc(isB ? 'No order for this stock' : s[1])}</td></tr>`; }).join('');
   const cmd = dhCopy().refreshCmd || '/refresh-dhan';
   const high = bl.length || stale || alerts.some(x => x.sev === 'high');
   const guardTxt = (stale ? 'Check older than signals · ' : '') + (g && g.global_block ? 'ALL ORDERS BLOCKED · ' : '')
@@ -9520,7 +9564,7 @@ function dhGuardHtml(g, d, alerts) {
   const cls = `dh-stale ${high ? 'high' : ''}`, box = 'padding:8px 14px;margin-bottom:10px';
   if (!all.length) return `<div class="${cls}" role="alert" style="${box}"><div style="${sumStyle}">${parts}${copy}</div></div>`;
   return `<details class="${cls}" style="${box}"><summary style="${sumStyle}">${parts}${copy}</summary>`
-    + `<div class="al-wrap"><table class="al-tbl" data-te="off"><thead><tr><th>Status</th><th>Stock</th><th>Issue</th><th>Action</th></tr></thead><tbody>${rows}</tbody></table></div>`
+    + `<div class="al-wrap"><table class="al-tbl" data-te="off"><thead><tr><th>Status</th><th>Stock / count</th><th>Issue</th><th>Action</th></tr></thead><tbody>${rows}</tbody></table></div>`
     + (all.length > 40 ? `<div class="dh-stale-act">+${all.length - 40} more</div>` : '') + '</details>';
 }
 function dhRenderStale(d) {
