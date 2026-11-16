@@ -10202,8 +10202,15 @@ function ccShortAlert0(r) {
     default: { const t = c.split(/[:;]/)[0]; return [t.length > 46 ? t.slice(0, 44) + '…' : t, a.length > 36 ? a.slice(0, 34) + '…' : a]; }
   }
 }
+// Supertrend colour per stock (set from the loaded covered-call data by ccAlertsBox) and the structure that colour wants: green = BPS, red = sell call (Supertrend only, no RSI)
+window._ccTrend = window._ccTrend || {};
+const ccTrendOf = sym => (window._ccTrend || {})[sym] || '';
+const ccTrendCell = r => { const c = ccTrendOf(r.symbol); return c ? `<span class="cc-dot ${c === 'green' ? 'g' : 'r'}" title="Supertrend ${dhEsc(c)}">●</span> ${c === 'green' ? 'Green' : 'Red'}` : '<span style="color:var(--text-muted)">—</span>'; };
+const ccRightPos = r => { const c = ccTrendOf(r.symbol); return c === 'green' ? 'Open BPS' : c === 'red' ? 'Sell call' : '—'; };
 const ccAlertCols = withType => (withType ? [{ h: 'Alert type', v: r => ccTypeOrd(r), c: r => ccTypePill(r) }] : []).concat([
   { h: 'Stock', v: r => r.symbol, c: r => `<b class="stk">${dhEsc(r.symbol)}</b>` },
+  { h: 'Trend', v: r => ccTrendOf(r.symbol), c: ccTrendCell, txt: true },
+  { h: 'Right position', v: r => ccRightPos(r), c: r => { const p = ccRightPos(r); return p === '—' ? '<span style="color:var(--text-muted)">—</span>' : `<b title="The structure the Supertrend colour wants: green = bull put spread, red = sell call">${p}</b>`; }, txt: true },
   { h: 'Leg', v: r => r.strike == null ? '' : r.strike, c: r => r.strike == null ? '—' : ccStrike(r.strike) + ' ' + (r.opt_type || '') },
   { h: 'Expiry', v: r => r.expiry || '', c: r => r.expiry ? dhFmtDate(r.expiry) : '—' },
   { h: 'Issue', v: r => ccShortAlert(r)[0], c: r => `<span title="${dhEsc(r.concern || ccAlertDetail(r) || '')}">${dhEsc(ccShortAlert(r)[0])}</span>`, txt: true },
@@ -10213,6 +10220,7 @@ const ccAlertCols = withType => (withType ? [{ h: 'Alert type', v: r => ccTypeOr
 window._ccAlertSub = window._ccAlertSub || null;
 function ccAlertSub(k) { window._ccAlertSub = k; document.querySelectorAll('#cc-alert-subs button').forEach(b => b.classList.toggle('active', b.dataset.k === k)); document.querySelectorAll('.cc-asub').forEach(v => { v.style.display = v.dataset.k === k ? '' : 'none'; }); }
 function ccAlertsBox(d, pfx, hint) {
+  window._ccTrend = Object.fromEntries((d.stocks || []).filter(s => s.colour).map(s => [s.symbol, s.colour]));   // this broker's Supertrend colours for the Trend / Right position columns
   const rows = (d.alerts || []).slice().sort(ccAlertSort);
   if (!rows.length) return `<div class="d2-panel"><div class="d2-panel-head"><div><div class="d2-title">Alerts</div></div></div><div class="d2-edge-foot" style="border:0">No alerts on the open option legs.</div></div>`;
   const types = CC_TYPE_ORDER.filter(t => rows.some(r => r.type === t));
