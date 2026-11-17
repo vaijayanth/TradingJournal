@@ -45,3 +45,5 @@ Plain: scanned / cancelled / modified / placed / failed (with the verbatim error
 
 ## Next-step nudge (user, 2026-11-16)
 When done, say what is left on tonight's checklist and the next command: close any flagged leg in the Dhan app, `/dhan-order` if it has not been run tonight, and tomorrow's `/refresh-dhan`. If the refresh checklist is not in this conversation, run `python scripts/action_items.py` to rebuild it.
+
+**Format (user, 2026-11-17):** end with two separate parts: **A. Run a skill (I take the action)** - the exact next command(s); **B. Manual steps (only you, in the broker app)** - the legs to close or decide. Never mix them.

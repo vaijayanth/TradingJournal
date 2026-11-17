@@ -94,3 +94,5 @@ Plain: placed (as AMO) / status / still pending / failed (verbatim error). Never
 
 ## Next-step nudge (user, 2026-11-16)
 When the last group is done, do not stop at the summary: say what is left on tonight's checklist and the exact next command: close the flagged option legs in the Dhan app, then `/dhan-superorder` (clean-up, new options), and tomorrow's `/refresh-dhan`. If the refresh checklist is not in this conversation, run `python scripts/action_items.py` to rebuild it.
+
+**Format (user, 2026-11-17):** end with two separate parts: **A. Run a skill (I take the action)** - the exact next command(s); **B. Manual steps (only you, in the broker app)** - the legs to close or decide. Never mix them.

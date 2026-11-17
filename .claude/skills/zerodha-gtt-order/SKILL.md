@@ -40,3 +40,5 @@ Plain: scanned / placed / deleted / modified / failed (with the verbatim error).
 
 ## Next-step nudge (user, 2026-11-16)
 When done, say what is left on tonight's checklist and the next command: close any leg still past its 3x stop in Kite, `/zerodha-option-entry-signal` then `/zerodha-option-order` for new option trades, and tomorrow's `/refresh-zerodha`. If the refresh checklist is not in this conversation, run `python scripts/action_items.py` to rebuild it.
+
+**Format (user, 2026-11-17):** end with two separate parts: **A. Run a skill (I take the action)** - the exact next command(s); **B. Manual steps (only you, in the broker app)** - the legs to close or decide. Never mix them.
