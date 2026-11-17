@@ -1,33 +1,20 @@
 {
- "fetched_at": "2026-11-14T00:41:53+05:30",
- "gtts_fetched_at": "2026-11-14T00:41:52+05:30",
- "checked": 71,
+ "fetched_at": "2026-11-17T10:48:51+05:30",
+ "gtts_fetched_at": "2026-11-17T10:48:19+05:30",
+ "checked": 63,
  "findings": [
-  {
-   "check": "G5",
-   "name": "TRIGGER",
-   "severity": "WARN",
-   "tradingsymbol": "BANKINDIA26NOV160CE",
-   "gtt_id": 344781626,
-   "symbol": "BANKINDIA",
-   "expiry": "2026-11-23",
-   "strike": 160.0,
-   "opt_type": "CE",
-   "concern": "Stop limit 0 is below its trigger 1.63: it may not fill",
-   "action": "Raise the limit above the trigger"
-  },
   {
    "check": "G6",
    "name": "OFF-RULE",
    "severity": "WARN",
-   "tradingsymbol": "BRITANNIA26NOV5000CE",
-   "gtt_id": 343664213,
-   "symbol": "BRITANNIA",
+   "tradingsymbol": "HINDPETRO26NOV360PE",
+   "gtt_id": 343695983,
+   "symbol": "HINDPETRO",
    "expiry": "2026-11-23",
-   "strike": 5000.0,
-   "opt_type": "CE",
-   "concern": "Stop is 2.0x the sold price (rule 3x)",
-   "action": "Re-set to 56.40"
+   "strike": 360.0,
+   "opt_type": "PE",
+   "concern": "Stop is 8.6x the sold price (rule 3x)",
+   "action": "Re-set to 3.15"
   }
  ]
 }
