@@ -1,38 +1,14 @@
 {
- "fetched_at": "2026-11-17T13:41:03+05:30",
+ "fetched_at": "2026-11-17T18:09:40+05:30",
  "stale_inputs": [],
- "open_legs": 20,
- "shorts": 11,
+ "open_legs": 21,
+ "shorts": 13,
  "super_orders": 13,
  "fired_cleanly": [
   "BANKINDIA @ 0.88",
   "DIXON @ 200.55"
  ],
  "findings": [
-  {
-   "section": "A",
-   "severity": "WARN",
-   "symbol": "BANKINDIA",
-   "leg": "BANKINDIA 120PE 2026-11-23",
-   "concern": "Long 120PE (5200 qty) no short against it; P&L Rs-1,508, expiry 2026-11-23",
-   "action": "Sell it or let it expire"
-  },
-  {
-   "section": "A",
-   "severity": "WARN",
-   "symbol": "BANKINDIA",
-   "leg": "BANKINDIA 140PE 2026-11-23",
-   "concern": "Long 140PE (5200 qty) no short against it; P&L Rs-1,508, expiry 2026-11-23",
-   "action": "Sell it or let it expire"
-  },
-  {
-   "section": "A",
-   "severity": "WARN",
-   "symbol": "DIXON",
-   "leg": "DIXON 11000PE 2026-12-29",
-   "concern": "Long 11000PE (50 qty) no short against it; P&L Rs-3,125, expiry 2026-12-29",
-   "action": "Sell it or let it expire"
-  },
   {
    "section": "B",
    "severity": "HIGH",
@@ -72,6 +48,38 @@
    "leg": "SHRIRAMFIN 1120CE 2026-12-29",
    "concern": "Short 1120CE (825 qty) is a naked call (by design; covered by shares you hold)",
    "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "BANKINDIA",
+   "leg": "BANKINDIA 140PE 2026-12-29",
+   "concern": "No super order matches this short (10400 @ 1.05, premium 1.07)",
+   "action": "Close and re-enter as a super order, or place a daily stop order"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "DIXON",
+   "leg": "DIXON 11500PE 2026-12-29",
+   "concern": "No super order matches this short (50 @ 147.38, premium 28.33)",
+   "action": "Close and re-enter as a super order, or place a daily stop order"
+  },
+  {
+   "section": "F",
+   "severity": "WARN",
+   "symbol": "BANKINDIA",
+   "leg": "BANKINDIA 140PE 2026-12-29",
+   "concern": "S2 NO STOP: No super order matches this short (10400 @ 1.05): no stop protects it",
+   "action": "Close and re-enter as a super order, or use a daily stop order"
+  },
+  {
+   "section": "F",
+   "severity": "WARN",
+   "symbol": "DIXON",
+   "leg": "DIXON 11500PE 2026-12-29",
+   "concern": "S2 NO STOP: No super order matches this short (50 @ 147.38): no stop protects it",
+   "action": "Close and re-enter as a super order, or use a daily stop order"
   }
  ]
 }

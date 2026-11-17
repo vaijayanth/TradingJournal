@@ -1,6 +1,31 @@
 {
- "fetched_at": "2026-11-17T13:40:24+05:30",
+ "fetched_at": "2026-11-17T18:09:15+05:30",
  "orders_checked": 13,
- "shorts": 11,
- "findings": []
+ "shorts": 13,
+ "findings": [
+  {
+   "check": "S2",
+   "name": "NO STOP",
+   "severity": "WARN",
+   "order_id": null,
+   "symbol": "BANKINDIA",
+   "expiry": "2026-12-29",
+   "strike": 140.0,
+   "opt_type": "PE",
+   "concern": "No super order matches this short (10400 @ 1.05): no stop protects it",
+   "action": "Close and re-enter as a super order, or use a daily stop order"
+  },
+  {
+   "check": "S2",
+   "name": "NO STOP",
+   "severity": "WARN",
+   "order_id": null,
+   "symbol": "DIXON",
+   "expiry": "2026-12-29",
+   "strike": 11500.0,
+   "opt_type": "PE",
+   "concern": "No super order matches this short (50 @ 147.38): no stop protects it",
+   "action": "Close and re-enter as a super order, or use a daily stop order"
+  }
+ ]
 }
