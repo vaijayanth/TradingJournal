@@ -1,9 +1,9 @@
 {
- "fetched_at": "2026-11-17T18:09:40+05:30",
+ "fetched_at": "2026-11-17T18:30:02+05:30",
  "stale_inputs": [],
  "open_legs": 21,
  "shorts": 13,
- "super_orders": 13,
+ "super_orders": 15,
  "fired_cleanly": [
   "BANKINDIA @ 0.88",
   "DIXON @ 200.55"
@@ -50,36 +50,20 @@
    "action": "Watch the 3x stop and the Supertrend colour"
   },
   {
-   "section": "C",
-   "severity": "WARN",
-   "symbol": "BANKINDIA",
-   "leg": "BANKINDIA 140PE 2026-12-29",
-   "concern": "No super order matches this short (10400 @ 1.05, premium 1.07)",
-   "action": "Close and re-enter as a super order, or place a daily stop order"
-  },
-  {
-   "section": "C",
+   "section": "E",
    "severity": "WARN",
    "symbol": "DIXON",
    "leg": "DIXON 11500PE 2026-12-29",
-   "concern": "No super order matches this short (50 @ 147.38, premium 28.33)",
-   "action": "Close and re-enter as a super order, or place a daily stop order"
-  },
-  {
-   "section": "F",
-   "severity": "WARN",
-   "symbol": "BANKINDIA",
-   "leg": "BANKINDIA 140PE 2026-12-29",
-   "concern": "S2 NO STOP: No super order matches this short (10400 @ 1.05): no stop protects it",
-   "action": "Close and re-enter as a super order, or use a daily stop order"
+   "concern": "Premium 28.33 is at or below the target price 37.7 (order 2132611173030773) but the target is still PENDING",
+   "action": "Book the profit or check the order"
   },
   {
    "section": "F",
    "severity": "WARN",
    "symbol": "DIXON",
    "leg": "DIXON 11500PE 2026-12-29",
-   "concern": "S2 NO STOP: No super order matches this short (50 @ 147.38): no stop protects it",
-   "action": "Close and re-enter as a super order, or use a daily stop order"
+   "concern": "S3 OFF-RULE: Stop 282.6 is 1.9x the sold 147.38 (rule 3x) (order 2132611173030773)",
+   "action": "Move the stop leg to 442.14"
   }
  ]
 }
