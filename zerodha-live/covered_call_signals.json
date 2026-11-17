@@ -1,9 +1,9 @@
 {
- "generated_at": "2026-11-17T13:04:11.817363+00:00",
+ "generated_at": "2026-11-17T13:18:01.120662+00:00",
  "market_data_date": "2026-11-17",
  "live_prices_at": "2026-11-17T18:34:06+05:30",
- "gtt_scan_at": "2026-11-17T18:33:44+05:30",
- "gtt_checked_at": "2026-11-17T18:33:44+05:30",
+ "gtt_scan_at": "2026-11-17T18:48:00+05:30",
+ "gtt_checked_at": "2026-11-17T18:48:00+05:30",
  "rules": {
   "short_call_delta": 0.1,
   "short_put_delta": 0.1,
@@ -8370,17 +8370,6 @@
   },
   {
    "level": "BREACH",
-   "type": "Invalid GTT",
-   "symbol": "RADICO",
-   "expiry": "2026-11-23",
-   "strike": 4100.0,
-   "opt_type": "PE",
-   "concern": "Stale: No open position on this contract (closed or expired): if it triggers it BUYS a new long position",
-   "action": "Delete this GTT (GTT 343705258)",
-   "text": "RADICO RADICO26NOV4100PE: No open position on this contract (closed or expired): if it triggers it BUYS a new long position"
-  },
-  {
-   "level": "BREACH",
    "type": "Event close",
    "symbol": "NAUKRI",
    "expiry": "2026-12-29",
@@ -8689,7 +8678,7 @@
   "RECLTD"
  ],
  "positions": {
-  "fetched_at": "2026-11-17T13:03:44.126056+00:00",
+  "fetched_at": "2026-11-17T13:17:32.906064+00:00",
   "track_from": "2026-11-01",
   "legs": 63,
   "ignored_legs": 16
