@@ -1,12 +1,12 @@
 {
- "generated_at": "2026-11-16T18:38:27+05:30",
+ "generated_at": "2026-11-17T13:41:33+05:30",
  "broker": "dhan",
  "market_data_date": "2026-11-16",
- "signals_generated_at": "2026-11-16T13:08:24.866361+00:00",
- "status": "WARN",
- "global_block": false,
+ "signals_generated_at": "2026-11-17T08:10:41.309155+00:00",
+ "status": "BLOCK",
+ "global_block": true,
  "counts": {
-  "block": 0,
+  "block": 1,
   "warn": 4,
   "info": 0
  },
@@ -14,21 +14,27 @@
  "findings": [
   {
    "id": "F5",
-   "level": "WARN",
+   "level": "BLOCK",
    "symbol": null,
-   "msg": "the cross-check flagged 2 of 13 signals (advisory only, the backtester signal stands and they are not blocked): BHARTIARTL, PRIZOR"
+   "msg": "the cross-check disagrees with 4 of 5 signals - prices are suspect (a partial same-day bar while the market is open, a hole in the price history, or a bad feed). Do not order until the close-of-day data is published and the refresh re-run."
   },
   {
-   "id": "I8",
+   "id": "I3",
    "level": "WARN",
    "symbol": "PASHUPATI",
-   "msg": "PASHUPATI: a 2.5-for-1 split / bonus on 2026-11-13 came after 1 of your fill(s) and is not recorded in data/corporate_actions.json, so this stock's cost, quantity and P&L can be wrong (a fake gain or loss)"
+   "msg": "PASHUPATI: trade log says 13.5, Dhan holdings say 13. Holdings are used; it usually clears after the next refresh (a recent sale or buy not yet settled)."
+  },
+  {
+   "id": "I3",
+   "level": "WARN",
+   "symbol": "MATRIMONY",
+   "msg": "MATRIMONY: trade log says 0, Dhan holdings say 1. Holdings are used; it usually clears after the next refresh (a recent sale or buy not yet settled)."
   },
   {
    "id": "I3",
    "level": "WARN",
    "symbol": null,
-   "msg": "18 stocks were bought in the last 3 days and are not in Dhan holdings yet (settlement timing); positions and P&L exclude them until holdings catch up: ALICON (0->1), AMANTA (0->4), ASAHIINDIA (0->1), NAZARA (0->2), STYLEBAAZA (0->2), APOLLO (0->2), DCBBANK (0->4), ESAFSFB (0->21), MMFL (0->1), NILKAMAL (0->1), PAYTM (0->1), SANSERA (0->1) ..."
+   "msg": "8 stocks were bought in the last 3 days and are not in Dhan holdings yet (settlement timing); positions and P&L exclude them until holdings catch up: SHREEPUSHK (1->2), BHARTIARTL (0->1), UNIONBANK (0->9), HINDOILEXP (0->9), RKFORGE (0->2), LICHSGFIN (0->3), ABDL (0->2), SANATHAN (0->3)"
   },
   {
    "id": "P3",
