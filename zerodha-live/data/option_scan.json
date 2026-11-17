@@ -1,35 +1,63 @@
 {
  "fired_ok_today": [
-  "LAURUSLABS26NOV2100PE",
-  "DRREDDY26NOV1450CE",
-  "LAURUSLABS26NOV2220PE",
-  "BIOCON26NOV385CE",
-  "BOSCHLTD26NOV51500CE",
-  "IRFC26NOV74PE",
-  "NAUKRI26NOV1280CE",
-  "BHARTIARTL26DEC2280CE",
-  "RECLTD26NOV310CE",
-  "ADANIGREEN26NOV1600CE",
-  "LAURUSLABS26NOV2200PE",
-  "BANKINDIA26NOV160CE"
+  "ANGELONE26NOV325PE",
+  "ANGELONE26NOV370CE",
+  "HDFCBANK26NOV800PE",
+  "CHOLAFIN26NOV1740PE",
+  "HEROMOTOCO26NOV5650CE",
+  "MAHABANK26NOV88PE",
+  "ADANIENSOL26NOV1320PE",
+  "ABB26NOV7800CE"
  ],
- "fetched_at": "2026-11-16T18:41:06+05:30",
+ "fetched_at": "2026-11-17T10:54:06+05:30",
  "inputs": {
-  "positions": "2026-11-16T13:10:57.855234+00:00",
-  "gtts": "2026-11-16T18:40:57+05:30",
-  "orders": "2026-11-16T18:40:57+05:30",
-  "gtt_scan": "2026-11-16T18:40:57+05:30"
+  "positions": "2026-11-17T05:23:54.059597+00:00",
+  "gtts": "2026-11-17T10:53:54+05:30",
+  "orders": "2026-11-17T10:53:54+05:30",
+  "gtt_scan": "2026-11-17T10:53:54+05:30"
  },
  "stale_inputs": [],
- "open_legs": 120,
- "triggered_gtts": 12,
+ "open_legs": 112,
+ "triggered_gtts": 8,
  "findings": [
+  {
+   "section": "A",
+   "severity": "WARN",
+   "symbol": "ADANIENSOL",
+   "tradingsymbol": "ADANIENSOL26NOV1100PE",
+   "concern": "Long 1100PE (675 qty) no short against it; P&L Rs-4,522, expiry 2026-11-23",
+   "action": "Sell it or let it expire"
+  },
+  {
+   "section": "A",
+   "severity": "WARN",
+   "symbol": "ANGELONE",
+   "tradingsymbol": "ANGELONE26NOV250PE",
+   "concern": "Long 250PE (2500 qty) no short against it; P&L Rs-7,125, expiry 2026-11-23",
+   "action": "Sell it or let it expire"
+  },
   {
    "section": "A",
    "severity": "WARN",
    "symbol": "AUBANK",
    "tradingsymbol": "AUBANK26NOV790PE",
-   "concern": "Long 790PE (500 qty) no short against it; P&L Rs-4,300, expiry 2026-11-23",
+   "concern": "Long 790PE (500 qty) no short against it; P&L Rs-2,200, expiry 2026-11-23",
+   "action": "Sell it or let it expire"
+  },
+  {
+   "section": "A",
+   "severity": "WARN",
+   "symbol": "CHOLAFIN",
+   "tradingsymbol": "CHOLAFIN26NOV1460PE",
+   "concern": "Long 1460PE (625 qty) no short against it; P&L Rs-3,594, expiry 2026-11-23",
+   "action": "Sell it or let it expire"
+  },
+  {
+   "section": "A",
+   "severity": "WARN",
+   "symbol": "HDFCBANK",
+   "tradingsymbol": "HDFCBANK26NOV770PE",
+   "concern": "Long 770PE (650 qty) no short against it; P&L Rs-9,685, expiry 2026-11-23",
    "action": "Sell it or let it expire"
   },
   {
@@ -37,7 +65,15 @@
    "severity": "WARN",
    "symbol": "LAURUSLABS",
    "tradingsymbol": "LAURUSLABS26NOV1720PE",
-   "concern": "Long 1720PE (850 qty) no short against it; P&L Rs-8,798, expiry 2026-11-23",
+   "concern": "Long 1720PE (850 qty) no short against it; P&L Rs-9,222, expiry 2026-11-23",
+   "action": "Sell it or let it expire"
+  },
+  {
+   "section": "A",
+   "severity": "WARN",
+   "symbol": "MAHABANK",
+   "tradingsymbol": "MAHABANK26NOV77PE",
+   "concern": "Long 77PE (6500 qty) no short against it; P&L Rs-2,470, expiry 2026-11-23",
    "action": "Sell it or let it expire"
   },
   {
@@ -45,7 +81,7 @@
    "severity": "WARN",
    "symbol": "RECLTD",
    "tradingsymbol": "RECLTD26NOV300CE",
-   "concern": "Long 300CE (1575 qty) no short against it; P&L Rs-7,639, expiry 2026-11-23",
+   "concern": "Long 300CE (1575 qty) no short against it; P&L Rs-7,402, expiry 2026-11-23",
    "action": "Sell it or let it expire"
   },
   {
@@ -59,25 +95,9 @@
   {
    "section": "B",
    "severity": "INFO",
-   "symbol": "ABB",
-   "tradingsymbol": "ABB26NOV7800CE",
-   "concern": "Short 7800CE (125 qty) is a naked call (by design; covered only by shares you hold)",
-   "action": "Watch the 3x stop and the Supertrend colour"
-  },
-  {
-   "section": "B",
-   "severity": "INFO",
    "symbol": "ADANIPOWER",
    "tradingsymbol": "ADANIPOWER26NOV220CE",
    "concern": "Short 220CE (3550 qty) is a naked call (by design; covered only by shares you hold)",
-   "action": "Watch the 3x stop and the Supertrend colour"
-  },
-  {
-   "section": "B",
-   "severity": "INFO",
-   "symbol": "ANGELONE",
-   "tradingsymbol": "ANGELONE26NOV370CE",
-   "concern": "Short 370CE (2500 qty) is a naked call (by design; covered only by shares you hold)",
    "action": "Watch the 3x stop and the Supertrend colour"
   },
   {
@@ -182,14 +202,6 @@
    "symbol": "HDFCBANK",
    "tradingsymbol": "HDFCBANK26NOV760CE",
    "concern": "Short 760CE (650 qty) is a naked call (by design; covered only by shares you hold)",
-   "action": "Watch the 3x stop and the Supertrend colour"
-  },
-  {
-   "section": "B",
-   "severity": "INFO",
-   "symbol": "HEROMOTOCO",
-   "tradingsymbol": "HEROMOTOCO26NOV5650CE",
-   "concern": "Short 5650CE (150 qty) is a naked call (by design; covered only by shares you hold)",
    "action": "Watch the 3x stop and the Supertrend colour"
   },
   {
@@ -365,7 +377,7 @@
    "severity": "HIGH",
    "symbol": "DIVISLAB",
    "tradingsymbol": "DIVISLAB26NOV10600CE",
-   "concern": "No active buy-back GTT (premium 512, sold 116.95, already 4.4x: a GTT would fire at once)",
+   "concern": "No active buy-back GTT (premium 507.6, sold 116.95, already 4.3x: a GTT would fire at once)",
    "action": "Close it now (a GTT would fire at once)"
   },
   {
@@ -373,7 +385,7 @@
    "severity": "HIGH",
    "symbol": "HDFCBANK",
    "tradingsymbol": "HDFCBANK26NOV760CE",
-   "concern": "No active buy-back GTT (premium 54.85, sold 2.8, already 19.6x: a GTT would fire at once)",
+   "concern": "No active buy-back GTT (premium 57.6, sold 2.8, already 20.6x: a GTT would fire at once)",
    "action": "Close it now (a GTT would fire at once)"
   },
   {
@@ -381,7 +393,7 @@
    "severity": "HIGH",
    "symbol": "HINDPETRO",
    "tradingsymbol": "HINDPETRO26NOV380CE",
-   "concern": "No active buy-back GTT (premium 9.1, sold 1.3, already 7.0x: a GTT would fire at once)",
+   "concern": "No active buy-back GTT (premium 13.55, sold 1.3, already 10.4x: a GTT would fire at once)",
    "action": "Close it now (a GTT would fire at once)"
   },
   {
@@ -397,8 +409,16 @@
    "severity": "HIGH",
    "symbol": "NAM-INDIA",
    "tradingsymbol": "NAM-INDIA26NOV1100CE",
-   "concern": "No active buy-back GTT (premium 12.35, sold 3.85, already 3.2x: a GTT would fire at once)",
+   "concern": "No active buy-back GTT (premium 37.7, sold 3.85, already 9.8x: a GTT would fire at once)",
    "action": "Close it now (a GTT would fire at once)"
+  },
+  {
+   "section": "F",
+   "severity": "WARN",
+   "symbol": "HINDPETRO",
+   "tradingsymbol": "HINDPETRO26NOV360PE",
+   "concern": "G6 OFF-RULE: Stop is 8.6x the sold price (rule 3x) (GTT 343695983)",
+   "action": "Re-set to 3.15"
   }
  ]
 }
