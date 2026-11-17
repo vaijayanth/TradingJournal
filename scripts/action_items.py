@@ -112,7 +112,7 @@ def broker(folder, name, cmd, order_cmd, orders_label):
     sh_e, sh_x = len(sh.get("entries", [])), len(sh.get("exits", []))
     sh_a = sum(1 for x in sh.get("rows", []) if x.get("avg_status") == "ADD")
     if sh_e or sh_x or sh_a:
-        r["skill"].append(f"{order_cmd} (share stages): {sh_x} exits, {sh_e} entries, {sh_a} averaging due")
+        r["skill"].append(f"{order_cmd} (investment-share stages): {sh_x} exits, {sh_e} entries, {sh_a} averaging due")
     gtt_missing = [f for f in scan.get("findings", []) if f.get("section") == "C" and f.get("severity") == "WARN"]
     gtt_hyg = [f for f in scan.get("findings", []) if f.get("section") == "F"]
     if gtt_missing or gtt_hyg:

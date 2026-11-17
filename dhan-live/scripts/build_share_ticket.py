@@ -166,7 +166,7 @@ def main():
         for pr in check_caps(tickets, (dh_sig.get("capital_base") or {}).get("initial_capital"), gate_cfg, args.allow_big_batch):
             print("  BATCH CAP OVERRIDDEN by the user: " + pr)
     label = "selected" if args.pick else "available"
-    print(f"SHARE {args.kind.upper()} - investment portfolio, data {md} ({age}d old) - {len(tickets)} {label}" + ("" if args.pick else " (numbered):"))
+    print(f"INVESTMENT-SHARE {args.kind.upper()} - investment portfolio, data {md} ({age}d old) - {len(tickets)} {label}" + ("" if args.pick else " (numbered):"))
     for c in tickets:
         q = f"x{c['qty']}" if c["qty"] is not None else "x?"
         v = f"~Rs{c['est_value']}" if c.get("est_value") is not None else ""
