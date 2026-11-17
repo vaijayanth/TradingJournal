@@ -1,0 +1,14 @@
+{
+  "hooks": {
+    "SessionStart": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "B=claude/beautiful-hamilton-fwa55n; git fetch -q origin $B 2>/dev/null; if [ -z \"$(git status --porcelain)\" ]; then git checkout -q -B $B origin/$B 2>/dev/null && echo \"On default branch $B (vaijayanth/TradingJournal)\"; else echo \"Uncommitted changes: stayed on $(git branch --show-current), not $B\"; fi"
+          }
+        ]
+      }
+    ]
+  }
+}
