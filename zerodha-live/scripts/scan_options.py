@@ -4,13 +4,14 @@ Usage: python zerodha-live/scripts/scan_options.py [--json] [--all]   (--all als
 Needs, from the SAME day (the script says so when one is stale):
   data/cc_positions.json (cc_positions.py)   data/cc_gtts.json (cc_gtts.py: active + triggered GTTs)   data/cc_orders_today.json (cc_orders.py)
   data/gtt_scan.json (scan_gtts.py)          data/cc_config.json
-Sections (A-F):
+Sections (A-G):
   A  ORPHANED LONG       a long (bought) leg that hedges no short: same stock / expiry / type, protective side (put: below the short, call: above it)
   B  UNHEDGED SHORT PUT  a short put with no long put below it (a bull put spread is the user's put structure). Short CALLS are naked by design: listed as INFO
   C  NO ACTIVE STOP GTT  a short leg with no active buy-back GTT on its contract
   D  GTT FIRED, NOT FIXED a GTT that triggered but the position is still open / its buy-back order was rejected, cancelled or is unfilled / no order is found
   E  TRIGGER PASSED      a short leg whose premium is already at or above its active GTT's stop trigger (or at / below the profit trigger) but the GTT is still active
   F  GTT HYGIENE         stale / wrong-side / wrong-quantity / duplicate / off-rule GTTs from scan_gtts.py (G1-G7)
+  G  NO PROFIT TARGET    a short whose active GTT has only a stop trigger (single / trailing GTT), no profit (lower) trigger; suggests the target at the profit_exit_decay_pct rule
 Writes data/option_scan.json {fetched_at, inputs, findings[{section, severity, symbol, tradingsymbol, concern, action}]}.
 """
 import json
@@ -25,7 +26,7 @@ if "--data-dir" in sys.argv:   # used by test_scan_options.py
 IST = timezone(timedelta(hours=5, minutes=30))
 RX = re.compile(r"^(.+?)(\d\d)([A-Z]{3})(\d+(?:\.\d+)?)(CE|PE)$")
 TITLES = {"A": "ORPHANED LONG (bought leg that hedges nothing)", "B": "UNHEDGED SHORT PUT / NAKED CALL", "C": "SHORT WITH NO ACTIVE STOP GTT", "D": "GTT FIRED BUT NOT FIXED",
-          "E": "TRIGGER ALREADY PASSED, GTT STILL ACTIVE", "F": "GTT HYGIENE (stale / wrong / off-rule)"}
+          "E": "TRIGGER ALREADY PASSED, GTT STILL ACTIVE", "F": "GTT HYGIENE (stale / wrong / off-rule)", "G": "STOP GTT BUT NO PROFIT TARGET"}
 
 
 def load(n, default=None):
@@ -141,6 +142,21 @@ def main():
         elif lo is not None and s["ltp"] <= lo:
             add("E", "WARN", t, t, f"Premium {s['ltp']:g} is at or below the profit trigger {lo:g} (GTT {g['id']}) but it is still ACTIVE", "Book the profit or check the GTT")
 
+    # G: a short with active GTT(s) but no profit target (user, 2026-11-17, same check as ND): a two-leg GTT has a lower (profit) and an upper (stop) trigger;
+    # a single or trailing GTT has only the stop. The Zerodha tool cannot create trailing GTTs, so the fix is a two-leg GTT (zerodha-gtt-order) or the Kite app.
+    decay = cfg.get("rules", {}).get("profit_exit_decay_pct", 60) if isinstance(cfg, dict) else 60
+    by_contract = {}
+    for g in gtt_d.get("gtts", []):
+        if any(o["side"] == "BUY" for o in g["orders"]):
+            by_contract.setdefault(g["tradingsymbol"], []).append(g)
+    for t, gs in by_contract.items():
+        s = open_short.get(t)
+        if s and all(len(g.get("triggers") or []) < 2 for g in gs) and gs:
+            want = round(s["avg"] * (1 - decay / 100), 2)
+            kinds = ", ".join(sorted({str(g.get("type")) for g in gs}))
+            add("G", "WARN", s["symbol"], t, f"Active GTT {gs[0]['id']} ({kinds}) has a stop but no profit target; sold {s['avg']:g}, premium {s['ltp']:g}",
+                f"Add a profit target at about {want:g} (a two-leg GTT: /zerodha-gtt-order or the Kite app)")
+
     # F: GTT hygiene findings
     for f in (scan_d or {}).get("findings", []):
         add("F", f["severity"], f["symbol"], f["tradingsymbol"], f"{f['check']} {f['name']}: {f['concern']} (GTT {f['gtt_id']})", f["action"])
@@ -157,7 +173,7 @@ def main():
     print(f"Option position scan: {len(legs)} open legs, {sum(1 for l in legs if l['side'] == 'SHORT')} short, {sum(1 for l in legs if l['side'] == 'LONG')} long; {len(gtt_d.get('triggered', []))} fired GTTs in the list.")
     for s in stale:
         print(f"  !! STALE INPUT - {s}")
-    for sec in "ABCDEF":
+    for sec in "ABCDEFG":
         rows = [f for f in findings if f["section"] == sec]
         high = sum(1 for f in rows if f["severity"] == "HIGH")
         info = [f for f in rows if f["severity"] == "INFO"]

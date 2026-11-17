@@ -16,6 +16,9 @@ Run from the repo root of TradingJournal on branch `claude/beautiful-hamilton-fw
 - Add: Supertrend green and the position down 6% or more (P&L <= -6%, same as ND) -> 1/10 of the current quantity (min 1), once every 7 days.
 - Fixed capital base Rs 30,00,000. Closed-trade P&L is gross of charges.
 
+## Naming (user, 2026-11-17)
+AZ trades one kind of stock: **swing shares** (the Nifty F&O Supertrend stocks). Say "swing-share exits / add-ons / entries" (the Dhan side also has "investment shares", the 10 covered-call stocks: that kind does not exist on AZ). Options are always called options, never "shares".
+
 ## Scope (user, 2026-11-09)
 - The dashboard's open positions are ONLY the stocks in `data/moved_from_sheet.json` plus positions opened through it later (`zerodha_trades.py buy --entry`). All other Zerodha holdings are ignored, but any holding still blocks a new entry in that stock. `data/excluded_symbols.json` (BSE, BEL, RECLTD) is excluded entirely. The sheet's closed trades are not part of this dashboard.
 - When the user moves more trades from the sheet, add the symbols to `moved_from_sheet.json` (and tell them to delete the rows from the sheet); never re-run `freeze_baseline.py`.

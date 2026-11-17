@@ -10,6 +10,9 @@ disable-model-invocation: true
 
 This skill places REAL orders on the user's Zerodha account through the Zerodha MCP (`mcp__claude_ai_Zerodha_Mcp__*`). Signals are computed after the close and orders go in as AMO (after-market) orders for the NEXT trading day. It works in three **stages, in this order**: **1) EXITS** (SELL), **2) ADD-ONS** (BUY), **3) ENTRIES** (BUY). Each stage is listed, the user may exclude stocks, the user confirms, the orders are placed and VERIFIED, and only then does the next stage start. It is the AZ twin of `dhan-order`; ND and AZ share no code or data. Option GTTs are `zerodha-gtt-order`, not this skill.
 
+## Naming (user, 2026-11-17)
+AZ trades one kind of stock: **swing shares** (the Nifty F&O Supertrend stocks). Say "swing-share exits / add-ons / entries" (the Dhan side also has "investment shares", the 10 covered-call stocks: that kind does not exist on AZ). Options are always called options, never "shares".
+
 ## The AZ rules these orders come from (user, 2026-11-09)
 - Universe: Nifty F&O stocks (`zerodha-live/data/fno_universe.json`), minus `excluded_symbols.json` (BSE, BEL, RECLTD). Only the dashboard's own positions (the 21 moved from the old sheet plus positions opened through it) can have exit or add-on signals; other Zerodha holdings are never ticketed.
 - **EXIT:** Supertrend RED, any profit or loss, the WHOLE position (never partial). Grandfathered: a position already red at the baseline cut-off (2026-11-08) only gets an exit signal after a red flip AFTER that date; the engine decides, this skill never overrides it.

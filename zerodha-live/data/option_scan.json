@@ -11,7 +11,7 @@
   "ADANIENSOL26NOV1320PE",
   "ABB26NOV7800CE"
  ],
- "fetched_at": "2026-11-17T14:57:37+05:30",
+ "fetched_at": "2026-11-17T18:31:46+05:30",
  "inputs": {
   "positions": "2026-11-17T09:25:44.021274+00:00",
   "gtts": "2026-11-17T14:57:37+05:30",
@@ -309,6 +309,94 @@
    "tradingsymbol": "MAHABANK26NOV89CE",
    "concern": "No active buy-back GTT (premium 5.96, sold 0.32, already 18.6x: a GTT would fire at once)",
    "action": "Close it now (a GTT would fire at once)"
+  },
+  {
+   "section": "G",
+   "severity": "WARN",
+   "symbol": "APOLLOHOSP",
+   "tradingsymbol": "APOLLOHOSP26NOV9100CE",
+   "concern": "Active GTT 343048061 (trailing-single) has a stop but no profit target; sold 29.6, premium 14.95",
+   "action": "Add a profit target at about 11.84 (a two-leg GTT: /zerodha-gtt-order or the Kite app)"
+  },
+  {
+   "section": "G",
+   "severity": "WARN",
+   "symbol": "BEL",
+   "tradingsymbol": "BEL26NOV360PE",
+   "concern": "Active GTT 343633894 (trailing-single) has a stop but no profit target; sold 1.6, premium 0.15",
+   "action": "Add a profit target at about 0.64 (a two-leg GTT: /zerodha-gtt-order or the Kite app)"
+  },
+  {
+   "section": "G",
+   "severity": "WARN",
+   "symbol": "BPCL",
+   "tradingsymbol": "BPCL26NOV300PE",
+   "concern": "Active GTT 343668936 (trailing-single) has a stop but no profit target; sold 2.9, premium 1.6",
+   "action": "Add a profit target at about 1.16 (a two-leg GTT: /zerodha-gtt-order or the Kite app)"
+  },
+  {
+   "section": "G",
+   "severity": "WARN",
+   "symbol": "COCHINSHIP",
+   "tradingsymbol": "COCHINSHIP26NOV1120PE",
+   "concern": "Active GTT 344051339 (trailing-single) has a stop but no profit target; sold 7.95, premium 8.45",
+   "action": "Add a profit target at about 3.18 (a two-leg GTT: /zerodha-gtt-order or the Kite app)"
+  },
+  {
+   "section": "G",
+   "severity": "WARN",
+   "symbol": "CUMMINSIND",
+   "tradingsymbol": "CUMMINSIND26DEC5000CE",
+   "concern": "Active GTT 344015712 (trailing-single) has a stop but no profit target; sold 21.8, premium 11.45",
+   "action": "Add a profit target at about 8.72 (a two-leg GTT: /zerodha-gtt-order or the Kite app)"
+  },
+  {
+   "section": "G",
+   "severity": "WARN",
+   "symbol": "HINDZINC",
+   "tradingsymbol": "HINDZINC26NOV500PE",
+   "concern": "Active GTT 343262028 (trailing-single) has a stop but no profit target; sold 2.4, premium 0.65",
+   "action": "Add a profit target at about 0.96 (a two-leg GTT: /zerodha-gtt-order or the Kite app)"
+  },
+  {
+   "section": "G",
+   "severity": "WARN",
+   "symbol": "KARURVYSYA",
+   "tradingsymbol": "KARURVYSYA26NOV410CE",
+   "concern": "Active GTT 343750241 (trailing-single) has a stop but no profit target; sold 1.7, premium 2.25",
+   "action": "Add a profit target at about 0.68 (a two-leg GTT: /zerodha-gtt-order or the Kite app)"
+  },
+  {
+   "section": "G",
+   "severity": "WARN",
+   "symbol": "MOTILALOFS",
+   "tradingsymbol": "MOTILALOFS26NOV960PE",
+   "concern": "Active GTT 343700554 (trailing-single) has a stop but no profit target; sold 4.7, premium 0.6",
+   "action": "Add a profit target at about 1.88 (a two-leg GTT: /zerodha-gtt-order or the Kite app)"
+  },
+  {
+   "section": "G",
+   "severity": "WARN",
+   "symbol": "MUTHOOTFIN",
+   "tradingsymbol": "MUTHOOTFIN26NOV2650PE",
+   "concern": "Active GTT 343977413 (trailing-single) has a stop but no profit target; sold 11.7, premium 7.2",
+   "action": "Add a profit target at about 4.68 (a two-leg GTT: /zerodha-gtt-order or the Kite app)"
+  },
+  {
+   "section": "G",
+   "severity": "WARN",
+   "symbol": "RADICO",
+   "tradingsymbol": "RADICO26NOV4100PE",
+   "concern": "Active GTT 343705258 (single) has a stop but no profit target; sold 15.8, premium 2.1",
+   "action": "Add a profit target at about 6.32 (a two-leg GTT: /zerodha-gtt-order or the Kite app)"
+  },
+  {
+   "section": "G",
+   "severity": "WARN",
+   "symbol": "SUNPHARMA",
+   "tradingsymbol": "SUNPHARMA26DEC2100CE",
+   "concern": "Active GTT 344014614 (trailing-single) has a stop but no profit target; sold 12.15, premium 6.2",
+   "action": "Add a profit target at about 4.86 (a two-leg GTT: /zerodha-gtt-order or the Kite app)"
   }
  ]
 }
