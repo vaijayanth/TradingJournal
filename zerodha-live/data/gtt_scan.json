@@ -1,8 +1,21 @@
 {
- "fetched_at": "2026-11-17T10:53:54+05:30",
- "gtts_fetched_at": "2026-11-17T10:53:54+05:30",
- "checked": 63,
+ "fetched_at": "2026-11-17T13:36:28+05:30",
+ "gtts_fetched_at": "2026-11-17T13:36:28+05:30",
+ "checked": 44,
  "findings": [
+  {
+   "check": "G2",
+   "name": "WRONG SIDE",
+   "severity": "HIGH",
+   "tradingsymbol": "BHARTIARTL26NOV1980PE",
+   "gtt_id": 343638098,
+   "symbol": "BHARTIARTL",
+   "expiry": "2026-11-23",
+   "strike": 1980.0,
+   "opt_type": "PE",
+   "concern": "BUY GTT on a long (hedge) leg: it would add to the position",
+   "action": "Check it; delete if unintended"
+  },
   {
    "check": "G6",
    "name": "OFF-RULE",
@@ -15,6 +28,19 @@
    "opt_type": "PE",
    "concern": "Stop is 8.6x the sold price (rule 3x)",
    "action": "Re-set to 3.15"
+  },
+  {
+   "check": "G6",
+   "name": "OFF-RULE",
+   "severity": "WARN",
+   "tradingsymbol": "PERSISTENT26NOV6500CE",
+   "gtt_id": 340515021,
+   "symbol": "PERSISTENT",
+   "expiry": "2026-11-23",
+   "strike": 6500.0,
+   "opt_type": "CE",
+   "concern": "Stop is 2.0x the sold price (rule 3x)",
+   "action": "Re-set to 96.15"
   }
  ]
 }
