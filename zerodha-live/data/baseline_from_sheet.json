@@ -571,10 +571,8 @@
   "BRITANNIA": "2026-08-13",
   "CAMS": "2026-08-03",
   "CGPOWER": "2026-09-09",
-  "CHOLAFIN": "2026-08-03",
   "COLPAL": "2026-07-28",
   "CONCOR": "2026-07-28",
-  "EICHERMOT": "2026-07-28",
   "GODREJPROP": "2026-07-29",
   "GRASIM": "2026-08-07",
   "GVT&D": "2026-09-09",
@@ -623,10 +621,8 @@
   "BRITANNIA": "2026-08-13",
   "CAMS": "2026-08-03",
   "CGPOWER": "2026-09-09",
-  "CHOLAFIN": "2026-08-03",
   "COLPAL": "2026-07-28",
   "CONCOR": "2026-07-28",
-  "EICHERMOT": "2026-07-28",
   "GODREJPROP": "2026-07-29",
   "GRASIM": "2026-08-07",
   "GVT&D": "2026-09-09",
@@ -675,10 +671,8 @@
   "BRITANNIA": 4,
   "CAMS": 25,
   "CGPOWER": 28,
-  "CHOLAFIN": 11,
   "COLPAL": 9,
   "CONCOR": 40,
-  "EICHERMOT": 3,
   "GODREJPROP": 12,
   "GRASIM": 6,
   "GVT&D": 5,
@@ -714,7 +708,7 @@
   "RBLBANK": 59
  },
  "moved_out": {
-  "note": "The 21 trades the user moved to the new dashboard (19 on 2026-11-09, KALYANKJIL and MANKIND added 2026-11-09 evening) were removed from this baseline; their entry dates / quantities now live in moved_from_sheet.json. On 2026-11-16 six more (DLF, CDSL, BAJFINANCE, INDIGO, 360ONE, RADICO) were moved under the new rule: green and profitable (any size). On 2026-11-16 (evening) SBIN was moved too.",
+  "note": "The 21 trades the user moved to the new dashboard (19 on 2026-11-09, KALYANKJIL and MANKIND added 2026-11-09 evening) were removed from this baseline; their entry dates / quantities now live in moved_from_sheet.json. On 2026-11-16 six more (DLF, CDSL, BAJFINANCE, INDIGO, 360ONE, RADICO) were moved under the new rule: green and profitable (any size). On 2026-11-16 (evening) SBIN was moved too. On 2026-11-17 EICHERMOT and CHOLAFIN were moved too.",
   "symbols": [
    "ANANDRATHI",
    "ANGELONE",
@@ -743,7 +737,9 @@
    "INDIGO",
    "360ONE",
    "RADICO",
-   "SBIN"
+   "SBIN",
+   "EICHERMOT",
+   "CHOLAFIN"
   ],
   "removed_at": "2026-11-09"
  }

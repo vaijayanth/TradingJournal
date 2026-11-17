@@ -29,7 +29,9 @@
   "INDIGO",
   "360ONE",
   "RADICO",
-  "SBIN"
+  "SBIN",
+  "EICHERMOT",
+  "CHOLAFIN"
  ],
  "include_baseline_closed": false,
  "kept_on_sheet": {
@@ -63,7 +65,9 @@
   "INDIGO": "2026-08-06",
   "360ONE": "2026-08-04",
   "RADICO": "2026-08-13",
-  "SBIN": "2026-08-07"
+  "SBIN": "2026-08-07",
+  "EICHERMOT": "2026-07-28",
+  "CHOLAFIN": "2026-08-03"
  },
  "last_buy": {
   "ANANDRATHI": "2026-08-13",
@@ -93,7 +97,9 @@
   "INDIGO": "2026-08-06",
   "360ONE": "2026-08-04",
   "RADICO": "2026-08-13",
-  "SBIN": "2026-08-07"
+  "SBIN": "2026-08-07",
+  "EICHERMOT": "2026-07-28",
+  "CHOLAFIN": "2026-08-03"
  },
  "sheet_qty": {
   "ANANDRATHI": 9,
@@ -123,7 +129,9 @@
   "INDIGO": 4,
   "360ONE": 17,
   "RADICO": 4,
-  "SBIN": 19
+  "SBIN": 19,
+  "EICHERMOT": 3,
+  "CHOLAFIN": 11
  },
  "moved_batch_2": {
   "date": "2026-11-16",
@@ -143,5 +151,13 @@
    "SBIN"
   ],
   "rule": "user 2026-11-16: green and profitable (+0.1% at the 2026-11-16 close), in the F&O universe"
+ },
+ "moved_batch_4": {
+  "date": "2026-11-17",
+  "symbols": [
+   "EICHERMOT",
+   "CHOLAFIN"
+  ],
+  "rule": "user 2026-11-17: green and profitable (EICHERMOT +0.5%, CHOLAFIN +0.1% at the 2026-11-17 close), in the F&O universe"
  }
 }
