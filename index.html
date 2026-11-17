@@ -793,6 +793,11 @@ tbody tr:hover { filter: brightness(0.97); }
 .d2-filters { display:flex; gap:7px; flex-wrap:wrap; }
 .d2-chip { background:var(--surface2); border:1px solid var(--border); border-radius:6px; color:var(--text-secondary); padding:7px 11px; font:inherit; font-size:11px; }
 .d2-chip-soft { background:transparent; color:var(--text-muted); }
+.fr-wrap { display:inline-flex; flex-wrap:wrap; gap:6px; align-items:center; }
+.fr-pill { border:1px solid var(--border); border-radius:6px; padding:4px 10px; font-size:11.5px; line-height:1.35; background:var(--surface2); color:var(--text-secondary); cursor:help; }
+.fr-pill b { font-weight:600; color:var(--text-primary); margin-right:3px; }
+.fr-pill.ok { border-color:var(--green); } .fr-pill.ok::before { content:'●'; color:var(--green); margin-right:6px; font-size:9px; }
+.fr-pill.bad { border-color:var(--red); } .fr-pill.bad::before { content:'●'; color:var(--red); margin-right:6px; font-size:9px; }
 .d2-chip-btn { cursor:pointer; } .d2-chip-btn:hover { border-color:var(--accent); color:var(--accent); }
 .d2-kpis.d2-kpis6 { grid-template-columns:repeat(6,1fr); }
 .d2-kpis.d2-kpis7 { grid-template-columns:repeat(7,1fr); }
@@ -9617,11 +9622,38 @@ function wsFresh(meta, extra) {
     !hOk ? `Holdings were pulled before the ${dhFmtDate(exp)} close` : null, stale ? 'The market is open and the last refresh is over an hour old' : null].filter(Boolean);
   return { text: parts.join(' · ') + (stale ? ' · refresh overdue' : ''), tip: tip + String.fromCharCode(10) + (ok ? 'Up to date as of the last market close' : 'NOT up to date: ' + why.join('; ')), stale, ok };
 }
+// Two separate sources, shown as two labelled pills (user, 2026-11-17): (1) BROKER data = holdings, positions, orders and live option prices pulled from Dhan / Zerodha;
+// (2) BACKTESTER signals = the daily close prices, Supertrend and 52-week highs the backtester publishes after the market closes.
+function wsFreshParts(meta) {
+  const m = meta || {}, cc = WS.cc[WS.id] || null, live = (cc && cc.live_prices_at) || null, label = (WORKSPACES[WS.id] || {}).label || '';
+  const nowI = dhNowIst(), exp = dhExpectedSession(nowI), f = wsFresh(m);
+  const pulled = [m.fetchedAt, live].filter(x => x && !isNaN(new Date(x))).sort().pop() || null;
+  const mdOk = !!m.marketDate && m.marketDate >= exp;
+  const hOk = !m.fetchedAt || new Date(m.fetchedAt) >= new Date(exp + 'T15:30:00+05:30');
+  const bOk = hOk && !f.stale;
+  const broker = {
+    ok: bOk,
+    text: pulled ? `<b>${dhEsc(label)} broker data</b> pulled ${wsFmtT(pulled, true)} IST · ${wsAgo(pulled)}` : `<b>${dhEsc(label)} broker data</b> not pulled yet`,
+    tip: ['Holdings, positions, orders and live option prices from the broker (Dhan / Zerodha MCP).', m.fetchedAt ? 'Holdings pulled: ' + wsFmtT(m.fetchedAt, true) + ' IST' : null,
+      live ? 'Live option prices: ' + wsFmtT(live, true) + ' IST' : 'Live option prices: not pulled today',
+      bOk ? 'Up to date.' : (!hOk ? 'Holdings were pulled before the ' + dhFmtDate(exp) + ' close: run the refresh.' : 'The market is open and the last pull is over an hour old: run the refresh.')].filter(Boolean).join('\n')
+  };
+  const signals = {
+    ok: mdOk,
+    text: `<b>Backtester signals</b> ${m.marketDate ? dhFmtDate(m.marketDate) : 'date unknown'} close` + (m.sourceAt ? ` · published ${wsFmtT(m.sourceAt, true)} IST` : ''),
+    tip: ['Daily closes, Supertrend and 52-week highs from the backtester. They are built once the market has closed (about 16:00 to 20:00 IST) and never from a live price.',
+      'Close of: ' + (m.marketDate ? dhFmtDate(m.marketDate) : '?'), m.sourceAt ? 'Published: ' + wsFmtT(m.sourceAt, true) + ' IST' : null, m.computedAt ? 'Our signals computed from it: ' + wsFmtT(m.computedAt, true) + ' IST' : null,
+      mdOk ? 'Up to date: this is the latest published close.' : 'Behind: the latest close should be ' + dhFmtDate(exp) + '. The backtester has not published it yet (or the refresh has not picked it up).'].filter(Boolean).join('\n')
+  };
+  return { broker, signals, stale: f.stale, ok: f.ok };
+}
 function wsPaintFresh() {
   const d = WS.data && WS.data[WS.id]; if (!d || !d.meta) return;
-  const f = wsFresh(d.meta);
+  const p = wsFreshParts(d.meta);
+  const pill = x => `<span class="fr-pill ${x.ok ? 'ok' : 'bad'}" title="${dhEsc(x.tip)}">${x.text}</span>`;
   ['d2-asof', 'p2-asof', 'a2-asof', 'cc-asof', 'dh-live-asof'].forEach(id => { const el = document.getElementById(id); if (!el) return;
-    el.textContent = f.text; el.title = f.tip; el.style.color = f.ok ? 'var(--green)' : 'var(--red)'; el.style.borderColor = f.ok ? 'var(--green)' : 'var(--red)'; el.style.whiteSpace = 'normal'; });
+    el.innerHTML = '<span class="fr-wrap">' + pill(p.broker) + pill(p.signals) + '</span>'; el.removeAttribute('title');
+    el.style.border = 'none'; el.style.padding = '0'; el.style.background = 'transparent'; el.style.color = ''; el.style.whiteSpace = 'normal'; });
 }
 setInterval(() => { try { wsPaintFresh(); } catch (e) {} }, 60000);
 function dhStaleAlerts(d, ex) {
