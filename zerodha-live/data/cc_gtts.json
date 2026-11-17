@@ -1,5 +1,5 @@
 {
- "fetched_at": "2026-11-17T13:36:28+05:30",
+ "fetched_at": "2026-11-17T14:37:01+05:30",
  "active": {
   "ABB26NOV6000PE": [
    {
@@ -491,16 +491,6 @@
     "qty": 1975
    }
   ],
-  "BHARTIARTL26NOV1980PE": [
-   {
-    "id": 343638098,
-    "type": "trailing-single",
-    "trigger_values": [
-     10
-    ],
-    "qty": 475
-   }
-  ],
   "BEL26NOV360PE": [
    {
     "id": 343633894,
@@ -541,16 +531,6 @@
     "qty": 1225
    }
   ],
-  "SYRMA26NOV1320PE": [
-   {
-    "id": 343204833,
-    "type": "trailing-single",
-    "trigger_values": [
-     34
-    ],
-    "qty": 325
-   }
-  ],
   "SYRMA26NOV1720CE": [
    {
     "id": 343204703,
@@ -589,16 +569,6 @@
      72
     ],
     "qty": 125
-   }
-  ],
-  "TECHM26NOV1960CE": [
-   {
-    "id": 342126871,
-    "type": "trailing-single",
-    "trigger_values": [
-     14
-    ],
-    "qty": 600
    }
   ],
   "OFSS26NOV11000CE": [
@@ -1386,26 +1356,6 @@
    ]
   },
   {
-   "id": 343638098,
-   "type": "trailing-single",
-   "created_at": "2026-11-06T09:30:16+05:30",
-   "expires_at": "2026-11-24T00:00:00+05:30",
-   "tradingsymbol": "BHARTIARTL26NOV1980PE",
-   "last_price": 5.05,
-   "triggers": [
-    10
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 475,
-     "price": 11,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
    "id": 343633894,
    "type": "trailing-single",
    "created_at": "2026-11-06T09:25:41+05:30",
@@ -1486,26 +1436,6 @@
    ]
   },
   {
-   "id": 343204833,
-   "type": "trailing-single",
-   "created_at": "2026-11-04T09:52:03+05:30",
-   "expires_at": "2026-11-24T00:00:00+05:30",
-   "tradingsymbol": "SYRMA26NOV1320PE",
-   "last_price": 15,
-   "triggers": [
-    34
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 325,
-     "price": 34.5,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
    "id": 343204703,
    "type": "trailing-single",
    "created_at": "2026-11-04T09:51:50+05:30",
@@ -1580,26 +1510,6 @@
      "side": "BUY",
      "qty": 125,
      "price": 73,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
-   "id": 342126871,
-   "type": "trailing-single",
-   "created_at": "2026-10-28T09:28:42+05:30",
-   "expires_at": "2026-11-24T00:00:00+05:30",
-   "tradingsymbol": "TECHM26NOV1960CE",
-   "last_price": 6.85,
-   "triggers": [
-    14
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 600,
-     "price": 15,
      "product": "NRML",
      "order_type": "LIMIT"
     }
