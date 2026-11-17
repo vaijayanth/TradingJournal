@@ -11,12 +11,12 @@
   "ADANIENSOL26NOV1320PE",
   "ABB26NOV7800CE"
  ],
- "fetched_at": "2026-11-17T18:34:17+05:30",
+ "fetched_at": "2026-11-17T20:24:52+05:30",
  "inputs": {
-  "positions": "2026-11-17T13:03:44.126056+00:00",
-  "gtts": "2026-11-17T18:33:44+05:30",
-  "orders": "2026-11-17T18:33:44+05:30",
-  "gtt_scan": "2026-11-17T18:33:44+05:30"
+  "positions": "2026-11-17T14:54:11.375795+00:00",
+  "gtts": "2026-11-17T20:24:11+05:30",
+  "orders": "2026-11-17T20:24:05+05:30",
+  "gtt_scan": "2026-11-17T20:24:11+05:30"
  },
  "stale_inputs": [],
  "open_legs": 64,
@@ -317,14 +317,6 @@
    "tradingsymbol": "MAHABANK26NOV89CE",
    "concern": "No active buy-back GTT (premium 7.25, sold 0.32, already 22.7x: a GTT would fire at once)",
    "action": "Close it now (a GTT would fire at once)"
-  },
-  {
-   "section": "F",
-   "severity": "HIGH",
-   "symbol": "RADICO",
-   "tradingsymbol": "RADICO26NOV4100PE",
-   "concern": "G1 STALE: No open position on this contract (closed or expired): if it triggers it BUYS a new long position (GTT 343705258)",
-   "action": "Delete this GTT"
   },
   {
    "section": "G",
