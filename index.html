@@ -3592,6 +3592,7 @@ b.stk, #cc-root td b.stk, #page-dashboard-di b.stk { font-weight:700; }
     <div class="dhm-kpi"><div class="dhm-kpi-label">Positions</div><div class="dhm-kpi-val" id="dh-live-holdings-count">—</div></div>
     <div class="dhm-kpi"><div class="dhm-kpi-label">Invested</div><div class="dhm-kpi-val" id="dh-live-invested">—</div></div>
     <div class="dhm-kpi"><div class="dhm-kpi-label">Overall P&amp;L</div><div class="dhm-kpi-val" id="dh-live-combined-pl">—</div></div>
+    <div class="dhm-kpi" title="Overall P&amp;L divided by the capital invested in the open positions"><div class="dhm-kpi-label">Return on deployed</div><div class="dhm-kpi-val" id="dh-live-roic">—</div><div class="dhm-kpi-sub" id="dh-live-roic-sub">&nbsp;</div></div>
     <div class="dhm-kpi"><div class="dhm-kpi-label">Tier size</div><div class="dhm-kpi-val" id="dh-live-tier">—</div><div class="dhm-kpi-sub">per new position</div></div>
     <div class="dhm-kpi" title="Share of open positions currently in profit (target 60% or more)"><div class="dhm-kpi-label">In profit</div><div class="dhm-kpi-val" id="dh-h-profit">—</div><div class="dhm-kpi-sub" id="dh-h-profit-sub">&nbsp;</div></div>
     <div class="dhm-kpi" title="Positions down by the add-on trigger or more"><div class="dhm-kpi-label">Deep losers</div><div class="dhm-kpi-val" id="dh-h-deep">—</div><div class="dhm-kpi-sub" id="dh-h-deep-sub">&nbsp;</div></div>
@@ -9350,6 +9351,11 @@ function dhLiveRender(d) {
   const combinedEl = document.getElementById('dh-live-combined-pl');
   combinedEl.textContent = dhFmtRs(cap.combined);
   combinedEl.className = 'dhm-kpi-val' + (cap.combined == null ? '' : cap.combined >= 0 ? ' green' : ' red');
+  { const re = document.getElementById('dh-live-roic'), rs = document.getElementById('dh-live-roic-sub');
+    if (re) { const ok = cap.invested > 0 && cap.combined != null, r = ok ? cap.combined / cap.invested * 100 : null;
+      re.textContent = ok ? (r >= 0 ? '+' : '−') + Math.abs(r).toFixed(2) + '%' : '—';
+      re.className = 'dhm-kpi-val' + (ok ? (r >= 0 ? ' green' : ' red') : '');
+      if (rs) rs.textContent = ok ? 'P&L ÷ invested' : ' '; } }
   { // portfolio health strip (all from the open positions in the contract)
     const P = d.positions, N = P.length, trig = rules.addTriggerPct != null ? rules.addTriggerPct : -6;
     const put = (id, txt, cls, sub) => { const el = document.getElementById(id); if (el) { el.textContent = txt; el.className = 'dhm-kpi-val' + (cls ? ' ' + cls : ''); } const s = document.getElementById(id + '-sub'); if (s) s.textContent = sub || ' '; };
