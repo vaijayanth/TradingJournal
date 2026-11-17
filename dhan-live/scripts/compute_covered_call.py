@@ -444,7 +444,6 @@ def main():
 
         has_call = any(l["type"] == "CE" and l["side"] == "SHORT" for l in my_legs)
         tag = tags.get(sym)
-        flipped = bool(tag and tag.get("entry_colour") and tag["entry_colour"] != colour)
         if not rules.get("rsi_override", True):   # user, 2026-11-09 (ND): the Supertrend colour alone decides - red = sell call, green = bull put spread
             desired, basis = ("PUT_SPREAD", "Supertrend green") if colour == "green" else ("CALL", "Supertrend red")
         elif rsi is not None and rsi > rules["rsi_sell_call_above"]:
@@ -458,6 +457,8 @@ def main():
         col_rule = "PUT_SPREAD" if colour == "green" else "CALL"   # the Supertrend colour alone (the RSI override never triggers an Exit)
         opp_legs = [l for l in shorts if l["type"] == ("PE" if col_rule == "CALL" else "CE")]   # open legs of the structure the colour no longer wants
         opposite = bool(opp_legs)
+        # A tagged colour flip only matters while the structure it opened is still open: with no opposite short open there is nothing to close (stale tag), so no Exit.
+        flipped = bool(tag and tag.get("entry_colour") and tag["entry_colour"] != colour and opposite)
         if opposite and not flipped:
             leg_txt = ", ".join(f"{l['strike']:g}{l['type']} {l['expiry']}" for l in opp_legs)
             opp_note = (f"Supertrend is {colour.upper()}: the open {'short put / put spread' if col_rule == 'CALL' else 'short call'} ({leg_txt}) is the opposite of the colour rule - close it and "

@@ -15,11 +15,14 @@ DATA = Path(__file__).resolve().parent.parent / "data"
 def main(path):
     raw = json.loads(Path(path).read_text(encoding="utf-8"))
     raw = raw.get("data", raw) if isinstance(raw, dict) else raw
-    active, gtts, other = {}, [], 0
+    active, gtts, other, triggered = {}, [], 0, []
     for g in raw:
+        c = g.get("condition", {})
+        if g.get("status") == "triggered" and c.get("exchange") == "NFO":   # a GTT that has fired: scan_options.py checks the buy-back actually happened
+            triggered.append({"id": g["id"], "type": g.get("type"), "tradingsymbol": c.get("tradingsymbol"), "triggers": c.get("trigger_values"), "triggered_at": g.get("updated_at"),
+                              "orders": [{"side": o.get("transaction_type"), "qty": o.get("quantity"), "price": o.get("price")} for o in g.get("orders", [])]})
         if g.get("status") != "active":
             continue
-        c = g.get("condition", {})
         if c.get("exchange") != "NFO":
             other += 1   # stock GTTs (NSE / BSE) are not part of the option checks
             continue
@@ -30,7 +33,7 @@ def main(path):
             if o.get("transaction_type") == "BUY":
                 active.setdefault(c["tradingsymbol"], []).append({"id": g["id"], "type": g.get("type"), "trigger_values": c.get("trigger_values"), "qty": o.get("quantity")})
     ist = timezone(timedelta(hours=5, minutes=30))
-    (DATA / "cc_gtts.json").write_text(json.dumps({"fetched_at": datetime.now(ist).isoformat(timespec="seconds"), "active": active, "gtts": gtts, "non_option_gtts": other}, indent=1))
+    (DATA / "cc_gtts.json").write_text(json.dumps({"fetched_at": datetime.now(ist).isoformat(timespec="seconds"), "active": active, "gtts": gtts, "triggered": triggered, "non_option_gtts": other}, indent=1))
     print(f"cc_gtts.json: active buy GTTs on {len(active)} option contracts")
 
 

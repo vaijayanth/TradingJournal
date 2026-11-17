@@ -293,12 +293,17 @@ def main():
         if my and sym not in tags:  # first time legs are seen: the Supertrend colour now is the entry colour
             tags[sym] = {"entry_colour": colour, "first_seen": market_date, "source": "first_seen"}
             new_tags = True
-        tag = tags.get(sym)
-        flipped = bool(my and tag and tag.get("entry_colour") and tag["entry_colour"] != colour)
         have = has_put_spread if kind == "PUT_SPREAD" else has_call
         col_rule = "PUT_SPREAD" if colour == "green" else "CALL"   # the Supertrend colour alone (the RSI override never triggers an Exit)
         opp_legs = [l for l in shorts if l["type"] == ("PE" if col_rule == "CALL" else "CE")]   # open legs of the structure the colour no longer wants
         opposite = bool(opp_legs)
+        tag = tags.get(sym)
+        # The stored entry colour only matters while the structure it opened is still open. If no short of the structure the colour no longer wants is open
+        # (the user already closed it / re-opened the other way), the note is STALE: re-stamp it to today's colour instead of raising an Exit with nothing to close.
+        if my and tag and tag.get("entry_colour") and tag["entry_colour"] != colour and not opposite:
+            tags[sym] = tag = {"entry_colour": colour, "first_seen": tag.get("first_seen") or market_date, "source": "restamped", "was": tag["entry_colour"], "restamped": market_date}
+            new_tags = True
+        flipped = bool(my and tag and tag.get("entry_colour") and tag["entry_colour"] != colour)
         if opposite and not flipped:
             leg_txt = ", ".join(f"{l['strike']:g}{l['type']} {l['expiry']}" for l in opp_legs)
             opp_note = (f"Supertrend is {colour.upper()}: the open {'short put / put spread' if col_rule == 'CALL' else 'short call'} ({leg_txt}) is the opposite of the colour rule - close it and "

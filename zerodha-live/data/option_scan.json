@@ -1,0 +1,404 @@
+{
+ "fired_ok_today": [
+  "LAURUSLABS26NOV2100PE",
+  "DRREDDY26NOV1450CE",
+  "LAURUSLABS26NOV2220PE",
+  "BIOCON26NOV385CE",
+  "BOSCHLTD26NOV51500CE",
+  "IRFC26NOV74PE",
+  "NAUKRI26NOV1280CE",
+  "BHARTIARTL26DEC2280CE",
+  "RECLTD26NOV310CE",
+  "ADANIGREEN26NOV1600CE",
+  "LAURUSLABS26NOV2200PE",
+  "BANKINDIA26NOV160CE"
+ ],
+ "fetched_at": "2026-11-16T18:41:06+05:30",
+ "inputs": {
+  "positions": "2026-11-16T13:10:57.855234+00:00",
+  "gtts": "2026-11-16T18:40:57+05:30",
+  "orders": "2026-11-16T18:40:57+05:30",
+  "gtt_scan": "2026-11-16T18:40:57+05:30"
+ },
+ "stale_inputs": [],
+ "open_legs": 120,
+ "triggered_gtts": 12,
+ "findings": [
+  {
+   "section": "A",
+   "severity": "WARN",
+   "symbol": "AUBANK",
+   "tradingsymbol": "AUBANK26NOV790PE",
+   "concern": "Long 790PE (500 qty) no short against it; P&L Rs-4,300, expiry 2026-11-23",
+   "action": "Sell it or let it expire"
+  },
+  {
+   "section": "A",
+   "severity": "WARN",
+   "symbol": "LAURUSLABS",
+   "tradingsymbol": "LAURUSLABS26NOV1720PE",
+   "concern": "Long 1720PE (850 qty) no short against it; P&L Rs-8,798, expiry 2026-11-23",
+   "action": "Sell it or let it expire"
+  },
+  {
+   "section": "A",
+   "severity": "WARN",
+   "symbol": "RECLTD",
+   "tradingsymbol": "RECLTD26NOV300CE",
+   "concern": "Long 300CE (1575 qty) no short against it; P&L Rs-7,639, expiry 2026-11-23",
+   "action": "Sell it or let it expire"
+  },
+  {
+   "section": "B",
+   "severity": "HIGH",
+   "symbol": "BEL",
+   "tradingsymbol": "BEL26NOV360PE",
+   "concern": "Short 360PE: 1425 of 1425 qty has no put hedge below it (expiry 2026-11-23)",
+   "action": "Buy the hedge put or close the short"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "ABB",
+   "tradingsymbol": "ABB26NOV7800CE",
+   "concern": "Short 7800CE (125 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "ADANIPOWER",
+   "tradingsymbol": "ADANIPOWER26NOV220CE",
+   "concern": "Short 220CE (3550 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "ANGELONE",
+   "tradingsymbol": "ANGELONE26NOV370CE",
+   "concern": "Short 370CE (2500 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "APOLLOHOSP",
+   "tradingsymbol": "APOLLOHOSP26NOV9100CE",
+   "concern": "Short 9100CE (125 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "ASTRAL",
+   "tradingsymbol": "ASTRAL26DEC1440CE",
+   "concern": "Short 1440CE (425 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "BHARATFORG",
+   "tradingsymbol": "BHARATFORG26NOV1900CE",
+   "concern": "Short 1900CE (500 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "BRITANNIA",
+   "tradingsymbol": "BRITANNIA26NOV5000CE",
+   "concern": "Short 5000CE (125 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "BSE",
+   "tradingsymbol": "BSE26NOV4400CE",
+   "concern": "Short 4400CE (200 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "CAMS",
+   "tradingsymbol": "CAMS26NOV800CE",
+   "concern": "Short 800CE (825 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "CGPOWER",
+   "tradingsymbol": "CGPOWER26DEC960CE",
+   "concern": "Short 960CE (850 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "COALINDIA",
+   "tradingsymbol": "COALINDIA26DEC440CE",
+   "concern": "Short 440CE (1350 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "CUMMINSIND",
+   "tradingsymbol": "CUMMINSIND26DEC5000CE",
+   "concern": "Short 5000CE (100 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "DIVISLAB",
+   "tradingsymbol": "DIVISLAB26NOV10600CE",
+   "concern": "Short 10600CE (100 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "DIVISLAB",
+   "tradingsymbol": "DIVISLAB26NOV11300CE",
+   "concern": "Short 11300CE (100 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "DMART",
+   "tradingsymbol": "DMART26NOV3700CE",
+   "concern": "Short 3700CE (150 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "HDFCBANK",
+   "tradingsymbol": "HDFCBANK26NOV760CE",
+   "concern": "Short 760CE (650 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "HEROMOTOCO",
+   "tradingsymbol": "HEROMOTOCO26NOV5650CE",
+   "concern": "Short 5650CE (150 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "HINDPETRO",
+   "tradingsymbol": "HINDPETRO26NOV380CE",
+   "concern": "Short 380CE (2025 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "INDHOTEL",
+   "tradingsymbol": "INDHOTEL26NOV960CE",
+   "concern": "Short 960CE (1000 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "KARURVYSYA",
+   "tradingsymbol": "KARURVYSYA26NOV410CE",
+   "concern": "Short 410CE (1550 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "LUPIN",
+   "tradingsymbol": "LUPIN26DEC2240CE",
+   "concern": "Short 2240CE (425 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "MAHABANK",
+   "tradingsymbol": "MAHABANK26NOV89CE",
+   "concern": "Short 89CE (6500 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "MANAPPURAM",
+   "tradingsymbol": "MANAPPURAM26NOV360CE",
+   "concern": "Short 360CE (3000 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "MAZDOCK",
+   "tradingsymbol": "MAZDOCK26DEC2200CE",
+   "concern": "Short 2200CE (225 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "NAM-INDIA",
+   "tradingsymbol": "NAM-INDIA26NOV1100CE",
+   "concern": "Short 1100CE (625 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "NATIONALUM",
+   "tradingsymbol": "NATIONALUM26NOV370CE",
+   "concern": "Short 370CE (1875 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "NAUKRI",
+   "tradingsymbol": "NAUKRI26DEC1300CE",
+   "concern": "Short 1300CE (550 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "NESTLEIND",
+   "tradingsymbol": "NESTLEIND26NOV1350CE",
+   "concern": "Short 1350CE (500 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "OFSS",
+   "tradingsymbol": "OFSS26NOV11000CE",
+   "concern": "Short 11000CE (100 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "OIL",
+   "tradingsymbol": "OIL26DEC500CE",
+   "concern": "Short 500CE (1400 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "PERSISTENT",
+   "tradingsymbol": "PERSISTENT26NOV6500CE",
+   "concern": "Short 6500CE (125 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "PIIND",
+   "tradingsymbol": "PIIND26DEC2000CE",
+   "concern": "Short 2000CE (175 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "PREMIERENE",
+   "tradingsymbol": "PREMIERENE26DEC1000CE",
+   "concern": "Short 1000CE (650 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "SOLARINDS",
+   "tradingsymbol": "SOLARINDS26DEC22000CE",
+   "concern": "Short 22000CE (50 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "SUNPHARMA",
+   "tradingsymbol": "SUNPHARMA26DEC2100CE",
+   "concern": "Short 2100CE (350 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "SWIGGY",
+   "tradingsymbol": "SWIGGY26DEC250CE",
+   "concern": "Short 250CE (1825 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "SYRMA",
+   "tradingsymbol": "SYRMA26NOV1720CE",
+   "concern": "Short 1720CE (325 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "TECHM",
+   "tradingsymbol": "TECHM26NOV1960CE",
+   "concern": "Short 1960CE (600 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "C",
+   "severity": "HIGH",
+   "symbol": "DIVISLAB",
+   "tradingsymbol": "DIVISLAB26NOV10600CE",
+   "concern": "No active buy-back GTT (premium 512, sold 116.95, already 4.4x: a GTT would fire at once)",
+   "action": "Close it now (a GTT would fire at once)"
+  },
+  {
+   "section": "C",
+   "severity": "HIGH",
+   "symbol": "HDFCBANK",
+   "tradingsymbol": "HDFCBANK26NOV760CE",
+   "concern": "No active buy-back GTT (premium 54.85, sold 2.8, already 19.6x: a GTT would fire at once)",
+   "action": "Close it now (a GTT would fire at once)"
+  },
+  {
+   "section": "C",
+   "severity": "HIGH",
+   "symbol": "HINDPETRO",
+   "tradingsymbol": "HINDPETRO26NOV380CE",
+   "concern": "No active buy-back GTT (premium 9.1, sold 1.3, already 7.0x: a GTT would fire at once)",
+   "action": "Close it now (a GTT would fire at once)"
+  },
+  {
+   "section": "C",
+   "severity": "HIGH",
+   "symbol": "MAHABANK",
+   "tradingsymbol": "MAHABANK26NOV89CE",
+   "concern": "No active buy-back GTT (premium 3.63, sold 0.32, already 11.3x: a GTT would fire at once)",
+   "action": "Close it now (a GTT would fire at once)"
+  },
+  {
+   "section": "C",
+   "severity": "HIGH",
+   "symbol": "NAM-INDIA",
+   "tradingsymbol": "NAM-INDIA26NOV1100CE",
+   "concern": "No active buy-back GTT (premium 12.35, sold 3.85, already 3.2x: a GTT would fire at once)",
+   "action": "Close it now (a GTT would fire at once)"
+  }
+ ]
+}

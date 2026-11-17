@@ -37,3 +37,6 @@ This works on REAL GTT orders on the user's Zerodha account through the Zerodha 
 
 ## Reporting
 Plain: scanned / placed / deleted / modified / failed (with the verbatim error). A GTT is active, not triggered or filled: never say a buy-back happened unless `get_gtts` shows it triggered and the position changed.
+
+## Next-step nudge (user, 2026-11-16)
+When done, say what is left on tonight's checklist and the next command: close any leg still past its 3x stop in Kite, `/zerodha-option-entry-signal` then `/zerodha-option-order` for new option trades, and tomorrow's `/refresh-zerodha`. If the refresh checklist is not in this conversation, run `python scripts/action_items.py` to rebuild it.

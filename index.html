@@ -795,6 +795,8 @@ tbody tr:hover { filter: brightness(0.97); }
 .d2-chip-soft { background:transparent; color:var(--text-muted); }
 .d2-chip-btn { cursor:pointer; } .d2-chip-btn:hover { border-color:var(--accent); color:var(--accent); }
 .d2-kpis.d2-kpis6 { grid-template-columns:repeat(6,1fr); }
+.d2-kpis.d2-kpis7 { grid-template-columns:repeat(7,1fr); }
+.d2-kpis7 .d2-kpi { padding:13px 13px; }
 .d2-kpis { display:grid; grid-template-columns:repeat(5,1fr); background:var(--surface); border:1px solid var(--border); border-radius:9px; overflow:hidden; margin-bottom:13px; }
 .d2-kpi { padding:13px 16px; border-right:1px solid var(--border); min-height:78px; }
 .d2-kpi:last-child { border-right:0; }
@@ -903,12 +905,12 @@ tr.cc-det td { background:var(--surface2); white-space:normal !important; paddin
 .d2-recent-s { border-right:1px solid var(--border); padding:2px 15px; } .d2-recent-s:first-child { padding-left:0; } .d2-recent-s:last-child { border-right:0; }
 .d2-foot { font-size:9.5px; color:var(--text-muted); padding:13px 2px; }
 @media (max-width: 900px) {
-  .d2-layout { grid-template-columns:1fr; } .d2-kpis, .d2-kpis.d2-kpis6 { grid-template-columns:repeat(3,1fr); }
+  .d2-layout { grid-template-columns:1fr; } .d2-kpis, .d2-kpis.d2-kpis6, .d2-kpis.d2-kpis7 { grid-template-columns:repeat(3,1fr); }
   .d2-kpi:nth-child(3) { border-right:0; } .d2-kpi:nth-child(n+4) { border-top:1px solid var(--border); }
   .d2-attn-body { grid-template-columns:repeat(2,1fr); }
 }
 @media (max-width: 600px) {
-  .d2-kpis, .d2-kpis.d2-kpis6 { grid-template-columns:repeat(2,1fr); } .d2-kpi:nth-child(odd) { border-right:1px solid var(--border); } .d2-kpi:nth-child(even) { border-right:0; }
+  .d2-kpis, .d2-kpis.d2-kpis6, .d2-kpis.d2-kpis7 { grid-template-columns:repeat(2,1fr); } .d2-kpi:nth-child(odd) { border-right:1px solid var(--border); } .d2-kpi:nth-child(even) { border-right:0; }
   .d2-kpi:nth-child(n+3) { border-top:1px solid var(--border); }
   .d2-edge-body, .d2-recent-body { grid-template-columns:repeat(2,1fr); gap:12px; }
   .d2-edge-m:nth-child(2) { border-right:0; } .d2-edge-m:nth-child(n+3) { border-top:1px solid var(--border); }
@@ -1228,8 +1230,8 @@ b.stk, #cc-root td b.stk, #page-dashboard-di b.stk { font-weight:700; }
   <div class="d2-layout" style="margin-top:13px">
     <section class="d2-panel">
       <div class="d2-panel-head">
-        <div><div class="d2-title">P&amp;L calendar</div><div class="d2-hint">Daily change in total P&amp;L (realised + open-book)</div></div>
-        <div class="p2-calnav"><button onclick="p2CalNav(-1)" aria-label="Previous month">‹</button><span id="p2-cal-label">—</span><button onclick="p2CalNav(1)" aria-label="Next month">›</button></div>
+        <div><div class="d2-title">P&amp;L calendar</div><div class="d2-hint">Realised P&amp;L per day (closed trades, by exit date)</div></div>
+        <div class="p2-calnav"><span id="p2-cal-sum" style="margin-right:10px;font-family:var(--font-mono);font-size:11.5px"></span><button onclick="p2CalNav(-1)" aria-label="Previous month">‹</button><span id="p2-cal-label">—</span><button onclick="p2CalNav(1)" aria-label="Next month">›</button></div>
       </div>
       <div class="p2-body"><div class="p2-cal" id="p2-cal"></div></div>
     </section>
@@ -1276,9 +1278,10 @@ b.stk, #cc-root td b.stk, #page-dashboard-di b.stk { font-weight:700; }
   </div>
 
   <div class="dh-stale-slot"></div>
-  <section class="d2-kpis d2-kpis6" aria-label="Financial snapshot">
+  <section class="d2-kpis d2-kpis7" aria-label="Financial snapshot">
     <div class="d2-kpi"><div class="d2-label">Portfolio value</div><div class="d2-value" id="d2-k-value">—</div><div class="d2-note" title="Later deposits are deliberately ignored">Start <span id="d2-k-deployed">—</span> + P&amp;L<span id="d2-k-deployed-n" style="display:none"></span></div></div>
     <div class="d2-kpi"><div class="d2-label">FY return</div><div class="d2-value" id="d2-k-ret">—</div><div class="d2-note">On starting capital</div></div>
+    <div class="d2-kpi" title="Realised + unrealised P&amp;L this FY, divided by the capital currently invested in open positions"><div class="d2-label">Return on invested</div><div class="d2-value" id="d2-k-roic">—</div><div class="d2-note" id="d2-k-roic-n">Combined P&amp;L</div></div>
     <div class="d2-kpi"><div class="d2-label">Realised P&amp;L · FY</div><div class="d2-value" id="d2-k-realised">—</div><div class="d2-note" id="d2-k-realised-n">—</div></div>
     <div class="d2-kpi"><div class="d2-label">Unrealised MTM</div><div class="d2-value" id="d2-k-mtm">—</div><div class="d2-note">Open book</div></div>
     <div class="d2-kpi"><div class="d2-label">Invested</div><div class="d2-value" id="d2-a-inv">—</div><div class="d2-note"><span id="d2-a-pos">—</span> open positions</div></div>
@@ -3585,6 +3588,10 @@ b.stk, #cc-root td b.stk, #page-dashboard-di b.stk { font-weight:700; }
     <div class="dhm-kpi"><div class="dhm-kpi-label">Invested</div><div class="dhm-kpi-val" id="dh-live-invested">—</div></div>
     <div class="dhm-kpi"><div class="dhm-kpi-label">Overall P&amp;L</div><div class="dhm-kpi-val" id="dh-live-combined-pl">—</div></div>
     <div class="dhm-kpi"><div class="dhm-kpi-label">Tier size</div><div class="dhm-kpi-val" id="dh-live-tier">—</div><div class="dhm-kpi-sub">per new position</div></div>
+    <div class="dhm-kpi" title="Share of open positions currently in profit (target 60% or more)"><div class="dhm-kpi-label">In profit</div><div class="dhm-kpi-val" id="dh-h-profit">—</div><div class="dhm-kpi-sub" id="dh-h-profit-sub">&nbsp;</div></div>
+    <div class="dhm-kpi" title="Positions down by the add-on trigger or more"><div class="dhm-kpi-label">Deep losers</div><div class="dhm-kpi-val" id="dh-h-deep">—</div><div class="dhm-kpi-sub" id="dh-h-deep-sub">&nbsp;</div></div>
+    <div class="dhm-kpi" title="Positions trading below their 200-day average"><div class="dhm-kpi-label">Below 200 SMA</div><div class="dhm-kpi-val" id="dh-h-sma">—</div><div class="dhm-kpi-sub" id="dh-h-sma-sub">&nbsp;</div></div>
+    <div class="dhm-kpi" title="Average days the open positions have been held"><div class="dhm-kpi-label">Avg hold</div><div class="dhm-kpi-val" id="dh-h-age">—</div><div class="dhm-kpi-sub">days, open positions</div></div>
   </div>
 
   <div class="dhm-tabs" role="tablist">
@@ -3625,6 +3632,7 @@ b.stk, #cc-root td b.stk, #page-dashboard-di b.stk { font-weight:700; }
       <div class="dhm-controls">
         <input type="search" id="dh-search-entry" placeholder="Search stock…" oninput="dhLiveApply('entry')">
         <select id="dh-filter-entry" onchange="dhLiveApply('entry')"><option value="all">All breakouts</option><option value="hot">🔥 Hot sectors only</option><option value="today">Hit today only</option></select>
+        <label id="dh-blk-wrap" style="display:none;align-items:center;gap:5px;font-size:12px;color:var(--text-muted);cursor:pointer;white-space:nowrap" title="Signals held back by the price cross-check. Hidden by default: they cannot be ordered."><input type="checkbox" id="dh-show-blk" style="width:auto;min-width:0;flex:none;margin:0;padding:0" onchange="dhLiveApply('entry')"><span id="dh-blk-label">Show blocked</span></label>
         <button onclick="dhLiveExportCsv('entry')">Export ↓</button>
       </div>
     </div>
@@ -3677,7 +3685,7 @@ b.stk, #cc-root td b.stk, #page-dashboard-di b.stk { font-weight:700; }
         <thead><tr>
           <th>Stock</th><th>Entry</th><th class="num">Qty</th><th class="num">WAC</th><th class="num">CMP</th>
           <th>Trend</th><th class="num">Flip</th><th class="num">P&amp;L ₹</th><th class="num">P&amp;L%</th>
-          <th class="num">Adds</th><th class="num">Age</th><th>Signal</th><th class="num">vs 52WH</th>
+          <th class="num">Adds</th><th class="num">Age</th><th>Signal</th><th class="opt-col">Option trade</th><th class="num">vs 52WH</th>
         </tr></thead>
         <tbody id="dh-live-pos-tbody"></tbody>
       </table>
@@ -8802,7 +8810,7 @@ const WORKSPACES = {
              ordersUrl: 'zerodha-live/data/orders_snapshot.json', crosscheckUrl: 'zerodha-live/data/signal_crosscheck.json', guardUrl: 'zerodha-live/data/guardrails.json',
              ccUrl: 'zerodha-live/covered_call_signals.json',
              cfg: { staleDays: 3, addTriggerPct: -6, addCooldownDays: 7, addFraction: 0.1 },
-             copy: { refreshCmd: '/refresh-zerodha', hasCC: false, strat: 'F&O Supertrend', liveTitle: 'AZ Live · Nifty F&O',
+             copy: { refreshCmd: '/refresh-zerodha', hasCC: false, optCol: true, strat: 'F&O Supertrend', liveTitle: 'AZ Live · Nifty F&O',
                      liveSub: "AZ holdings in Nifty F&O stocks vs. the backtester's daily Supertrend signals", logoA: 'F&O', logoB: '', logoSub: 'Supertrend swing',
                      entryShort: 'Supertrend flipped to green today', addShort: 'Down 6% or more, trend green',
                      entryHint: 'Supertrend flipped to green today · no open position in the stock · Nifty F&O stocks only · 🔥 = top-3 sector by Supertrend turnarounds',
@@ -8873,6 +8881,7 @@ function wsGate(pageId) {
 
 function wsApply() {
   const ws = WORKSPACES[WS.id];
+  document.querySelectorAll('.dh-stale-slot').forEach(s => { s.innerHTML = ''; });   // stale / guardrail chips belong to one broker: clear them, the page render repaints this broker's (DI has none)
   document.querySelectorAll('#ws-switch .ws-btn').forEach(b => {
     const on = b.dataset.ws === WS.id;
     b.classList.toggle('active', on);
@@ -8896,6 +8905,7 @@ function wsSelect(id) {
   if (!WORKSPACES[id]) return;
   WS.id = id;
   try { localStorage.setItem(WS_KEY, id); } catch (e) {}
+  ccAlias(); ccPrefetch(id);   // covered-call cache is per workspace: point the alias at this broker and load its file in the background
   // If the page we're on has no data for this workspace, hop to the first page that does
   const cur = wsActivePageId();
   if (cur && !wsHasPage(id, cur)) {
@@ -8905,6 +8915,7 @@ function wsSelect(id) {
   }
   wsApply();
   if (wsActivePageId() === 'dhanlive') dhLiveEnsure();
+  if (wsActivePageId() === 'covcall') ccEnsure();   // switching broker while on Covered Call: load that broker's data (it used to keep the old broker's view)
   // Zerodha is still sheet-backed: load the Google Sheet feed the first time it's selected
 }
 
@@ -8919,6 +8930,7 @@ function wsInit() {
     if (btn) showPage(next, btn);
   }
   wsApply();
+  ccPrefetch(WS.id);
 }
 document.addEventListener('DOMContentLoaded', wsInit);
 
@@ -9116,6 +9128,31 @@ function dhFlipText(r) { if (!r.flipDate) return ''; const n = dhFlipDays(r); re
 const DH_FLIP_CELL = ['Flip', r => r.flipDate || '', r => { const t = dhFlipText(r); return t ? `<td class="num${dhFlipDays(r) === 0 ? ' dh-flip-today' : ''}">${t}</td>` : `<td class="num">${dhDash}</td>`; }];
 
 // Position columns shared by the Exit and Open positions tabs
+// The option trade open on a share position (AZ only, user 2026-11-16): is there a bull put spread (green) or a short call (red), and does it match the Supertrend colour?
+function dhOptText(r) {
+  const c = WS.cc && WS.cc[WS.id]; if (!c) return null;
+  const st = (c.stocks || []).find(s => s.symbol === r.symbol), legs = (st && st.legs) || [];
+  const out = [], exps = [...new Set(legs.map(l => l.expiry))].sort();
+  exps.forEach(e => {
+    const L = legs.filter(l => l.expiry === e), sp = L.filter(l => l.side === 'SHORT' && l.type === 'PE'), lp = L.filter(l => l.side === 'LONG' && l.type === 'PE');
+    const sc = L.filter(l => l.side === 'SHORT' && l.type === 'CE');
+    const d = dhFmtDate(e).replace(/-\d\d$/, '');
+    sp.forEach(s => { const h = lp.filter(l => l.strike < s.strike).sort((a, b) => b.strike - a.strike)[0]; out.push({ k: h ? 'BPS' : 'PUT', t: h ? `BPS ${s.strike}/${h.strike} · ${d}` : `Short put ${s.strike} · ${d} (no hedge)` }); });
+    sc.forEach(s => out.push({ k: 'CALL', t: `Short call ${s.strike} · ${d}` }));
+  });
+  return out;
+}
+const dhOptCell = r => {
+  const o = dhOptText(r);
+  if (o == null) return '<td style="color:var(--text-muted)">…</td>';
+  const g = r.supertrend === 'green', rd = r.supertrend === 'red';
+  if (!o.length) return `<td style="color:var(--text-muted)" title="No open option trade on this stock">${g ? 'No BPS' : rd ? 'No call' : 'None'}</td>`;
+  return '<td style="white-space:normal;min-width:150px">' + o.map(x => {
+    const ok = (g && x.k === 'BPS') || (rd && x.k === 'CALL'), bad = (g && x.k === 'CALL') || (rd && x.k !== 'CALL');
+    return `<div title="${ok ? 'Matches the Supertrend colour' : bad ? 'Opposite of what the Supertrend colour wants (green = bull put spread, red = short call)' : ''}">${dhEsc(x.t)} <span style="color:${ok ? 'var(--green)' : bad ? 'var(--amber)' : 'var(--text-muted)'}">${ok ? '✓' : bad ? '≠' : ''}</span></div>`;
+  }).join('') + '</td>';
+};
+const DH_OPT_CELL = ['Option trade', r => { const o = dhOptText(r); return o == null ? '' : o.length ? o.map(x => x.t).join('; ') : 'none'; }, dhOptCell];
 const DH_POS_CELLS = [
   ['Stock', r => r.symbol, r => `<td class="stock-name">${dhEsc(r.symbol)}</td>`],
   ['Entry', r => r.entryDate, r => `<td>${dhFmtDate(r.entryDate)}</td>`],
@@ -9142,7 +9179,9 @@ const DH_DEFS = {
   },
   entry: {
     rows: d => d.signals.entry.slice().sort((a, b) => a.hitDays - b.hitDays || b.pctFromHigh - a.pctFromHigh),
-    filter: (r, f) => f === 'today' ? (dhCopy().flipTodayMode ? /\(0\)/.test(r.flip || '') : r.hitDays === 0) : f === 'hot' ? (r.hot52wh || r.hotTurn) : true,
+    // signals blocked by the price cross-check are hidden unless "Show blocked" is ticked
+    filter: (r, f) => (f === 'today' ? (dhCopy().flipTodayMode ? /\(0\)/.test(r.flip || '') : r.hitDays === 0) : f === 'hot' ? (r.hot52wh || r.hotTurn) : true)
+      && (!(r.ord && r.ord.st === 'blk') || !!(document.getElementById('dh-show-blk') || {}).checked),
     cls: r => (r.hot52wh || r.hotTurn) ? 'row-amber' : '', empty: 'No fresh 52-week-high breakouts right now.', cols: 10,
     cells: [
       ['Signal date', r => r.date, r => `<td>${dhFmtDate(r.date)}</td>`],
@@ -9181,7 +9220,7 @@ const DH_DEFS = {
     filter: (r, f) => f === 'all' ? true : r.signal === f,
     cls: r => r.signal === 'EXIT' ? 'row-red' : r.signal === 'ADD-ON' ? 'row-green' : '',
     empty: 'No position data.', cols: 13,
-    cells: [...DH_POS_CELLS.filter(c => c[0] !== 'vs 52WH %'), ['Signal', r => r.signal, r => `<td>${dhSignalPill(r.signal)}</td>`], DH_POS_CELLS.find(c => c[0] === 'vs 52WH %')],
+    cells: [...DH_POS_CELLS.filter(c => c[0] !== 'vs 52WH %'), ['Signal', r => r.signal, r => `<td>${dhSignalPill(r.signal)}</td>`], DH_OPT_CELL, DH_POS_CELLS.find(c => c[0] === 'vs 52WH %')],
   },
   orders: {
     rows: d => (d.orders || []).slice().sort((a, b) => (a.side === b.side ? a.symbol.localeCompare(b.symbol) : a.side === 'SELL' ? -1 : 1)),
@@ -9211,7 +9250,7 @@ function dhLiveVisible(tab) {
 }
 
 // AZ's rule is flip-based, so it has no 52-week-high columns in the entry, exit or positions tables
-function dhCells(tab) { const def = DH_DEFS[tab], hide = (tab === 'entry' || tab === 'exit' || tab === 'pos') && dhCopy().hideEntryCols; return hide ? def.cells.filter(c => !/52WH/.test(c[0])) : def.cells; }
+function dhCells(tab) { const def = DH_DEFS[tab], hide = (tab === 'entry' || tab === 'exit' || tab === 'pos') && dhCopy().hideEntryCols; let cells = hide ? def.cells.filter(c => !/52WH/.test(c[0])) : def.cells; if (!dhCopy().optCol) cells = cells.filter(c => c !== DH_OPT_CELL); return cells; }
 function dhLiveApply(tab) {
   const def = DH_DEFS[tab];
   const { all, rows } = dhLiveVisible(tab);
@@ -9221,6 +9260,12 @@ function dhLiveApply(tab) {
     : `<tr><td colspan="${def.cols}" style="color:var(--text-muted)">${all.length ? 'No rows match the search / filter.' : def.empty}</td></tr>`;
   const foot = document.getElementById('dh-foot-' + tab);
   if (foot) foot.textContent = rows.length === all.length ? `${all.length} row${all.length === 1 ? '' : 's'}` : `${rows.length} of ${all.length} rows shown`;
+  if (tab === 'entry') { // blocked-signal toggle: label with the count, hidden when there are none
+    const nb = all.filter(r => r.ord && r.ord.st === 'blk').length, wrap = document.getElementById('dh-blk-wrap'), lab = document.getElementById('dh-blk-label');
+    if (wrap) wrap.style.display = nb ? 'inline-flex' : 'none';
+    if (lab) lab.textContent = `Show blocked (${nb})`;
+    if (foot && nb && !(document.getElementById('dh-show-blk') || {}).checked) foot.textContent = rows.length === all.length - nb ? `${rows.length} row${rows.length === 1 ? '' : 's'} · ${nb} blocked hidden` : foot.textContent + ` · ${nb} blocked hidden`;
+  }
 }
 
 function dhLiveTab(name) {
@@ -9254,7 +9299,7 @@ function dhLiveRender(d) {
   const cp = dhCopy();
   set('dh-live-title', '/ ' + (cp.liveTitle || '')); set('dh-live-subtitle', cp.liveSub || ''); set('dh-entry-hint', cp.entryHint || ''); set('dh-pos-hint-t', cp.posHint || '');
   { const lg = document.getElementById('dh-logo'); if (lg) lg.innerHTML = `<b>${dhEsc(cp.logoA || '')}${cp.logoB ? `<em>${dhEsc(cp.logoB)}</em>` : ''}</b><span>${dhEsc(cp.logoSub || '')}</span>`; }
-  document.querySelectorAll('#dh-live-entry-table thead th, #dh-live-exit-table thead th, #dh-live-pos-table thead th').forEach(th => { th.style.display = (cp.hideEntryCols && /52WH/.test(th.textContent)) ? 'none' : ''; });
+  document.querySelectorAll('#dh-live-entry-table thead th, #dh-live-exit-table thead th, #dh-live-pos-table thead th').forEach(th => { th.style.display = ((cp.hideEntryCols && /52WH/.test(th.textContent)) || (th.classList.contains('opt-col') && !cp.optCol)) ? 'none' : ''; });
 
   const ranD = new Date(m.computedAt);
   wsPaintFresh();
@@ -9300,6 +9345,21 @@ function dhLiveRender(d) {
   const combinedEl = document.getElementById('dh-live-combined-pl');
   combinedEl.textContent = dhFmtRs(cap.combined);
   combinedEl.className = 'dhm-kpi-val' + (cap.combined == null ? '' : cap.combined >= 0 ? ' green' : ' red');
+  { // portfolio health strip (all from the open positions in the contract)
+    const P = d.positions, N = P.length, trig = rules.addTriggerPct != null ? rules.addTriggerPct : -6;
+    const put = (id, txt, cls, sub) => { const el = document.getElementById(id); if (el) { el.textContent = txt; el.className = 'dhm-kpi-val' + (cls ? ' ' + cls : ''); } const s = document.getElementById(id + '-sub'); if (s) s.textContent = sub || ' '; };
+    if (!N) { put('dh-h-profit', '—'); put('dh-h-deep', '—'); put('dh-h-sma', '—'); put('dh-h-age', '—'); }
+    else {
+      const win = P.filter(p => p.plPct > 0).length, pct = win / N * 100;
+      put('dh-h-profit', pct.toFixed(0) + '%', pct >= 60 ? 'green' : pct >= 45 ? '' : 'red', `${win} of ${N}`);
+      const deep = P.filter(p => p.plPct != null && p.plPct <= trig).length;
+      put('dh-h-deep', String(deep), deep / N > 0.25 ? 'red' : '', `≤ ${String(trig).replace('-', '−')}% vs WAC`);
+      const withSma = P.filter(p => p.sma200 != null), below = withSma.filter(p => p.cmp < p.sma200).length;
+      put('dh-h-sma', withSma.length ? String(below) : '—', withSma.length && below / withSma.length > 0.3 ? 'red' : '', withSma.length ? `of ${withSma.length} with data` : 'no 200 SMA data');
+      const ages = P.map(p => p.ageDays).filter(a => a != null && !isNaN(a));
+      put('dh-h-age', ages.length ? Math.round(ages.reduce((a, b) => a + b, 0) / ages.length) + 'd' : '—');
+    }
+  }
   set('dh-live-entry-count', entryN); set('dh-live-exit-count', exitN); set('dh-live-addon-count', addN);
   set('dh-tabcount-exit', exitN); set('dh-tabcount-entry', entryN); set('dh-tabcount-addon', addN); set('dh-tabcount-pos', d.positions.length);
 
@@ -9536,7 +9596,7 @@ const wsFmtT = (iso, withDate) => { const x = new Date(iso); if (!iso || isNaN(x
   return (day === today && !withDate ? '' : dhFmtDate(day) + ' ') + t; };
 const wsAgo = iso => { const m = Math.round((Date.now() - new Date(iso)) / 60000); return isNaN(m) ? '' : m < 1 ? 'just now' : m < 60 ? m + ' min ago' : m < 1440 ? Math.floor(m / 60) + 'h ' + (m % 60) + 'm ago' : Math.floor(m / 1440) + ' d ago'; };
 function wsFresh(meta, extra) {
-  const m = meta || {}, cc = (window._cc && window._ccWs === WS.id) ? window._cc : null, live = (extra && extra.livePricesAt) || (cc && cc.live_prices_at) || null;
+  const m = meta || {}, cc = WS.cc[WS.id] || null, live = (extra && extra.livePricesAt) || (cc && cc.live_prices_at) || null;
   const stamps = [m.fetchedAt, m.computedAt, live].filter(x => x && !isNaN(new Date(x)));
   const last = stamps.length ? stamps.reduce((a, b) => (new Date(a) > new Date(b) ? a : b)) : null;
   const mins = last ? Math.round((Date.now() - new Date(last)) / 60000) : null;
@@ -9770,9 +9830,9 @@ function d2RenderActions(d) {
   draw(null);
   dhExtras(true).then(draw);
   if (!cp.hasCC) return;
-  if (window._cc && window._ccWs === WS.id) drawCc(window._cc);
-  else fetch(CC_URL + '?t=' + Date.now()).then(r => r.ok ? r.json() : Promise.reject()).then(j => { window._cc = j; window._ccWs = WS.id; drawCc(j); })
-    .catch(() => { set('d2-r-opt', none('Covered-call data not loaded')); set('d2-r-shr', none('Covered-call data not loaded')); });
+  if (ccAlias()) drawCc(window._cc);
+  else { const ws0 = WS.id; fetch(ccUrl() + '?t=' + Date.now()).then(r => r.ok ? r.json() : Promise.reject()).then(j => { ccPut(ws0, j); if (ws0 !== WS.id) return; drawCc(j); })   // this workspace's own file, stamped with the workspace it was fetched for (was ND's file stamped as whichever broker was open: AZ then showed ND option data)
+    .catch(() => { set('d2-r-opt', none('Covered-call data not loaded')); set('d2-r-shr', none('Covered-call data not loaded')); }); }
 }
 
 function d2Render(d) {
@@ -9795,6 +9855,11 @@ function d2Render(d) {
   set('d2-k-realised-n', closedFy.length ? `${closedFy.length} closed trade${closedFy.length === 1 ? '' : 's'}` : 'No closed trades yet');
   set('d2-k-mtm', d2Signed(mtm), d2Cls(mtm));
   set('d2-k-ret', fyRet == null ? '—' : dhFmtPct(fyRet), d2Cls(fyRet));
+  { // return on invested capital (user, 2026-11-16): combined realised + unrealised P&L over the capital currently invested
+    const comb = realised + mtm, roic = inv ? comb / inv * 100 : null;
+    set('d2-k-roic', roic == null ? '—' : dhFmtPct(roic), d2Cls(roic));
+    set('d2-k-roic-n', inv ? `${d2Signed(comb)} on ${d2Compact(inv)} invested` : 'No open positions');
+  }
   set('d2-k-value', base ? dhFmtRs(base + realised + mtm) : '—');
 
   d2RenderActions(d);
@@ -10012,7 +10077,21 @@ function ccPill(st) {
   const [bg, fg] = m[st] || m.HOLD;
   return `<span class="trend-pill" style="background:${bg};color:${fg}">${st}</span>`;
 }
-const ccUrl = () => (WORKSPACES[WS.id] || {}).ccUrl || CC_URL;
+const ccUrlFor = id => (WORKSPACES[id] || {}).ccUrl || CC_URL;
+const ccUrl = () => ccUrlFor(WS.id);
+// Covered-call data is cached PER WORKSPACE (WS.cc[id]); window._cc / _ccWs are only an alias of the active workspace's entry, kept in step on every switch.
+WS.cc = WS.cc || {};
+function ccAlias() { const c = WS.cc[WS.id] || null; window._cc = c; window._ccWs = c ? WS.id : null; return c; }
+function ccPut(ws, j) { WS.cc[ws] = j; if (ws === WS.id) ccAlias(); }
+async function ccPrefetch(ws) {   // load a workspace's covered-call file in the background so the freshness chip (live-price time) never depends on having opened Covered Call
+  if (WS.cc[ws]) return WS.cc[ws];
+  try {
+    const res = await fetch(ccUrlFor(ws) + '?t=' + Date.now()); if (!res.ok) return null;
+    ccPut(ws, await res.json());
+    if (ws === WS.id) { try { wsPaintFresh(); } catch (e) {} try { if (dhCopy().optCol && dhLiveData()) dhLiveApply('pos'); } catch (e) {} }   // the Open positions table shows each stock's option trade
+    return WS.cc[ws];
+  } catch (e) { return null; }
+}
 async function ccRefresh(spin) {
   const root = document.getElementById('cc-root'), asof = document.getElementById('cc-asof');
   if (spin && asof) asof.textContent = 'Loading…';
@@ -10020,8 +10099,8 @@ async function ccRefresh(spin) {
     const ws = WS.id, res = await fetch(ccUrl() + '?t=' + Date.now());
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const j = await res.json();
+    ccPut(ws, j);                       // always cache it under the workspace it was fetched for
     if (ws !== WS.id) return;           // workspace switched while loading: never paint another broker's data
-    window._cc = j; window._ccWs = ws;
     ccRender(window._cc);
   } catch (e) {
     if (asof) asof.textContent = 'Could not load';
@@ -10029,7 +10108,7 @@ async function ccRefresh(spin) {
     console.error('Covered call load error:', e);
   }
 }
-function ccEnsure() { if (window._cc && window._ccWs === WS.id) ccRender(window._cc); else { window._cc = null; ccRefresh(false); } }
+function ccEnsure() { const c = ccAlias(); if (c) ccRender(c); else ccRefresh(false); }
 
 function ccSuggest(g, lot) {
   const x = dhFmtDate(g.expiry), tag = `<b>${x}</b>${g.expiry_week ? ' <span class="neg">expiry week</span>' : ''} · `;
@@ -10121,7 +10200,8 @@ function ccTblApply(id) {
       + (det && st.open[k] ? `<tr class="cc-det"><td colspan="${def.cols.length}">${def.detail(r)}</td></tr>` : '');
   };
   const grouped = () => def.groups.map(g => {
-    const rs = rows.filter(r => def.group(r) === g.key); if (!rs.length) return '';
+    const rs = rows.filter(r => def.group(r) === g.key);
+    if (!rs.length) return def.showEmpty && !st.q.trim() ? `<tr class="cc-grp"><td colspan="${def.cols.length}" style="cursor:default;opacity:.75">${g.label} <span class="cc-grp-n">0</span> <span style="font-weight:400;color:var(--text-muted)">· none</span></td></tr>` : '';
     const closed = st.col[g.key] && !st.q.trim();                                                   // a search always shows its matches
     return `<tr class="cc-grp"><td colspan="${def.cols.length}" onclick="ccTblGrp('${id}','${g.key}')">${closed ? '▸' : '▾'} ${g.label} <span class="cc-grp-n">${rs.length}</span></td></tr>` + (closed ? '' : rs.map(rowHtml).join(''));
   }).join('');
@@ -10183,8 +10263,15 @@ function ccShortAlert0(r) {
     default: { const t = c.split(/[:;]/)[0]; return [t.length > 46 ? t.slice(0, 44) + '…' : t, a.length > 36 ? a.slice(0, 34) + '…' : a]; }
   }
 }
+// Supertrend colour per stock (set from the loaded covered-call data by ccAlertsBox) and the structure that colour wants: green = BPS, red = sell call (Supertrend only, no RSI)
+window._ccTrend = window._ccTrend || {};
+const ccTrendOf = sym => (window._ccTrend || {})[sym] || '';
+const ccTrendCell = r => { const c = ccTrendOf(r.symbol); return c ? `<span class="cc-dot ${c === 'green' ? 'g' : 'r'}" title="Supertrend ${dhEsc(c)}">●</span> ${c === 'green' ? 'Green' : 'Red'}` : '<span style="color:var(--text-muted)">—</span>'; };
+const ccRightPos = r => { const c = ccTrendOf(r.symbol); return c === 'green' ? 'Open BPS' : c === 'red' ? 'Sell call' : '—'; };
 const ccAlertCols = withType => (withType ? [{ h: 'Alert type', v: r => ccTypeOrd(r), c: r => ccTypePill(r) }] : []).concat([
   { h: 'Stock', v: r => r.symbol, c: r => `<b class="stk">${dhEsc(r.symbol)}</b>` },
+  { h: 'Trend', v: r => ccTrendOf(r.symbol), c: ccTrendCell, txt: true },
+  { h: 'Right position', v: r => ccRightPos(r), c: r => { const p = ccRightPos(r); return p === '—' ? '<span style="color:var(--text-muted)">—</span>' : `<b title="The structure the Supertrend colour wants: green = bull put spread, red = sell call">${p}</b>`; }, txt: true },
   { h: 'Leg', v: r => r.strike == null ? '' : r.strike, c: r => r.strike == null ? '—' : ccStrike(r.strike) + ' ' + (r.opt_type || '') },
   { h: 'Expiry', v: r => r.expiry || '', c: r => r.expiry ? dhFmtDate(r.expiry) : '—' },
   { h: 'Issue', v: r => ccShortAlert(r)[0], c: r => `<span title="${dhEsc(r.concern || ccAlertDetail(r) || '')}">${dhEsc(ccShortAlert(r)[0])}</span>`, txt: true },
@@ -10194,6 +10281,7 @@ const ccAlertCols = withType => (withType ? [{ h: 'Alert type', v: r => ccTypeOr
 window._ccAlertSub = window._ccAlertSub || null;
 function ccAlertSub(k) { window._ccAlertSub = k; document.querySelectorAll('#cc-alert-subs button').forEach(b => b.classList.toggle('active', b.dataset.k === k)); document.querySelectorAll('.cc-asub').forEach(v => { v.style.display = v.dataset.k === k ? '' : 'none'; }); }
 function ccAlertsBox(d, pfx, hint) {
+  window._ccTrend = Object.fromEntries((d.stocks || []).filter(s => s.colour).map(s => [s.symbol, s.colour]));   // this broker's Supertrend colours for the Trend / Right position columns
   const rows = (d.alerts || []).slice().sort(ccAlertSort);
   if (!rows.length) return `<div class="d2-panel"><div class="d2-panel-head"><div><div class="d2-title">Alerts</div></div></div><div class="d2-edge-foot" style="border:0">No alerts on the open option legs.</div></div>`;
   const types = CC_TYPE_ORDER.filter(t => rows.some(r => r.type === t));
@@ -10268,9 +10356,76 @@ const ccSigFilters = rsi => [['all', 'All stocks', () => true], ['call', 'Sell c
   ['open', 'Has open legs', s => (s.legs || []).length > 0], ['event', 'Event within 2 weeks', s => { const n = ccEventDays(s); return n != null && n <= CC_EVENT_DAYS; }]].concat(rsi ? [['rsi', 'RSI override', s => s.rsi_override]] : []);
 const ccSigGroups = [{ key: 'act', label: 'Act now' }, { key: 'cand', label: 'Candidates · no recent flip', collapsed: true }, { key: 'hold', label: 'Holding', collapsed: true }];
 
+// ── AZ ENTRY SIGNALS IN TIERS (user, 2026-11-16): Supertrend only (no RSI), by when the CURRENT colour began; stocks with open option legs are left out ──
+// Tier 1 = flipped on the latest session; Tier 2 = 1-5 trading days ago; Tier 3 = within 30 days; Tier 4 = within 90 days (each stock in its freshest tier).
+// Mirrors zerodha-live/scripts/option_entry_tiers.py (the read-only skill zerodha-option-entry-signal); change both together.
+// one sub-tab per tier: [key, tab label, table title]
+const CC_TIER_TABS = [
+  ['1', 'Tier 1 · today', 'Tier 1 · flipped on the latest session'],
+  ['2', 'Tier 2 · last week', 'Tier 2 · flipped 1–5 trading days ago (the last trading week)'],
+  ['3', 'Tier 3 · 30 days', 'Tier 3 · flipped in the last 30 days'],
+  ['4', 'Tier 4 · 90 days', 'Tier 4 · flipped in the last 90 days'],
+  ['5', 'Tier 5 · older', 'Tier 5 · flipped more than 90 days ago (the oldest, weakest signal)']];
+function ccTierTab(name) { ccPick('cc-tiertabs', 'cc-tv-', ['1', '2', '3', '4', '5'], ['1', '2', '3', '4', '5'].includes(name) ? name : '1', 'tj_cctier'); }
+function ccTierRows(d) {
+  const R = d.rules || {}, close = R.event_close_days ?? 15, minDays = R.expiry_min_days ?? 30;
+  const t0 = new Date(); t0.setHours(0, 0, 0, 0);
+  const md = new Date(d.market_data_date + 'T00:00:00'), day = x => new Date(x + 'T00:00:00'), diff = (a, b) => Math.round((a - b) / 86400000);
+  const out = [];
+  (d.stocks || []).forEach(s => {
+    if ((s.legs || []).length || s.flip_date == null || s.flip_trading_days == null) return;   // open option legs: not an entry candidate
+    const e = (s.expiries || [])[0]; if (!e || !e.lot) return;
+    const td = s.flip_trading_days, cal = diff(md, day(s.flip_date));
+    const tier = td === 0 ? 1 : td <= 5 ? 2 : cal <= 30 ? 3 : cal <= 90 ? 4 : 5;   // tier 5 = flipped more than 90 days ago
+    const exp = day(e.expiry), dte = diff(exp, t0), evs = [];
+    let lvl = 0, main = null;
+    (s.events || []).slice().sort((a, b) => a.date.localeCompare(b.date)).forEach(ev => {
+      const days = diff(day(ev.date), t0); if (days < 0) return;
+      const start = new Date(day(ev.date)); start.setDate(start.getDate() - close);
+      const nm = /^result/i.test(ev.label) ? 'Results' : 'Ex-div', est = ev.estimated ? ' (est.)' : '';
+      let l = 0, txt = '';
+      if (start <= t0) { l = 3; txt = `${nm} ${dhFmtDate(ev.date)}${est} in ${days}d`; }
+      else if (start < exp) { l = 2; txt = `${nm} ${dhFmtDate(ev.date)}${est}`; }
+      else if (days <= 60) { l = 1; txt = `${nm} ${dhFmtDate(ev.date)}${est} · ${days}d`; }
+      else return;
+      evs.push({ l, txt, start });
+      if (l > lvl) { lvl = l; main = { l, txt, start }; }
+    });
+    const short = dte < minDays;
+    out.push({ symbol: s.symbol, tier, desired: s.colour === 'green' ? 'PUT_SPREAD' : 'CALL', colour: s.colour, spot: s.spot, flip_date: s.flip_date, td, cal,
+      expiry: e.expiry, lot: e.lot, dte, short, evs, lvl: Math.max(lvl, short ? 2 : 0), main, events: s.events || [] });
+  });
+  return out;
+}
+const ccTierAlert = r => {
+  const chip = (bg, fg, t, tip) => `<span class="trend-pill" style="background:${bg};color:${fg};white-space:nowrap" title="${dhEsc(tip || '')}">${t}</span>`;
+  const parts = [];
+  if (r.main && r.main.l === 3) parts.push(chip('var(--red)', '#fff', '✕ Do not open · ' + dhEsc(r.main.txt), 'This event is inside the ' + 'close window right now: a new option would have to be closed at once'));
+  else if (r.main && r.main.l === 2) parts.push(chip('var(--amber-soft, var(--surface2))', 'var(--amber)', '⚠ Close by ' + dhFmtDate(r.main.start.getFullYear() + '-' + String(r.main.start.getMonth() + 1).padStart(2, '0') + '-' + String(r.main.start.getDate()).padStart(2, '0')) + ' · ' + dhEsc(r.main.txt), 'The close window opens before the expiry: the trade must be closed early'));
+  else if (r.main) parts.push(`<span style="color:var(--text-muted)">${dhEsc(r.main.txt)}</span>`);
+  if (r.short) parts.push(chip('var(--amber-soft, var(--surface2))', 'var(--amber)', '⚠ Short expiry ' + r.dte + 'd', 'Only a near expiry is listed for this stock'));
+  return parts.length ? parts.join(' ') : '<span style="color:var(--text-muted)">—</span>';
+};
+const ccTierCols = () => [
+  { h: 'Stock', v: r => r.symbol, c: r => `<b class="stk">${dhEsc(r.symbol)}</b>`, txt: true },
+  { h: 'Structure', v: r => r.desired, c: r => r.desired === 'PUT_SPREAD' ? '<span class="trend-pill" style="background:var(--green-soft);color:var(--green)">BPS</span>' : '<span class="trend-pill" style="background:var(--red-soft);color:var(--red)">Sell call</span>', txt: true },
+  { h: 'CMP', v: r => r.spot, c: r => ccP(r.spot), num: true },
+  { h: 'Flipped', v: r => r.td, x: r => r.flip_date, c: r => `<span class="cc-dot ${r.colour === 'green' ? 'g' : 'r'}" title="Supertrend ${dhEsc(r.colour)}">●</span> ${r.td === 0 ? '<b>today</b>' : dhFmtDate(r.flip_date) + ' <span style="color:var(--text-muted)">· ' + r.td + 'td</span>'}`, txt: true },
+  { h: 'Expiry · lot', v: r => r.expiry, x: r => r.expiry + ' lot ' + r.lot, c: r => `${dhFmtDate(r.expiry)} <span style="color:var(--text-muted)">· ${r.lot}</span>`, txt: true },
+  { h: 'Results / ex-dividend', v: r => -r.lvl, x: r => (r.evs.map(e => e.txt).join('; ')) + (r.short ? '; short expiry' : ''), c: ccTierAlert, txt: true, nw: 230 },
+];
+const ccTierDetail = r => {
+  const evs = r.events.map(e => `${e.label} ${dhFmtDate(e.date)}${e.estimated ? ' (est.)' : ''}`).join(' · ') || 'no date';
+  const cell = (l, v) => `<div><b>${l}</b>${v}</div>`;
+  return `<div class="cc-dgrid">${cell('Supertrend', `${dhEsc(r.colour)} since ${dhFmtDate(r.flip_date)} (${r.td} trading days, ${r.cal} calendar days)`)}${cell('Structure', r.desired === 'PUT_SPREAD' ? 'Sell a put, buy the hedge 2 listed strikes lower' : 'Sell a call (no hedge)')}${cell('Expiry', dhFmtDate(r.expiry) + ' · ' + r.dte + 'd · lot ' + r.lot)}${cell('Events', dhEsc(evs))}${cell('To place', '/zerodha-option-order with --structure ' + (r.desired === 'PUT_SPREAD' ? 'put-spread' : 'call') + ' (market hours)')}</div>`;
+};
+const ccTierFilters = [['all', 'All entry signals', () => true], ['put', 'BPS', r => r.desired === 'PUT_SPREAD'], ['call', 'Sell call', r => r.desired === 'CALL'],
+  ['clear', 'Clear to open (no event alert)', r => r.lvl < 2], ['alert', 'Has an event alert', r => r.lvl >= 2]];
+
 // ── Open positions as TRADES (one row per structure, not per leg): % of max profit vs the profit target, distance to the short strike, stop in place, next step ──
 const CC_TRADE_ORDER = ['3× premium', 'Through hedge', 'Expiry risk', 'Event close', 'Exit', 'Beyond strike', 'Profit Exit', 'No stop placed', 'No GTT placed', 'Invalid GTT', 'Near strike', 'Leftover hedge'];
 function ccTrades(S, alerts, R) {
+  window._ccTrend = Object.fromEntries((S || []).filter(s => s.colour).map(s => [s.symbol, s.colour]));   // this broker's Supertrend colours (Trend / Right position columns)
   const t0 = new Date(); t0.setHours(0, 0, 0, 0);
   const al = {};
   (alerts || []).forEach(a => { if (a.strike == null || !a.expiry) return; const k = a.symbol + '|' + a.expiry + '|' + Number(a.strike); (al[k] = al[k] || []).push(a); });
@@ -10291,6 +10446,7 @@ function ccTrades(S, alerts, R) {
     t.kept = sold > 0 ? (sold - now) / sold * 100 : null;
     t.pnl = t.legs.reduce((a, l) => a + (l.pnl_rs || 0), 0);
     t.shortPnl = shorts.reduce((a, l) => a + (l.pnl_rs || 0), 0);
+    t.shorts_n = shorts.length;
     const near = shorts.filter(l => l.dist_pct != null).sort((a, b) => Math.abs(a.dist_pct) - Math.abs(b.dist_pct))[0];
     t.near = near || null;
     const mine = t.legs.flatMap(l => al[t.symbol + '|' + l.expiry + '|' + Number(l.strike)] || []);
@@ -10318,8 +10474,12 @@ const ccTradeDetail = t => {
   }).join('');
   return `<div class="cc-dgrid" style="grid-template-columns:repeat(auto-fill,minmax(330px,1fr))">${rows}</div>`;
 };
+// Does the structure held in this trade row match what the Supertrend colour wants? (green wants a bull put spread / put side, red wants the call side)
+const ccHeldMatch = t => { const c = ccTrendOf(t.symbol); if (!c || !t.shorts_n) return null; return c === 'green' ? t.type === 'PE' : t.type === 'CE'; };
 const ccTradeCols = () => [
   { h: 'Stock', v: t => t.symbol, c: t => `<b class="stk">${dhEsc(t.symbol)}</b>`, txt: true },
+  { h: 'Trend', v: t => ccTrendOf(t.symbol), c: t => ccTrendCell(t), txt: true },
+  { h: 'Right position', v: t => ccRightPos(t), c: t => { const p = ccRightPos(t), m = ccHeldMatch(t); const mk = m == null ? '' : m ? ' <span class="pos" title="This trade is the structure the colour wants">✓</span>' : ' <span class="neg" title="This trade is the opposite of what the colour wants">≠</span>'; return p === '—' ? '<span style="color:var(--text-muted)">—</span>' : `<b>${p}</b>${mk}`; }, txt: true },
   { h: 'Trade', v: t => t.label, c: t => dhEsc(t.label), txt: true },
   { h: 'Expiry', v: t => t.expiry, c: t => `${dhFmtDate(t.expiry)} <span style="color:${t.days <= 7 ? 'var(--red)' : 'var(--text-muted)'}">(${t.days}d)</span>`, txt: true },
   { h: 'Short leg', v: t => t.kept ?? -999, c: ccKeptCell, txt: true },
@@ -10535,8 +10695,10 @@ function ccZerodhaView(d) {
   const zLegs = S.flatMap(s => (s.legs || []).map(l => ({ ...l, symbol: l.symbol || s.symbol })));
   const zMtm = zLegs.reduce((a, l) => a + (l.pnl_rs || 0), 0);
   const zNear = zLegs.filter(l => l.side === 'SHORT').sort((a, b) => Math.abs(a.dist_pct) - Math.abs(b.dist_pct))[0];
+  const tierRows = di ? [] : ccTierRows(d), tn = k => tierRows.filter(r => r.tier === k).length;
   const kpis = a2Metrics([
-    ['Signals', `${C.call || 0} call · ${C.put_spread || 0} BPS`, (di ? `${S.length} DI stocks with options` : `${S.length} Nifty F&O stocks`) + ((d.no_data || []).length ? ' (no data: ' + d.no_data.join(', ') + ')' : '') + (di ? ((d.no_options || []).length ? ` · no options: ${d.no_options.join(', ')}` : '') : ` · RSI overrides: ${C.rsi_override || 0}`)],
+    di ? ['Signals', `${C.call || 0} call · ${C.put_spread || 0} BPS`, `${S.length} DI stocks with options` + ((d.no_data || []).length ? ' (no data: ' + d.no_data.join(', ') + ')' : '') + ((d.no_options || []).length ? ` · no options: ${d.no_options.join(', ')}` : '')]
+      : ['Entry signals', tierRows.length, `Tier 1: ${tn(1)} · Tier 2: ${tn(2)} · Tier 3: ${tn(3)} · Tier 4: ${tn(4)} · Tier 5: ${tn(5)} · Supertrend only, open-leg stocks left out`],
     ['Open option legs', (d.positions || {}).legs || 0, 'Expiries from ' + dhFmtDate((d.positions || {}).track_from) + ' · ' + ((d.positions || {}).ignored_legs || 0) + ' earlier legs ignored'],
     ['Act now', ccActNow(d), 'Exit, 3× premium, beyond strike, profit exit (other alerts are in the Alerts tab)', ccActNowBad(d) ? 'neg' : ''],
     ['Nearest short strike', zNear ? ccSigned(zNear.dist_pct) : '—', zNear ? `${zNear.symbol} ${ccStrike(zNear.strike)}${zNear.type} · ${ccSD(zNear.expiry)}` : 'No short legs', zNear && Math.abs(zNear.dist_pct) < 5 ? 'neg' : ''],
@@ -10552,6 +10714,13 @@ function ccZerodhaView(d) {
     filters: ccSigFilters(true),
     cols: ccSigCols(d),
   });
+  const tierIntro = 'Supertrend only, no RSI: green = BPS (bull put spread), red = sell call. Each stock sits in the freshest tier that fits (tier = when the current colour began). Stocks that already have open option legs are not listed. The last column warns of results / ex-dividend dates: <b>✕ Do not open</b> = inside the ' + (R.event_close_days ?? 15) + '-day close window now, <b>⚠ Close by</b> = the window opens before the expiry. Click a row for details. Place with /zerodha-option-order (strikes and premiums come from live quotes there).';
+  const tierT = di ? '' : `<div class="d2-hint" style="margin:6px 2px 0;line-height:1.5">${tierIntro}</div>`
+    + ccTabBar('cc-tiertabs', CC_TIER_TABS.map(([k, l]) => [k, l, tn(+k)]), 'ccTierTab')
+    + CC_TIER_TABS.map(([k, l, full]) => `<div id="cc-tv-${k}" class="a2-view">` + ccTbl('ztier' + k, {
+      title: full, hint: '', rows: tierRows.filter(r => r.tier === +k), search: r => r.symbol, empty: 'No stocks in this tier: none flipped in this window, or those that did already have open option legs.', sort: [3, 1],
+      rowKey: r => r.symbol, detail: ccTierDetail, filters: ccTierFilters, cols: ccTierCols(),
+    }) + '</div>').join('');
   const lvlOrd = { EXIT: 0, BREACH: 1, WARN: 2 };
   const alertsT = ccAlertsBox(d, 'zal', 'Alert types: 3× premium, beyond / near strike, through hedge, profit exit, no GTT, no hedge, Exit (colour flipped, opposite position open)');
   const trades = ccTrades(S, d.alerts, R);
@@ -10561,11 +10730,11 @@ function ccZerodhaView(d) {
     rowKey: t => t.key, detail: ccTradeDetail, group: t => t.needs ? 'act' : 'ok', groups: ccTradeGroups, filters: ccTradeFilters, cols: ccTradeCols(),
   });
   const rulesPanel = a2Panel('Option rules', 'Edit ' + dir + '/data/cc_config.json to change; shown here as applied',
-    a2Rows((R.rsi_override === false ? [
+    a2Rows((R.rsi_override === false || !di ? [
       ['Green', `BPS (sell a put, buy ${R.hedge_strikes_below} listed strikes lower)`],
       ['Red', 'Sell the call only'],
       ['RSI', 'No RSI override: the Supertrend colour alone decides'],
-    ] : [
+    ].concat(di ? [] : [['Entry tiers', 'Tier 1 flipped on the latest session · Tier 2 flipped 1–5 trading days ago · Tier 3 within 30 days · Tier 4 within 90 days · Tier 5 older than 90 days. Stocks with open option legs are left out']]) : [
       ['RSI above ' + R.rsi_sell_call_above, `Sell the ${R.short_call_delta} delta call, whatever the Supertrend colour`],
       ['RSI below ' + R.rsi_sell_put_below, `BPS (sell the ${R.short_put_delta} delta put, buy ${R.hedge_strikes_below} listed strikes lower), whatever the colour`],
       ['Otherwise · green', 'BPS'],
@@ -10578,11 +10747,12 @@ function ccZerodhaView(d) {
       ['Universe', di ? 'The DI dividend universe: only the stocks with listed options appear here' : 'All Nifty F&O stocks except ' + ((d.excluded || []).join(', ') || 'none')],
     ]).concat(ccRulesCommon(R, di ? ['Stop protection', 'Not tracked for DI: place and watch the 3× stop in ICICIdirect'] : ['Stop protection', 'Each short should have a buy-back GTT (stop 3× + profit target); an invalid or missing one raises Invalid GTT / No GTT placed (scan_gtts.py, the zerodha-gtt-order skill)']))));
   const foot = `<div class="d2-edge-foot" style="border:0">Market data ${dhFmtDate(d.market_data_date)} · no option quotes are pulled, so strikes and premiums for new trades are not shown · positions fetched ${(d.positions || {}).fetched_at ? dhFmtDate(String(d.positions.fetched_at).slice(0, 10)) : (di ? 'never (upload not connected yet)' : 'never (run /refresh-zerodha)')}.</div>`;
-  const bar = ccTabBar('cc-otabs', [['alerts', 'Alerts', (d.alerts || []).length], ['signals', 'Signals', S.length], ['legs', 'Open positions', trades.length], ['rules', 'Rules', null]], 'ccZTab');
-  return ccStrikeBanner(d) + kpis + bar + `<div id="cc-ov-alerts" class="a2-view">${alertsT}</div><div id="cc-ov-signals" class="a2-view">${sigT}</div><div id="cc-ov-legs" class="a2-view">${legT}</div><div id="cc-ov-rules" class="a2-view">${rulesPanel}${foot}</div>`;
+  const bar = ccTabBar('cc-otabs', [['alerts', 'Alerts', (d.alerts || []).length], ['signals', di ? 'Signals' : 'Entry signals', di ? S.length : tierRows.length], ['legs', 'Open positions', trades.length], ['rules', 'Rules', null]], 'ccZTab');
+  return ccStrikeBanner(d) + kpis + bar + `<div id="cc-ov-alerts" class="a2-view">${alertsT}</div><div id="cc-ov-signals" class="a2-view">${di ? sigT : tierT}</div><div id="cc-ov-legs" class="a2-view">${legT}</div><div id="cc-ov-rules" class="a2-view">${rulesPanel}${foot}</div>`;
 }
 
 function ccRender(d) {
+  if (window._ccWs && window._ccWs !== WS.id) { window._cc = null; ccRefresh(false); return; }   // never paint another broker's data in this broker's view
   try { const c = WS.data[WS.id]; if (c) dhRenderStale(c); } catch (e) {}
   const asof = document.getElementById('cc-asof');
   wsPaintFresh();
@@ -10594,7 +10764,7 @@ function ccRender(d) {
     pg.querySelector('.d2-eyebrow').textContent = di ? 'DI workspace · dividend portfolio options' : zer ? 'AZ workspace · Nifty F&O option selling' : 'ND workspace · investment portfolio options';
     pg.querySelector('.d2-sub').textContent = di ? 'Supertrend red = sell the call, green = BPS (no RSI override), on the DI stocks that have listed options. Exit at 3× premium or when the Supertrend colour changes. Open legs come from the uploaded ICICIdirect positions (not connected yet).'
       : zer
-      ? 'RSI > 70 sell call, RSI < 30 BPS, else Supertrend green = BPS, red = sell call. Exit at 3× premium or when the Supertrend colour changes. Open legs from the tracking start date (see Alerts) are checked against the live price.'
+      ? 'Supertrend only (no RSI): green = BPS, red = sell call, in 4 tiers by how recently the colour flipped. Exit at 3× premium or when the Supertrend colour changes. Open legs from the tracking start date (see Alerts) are checked against the live price.'
       : 'Options: Supertrend red = sell the 0.10-delta call, green = BPS (no RSI override). Shares: entries, exits and averaging for the investment portfolio.';
   }
   if (zer) {
@@ -10602,6 +10772,7 @@ function ccRender(d) {
     Object.keys(CC_T).forEach(ccTblApply);
     let zt = null; try { zt = localStorage.getItem('tj_ccz_tab'); } catch (e) {}
     ccZTab(zt || 'signals');
+    if (!di) { let tt = null; try { tt = localStorage.getItem('tj_cctier'); } catch (e) {} ccTierTab(tt || '1'); }
     return;
   }
   document.getElementById('cc-root').innerHTML =
@@ -10740,13 +10911,18 @@ function p2RenderCal(d) {
   const first = ser[0].date.slice(0, 7), lastK = ser[ser.length - 1].date.slice(0, 7);
   if (!window._p2Cal || window._p2Cal.ws !== WS.id) window._p2Cal = { ws: WS.id, key: lastK };
   const key = window._p2Cal.key, [y, m] = key.split('-').map(Number);
-  const byDate = {}; ser.forEach(s => { byDate[s.date] = s.delta; });
+  // realised P&L per day (user, 2026-11-16): sum of the closed trades' P&L on their exit date, like the old sheet dashboard; days with no exit stay blank
+  const byDate = {}, cnt = {}, names = {};
+  (d.closed || []).forEach(c => { if (!c.exitDate) return; byDate[c.exitDate] = (byDate[c.exitDate] || 0) + (c.plRs || 0); cnt[c.exitDate] = (cnt[c.exitDate] || 0) + 1; (names[c.exitDate] = names[c.exitDate] || []).push(c.symbol); });
   const offset = (new Date(y, m - 1, 1).getDay() + 6) % 7, days = new Date(y, m, 0).getDate();
+  const mk = `${y}-${String(m).padStart(2, '0')}`, mDates = Object.keys(byDate).filter(k => k.startsWith(mk));
+  const sumEl = document.getElementById('p2-cal-sum'), mSum = mDates.reduce((s, k) => s + byDate[k], 0), mN = mDates.reduce((s, k) => s + cnt[k], 0);
+  if (sumEl) sumEl.innerHTML = mN ? `${mN} closed · <b class="${mSum >= 0 ? 'pnl-pos' : 'pnl-neg'}">${p2SignedK(mSum)}</b>` : '<span style="color:var(--text-muted)">No closed trades</span>';
   let html = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'].map(h => `<div class="h">${h}</div>`).join('') + '<div class="p2-day blank"></div>'.repeat(offset);
   for (let day = 1; day <= days; day++) {
     const iso = `${y}-${String(m).padStart(2, '0')}-${String(day).padStart(2, '0')}`, v = byDate[iso];
     const wd = (offset + day - 1) % 7, we = wd >= 5;
-    html += `<div class="p2-day ${v == null ? '' : v >= 0 ? 'pos' : 'neg'}${we ? ' we' : ''}">${day}<small>${v == null ? '&nbsp;' : p2SignedK(v)}</small></div>`;
+    html += `<div class="p2-day ${v == null ? '' : v >= 0 ? 'pos' : 'neg'}${we ? ' we' : ''}"${v == null ? '' : ` title="${dhEsc((names[iso] || []).join(', '))} (${cnt[iso]} closed)"`}>${day}<small>${v == null ? '&nbsp;' : p2SignedK(v)}</small></div>`;
   }
   el.innerHTML = html;
   document.getElementById('p2-cal-label').textContent = `${P2_MONTHS[m - 1]} ${y}`;

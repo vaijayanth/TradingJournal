@@ -34,6 +34,7 @@ Real money, opens a short. Do it only when the user names the contract(s) in thi
 ## Learned 2026-11-14
 - `super_cancel` of a TARGET_LEG answers "Cancelled successful" but `super_list` keeps showing it PENDING for a long time (it was still PENDING a day later). The Dhan APP is the truth: its Super Orders page has three tabs, **Active** (entry done, an exit leg still live), **Closed** (the stop leg fired, nothing live) and **Cancel** (legs cancelled before doing anything). A stop-fired order whose leftover target the API still lists is already under Closed in the app, so do not cancel it again; confirm in the app or after the next session's open.
 - An open short with no stop can be given one in the app (the user did this for 7 shorts and the book grew from 19 to 26 orders, matched by the scan with stops about 3x). The MCP still cannot attach a stop to an existing position.
+- **Target legs can be set with `super_modify` (confirmed by the user in the Dhan app 2026-11-16).** Payload `{"orderId": "<id>", "legName": "TARGET_LEG", "targetPrice": <price>}` (only those three fields; the stop leg is untouched). All 13 open shorts had `TARGET_LEG: PENDING @ 0.00` (no target) and were set to 40% of the sold price rounded to the 0.05 tick (CUMMINSIND first as a test, then the other 12). `/dhan-option-scan-signal` section G lists shorts that have no target. Only on the user's explicit yes, one list shown first; check each with `super_list` afterwards and never use a target price at or above the current premium (it would fire at once).
 - Leftover LONG legs (hedges whose short is gone) are not an order problem: the Covered Call page raises the `Leftover hedge` alert for them (sell or let expire).
 
 ## After any change
@@ -41,3 +42,6 @@ Re-run Part 1 steps 1-3 so the alerts clear; nothing is committed ("push" handle
 
 ## Reporting
 Plain: scanned / cancelled / modified / placed / failed (with the verbatim error). A pending order is not a fill; an unconfirmed leg field name is reported, not guessed.
+
+## Next-step nudge (user, 2026-11-16)
+When done, say what is left on tonight's checklist and the next command: close any flagged leg in the Dhan app, `/dhan-order` if it has not been run tonight, and tomorrow's `/refresh-dhan`. If the refresh checklist is not in this conversation, run `python scripts/action_items.py` to rebuild it.

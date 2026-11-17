@@ -596,7 +596,6 @@
   "PIDILITIND": "2026-08-04",
   "PNBHOUSING": "2026-08-10",
   "SBILIFE": "2026-07-28",
-  "SBIN": "2026-08-07",
   "SHRIRAMFIN": "2026-08-06",
   "SIEMENS": "2026-08-12",
   "SUNPHARMA": "2026-07-27",
@@ -649,7 +648,6 @@
   "PIDILITIND": "2026-08-04",
   "PNBHOUSING": "2026-08-10",
   "SBILIFE": "2026-07-28",
-  "SBIN": "2026-08-07",
   "SHRIRAMFIN": "2026-08-06",
   "SIEMENS": "2026-08-12",
   "SUNPHARMA": "2026-07-27",
@@ -702,7 +700,6 @@
   "PIDILITIND": 12,
   "PNBHOUSING": 17,
   "SBILIFE": 11,
-  "SBIN": 19,
   "SHRIRAMFIN": 18,
   "SIEMENS": 5,
   "SUNPHARMA": 10,
@@ -717,7 +714,7 @@
   "RBLBANK": 59
  },
  "moved_out": {
-  "note": "The 21 trades the user moved to the new dashboard (19 on 2026-11-09, KALYANKJIL and MANKIND added 2026-11-09 evening) were removed from this baseline; their entry dates / quantities now live in moved_from_sheet.json. On 2026-11-16 six more (DLF, CDSL, BAJFINANCE, INDIGO, 360ONE, RADICO) were moved under the new rule: green and profitable (any size).",
+  "note": "The 21 trades the user moved to the new dashboard (19 on 2026-11-09, KALYANKJIL and MANKIND added 2026-11-09 evening) were removed from this baseline; their entry dates / quantities now live in moved_from_sheet.json. On 2026-11-16 six more (DLF, CDSL, BAJFINANCE, INDIGO, 360ONE, RADICO) were moved under the new rule: green and profitable (any size). On 2026-11-16 (evening) SBIN was moved too.",
   "symbols": [
    "ANANDRATHI",
    "ANGELONE",
@@ -745,7 +742,8 @@
    "BAJFINANCE",
    "INDIGO",
    "360ONE",
-   "RADICO"
+   "RADICO",
+   "SBIN"
   ],
   "removed_at": "2026-11-09"
  }

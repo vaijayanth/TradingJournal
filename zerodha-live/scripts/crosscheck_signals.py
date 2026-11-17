@@ -49,6 +49,9 @@ def supertrend(h, l, c, period=PERIOD, mult=MULT):
     return d
 
 
+BACKTESTER_FINAL = True   # user 2026-11-16: per-signal cross-check flags are advisory only (set False to block flagged signals again)
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--signals", default=str(ROOT / "zerodha_live_signals.json"))
@@ -64,12 +67,8 @@ def main():
     todo = ([("entry", r) for r in sig.get("entries", [])] + [("addon", r) for r in sig.get("addons", [])]
             + [("exit", r) for r in sig.get("exits", [])])
     syms = sorted({r["symbol"] for _, r in todo})
-    if not syms:   # no signals to check: write an empty result instead of crashing yf.download([])
-        Path(args.out).write_text(json.dumps({"generated_at": datetime.now(timezone.utc).isoformat(), "market_data_date": md, "yahoo_last_bars": [],
-                                              "bars_after_signal_date_ignored": [], "checked": 0, "flagged": 0, "results": []}, indent=1))
-        print(f"cross-check of 0 signals (market data {md}): nothing to check")
-        return
-    df = yf.download([s + ".NS" for s in syms], period="5y", progress=False, auto_adjust=False, threads=True)
+    # no signals today = nothing to cross-check (yf.download([]) raises "No objects to concatenate")
+    df = yf.download([s + ".NS" for s in syms], period="5y", progress=False, auto_adjust=False, threads=True) if syms else None
 
     results, last_bars, dropped = [], set(), set()
     # Daily bars from the Zerodha MCP (data/zerodha_bars_overlay.json) fill sessions Yahoo has not published yet; they are only ever
@@ -102,6 +101,8 @@ def main():
                 res["zerodha_bars_added"] = [o["date"] for o in add]
         if x is None or len(x) < PERIOD + 2:
             res["reasons"].append("not enough Yahoo history to verify")
+            res["flagged"] = True
+            res["ok"] = BACKTESTER_FINAL
             results.append(res)
             continue
         if len(x) < WINDOW:
@@ -138,10 +139,13 @@ def main():
             res["reasons"].append(f"close {close:.2f} is below the 252-session closing high {hi_close:.2f}")
         if kind == "entry" and args.mode == "flip" and (flip_bars is None or flip_bars > 0):
             res["reasons"].append(f"no red-to-green Supertrend flip on the last trading bar on complete data (last flip {flip_bars} bars ago)")
-        res["ok"] = not res["reasons"]
+        # Policy (user, 2026-11-16): the backtester's signal is FINAL. A disagreement is kept as an advisory (flagged + reasons) and shown,
+        # but it no longer blocks the signal (ok stays True). A mass disagreement still raises the global guardrail F5 (broken data).
+        res["flagged"] = bool(res["reasons"])
+        res["ok"] = (not res["reasons"]) or BACKTESTER_FINAL
         results.append(res)
 
-    bad = [x for x in results if not x["ok"]]
+    bad = [x for x in results if x.get("flagged", not x["ok"])]
     out = {"generated_at": datetime.now(timezone.utc).isoformat(), "market_data_date": md, "yahoo_last_bars": sorted(last_bars), "bars_after_signal_date_ignored": sorted(dropped),
            "checked": len(results), "flagged": len(bad), "results": results}
     Path(args.out).write_text(json.dumps(out, indent=1))

@@ -72,3 +72,6 @@ Summarise per group: placed / verified / skipped / excluded / failed (verbatim e
 
 ## Reporting
 Plain: placed (as AMO) / status / still pending / failed (verbatim error). Never call a pending AMO filled.
+
+## Next-step nudge (user, 2026-11-16)
+When the last group is done, do not stop at the summary: say what is left on tonight's checklist and the exact next command: close the flagged option legs in Kite, then `/zerodha-gtt-order` (stale GTT deletes + protective GTTs), then `/zerodha-option-entry-signal` and `/zerodha-option-order` if there are new option trades, and tomorrow's `/refresh-zerodha`. If the refresh checklist is not in this conversation, run `python scripts/action_items.py` to rebuild it.

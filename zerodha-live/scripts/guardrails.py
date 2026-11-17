@@ -141,14 +141,14 @@ def evaluate(ctx, now):
         out.append(f("WARN", "F5", "no signal cross-check result: signals have not been verified against complete Yahoo history"))
     else:
         res = xc.get("results", [])
-        bad = [r for r in res if not r.get("ok")]
+        bad = [r for r in res if r.get("flagged", not r.get("ok"))]
         if xc.get("market_data_date") != sig.get("market_data_date"):
             out.append(f("BLOCK", "F5", f"cross-check is for market data {xc.get('market_data_date')} but the signals are {sig.get('market_data_date')}"))
         elif len(res) >= cfg["crosscheck_min_signals"] and len(bad) / len(res) >= cfg["crosscheck_block_ratio"]:
             out.append(f("BLOCK", "F5", f"the cross-check disagrees with {len(bad)} of {len(res)} signals - prices are suspect (a partial same-day bar while the market is open, "
                                         "a hole in the price history, or a bad feed). Do not order until the close-of-day data is published and the refresh re-run."))
         elif bad:
-            out.append(f("WARN", "F5", f"the cross-check flagged {len(bad)} of {len(res)} signals (they are blocked from orders): " + ", ".join(sorted({r['symbol'] for r in bad})[:12])))
+            out.append(f("WARN", "F5", f"the cross-check flagged {len(bad)} of {len(res)} signals (advisory only, the backtester signal stands and they are not blocked): " + ", ".join(sorted({r['symbol'] for r in bad})[:12])))
 
     # I1 numerics
     for name in ("signals", "cc"):
