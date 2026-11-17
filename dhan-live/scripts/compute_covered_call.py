@@ -65,7 +65,22 @@ def parse_positions(text, expiries):
         elif cur and line.strip().startswith("P&L:"):
             p = re.search(r"([▲▼])\s*₹([\d,.]+)", line)
             cur["pnl_rs"] = (1 if p.group(1) == "▲" else -1) * num(p.group(2))
+            r = re.search(r"Realized\s*₹(-?[\d,.]+)", line)
+            # Dhan's P&L is TOTAL (realised + unrealised). A contract closed and reopened (or part-closed) the same day also
+            # carries a blended average, so neither the P&L nor the average describe the open lot alone (bug found 2026-11-17).
+            cur["realized_rs"] = num(r.group(1)) if r else 0.0
+            cur["blended"] = abs(cur["realized_rs"]) > 0.005
     return [l for l in legs if "qty" in l and "pnl_rs" in l and l["qty"] > 0]   # a CLOSED row (net 0, realised P&L only) is not an open leg
+
+
+def leg_premium(l):
+    """Current premium of an open leg from Dhan's position row. Dhan's P&L is realised + unrealised, so only the
+    unrealised part (P&L minus Realized) moves the premium off the average. Without this a leg that was closed and
+    reopened the same day showed a premium far from the real one (DIXON 11500PE: 28.33 instead of 94.20)."""
+    unreal = l["pnl_rs"] - l.get("realized_rs", 0.0)
+    if l["side"] == "SHORT":
+        return round(l["sell_avg"] - unreal / l["qty"], 2)
+    return round(l["buy_avg"] + unreal / l["qty"], 2)
 
 
 def parse_chain(text):
@@ -412,11 +427,11 @@ def main():
         my_legs = [l for l in legs if l["symbol"] == sym]
         for l in my_legs:
             if l["side"] == "SHORT":
-                l["ltp"] = round(l["sell_avg"] - l["pnl_rs"] / l["qty"], 2)
+                l["ltp"] = leg_premium(l)
                 l["stop_at"] = round(mult * l["sell_avg"], 2)
                 l["stop_hit"] = l["ltp"] >= l["stop_at"]
             else:
-                l["ltp"] = round(l["buy_avg"] + l["pnl_rs"] / l["qty"], 2)
+                l["ltp"] = leg_premium(l)
             strike_zone(l, spot_now, rules.get("near_strike_pct", 2))
             l["touched_h"] = l["touched"] if l["side"] == "LONG" else False
             l["dist_pct"] = round((l["strike"] / spot_now - 1) * 100, 2)
@@ -427,7 +442,7 @@ def main():
                 alerts.append({"level": "EXIT", "type": "3× premium", "symbol": sym, "expiry": l["expiry"], "strike": l["strike"], "opt_type": l["type"],
                                "concern": f"Premium {l['ltp']:g} is {l['ltp'] / l['sell_avg']:.1f}x the {l['sell_avg']:g} sold", "action": "Close now (3x stop hit)",
                                "text": f"{sym} {l['expiry']} {l['strike']:g}{l['type']}: premium {l['ltp']} >= {mult}x sold {l['sell_avg']} - close it"})
-            elif l["side"] == "SHORT" and l["ltp"] <= l["sell_avg"] * (1 - rules.get("profit_exit_decay_pct", 60) / 100):
+            elif l["side"] == "SHORT" and not l.get("blended") and l["ltp"] <= l["sell_avg"] * (1 - rules.get("profit_exit_decay_pct", 60) / 100):
                 alerts.append({"level": "PROFIT", "type": "Profit Exit", "symbol": sym, "expiry": l["expiry"], "strike": l["strike"], "opt_type": l["type"],
                                "concern": f"Premium decayed {(1 - l['ltp'] / l['sell_avg']) * 100:.0f}% (sold {l['sell_avg']:g}, now {l['ltp']:g})", "action": "Book profit: buy back",
                                "text": f"{sym} {l['expiry']} {l['strike']:g}{l['type']}: premium decayed {(1 - l['ltp'] / l['sell_avg']) * 100:.0f}% (sold {l['sell_avg']:g}, now {l['ltp']:g}) - book the profit"})
