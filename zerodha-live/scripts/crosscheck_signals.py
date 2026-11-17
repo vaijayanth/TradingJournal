@@ -64,6 +64,11 @@ def main():
     todo = ([("entry", r) for r in sig.get("entries", [])] + [("addon", r) for r in sig.get("addons", [])]
             + [("exit", r) for r in sig.get("exits", [])])
     syms = sorted({r["symbol"] for _, r in todo})
+    if not syms:   # no signals to check: write an empty result instead of crashing yf.download([])
+        Path(args.out).write_text(json.dumps({"generated_at": datetime.now(timezone.utc).isoformat(), "market_data_date": md, "yahoo_last_bars": [],
+                                              "bars_after_signal_date_ignored": [], "checked": 0, "flagged": 0, "results": []}, indent=1))
+        print(f"cross-check of 0 signals (market data {md}): nothing to check")
+        return
     df = yf.download([s + ".NS" for s in syms], period="5y", progress=False, auto_adjust=False, threads=True)
 
     results, last_bars, dropped = [], set(), set()
