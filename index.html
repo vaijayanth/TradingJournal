@@ -3710,7 +3710,7 @@ b.stk, #cc-root td b.stk, #page-dashboard-di b.stk { font-weight:700; }
     <div class="card" style="padding:0"><div class="table-wrap" style="border:none;border-radius:var(--radius)">
       <table id="dh-live-pos-table" class="dh-blotter">
         <thead><tr>
-          <th>Stock</th><th>Entry</th><th class="num">Qty</th><th class="num">WAC</th><th class="num">CMP</th>
+          <th>Stock</th><th>Entry</th><th class="num">Qty</th><th class="num">WAC</th><th class="num">CMP</th><th class="num">Invested ₹</th>
           <th>Trend</th><th class="num">Flip</th><th class="num">P&amp;L ₹</th><th class="num">P&amp;L%</th>
           <th class="num">Adds</th><th class="num">Age</th><th>Signal</th><th class="opt-col">Option trade</th><th class="num">vs 52WH</th>
         </tr></thead>
@@ -9248,8 +9248,8 @@ const DH_DEFS = {
     rows: d => d.positions.slice().sort((a, b) => a.plPct - b.plPct),
     filter: (r, f) => f === 'all' ? true : r.signal === f,
     cls: r => r.signal === 'EXIT' ? 'row-red' : r.signal === 'ADD-ON' ? 'row-green' : '',
-    empty: 'No position data.', cols: 13,
-    cells: [...DH_POS_CELLS.filter(c => c[0] !== 'vs 52WH %'), ['Signal', r => r.signal, r => `<td>${dhSignalPill(r.signal)}</td>`], DH_OPT_CELL, DH_POS_CELLS.find(c => c[0] === 'vs 52WH %')],
+    empty: 'No position data.', cols: 14,
+    cells: [...DH_POS_CELLS.filter(c => c[0] !== 'vs 52WH %').flatMap(c => c[0] === 'CMP' ? [c, ['Invested Rs', r => r.qty * r.avgCost, r => `<td class="num">${dhFmtRs(r.qty * r.avgCost)}</td>`]] : [c]), ['Signal', r => r.signal, r => `<td>${dhSignalPill(r.signal)}</td>`], DH_OPT_CELL, DH_POS_CELLS.find(c => c[0] === 'vs 52WH %')],
   },
   orders: {
     rows: d => (d.orders || []).slice().sort((a, b) => (a.side === b.side ? a.symbol.localeCompare(b.symbol) : a.side === 'SELL' ? -1 : 1)),
