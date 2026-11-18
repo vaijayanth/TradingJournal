@@ -137,7 +137,9 @@ def main():
                 bad = ["not covered by the cross-check"]
             if bad and s not in override:
                 blocked.append((kind, s, "; ".join(bad))); continue
+            cc_row = next((x for x in cc["results"] if x["kind"] == kind and x["symbol"] == s), {})
             tickets.append({"kind": kind, "symbol": s, "side": side, "qty": int(qty), "ref_price": ref,
+                            "supertrend": r.get("supertrend_color"), "yahoo_supertrend": cc_row.get("recomputed_colour"),
                             "est_value": round(qty * ref, 2), "reason": why, "market_data_date": md,
                         "crosscheck": "OVERRIDDEN: " + "; ".join(bad) if bad else "ok"})
     for i, t in enumerate(tickets, 1):
@@ -156,7 +158,8 @@ def main():
     label = "selected" if (args.pick or want) else "available"
     print(f"{args.kind.upper()} signals dated {md} ({age}d old) - {len(chosen)} {label}" + ("" if (args.pick or want) else " (numbered):"))
     for t in chosen:
-        print(f"  {t['no']:>2}) {t['side']:4} {t['symbol']:12} x{t['qty']:<4} ref Rs{t['ref_price']:<9} ~Rs{t['est_value']:<9} [{t['kind']}] {t['reason']}")
+        st = f"ST {t.get('supertrend') or '?'}" + (f" (Yahoo {t['yahoo_supertrend']})" if t.get("yahoo_supertrend") else "")
+        print(f"  {t['no']:>2}) {t['side']:4} {t['symbol']:12} x{t['qty']:<4} ref Rs{t['ref_price']:<9} ~Rs{t['est_value']:<9} {st:<24} [{t['kind']}] {t['reason']}")
     for s, why in skipped:
         print(f"  skipped {s}: {why}")
     for kind, s, why in blocked:
