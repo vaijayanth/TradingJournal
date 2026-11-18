@@ -113,3 +113,22 @@ Flip window 0, 6% idle cash, 2016-11-07 to 2026-11-17. Files: `results/az_ladder
 | Rs1 Cr | Rs20k + Rs10k | 18.24% | -18.88% | 4,497 | 40.6 | 1.75 | Rs5.36 Cr | 1,500 | 146 |
 
 Reading: doubling the step adds about 0.7-0.9 pt CAGR and 1.2-2.2 pt drawdown, the same return/risk line as the other variants.
+
+## ND (Dhan dh252) sizing test (2026-11-18, user request)
+Strategy: close above the 252-session closing high + Supertrend green, whole-position Supertrend-red exit, add-on at -6%; universe = every validated symbol (1,495) or the live ND universe (`--live-universe`: 1,483, ETFs and InvITs removed). 2016-11-07 to 2026-11-17, 6% idle cash, 0.1% slippage. Ladder = Rs1,000 + Rs1,000 per 100 closed trades, uncapped (the live position-size-doubling milestone is NOT modelled). `--size-pct` = each new position is that % of (start capital + realised P&L). Files: `results/nd_*`.
+
+| Start capital | Sizing | CAGR | Max DD | Closed | Win % | Avg win / loss | PF | Final | Missed (no cash) | Max pos |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Rs20L | ladder, all symbols | 28.08% | -15.46% | 7,927 | 41.4 | +33.0 / -9.0 | 2.02 | Rs2.39 Cr | 21,253 | 469 |
+| Rs20L | ladder, live universe | 28.01% | -15.42% | 7,898 | 41.3 | +33.1 / -9.0 | 2.01 | Rs2.38 Cr | 20,957 | 469 |
+| Rs20L | 0.1% | 11.63% | -5.40% | 9,986 | 42.2 | +35.4 / -8.4 | 2.11 | Rs0.60 Cr | 0 | 650 |
+| Rs20L | 0.25% | 19.82% | -11.69% | 9,518 | 43.0 | +34.8 / -8.9 | 2.05 | Rs1.23 Cr | 3,998 | 504 |
+| Rs20L | 0.5% | 26.20% | -19.46% | 7,140 | 42.6 | +35.5 / -9.1 | 1.85 | Rs2.06 Cr | 26,029 | 288 |
+| Rs20L | 1.0% | 31.58% | -22.48% | 4,350 | 42.7 | +36.5 / -9.2 | 1.81 | Rs3.13 Cr | 51,218 | 162 |
+| Rs1 Cr | ladder (live universe) | 18.28% | -10.04% | 9,903 | 42.8 | +34.8 / -8.8 | 2.19 | Rs5.38 Cr | 655 | 650 |
+| Rs1 Cr | 0.1% | 12.10% | -4.97% | 9,986 | 43.0 | +34.6 / -8.9 | 2.32 | Rs3.14 Cr | 0 | 650 |
+| Rs1 Cr | 0.25% | 20.28% | -11.50% | 9,518 | 43.2 | +34.7 / -8.9 | 2.07 | Rs6.37 Cr | 4,001 | 505 |
+| Rs1 Cr | 0.5% | 26.18% | -19.36% | 7,113 | 42.5 | +35.4 / -9.2 | 1.84 | Rs10.29 Cr | 26,429 | 286 |
+| Rs1 Cr | 1.0% | 31.84% | -22.41% | 4,314 | 43.0 | +36.3 / -9.3 | 1.84 | Rs15.98 Cr | 51,421 | 162 |
+
+Reading: at Rs20L the Rs1,000 ladder (28.0% / -15.4%, return per drawdown 1.8) sits on a better frontier than any fixed percentage (1.0%: 31.6% / -22.5%, 1.4; 0.25%: 19.8% / -11.7%, 1.7) because it starts at 0.05% of capital and ramps with experience. The ladder is capital-specific: at Rs1 Cr it under-deploys (18.3%). Percentage rules are scale-free (1.0%: 31.6% at Rs20L, 31.8% at Rs1 Cr). Up to 469-650 simultaneous positions: far above the live book (about 50), so liquidity and execution limits would bind in practice.

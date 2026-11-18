@@ -234,6 +234,7 @@ def main():
     ap.add_argument("--size-base", choices=["realised", "equity"], default="realised", help="base for --size-pct: start capital + realised P&L, or total equity (cash + holdings)")
     ap.add_argument("--base", type=float, default=None, help="ladder start size per position in Rs (AZ default 20,000)")
     ap.add_argument("--step", type=float, default=None, help="ladder increment per 100 trades in Rs (AZ default 5,000)")
+    ap.add_argument("--live-universe", action="store_true", help="dhan: apply the live ND exclusions (ETFs by name, plus the permanent InvIT/REIT list in dhan-live/data/excluded_universe.json)")
     ap.add_argument("--all-days", action="store_true", help="az: order every flip in the 3-day window, not only the freshest day")
     a = ap.parse_args()
     data_dir = Path(a.data)
@@ -246,8 +247,19 @@ def main():
         symbols = [s for s in valid if s in want]
     else:
         symbols = valid
+        if a.live_universe:
+            ex = json.loads((ROOT / "dhan-live" / "data" / "excluded_universe.json").read_text())
+            sfx = tuple(x.upper() for x in ex.get("suffixes", []))
+            perm = {x.upper() for x in ex.get("symbols", [])}
+            etf_extra = {"LIQUIDCASE", "GOLDBEES", "MIDCAPETF", "NIFTYIETF", "MON100", "MASPTOP50", "MAFANG", "MOM100", "SILVERBEES"}
+            def keep(sym):
+                b = sym.split(".")[0].upper()
+                return not (b in perm or b in etf_extra or b.endswith(("ETF", "IETF", "BEES")) or (sfx and b.endswith(sfx)))
+            before = len(symbols)
+            symbols = [x for x in symbols if keep(x)]
+            print(f"live universe filter: {before} -> {len(symbols)} symbols")
     res = run(a.strategy, data_dir, symbols, pd.Timestamp(a.start), a.slip, fresh_only=not a.all_days, cash_rate=a.cash_rate, tier_cap=a.tier_cap, flip_window=a.flip_window, capital=a.capital, size_pct=a.size_pct, size_base=a.size_base, base=a.base, step=a.step)
-    out, cv, tr = summarise(res, f"{a.strategy} start={a.start} slip={a.slip} cash={a.cash_rate} cap={a.tier_cap}{' all-days' if a.all_days else ''}{f' flip-window={a.flip_window}' if a.flip_window is not None else ''}{f' capital={a.capital:.0f}' if a.capital else ''}{f' size={a.size_pct}%of-{a.size_base}' if a.size_pct else ''}{f' base={a.base:.0f}' if a.base else ''}{f' step={a.step:.0f}' if a.step else ''}")
+    out, cv, tr = summarise(res, f"{a.strategy} start={a.start} slip={a.slip} cash={a.cash_rate} cap={a.tier_cap}{' all-days' if a.all_days else ''}{f' flip-window={a.flip_window}' if a.flip_window is not None else ''}{f' capital={a.capital:.0f}' if a.capital else ''}{f' size={a.size_pct}%of-{a.size_base}' if a.size_pct else ''}{f' base={a.base:.0f}' if a.base else ''}{' live-universe' if a.live_universe else ''}{f' step={a.step:.0f}' if a.step else ''}")
     print(json.dumps(out, indent=1, default=str))
     if a.out:
         cv.to_csv(a.out + "_equity.csv")
