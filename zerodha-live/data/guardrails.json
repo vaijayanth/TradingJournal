@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-18T14:43:08+05:30",
+ "generated_at": "2026-11-18T15:24:08+05:30",
  "broker": "zerodha",
  "market_data_date": "2026-11-17",
  "signals_generated_at": "2026-11-18T09:13:02.059983+00:00",
@@ -16,13 +16,13 @@
    "id": "P3",
    "level": "WARN",
    "symbol": null,
-   "msg": "17 open option exit / strike-breach alerts on 8 stocks (APOLLOHOSP, COCHINSHIP, DIVISLAB, HDFCBANK, HINDPETRO, KARURVYSYA, MAHABANK, SUNPHARMA) - see the Covered Call alerts"
+   "msg": "17 open option exit / strike-breach alerts on 8 stocks (APOLLOHOSP, DIVISLAB, HDFCBANK, HINDPETRO, KARURVYSYA, MAHABANK, PFC, SUNPHARMA) - see the Covered Call alerts"
   },
   {
    "id": "P5",
    "level": "WARN",
    "symbol": null,
-   "msg": "5 invalid GTT orders (5 high: e.g. buy GTTs on contracts you no longer hold) - see Covered Call > Alerts > Invalid GTT; the zerodha-gtt-order skill can delete them"
+   "msg": "6 invalid GTT orders (6 high: e.g. buy GTTs on contracts you no longer hold) - see Covered Call > Alerts > Invalid GTT; the zerodha-gtt-order skill can delete them"
   }
  ]
 }

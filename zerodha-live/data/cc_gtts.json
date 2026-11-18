@@ -1,5 +1,5 @@
 {
- "fetched_at": "2026-11-18T14:53:00+05:30",
+ "fetched_at": "2026-11-18T15:24:08+05:30",
  "active": {
   "TMPV26DEC310CE": [
    {
@@ -479,26 +479,6 @@
      5.4
     ],
     "qty": 1550
-   }
-  ],
-  "DIVISLAB26NOV11300CE": [
-   {
-    "id": 344931476,
-    "type": "two-leg",
-    "trigger_values": [
-     60.45,
-     453.45
-    ],
-    "qty": 100
-   },
-   {
-    "id": 344931476,
-    "type": "two-leg",
-    "trigger_values": [
-     60.45,
-     453.45
-    ],
-    "qty": 100
    }
   ],
   "CANBK26NOV124PE": [
@@ -1286,34 +1266,6 @@
    ]
   },
   {
-   "id": 344931476,
-   "type": "two-leg",
-   "created_at": "2026-11-16T11:42:12+05:30",
-   "expires_at": "2026-11-24T00:00:00+05:30",
-   "tradingsymbol": "DIVISLAB26NOV11300CE",
-   "last_price": 154,
-   "triggers": [
-    60.45,
-    453.45
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 100,
-     "price": 62.3,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    },
-    {
-     "side": "BUY",
-     "qty": 100,
-     "price": 467.1,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
    "id": 344931399,
    "type": "two-leg",
    "created_at": "2026-11-16T11:41:56+05:30",
@@ -1523,6 +1475,28 @@
   }
  ],
  "triggered": [
+  {
+   "id": 344931476,
+   "type": "two-leg",
+   "tradingsymbol": "DIVISLAB26NOV11300CE",
+   "triggers": [
+    60.45,
+    453.45
+   ],
+   "triggered_at": "2026-11-18T15:08:44+05:30",
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 100,
+     "price": 62.3
+    },
+    {
+     "side": "BUY",
+     "qty": 100,
+     "price": 467.1
+    }
+   ]
+  },
   {
    "id": 343977413,
    "type": "trailing-single",
