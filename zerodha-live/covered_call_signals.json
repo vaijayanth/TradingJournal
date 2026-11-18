@@ -1,9 +1,9 @@
 {
- "generated_at": "2026-11-18T09:54:08.889612+00:00",
- "market_data_date": "2026-11-17",
- "live_prices_at": "2026-11-18T14:43:00+05:30",
- "gtt_scan_at": "2026-11-18T15:24:08+05:30",
- "gtt_checked_at": "2026-11-18T15:24:08+05:30",
+ "generated_at": "2026-11-18T13:57:04.169008+00:00",
+ "market_data_date": "2026-11-18",
+ "live_prices_at": "2026-11-18T19:26:57+05:30",
+ "gtt_scan_at": "2026-11-18T19:26:57+05:30",
+ "gtt_checked_at": "2026-11-18T19:26:39+05:30",
  "rules": {
   "short_call_delta": 0.1,
   "short_put_delta": 0.1,
@@ -27,22 +27,22 @@
  "stocks": [
   {
    "symbol": "360ONE",
-   "spot": 1202.85,
+   "spot": 1211.05,
    "colour": "green",
-   "rsi": 69.9,
-   "basis": "Supertrend green",
-   "desired": "PUT_SPREAD",
+   "rsi": 70.9,
+   "basis": "RSI 70.9 > 70",
+   "desired": "CALL",
    "flip_date": "2026-11-04",
-   "flip_trading_days": 9,
+   "flip_trading_days": 10,
    "expiries": [
     {
      "expiry": "2026-12-29",
      "lot": 500
     }
    ],
-   "rsi_override": false,
+   "rsi_override": true,
    "status": "ENTER",
-   "note": "Supertrend green: bull put spread",
+   "note": "RSI 70.9 > 70: sell call",
    "legs": [],
    "events": [
     {
@@ -60,13 +60,13 @@
   },
   {
    "symbol": "ABB",
-   "spot": 6923.0,
+   "spot": 6851.0,
    "colour": "green",
-   "rsi": 53.8,
+   "rsi": 51.3,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-13",
-   "flip_trading_days": 2,
+   "flip_trading_days": 3,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -90,8 +90,8 @@
      "tradingsymbol": "ABB26NOV5600PE",
      "lot": 125,
      "lots": 1.0,
-     "dist_pct": -18.07,
-     "beyond_pct": -22.05,
+     "dist_pct": -18.26,
+     "beyond_pct": -22.34,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -110,10 +110,10 @@
      "tradingsymbol": "ABB26NOV6000PE",
      "lot": 125,
      "lots": 1.0,
-     "dist_pct": -12.22,
+     "dist_pct": -12.42,
      "stop_at": 10.65,
      "stop_hit": false,
-     "beyond_pct": -13.92,
+     "beyond_pct": -14.18,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -136,13 +136,13 @@
   },
   {
    "symbol": "ABCAPITAL",
-   "spot": 411.5,
+   "spot": 412.4,
    "colour": "green",
-   "rsi": 63.5,
+   "rsi": 63.9,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-02",
-   "flip_trading_days": 11,
+   "flip_trading_days": 12,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -164,13 +164,13 @@
   },
   {
    "symbol": "ADANIENSOL",
-   "spot": 1493.7,
+   "spot": 1490.0,
    "colour": "green",
-   "rsi": 64.9,
+   "rsi": 64.2,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-04",
-   "flip_trading_days": 9,
+   "flip_trading_days": 10,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -192,13 +192,13 @@
   },
   {
    "symbol": "ADANIENT",
-   "spot": 2745.1,
+   "spot": 2684.2,
    "colour": "green",
-   "rsi": 54.2,
+   "rsi": 48.9,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-04",
-   "flip_trading_days": 9,
+   "flip_trading_days": 10,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -225,13 +225,13 @@
   },
   {
    "symbol": "ADANIGREEN",
-   "spot": 1429.9,
+   "spot": 1404.1,
    "colour": "green",
-   "rsi": 61.6,
+   "rsi": 57.5,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-04",
-   "flip_trading_days": 9,
+   "flip_trading_days": 10,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -253,13 +253,13 @@
   },
   {
    "symbol": "ADANIPORTS",
-   "spot": 1917.0,
+   "spot": 1902.6,
    "colour": "green",
-   "rsi": 60.7,
+   "rsi": 58.2,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-09-09",
-   "flip_trading_days": 46,
+   "flip_trading_days": 47,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -286,13 +286,13 @@
   },
   {
    "symbol": "ADANIPOWER",
-   "spot": 208.07,
+   "spot": 205.3,
    "colour": "green",
-   "rsi": 61.9,
+   "rsi": 57.4,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-04",
-   "flip_trading_days": 9,
+   "flip_trading_days": 10,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -314,13 +314,13 @@
   },
   {
    "symbol": "ALKEM",
-   "spot": 5175.0,
+   "spot": 5222.5,
    "colour": "green",
-   "rsi": 48.6,
+   "rsi": 51.3,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-09",
-   "flip_trading_days": 5,
+   "flip_trading_days": 6,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -347,13 +347,13 @@
   },
   {
    "symbol": "AMBER",
-   "spot": 6245.5,
+   "spot": 6236.5,
    "colour": "green",
-   "rsi": 46.3,
+   "rsi": 46.1,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-05",
-   "flip_trading_days": 8,
+   "flip_trading_days": 9,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -372,13 +372,13 @@
      "side": "LONG",
      "qty": 100,
      "avg": 22,
-     "ltp": 2.15,
-     "pnl_rs": -3950,
+     "ltp": 4.25,
+     "pnl_rs": -3740,
      "tradingsymbol": "AMBER26NOV5500PE",
      "lot": 100,
      "lots": 1.0,
-     "dist_pct": -12.35,
-     "beyond_pct": -14.09,
+     "dist_pct": -11.81,
+     "beyond_pct": -13.39,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -390,13 +390,13 @@
   },
   {
    "symbol": "AMBUJACEM",
-   "spot": 390.2,
+   "spot": 384.8,
    "colour": "green",
-   "rsi": 59.7,
+   "rsi": 55.6,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-05",
-   "flip_trading_days": 8,
+   "flip_trading_days": 9,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -423,13 +423,13 @@
   },
   {
    "symbol": "ANANDRATHI",
-   "spot": 2375.3,
+   "spot": 2375.1,
    "colour": "green",
-   "rsi": 72.0,
-   "basis": "RSI 72.0 > 70",
+   "rsi": 71.9,
+   "basis": "RSI 71.9 > 70",
    "desired": "CALL",
    "flip_date": "2026-10-23",
-   "flip_trading_days": 17,
+   "flip_trading_days": 18,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -438,7 +438,7 @@
    ],
    "rsi_override": true,
    "status": "ENTER",
-   "note": "RSI 72.0 > 70: sell call",
+   "note": "RSI 71.9 > 70: sell call",
    "legs": [],
    "events": [
     {
@@ -451,22 +451,22 @@
   },
   {
    "symbol": "ANGELONE",
-   "spot": 349.8,
+   "spot": 338.3,
    "colour": "green",
-   "rsi": 73.4,
-   "basis": "RSI 73.4 > 70",
-   "desired": "CALL",
+   "rsi": 63.0,
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
    "flip_date": "2026-11-05",
-   "flip_trading_days": 8,
+   "flip_trading_days": 9,
    "expiries": [
     {
      "expiry": "2026-12-29",
      "lot": 2500
     }
    ],
-   "rsi_override": true,
+   "rsi_override": false,
    "status": "ENTER",
-   "note": "RSI 73.4 > 70: sell call",
+   "note": "Supertrend green: bull put spread",
    "legs": [],
    "events": [
     {
@@ -479,13 +479,13 @@
   },
   {
    "symbol": "APLAPOLLO",
-   "spot": 2188.5,
+   "spot": 2161.2,
    "colour": "green",
-   "rsi": 51.6,
+   "rsi": 48.0,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-10-27",
-   "flip_trading_days": 15,
+   "flip_trading_days": 16,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -512,13 +512,13 @@
   },
   {
    "symbol": "APOLLOHOSP",
-   "spot": 8712.5,
+   "spot": 8821.0,
    "colour": "green",
-   "rsi": 61.9,
+   "rsi": 64.6,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-10-30",
-   "flip_trading_days": 12,
+   "flip_trading_days": 13,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -537,15 +537,15 @@
      "side": "SHORT",
      "qty": 125,
      "avg": 29.6,
-     "ltp": 15.6,
-     "pnl_rs": 1750,
+     "ltp": 12.7,
+     "pnl_rs": 2112.5,
      "tradingsymbol": "APOLLOHOSP26NOV9100CE",
      "lot": 125,
      "lots": 1.0,
-     "dist_pct": 3.6,
+     "dist_pct": 3.16,
      "stop_at": 88.8,
      "stop_hit": false,
-     "beyond_pct": -3.47,
+     "beyond_pct": -3.07,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -568,13 +568,13 @@
   },
   {
    "symbol": "ASHOKLEY",
-   "spot": 160.5,
+   "spot": 162.45,
    "colour": "green",
-   "rsi": 50.5,
+   "rsi": 52.8,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-05",
-   "flip_trading_days": 8,
+   "flip_trading_days": 9,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -601,22 +601,22 @@
   },
   {
    "symbol": "ASIANPAINT",
-   "spot": 2625.0,
+   "spot": 2580.3,
    "colour": "green",
-   "rsi": 71.6,
-   "basis": "RSI 71.6 > 70",
-   "desired": "CALL",
+   "rsi": 64.2,
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
    "flip_date": "2026-11-03",
-   "flip_trading_days": 10,
+   "flip_trading_days": 11,
    "expiries": [
     {
      "expiry": "2026-12-29",
      "lot": 250
     }
    ],
-   "rsi_override": true,
+   "rsi_override": false,
    "status": "ENTER",
-   "note": "RSI 71.6 > 70: sell call",
+   "note": "Supertrend green: bull put spread",
    "legs": [],
    "events": [
     {
@@ -634,13 +634,13 @@
   },
   {
    "symbol": "ASTRAL",
-   "spot": 1242.6,
+   "spot": 1230.3,
    "colour": "red",
-   "rsi": 32.5,
+   "rsi": 31.2,
    "basis": "Supertrend red",
    "desired": "CALL",
    "flip_date": "2026-10-26",
-   "flip_trading_days": 16,
+   "flip_trading_days": 17,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -664,10 +664,10 @@
      "tradingsymbol": "ASTRAL26DEC1440CE",
      "lot": 425,
      "lots": 1.0,
-     "dist_pct": 16.79,
+     "dist_pct": 17.04,
      "stop_at": 25.35,
      "stop_hit": false,
-     "beyond_pct": -14.38,
+     "beyond_pct": -14.56,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -690,13 +690,13 @@
   },
   {
    "symbol": "ATHERENERG",
-   "spot": 1908.6,
+   "spot": 1901.1,
    "colour": "green",
-   "rsi": 69.8,
+   "rsi": 68.7,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-10-27",
-   "flip_trading_days": 15,
+   "flip_trading_days": 16,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -712,13 +712,13 @@
   },
   {
    "symbol": "AUBANK",
-   "spot": 993.1,
+   "spot": 977.0,
    "colour": "green",
-   "rsi": 59.5,
+   "rsi": 55.4,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-12",
-   "flip_trading_days": 3,
+   "flip_trading_days": 4,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -737,13 +737,13 @@
      "side": "LONG",
      "qty": 1000,
      "avg": 6,
-     "ltp": 5.45,
-     "pnl_rs": -550,
+     "ltp": 5.5,
+     "pnl_rs": -500,
      "tradingsymbol": "AUBANK26DEC870PE",
      "lot": 500,
      "lots": 2.0,
-     "dist_pct": -12.4,
-     "beyond_pct": -14.15,
+     "dist_pct": -10.95,
+     "beyond_pct": -12.3,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -757,15 +757,15 @@
      "side": "SHORT",
      "qty": 1000,
      "avg": 8.05,
-     "ltp": 7.6,
-     "pnl_rs": 450.0000000000009,
+     "ltp": 7.75,
+     "pnl_rs": 300.0000000000009,
      "tradingsymbol": "AUBANK26DEC890PE",
      "lot": 500,
      "lots": 2.0,
-     "dist_pct": -10.38,
+     "dist_pct": -8.9,
      "stop_at": 24.15,
      "stop_hit": false,
-     "beyond_pct": -11.58,
+     "beyond_pct": -9.78,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -788,13 +788,13 @@
   },
   {
    "symbol": "AUROPHARMA",
-   "spot": 1794.1,
+   "spot": 1796.3,
    "colour": "green",
-   "rsi": 60.8,
+   "rsi": 61.1,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-05",
-   "flip_trading_days": 8,
+   "flip_trading_days": 9,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -821,22 +821,22 @@
   },
   {
    "symbol": "AXISBANK",
-   "spot": 1369.0,
+   "spot": 1360.0,
    "colour": "green",
-   "rsi": 71.4,
-   "basis": "RSI 71.4 > 70",
-   "desired": "CALL",
+   "rsi": 68.5,
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
    "flip_date": "2026-10-15",
-   "flip_trading_days": 22,
+   "flip_trading_days": 23,
    "expiries": [
     {
      "expiry": "2026-12-29",
      "lot": 625
     }
    ],
-   "rsi_override": true,
+   "rsi_override": false,
    "status": "ENTER",
-   "note": "RSI 71.4 > 70: sell call",
+   "note": "Supertrend green: bull put spread",
    "legs": [],
    "events": [
     {
@@ -854,13 +854,13 @@
   },
   {
    "symbol": "BAJAJ-AUTO",
-   "spot": 10770.0,
+   "spot": 10570.0,
    "colour": "green",
-   "rsi": 53.5,
+   "rsi": 46.7,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-03",
-   "flip_trading_days": 10,
+   "flip_trading_days": 11,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -887,13 +887,13 @@
   },
   {
    "symbol": "BAJAJFINSV",
-   "spot": 1870.8,
+   "spot": 1856.2,
    "colour": "green",
-   "rsi": 63.4,
+   "rsi": 60.5,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-05",
-   "flip_trading_days": 8,
+   "flip_trading_days": 9,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -920,22 +920,22 @@
   },
   {
    "symbol": "BAJFINANCE",
-   "spot": 1121.1,
+   "spot": 1093.85,
    "colour": "green",
-   "rsi": 71.4,
-   "basis": "RSI 71.4 > 70",
-   "desired": "CALL",
+   "rsi": 63.4,
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
    "flip_date": "2026-11-04",
-   "flip_trading_days": 9,
+   "flip_trading_days": 10,
    "expiries": [
     {
      "expiry": "2026-12-29",
      "lot": 750
     }
    ],
-   "rsi_override": true,
+   "rsi_override": false,
    "status": "ENTER",
-   "note": "RSI 71.4 > 70: sell call",
+   "note": "Supertrend green: bull put spread",
    "legs": [],
    "events": [
     {
@@ -953,13 +953,13 @@
   },
   {
    "symbol": "BANDHANBNK",
-   "spot": 174.62,
+   "spot": 170.06,
    "colour": "green",
-   "rsi": 60.2,
+   "rsi": 54.3,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-11",
-   "flip_trading_days": 4,
+   "flip_trading_days": 5,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -978,13 +978,13 @@
      "side": "LONG",
      "qty": 7200,
      "avg": 1.47,
-     "ltp": 1.06,
-     "pnl_rs": -2952,
+     "ltp": 1.13,
+     "pnl_rs": -2448.000000000001,
      "tradingsymbol": "BANDHANBNK26DEC145PE",
      "lot": 3600,
      "lots": 2.0,
-     "dist_pct": -15.09,
-     "beyond_pct": -17.77,
+     "dist_pct": -14.74,
+     "beyond_pct": -17.28,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -998,15 +998,15 @@
      "side": "SHORT",
      "qty": 7200,
      "avg": 1.92,
-     "ltp": 1.52,
-     "pnl_rs": 2880,
+     "ltp": 1.58,
+     "pnl_rs": 2448,
      "tradingsymbol": "BANDHANBNK26DEC150PE",
      "lot": 3600,
      "lots": 2.0,
-     "dist_pct": -12.16,
+     "dist_pct": -11.8,
      "stop_at": 5.76,
      "stop_hit": false,
-     "beyond_pct": -13.85,
+     "beyond_pct": -13.37,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -1029,13 +1029,13 @@
   },
   {
    "symbol": "BANKBARODA",
-   "spot": 274.89,
+   "spot": 274.5,
    "colour": "green",
-   "rsi": 73.0,
-   "basis": "RSI 73.0 > 70",
+   "rsi": 72.5,
+   "basis": "RSI 72.5 > 70",
    "desired": "CALL",
    "flip_date": "2026-10-29",
-   "flip_trading_days": 13,
+   "flip_trading_days": 14,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -1044,7 +1044,7 @@
    ],
    "rsi_override": true,
    "status": "ENTER",
-   "note": "RSI 73.0 > 70: sell call",
+   "note": "RSI 72.5 > 70: sell call",
    "legs": [],
    "events": [
     {
@@ -1062,13 +1062,13 @@
   },
   {
    "symbol": "BANKINDIA",
-   "spot": 159.28,
+   "spot": 158.0,
    "colour": "green",
-   "rsi": 75.5,
-   "basis": "RSI 75.5 > 70",
+   "rsi": 72.8,
+   "basis": "RSI 72.8 > 70",
    "desired": "CALL",
    "flip_date": "2026-11-05",
-   "flip_trading_days": 8,
+   "flip_trading_days": 9,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -1077,7 +1077,7 @@
    ],
    "rsi_override": true,
    "status": "ENTER",
-   "note": "RSI 75.5 > 70: sell call",
+   "note": "RSI 72.8 > 70: sell call",
    "legs": [],
    "events": [
     {
@@ -1090,13 +1090,13 @@
   },
   {
    "symbol": "BDL",
-   "spot": 1027.1,
+   "spot": 1013.4,
    "colour": "green",
-   "rsi": 42.5,
+   "rsi": 40.4,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-09",
-   "flip_trading_days": 5,
+   "flip_trading_days": 6,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -1120,8 +1120,8 @@
      "tradingsymbol": "BDL26DEC860PE",
      "lot": 425,
      "lots": 2.0,
-     "dist_pct": -14.94,
-     "beyond_pct": -17.56,
+     "dist_pct": -15.14,
+     "beyond_pct": -17.84,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -1135,15 +1135,15 @@
      "side": "SHORT",
      "qty": 850,
      "avg": 11.55,
-     "ltp": 11.35,
-     "pnl_rs": 170,
+     "ltp": 10.9,
+     "pnl_rs": 552.5,
      "tradingsymbol": "BDL26DEC900PE",
      "lot": 425,
      "lots": 2.0,
-     "dist_pct": -10.98,
+     "dist_pct": -11.19,
      "stop_at": 34.65,
      "stop_hit": false,
-     "beyond_pct": -12.34,
+     "beyond_pct": -12.6,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -1166,13 +1166,13 @@
   },
   {
    "symbol": "BHARATFORG",
-   "spot": 1714.7,
+   "spot": 1684.5,
    "colour": "red",
-   "rsi": 38.7,
+   "rsi": 35.0,
    "basis": "Supertrend red",
    "desired": "CALL",
    "flip_date": "2026-08-11",
-   "flip_trading_days": 67,
+   "flip_trading_days": 68,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -1191,15 +1191,15 @@
      "side": "SHORT",
      "qty": 500,
      "avg": 5.35,
-     "ltp": 4.7,
-     "pnl_rs": 325,
+     "ltp": 4.55,
+     "pnl_rs": 400,
      "tradingsymbol": "BHARATFORG26DEC2000CE",
      "lot": 500,
      "lots": 1.0,
-     "dist_pct": 18.29,
+     "dist_pct": 18.73,
      "stop_at": 16.05,
      "stop_hit": false,
-     "beyond_pct": -15.46,
+     "beyond_pct": -15.77,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -1222,22 +1222,22 @@
   },
   {
    "symbol": "BHARTIARTL",
-   "spot": 2138.3,
+   "spot": 2132.0,
    "colour": "green",
-   "rsi": 70.5,
-   "basis": "RSI 70.5 > 70",
-   "desired": "CALL",
+   "rsi": 69.1,
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
    "flip_date": "2026-10-15",
-   "flip_trading_days": 22,
+   "flip_trading_days": 23,
    "expiries": [
     {
      "expiry": "2026-12-29",
      "lot": 475
     }
    ],
-   "rsi_override": true,
+   "rsi_override": false,
    "status": "ENTER",
-   "note": "RSI 70.5 > 70: sell call",
+   "note": "Supertrend green: bull put spread",
    "legs": [],
    "events": [
     {
@@ -1255,13 +1255,13 @@
   },
   {
    "symbol": "BHEL",
-   "spot": 430.65,
+   "spot": 421.7,
    "colour": "red",
-   "rsi": 55.5,
+   "rsi": 50.5,
    "basis": "Supertrend red",
    "desired": "CALL",
    "flip_date": "2026-10-21",
-   "flip_trading_days": 19,
+   "flip_trading_days": 20,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -1280,15 +1280,15 @@
      "side": "SHORT",
      "qty": 2625,
      "avg": 1.5,
-     "ltp": 1.55,
-     "pnl_rs": -131.25,
+     "ltp": 1.5,
+     "pnl_rs": 0,
      "tradingsymbol": "BHEL26DEC500CE",
      "lot": 2625,
      "lots": 1.0,
-     "dist_pct": 16.1,
+     "dist_pct": 18.57,
      "stop_at": 4.5,
      "stop_hit": false,
-     "beyond_pct": -13.87,
+     "beyond_pct": -15.66,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -1311,13 +1311,13 @@
   },
   {
    "symbol": "BIOCON",
-   "spot": 359.4,
+   "spot": 361.95,
    "colour": "green",
-   "rsi": 50.4,
+   "rsi": 52.4,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-10-29",
-   "flip_trading_days": 13,
+   "flip_trading_days": 14,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -1344,13 +1344,13 @@
   },
   {
    "symbol": "BLUESTARCO",
-   "spot": 1608.0,
+   "spot": 1621.8,
    "colour": "green",
-   "rsi": 55.3,
+   "rsi": 57.2,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-09-28",
-   "flip_trading_days": 34,
+   "flip_trading_days": 35,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -1377,13 +1377,13 @@
   },
   {
    "symbol": "BOSCHLTD",
-   "spot": 49085.0,
+   "spot": 49170.0,
    "colour": "green",
-   "rsi": 54.7,
+   "rsi": 55.1,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-10-28",
-   "flip_trading_days": 14,
+   "flip_trading_days": 15,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -1410,13 +1410,13 @@
   },
   {
    "symbol": "BPCL",
-   "spot": 305.8,
+   "spot": 305.5,
    "colour": "green",
-   "rsi": 52.6,
+   "rsi": 52.3,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-05",
-   "flip_trading_days": 8,
+   "flip_trading_days": 9,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -1440,8 +1440,8 @@
      "tradingsymbol": "BPCL26NOV290PE",
      "lot": 1975,
      "lots": 1.0,
-     "dist_pct": -4.61,
-     "beyond_pct": -4.83,
+     "dist_pct": -5.07,
+     "beyond_pct": -5.34,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -1455,15 +1455,15 @@
      "side": "SHORT",
      "qty": 1975,
      "avg": 2.9,
-     "ltp": 1.7,
-     "pnl_rs": 2370,
+     "ltp": 1.65,
+     "pnl_rs": 2468.75,
      "tradingsymbol": "BPCL26NOV300PE",
      "lot": 1975,
      "lots": 1.0,
-     "dist_pct": -1.32,
+     "dist_pct": -1.8,
      "stop_at": 8.7,
      "stop_hit": false,
-     "beyond_pct": -1.33,
+     "beyond_pct": -1.83,
      "intrinsic_rs": 0,
      "touched": false,
      "near": true,
@@ -1486,13 +1486,13 @@
   },
   {
    "symbol": "BRITANNIA",
-   "spot": 4700.0,
+   "spot": 4673.2,
    "colour": "green",
-   "rsi": 44.0,
+   "rsi": 42.4,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-03",
-   "flip_trading_days": 10,
+   "flip_trading_days": 11,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -1519,13 +1519,13 @@
   },
   {
    "symbol": "CAMS",
-   "spot": 744.0,
+   "spot": 716.0,
    "colour": "green",
-   "rsi": 62.0,
+   "rsi": 52.8,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-05",
-   "flip_trading_days": 8,
+   "flip_trading_days": 9,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -1552,13 +1552,13 @@
   },
   {
    "symbol": "CANBK",
-   "spot": 134.0,
+   "spot": 133.4,
    "colour": "green",
-   "rsi": 68.9,
+   "rsi": 67.3,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-09",
-   "flip_trading_days": 5,
+   "flip_trading_days": 6,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -1582,8 +1582,8 @@
      "tradingsymbol": "CANBK26NOV112PE",
      "lot": 6750,
      "lots": 1.0,
-     "dist_pct": -15.85,
-     "beyond_pct": -18.84,
+     "dist_pct": -16.04,
+     "beyond_pct": -19.11,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -1602,10 +1602,10 @@
      "tradingsymbol": "CANBK26NOV124PE",
      "lot": 6750,
      "lots": 1.0,
-     "dist_pct": -6.84,
+     "dist_pct": -7.05,
      "stop_at": 1.08,
      "stop_hit": false,
-     "beyond_pct": -7.34,
+     "beyond_pct": -7.58,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -1628,13 +1628,13 @@
   },
   {
    "symbol": "CDSL",
-   "spot": 1439.8,
+   "spot": 1416.6,
    "colour": "green",
-   "rsi": 69.6,
+   "rsi": 64.0,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-03",
-   "flip_trading_days": 10,
+   "flip_trading_days": 11,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -1656,13 +1656,13 @@
   },
   {
    "symbol": "CGPOWER",
-   "spot": 801.0,
+   "spot": 791.0,
    "colour": "red",
-   "rsi": 43.4,
+   "rsi": 41.5,
    "basis": "Supertrend red",
    "desired": "CALL",
    "flip_date": "2026-09-16",
-   "flip_trading_days": 42,
+   "flip_trading_days": 43,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -1686,10 +1686,10 @@
      "tradingsymbol": "CGPOWER26DEC960CE",
      "lot": 850,
      "lots": 1.0,
-     "dist_pct": 21.76,
+     "dist_pct": 21.37,
      "stop_at": 18.9,
      "stop_hit": false,
-     "beyond_pct": -17.87,
+     "beyond_pct": -17.6,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -1712,13 +1712,13 @@
   },
   {
    "symbol": "CHOLAFIN",
-   "spot": 1884.7,
+   "spot": 1875.0,
    "colour": "green",
-   "rsi": 72.7,
-   "basis": "RSI 72.7 > 70",
+   "rsi": 70.8,
+   "basis": "RSI 70.8 > 70",
    "desired": "CALL",
    "flip_date": "2026-10-29",
-   "flip_trading_days": 13,
+   "flip_trading_days": 14,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -1727,7 +1727,7 @@
    ],
    "rsi_override": true,
    "status": "ENTER",
-   "note": "RSI 72.7 > 70: sell call",
+   "note": "RSI 70.8 > 70: sell call",
    "legs": [],
    "events": [
     {
@@ -1745,13 +1745,13 @@
   },
   {
    "symbol": "CIPLA",
-   "spot": 1388.0,
+   "spot": 1417.0,
    "colour": "green",
-   "rsi": 53.1,
+   "rsi": 62.1,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-03",
-   "flip_trading_days": 10,
+   "flip_trading_days": 11,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -1778,13 +1778,13 @@
   },
   {
    "symbol": "COALINDIA",
-   "spot": 391.55,
+   "spot": 388.0,
    "colour": "red",
-   "rsi": 44.1,
+   "rsi": 41.6,
    "basis": "Supertrend red",
    "desired": "CALL",
    "flip_date": "2026-10-12",
-   "flip_trading_days": 25,
+   "flip_trading_days": 26,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -1808,10 +1808,10 @@
      "tradingsymbol": "COALINDIA26DEC440CE",
      "lot": 1350,
      "lots": 1.0,
-     "dist_pct": 13.14,
+     "dist_pct": 13.4,
      "stop_at": 5.1,
      "stop_hit": false,
-     "beyond_pct": -11.61,
+     "beyond_pct": -11.82,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -1834,13 +1834,13 @@
   },
   {
    "symbol": "COCHINSHIP",
-   "spot": 1147.0,
+   "spot": 1139.4,
    "colour": "green",
-   "rsi": 40.4,
+   "rsi": 39.6,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-09",
-   "flip_trading_days": 5,
+   "flip_trading_days": 6,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -1862,13 +1862,13 @@
   },
   {
    "symbol": "COFORGE",
-   "spot": 2041.0,
+   "spot": 2049.0,
    "colour": "green",
-   "rsi": 58.1,
+   "rsi": 59.1,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-10-15",
-   "flip_trading_days": 22,
+   "flip_trading_days": 23,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -1895,13 +1895,13 @@
   },
   {
    "symbol": "COLPAL",
-   "spot": 1719.7,
+   "spot": 1688.4,
    "colour": "green",
-   "rsi": 53.5,
+   "rsi": 48.5,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-11",
-   "flip_trading_days": 4,
+   "flip_trading_days": 5,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -1920,13 +1920,13 @@
      "side": "LONG",
      "qty": 550,
      "avg": 8,
-     "ltp": 8.1,
-     "pnl_rs": 55,
+     "ltp": 7.25,
+     "pnl_rs": -412.5,
      "tradingsymbol": "COLPAL26DEC1500PE",
      "lot": 275,
      "lots": 2.0,
-     "dist_pct": -12.78,
-     "beyond_pct": -14.65,
+     "dist_pct": -11.16,
+     "beyond_pct": -12.56,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -1940,15 +1940,15 @@
      "side": "SHORT",
      "qty": 550,
      "avg": 12.3,
-     "ltp": 12.2,
-     "pnl_rs": 55,
+     "ltp": 10.95,
+     "pnl_rs": 742.5,
      "tradingsymbol": "COLPAL26DEC1540PE",
      "lot": 275,
      "lots": 2.0,
-     "dist_pct": -10.45,
+     "dist_pct": -8.79,
      "stop_at": 36.9,
      "stop_hit": false,
-     "beyond_pct": -11.67,
+     "beyond_pct": -9.64,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -1971,13 +1971,13 @@
   },
   {
    "symbol": "CONCOR",
-   "spot": 441.9,
+   "spot": 436.95,
    "colour": "green",
-   "rsi": 52.3,
+   "rsi": 48.6,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-09",
-   "flip_trading_days": 5,
+   "flip_trading_days": 6,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -2004,13 +2004,13 @@
   },
   {
    "symbol": "COROMANDEL",
-   "spot": 1973.5,
+   "spot": 1959.0,
    "colour": "green",
-   "rsi": 63.6,
+   "rsi": 61.5,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-05",
-   "flip_trading_days": 8,
+   "flip_trading_days": 9,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -2037,13 +2037,13 @@
   },
   {
    "symbol": "CROMPTON",
-   "spot": 208.95,
+   "spot": 207.3,
    "colour": "green",
-   "rsi": 49.3,
+   "rsi": 47.7,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-09",
-   "flip_trading_days": 5,
+   "flip_trading_days": 6,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -2070,13 +2070,13 @@
   },
   {
    "symbol": "CUB",
-   "spot": 232.4,
+   "spot": 232.2,
    "colour": "red",
-   "rsi": 57.2,
+   "rsi": 57.0,
    "basis": "Supertrend red",
    "desired": "CALL",
    "flip_date": "2026-10-26",
-   "flip_trading_days": 16,
+   "flip_trading_days": 17,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -2103,13 +2103,13 @@
   },
   {
    "symbol": "CUMMINSIND",
-   "spot": 4065.0,
+   "spot": 4005.0,
    "colour": "red",
-   "rsi": 36.3,
+   "rsi": 34.8,
    "basis": "Supertrend red",
    "desired": "CALL",
    "flip_date": "2026-11-05",
-   "flip_trading_days": 8,
+   "flip_trading_days": 9,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -2128,15 +2128,15 @@
      "side": "SHORT",
      "qty": 100,
      "avg": 21.8,
-     "ltp": 8.9,
-     "pnl_rs": 1290,
+     "ltp": 8.5,
+     "pnl_rs": 1330,
      "tradingsymbol": "CUMMINSIND26DEC5000CE",
      "lot": 100,
      "lots": 1.0,
-     "dist_pct": 25.16,
+     "dist_pct": 24.84,
      "stop_at": 65.4,
      "stop_hit": false,
-     "beyond_pct": -20.1,
+     "beyond_pct": -19.9,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -2159,13 +2159,13 @@
   },
   {
    "symbol": "DABUR",
-   "spot": 384.3,
+   "spot": 379.25,
    "colour": "green",
-   "rsi": 55.7,
+   "rsi": 51.6,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-04",
-   "flip_trading_days": 9,
+   "flip_trading_days": 10,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -2192,13 +2192,13 @@
   },
   {
    "symbol": "DATAPATTNS",
-   "spot": 4215.9,
+   "spot": 4111.0,
    "colour": "green",
-   "rsi": 55.2,
+   "rsi": 51.1,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-12",
-   "flip_trading_days": 3,
+   "flip_trading_days": 4,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -2220,13 +2220,13 @@
   },
   {
    "symbol": "DELHIVERY",
-   "spot": 457.95,
+   "spot": 449.5,
    "colour": "green",
-   "rsi": 70.0,
+   "rsi": 64.1,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-03",
-   "flip_trading_days": 10,
+   "flip_trading_days": 11,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -2248,13 +2248,13 @@
   },
   {
    "symbol": "DIVISLAB",
-   "spot": 11150.0,
+   "spot": 11049.0,
    "colour": "green",
-   "rsi": 68.8,
+   "rsi": 65.9,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-10-30",
-   "flip_trading_days": 12,
+   "flip_trading_days": 13,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -2273,16 +2273,16 @@
      "side": "SHORT",
      "qty": 100,
      "avg": 116.95,
-     "ltp": 510.6,
-     "pnl_rs": -39365,
+     "ltp": 480,
+     "pnl_rs": -36305,
      "tradingsymbol": "DIVISLAB26NOV10600CE",
      "lot": 100,
      "lots": 1.0,
-     "dist_pct": -4.65,
+     "dist_pct": -4.06,
      "stop_at": 350.85,
      "stop_hit": true,
-     "beyond_pct": 4.88,
-     "intrinsic_rs": 51750,
+     "beyond_pct": 4.24,
+     "intrinsic_rs": 44900,
      "touched": true,
      "near": false,
      "touched_h": false
@@ -2295,14 +2295,14 @@
      "side": "LONG",
      "qty": 100,
      "avg": 360,
-     "ltp": 339.8,
-     "pnl_rs": -2020,
+     "ltp": 300,
+     "pnl_rs": -6000,
      "tradingsymbol": "DIVISLAB26NOV10800CE",
      "lot": 100,
      "lots": 1.0,
-     "dist_pct": -2.86,
-     "beyond_pct": 2.94,
-     "intrinsic_rs": 31750,
+     "dist_pct": -2.25,
+     "beyond_pct": 2.31,
+     "intrinsic_rs": 24900,
      "touched": true,
      "near": false,
      "touched_h": true
@@ -2324,13 +2324,13 @@
   },
   {
    "symbol": "DIXON",
-   "spot": 13081.0,
+   "spot": 12615.0,
    "colour": "green",
-   "rsi": 60.7,
+   "rsi": 51.2,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-02",
-   "flip_trading_days": 11,
+   "flip_trading_days": 12,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -2357,13 +2357,13 @@
   },
   {
    "symbol": "DLF",
-   "spot": 765.95,
+   "spot": 764.3,
    "colour": "green",
-   "rsi": 68.6,
+   "rsi": 67.8,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-09-23",
-   "flip_trading_days": 37,
+   "flip_trading_days": 38,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -2390,13 +2390,13 @@
   },
   {
    "symbol": "DMART",
-   "spot": 3470.0,
+   "spot": 3459.0,
    "colour": "green",
-   "rsi": 55.5,
+   "rsi": 54.1,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-04",
-   "flip_trading_days": 9,
+   "flip_trading_days": 10,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -2418,13 +2418,13 @@
   },
   {
    "symbol": "DRREDDY",
-   "spot": 1388.0,
+   "spot": 1398.2,
    "colour": "green",
-   "rsi": 71.9,
-   "basis": "RSI 71.9 > 70",
+   "rsi": 73.6,
+   "basis": "RSI 73.6 > 70",
    "desired": "CALL",
    "flip_date": "2026-09-21",
-   "flip_trading_days": 39,
+   "flip_trading_days": 40,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -2433,7 +2433,7 @@
    ],
    "rsi_override": true,
    "status": "ENTER",
-   "note": "RSI 71.9 > 70: sell call",
+   "note": "RSI 73.6 > 70: sell call",
    "legs": [],
    "events": [
     {
@@ -2451,13 +2451,13 @@
   },
   {
    "symbol": "EICHERMOT",
-   "spot": 7828.0,
+   "spot": 7700.0,
    "colour": "green",
-   "rsi": 66.4,
+   "rsi": 59.7,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-10-16",
-   "flip_trading_days": 21,
+   "flip_trading_days": 22,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -2484,13 +2484,13 @@
   },
   {
    "symbol": "ENRIN",
-   "spot": 3021.5,
+   "spot": 2965.1,
    "colour": "green",
-   "rsi": 52.4,
+   "rsi": 49.3,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-12",
-   "flip_trading_days": 3,
+   "flip_trading_days": 4,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -2512,22 +2512,22 @@
   },
   {
    "symbol": "ETERNAL",
-   "spot": 375.05,
+   "spot": 366.0,
    "colour": "green",
-   "rsi": 72.8,
-   "basis": "RSI 72.8 > 70",
-   "desired": "CALL",
+   "rsi": 63.9,
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
    "flip_date": "2026-10-30",
-   "flip_trading_days": 12,
+   "flip_trading_days": 13,
    "expiries": [
     {
      "expiry": "2026-12-29",
      "lot": 2425
     }
    ],
-   "rsi_override": true,
+   "rsi_override": false,
    "status": "ENTER",
-   "note": "RSI 72.8 > 70: sell call",
+   "note": "Supertrend green: bull put spread",
    "legs": [],
    "events": [
     {
@@ -2540,13 +2540,13 @@
   },
   {
    "symbol": "FEDERALBNK",
-   "spot": 365.8,
+   "spot": 360.35,
    "colour": "green",
-   "rsi": 69.2,
+   "rsi": 62.6,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-10-19",
-   "flip_trading_days": 20,
+   "flip_trading_days": 21,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -2573,13 +2573,13 @@
   },
   {
    "symbol": "FORCEMOT",
-   "spot": 19945.0,
+   "spot": 20088.0,
    "colour": "green",
-   "rsi": 70.2,
-   "basis": "RSI 70.2 > 70",
+   "rsi": 71.2,
+   "basis": "RSI 71.2 > 70",
    "desired": "CALL",
    "flip_date": "2026-11-04",
-   "flip_trading_days": 9,
+   "flip_trading_days": 10,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -2588,7 +2588,7 @@
    ],
    "rsi_override": true,
    "status": "ENTER",
-   "note": "RSI 70.2 > 70: sell call",
+   "note": "RSI 71.2 > 70: sell call",
    "legs": [],
    "events": [
     {
@@ -2601,13 +2601,13 @@
   },
   {
    "symbol": "FORTIS",
-   "spot": 806.8,
+   "spot": 793.55,
    "colour": "green",
-   "rsi": 57.3,
+   "rsi": 53.3,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-03",
-   "flip_trading_days": 10,
+   "flip_trading_days": 11,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -2634,22 +2634,22 @@
   },
   {
    "symbol": "GAIL",
-   "spot": 187.0,
+   "spot": 190.0,
    "colour": "green",
-   "rsi": 66.5,
-   "basis": "Supertrend green",
-   "desired": "PUT_SPREAD",
+   "rsi": 70.2,
+   "basis": "RSI 70.2 > 70",
+   "desired": "CALL",
    "flip_date": "2026-11-02",
-   "flip_trading_days": 11,
+   "flip_trading_days": 12,
    "expiries": [
     {
      "expiry": "2026-12-29",
      "lot": 3550
     }
    ],
-   "rsi_override": false,
+   "rsi_override": true,
    "status": "ENTER",
-   "note": "Supertrend green: bull put spread",
+   "note": "RSI 70.2 > 70: sell call",
    "legs": [],
    "events": [
     {
@@ -2667,13 +2667,13 @@
   },
   {
    "symbol": "GLENMARK",
-   "spot": 2615.8,
+   "spot": 2646.1,
    "colour": "green",
-   "rsi": 66.7,
+   "rsi": 68.7,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-02",
-   "flip_trading_days": 11,
+   "flip_trading_days": 12,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -2700,13 +2700,13 @@
   },
   {
    "symbol": "GMRAIRPORT",
-   "spot": 104.5,
+   "spot": 104.4,
    "colour": "green",
-   "rsi": 69.5,
+   "rsi": 69.2,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-04",
-   "flip_trading_days": 9,
+   "flip_trading_days": 10,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -2728,13 +2728,13 @@
   },
   {
    "symbol": "GODFRYPHLP",
-   "spot": 1788.0,
+   "spot": 1758.4,
    "colour": "red",
-   "rsi": 48.0,
+   "rsi": 43.9,
    "basis": "Supertrend red",
    "desired": "CALL",
    "flip_date": "2026-09-02",
-   "flip_trading_days": 51,
+   "flip_trading_days": 52,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -2756,13 +2756,13 @@
   },
   {
    "symbol": "GODREJCP",
-   "spot": 894.5,
+   "spot": 896.45,
    "colour": "green",
-   "rsi": 63.3,
+   "rsi": 63.9,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-11",
-   "flip_trading_days": 4,
+   "flip_trading_days": 5,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -2789,13 +2789,13 @@
   },
   {
    "symbol": "GODREJPROP",
-   "spot": 1892.4,
+   "spot": 1877.6,
    "colour": "green",
-   "rsi": 68.4,
+   "rsi": 66.1,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-04",
-   "flip_trading_days": 9,
+   "flip_trading_days": 10,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -2822,13 +2822,13 @@
   },
   {
    "symbol": "GRASIM",
-   "spot": 3054.8,
+   "spot": 3062.0,
    "colour": "green",
-   "rsi": 49.8,
+   "rsi": 50.5,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-02",
-   "flip_trading_days": 11,
+   "flip_trading_days": 12,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -2861,7 +2861,7 @@
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-10-28",
-   "flip_trading_days": 14,
+   "flip_trading_days": 15,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -2883,13 +2883,13 @@
   },
   {
    "symbol": "HAL",
-   "spot": 4727.0,
-   "colour": "green",
-   "rsi": 40.1,
-   "basis": "Supertrend green",
-   "desired": "PUT_SPREAD",
-   "flip_date": "2026-10-16",
-   "flip_trading_days": 21,
+   "spot": 4675.0,
+   "colour": "red",
+   "rsi": 37.3,
+   "basis": "Supertrend red",
+   "desired": "CALL",
+   "flip_date": "2026-11-18",
+   "flip_trading_days": 0,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -2898,7 +2898,7 @@
    ],
    "rsi_override": false,
    "status": "ENTER",
-   "note": "Supertrend green: bull put spread",
+   "note": "Supertrend red: sell call",
    "legs": [],
    "events": [
     {
@@ -2916,13 +2916,13 @@
   },
   {
    "symbol": "HAVELLS",
-   "spot": 1175.0,
+   "spot": 1140.0,
    "colour": "green",
-   "rsi": 66.6,
+   "rsi": 56.8,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-06",
-   "flip_trading_days": 7,
+   "flip_trading_days": 8,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -2949,13 +2949,13 @@
   },
   {
    "symbol": "HCLTECH",
-   "spot": 1355.7,
+   "spot": 1344.7,
    "colour": "green",
-   "rsi": 46.7,
+   "rsi": 44.4,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-10-13",
-   "flip_trading_days": 24,
+   "flip_trading_days": 25,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -2982,13 +2982,13 @@
   },
   {
    "symbol": "HDFCAMC",
-   "spot": 2699.0,
+   "spot": 2649.1,
    "colour": "green",
-   "rsi": 67.8,
+   "rsi": 62.0,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-03",
-   "flip_trading_days": 10,
+   "flip_trading_days": 11,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -3015,13 +3015,13 @@
   },
   {
    "symbol": "HDFCBANK",
-   "spot": 814.95,
+   "spot": 808.15,
    "colour": "green",
-   "rsi": 74.8,
-   "basis": "RSI 74.8 > 70",
+   "rsi": 71.1,
+   "basis": "RSI 71.1 > 70",
    "desired": "CALL",
    "flip_date": "2026-11-03",
-   "flip_trading_days": 10,
+   "flip_trading_days": 11,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -3040,16 +3040,16 @@
      "side": "SHORT",
      "qty": 650,
      "avg": 2.8,
-     "ltp": 45.9,
-     "pnl_rs": -28015,
+     "ltp": 46.5,
+     "pnl_rs": -28405,
      "tradingsymbol": "HDFCBANK26NOV760CE",
      "lot": 650,
      "lots": 1.0,
-     "dist_pct": -6.02,
+     "dist_pct": -5.96,
      "stop_at": 8.4,
      "stop_hit": true,
-     "beyond_pct": 6.4,
-     "intrinsic_rs": 31622,
+     "beyond_pct": 6.34,
+     "intrinsic_rs": 31297,
      "touched": true,
      "near": false,
      "touched_h": false
@@ -3062,14 +3062,14 @@
      "side": "LONG",
      "qty": 650,
      "avg": 15.9,
-     "ltp": 35.4,
-     "pnl_rs": 12675,
+     "ltp": 36.5,
+     "pnl_rs": 13390,
      "tradingsymbol": "HDFCBANK26NOV770CE",
      "lot": 650,
      "lots": 1.0,
-     "dist_pct": -4.78,
-     "beyond_pct": 5.02,
-     "intrinsic_rs": 25122,
+     "dist_pct": -4.72,
+     "beyond_pct": 4.95,
+     "intrinsic_rs": 24797,
      "touched": true,
      "near": false,
      "touched_h": true
@@ -3091,13 +3091,13 @@
   },
   {
    "symbol": "HDFCLIFE",
-   "spot": 595.05,
+   "spot": 575.5,
    "colour": "green",
-   "rsi": 67.8,
+   "rsi": 57.5,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-06",
-   "flip_trading_days": 7,
+   "flip_trading_days": 8,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -3124,13 +3124,13 @@
   },
   {
    "symbol": "HEROMOTOCO",
-   "spot": 5329.0,
+   "spot": 5253.0,
    "colour": "green",
-   "rsi": 52.5,
+   "rsi": 48.1,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-10-28",
-   "flip_trading_days": 14,
+   "flip_trading_days": 15,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -3157,13 +3157,13 @@
   },
   {
    "symbol": "HINDALCO",
-   "spot": 927.75,
+   "spot": 900.0,
    "colour": "green",
-   "rsi": 49.3,
+   "rsi": 41.2,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-04",
-   "flip_trading_days": 9,
+   "flip_trading_days": 10,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -3190,13 +3190,13 @@
   },
   {
    "symbol": "HINDPETRO",
-   "spot": 389.55,
+   "spot": 386.45,
    "colour": "green",
-   "rsi": 63.9,
+   "rsi": 61.7,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-04",
-   "flip_trading_days": 9,
+   "flip_trading_days": 10,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -3215,13 +3215,13 @@
      "side": "LONG",
      "qty": 2025,
      "avg": 2.35,
-     "ltp": 0.1,
-     "pnl_rs": -4556.25,
+     "ltp": 0.05,
+     "pnl_rs": -4657.5,
      "tradingsymbol": "HINDPETRO26NOV350PE",
      "lot": 2025,
      "lots": 1.0,
-     "dist_pct": -9.62,
-     "beyond_pct": -10.64,
+     "dist_pct": -9.43,
+     "beyond_pct": -10.41,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -3235,16 +3235,16 @@
      "side": "SHORT",
      "qty": 2025,
      "avg": 1.3,
-     "ltp": 8.75,
-     "pnl_rs": -15086.25,
+     "ltp": 10.5,
+     "pnl_rs": -18630,
      "tradingsymbol": "HINDPETRO26NOV380CE",
      "lot": 2025,
      "lots": 1.0,
-     "dist_pct": -1.87,
+     "dist_pct": -1.67,
      "stop_at": 3.9,
      "stop_hit": true,
-     "beyond_pct": 1.91,
-     "intrinsic_rs": 14681,
+     "beyond_pct": 1.7,
+     "intrinsic_rs": 13061,
      "touched": true,
      "near": false,
      "touched_h": false
@@ -3257,15 +3257,15 @@
      "side": "SHORT",
      "qty": 2025,
      "avg": 1.75,
-     "ltp": 2.45,
-     "pnl_rs": -1417.5,
+     "ltp": 2.05,
+     "pnl_rs": -607.5,
      "tradingsymbol": "HINDPETRO26NOV380PE",
      "lot": 2025,
      "lots": 1.0,
-     "dist_pct": -1.87,
+     "dist_pct": -1.67,
      "stop_at": 5.25,
      "stop_hit": false,
-     "beyond_pct": -1.91,
+     "beyond_pct": -1.7,
      "intrinsic_rs": 0,
      "touched": false,
      "near": true,
@@ -3279,14 +3279,14 @@
      "side": "LONG",
      "qty": 2025,
      "avg": 7.85,
-     "ltp": 6.25,
-     "pnl_rs": -3240,
+     "ltp": 6.9,
+     "pnl_rs": -1923.75,
      "tradingsymbol": "HINDPETRO26NOV385CE",
      "lot": 2025,
      "lots": 1.0,
-     "dist_pct": -0.58,
-     "beyond_pct": 0.58,
-     "intrinsic_rs": 4556,
+     "dist_pct": -0.38,
+     "beyond_pct": 0.38,
+     "intrinsic_rs": 2936,
      "touched": true,
      "near": false,
      "touched_h": true
@@ -3308,13 +3308,13 @@
   },
   {
    "symbol": "HINDUNILVR",
-   "spot": 2009.9,
+   "spot": 1993.0,
    "colour": "green",
-   "rsi": 65.5,
+   "rsi": 60.9,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-03",
-   "flip_trading_days": 10,
+   "flip_trading_days": 11,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -3341,13 +3341,13 @@
   },
   {
    "symbol": "HINDZINC",
-   "spot": 550.0,
-   "colour": "green",
-   "rsi": 50.5,
-   "basis": "Supertrend green",
-   "desired": "PUT_SPREAD",
-   "flip_date": "2026-11-04",
-   "flip_trading_days": 9,
+   "spot": 527.0,
+   "colour": "red",
+   "rsi": 41.8,
+   "basis": "Supertrend red",
+   "desired": "CALL",
+   "flip_date": "2026-11-18",
+   "flip_trading_days": 0,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -3355,8 +3355,8 @@
     }
    ],
    "rsi_override": false,
-   "status": "HOLD",
-   "note": "Open structure matches the rule (Supertrend green).",
+   "status": "FLIP",
+   "note": "Supertrend turned RED since entry (green): close the put spread and open the short call.",
    "legs": [
     {
      "symbol": "HINDZINC",
@@ -3366,13 +3366,13 @@
      "side": "LONG",
      "qty": 1225,
      "avg": 1.05,
-     "ltp": 0.75,
-     "pnl_rs": -367.5,
+     "ltp": 0.7,
+     "pnl_rs": -428.75,
      "tradingsymbol": "HINDZINC26NOV480PE",
      "lot": 1225,
      "lots": 1.0,
-     "dist_pct": -9.13,
-     "beyond_pct": -10.05,
+     "dist_pct": -8.92,
+     "beyond_pct": -9.79,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -3386,15 +3386,15 @@
      "side": "SHORT",
      "qty": 1225,
      "avg": 2.4,
-     "ltp": 1.55,
-     "pnl_rs": 1041.25,
+     "ltp": 1.65,
+     "pnl_rs": 918.75,
      "tradingsymbol": "HINDZINC26NOV500PE",
      "lot": 1225,
      "lots": 1.0,
-     "dist_pct": -5.35,
+     "dist_pct": -5.12,
      "stop_at": 7.2,
      "stop_hit": false,
-     "beyond_pct": -5.65,
+     "beyond_pct": -5.4,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -3417,13 +3417,13 @@
   },
   {
    "symbol": "HYUNDAI",
-   "spot": 2121.3,
+   "spot": 2097.5,
    "colour": "green",
-   "rsi": 59.7,
+   "rsi": 56.3,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-03",
-   "flip_trading_days": 10,
+   "flip_trading_days": 11,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -3445,13 +3445,13 @@
   },
   {
    "symbol": "ICICIBANK",
-   "spot": 1598.7,
+   "spot": 1601.3,
    "colour": "green",
-   "rsi": 76.3,
-   "basis": "RSI 76.3 > 70",
+   "rsi": 76.5,
+   "basis": "RSI 76.5 > 70",
    "desired": "CALL",
    "flip_date": "2026-10-07",
-   "flip_trading_days": 28,
+   "flip_trading_days": 29,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -3460,7 +3460,7 @@
    ],
    "rsi_override": true,
    "status": "ENTER",
-   "note": "RSI 76.3 > 70: sell call",
+   "note": "RSI 76.5 > 70: sell call",
    "legs": [],
    "events": [
     {
@@ -3478,13 +3478,13 @@
   },
   {
    "symbol": "ICICIGI",
-   "spot": 1693.5,
+   "spot": 1646.5,
    "colour": "green",
-   "rsi": 62.1,
+   "rsi": 52.2,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-12",
-   "flip_trading_days": 3,
+   "flip_trading_days": 4,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -3503,13 +3503,13 @@
      "side": "LONG",
      "qty": 325,
      "avg": 8.1,
-     "ltp": 8.3,
-     "pnl_rs": 65.00000000000045,
+     "ltp": 8.35,
+     "pnl_rs": 81.25,
      "tradingsymbol": "ICICIGI26DEC1520PE",
      "lot": 325,
      "lots": 1.0,
-     "dist_pct": -10.25,
-     "beyond_pct": -11.41,
+     "dist_pct": -7.68,
+     "beyond_pct": -8.32,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -3523,15 +3523,15 @@
      "side": "SHORT",
      "qty": 325,
      "avg": 13.5,
-     "ltp": 14.45,
-     "pnl_rs": -308.75,
+     "ltp": 14.9,
+     "pnl_rs": -455,
      "tradingsymbol": "ICICIGI26DEC1560PE",
      "lot": 325,
      "lots": 1.0,
-     "dist_pct": -7.88,
+     "dist_pct": -5.25,
      "stop_at": 40.5,
      "stop_hit": false,
-     "beyond_pct": -8.56,
+     "beyond_pct": -5.54,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -3554,13 +3554,13 @@
   },
   {
    "symbol": "ICICILIFE",
-   "spot": 461.1,
+   "spot": 453.2,
    "colour": "green",
-   "rsi": 61.0,
+   "rsi": 56.0,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-11",
-   "flip_trading_days": 4,
+   "flip_trading_days": 5,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -3587,13 +3587,13 @@
   },
   {
    "symbol": "IDEA",
-   "spot": 12.3,
+   "spot": 12.1,
    "colour": "green",
-   "rsi": 44.3,
+   "rsi": 41.5,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-05",
-   "flip_trading_days": 8,
+   "flip_trading_days": 9,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -3615,13 +3615,13 @@
   },
   {
    "symbol": "IDFCFIRSTB",
-   "spot": 83.59,
+   "spot": 82.45,
    "colour": "green",
-   "rsi": 65.9,
+   "rsi": 61.7,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-11",
-   "flip_trading_days": 4,
+   "flip_trading_days": 5,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -3640,13 +3640,13 @@
      "side": "LONG",
      "qty": 9275,
      "avg": 0.47,
-     "ltp": 0.47,
-     "pnl_rs": 0,
+     "ltp": 0.45,
+     "pnl_rs": -185.5,
      "tradingsymbol": "IDFCFIRSTB26DEC73PE",
      "lot": 9275,
      "lots": 1.0,
-     "dist_pct": -12.67,
-     "beyond_pct": -14.51,
+     "dist_pct": -11.46,
+     "beyond_pct": -12.95,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -3660,15 +3660,15 @@
      "side": "SHORT",
      "qty": 9275,
      "avg": 0.67,
-     "ltp": 0.66,
-     "pnl_rs": 92.75,
+     "ltp": 0.67,
+     "pnl_rs": 0,
      "tradingsymbol": "IDFCFIRSTB26DEC75PE",
      "lot": 9275,
      "lots": 1.0,
-     "dist_pct": -10.28,
+     "dist_pct": -9.04,
      "stop_at": 2.01,
      "stop_hit": false,
-     "beyond_pct": -11.45,
+     "beyond_pct": -9.93,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -3691,13 +3691,13 @@
   },
   {
    "symbol": "IEX",
-   "spot": 114.4,
+   "spot": 115.0,
    "colour": "green",
-   "rsi": 59.2,
+   "rsi": 60.3,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-04",
-   "flip_trading_days": 9,
+   "flip_trading_days": 10,
    "expiries": [
     {
      "expiry": "2026-11-23",
@@ -3724,11 +3724,11 @@
   },
   {
    "symbol": "INDHOTEL",
-   "spot": 901.55,
+   "spot": 875.05,
    "colour": "green",
-   "rsi": 76.4,
-   "basis": "RSI 76.4 > 70",
-   "desired": "CALL",
+   "rsi": 64.6,
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
    "flip_date": "2026-04-15",
    "flip_trading_days": 91,
    "expiries": [
@@ -3737,9 +3737,9 @@
      "lot": 1000
     }
    ],
-   "rsi_override": true,
+   "rsi_override": false,
    "status": "ENTER",
-   "note": "RSI 76.4 > 70: sell call",
+   "note": "Supertrend green: bull put spread",
    "legs": [],
    "events": [
     {
@@ -3757,13 +3757,13 @@
   },
   {
    "symbol": "INDIANB",
-   "spot": 936.0,
+   "spot": 937.0,
    "colour": "green",
-   "rsi": 69.3,
+   "rsi": 69.5,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-10-19",
-   "flip_trading_days": 20,
+   "flip_trading_days": 21,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -3790,22 +3790,22 @@
   },
   {
    "symbol": "INDIGO",
-   "spot": 5611.0,
+   "spot": 5499.3,
    "colour": "green",
-   "rsi": 71.3,
-   "basis": "RSI 71.3 > 70",
-   "desired": "CALL",
+   "rsi": 64.7,
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
    "flip_date": "2026-11-02",
-   "flip_trading_days": 11,
+   "flip_trading_days": 12,
    "expiries": [
     {
      "expiry": "2026-12-29",
      "lot": 150
     }
    ],
-   "rsi_override": true,
+   "rsi_override": false,
    "status": "ENTER",
-   "note": "RSI 71.3 > 70: sell call",
+   "note": "Supertrend green: bull put spread",
    "legs": [],
    "events": [
     {
@@ -3818,13 +3818,13 @@
   },
   {
    "symbol": "INDUSINDBK",
-   "spot": 931.0,
+   "spot": 911.85,
    "colour": "green",
-   "rsi": 60.3,
+   "rsi": 54.5,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-05",
-   "flip_trading_days": 8,
+   "flip_trading_days": 9,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -3851,13 +3851,13 @@
   },
   {
    "symbol": "INDUSTOWER",
-   "spot": 392.6,
+   "spot": 391.6,
    "colour": "green",
-   "rsi": 55.2,
+   "rsi": 54.4,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-11",
-   "flip_trading_days": 4,
+   "flip_trading_days": 5,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -3884,13 +3884,13 @@
   },
   {
    "symbol": "INFY",
-   "spot": 1130.0,
+   "spot": 1108.8,
    "colour": "green",
-   "rsi": 52.0,
+   "rsi": 47.3,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-10-14",
-   "flip_trading_days": 23,
+   "flip_trading_days": 24,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -3917,13 +3917,13 @@
   },
   {
    "symbol": "INOXWIND",
-   "spot": 59.7,
-   "colour": "green",
-   "rsi": 39.6,
-   "basis": "Supertrend green",
-   "desired": "PUT_SPREAD",
-   "flip_date": "2026-11-05",
-   "flip_trading_days": 8,
+   "spot": 57.5,
+   "colour": "red",
+   "rsi": 35.9,
+   "basis": "Supertrend red",
+   "desired": "CALL",
+   "flip_date": "2026-11-18",
+   "flip_trading_days": 0,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -3932,20 +3932,20 @@
    ],
    "rsi_override": false,
    "status": "ENTER",
-   "note": "Supertrend green: bull put spread",
+   "note": "Supertrend red: sell call",
    "legs": [],
    "events": [],
    "event_block": null
   },
   {
    "symbol": "IOC",
-   "spot": 145.56,
+   "spot": 143.82,
    "colour": "green",
-   "rsi": 65.3,
+   "rsi": 60.4,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-02",
-   "flip_trading_days": 11,
+   "flip_trading_days": 12,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -3972,13 +3972,13 @@
   },
   {
    "symbol": "IREDA",
-   "spot": 117.4,
+   "spot": 119.8,
    "colour": "green",
-   "rsi": 63.6,
+   "rsi": 66.7,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-05",
-   "flip_trading_days": 8,
+   "flip_trading_days": 9,
    "expiries": [
     {
      "expiry": "2026-11-23",
@@ -4000,13 +4000,13 @@
   },
   {
    "symbol": "IRFC",
-   "spot": 82.65,
+   "spot": 81.1,
    "colour": "green",
-   "rsi": 58.8,
+   "rsi": 54.0,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-10-16",
-   "flip_trading_days": 21,
+   "flip_trading_days": 22,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -4033,13 +4033,13 @@
   },
   {
    "symbol": "ITC",
-   "spot": 293.3,
+   "spot": 296.6,
    "colour": "green",
-   "rsi": 70.3,
-   "basis": "RSI 70.3 > 70",
+   "rsi": 72.3,
+   "basis": "RSI 72.3 > 70",
    "desired": "CALL",
    "flip_date": "2026-11-03",
-   "flip_trading_days": 10,
+   "flip_trading_days": 11,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -4048,7 +4048,7 @@
    ],
    "rsi_override": true,
    "status": "ENTER",
-   "note": "RSI 70.3 > 70: sell call",
+   "note": "RSI 72.3 > 70: sell call",
    "legs": [],
    "events": [
     {
@@ -4066,13 +4066,13 @@
   },
   {
    "symbol": "JINDALSTEL",
-   "spot": 1137.5,
+   "spot": 1103.0,
    "colour": "green",
-   "rsi": 57.8,
+   "rsi": 48.4,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-04",
-   "flip_trading_days": 9,
+   "flip_trading_days": 10,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -4099,13 +4099,13 @@
   },
   {
    "symbol": "JIOFIN",
-   "spot": 228.96,
+   "spot": 224.5,
    "colour": "green",
-   "rsi": 60.1,
+   "rsi": 53.0,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-04",
-   "flip_trading_days": 9,
+   "flip_trading_days": 10,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -4127,13 +4127,13 @@
   },
   {
    "symbol": "JSWENERGY",
-   "spot": 514.9,
+   "spot": 511.85,
    "colour": "green",
-   "rsi": 56.1,
+   "rsi": 54.1,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-10-29",
-   "flip_trading_days": 13,
+   "flip_trading_days": 14,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -4160,13 +4160,13 @@
   },
   {
    "symbol": "JSWSTEEL",
-   "spot": 1332.0,
+   "spot": 1315.9,
    "colour": "green",
-   "rsi": 59.8,
+   "rsi": 55.1,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-10-26",
-   "flip_trading_days": 16,
+   "flip_trading_days": 17,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -4193,13 +4193,13 @@
   },
   {
    "symbol": "JUBLFOOD",
-   "spot": 427.5,
+   "spot": 420.95,
    "colour": "green",
-   "rsi": 45.4,
+   "rsi": 42.4,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-05",
-   "flip_trading_days": 8,
+   "flip_trading_days": 9,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -4226,13 +4226,13 @@
   },
   {
    "symbol": "KALYANKJIL",
-   "spot": 682.75,
+   "spot": 650.0,
    "colour": "green",
-   "rsi": 68.9,
+   "rsi": 60.6,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-05",
-   "flip_trading_days": 8,
+   "flip_trading_days": 9,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -4254,13 +4254,13 @@
   },
   {
    "symbol": "KARURVYSYA",
-   "spot": 393.5,
+   "spot": 387.0,
    "colour": "green",
-   "rsi": 69.8,
+   "rsi": 64.8,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-10-13",
-   "flip_trading_days": 24,
+   "flip_trading_days": 25,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -4284,8 +4284,8 @@
      "tradingsymbol": "KARURVYSYA26NOV330PE",
      "lot": 1550,
      "lots": 1.0,
-     "dist_pct": -14.16,
-     "beyond_pct": -16.5,
+     "dist_pct": -14.73,
+     "beyond_pct": -17.27,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -4299,15 +4299,15 @@
      "side": "SHORT",
      "qty": 1550,
      "avg": 1.8,
-     "ltp": 1.8,
-     "pnl_rs": 0,
+     "ltp": 1.75,
+     "pnl_rs": 77.5,
      "tradingsymbol": "KARURVYSYA26NOV370PE",
      "lot": 1550,
      "lots": 1.0,
-     "dist_pct": -3.76,
+     "dist_pct": -4.39,
      "stop_at": 5.4,
      "stop_hit": false,
-     "beyond_pct": -3.91,
+     "beyond_pct": -4.59,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -4326,10 +4326,10 @@
      "tradingsymbol": "KARURVYSYA26NOV410CE",
      "lot": 1550,
      "lots": 1.0,
-     "dist_pct": 6.65,
+     "dist_pct": 5.94,
      "stop_at": 5.1,
      "stop_hit": false,
-     "beyond_pct": -6.23,
+     "beyond_pct": -5.61,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -4352,13 +4352,13 @@
   },
   {
    "symbol": "KAYNES",
-   "spot": 2858.0,
+   "spot": 2882.0,
    "colour": "red",
-   "rsi": 34.0,
+   "rsi": 35.2,
    "basis": "Supertrend red",
    "desired": "CALL",
    "flip_date": "2026-09-01",
-   "flip_trading_days": 52,
+   "flip_trading_days": 53,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -4374,13 +4374,13 @@
   },
   {
    "symbol": "KEI",
-   "spot": 3851.0,
+   "spot": 3725.0,
    "colour": "red",
-   "rsi": 36.6,
+   "rsi": 32.6,
    "basis": "Supertrend red",
    "desired": "CALL",
    "flip_date": "2026-09-01",
-   "flip_trading_days": 52,
+   "flip_trading_days": 53,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -4399,15 +4399,15 @@
      "side": "SHORT",
      "qty": 175,
      "avg": 27,
-     "ltp": 18.5,
-     "pnl_rs": 1487.5,
+     "ltp": 18,
+     "pnl_rs": 1575,
      "tradingsymbol": "KEI26DEC4500CE",
      "lot": 175,
      "lots": 1.0,
-     "dist_pct": 20.66,
+     "dist_pct": 20.81,
      "stop_at": 81,
      "stop_hit": false,
-     "beyond_pct": -17.12,
+     "beyond_pct": -17.22,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -4430,13 +4430,13 @@
   },
   {
    "symbol": "KFINTECH",
-   "spot": 965.0,
+   "spot": 932.75,
    "colour": "green",
-   "rsi": 64.5,
+   "rsi": 56.1,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-04",
-   "flip_trading_days": 9,
+   "flip_trading_days": 10,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -4458,13 +4458,13 @@
   },
   {
    "symbol": "KOTAKBANK",
-   "spot": 497.25,
+   "spot": 494.85,
    "colour": "green",
-   "rsi": 77.0,
-   "basis": "RSI 77.0 > 70",
+   "rsi": 74.3,
+   "basis": "RSI 74.3 > 70",
    "desired": "CALL",
    "flip_date": "2026-10-06",
-   "flip_trading_days": 29,
+   "flip_trading_days": 30,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -4473,7 +4473,7 @@
    ],
    "rsi_override": true,
    "status": "ENTER",
-   "note": "RSI 77.0 > 70: sell call",
+   "note": "RSI 74.3 > 70: sell call",
    "legs": [],
    "events": [
     {
@@ -4491,13 +4491,13 @@
   },
   {
    "symbol": "KPITTECH",
-   "spot": 531.65,
+   "spot": 521.75,
    "colour": "green",
-   "rsi": 48.2,
+   "rsi": 44.3,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-10-16",
-   "flip_trading_days": 21,
+   "flip_trading_days": 22,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -4524,9 +4524,9 @@
   },
   {
    "symbol": "LAURUSLABS",
-   "spot": 2338.0,
+   "spot": 2322.5,
    "colour": "green",
-   "rsi": 57.5,
+   "rsi": 56.4,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-04-08",
@@ -4557,13 +4557,13 @@
   },
   {
    "symbol": "LICHSGFIN",
-   "spot": 622.5,
+   "spot": 610.0,
    "colour": "green",
-   "rsi": 76.6,
-   "basis": "RSI 76.6 > 70",
+   "rsi": 70.6,
+   "basis": "RSI 70.6 > 70",
    "desired": "CALL",
    "flip_date": "2026-11-09",
-   "flip_trading_days": 5,
+   "flip_trading_days": 6,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -4572,7 +4572,7 @@
    ],
    "rsi_override": true,
    "status": "ENTER",
-   "note": "RSI 76.6 > 70: sell call",
+   "note": "RSI 70.6 > 70: sell call",
    "legs": [],
    "events": [
     {
@@ -4590,13 +4590,13 @@
   },
   {
    "symbol": "LICI",
-   "spot": 397.7,
+   "spot": 400.0,
    "colour": "green",
-   "rsi": 50.7,
+   "rsi": 52.6,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-04",
-   "flip_trading_days": 9,
+   "flip_trading_days": 10,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -4623,13 +4623,13 @@
   },
   {
    "symbol": "LODHA",
-   "spot": 1203.1,
+   "spot": 1197.1,
    "colour": "green",
-   "rsi": 61.9,
+   "rsi": 60.8,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-04",
-   "flip_trading_days": 9,
+   "flip_trading_days": 10,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -4656,13 +4656,13 @@
   },
   {
    "symbol": "LT",
-   "spot": 4155.5,
+   "spot": 4159.0,
    "colour": "green",
-   "rsi": 70.6,
-   "basis": "RSI 70.6 > 70",
+   "rsi": 70.8,
+   "basis": "RSI 70.8 > 70",
    "desired": "CALL",
    "flip_date": "2026-10-30",
-   "flip_trading_days": 12,
+   "flip_trading_days": 13,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -4671,7 +4671,7 @@
    ],
    "rsi_override": true,
    "status": "ENTER",
-   "note": "RSI 70.6 > 70: sell call",
+   "note": "RSI 70.8 > 70: sell call",
    "legs": [],
    "events": [
     {
@@ -4689,13 +4689,13 @@
   },
   {
    "symbol": "LTF",
-   "spot": 280.3,
+   "spot": 273.9,
    "colour": "green",
-   "rsi": 59.3,
+   "rsi": 53.7,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-04",
-   "flip_trading_days": 9,
+   "flip_trading_days": 10,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -4722,13 +4722,13 @@
   },
   {
    "symbol": "LTM",
-   "spot": 4118.0,
+   "spot": 4075.0,
    "colour": "green",
-   "rsi": 43.9,
+   "rsi": 41.6,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-10-16",
-   "flip_trading_days": 21,
+   "flip_trading_days": 22,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -4755,13 +4755,13 @@
   },
   {
    "symbol": "LUPIN",
-   "spot": 1950.0,
+   "spot": 1971.9,
    "colour": "red",
-   "rsi": 39.8,
+   "rsi": 44.9,
    "basis": "Supertrend red",
    "desired": "CALL",
    "flip_date": "2026-08-10",
-   "flip_trading_days": 68,
+   "flip_trading_days": 69,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -4785,10 +4785,10 @@
      "tradingsymbol": "LUPIN26DEC2240CE",
      "lot": 425,
      "lots": 1.0,
-     "dist_pct": 12.69,
+     "dist_pct": 13.6,
      "stop_at": 23.55,
      "stop_hit": false,
-     "beyond_pct": -11.26,
+     "beyond_pct": -11.97,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -4811,22 +4811,22 @@
   },
   {
    "symbol": "M&M",
-   "spot": 3399.0,
+   "spot": 3359.1,
    "colour": "green",
-   "rsi": 70.1,
-   "basis": "RSI 70.1 > 70",
-   "desired": "CALL",
+   "rsi": 66.3,
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
    "flip_date": "2026-11-04",
-   "flip_trading_days": 9,
+   "flip_trading_days": 10,
    "expiries": [
     {
      "expiry": "2026-12-29",
      "lot": 200
     }
    ],
-   "rsi_override": true,
+   "rsi_override": false,
    "status": "ENTER",
-   "note": "RSI 70.1 > 70: sell call",
+   "note": "Supertrend green: bull put spread",
    "legs": [],
    "events": [
     {
@@ -4844,13 +4844,13 @@
   },
   {
    "symbol": "MAHABANK",
-   "spot": 95.99,
+   "spot": 96.0,
    "colour": "green",
    "rsi": 74.9,
    "basis": "RSI 74.9 > 70",
    "desired": "CALL",
    "flip_date": "2026-11-05",
-   "flip_trading_days": 8,
+   "flip_trading_days": 9,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -4874,11 +4874,11 @@
      "tradingsymbol": "MAHABANK26NOV89CE",
      "lot": 6500,
      "lots": 1.0,
-     "dist_pct": -7.28,
+     "dist_pct": -7.29,
      "stop_at": 0.96,
      "stop_hit": true,
-     "beyond_pct": 7.85,
-     "intrinsic_rs": 45435,
+     "beyond_pct": 7.87,
+     "intrinsic_rs": 45500,
      "touched": true,
      "near": false,
      "touched_h": false
@@ -4896,9 +4896,9 @@
      "tradingsymbol": "MAHABANK26NOV90CE",
      "lot": 6500,
      "lots": 1.0,
-     "dist_pct": -6.24,
-     "beyond_pct": 6.66,
-     "intrinsic_rs": 38935,
+     "dist_pct": -6.25,
+     "beyond_pct": 6.67,
+     "intrinsic_rs": 39000,
      "touched": true,
      "near": false,
      "touched_h": true
@@ -4915,13 +4915,13 @@
   },
   {
    "symbol": "MANAPPURAM",
-   "spot": 296.6,
-   "colour": "green",
-   "rsi": 40.9,
-   "basis": "Supertrend green",
-   "desired": "PUT_SPREAD",
-   "flip_date": "2026-11-05",
-   "flip_trading_days": 8,
+   "spot": 283.0,
+   "colour": "red",
+   "rsi": 34.8,
+   "basis": "Supertrend red",
+   "desired": "CALL",
+   "flip_date": "2026-11-18",
+   "flip_trading_days": 0,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -4930,7 +4930,7 @@
    ],
    "rsi_override": false,
    "status": "ENTER",
-   "note": "Supertrend green: bull put spread",
+   "note": "Supertrend red: sell call",
    "legs": [],
    "events": [
     {
@@ -4948,13 +4948,13 @@
   },
   {
    "symbol": "MANKIND",
-   "spot": 2610.0,
+   "spot": 2625.0,
    "colour": "green",
-   "rsi": 61.5,
+   "rsi": 62.7,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-10-27",
-   "flip_trading_days": 15,
+   "flip_trading_days": 16,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -4976,22 +4976,22 @@
   },
   {
    "symbol": "MARICO",
-   "spot": 924.0,
+   "spot": 906.05,
    "colour": "green",
-   "rsi": 72.7,
-   "basis": "RSI 72.7 > 70",
-   "desired": "CALL",
+   "rsi": 65.1,
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
    "flip_date": "2026-11-03",
-   "flip_trading_days": 10,
+   "flip_trading_days": 11,
    "expiries": [
     {
      "expiry": "2026-12-29",
      "lot": 1200
     }
    ],
-   "rsi_override": true,
+   "rsi_override": false,
    "status": "ENTER",
-   "note": "RSI 72.7 > 70: sell call",
+   "note": "Supertrend green: bull put spread",
    "legs": [],
    "events": [
     {
@@ -5009,13 +5009,13 @@
   },
   {
    "symbol": "MARUTI",
-   "spot": 12625.0,
+   "spot": 12632.0,
    "colour": "green",
-   "rsi": 59.2,
+   "rsi": 59.3,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-04",
-   "flip_trading_days": 9,
+   "flip_trading_days": 10,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -5042,13 +5042,13 @@
   },
   {
    "symbol": "MAXHEALTH",
-   "spot": 1030.9,
+   "spot": 1022.85,
    "colour": "green",
-   "rsi": 75.5,
-   "basis": "RSI 75.5 > 70",
+   "rsi": 72.7,
+   "basis": "RSI 72.7 > 70",
    "desired": "CALL",
    "flip_date": "2026-11-03",
-   "flip_trading_days": 10,
+   "flip_trading_days": 11,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -5057,7 +5057,7 @@
    ],
    "rsi_override": true,
    "status": "ENTER",
-   "note": "RSI 75.5 > 70: sell call",
+   "note": "RSI 72.7 > 70: sell call",
    "legs": [],
    "events": [
     {
@@ -5075,13 +5075,13 @@
   },
   {
    "symbol": "MAZDOCK",
-   "spot": 1847.0,
+   "spot": 1822.4,
    "colour": "red",
-   "rsi": 41.0,
+   "rsi": 38.6,
    "basis": "Supertrend red",
    "desired": "CALL",
    "flip_date": "2026-09-09",
-   "flip_trading_days": 46,
+   "flip_trading_days": 47,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -5100,15 +5100,15 @@
      "side": "SHORT",
      "qty": 225,
      "avg": 11.6,
-     "ltp": 7.5,
-     "pnl_rs": 922.5,
+     "ltp": 7.6,
+     "pnl_rs": 900,
      "tradingsymbol": "MAZDOCK26DEC2200CE",
      "lot": 225,
      "lots": 1.0,
-     "dist_pct": 20.25,
+     "dist_pct": 20.72,
      "stop_at": 34.8,
      "stop_hit": false,
-     "beyond_pct": -16.84,
+     "beyond_pct": -17.16,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -5126,13 +5126,13 @@
   },
   {
    "symbol": "MCX",
-   "spot": 3705.4,
+   "spot": 3619.0,
    "colour": "green",
-   "rsi": 67.1,
+   "rsi": 61.1,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-03",
-   "flip_trading_days": 10,
+   "flip_trading_days": 11,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -5159,13 +5159,13 @@
   },
   {
    "symbol": "MFSL",
-   "spot": 1431.0,
+   "spot": 1420.8,
    "colour": "green",
-   "rsi": 67.3,
+   "rsi": 65.2,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-12",
-   "flip_trading_days": 3,
+   "flip_trading_days": 4,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -5187,13 +5187,13 @@
   },
   {
    "symbol": "MOTHERSON",
-   "spot": 164.39,
+   "spot": 157.24,
    "colour": "green",
-   "rsi": 54.1,
+   "rsi": 45.7,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-05",
-   "flip_trading_days": 8,
+   "flip_trading_days": 9,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -5220,13 +5220,13 @@
   },
   {
    "symbol": "MOTILALOFS",
-   "spot": 1240.25,
+   "spot": 1228.95,
    "colour": "green",
-   "rsi": 75.3,
-   "basis": "RSI 75.3 > 70",
+   "rsi": 72.6,
+   "basis": "RSI 72.6 > 70",
    "desired": "CALL",
    "flip_date": "2026-11-05",
-   "flip_trading_days": 8,
+   "flip_trading_days": 9,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -5235,7 +5235,7 @@
    ],
    "rsi_override": true,
    "status": "ENTER",
-   "note": "RSI 75.3 > 70: sell call (you hold other legs in this stock)",
+   "note": "RSI 72.6 > 70: sell call (you hold other legs in this stock)",
    "legs": [
     {
      "symbol": "MOTILALOFS",
@@ -5250,8 +5250,8 @@
      "tradingsymbol": "MOTILALOFS26NOV840PE",
      "lot": 775,
      "lots": 1.0,
-     "dist_pct": -31.31,
-     "beyond_pct": -45.57,
+     "dist_pct": -31.65,
+     "beyond_pct": -46.3,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -5269,13 +5269,13 @@
   },
   {
    "symbol": "MPHASIS",
-   "spot": 2445.0,
+   "spot": 2397.0,
    "colour": "green",
-   "rsi": 48.9,
+   "rsi": 44.6,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-10-13",
-   "flip_trading_days": 24,
+   "flip_trading_days": 25,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -5302,13 +5302,13 @@
   },
   {
    "symbol": "MUTHOOTFIN",
-   "spot": 2749.0,
+   "spot": 2640.0,
    "colour": "green",
-   "rsi": 53.3,
+   "rsi": 46.2,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-04",
-   "flip_trading_days": 9,
+   "flip_trading_days": 10,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -5335,13 +5335,13 @@
   },
   {
    "symbol": "NAM-INDIA",
-   "spot": 1085.5,
+   "spot": 1052.6,
    "colour": "green",
-   "rsi": 57.7,
+   "rsi": 51.2,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-05",
-   "flip_trading_days": 8,
+   "flip_trading_days": 9,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -5363,13 +5363,13 @@
   },
   {
    "symbol": "NATIONALUM",
-   "spot": 320.9,
+   "spot": 308.1,
    "colour": "green",
-   "rsi": 48.0,
+   "rsi": 41.3,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-09",
-   "flip_trading_days": 5,
+   "flip_trading_days": 6,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -5393,8 +5393,8 @@
      "tradingsymbol": "NATIONALUM26DEC260PE",
      "lot": 1875,
      "lots": 1.0,
-     "dist_pct": -18.98,
-     "beyond_pct": -23.42,
+     "dist_pct": -15.61,
+     "beyond_pct": -18.5,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -5408,15 +5408,15 @@
      "side": "SHORT",
      "qty": 1875,
      "avg": 3.75,
-     "ltp": 3.7,
-     "pnl_rs": 93.75,
+     "ltp": 3.65,
+     "pnl_rs": 187.5,
      "tradingsymbol": "NATIONALUM26DEC280PE",
      "lot": 1875,
      "lots": 1.0,
-     "dist_pct": -12.75,
+     "dist_pct": -9.12,
      "stop_at": 11.25,
      "stop_hit": false,
-     "beyond_pct": -14.61,
+     "beyond_pct": -10.04,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -5439,13 +5439,13 @@
   },
   {
    "symbol": "NAUKRI",
-   "spot": 1175.0,
+   "spot": 1155.0,
    "colour": "red",
-   "rsi": 43.4,
+   "rsi": 39.3,
    "basis": "Supertrend red",
    "desired": "CALL",
    "flip_date": "2026-09-11",
-   "flip_trading_days": 44,
+   "flip_trading_days": 45,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -5472,22 +5472,22 @@
   },
   {
    "symbol": "NAVINFLUOR",
-   "spot": 9815.0,
+   "spot": 10278.0,
    "colour": "green",
-   "rsi": 69.7,
-   "basis": "Supertrend green",
-   "desired": "PUT_SPREAD",
+   "rsi": 74.7,
+   "basis": "RSI 74.7 > 70",
+   "desired": "CALL",
    "flip_date": "2026-10-28",
-   "flip_trading_days": 14,
+   "flip_trading_days": 15,
    "expiries": [
     {
      "expiry": "2026-12-29",
      "lot": 75
     }
    ],
-   "rsi_override": false,
+   "rsi_override": true,
    "status": "ENTER",
-   "note": "Supertrend green: bull put spread",
+   "note": "RSI 74.7 > 70: sell call",
    "legs": [],
    "events": [
     {
@@ -5505,13 +5505,13 @@
   },
   {
    "symbol": "NBCC",
-   "spot": 78.51,
+   "spot": 77.32,
    "colour": "green",
-   "rsi": 53.6,
+   "rsi": 50.2,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-02",
-   "flip_trading_days": 11,
+   "flip_trading_days": 12,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -5533,13 +5533,13 @@
   },
   {
    "symbol": "NESTLEIND",
-   "spot": 1294.3,
+   "spot": 1281.6,
    "colour": "green",
-   "rsi": 54.8,
+   "rsi": 52.1,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-06",
-   "flip_trading_days": 7,
+   "flip_trading_days": 8,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -5566,13 +5566,13 @@
   },
   {
    "symbol": "NHPC",
-   "spot": 74.8,
+   "spot": 74.46,
    "colour": "red",
-   "rsi": 44.8,
+   "rsi": 43.7,
    "basis": "Supertrend red",
    "desired": "CALL",
    "flip_date": "2026-11-17",
-   "flip_trading_days": 0,
+   "flip_trading_days": 1,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -5596,10 +5596,10 @@
      "tradingsymbol": "NHPC26DEC85CE",
      "lot": 6950,
      "lots": 1.0,
-     "dist_pct": 13.64,
+     "dist_pct": 14.16,
      "stop_at": 1.2,
      "stop_hit": false,
-     "beyond_pct": -12.0,
+     "beyond_pct": -12.4,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -5622,13 +5622,13 @@
   },
   {
    "symbol": "NMDC",
-   "spot": 69.3,
+   "spot": 68.24,
    "colour": "green",
-   "rsi": 42.6,
+   "rsi": 38.7,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-11",
-   "flip_trading_days": 4,
+   "flip_trading_days": 5,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -5655,13 +5655,13 @@
   },
   {
    "symbol": "NTPC",
-   "spot": 321.8,
+   "spot": 320.4,
    "colour": "green",
-   "rsi": 55.8,
+   "rsi": 54.1,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-02",
-   "flip_trading_days": 11,
+   "flip_trading_days": 12,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -5688,13 +5688,13 @@
   },
   {
    "symbol": "NYKAA",
-   "spot": 358.0,
+   "spot": 352.0,
    "colour": "green",
-   "rsi": 57.7,
+   "rsi": 52.5,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-10-29",
-   "flip_trading_days": 13,
+   "flip_trading_days": 14,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -5716,13 +5716,13 @@
   },
   {
    "symbol": "OBEROIRLTY",
-   "spot": 1819.7,
+   "spot": 1800.0,
    "colour": "green",
-   "rsi": 62.4,
+   "rsi": 59.1,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-05",
-   "flip_trading_days": 8,
+   "flip_trading_days": 9,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -5749,13 +5749,13 @@
   },
   {
    "symbol": "OFSS",
-   "spot": 9741.0,
+   "spot": 9694.5,
    "colour": "red",
-   "rsi": 37.6,
+   "rsi": 36.6,
    "basis": "Supertrend red",
    "desired": "CALL",
    "flip_date": "2026-09-21",
-   "flip_trading_days": 39,
+   "flip_trading_days": 40,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -5774,15 +5774,15 @@
      "side": "SHORT",
      "qty": 50,
      "avg": 46.9,
-     "ltp": 46.65,
-     "pnl_rs": 12.5,
+     "ltp": 43.35,
+     "pnl_rs": 177.5,
      "tradingsymbol": "OFSS26DEC11500CE",
      "lot": 50,
      "lots": 1.0,
-     "dist_pct": 18.06,
+     "dist_pct": 18.62,
      "stop_at": 140.7,
      "stop_hit": false,
-     "beyond_pct": -15.3,
+     "beyond_pct": -15.7,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -5805,13 +5805,13 @@
   },
   {
    "symbol": "OIL",
-   "spot": 433.5,
+   "spot": 435.5,
    "colour": "red",
-   "rsi": 38.6,
+   "rsi": 40.4,
    "basis": "Supertrend red",
    "desired": "CALL",
    "flip_date": "2026-09-22",
-   "flip_trading_days": 38,
+   "flip_trading_days": 39,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -5838,13 +5838,13 @@
   },
   {
    "symbol": "ONGC",
-   "spot": 223.52,
+   "spot": 225.0,
    "colour": "green",
-   "rsi": 43.1,
+   "rsi": 45.5,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-02",
-   "flip_trading_days": 11,
+   "flip_trading_days": 12,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -5871,13 +5871,13 @@
   },
   {
    "symbol": "PAGEIND",
-   "spot": 31105.0,
+   "spot": 30810.0,
    "colour": "red",
-   "rsi": 29.7,
-   "basis": "RSI 29.7 < 30",
+   "rsi": 28.1,
+   "basis": "RSI 28.1 < 30",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-12",
-   "flip_trading_days": 3,
+   "flip_trading_days": 4,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -5886,7 +5886,7 @@
    ],
    "rsi_override": true,
    "status": "ENTER",
-   "note": "RSI 29.7 < 30: bull put spread",
+   "note": "RSI 28.1 < 30: bull put spread",
    "legs": [],
    "events": [
     {
@@ -5904,13 +5904,13 @@
   },
   {
    "symbol": "PATANJALI",
-   "spot": 404.8,
+   "spot": 401.0,
    "colour": "green",
-   "rsi": 57.2,
+   "rsi": 55.1,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-10-29",
-   "flip_trading_days": 13,
+   "flip_trading_days": 14,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -5937,13 +5937,13 @@
   },
   {
    "symbol": "PAYTM",
-   "spot": 1903.4,
+   "spot": 1890.0,
    "colour": "green",
-   "rsi": 66.1,
+   "rsi": 64.1,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-12",
-   "flip_trading_days": 3,
+   "flip_trading_days": 4,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -5962,13 +5962,13 @@
      "side": "LONG",
      "qty": 725,
      "avg": 12.45,
-     "ltp": 12.55,
-     "pnl_rs": 72.5,
+     "ltp": 11.85,
+     "pnl_rs": -435,
      "tradingsymbol": "PAYTM26DEC1600PE",
      "lot": 725,
      "lots": 1.0,
-     "dist_pct": -15.94,
-     "beyond_pct": -18.96,
+     "dist_pct": -15.34,
+     "beyond_pct": -18.12,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -5982,15 +5982,15 @@
      "side": "SHORT",
      "qty": 725,
      "avg": 16.5,
-     "ltp": 16.5,
-     "pnl_rs": 0,
+     "ltp": 16.4,
+     "pnl_rs": 72.50000000000182,
      "tradingsymbol": "PAYTM26DEC1640PE",
      "lot": 725,
      "lots": 1.0,
-     "dist_pct": -13.84,
+     "dist_pct": -13.23,
      "stop_at": 49.5,
      "stop_hit": false,
-     "beyond_pct": -16.06,
+     "beyond_pct": -15.24,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -6008,13 +6008,13 @@
   },
   {
    "symbol": "PERSISTENT",
-   "spot": 5911.0,
+   "spot": 5857.0,
    "colour": "green",
-   "rsi": 51.9,
+   "rsi": 48.6,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-10-09",
-   "flip_trading_days": 26,
+   "flip_trading_days": 27,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -6041,9 +6041,9 @@
   },
   {
    "symbol": "PETRONET",
-   "spot": 328.1,
+   "spot": 325.5,
    "colour": "green",
-   "rsi": 68.6,
+   "rsi": 65.9,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-04-27",
@@ -6074,13 +6074,13 @@
   },
   {
    "symbol": "PFC",
-   "spot": 328.0,
+   "spot": 323.55,
    "colour": "green",
-   "rsi": 47.7,
+   "rsi": 44.2,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-11",
-   "flip_trading_days": 4,
+   "flip_trading_days": 5,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -6099,13 +6099,13 @@
      "side": "LONG",
      "qty": 2600,
      "avg": 1.45,
-     "ltp": 1.35,
-     "pnl_rs": -259.99999999999955,
+     "ltp": 1.4,
+     "pnl_rs": -130.00000000000045,
      "tradingsymbol": "PFC26DEC290PE",
      "lot": 1300,
      "lots": 2.0,
-     "dist_pct": -11.59,
-     "beyond_pct": -13.1,
+     "dist_pct": -10.37,
+     "beyond_pct": -11.57,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -6119,15 +6119,15 @@
      "side": "SHORT",
      "qty": 2600,
      "avg": 2.5,
-     "ltp": 2.4,
-     "pnl_rs": 260,
+     "ltp": 2.5,
+     "pnl_rs": 0,
      "tradingsymbol": "PFC26DEC300PE",
      "lot": 1300,
      "lots": 2.0,
-     "dist_pct": -8.54,
+     "dist_pct": -7.28,
      "stop_at": 7.5,
      "stop_hit": false,
-     "beyond_pct": -9.33,
+     "beyond_pct": -7.85,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -6150,13 +6150,13 @@
   },
   {
    "symbol": "PGEL",
-   "spot": 533.0,
+   "spot": 539.2,
    "colour": "green",
-   "rsi": 48.8,
+   "rsi": 51.4,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-10-28",
-   "flip_trading_days": 14,
+   "flip_trading_days": 15,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -6178,13 +6178,13 @@
   },
   {
    "symbol": "PHOENIXLTD",
-   "spot": 2229.0,
+   "spot": 2204.6,
    "colour": "green",
-   "rsi": 67.8,
+   "rsi": 65.3,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-10-29",
-   "flip_trading_days": 13,
+   "flip_trading_days": 14,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -6211,13 +6211,13 @@
   },
   {
    "symbol": "PIDILITIND",
-   "spot": 1534.6,
+   "spot": 1530.2,
    "colour": "green",
-   "rsi": 52.3,
+   "rsi": 51.5,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-03",
-   "flip_trading_days": 10,
+   "flip_trading_days": 11,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -6244,13 +6244,13 @@
   },
   {
    "symbol": "PIIND",
-   "spot": 1672.0,
+   "spot": 1624.0,
    "colour": "red",
-   "rsi": 25.6,
-   "basis": "RSI 25.6 < 30",
+   "rsi": 23.7,
+   "basis": "RSI 23.7 < 30",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-08-12",
-   "flip_trading_days": 66,
+   "flip_trading_days": 67,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -6259,7 +6259,7 @@
    ],
    "rsi_override": true,
    "status": "ENTER",
-   "note": "RSI 25.6 < 30: bull put spread (you hold other legs in this stock)",
+   "note": "RSI 23.7 < 30: bull put spread (you hold other legs in this stock)",
    "legs": [
     {
      "symbol": "PIIND",
@@ -6269,15 +6269,15 @@
      "side": "SHORT",
      "qty": 175,
      "avg": 11.3,
-     "ltp": 5.4,
-     "pnl_rs": 1032.5,
+     "ltp": 5.6,
+     "pnl_rs": 997.5000000000003,
      "tradingsymbol": "PIIND26DEC2000CE",
      "lot": 175,
      "lots": 1.0,
-     "dist_pct": 23.19,
+     "dist_pct": 23.15,
      "stop_at": 33.9,
      "stop_hit": false,
-     "beyond_pct": -18.83,
+     "beyond_pct": -18.8,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -6300,13 +6300,13 @@
   },
   {
    "symbol": "PNB",
-   "spot": 150.0,
+   "spot": 149.57,
    "colour": "green",
-   "rsi": 85.5,
-   "basis": "RSI 85.5 > 70",
+   "rsi": 84.3,
+   "basis": "RSI 84.3 > 70",
    "desired": "CALL",
    "flip_date": "2026-10-19",
-   "flip_trading_days": 20,
+   "flip_trading_days": 21,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -6315,7 +6315,7 @@
    ],
    "rsi_override": true,
    "status": "ENTER",
-   "note": "RSI 85.5 > 70: sell call",
+   "note": "RSI 84.3 > 70: sell call",
    "legs": [],
    "events": [
     {
@@ -6333,13 +6333,13 @@
   },
   {
    "symbol": "PNBHOUSING",
-   "spot": 1138.0,
+   "spot": 1125.3,
    "colour": "red",
-   "rsi": 54.9,
+   "rsi": 51.6,
    "basis": "Supertrend red",
    "desired": "CALL",
    "flip_date": "2026-10-23",
-   "flip_trading_days": 17,
+   "flip_trading_days": 18,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -6363,10 +6363,10 @@
      "tradingsymbol": "PNBHOUSING26DEC1280CE",
      "lot": 650,
      "lots": 1.0,
-     "dist_pct": 13.58,
+     "dist_pct": 13.75,
      "stop_at": 24.45,
      "stop_hit": false,
-     "beyond_pct": -11.95,
+     "beyond_pct": -12.09,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -6384,13 +6384,13 @@
   },
   {
    "symbol": "POLICYBZR",
-   "spot": 1052.1,
+   "spot": 1035.2,
    "colour": "green",
-   "rsi": 48.2,
+   "rsi": 46.3,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-13",
-   "flip_trading_days": 2,
+   "flip_trading_days": 3,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -6409,13 +6409,13 @@
      "side": "LONG",
      "qty": 350,
      "avg": 13.7,
-     "ltp": 14.2,
-     "pnl_rs": 175,
+     "ltp": 13.55,
+     "pnl_rs": -52.5,
      "tradingsymbol": "POLICYBZR26DEC860PE",
      "lot": 350,
      "lots": 1.0,
-     "dist_pct": -16.56,
-     "beyond_pct": -19.85,
+     "dist_pct": -16.92,
+     "beyond_pct": -20.37,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -6429,15 +6429,15 @@
      "side": "SHORT",
      "qty": 350,
      "avg": 19.3,
-     "ltp": 20.85,
-     "pnl_rs": -542.5000000000009,
+     "ltp": 21.15,
+     "pnl_rs": -647.4999999999991,
      "tradingsymbol": "POLICYBZR26DEC900PE",
      "lot": 350,
      "lots": 1.0,
-     "dist_pct": -12.68,
+     "dist_pct": -13.06,
      "stop_at": 57.9,
      "stop_hit": false,
-     "beyond_pct": -14.52,
+     "beyond_pct": -15.02,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -6455,9 +6455,9 @@
   },
   {
    "symbol": "POLYCAB",
-   "spot": 7702.0,
+   "spot": 7307.5,
    "colour": "red",
-   "rsi": 41.1,
+   "rsi": 32.1,
    "basis": "Supertrend red",
    "desired": "CALL",
    "flip_date": "2026-07-07",
@@ -6480,15 +6480,15 @@
      "side": "SHORT",
      "qty": 125,
      "avg": 114.25,
-     "ltp": 54.6,
-     "pnl_rs": 7456.25,
+     "ltp": 53.2,
+     "pnl_rs": 7631.25,
      "tradingsymbol": "POLYCAB26DEC8400CE",
      "lot": 125,
      "lots": 1.0,
-     "dist_pct": 14.8,
+     "dist_pct": 14.95,
      "stop_at": 342.75,
      "stop_hit": false,
-     "beyond_pct": -12.89,
+     "beyond_pct": -13.01,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -6507,8 +6507,8 @@
      "tradingsymbol": "POLYCAB26DEC8600CE",
      "lot": 125,
      "lots": 1.0,
-     "dist_pct": 17.53,
-     "beyond_pct": -14.92,
+     "dist_pct": 17.69,
+     "beyond_pct": -15.03,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -6531,13 +6531,13 @@
   },
   {
    "symbol": "POWERGRID",
-   "spot": 258.0,
+   "spot": 259.1,
    "colour": "green",
-   "rsi": 51.3,
+   "rsi": 52.5,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-10-30",
-   "flip_trading_days": 12,
+   "flip_trading_days": 13,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -6564,13 +6564,13 @@
   },
   {
    "symbol": "POWERINDIA",
-   "spot": 30435.0,
+   "spot": 30840.0,
    "colour": "green",
-   "rsi": 55.7,
+   "rsi": 57.4,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-13",
-   "flip_trading_days": 2,
+   "flip_trading_days": 3,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -6589,13 +6589,13 @@
      "side": "LONG",
      "qty": 25,
      "avg": 262.3,
-     "ltp": 168.65,
-     "pnl_rs": -2341.25,
+     "ltp": 171.35,
+     "pnl_rs": -2273.75,
      "tradingsymbol": "POWERINDIA26DEC26000PE",
      "lot": 25,
      "lots": 1.0,
-     "dist_pct": -15.52,
-     "beyond_pct": -18.37,
+     "dist_pct": -15.69,
+     "beyond_pct": -18.62,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -6609,15 +6609,15 @@
      "side": "SHORT",
      "qty": 25,
      "avg": 531,
-     "ltp": 422.65,
-     "pnl_rs": 2708.75,
+     "ltp": 428.3,
+     "pnl_rs": 2567.5,
      "tradingsymbol": "POWERINDIA26DEC28000PE",
      "lot": 25,
      "lots": 1.0,
-     "dist_pct": -9.02,
+     "dist_pct": -9.21,
      "stop_at": 1593,
      "stop_hit": false,
-     "beyond_pct": -9.91,
+     "beyond_pct": -10.14,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -6635,13 +6635,13 @@
   },
   {
    "symbol": "PREMIERENE",
-   "spot": 833.0,
+   "spot": 832.5,
    "colour": "red",
-   "rsi": 37.3,
+   "rsi": 37.2,
    "basis": "Supertrend red",
    "desired": "CALL",
    "flip_date": "2026-07-30",
-   "flip_trading_days": 75,
+   "flip_trading_days": 76,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -6665,10 +6665,10 @@
      "tradingsymbol": "PREMIERENE26DEC1000CE",
      "lot": 650,
      "lots": 1.0,
-     "dist_pct": 20.26,
+     "dist_pct": 20.12,
      "stop_at": 12,
      "stop_hit": false,
-     "beyond_pct": -16.85,
+     "beyond_pct": -16.75,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -6686,13 +6686,13 @@
   },
   {
    "symbol": "PRESTIGE",
-   "spot": 1691.5,
+   "spot": 1657.4,
    "colour": "green",
-   "rsi": 66.4,
+   "rsi": 61.5,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-03",
-   "flip_trading_days": 10,
+   "flip_trading_days": 11,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -6719,13 +6719,13 @@
   },
   {
    "symbol": "RADICO",
-   "spot": 4662.9,
+   "spot": 4665.0,
    "colour": "green",
-   "rsi": 60.5,
+   "rsi": 60.6,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-09",
-   "flip_trading_days": 5,
+   "flip_trading_days": 6,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -6752,13 +6752,13 @@
   },
   {
    "symbol": "RBLBANK",
-   "spot": 390.1,
+   "spot": 387.5,
    "colour": "green",
-   "rsi": 57.4,
+   "rsi": 55.6,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-11",
-   "flip_trading_days": 4,
+   "flip_trading_days": 5,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -6785,13 +6785,13 @@
   },
   {
    "symbol": "RELIANCE",
-   "spot": 1367.0,
+   "spot": 1363.0,
    "colour": "green",
-   "rsi": 74.7,
-   "basis": "RSI 74.7 > 70",
+   "rsi": 73.1,
+   "basis": "RSI 73.1 > 70",
    "desired": "CALL",
    "flip_date": "2026-11-02",
-   "flip_trading_days": 11,
+   "flip_trading_days": 12,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -6800,7 +6800,7 @@
    ],
    "rsi_override": true,
    "status": "ENTER",
-   "note": "RSI 74.7 > 70: sell call",
+   "note": "RSI 73.1 > 70: sell call",
    "legs": [],
    "events": [
     {
@@ -6818,13 +6818,13 @@
   },
   {
    "symbol": "RVNL",
-   "spot": 195.5,
+   "spot": 189.0,
    "colour": "green",
-   "rsi": 50.3,
+   "rsi": 44.6,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-09",
-   "flip_trading_days": 5,
+   "flip_trading_days": 6,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -6846,13 +6846,13 @@
   },
   {
    "symbol": "SAGILITY",
-   "spot": 43.89,
+   "spot": 45.15,
    "colour": "red",
-   "rsi": 49.8,
+   "rsi": 56.0,
    "basis": "Supertrend red",
    "desired": "CALL",
    "flip_date": "2026-09-29",
-   "flip_trading_days": 33,
+   "flip_trading_days": 34,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -6874,13 +6874,13 @@
   },
   {
    "symbol": "SAIL",
-   "spot": 171.31,
+   "spot": 164.0,
    "colour": "red",
-   "rsi": 49.9,
+   "rsi": 41.8,
    "basis": "Supertrend red",
    "desired": "CALL",
    "flip_date": "2026-09-15",
-   "flip_trading_days": 43,
+   "flip_trading_days": 44,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -6899,15 +6899,15 @@
      "side": "SHORT",
      "qty": 4700,
      "avg": 1,
-     "ltp": 0.89,
-     "pnl_rs": 517,
+     "ltp": 0.92,
+     "pnl_rs": 376,
      "tradingsymbol": "SAIL26DEC200CE",
      "lot": 4700,
      "lots": 1.0,
-     "dist_pct": 16.75,
+     "dist_pct": 21.95,
      "stop_at": 3,
      "stop_hit": false,
-     "beyond_pct": -14.34,
+     "beyond_pct": -18.0,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -6930,13 +6930,13 @@
   },
   {
    "symbol": "SBICARD",
-   "spot": 574.5,
+   "spot": 561.5,
    "colour": "green",
-   "rsi": 51.5,
+   "rsi": 46.1,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-05",
-   "flip_trading_days": 8,
+   "flip_trading_days": 9,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -6963,13 +6963,13 @@
   },
   {
    "symbol": "SBILIFE",
-   "spot": 1815.0,
+   "spot": 1788.0,
    "colour": "green",
-   "rsi": 63.9,
+   "rsi": 58.7,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-06",
-   "flip_trading_days": 7,
+   "flip_trading_days": 8,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -6996,13 +6996,13 @@
   },
   {
    "symbol": "SBIN",
-   "spot": 1108.6,
+   "spot": 1135.0,
    "colour": "green",
-   "rsi": 76.4,
-   "basis": "RSI 76.4 > 70",
+   "rsi": 79.4,
+   "basis": "RSI 79.4 > 70",
    "desired": "CALL",
    "flip_date": "2026-11-05",
-   "flip_trading_days": 8,
+   "flip_trading_days": 9,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -7011,7 +7011,7 @@
    ],
    "rsi_override": true,
    "status": "ENTER",
-   "note": "RSI 76.4 > 70: sell call",
+   "note": "RSI 79.4 > 70: sell call",
    "legs": [],
    "events": [
     {
@@ -7029,13 +7029,13 @@
   },
   {
    "symbol": "SHREECEM",
-   "spot": 24900.0,
+   "spot": 24835.0,
    "colour": "green",
-   "rsi": 64.3,
+   "rsi": 63.1,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-10-26",
-   "flip_trading_days": 16,
+   "flip_trading_days": 17,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -7062,13 +7062,13 @@
   },
   {
    "symbol": "SHRIRAMFIN",
-   "spot": 982.85,
+   "spot": 970.0,
    "colour": "green",
-   "rsi": 59.2,
+   "rsi": 56.1,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-05",
-   "flip_trading_days": 8,
+   "flip_trading_days": 9,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -7095,13 +7095,13 @@
   },
   {
    "symbol": "SIEMENS",
-   "spot": 3561.9,
+   "spot": 3520.0,
    "colour": "green",
-   "rsi": 48.9,
+   "rsi": 46.4,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-08",
-   "flip_trading_days": 6,
+   "flip_trading_days": 7,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -7120,13 +7120,13 @@
      "side": "LONG",
      "qty": 175,
      "avg": 19.75,
-     "ltp": 19.6,
-     "pnl_rs": -26.249999999999545,
+     "ltp": 19.15,
+     "pnl_rs": -105.00000000000045,
      "tradingsymbol": "SIEMENS26DEC3050PE",
      "lot": 175,
      "lots": 1.0,
-     "dist_pct": -14.37,
-     "beyond_pct": -16.78,
+     "dist_pct": -13.35,
+     "beyond_pct": -15.41,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -7145,10 +7145,10 @@
      "tradingsymbol": "SIEMENS26DEC3150PE",
      "lot": 175,
      "lots": 1.0,
-     "dist_pct": -11.56,
+     "dist_pct": -10.51,
      "stop_at": 92.25,
      "stop_hit": false,
-     "beyond_pct": -13.08,
+     "beyond_pct": -11.75,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -7171,13 +7171,13 @@
   },
   {
    "symbol": "SOLARINDS",
-   "spot": 18764.0,
+   "spot": 18520.0,
    "colour": "red",
-   "rsi": 44.2,
+   "rsi": 41.7,
    "basis": "Supertrend red",
    "desired": "CALL",
    "flip_date": "2026-09-15",
-   "flip_trading_days": 43,
+   "flip_trading_days": 44,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -7196,15 +7196,15 @@
      "side": "SHORT",
      "qty": 50,
      "avg": 137.375,
-     "ltp": 84.7,
-     "pnl_rs": 2633.75,
+     "ltp": 83.95,
+     "pnl_rs": 2671.25,
      "tradingsymbol": "SOLARINDS26DEC22000CE",
      "lot": 25,
      "lots": 2.0,
-     "dist_pct": 18.41,
+     "dist_pct": 18.79,
      "stop_at": 412.12,
      "stop_hit": false,
-     "beyond_pct": -15.55,
+     "beyond_pct": -15.82,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -7227,13 +7227,13 @@
   },
   {
    "symbol": "SONACOMS",
-   "spot": 899.7,
+   "spot": 889.0,
    "colour": "green",
-   "rsi": 59.5,
+   "rsi": 56.0,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-10-27",
-   "flip_trading_days": 15,
+   "flip_trading_days": 16,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -7260,13 +7260,13 @@
   },
   {
    "symbol": "SRF",
-   "spot": 2479.4,
+   "spot": 2445.0,
    "colour": "green",
-   "rsi": 54.6,
+   "rsi": 48.9,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-11",
-   "flip_trading_days": 4,
+   "flip_trading_days": 5,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -7293,13 +7293,13 @@
   },
   {
    "symbol": "SUNPHARMA",
-   "spot": 1870.0,
+   "spot": 1871.5,
    "colour": "green",
-   "rsi": 60.5,
+   "rsi": 60.8,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-06",
-   "flip_trading_days": 7,
+   "flip_trading_days": 8,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -7318,15 +7318,15 @@
      "side": "SHORT",
      "qty": 350,
      "avg": 12.15,
-     "ltp": 6.15,
-     "pnl_rs": 2100,
+     "ltp": 5.3,
+     "pnl_rs": 2397.5,
      "tradingsymbol": "SUNPHARMA26DEC2100CE",
      "lot": 350,
      "lots": 1.0,
-     "dist_pct": 11.8,
+     "dist_pct": 12.21,
      "stop_at": 36.45,
      "stop_hit": false,
-     "beyond_pct": -10.56,
+     "beyond_pct": -10.88,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -7349,13 +7349,13 @@
   },
   {
    "symbol": "SUPREMEIND",
-   "spot": 3231.3,
+   "spot": 3151.0,
    "colour": "red",
-   "rsi": 43.1,
+   "rsi": 38.7,
    "basis": "Supertrend red",
    "desired": "CALL",
    "flip_date": "2026-10-26",
-   "flip_trading_days": 16,
+   "flip_trading_days": 17,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -7382,13 +7382,13 @@
   },
   {
    "symbol": "SUZLON",
-   "spot": 37.19,
+   "spot": 36.13,
    "colour": "red",
-   "rsi": 42.1,
+   "rsi": 37.4,
    "basis": "Supertrend red",
    "desired": "CALL",
    "flip_date": "2026-10-23",
-   "flip_trading_days": 17,
+   "flip_trading_days": 18,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -7410,13 +7410,13 @@
   },
   {
    "symbol": "SWIGGY",
-   "spot": 188.5,
+   "spot": 180.49,
    "colour": "red",
-   "rsi": 38.9,
+   "rsi": 34.3,
    "basis": "Supertrend red",
    "desired": "CALL",
    "flip_date": "2026-09-28",
-   "flip_trading_days": 34,
+   "flip_trading_days": 35,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -7440,10 +7440,10 @@
      "tradingsymbol": "SWIGGY26DEC250CE",
      "lot": 1825,
      "lots": 1.0,
-     "dist_pct": 37.21,
+     "dist_pct": 38.51,
      "stop_at": 3.54,
      "stop_hit": false,
-     "beyond_pct": -27.12,
+     "beyond_pct": -27.8,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -7455,13 +7455,13 @@
   },
   {
    "symbol": "SYRMA",
-   "spot": 1433.9,
+   "spot": 1475.0,
    "colour": "red",
-   "rsi": 40.1,
+   "rsi": 44.6,
    "basis": "Supertrend red",
    "desired": "CALL",
    "flip_date": "2026-10-21",
-   "flip_trading_days": 19,
+   "flip_trading_days": 20,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -7483,13 +7483,13 @@
   },
   {
    "symbol": "TATACONSUM",
-   "spot": 1112.4,
+   "spot": 1130.9,
    "colour": "green",
-   "rsi": 70.7,
-   "basis": "RSI 70.7 > 70",
+   "rsi": 73.6,
+   "basis": "RSI 73.6 > 70",
    "desired": "CALL",
    "flip_date": "2026-10-29",
-   "flip_trading_days": 13,
+   "flip_trading_days": 14,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -7498,7 +7498,7 @@
    ],
    "rsi_override": true,
    "status": "ENTER",
-   "note": "RSI 70.7 > 70: sell call",
+   "note": "RSI 73.6 > 70: sell call",
    "legs": [],
    "events": [
     {
@@ -7516,13 +7516,13 @@
   },
   {
    "symbol": "TATAELXSI",
-   "spot": 3710.7,
+   "spot": 3670.0,
    "colour": "green",
-   "rsi": 49.8,
+   "rsi": 46.8,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-10-13",
-   "flip_trading_days": 24,
+   "flip_trading_days": 25,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -7549,13 +7549,13 @@
   },
   {
    "symbol": "TATAPOWER",
-   "spot": 344.5,
+   "spot": 338.0,
    "colour": "green",
-   "rsi": 42.7,
+   "rsi": 38.1,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-05",
-   "flip_trading_days": 8,
+   "flip_trading_days": 9,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -7582,13 +7582,13 @@
   },
   {
    "symbol": "TATASTEEL",
-   "spot": 181.5,
+   "spot": 179.0,
    "colour": "green",
-   "rsi": 52.5,
+   "rsi": 48.7,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-05",
-   "flip_trading_days": 8,
+   "flip_trading_days": 9,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -7615,13 +7615,13 @@
   },
   {
    "symbol": "TCS",
-   "spot": 2406.6,
+   "spot": 2379.5,
    "colour": "green",
-   "rsi": 49.8,
+   "rsi": 46.0,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-10-13",
-   "flip_trading_days": 24,
+   "flip_trading_days": 25,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -7648,13 +7648,13 @@
   },
   {
    "symbol": "TECHM",
-   "spot": 1762.0,
+   "spot": 1750.0,
    "colour": "green",
-   "rsi": 54.5,
+   "rsi": 52.0,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-10-15",
-   "flip_trading_days": 22,
+   "flip_trading_days": 23,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -7681,13 +7681,13 @@
   },
   {
    "symbol": "TIINDIA",
-   "spot": 2230.8,
+   "spot": 2207.5,
    "colour": "green",
-   "rsi": 47.9,
+   "rsi": 45.8,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-05",
-   "flip_trading_days": 8,
+   "flip_trading_days": 9,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -7714,13 +7714,13 @@
   },
   {
    "symbol": "TITAN",
-   "spot": 4908.0,
+   "spot": 4648.1,
    "colour": "green",
-   "rsi": 62.9,
+   "rsi": 47.1,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-03",
-   "flip_trading_days": 10,
+   "flip_trading_days": 11,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -7747,13 +7747,13 @@
   },
   {
    "symbol": "TMPV",
-   "spot": 259.2,
+   "spot": 252.55,
    "colour": "red",
-   "rsi": 34.2,
+   "rsi": 31.4,
    "basis": "Supertrend red",
    "desired": "CALL",
    "flip_date": "2026-11-16",
-   "flip_trading_days": 1,
+   "flip_trading_days": 2,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -7772,15 +7772,15 @@
      "side": "SHORT",
      "qty": 1600,
      "avg": 1.45,
-     "ltp": 1.1,
-     "pnl_rs": 559.9999999999998,
+     "ltp": 1.05,
+     "pnl_rs": 640,
      "tradingsymbol": "TMPV26DEC310CE",
      "lot": 1600,
      "lots": 1.0,
-     "dist_pct": 22.31,
+     "dist_pct": 22.75,
      "stop_at": 4.35,
      "stop_hit": false,
-     "beyond_pct": -18.24,
+     "beyond_pct": -18.53,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -7803,13 +7803,13 @@
   },
   {
    "symbol": "TORNTPHARM",
-   "spot": 4668.8,
+   "spot": 4610.7,
    "colour": "red",
-   "rsi": 47.8,
+   "rsi": 43.0,
    "basis": "Supertrend red",
    "desired": "CALL",
    "flip_date": "2026-10-08",
-   "flip_trading_days": 27,
+   "flip_trading_days": 28,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -7828,15 +7828,15 @@
      "side": "SHORT",
      "qty": 125,
      "avg": 25.05,
-     "ltp": 24.5,
-     "pnl_rs": 68.75,
+     "ltp": 23.55,
+     "pnl_rs": 187.5,
      "tradingsymbol": "TORNTPHARM26DEC5100CE",
      "lot": 125,
      "lots": 1.0,
-     "dist_pct": 9.24,
+     "dist_pct": 10.61,
      "stop_at": 75.15,
      "stop_hit": false,
-     "beyond_pct": -8.45,
+     "beyond_pct": -9.59,
      "intrinsic_rs": 0,
      "touched": false,
      "near": false,
@@ -7859,13 +7859,13 @@
   },
   {
    "symbol": "TRENT",
-   "spot": 3176.3,
+   "spot": 3190.0,
    "colour": "green",
-   "rsi": 64.3,
+   "rsi": 65.2,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-10-30",
-   "flip_trading_days": 12,
+   "flip_trading_days": 13,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -7892,13 +7892,13 @@
   },
   {
    "symbol": "TVSMOTOR",
-   "spot": 4466.2,
+   "spot": 4369.0,
    "colour": "green",
-   "rsi": 64.0,
+   "rsi": 55.0,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-10-28",
-   "flip_trading_days": 14,
+   "flip_trading_days": 15,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -7925,13 +7925,13 @@
   },
   {
    "symbol": "UJJIVANSFB",
-   "spot": 61.2,
+   "spot": 61.25,
    "colour": "red",
-   "rsi": 53.1,
+   "rsi": 53.3,
    "basis": "Supertrend red",
    "desired": "CALL",
    "flip_date": "2026-09-01",
-   "flip_trading_days": 52,
+   "flip_trading_days": 53,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -7947,13 +7947,13 @@
   },
   {
    "symbol": "ULTRACEMCO",
-   "spot": 12290.0,
+   "spot": 12428.0,
    "colour": "green",
-   "rsi": 65.6,
+   "rsi": 67.9,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-02",
-   "flip_trading_days": 11,
+   "flip_trading_days": 12,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -7980,13 +7980,13 @@
   },
   {
    "symbol": "UNIONBANK",
-   "spot": 207.9,
+   "spot": 207.88,
    "colour": "green",
-   "rsi": 76.5,
-   "basis": "RSI 76.5 > 70",
+   "rsi": 76.4,
+   "basis": "RSI 76.4 > 70",
    "desired": "CALL",
    "flip_date": "2026-10-22",
-   "flip_trading_days": 18,
+   "flip_trading_days": 19,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -7995,7 +7995,7 @@
    ],
    "rsi_override": true,
    "status": "ENTER",
-   "note": "RSI 76.5 > 70: sell call",
+   "note": "RSI 76.4 > 70: sell call",
    "legs": [],
    "events": [
     {
@@ -8013,13 +8013,13 @@
   },
   {
    "symbol": "UNITDSPR",
-   "spot": 1444.0,
+   "spot": 1441.0,
    "colour": "green",
-   "rsi": 60.4,
+   "rsi": 59.8,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-02",
-   "flip_trading_days": 11,
+   "flip_trading_days": 12,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -8046,22 +8046,22 @@
   },
   {
    "symbol": "UNOMINDA",
-   "spot": 1388.1,
+   "spot": 1370.0,
    "colour": "green",
-   "rsi": 72.4,
-   "basis": "RSI 72.4 > 70",
-   "desired": "CALL",
+   "rsi": 68.7,
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
    "flip_date": "2026-11-04",
-   "flip_trading_days": 9,
+   "flip_trading_days": 10,
    "expiries": [
     {
      "expiry": "2026-12-29",
      "lot": 550
     }
    ],
-   "rsi_override": true,
+   "rsi_override": false,
    "status": "ENTER",
-   "note": "RSI 72.4 > 70: sell call",
+   "note": "Supertrend green: bull put spread",
    "legs": [],
    "events": [
     {
@@ -8079,13 +8079,13 @@
   },
   {
    "symbol": "UPL",
-   "spot": 551.7,
+   "spot": 552.0,
    "colour": "green",
-   "rsi": 56.5,
+   "rsi": 56.6,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-10-14",
-   "flip_trading_days": 23,
+   "flip_trading_days": 24,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -8112,13 +8112,13 @@
   },
   {
    "symbol": "VBL",
-   "spot": 430.0,
+   "spot": 424.55,
    "colour": "green",
-   "rsi": 52.9,
+   "rsi": 49.6,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-05",
-   "flip_trading_days": 8,
+   "flip_trading_days": 9,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -8145,13 +8145,13 @@
   },
   {
    "symbol": "VEDL",
-   "spot": 255.03,
+   "spot": 245.4,
    "colour": "green",
-   "rsi": 52.5,
+   "rsi": 43.8,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-04",
-   "flip_trading_days": 9,
+   "flip_trading_days": 10,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -8178,13 +8178,13 @@
   },
   {
    "symbol": "VMM",
-   "spot": 92.99,
+   "spot": 90.23,
    "colour": "green",
-   "rsi": 47.3,
+   "rsi": 41.8,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-11",
-   "flip_trading_days": 4,
+   "flip_trading_days": 5,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -8200,13 +8200,13 @@
   },
   {
    "symbol": "VOLTAS",
-   "spot": 1148.9,
+   "spot": 1134.6,
    "colour": "green",
-   "rsi": 62.9,
+   "rsi": 59.6,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-10-29",
-   "flip_trading_days": 13,
+   "flip_trading_days": 14,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -8233,13 +8233,13 @@
   },
   {
    "symbol": "WAAREEENER",
-   "spot": 2441.5,
+   "spot": 2392.0,
    "colour": "green",
-   "rsi": 50.5,
+   "rsi": 46.1,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-11",
-   "flip_trading_days": 4,
+   "flip_trading_days": 5,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -8261,13 +8261,13 @@
   },
   {
    "symbol": "WIPRO",
-   "spot": 189.89,
+   "spot": 185.14,
    "colour": "green",
-   "rsi": 52.9,
+   "rsi": 46.1,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-10-14",
-   "flip_trading_days": 23,
+   "flip_trading_days": 24,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -8294,13 +8294,13 @@
   },
   {
    "symbol": "YESBANK",
-   "spot": 17.85,
+   "spot": 17.68,
    "colour": "green",
-   "rsi": 51.7,
+   "rsi": 50.0,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-06",
-   "flip_trading_days": 7,
+   "flip_trading_days": 8,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -8322,13 +8322,13 @@
   },
   {
    "symbol": "ZYDUSLIFE",
-   "spot": 1204.2,
+   "spot": 1202.0,
    "colour": "green",
-   "rsi": 56.0,
+   "rsi": 55.3,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-10-30",
-   "flip_trading_days": 12,
+   "flip_trading_days": 13,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -8373,8 +8373,8 @@
    "expiry": "2026-11-23",
    "strike": 10600.0,
    "opt_type": "CE",
-   "text": "DIVISLAB 2026-11-23 10600CE: premium 510.6 >= 3x sold 116.95 - close it",
-   "concern": "Premium 510.6 is 4.4x the 116.95 sold",
+   "text": "DIVISLAB 2026-11-23 10600CE: premium 480 >= 3x sold 116.95 - close it",
+   "concern": "Premium 480 is 4.1x the 116.95 sold",
    "action": "Close now (3x stop hit)"
   },
   {
@@ -8382,16 +8382,16 @@
    "strike": 10600.0,
    "opt_type": "CE",
    "qty": 100,
-   "spot": 11117.5,
-   "beyond_pct": 4.88,
-   "intrinsic_rs": 51750,
+   "spot": 11049,
+   "beyond_pct": 4.24,
+   "intrinsic_rs": 44900,
    "level": "EXIT",
    "type": "Through hedge",
    "hedge_strike": 10800.0,
    "symbol": "DIVISLAB",
-   "concern": "Price 4.9% past the short and through the 10800 hedge: max loss, Rs51,750 intrinsic",
+   "concern": "Price 4.2% past the short and through the 10800 hedge: max loss, Rs44,900 intrinsic",
    "action": "Close or roll now",
-   "text": "DIVISLAB 2026-11-23: price 11117.5 is 4.9% above the short 10600CE (in the money, intrinsic Rs51,750 on 100 qty); it is also through the 10800CE hedge - the spread is at maximum loss, decide now"
+   "text": "DIVISLAB 2026-11-23: price 11049 is 4.2% above the short 10600CE (in the money, intrinsic Rs44,900 on 100 qty); it is also through the 10800CE hedge - the spread is at maximum loss, decide now"
   },
   {
    "expiry": "2026-11-23",
@@ -8411,8 +8411,8 @@
    "expiry": "2026-11-23",
    "strike": 760.0,
    "opt_type": "CE",
-   "text": "HDFCBANK 2026-11-23 760CE: premium 45.9 >= 3x sold 2.8 - close it",
-   "concern": "Premium 45.9 is 16.4x the 2.8 sold",
+   "text": "HDFCBANK 2026-11-23 760CE: premium 46.5 >= 3x sold 2.8 - close it",
+   "concern": "Premium 46.5 is 16.6x the 2.8 sold",
    "action": "Close now (3x stop hit)"
   },
   {
@@ -8420,16 +8420,16 @@
    "strike": 760.0,
    "opt_type": "CE",
    "qty": 650,
-   "spot": 808.65,
-   "beyond_pct": 6.4,
-   "intrinsic_rs": 31622,
+   "spot": 808.15,
+   "beyond_pct": 6.34,
+   "intrinsic_rs": 31297,
    "level": "EXIT",
    "type": "Through hedge",
    "hedge_strike": 770.0,
    "symbol": "HDFCBANK",
-   "concern": "Price 6.4% past the short and through the 770 hedge: max loss, Rs31,622 intrinsic",
+   "concern": "Price 6.3% past the short and through the 770 hedge: max loss, Rs31,297 intrinsic",
    "action": "Close or roll now",
-   "text": "HDFCBANK 2026-11-23: price 808.65 is 6.4% above the short 760CE (in the money, intrinsic Rs31,622 on 650 qty); it is also through the 770CE hedge - the spread is at maximum loss, decide now"
+   "text": "HDFCBANK 2026-11-23: price 808.15 is 6.3% above the short 760CE (in the money, intrinsic Rs31,297 on 650 qty); it is also through the 770CE hedge - the spread is at maximum loss, decide now"
   },
   {
    "expiry": "2026-11-23",
@@ -8449,8 +8449,8 @@
    "expiry": "2026-11-23",
    "strike": 380.0,
    "opt_type": "CE",
-   "text": "HINDPETRO 2026-11-23 380CE: premium 8.75 >= 3x sold 1.3 - close it",
-   "concern": "Premium 8.75 is 6.7x the 1.3 sold",
+   "text": "HINDPETRO 2026-11-23 380CE: premium 10.5 >= 3x sold 1.3 - close it",
+   "concern": "Premium 10.5 is 8.1x the 1.3 sold",
    "action": "Close now (3x stop hit)"
   },
   {
@@ -8458,16 +8458,16 @@
    "strike": 380.0,
    "opt_type": "CE",
    "qty": 2025,
-   "spot": 387.25,
-   "beyond_pct": 1.91,
-   "intrinsic_rs": 14681,
+   "spot": 386.45,
+   "beyond_pct": 1.7,
+   "intrinsic_rs": 13061,
    "level": "EXIT",
    "type": "Through hedge",
    "hedge_strike": 385.0,
    "symbol": "HINDPETRO",
-   "concern": "Price 1.9% past the short and through the 385 hedge: max loss, Rs14,681 intrinsic",
+   "concern": "Price 1.7% past the short and through the 385 hedge: max loss, Rs13,061 intrinsic",
    "action": "Close or roll now",
-   "text": "HINDPETRO 2026-11-23: price 387.25 is 1.9% above the short 380CE (in the money, intrinsic Rs14,681 on 2025 qty); it is also through the 385CE hedge - the spread is at maximum loss, decide now"
+   "text": "HINDPETRO 2026-11-23: price 386.45 is 1.7% above the short 380CE (in the money, intrinsic Rs13,061 on 2025 qty); it is also through the 385CE hedge - the spread is at maximum loss, decide now"
   },
   {
    "expiry": "2026-11-23",
@@ -8479,6 +8479,17 @@
    "concern": "Supertrend GREEN but the short call is still open",
    "action": "Close it and open the bull put spread",
    "text": "HINDPETRO: Supertrend is GREEN: the open short call (380CE 2026-11-23) is the opposite of the colour rule - close it and open the bull put spread."
+  },
+  {
+   "expiry": "2026-11-23",
+   "strike": 500.0,
+   "opt_type": "PE",
+   "level": "EXIT",
+   "type": "Exit",
+   "symbol": "HINDZINC",
+   "concern": "Supertrend turned RED since entry",
+   "action": "Close it and sell the call",
+   "text": "HINDZINC: Supertrend turned RED since entry (green): close the put spread and open the short call."
   },
   {
    "expiry": "2026-11-23",
@@ -8507,16 +8518,16 @@
    "strike": 89.0,
    "opt_type": "CE",
    "qty": 6500,
-   "spot": 95.99,
-   "beyond_pct": 7.85,
-   "intrinsic_rs": 45435,
+   "spot": 96,
+   "beyond_pct": 7.87,
+   "intrinsic_rs": 45500,
    "level": "EXIT",
    "type": "Through hedge",
    "hedge_strike": 90.0,
    "symbol": "MAHABANK",
-   "concern": "Price 7.8% past the short and through the 90 hedge: max loss, Rs45,435 intrinsic",
+   "concern": "Price 7.9% past the short and through the 90 hedge: max loss, Rs45,500 intrinsic",
    "action": "Close or roll now",
-   "text": "MAHABANK 2026-11-23: price 95.99 is 7.8% above the short 89CE (in the money, intrinsic Rs45,435 on 6500 qty); it is also through the 90CE hedge - the spread is at maximum loss, decide now"
+   "text": "MAHABANK 2026-11-23: price 96 is 7.9% above the short 89CE (in the money, intrinsic Rs45,500 on 6500 qty); it is also through the 90CE hedge - the spread is at maximum loss, decide now"
   },
   {
    "expiry": "2026-11-23",
@@ -8638,9 +8649,9 @@
    "strike": 5500.0,
    "opt_type": "PE",
    "qty": 100,
-   "concern": "Long 5500PE (100 qty) has no short against it - P&L Rs-3,950, 5d to expiry",
+   "concern": "Long 5500PE (100 qty) has no short against it - P&L Rs-3,740, 5d to expiry",
    "action": "Sell it or let it expire",
-   "text": "AMBER 2026-11-23: Long 5500PE (100 qty) has no short against it - P&L Rs-3,950, 5d to expiry - sell it or let it expire"
+   "text": "AMBER 2026-11-23: Long 5500PE (100 qty) has no short against it - P&L Rs-3,740, 5d to expiry - sell it or let it expire"
   },
   {
    "level": "WARN",
@@ -8671,15 +8682,15 @@
    "strike": 300.0,
    "opt_type": "PE",
    "qty": 1975,
-   "spot": 304,
-   "beyond_pct": -1.33,
+   "spot": 305.5,
+   "beyond_pct": -1.83,
    "intrinsic_rs": 0,
    "level": "WARN",
    "type": "Near strike",
    "symbol": "BPCL",
-   "concern": "Price 1.3% from the short strike",
+   "concern": "Price 1.8% from the short strike",
    "action": "Watch; plan the roll",
-   "text": "BPCL 2026-11-23: price 304 is within 1.3% of the short 300PE"
+   "text": "BPCL 2026-11-23: price 305.5 is within 1.8% of the short 300PE"
   },
   {
    "level": "WARN",
@@ -8770,15 +8781,15 @@
    "strike": 380.0,
    "opt_type": "PE",
    "qty": 2025,
-   "spot": 387.25,
-   "beyond_pct": -1.91,
+   "spot": 386.45,
+   "beyond_pct": -1.7,
    "intrinsic_rs": 0,
    "level": "WARN",
    "type": "Near strike",
    "symbol": "HINDPETRO",
-   "concern": "Price 1.9% from the short strike",
+   "concern": "Price 1.7% from the short strike",
    "action": "Watch; plan the roll",
-   "text": "HINDPETRO 2026-11-23: price 387.25 is within 1.9% of the short 380PE"
+   "text": "HINDPETRO 2026-11-23: price 386.45 is within 1.7% of the short 380PE"
   },
   {
    "level": "WARN",
@@ -8983,6 +8994,17 @@
    "concern": "No buy-back GTT on this short",
    "action": "Place GTT at 75.15 (3x premium)",
    "text": "TORNTPHARM 2026-12-29 short 5100CE: no active buy-back GTT (3x premium stop = 75.15)"
+  },
+  {
+   "level": "PROFIT",
+   "type": "Profit Exit",
+   "symbol": "CUMMINSIND",
+   "expiry": "2026-12-29",
+   "strike": 5000.0,
+   "opt_type": "CE",
+   "concern": "Premium decayed 61% (sold 21.8, now 8.5)",
+   "action": "Book profit: buy back",
+   "text": "CUMMINSIND 2026-12-29 5000CE: premium decayed 61% (sold 21.8, now 8.5) - book the profit"
   }
  ],
  "events_file_at": "2026-11-18T06:27:00.461891+00:00",
@@ -9002,17 +9024,17 @@
   "RECLTD"
  ],
  "positions": {
-  "fetched_at": "2026-11-18T09:54:08.678404+00:00",
+  "fetched_at": "2026-11-18T13:56:39.610771+00:00",
   "track_from": "2026-11-01",
   "legs": 70,
   "ignored_legs": 16
  },
  "counts": {
-  "call": 60,
-  "put_spread": 155,
-  "rsi_override": 33,
+  "call": 56,
+  "put_spread": 159,
+  "rsi_override": 25,
   "enter": 173,
-  "hold": 35,
-  "flip": 7
+  "hold": 34,
+  "flip": 8
  }
 }
