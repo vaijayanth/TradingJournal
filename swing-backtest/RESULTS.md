@@ -101,3 +101,15 @@ Flip window 0, Rs1 Cr start, 6% idle cash, ladder `--base 50000 --step S` (S per
 | 1.0% of base (realised, reference) | 20.25% | -19.62% | 4,333 | 42.1 | 1.79 | Rs6.35 Cr | 1,667 | 112 |
 
 Reading: a Rs50k start fixes the under-deployment of the Rs20k ladder at Rs1 Cr (+1.0 pt CAGR for +0.5 pt drawdown with the same Rs5k step). All the variants lie on one return/risk line (CAGR / |max DD| about 1.0-1.1): the step size, not the start size, sets where on the line you sit.
+
+### Rs20,000 base with a Rs10,000 step (user request 2026-11-18)
+Flip window 0, 6% idle cash, 2016-11-07 to 2026-11-17. Files: `results/az_ladder_*_b20k_s10k_*`.
+
+| Start capital | Ladder | CAGR | Max DD | Closed | Win % | PF | Final | Missed (no cash) | Max pos |
+|---|---|---|---|---|---|---|---|---|---|
+| Rs30L | Rs20k + Rs5k (current) | 20.21% | -21.32% | 3,656 | 41.2 | 1.75 | Rs1.90 Cr | 2,360 | 136 |
+| Rs30L | Rs20k + Rs10k | 20.91% | -22.48% | 2,761 | 41.7 | 1.76 | Rs2.01 Cr | 3,279 | 129 |
+| Rs1 Cr | Rs20k + Rs5k | 17.37% | -16.71% | 5,526 | 40.9 | 1.83 | Rs4.98 Cr | 419 | 170 |
+| Rs1 Cr | Rs20k + Rs10k | 18.24% | -18.88% | 4,497 | 40.6 | 1.75 | Rs5.36 Cr | 1,500 | 146 |
+
+Reading: doubling the step adds about 0.7-0.9 pt CAGR and 1.2-2.2 pt drawdown, the same return/risk line as the other variants.
