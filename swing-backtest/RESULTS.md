@@ -169,3 +169,19 @@ Reading: uncapped doubling fails (about 1,200-1,400 closed trades in 10 years, w
 | AZ flip-today, 1.0% (ref) | Rs30L | 19.87% | -19.42% | 4,363 | 42.0 | +22.1 / -6.8 | 1.78 | Rs1.85 Cr | 1,637 | 113 |
 
 Reading: on the 214-stock F&O universe the 252-day-high entry produces far fewer trades (2,267 vs 3,556-4,363 in 10 years), so the Rs1,000 ladder barely deploys capital (CAGR 8-9%, drawdown -3 to -4%, no missed entries). At equal sizing (Rs20k + Rs5k) it earns 15.6% with a shallower drawdown (-12.8% vs -21.3%) and higher PF (2.22 vs 1.75) than the AZ flip-today entry, but less return. The Dhan entry's big average win (+33%) comes from the small/mid-cap names of the full 1,483-stock universe; on F&O stocks it is +23%.
+
+### Dhan entry on the F&O universe: sizing up to 3% (user request 2026-11-18)
+Same setup as the table above (Rs30L, 6% idle cash, each position = that % of start capital + realised P&L). Files: `results/fno_30L_d_p*`.
+
+| Sizing | CAGR | Max DD | Return / DD | Closed | Win % | PF | Final | Missed | Max pos |
+|---|---|---|---|---|---|---|---|---|---|
+| 0.5% | 9.67% | -4.20% | 2.30 | 2,267 | 42.4 | 2.20 | Rs0.76 Cr | 0 | 151 |
+| 1.0% | 13.32% | -10.08% | 1.32 | 2,256 | 42.6 | 2.10 | Rs1.05 Cr | 138 | 123 |
+| 1.5% | 16.25% | -15.98% | 1.02 | 2,001 | 42.8 | 2.09 | Rs1.36 Cr | 2,374 | 84 |
+| 2.0% | 18.29% | -19.48% | 0.94 | 1,765 | 42.7 | 2.05 | Rs1.62 Cr | 4,812 | 63 |
+| 2.5% | 19.39% | -22.63% | 0.86 | 1,558 | 43.2 | 2.01 | Rs1.77 Cr | 6,900 | 50 |
+| 3.0% | 20.78% | -23.15% | 0.90 | 1,341 | 44.1 | 2.09 | Rs1.99 Cr | 8,882 | 41 |
+| Ladder Rs20k + Rs5k | 15.56% | -12.75% | 1.22 | 2,155 | 42.6 | 2.22 | Rs1.28 Cr | 1,138 | 107 |
+| AZ flip-today, ladder Rs20k + Rs5k (ref) | 20.21% | -21.32% | 0.95 | 3,656 | 41.2 | 1.75 | Rs1.90 Cr | 2,360 | 136 |
+
+Reading: sized up, the Dhan entry on F&O stocks reaches AZ-like returns only at 3% (20.8% vs 20.2%) with a similar drawdown (-23.2% vs -21.3%), so its return per drawdown (0.90) falls to the AZ level (0.95); its edge is lower risk at low sizing, not more return. Cash becomes the limit: at 3% it holds at most 41 positions and misses 8,882 entries.
