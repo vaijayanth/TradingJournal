@@ -1,0 +1,30 @@
+{
+ "as_of": "2026-11-18",
+ "written_at": "2026-11-18T22:34:04+05:30",
+ "confidence": "low",
+ "maturity": "10 days of history and 2 closed trades: a health check, not a verdict on the strategy.",
+ "headline": "The swing book is young and healthy. The real P&L risk this week is in options, not in the shares.",
+ "points": [
+  {
+   "label": "Swing book",
+   "text": "36 positions, +₹12.4k open (+1.4% on ₹8.6L invested), 56% in profit. Too early to say whether the strategy works: the scorecard statuses switch on at 90 days and 30 closed trades."
+  },
+  {
+   "label": "New entries start under water",
+   "text": "Positions under 14 days average −2.2%, while those over 30 days average +2.4% to +3.9%. That is the backtest shape (losers exit near day 36, winners run about 106 days), so no action."
+  },
+  {
+   "label": "Options are the bigger swing",
+   "text": "The 4 stopped-out spreads are down about ₹94k net, roughly 7 times the swing book's open profit. All four were sold calls opened on a red Supertrend that later flipped green. The flip alert existed, the legs stayed open to their 3x stops, and none had an active protective GTT when the stop was hit."
+  },
+  {
+   "label": "Same pattern again today",
+   "text": "APOLLOHOSP, KARURVYSYA and SUNPHARMA calls are in profit (+₹5.8k together) but their Supertrend is green. Closing them at the open locks the gain and avoids repeating the pattern. The 13 new December spreads all have protective GTTs, which is the fix."
+  },
+  {
+   "label": "Sizing is not the lever",
+   "text": "Only 29% of ₹30L is invested, but the backtest shows 1.0% of capital (about ₹30k per position) gives 19.9% against 20.2% for your ₹20k ladder. Keep ₹20k. One watch item: PAGEIND (one share at ₹36.5k) lost 12.7%, nearly twice the backtest's average loss of 6.8%, because the one-share minimum makes very high-priced stocks bigger than the tier."
+  }
+ ],
+ "action": "At 09:15 close the 4 stopped-out spreads and the 3 flipped calls. Make no strategy change until 30 trades have closed."
+}

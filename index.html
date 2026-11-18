@@ -891,6 +891,12 @@ tr.cc-det td { background:var(--surface2); white-space:normal !important; paddin
 .d2-edge-foot { border-top:1px solid var(--border); padding:9px 15px; color:var(--text-muted); font-size:10px; }
 .d2-edge-split { display:grid; grid-template-columns:1fr 1fr; border-top:1px solid var(--border); }
 .d2-edge-sub { padding:13px 15px; } .d2-edge-sub:first-child { border-right:1px solid var(--border); }
+.d2-ins-body { padding:4px 16px 14px; } .d2-ins-head { font-size:15px; font-weight:650; line-height:1.4; margin:8px 0 10px; }
+.d2-ins-pt { display:grid; grid-template-columns:170px 1fr; gap:10px; padding:7px 0; border-top:1px solid var(--border); font-size:12.5px; line-height:1.5; }
+.d2-ins-pt b { font-weight:600; color:var(--text-primary); } .d2-ins-pt span { color:var(--text-secondary); }
+.d2-ins-act { margin-top:10px; padding:9px 12px; border-left:3px solid var(--accent); background:var(--bg-elevated, rgba(76,134,255,.08)); border-radius:4px; font-size:12.5px; line-height:1.5; }
+.d2-ins-act b { color:var(--accent); } .d2-ins-mat { margin-top:9px; font-size:11px; color:var(--text-muted); }
+@media (max-width:640px) { .d2-ins-pt { grid-template-columns:1fr; gap:2px; } }
 .d2-sc-chip { display:inline-block; font-size:10px; font-weight:600; letter-spacing:.03em; padding:2px 8px; border-radius:99px; border:1px solid var(--border); color:var(--text-muted); white-space:nowrap; }
 .d2-sc-chip.ok { color:var(--green); border-color:var(--green); } .d2-sc-chip.warn { color:var(--red); border-color:var(--red); } .d2-sc-chip.early { color:var(--amber); border-color:var(--amber); }
 #d2-score-t td:last-child, #d2-score-t th:last-child { text-align:right; width:150px; } #d2-score-t td:nth-child(2), #d2-score-t td:nth-child(3) { text-align:right; }
@@ -1295,6 +1301,11 @@ b.stk, #cc-root td b.stk, #page-dashboard-di b.stk { font-weight:700; }
     <div class="d2-kpi"><div class="d2-label">Unrealised MTM</div><div class="d2-value" id="d2-k-mtm">—</div><div class="d2-note">Open book</div></div>
     <div class="d2-kpi"><div class="d2-label">Invested</div><div class="d2-value" id="d2-a-inv">—</div><div class="d2-note"><span id="d2-a-pos">—</span> open positions</div></div>
     <div class="d2-kpi"><div class="d2-label">Position tier</div><div class="d2-value" id="d2-a-tier">—</div><div class="d2-note" id="d2-a-tier-n">—</div></div>
+  </section>
+
+  <section class="d2-panel" id="d2-insights" style="display:none;margin-bottom:13px">
+    <div class="d2-panel-head"><div><div class="d2-title">Strategy insights</div><div class="d2-hint" id="d2-ins-sub">Written by Claude at each end-of-day refresh</div></div><span class="d2-pill muted" id="d2-ins-pill">—</span></div>
+    <div class="d2-ins-body" id="d2-ins-body"></div>
   </section>
 
   <section class="d2-panel" id="d2-actions" style="margin-bottom:13px">
@@ -8807,7 +8818,7 @@ function renderClosedTradesReal(closed) {
 const WS_KEY = 'tj_workspace';
 const WORKSPACES = {
   dhan:    { id: 'dhan',    label: 'ND',      strategy: 'dh252', source: 'MCP snapshot',  status: 'live',
-             snapshotUrl: 'dhan-live/dhan_live_signals.json',
+             snapshotUrl: 'dhan-live/dhan_live_signals.json', insightsUrl: 'dhan-live/insights.json',
              ordersUrl: 'dhan-live/data/orders_snapshot.json', crosscheckUrl: 'dhan-live/data/signal_crosscheck.json', guardUrl: 'dhan-live/data/guardrails.json',
              copy: { refreshCmd: '/refresh-dhan', hasCC: true, strat: 'dh252', liveTitle: 'ND Live · dh252',
                      liveSub: "Live ND positions vs. backtester's daily Supertrend / 52-week-high signals", logoA: 'dh', logoB: '252', logoSub: '52-week-high swing',
@@ -8823,7 +8834,7 @@ const WORKSPACES = {
                     bt: { label: '10-yr backtest · Rs20L start · Rs1k + Rs1k ladder · 6% on idle cash', cagr: 28.01, maxDd: -15.42, winRate: 41.3, pf: 2.01, avgWin: 33.1, avgLoss: -9.0, holdWin: 102, holdLoss: 39, maxPos: 469, trades: 7898 } },
              pages: { live: true, covcall: true, dashboard: 'v2', performance: 'v2', analysis: 'v2' } },   // 'v2' = contract-driven page-dashboard2
   zerodha: { id: 'zerodha', label: 'AZ',      strategy: 'F&O Supertrend', source: 'MCP snapshot', status: 'live',
-             snapshotUrl: 'zerodha-live/zerodha_live_signals.json',
+             snapshotUrl: 'zerodha-live/zerodha_live_signals.json', insightsUrl: 'zerodha-live/insights.json',
              ordersUrl: 'zerodha-live/data/orders_snapshot.json', crosscheckUrl: 'zerodha-live/data/signal_crosscheck.json', guardUrl: 'zerodha-live/data/guardrails.json',
              ccUrl: 'zerodha-live/covered_call_signals.json',
              cfg: { staleDays: 3, addTriggerPct: -6, addCooldownDays: 7, addFraction: 0.1,
@@ -9972,6 +9983,7 @@ function d2Render(d) {
     + `Marked to market at the last close.`);
 
   try { d2RenderScore(d); } catch (e) { console.error('Scorecard error:', e); }
+  d2RenderInsights();
 
   // Attention queues
   const q = d2Queues(d);
@@ -10003,6 +10015,23 @@ function d2Render(d) {
     + 'Closed trades come from ' + (dhCopy().closedSrc || 'the recorded fills') + '.');
 }
 
+
+// ── Strategy insights (user, 2026-11-18): one box per workspace, written by Claude at each refresh into <broker>-live/insights.json ──
+async function d2RenderInsights() {
+  const ws = WORKSPACES[WS.id], box = document.getElementById('d2-insights'); if (!box) return;
+  if (!ws.insightsUrl) { box.style.display = 'none'; return; }
+  try {
+    const res = await fetch(ws.insightsUrl + '?t=' + Date.now()); if (!res.ok) throw new Error('HTTP ' + res.status);
+    const j = await res.json();
+    if (WS.id !== ws.id) return;
+    const pts = (j.points || []).map(x => `<div class="d2-ins-pt"><b>${dhEsc(x.label)}</b><span>${dhEsc(x.text)}</span></div>`).join('');
+    document.getElementById('d2-ins-body').innerHTML = `<div class="d2-ins-head">${dhEsc(j.headline || '')}</div>${pts}`
+      + (j.action ? `<div class="d2-ins-act"><b>Next:</b> ${dhEsc(j.action)}</div>` : '')
+      + (j.maturity ? `<div class="d2-ins-mat">${dhEsc(j.maturity)}</div>` : '');
+    const pill = document.getElementById('d2-ins-pill'); pill.textContent = `${(j.confidence || '—')} confidence · ${j.as_of ? dhFmtDate(j.as_of) : ''}`; pill.className = 'd2-pill' + (j.confidence === 'low' ? ' muted' : '');
+    box.style.display = '';
+  } catch (e) { box.style.display = 'none'; }
+}
 
 // ── Strategy scorecard (user, 2026-11-18): live max drawdown, profit factor, CAGR, win rate etc. against the workspace's backtest (ws.cfg.bt) ──
 function d2RenderScore(d) {
