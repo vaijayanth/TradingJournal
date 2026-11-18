@@ -1,33 +1,22 @@
 {
- "fired_ok_today": [
-  "CAMS26NOV800CE",
-  "SHRIRAMFIN26NOV900PE",
-  "ANGELONE26NOV325PE",
-  "ANGELONE26NOV370CE",
-  "HDFCBANK26NOV800PE",
-  "CHOLAFIN26NOV1740PE",
-  "HEROMOTOCO26NOV5650CE",
-  "MAHABANK26NOV88PE",
-  "ADANIENSOL26NOV1320PE",
-  "ABB26NOV7800CE"
- ],
- "fetched_at": "2026-11-17T20:24:52+05:30",
+ "fired_ok_today": [],
+ "fetched_at": "2026-11-18T08:11:14+05:30",
  "inputs": {
-  "positions": "2026-11-17T14:54:11.375795+00:00",
-  "gtts": "2026-11-17T20:24:11+05:30",
-  "orders": "2026-11-17T20:24:05+05:30",
-  "gtt_scan": "2026-11-17T20:24:11+05:30"
+  "positions": "2026-11-18T02:40:57.117691+00:00",
+  "gtts": "2026-11-18T08:10:52+05:30",
+  "orders": "2026-11-18T08:10:57+05:30",
+  "gtt_scan": "2026-11-18T08:10:52+05:30"
  },
  "stale_inputs": [],
  "open_legs": 64,
- "triggered_gtts": 10,
+ "triggered_gtts": 0,
  "findings": [
   {
    "section": "A",
    "severity": "WARN",
    "symbol": "AMBER",
    "tradingsymbol": "AMBER26NOV5500PE",
-   "concern": "Long 5500PE (100 qty) no short against it; P&L Rs-3,890, expiry 2026-11-23",
+   "concern": "Long 5500PE (100 qty) no short against it; P&L Rs-3,885, expiry 2026-11-23",
    "action": "Sell it or let it expire"
   },
   {
@@ -35,7 +24,7 @@
    "severity": "WARN",
    "symbol": "BAJFINANCE",
    "tradingsymbol": "BAJFINANCE26NOV900PE",
-   "concern": "Long 900PE (750 qty) no short against it; P&L Rs-2,925, expiry 2026-11-23",
+   "concern": "Long 900PE (750 qty) no short against it; P&L Rs-2,888, expiry 2026-11-23",
    "action": "Sell it or let it expire"
   },
   {
@@ -51,7 +40,7 @@
    "severity": "WARN",
    "symbol": "BHARTIARTL",
    "tradingsymbol": "BHARTIARTL26NOV1980PE",
-   "concern": "Long 1980PE (475 qty) no short against it; P&L Rs2,209, expiry 2026-11-23",
+   "concern": "Long 1980PE (475 qty) no short against it; P&L Rs24, expiry 2026-11-23",
    "action": "In profit: book it or let it run"
   },
   {
@@ -59,7 +48,7 @@
    "severity": "WARN",
    "symbol": "BHEL",
    "tradingsymbol": "BHEL26NOV360PE",
-   "concern": "Long 360PE (2625 qty) no short against it; P&L Rs-8,269, expiry 2026-11-23",
+   "concern": "Long 360PE (2625 qty) no short against it; P&L Rs-8,138, expiry 2026-11-23",
    "action": "Sell it or let it expire"
   },
   {
@@ -67,7 +56,7 @@
    "severity": "WARN",
    "symbol": "RADICO",
    "tradingsymbol": "RADICO26NOV3900PE",
-   "concern": "Long 3900PE (150 qty) no short against it; P&L Rs-8,295, expiry 2026-11-23",
+   "concern": "Long 3900PE (150 qty) no short against it; P&L Rs-8,265, expiry 2026-11-23",
    "action": "Sell it or let it expire"
   },
   {
@@ -299,7 +288,7 @@
    "severity": "HIGH",
    "symbol": "HDFCBANK",
    "tradingsymbol": "HDFCBANK26NOV760CE",
-   "concern": "No active buy-back GTT (premium 53.5, sold 2.8, already 19.1x: a GTT would fire at once)",
+   "concern": "No active buy-back GTT (premium 54.25, sold 2.8, already 19.4x: a GTT would fire at once)",
    "action": "Close it now (a GTT would fire at once)"
   },
   {
@@ -307,7 +296,7 @@
    "severity": "HIGH",
    "symbol": "HINDPETRO",
    "tradingsymbol": "HINDPETRO26NOV380CE",
-   "concern": "No active buy-back GTT (premium 11.85, sold 1.3, already 9.1x: a GTT would fire at once)",
+   "concern": "No active buy-back GTT (premium 12.6, sold 1.3, already 9.7x: a GTT would fire at once)",
    "action": "Close it now (a GTT would fire at once)"
   },
   {
@@ -315,7 +304,7 @@
    "severity": "HIGH",
    "symbol": "MAHABANK",
    "tradingsymbol": "MAHABANK26NOV89CE",
-   "concern": "No active buy-back GTT (premium 7.25, sold 0.32, already 22.7x: a GTT would fire at once)",
+   "concern": "No active buy-back GTT (premium 7.26, sold 0.32, already 22.7x: a GTT would fire at once)",
    "action": "Close it now (a GTT would fire at once)"
   },
   {
@@ -323,7 +312,7 @@
    "severity": "WARN",
    "symbol": "APOLLOHOSP",
    "tradingsymbol": "APOLLOHOSP26NOV9100CE",
-   "concern": "Active GTT 343048061 (trailing-single) has a stop but no profit target; sold 29.6, premium 12.5",
+   "concern": "Active GTT 343048061 (trailing-single) has a stop but no profit target; sold 29.6, premium 13.75",
    "action": "Add a profit target at about 11.84 (a two-leg GTT: /zerodha-gtt-order or the Kite app)"
   },
   {
@@ -339,7 +328,7 @@
    "severity": "WARN",
    "symbol": "BPCL",
    "tradingsymbol": "BPCL26NOV300PE",
-   "concern": "Active GTT 343668936 (trailing-single) has a stop but no profit target; sold 2.9, premium 1.65",
+   "concern": "Active GTT 343668936 (trailing-single) has a stop but no profit target; sold 2.9, premium 1.7",
    "action": "Add a profit target at about 1.16 (a two-leg GTT: /zerodha-gtt-order or the Kite app)"
   },
   {
@@ -347,7 +336,7 @@
    "severity": "WARN",
    "symbol": "COCHINSHIP",
    "tradingsymbol": "COCHINSHIP26NOV1120PE",
-   "concern": "Active GTT 344051339 (trailing-single) has a stop but no profit target; sold 7.95, premium 10.65",
+   "concern": "Active GTT 344051339 (trailing-single) has a stop but no profit target; sold 7.95, premium 10.2",
    "action": "Add a profit target at about 3.18 (a two-leg GTT: /zerodha-gtt-order or the Kite app)"
   },
   {
@@ -355,7 +344,7 @@
    "severity": "WARN",
    "symbol": "CUMMINSIND",
    "tradingsymbol": "CUMMINSIND26DEC5000CE",
-   "concern": "Active GTT 344015712 (trailing-single) has a stop but no profit target; sold 21.8, premium 11.6",
+   "concern": "Active GTT 344015712 (trailing-single) has a stop but no profit target; sold 21.8, premium 11.9",
    "action": "Add a profit target at about 8.72 (a two-leg GTT: /zerodha-gtt-order or the Kite app)"
   },
   {
@@ -363,7 +352,7 @@
    "severity": "WARN",
    "symbol": "HINDZINC",
    "tradingsymbol": "HINDZINC26NOV500PE",
-   "concern": "Active GTT 343262028 (trailing-single) has a stop but no profit target; sold 2.4, premium 0.75",
+   "concern": "Active GTT 343262028 (trailing-single) has a stop but no profit target; sold 2.4, premium 0.7",
    "action": "Add a profit target at about 0.96 (a two-leg GTT: /zerodha-gtt-order or the Kite app)"
   },
   {
@@ -371,7 +360,7 @@
    "severity": "WARN",
    "symbol": "KARURVYSYA",
    "tradingsymbol": "KARURVYSYA26NOV410CE",
-   "concern": "Active GTT 343750241 (trailing-single) has a stop but no profit target; sold 1.7, premium 1.9",
+   "concern": "Active GTT 343750241 (trailing-single) has a stop but no profit target; sold 1.7, premium 2",
    "action": "Add a profit target at about 0.68 (a two-leg GTT: /zerodha-gtt-order or the Kite app)"
   },
   {
@@ -387,7 +376,7 @@
    "severity": "WARN",
    "symbol": "MUTHOOTFIN",
    "tradingsymbol": "MUTHOOTFIN26NOV2650PE",
-   "concern": "Active GTT 343977413 (trailing-single) has a stop but no profit target; sold 11.7, premium 10.9",
+   "concern": "Active GTT 343977413 (trailing-single) has a stop but no profit target; sold 11.7, premium 9.75",
    "action": "Add a profit target at about 4.68 (a two-leg GTT: /zerodha-gtt-order or the Kite app)"
   },
   {
@@ -395,7 +384,7 @@
    "severity": "WARN",
    "symbol": "SUNPHARMA",
    "tradingsymbol": "SUNPHARMA26DEC2100CE",
-   "concern": "Active GTT 344014614 (trailing-single) has a stop but no profit target; sold 12.15, premium 6.3",
+   "concern": "Active GTT 344014614 (trailing-single) has a stop but no profit target; sold 12.15, premium 6.35",
    "action": "Add a profit target at about 4.86 (a two-leg GTT: /zerodha-gtt-order or the Kite app)"
   }
  ]
