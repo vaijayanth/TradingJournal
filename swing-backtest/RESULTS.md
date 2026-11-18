@@ -39,3 +39,15 @@ Idle cash accrues daily at a flat annual yield (`--cash-rate`). LIQUIDBEES pays 
 | Rs50,000 | 27.8% / -15.5% / 41.2% / 2.11 / Rs2.32 Cr | 18.6% / -17.2% / 42.0% / 2.03 / Rs1.65 Cr |
 | Rs25,000 | 26.4% / -13.1% / 42.0% / 2.42 / Rs2.08 Cr | not run |
 | Rs10,000 | 20.9% / -11.8% / 42.7% / 2.63 / Rs1.34 Cr | not run |
+
+## AZ entry window test (2026-11-18, user request)
+`--flip-window N` = sessions since the green flip (freshest flip day only, ₹30L, ₹20k + ₹5k/100 trades uncapped, slippage 0.1%, 2016-11-07 to 2026-11-17, 214 stocks). Files: `results/az_win<N>_*`.
+
+| Window | CAGR | Max DD | Closed | Win % | Avg win / loss | PF | Final equity | Missed entries (no cash) |
+|---|---|---|---|---|---|---|---|---|
+| 0 (flipped today, live rule) | 19.19% | -22.99% | 3,556 | 41.1 | +21.3 / -6.9 | 1.76 | Rs1.74 Cr | 2,465 |
+| 1 | 18.92% | -24.23% | 3,528 | 40.7 | +21.4 / -6.9 | 1.75 | Rs1.70 Cr | 2,768 |
+| 3 (earlier published setup) | 18.71% | -23.92% | 3,563 | 40.3 | +21.3 / -6.8 | 1.72 | Rs1.67 Cr | 2,938 |
+| 5 | 18.87% | -24.53% | 3,618 | 40.2 | +21.3 / -6.8 | 1.71 | Rs1.70 Cr | 3,009 |
+
+Reading: the spread is under 0.5 CAGR points, i.e. noise; flip-today is marginally best on CAGR, drawdown and profit factor, so the stricter rule costs nothing. Because only the freshest flip day is ordered, a wider window rarely adds trades. Same caveats as above (survivorship, dividend-adjusted prices, uncapped sizing).
