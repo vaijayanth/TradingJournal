@@ -47,7 +47,7 @@ Usage:
 import argparse
 import json
 import sys
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
@@ -79,7 +79,12 @@ def load_excluded_universe():
     """ND universe exclusions (data/excluded_universe.json): InvITs / REITs are not wanted (user, 2026-11-16)."""
     p = Path(__file__).resolve().parent.parent / "data" / "excluded_universe.json"
     d = json.loads(p.read_text(encoding="utf-8")) if p.exists() else {}
-    return tuple(x.upper() for x in d.get("suffixes", [])), {x.upper() for x in d.get("symbols", [])}
+    names = {x.upper() for x in d.get("symbols", [])}
+    # Monthly exclusions (user, 2026-11-17: "not permanent, refresh every month"): {"YYYY-MM": [symbols]} only
+    # applies during that calendar month (IST) and lapses by itself when the next month starts.
+    month = datetime.now(timezone(timedelta(hours=5, minutes=30))).strftime("%Y-%m")
+    names |= {x.upper() for x in d.get("monthly", {}).get(month, [])}
+    return tuple(x.upper() for x in d.get("suffixes", [])), names
 
 
 def is_excluded_universe(symbol, rules=None):

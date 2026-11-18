@@ -96,7 +96,8 @@ def main():
         sl = o["legs"].get("STOP_LOSS_LEG")
         if sl and sl["status"] == "PENDING":
             r = sl["price"] / o["entry"]
-            if not (mult - 1) <= r <= (mult + 1):
+            # a contract closed and reopened the same day has a blended average, so the stop (3x the REAL sold price) cannot be judged against it
+            if not l.get("blended") and not (mult - 1) <= r <= (mult + 1):
                 add("S3", "WARN", o, l, f"Stop {sl['price']:g} is {r:.1f}x the sold {o['entry']:g} (rule {mult}x)", f"Move the stop leg to {mult * o['entry']:.2f}")
         else:
             add("S2", "WARN", o, l, "Super order has no pending stop leg", "Place a protective stop")
