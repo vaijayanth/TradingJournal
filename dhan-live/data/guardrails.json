@@ -1,38 +1,22 @@
 {
- "generated_at": "2026-11-18T15:28:31+05:30",
+ "generated_at": "2026-11-18T19:55:27+05:30",
  "broker": "dhan",
- "market_data_date": "2026-11-17",
- "signals_generated_at": "2026-11-18T09:58:30.069380+00:00",
- "status": "BLOCK",
- "global_block": true,
+ "market_data_date": "2026-11-18",
+ "signals_generated_at": "2026-11-18T14:25:24.547714+00:00",
+ "status": "WARN",
+ "global_block": false,
  "counts": {
-  "block": 2,
+  "block": 0,
   "warn": 3,
   "info": 0
  },
- "per_symbol_blocks": {
-  "PASHUPATI": [
-   "I2: PASHUPATI: signal qty/avg 13@43.62 differs from holdings 13@0.0"
-  ]
- },
+ "per_symbol_blocks": {},
  "findings": [
   {
    "id": "F5",
-   "level": "BLOCK",
-   "symbol": null,
-   "msg": "the cross-check disagrees with 1 of 4 signals - prices are suspect (a partial same-day bar while the market is open, a hole in the price history, or a bad feed). Do not order until the close-of-day data is published and the refresh re-run."
-  },
-  {
-   "id": "I2",
-   "level": "BLOCK",
-   "symbol": "PASHUPATI",
-   "msg": "PASHUPATI: signal qty/avg 13@43.62 differs from holdings 13@0.0"
-  },
-  {
-   "id": "I3",
    "level": "WARN",
-   "symbol": "PASHUPATI",
-   "msg": "PASHUPATI: trade log says 13.5, Dhan holdings say 13. Holdings are used; it usually clears after the next refresh (a recent sale or buy not yet settled)."
+   "symbol": null,
+   "msg": "the cross-check flagged 2 of 13 signals (advisory only, the backtester signal stands and they are not blocked): KODYTECH, SHRINGARMS"
   },
   {
    "id": "I3",
