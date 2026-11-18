@@ -128,6 +128,19 @@ def main():
                 used.add(j)
                 matched[i] = s
                 break
+    # last pass: the order book keeps the average the position had when the order was created (stale after a same-day close and
+    # reopen, DIXON 2026-11-18); match on symbol + quantity + a stop / target at 3x / 40% of the position's own sold price
+    for i, o in enumerate(orders):
+        if i in matched:
+            continue
+        for j, s in enumerate(shorts):
+            if j in used or s["symbol"] != o["symbol"] or s["qty"] != o["qty"]:
+                continue
+            sl0, tg0 = o["legs"].get("STOP_LOSS_LEG"), o["legs"].get("TARGET_LEG")
+            if (sl0 and abs(sl0["price"] - mult * s["sell_avg"]) <= 0.03 * mult * s["sell_avg"]) or (tg0 and tg0["price"] and abs(tg0["price"] - 0.4 * s["sell_avg"]) <= 0.05 * s["sell_avg"]):
+                used.add(j)
+                matched[i] = s
+                break
     fired_ok = []
     for i, o in enumerate(orders):
         sl, tg = o["legs"].get("STOP_LOSS_LEG"), o["legs"].get("TARGET_LEG")

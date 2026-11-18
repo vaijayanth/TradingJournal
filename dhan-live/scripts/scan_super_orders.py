@@ -84,6 +84,21 @@ def main():
             used.add(j)
             matched[i] = l
             break
+    # second pass: the order book keeps the average the position had when the order was created (a blended average after a
+    # same-day close and reopen, 2026-11-18 DIXON), so an order whose entry price no longer equals the position's sold average
+    # still matches when the symbol and quantity agree AND its stop / target sit at 3x / 40% of the position's own sold price
+    for i, o in enumerate(orders):
+        if i in matched:
+            continue
+        for j, l in enumerate(shorts):
+            if j in used or l["symbol"] != o["symbol"] or l["qty"] != o["qty"]:
+                continue
+            sl, tg = o["legs"].get("STOP_LOSS_LEG"), o["legs"].get("TARGET_LEG")
+            if (sl and abs(sl["price"] - mult * l["sell_avg"]) <= 0.03 * mult * l["sell_avg"]) or (tg and tg["price"] and abs(tg["price"] - 0.4 * l["sell_avg"]) <= 0.05 * l["sell_avg"]):
+                used.add(j)
+                matched[i] = l
+                o["entry_stale"] = True
+                break
     for i, o in enumerate(orders):
         pending = {k: v for k, v in o["legs"].items() if v["status"] == "PENDING" and k != "ENTRY_LEG"}
         l = matched.get(i)
@@ -95,7 +110,7 @@ def main():
             continue
         sl = o["legs"].get("STOP_LOSS_LEG")
         if sl and sl["status"] == "PENDING":
-            r = sl["price"] / o["entry"]
+            r = sl["price"] / (l["sell_avg"] if o.get("entry_stale") else o["entry"])
             # a contract closed and reopened the same day has a blended average, so the stop (3x the REAL sold price) cannot be judged against it
             if not l.get("blended") and not (mult - 1) <= r <= (mult + 1):
                 add("S3", "WARN", o, l, f"Stop {sl['price']:g} is {r:.1f}x the sold {o['entry']:g} (rule {mult}x)", f"Move the stop leg to {mult * o['entry']:.2f}")

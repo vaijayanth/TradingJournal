@@ -79,5 +79,10 @@ check("G a real target is not flagged", not has(run(spread, sup("12", "AAA", 100
 check("G a fired target is not flagged", not has(run(spread, sup("13", "AAA", 100, 5.0, tg="TRADED", tgp=2.0)), "G"))
 check("matching uses the sold average (a different average does not match)", has(run([leg("III", 100, "CE", "SHORT", 100, 5.0, 4.0)], sup("10", "III", 100, 7.0)), "C", "WARN"))
 
+stale = [leg("JJJ", 100, "PE", "SHORT", 50, 94.2, 90.0), leg("JJJ", 90, "PE", "LONG", 50, 54.2, 55.0)]
+r = run(stale, sup("14", "JJJ", 50, 147.38, slp=282.6, tgp=37.7))   # order book still shows the old blended entry price
+check("stale order entry price still matches by qty + stop/target at 3x / 40% of the position's sold price", not has(r, "C") and not has(r, "E") and not has(r, "F"))
+check("a stop at the wrong level does not match a stale-entry order", has(run(stale, sup("15", "JJJ", 50, 147.38, slp=500.0, tgp=70.0)), "C", "WARN"))
+
 print("\nALL ND SCAN_OPTIONS TESTS PASSED" if not fails else f"\n{len(fails)} FAILED: {fails}")
 sys.exit(1 if fails else 0)

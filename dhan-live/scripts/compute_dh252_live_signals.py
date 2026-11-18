@@ -309,6 +309,14 @@ def build_signals(holdings, week52, stmap, rsimap, entry_signals, trade_log, tod
             exited_outside_tracking.append(symbol)
             continue
         qty, wac = h["qty"], h["avg_cost"]  # holdings is ground truth, same principle as Equity Journal
+        if not wac or wac <= 0:
+            # Dhan sometimes reports an average cost of 0 for a stock right after a corporate action (PASHUPATI, 2026-11-18).
+            # Never divide by it: fall back to the fill ledger's own WAC and say so (a WARNING the refresh report must show).
+            wac = pos.get("log_wac") or 0
+            print(f"WARNING: Dhan holdings report avg cost 0 for {symbol}; using the fill-ledger WAC {wac}", file=sys.stderr)
+            if wac <= 0:
+                no_data.append({"symbol": symbol, "reason": "Dhan avg cost 0 and no ledger WAC"})
+                continue
 
         w = week52.get(symbol)
         st = stmap.get(symbol)
