@@ -3591,6 +3591,7 @@ b.stk, #cc-root td b.stk, #page-dashboard-di b.stk { font-weight:700; }
     </div>
     <div class="dhm-kpi"><div class="dhm-kpi-label">Positions</div><div class="dhm-kpi-val" id="dh-live-holdings-count">—</div></div>
     <div class="dhm-kpi"><div class="dhm-kpi-label">Invested</div><div class="dhm-kpi-val" id="dh-live-invested">—</div></div>
+    <div class="dhm-kpi" title="Invested capital divided by the number of open positions (new positions are sized at the Tier size)"><div class="dhm-kpi-label">Avg position</div><div class="dhm-kpi-val" id="dh-live-avgpos">—</div><div class="dhm-kpi-sub" id="dh-live-avgpos-sub">&nbsp;</div></div>
     <div class="dhm-kpi"><div class="dhm-kpi-label">Overall P&amp;L</div><div class="dhm-kpi-val" id="dh-live-combined-pl">—</div></div>
     <div class="dhm-kpi" title="Overall P&amp;L divided by the capital invested in the open positions"><div class="dhm-kpi-label">Return on deployed</div><div class="dhm-kpi-val" id="dh-live-roic">—</div><div class="dhm-kpi-sub" id="dh-live-roic-sub">&nbsp;</div></div>
     <div class="dhm-kpi"><div class="dhm-kpi-label">Tier size</div><div class="dhm-kpi-val" id="dh-live-tier">—</div><div class="dhm-kpi-sub">per new position</div></div>
@@ -9351,6 +9352,8 @@ function dhLiveRender(d) {
   const combinedEl = document.getElementById('dh-live-combined-pl');
   combinedEl.textContent = dhFmtRs(cap.combined);
   combinedEl.className = 'dhm-kpi-val' + (cap.combined == null ? '' : cap.combined >= 0 ? ' green' : ' red');
+  { const ae = document.getElementById('dh-live-avgpos'), as = document.getElementById('dh-live-avgpos-sub'), N0 = d.positions.length;
+    if (ae) { ae.textContent = N0 && cap.invested > 0 ? dhFmtRs(cap.invested / N0) : '—'; if (as) as.textContent = N0 ? `invested ÷ ${N0} open` : ' '; } }
   { const re = document.getElementById('dh-live-roic'), rs = document.getElementById('dh-live-roic-sub');
     if (re) { const ok = cap.invested > 0 && cap.combined != null, r = ok ? cap.combined / cap.invested * 100 : null;
       re.textContent = ok ? (r >= 0 ? '+' : '−') + Math.abs(r).toFixed(2) + '%' : '—';
