@@ -1,6 +1,6 @@
 {
- "fetched_at": "2026-11-18T20:02:19+05:30",
- "source": "mcp dhan orderbook list after /dhan-order stage 1 (18 Nov)",
+ "fetched_at": "2026-11-18T20:06:21+05:30",
+ "source": "mcp dhan orderbook list after /dhan-order stage 2 (18 Nov)",
  "orders": [
   {
    "order_id": "3452611187875",
@@ -19,6 +19,46 @@
    "qty": 4,
    "order_type": "MARKET",
    "price": null,
+   "status": "PENDING",
+   "amo": true
+  },
+  {
+   "order_id": "3452611187876",
+   "symbol": "GUFICBIO",
+   "side": "BUY",
+   "qty": 1,
+   "order_type": "LIMIT",
+   "price": 430.65,
+   "status": "PENDING",
+   "amo": true
+  },
+  {
+   "order_id": "3452611187877",
+   "symbol": "LGEINDIA",
+   "side": "BUY",
+   "qty": 1,
+   "order_type": "LIMIT",
+   "price": 1713.25,
+   "status": "PENDING",
+   "amo": true
+  },
+  {
+   "order_id": "2352611187871",
+   "symbol": "MACPOWER",
+   "side": "BUY",
+   "qty": 1,
+   "order_type": "LIMIT",
+   "price": 2212.15,
+   "status": "PENDING",
+   "amo": true
+  },
+  {
+   "order_id": "2252611189948",
+   "symbol": "TEXINFRA",
+   "side": "BUY",
+   "qty": 1,
+   "order_type": "LIMIT",
+   "price": 122.75,
    "status": "PENDING",
    "amo": true
   }
