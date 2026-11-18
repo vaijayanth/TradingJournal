@@ -129,7 +129,9 @@ check("S4 removed: a 1-share entry above the tier is NOT flagged", not has(run(c
 c = base(); c["signals"]["entries"] = [{"symbol": f"E{i}", "close": 10, "supertrend_color": "green", "pct_from_high": 0, "qty_to_buy": 1} for i in range(70)]
 check("S5 70 entries = WARN", has(run(c), "S5", "WARN"))
 c = base(); c["split_check"] = {"unrecorded": [{"symbol": "AAA", "ex_date": "2026-11-05", "ratio": 2.5, "fills_before": 1}]}
-check("I8 unrecorded split after your buys = WARN", has(run(c), "I8", "WARN", "AAA"))
+check("I8 unrecorded split after your buys = BLOCK for the stock", has(run(c), "I8", "BLOCK", "AAA"))
+c = base(); c["split_check"] = {"unrecorded": [], "auto_recorded": [{"symbol": "AAA", "ex_date": "2026-11-05", "ratio": 2.5, "holdings_qty": 13}]}
+check("I8 auto-recorded split is INFO only", has(run(c), "I8", "INFO", "AAA") and not has(run(c), "I8", "BLOCK"))
 c = base(); c["split_check"] = {"unrecorded": []}
 check("I8 quiet when every split is recorded", not has(run(c), "I8"))
 c = base(); c["signals"]["exits"] = [pos(f"X{i}", color="red") for i in range(3)]

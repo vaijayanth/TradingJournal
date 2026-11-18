@@ -187,9 +187,13 @@ def evaluate(ctx, now):
 
     # I8 a split / bonus after your buys that is not recorded in data/corporate_actions.json (check_splits.py): the ledger would compare pre- and post-event prices
     sc = ctx.get("split_check") or {}
+    for u in sc.get("auto_recorded", []):
+        out.append(f("INFO", "I8", f"{u['symbol']}: the {u['ratio']:g}-for-1 split on {u['ex_date']} was recorded automatically (Dhan holds {u.get('holdings_qty')} shares, as expected after the split)", u["symbol"]))
     for u in sc.get("unrecorded", []):
-        out.append(f("WARN", "I8", f"{u['symbol']}: a {u['ratio']:g}-for-1 split / bonus on {u['ex_date']} came after {u['fills_before']} of your fill(s) and is not recorded in "
-                                   f"data/corporate_actions.json, so this stock's cost, quantity and P&L can be wrong (a fake gain or loss)", u["symbol"]))
+        why = {"uncredited": "Dhan still shows the OLD share count, so the broker may not have applied it yet",
+               "mismatch": f"Dhan holds {u.get('holdings_qty')} but {u.get('expected_if_credited')} was expected after the split, so it cannot be recorded safely"}.get(u.get("outcome"), "it is not recorded")
+        out.append(f("BLOCK", "I8", f"{u['symbol']}: a {u['ratio']:g}-for-1 split / bonus on {u['ex_date']} came after your buys and is not recorded in data/corporate_actions.json "
+                                    f"({why}); cost, quantity and P&L would be wrong, so no order for this stock until it is resolved", u["symbol"]))
     # I3 + I6 + I7 fills ledger
     recent_buy, led = {}, {}
     if fills is not None:
