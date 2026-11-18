@@ -51,3 +51,21 @@ Idle cash accrues daily at a flat annual yield (`--cash-rate`). LIQUIDBEES pays 
 | 5 | 18.87% | -24.53% | 3,618 | 40.2 | +21.3 / -6.8 | 1.71 | Rs1.70 Cr | 3,009 |
 
 Reading: the spread is under 0.5 CAGR points, i.e. noise; flip-today is marginally best on CAGR, drawdown and profit factor, so the stricter rule costs nothing. Because only the freshest flip day is ordered, a wider window rarely adds trades. Same caveats as above (survivorship, dividend-adjusted prices, uncapped sizing).
+
+## AZ capital-linked sizing test (2026-11-18, user request)
+Flip window 0, 2016-11-07 to 2026-11-17, 214 stocks, idle cash earns 0%, slippage 0.1%. `--size-pct P --size-base realised|equity`: every new position = P% of (start capital + realised P&L) or of total equity (cash + holdings at the last close), replacing the trade-count ladder. Files: `results/az_size_*`.
+
+| Start capital | Sizing | CAGR | Max DD | Closed | Win % | PF | Final | Missed (no cash) | Max pos |
+|---|---|---|---|---|---|---|---|---|---|
+| Rs30L | ladder (Rs20k + Rs5k/100) | 19.19% | -22.99% | 3,556 | 41.1 | 1.76 | Rs1.74 Cr | 2,465 | 134 |
+| Rs30L | 0.5% realised | 12.61% | -16.28% | 5,919 | 41.5 | 1.83 | Rs0.99 Cr | 0 | 192 |
+| Rs30L | 0.67% realised | 14.97% | -19.46% | 5,588 | 41.2 | 1.74 | Rs1.21 Cr | 369 | 157 |
+| Rs30L | 1.0% realised | 18.81% | -20.96% | 4,210 | 42.0 | 1.80 | Rs1.69 Cr | 1,796 | 108 |
+| Rs30L | 0.67% equity | 15.54% | -19.93% | 5,425 | 41.1 | 1.74 | Rs1.28 Cr | 532 | 147 |
+| Rs1 Cr | ladder (Rs20k + Rs5k/100) | 14.92% | -19.07% | 5,322 | 40.5 | 1.77 | Rs4.03 Cr | 649 | 164 |
+| Rs1 Cr | 0.5% realised | 12.84% | -16.30% | 5,919 | 41.7 | 1.84 | Rs3.36 Cr | 0 | 192 |
+| Rs1 Cr | 0.67% realised | 15.04% | -19.42% | 5,569 | 41.2 | 1.74 | Rs4.08 Cr | 390 | 155 |
+| Rs1 Cr | 1.0% realised | 18.53% | -21.11% | 4,187 | 41.8 | 1.77 | Rs5.50 Cr | 1,820 | 108 |
+| Rs1 Cr | 0.67% equity | 15.76% | -19.88% | 5,400 | 41.3 | 1.75 | Rs4.34 Cr | 559 | 145 |
+
+Reading: the ladder is capital-specific (Rs20k is 0.67% of Rs30L but 0.2% of Rs1 Cr, so the Rs1 Cr ladder run under-deploys: 14.9% vs 19.2%). A percentage rule gives near-identical results at both capitals (1.0%: 18.8% vs 18.5%). Low percentages leave cash idle (0% yield here), so CAGR falls as deployment falls; 1.0% matches the ladder's return (-0.4 pt at Rs30L) with a shallower drawdown (-21.0% vs -23.0%) and a higher profit factor. Equity base vs realised base: same within noise. Not yet tested: idle cash at 6%, and 1.25-1.5%.

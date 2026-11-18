@@ -73,8 +73,10 @@ def load(data_dir, symbols, start, with_high_window):
     return raw
 
 
-def run(strategy, data_dir, symbols, start, slip, seed=0, fresh_only=True, cash_rate=0.0, tier_cap=None, flip_window=None):
+def run(strategy, data_dir, symbols, start, slip, seed=0, fresh_only=True, cash_rate=0.0, tier_cap=None, flip_window=None, capital=None, size_pct=None, size_base="realised"):
     cfg = dict(CFG[strategy])
+    if capital is not None:      # override the starting capital (default: the strategy's own)
+        cfg["capital"] = capital
     if flip_window is not None:   # az only: override the entry window (0 = today's flips only, default stays 3)
         cfg["flip_window"] = flip_window
     data = load(data_dir, symbols, start, strategy == "dhan")
@@ -113,6 +115,12 @@ def run(strategy, data_dir, symbols, start, slip, seed=0, fresh_only=True, cash_
             elif od["a"] == "buy" and sym not in pos:
                 n = len(closed) if cfg["count"] == "closed" else opened
                 tier = cfg["base"] + (n // cfg["every"]) * cfg["step"]
+                if size_pct:   # capital-linked sizing: size = size_pct % of (start capital + realised) or of total equity (cash + holdings at last close)
+                    if size_base == "equity":
+                        basev = cash + sum(p_["qty"] * last_seen.get(s_, p_["avg"]) for s_, p_ in pos.items())
+                    else:
+                        basev = cap0 + realised
+                    tier = size_pct / 100.0 * max(basev, 0.0)
                 if tier_cap:
                     tier = min(tier, tier_cap)
                 px = o * (1 + slip)
@@ -217,6 +225,9 @@ def main():
     ap.add_argument("--tier-cap", type=float, default=None, help="maximum Rs per new position (the tier stops growing here)")
     ap.add_argument("--cash-rate", type=float, default=0.0, help="annual yield earned by idle cash (liquid ETF), e.g. 0.06")
     ap.add_argument("--flip-window", type=int, default=None, help="az: entry window in sessions since the green flip (0 = flipped on the signal day; default 3 as in the published results)")
+    ap.add_argument("--capital", type=float, default=None, help="starting capital in Rs (default: the strategy's own, AZ 30,00,000)")
+    ap.add_argument("--size-pct", type=float, default=None, help="capital-linked sizing: each new position = this %% of the base (replaces the trade-count ladder)")
+    ap.add_argument("--size-base", choices=["realised", "equity"], default="realised", help="base for --size-pct: start capital + realised P&L, or total equity (cash + holdings)")
     ap.add_argument("--all-days", action="store_true", help="az: order every flip in the 3-day window, not only the freshest day")
     a = ap.parse_args()
     data_dir = Path(a.data)
@@ -229,8 +240,8 @@ def main():
         symbols = [s for s in valid if s in want]
     else:
         symbols = valid
-    res = run(a.strategy, data_dir, symbols, pd.Timestamp(a.start), a.slip, fresh_only=not a.all_days, cash_rate=a.cash_rate, tier_cap=a.tier_cap, flip_window=a.flip_window)
-    out, cv, tr = summarise(res, f"{a.strategy} start={a.start} slip={a.slip} cash={a.cash_rate} cap={a.tier_cap}{' all-days' if a.all_days else ''}{f' flip-window={a.flip_window}' if a.flip_window is not None else ''}")
+    res = run(a.strategy, data_dir, symbols, pd.Timestamp(a.start), a.slip, fresh_only=not a.all_days, cash_rate=a.cash_rate, tier_cap=a.tier_cap, flip_window=a.flip_window, capital=a.capital, size_pct=a.size_pct, size_base=a.size_base)
+    out, cv, tr = summarise(res, f"{a.strategy} start={a.start} slip={a.slip} cash={a.cash_rate} cap={a.tier_cap}{' all-days' if a.all_days else ''}{f' flip-window={a.flip_window}' if a.flip_window is not None else ''}{f' capital={a.capital:.0f}' if a.capital else ''}{f' size={a.size_pct}%of-{a.size_base}' if a.size_pct else ''}")
     print(json.dumps(out, indent=1, default=str))
     if a.out:
         cv.to_csv(a.out + "_equity.csv")
