@@ -1,6 +1,6 @@
 {
- "fetched_at": "2026-11-18T19:31:18+05:30",
- "source": "orders list after /zerodha-order add-on stage",
+ "fetched_at": "2026-11-18T22:18:26+05:30",
+ "source": "Zerodha MCP orders list",
  "orders": [
   {
    "order_id": "261118151374305",
@@ -12,6 +12,50 @@
    "status": "AMO REQ RECEIVED",
    "amo": true,
    "placed": "2026-11-18T19:30:56+05:30"
+  },
+  {
+   "order_id": "261118151374419",
+   "symbol": "ORCHPHARMA",
+   "side": "BUY",
+   "qty": 2,
+   "order_type": "LIMIT",
+   "price": 960.75,
+   "status": "AMO REQ RECEIVED",
+   "amo": true,
+   "placed": "2026-11-18T19:35:36+05:30"
+  },
+  {
+   "order_id": "261118151374455",
+   "symbol": "PARACABLES",
+   "side": "BUY",
+   "qty": 39,
+   "order_type": "LIMIT",
+   "price": 62.71,
+   "status": "AMO REQ RECEIVED",
+   "amo": true,
+   "placed": "2026-11-18T19:37:16+05:30"
+  },
+  {
+   "order_id": "261118151374476",
+   "symbol": "FSL",
+   "side": "BUY",
+   "qty": 8,
+   "order_type": "LIMIT",
+   "price": 275.65,
+   "status": "AMO REQ RECEIVED",
+   "amo": true,
+   "placed": "2026-11-18T19:38:05+05:30"
+  },
+  {
+   "order_id": "261118151374514",
+   "symbol": "TITAN",
+   "side": "BUY",
+   "qty": 1,
+   "order_type": "LIMIT",
+   "price": 4671.3,
+   "status": "AMO REQ RECEIVED",
+   "amo": true,
+   "placed": "2026-11-18T19:39:13+05:30"
   }
  ]
 }

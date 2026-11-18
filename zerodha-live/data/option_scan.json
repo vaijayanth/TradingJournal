@@ -1,13 +1,14 @@
 {
  "fired_ok_today": [
+  "DIVISLAB26NOV11300CE",
   "MUTHOOTFIN26NOV2650PE"
  ],
- "fetched_at": "2026-11-18T19:40:53+05:30",
+ "fetched_at": "2026-11-18T22:18:44+05:30",
  "inputs": {
-  "positions": "2026-11-18T14:02:06.646717+00:00",
-  "gtts": "2026-11-18T19:40:53+05:30",
-  "orders": "2026-11-18T14:42:50+05:30",
-  "gtt_scan": "2026-11-18T19:40:53+05:30"
+  "positions": "2026-11-18T16:48:26.324214+00:00",
+  "gtts": "2026-11-18T22:18:26+05:30",
+  "orders": "2026-11-18T22:18:26+05:30",
+  "gtt_scan": "2026-11-18T22:18:26+05:30"
  },
  "stale_inputs": [],
  "open_legs": 70,
@@ -276,14 +277,6 @@
    "tradingsymbol": "MAHABANK26NOV89CE",
    "concern": "No active buy-back GTT (premium 7.3, sold 0.32, already 22.8x: a GTT would fire at once)",
    "action": "Close it now (a GTT would fire at once)"
-  },
-  {
-   "section": "D",
-   "severity": "WARN",
-   "symbol": "DIVISLAB",
-   "tradingsymbol": "DIVISLAB26NOV11300CE",
-   "concern": "GTT 344931476 fired today (15:08) but no buy-back order from a GTT is in today's order list",
-   "action": "Check the order book in Kite"
   },
   {
    "section": "G",
