@@ -1,8 +1,21 @@
 {
- "fetched_at": "2026-11-18T11:56:07+05:30",
- "gtts_fetched_at": "2026-11-18T11:55:55+05:30",
+ "fetched_at": "2026-11-18T14:43:00+05:30",
+ "gtts_fetched_at": "2026-11-18T14:42:51+05:30",
  "checked": 35,
  "findings": [
+  {
+   "check": "G1",
+   "name": "STALE",
+   "severity": "HIGH",
+   "tradingsymbol": "BEL26NOV360PE",
+   "gtt_id": 343633894,
+   "symbol": "BEL",
+   "expiry": "2026-11-23",
+   "strike": 360.0,
+   "opt_type": "PE",
+   "concern": "No open position on this contract (closed or expired): if it triggers it BUYS a new long position",
+   "action": "Delete this GTT"
+  },
   {
    "check": "G1",
    "name": "STALE",
