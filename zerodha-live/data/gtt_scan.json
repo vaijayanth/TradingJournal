@@ -1,6 +1,59 @@
 {
- "fetched_at": "2026-11-18T10:58:28+05:30",
- "gtts_fetched_at": "2026-11-18T10:58:15+05:30",
+ "fetched_at": "2026-11-18T11:56:07+05:30",
+ "gtts_fetched_at": "2026-11-18T11:55:55+05:30",
  "checked": 35,
- "findings": []
+ "findings": [
+  {
+   "check": "G1",
+   "name": "STALE",
+   "severity": "HIGH",
+   "tradingsymbol": "KAYNES26DEC3900CE",
+   "gtt_id": 345199323,
+   "symbol": "KAYNES",
+   "expiry": "2026-12-29",
+   "strike": 3900.0,
+   "opt_type": "CE",
+   "concern": "No open position on this contract (closed or expired): if it triggers it BUYS a new long position",
+   "action": "Delete this GTT"
+  },
+  {
+   "check": "G1",
+   "name": "STALE",
+   "severity": "HIGH",
+   "tradingsymbol": "MOTILALOFS26NOV960PE",
+   "gtt_id": 343700554,
+   "symbol": "MOTILALOFS",
+   "expiry": "2026-11-23",
+   "strike": 960.0,
+   "opt_type": "PE",
+   "concern": "No open position on this contract (closed or expired): if it triggers it BUYS a new long position",
+   "action": "Delete this GTT"
+  },
+  {
+   "check": "G1",
+   "name": "STALE",
+   "severity": "HIGH",
+   "tradingsymbol": "NAUKRI26DEC1300CE",
+   "gtt_id": 344968270,
+   "symbol": "NAUKRI",
+   "expiry": "2026-12-29",
+   "strike": 1300.0,
+   "opt_type": "CE",
+   "concern": "No open position on this contract (closed or expired): if it triggers it BUYS a new long position",
+   "action": "Delete this GTT"
+  },
+  {
+   "check": "G1",
+   "name": "STALE",
+   "severity": "HIGH",
+   "tradingsymbol": "OIL26DEC500CE",
+   "gtt_id": 344968303,
+   "symbol": "OIL",
+   "expiry": "2026-12-29",
+   "strike": 500.0,
+   "opt_type": "CE",
+   "concern": "No open position on this contract (closed or expired): if it triggers it BUYS a new long position",
+   "action": "Delete this GTT"
+  }
+ ]
 }
