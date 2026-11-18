@@ -7,8 +7,8 @@ Inputs (all must be from TODAY, IST; the zerodha-gtt-order skill pulls them firs
   data/cc_positions.json   <- get_positions via cc_positions.py   (the open legs, quantities, sold average, LTP)
   data/cc_gtts.json        <- get_gtts via cc_gtts.py             (which contracts already have an active buy GTT)
 Rules: SHORT option legs only; BUY to close, NRML, quantity = the open short quantity. Default = a TWO-LEG (one-cancels-other) GTT like
-the user's own: upper trigger = the stop, stop_premium_multiple x the sold average (3), lower trigger = the profit target, the premium
-decayed by profit_exit_decay_pct (60%), i.e. 40% of the sold average. Each limit = its trigger + gtt_limit_buffer_pct (3%) rounded up to
+the user's own: upper trigger = the stop, gtt_stop_trigger_multiple x the sold average (2.75), upper limit = stop_premium_multiple x the sold average (3), lower trigger = the profit target, the premium
+decayed by profit_exit_decay_pct (60%), i.e. 40% of the sold average. The profit limit = its trigger + gtt_limit_buffer_pct (3%) rounded up to
 the 0.05 tick. `--single` builds the stop only. If the premium has already decayed past the profit target the ticket is stop-only (book
 the profit now: see the Profit Exit alert). A leg whose LTP is already at/above the stop is NOT ticketed (it needs closing now). Refuses when
 data/trading_halt.json says halt, when the inputs are not from today, or for a batch over 40 orders.
@@ -81,7 +81,10 @@ def main():
         if fetched_date_ist(d.get("fetched_at")) != today_ist():
             sys.exit(f"REFUSED: the {nm} were not pulled today ({d.get('fetched_at')}). Pull get_positions / get_gtts first, otherwise a leg that already has a GTT could get a second one.")
     cfg = load("cc_config.json")["rules"]
-    mult, buf = cfg.get("stop_premium_multiple", 3), cfg.get("gtt_limit_buffer_pct", 3)
+    # user, 2026-11-18: the stop TRIGGER is gtt_stop_trigger_multiple x the sold average (2.75) and the stop LIMIT is stop_premium_multiple x (3), so the
+    # buy-back order can fill anywhere up to 3x; gtt_limit_buffer_pct only pads the profit-target limit.
+    mult, buf = cfg.get("gtt_stop_trigger_multiple", cfg.get("stop_premium_multiple", 3)), cfg.get("gtt_limit_buffer_pct", 3)
+    limit_mult = cfg.get("stop_premium_multiple", 3)
     decay = cfg.get("profit_exit_decay_pct", 60)
     active = gtt.get("active", {})
     need, skipped = [], []
@@ -92,7 +95,7 @@ def main():
         if l["ltp"] >= trig:
             skipped.append((l, trig))
             continue
-        lim = tick(trig * (1 + buf / 100), up=True)
+        lim = tick(limit_mult * l["avg"])
         t = {"tradingsymbol": l["tradingsymbol"], "symbol": l["symbol"], "exchange": "NFO", "product": "NRML", "transaction_type": "BUY",
              "quantity": l["qty"], "sold_avg": l["avg"], "last_price": l["ltp"], "est_value": round(lim * l["qty"])}
         prof = tick(l["avg"] * (1 - decay / 100))

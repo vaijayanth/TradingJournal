@@ -2,12 +2,12 @@
  "fired_ok_today": [
   "MUTHOOTFIN26NOV2650PE"
  ],
- "fetched_at": "2026-11-18T19:27:09+05:30",
+ "fetched_at": "2026-11-18T19:40:53+05:30",
  "inputs": {
-  "positions": "2026-11-18T13:56:39.610771+00:00",
-  "gtts": "2026-11-18T19:26:39+05:30",
+  "positions": "2026-11-18T14:02:06.646717+00:00",
+  "gtts": "2026-11-18T19:40:53+05:30",
   "orders": "2026-11-18T14:42:50+05:30",
-  "gtt_scan": "2026-11-18T19:26:39+05:30"
+  "gtt_scan": "2026-11-18T19:40:53+05:30"
  },
  "stale_inputs": [],
  "open_legs": 70,
@@ -278,164 +278,12 @@
    "action": "Close it now (a GTT would fire at once)"
   },
   {
-   "section": "C",
-   "severity": "WARN",
-   "symbol": "AUBANK",
-   "tradingsymbol": "AUBANK26DEC890PE",
-   "concern": "No active buy-back GTT (premium 7.75, sold 8.05)",
-   "action": "Place the protective GTT (zerodha-gtt-order)"
-  },
-  {
-   "section": "C",
-   "severity": "WARN",
-   "symbol": "BHEL",
-   "tradingsymbol": "BHEL26DEC500CE",
-   "concern": "No active buy-back GTT (premium 1.5, sold 1.5)",
-   "action": "Place the protective GTT (zerodha-gtt-order)"
-  },
-  {
-   "section": "C",
-   "severity": "WARN",
-   "symbol": "COLPAL",
-   "tradingsymbol": "COLPAL26DEC1540PE",
-   "concern": "No active buy-back GTT (premium 10.95, sold 12.3)",
-   "action": "Place the protective GTT (zerodha-gtt-order)"
-  },
-  {
-   "section": "C",
-   "severity": "WARN",
-   "symbol": "ICICIGI",
-   "tradingsymbol": "ICICIGI26DEC1560PE",
-   "concern": "No active buy-back GTT (premium 14.9, sold 13.5)",
-   "action": "Place the protective GTT (zerodha-gtt-order)"
-  },
-  {
-   "section": "C",
-   "severity": "WARN",
-   "symbol": "IDFCFIRSTB",
-   "tradingsymbol": "IDFCFIRSTB26DEC75PE",
-   "concern": "No active buy-back GTT (premium 0.67, sold 0.67)",
-   "action": "Place the protective GTT (zerodha-gtt-order)"
-  },
-  {
-   "section": "C",
-   "severity": "WARN",
-   "symbol": "NATIONALUM",
-   "tradingsymbol": "NATIONALUM26DEC280PE",
-   "concern": "No active buy-back GTT (premium 3.65, sold 3.75)",
-   "action": "Place the protective GTT (zerodha-gtt-order)"
-  },
-  {
-   "section": "C",
-   "severity": "WARN",
-   "symbol": "NHPC",
-   "tradingsymbol": "NHPC26DEC85CE",
-   "concern": "No active buy-back GTT (premium 0.4, sold 0.4)",
-   "action": "Place the protective GTT (zerodha-gtt-order)"
-  },
-  {
-   "section": "C",
-   "severity": "WARN",
-   "symbol": "OFSS",
-   "tradingsymbol": "OFSS26DEC11500CE",
-   "concern": "No active buy-back GTT (premium 43.35, sold 46.9)",
-   "action": "Place the protective GTT (zerodha-gtt-order)"
-  },
-  {
-   "section": "C",
-   "severity": "WARN",
-   "symbol": "PAYTM",
-   "tradingsymbol": "PAYTM26DEC1640PE",
-   "concern": "No active buy-back GTT (premium 16.4, sold 16.5)",
-   "action": "Place the protective GTT (zerodha-gtt-order)"
-  },
-  {
-   "section": "C",
-   "severity": "WARN",
-   "symbol": "PFC",
-   "tradingsymbol": "PFC26DEC300PE",
-   "concern": "No active buy-back GTT (premium 2.5, sold 2.5)",
-   "action": "Place the protective GTT (zerodha-gtt-order)"
-  },
-  {
-   "section": "C",
-   "severity": "WARN",
-   "symbol": "SAIL",
-   "tradingsymbol": "SAIL26DEC200CE",
-   "concern": "No active buy-back GTT (premium 0.92, sold 1)",
-   "action": "Place the protective GTT (zerodha-gtt-order)"
-  },
-  {
-   "section": "C",
-   "severity": "WARN",
-   "symbol": "SIEMENS",
-   "tradingsymbol": "SIEMENS26DEC3150PE",
-   "concern": "No active buy-back GTT (premium 30.75, sold 30.75)",
-   "action": "Place the protective GTT (zerodha-gtt-order)"
-  },
-  {
-   "section": "C",
-   "severity": "WARN",
-   "symbol": "TORNTPHARM",
-   "tradingsymbol": "TORNTPHARM26DEC5100CE",
-   "concern": "No active buy-back GTT (premium 23.55, sold 25.05)",
-   "action": "Place the protective GTT (zerodha-gtt-order)"
-  },
-  {
    "section": "D",
    "severity": "WARN",
    "symbol": "DIVISLAB",
    "tradingsymbol": "DIVISLAB26NOV11300CE",
    "concern": "GTT 344931476 fired today (15:08) but no buy-back order from a GTT is in today's order list",
    "action": "Check the order book in Kite"
-  },
-  {
-   "section": "F",
-   "severity": "HIGH",
-   "symbol": "BEL",
-   "tradingsymbol": "BEL26NOV360PE",
-   "concern": "G1 STALE: No open position on this contract (closed or expired): if it triggers it BUYS a new long position (GTT 343633894)",
-   "action": "Delete this GTT"
-  },
-  {
-   "section": "F",
-   "severity": "HIGH",
-   "symbol": "COCHINSHIP",
-   "tradingsymbol": "COCHINSHIP26NOV1120PE",
-   "concern": "G1 STALE: No open position on this contract (closed or expired): if it triggers it BUYS a new long position (GTT 344051339)",
-   "action": "Delete this GTT"
-  },
-  {
-   "section": "F",
-   "severity": "HIGH",
-   "symbol": "KAYNES",
-   "tradingsymbol": "KAYNES26DEC3900CE",
-   "concern": "G1 STALE: No open position on this contract (closed or expired): if it triggers it BUYS a new long position (GTT 345199323)",
-   "action": "Delete this GTT"
-  },
-  {
-   "section": "F",
-   "severity": "HIGH",
-   "symbol": "MOTILALOFS",
-   "tradingsymbol": "MOTILALOFS26NOV960PE",
-   "concern": "G1 STALE: No open position on this contract (closed or expired): if it triggers it BUYS a new long position (GTT 343700554)",
-   "action": "Delete this GTT"
-  },
-  {
-   "section": "F",
-   "severity": "HIGH",
-   "symbol": "NAUKRI",
-   "tradingsymbol": "NAUKRI26DEC1300CE",
-   "concern": "G1 STALE: No open position on this contract (closed or expired): if it triggers it BUYS a new long position (GTT 344968270)",
-   "action": "Delete this GTT"
-  },
-  {
-   "section": "F",
-   "severity": "HIGH",
-   "symbol": "OIL",
-   "tradingsymbol": "OIL26DEC500CE",
-   "concern": "G1 STALE: No open position on this contract (closed or expired): if it triggers it BUYS a new long position (GTT 344968303)",
-   "action": "Delete this GTT"
   },
   {
    "section": "G",

@@ -1,14 +1,15 @@
 {
- "generated_at": "2026-11-18T13:57:04.169008+00:00",
+ "generated_at": "2026-11-18T14:22:22.351315+00:00",
  "market_data_date": "2026-11-18",
  "live_prices_at": "2026-11-18T19:26:57+05:30",
- "gtt_scan_at": "2026-11-18T19:26:57+05:30",
- "gtt_checked_at": "2026-11-18T19:26:39+05:30",
+ "gtt_scan_at": "2026-11-18T19:52:22+05:30",
+ "gtt_checked_at": "2026-11-18T19:52:22+05:30",
  "rules": {
   "short_call_delta": 0.1,
   "short_put_delta": 0.1,
   "hedge_strikes_below": 2,
   "stop_premium_multiple": 3,
+  "gtt_stop_trigger_multiple": 2.75,
   "near_strike_pct": 2,
   "profit_exit_decay_pct": 60,
   "expiry_risk_days": 7,
@@ -8553,72 +8554,6 @@
   },
   {
    "level": "BREACH",
-   "type": "Invalid GTT",
-   "symbol": "BEL",
-   "expiry": "2026-11-23",
-   "strike": 360.0,
-   "opt_type": "PE",
-   "concern": "Stale: No open position on this contract (closed or expired): if it triggers it BUYS a new long position",
-   "action": "Delete this GTT (GTT 343633894)",
-   "text": "BEL BEL26NOV360PE: No open position on this contract (closed or expired): if it triggers it BUYS a new long position"
-  },
-  {
-   "level": "BREACH",
-   "type": "Invalid GTT",
-   "symbol": "COCHINSHIP",
-   "expiry": "2026-11-23",
-   "strike": 1120.0,
-   "opt_type": "PE",
-   "concern": "Stale: No open position on this contract (closed or expired): if it triggers it BUYS a new long position",
-   "action": "Delete this GTT (GTT 344051339)",
-   "text": "COCHINSHIP COCHINSHIP26NOV1120PE: No open position on this contract (closed or expired): if it triggers it BUYS a new long position"
-  },
-  {
-   "level": "BREACH",
-   "type": "Invalid GTT",
-   "symbol": "KAYNES",
-   "expiry": "2026-12-29",
-   "strike": 3900.0,
-   "opt_type": "CE",
-   "concern": "Stale: No open position on this contract (closed or expired): if it triggers it BUYS a new long position",
-   "action": "Delete this GTT (GTT 345199323)",
-   "text": "KAYNES KAYNES26DEC3900CE: No open position on this contract (closed or expired): if it triggers it BUYS a new long position"
-  },
-  {
-   "level": "BREACH",
-   "type": "Invalid GTT",
-   "symbol": "MOTILALOFS",
-   "expiry": "2026-11-23",
-   "strike": 960.0,
-   "opt_type": "PE",
-   "concern": "Stale: No open position on this contract (closed or expired): if it triggers it BUYS a new long position",
-   "action": "Delete this GTT (GTT 343700554)",
-   "text": "MOTILALOFS MOTILALOFS26NOV960PE: No open position on this contract (closed or expired): if it triggers it BUYS a new long position"
-  },
-  {
-   "level": "BREACH",
-   "type": "Invalid GTT",
-   "symbol": "NAUKRI",
-   "expiry": "2026-12-29",
-   "strike": 1300.0,
-   "opt_type": "CE",
-   "concern": "Stale: No open position on this contract (closed or expired): if it triggers it BUYS a new long position",
-   "action": "Delete this GTT (GTT 344968270)",
-   "text": "NAUKRI NAUKRI26DEC1300CE: No open position on this contract (closed or expired): if it triggers it BUYS a new long position"
-  },
-  {
-   "level": "BREACH",
-   "type": "Invalid GTT",
-   "symbol": "OIL",
-   "expiry": "2026-12-29",
-   "strike": 500.0,
-   "opt_type": "CE",
-   "concern": "Stale: No open position on this contract (closed or expired): if it triggers it BUYS a new long position",
-   "action": "Delete this GTT (GTT 344968303)",
-   "text": "OIL OIL26DEC500CE: No open position on this contract (closed or expired): if it triggers it BUYS a new long position"
-  },
-  {
-   "level": "BREACH",
    "type": "Event close",
    "symbol": "PFC",
    "expiry": "2026-12-29",
@@ -8654,30 +8589,6 @@
    "text": "AMBER 2026-11-23: Long 5500PE (100 qty) has no short against it - P&L Rs-3,740, 5d to expiry - sell it or let it expire"
   },
   {
-   "level": "WARN",
-   "type": "No GTT placed",
-   "symbol": "AUBANK",
-   "expiry": "2026-12-29",
-   "strike": 890.0,
-   "opt_type": "PE",
-   "qty": 1000,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 24.15 (3x premium)",
-   "text": "AUBANK 2026-12-29 short 890PE: no active buy-back GTT (3x premium stop = 24.15)"
-  },
-  {
-   "level": "WARN",
-   "type": "No GTT placed",
-   "symbol": "BHEL",
-   "expiry": "2026-12-29",
-   "strike": 500.0,
-   "opt_type": "CE",
-   "qty": 2625,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 4.5 (3x premium)",
-   "text": "BHEL 2026-12-29 short 500CE: no active buy-back GTT (3x premium stop = 4.5)"
-  },
-  {
    "expiry": "2026-11-23",
    "strike": 300.0,
    "opt_type": "PE",
@@ -8691,18 +8602,6 @@
    "concern": "Price 1.8% from the short strike",
    "action": "Watch; plan the roll",
    "text": "BPCL 2026-11-23: price 305.5 is within 1.8% of the short 300PE"
-  },
-  {
-   "level": "WARN",
-   "type": "No GTT placed",
-   "symbol": "COLPAL",
-   "expiry": "2026-12-29",
-   "strike": 1540.0,
-   "opt_type": "PE",
-   "qty": 550,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 36.9 (3x premium)",
-   "text": "COLPAL 2026-12-29 short 1540PE: no active buy-back GTT (3x premium stop = 36.9)"
   },
   {
    "level": "WARN",
@@ -8830,30 +8729,6 @@
   {
    "level": "WARN",
    "type": "No GTT placed",
-   "symbol": "ICICIGI",
-   "expiry": "2026-12-29",
-   "strike": 1560.0,
-   "opt_type": "PE",
-   "qty": 325,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 40.5 (3x premium)",
-   "text": "ICICIGI 2026-12-29 short 1560PE: no active buy-back GTT (3x premium stop = 40.5)"
-  },
-  {
-   "level": "WARN",
-   "type": "No GTT placed",
-   "symbol": "IDFCFIRSTB",
-   "expiry": "2026-12-29",
-   "strike": 75.0,
-   "opt_type": "PE",
-   "qty": 9275,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 2.01 (3x premium)",
-   "text": "IDFCFIRSTB 2026-12-29 short 75PE: no active buy-back GTT (3x premium stop = 2.01)"
-  },
-  {
-   "level": "WARN",
-   "type": "No GTT placed",
    "symbol": "MAHABANK",
    "expiry": "2026-11-23",
    "strike": 89.0,
@@ -8900,102 +8775,6 @@
    "text": "MOTILALOFS 2026-11-23: Long 840PE (775 qty) has no short against it - P&L Rs-4,921, 5d to expiry - sell it or let it expire"
   },
   {
-   "level": "WARN",
-   "type": "No GTT placed",
-   "symbol": "NATIONALUM",
-   "expiry": "2026-12-29",
-   "strike": 280.0,
-   "opt_type": "PE",
-   "qty": 1875,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 11.25 (3x premium)",
-   "text": "NATIONALUM 2026-12-29 short 280PE: no active buy-back GTT (3x premium stop = 11.25)"
-  },
-  {
-   "level": "WARN",
-   "type": "No GTT placed",
-   "symbol": "NHPC",
-   "expiry": "2026-12-29",
-   "strike": 85.0,
-   "opt_type": "CE",
-   "qty": 6950,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 1.2 (3x premium)",
-   "text": "NHPC 2026-12-29 short 85CE: no active buy-back GTT (3x premium stop = 1.2)"
-  },
-  {
-   "level": "WARN",
-   "type": "No GTT placed",
-   "symbol": "OFSS",
-   "expiry": "2026-12-29",
-   "strike": 11500.0,
-   "opt_type": "CE",
-   "qty": 50,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 140.7 (3x premium)",
-   "text": "OFSS 2026-12-29 short 11500CE: no active buy-back GTT (3x premium stop = 140.7)"
-  },
-  {
-   "level": "WARN",
-   "type": "No GTT placed",
-   "symbol": "PAYTM",
-   "expiry": "2026-12-29",
-   "strike": 1640.0,
-   "opt_type": "PE",
-   "qty": 725,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 49.5 (3x premium)",
-   "text": "PAYTM 2026-12-29 short 1640PE: no active buy-back GTT (3x premium stop = 49.5)"
-  },
-  {
-   "level": "WARN",
-   "type": "No GTT placed",
-   "symbol": "PFC",
-   "expiry": "2026-12-29",
-   "strike": 300.0,
-   "opt_type": "PE",
-   "qty": 2600,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 7.5 (3x premium)",
-   "text": "PFC 2026-12-29 short 300PE: no active buy-back GTT (3x premium stop = 7.5)"
-  },
-  {
-   "level": "WARN",
-   "type": "No GTT placed",
-   "symbol": "SAIL",
-   "expiry": "2026-12-29",
-   "strike": 200.0,
-   "opt_type": "CE",
-   "qty": 4700,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 3 (3x premium)",
-   "text": "SAIL 2026-12-29 short 200CE: no active buy-back GTT (3x premium stop = 3)"
-  },
-  {
-   "level": "WARN",
-   "type": "No GTT placed",
-   "symbol": "SIEMENS",
-   "expiry": "2026-12-29",
-   "strike": 3150.0,
-   "opt_type": "PE",
-   "qty": 175,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 92.25 (3x premium)",
-   "text": "SIEMENS 2026-12-29 short 3150PE: no active buy-back GTT (3x premium stop = 92.25)"
-  },
-  {
-   "level": "WARN",
-   "type": "No GTT placed",
-   "symbol": "TORNTPHARM",
-   "expiry": "2026-12-29",
-   "strike": 5100.0,
-   "opt_type": "CE",
-   "qty": 125,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 75.15 (3x premium)",
-   "text": "TORNTPHARM 2026-12-29 short 5100CE: no active buy-back GTT (3x premium stop = 75.15)"
-  },
-  {
    "level": "PROFIT",
    "type": "Profit Exit",
    "symbol": "CUMMINSIND",
@@ -9024,7 +8803,7 @@
   "RECLTD"
  ],
  "positions": {
-  "fetched_at": "2026-11-18T13:56:39.610771+00:00",
+  "fetched_at": "2026-11-18T14:02:06.646717+00:00",
   "track_from": "2026-11-01",
   "legs": 70,
   "ignored_legs": 16
