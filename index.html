@@ -891,6 +891,10 @@ tr.cc-det td { background:var(--surface2); white-space:normal !important; paddin
 .d2-edge-foot { border-top:1px solid var(--border); padding:9px 15px; color:var(--text-muted); font-size:10px; }
 .d2-edge-split { display:grid; grid-template-columns:1fr 1fr; border-top:1px solid var(--border); }
 .d2-edge-sub { padding:13px 15px; } .d2-edge-sub:first-child { border-right:1px solid var(--border); }
+.d2-sc-chip { display:inline-block; font-size:10px; font-weight:600; letter-spacing:.03em; padding:2px 8px; border-radius:99px; border:1px solid var(--border); color:var(--text-muted); white-space:nowrap; }
+.d2-sc-chip.ok { color:var(--green); border-color:var(--green); } .d2-sc-chip.warn { color:var(--red); border-color:var(--red); } .d2-sc-chip.early { color:var(--amber); border-color:var(--amber); }
+#d2-score-t td:last-child, #d2-score-t th:last-child { text-align:right; width:150px; } #d2-score-t td:nth-child(2), #d2-score-t td:nth-child(3) { text-align:right; }
+.d2-sc-wrap { padding:4px 16px 14px; }
 .d2-edge-t { width:100%; border-collapse:collapse; font-size:12px; margin-top:7px; } .d2-edge-t td, .d2-edge-t th { padding:4px 0; text-align:right; font-weight:400; }
 .d2-edge-t td:first-child, .d2-edge-t th:first-child { text-align:left; color:var(--text-secondary); } .d2-edge-t th { color:var(--text-muted); font-size:10px; text-transform:uppercase; letter-spacing:.04em; }
 .d2-edge-t td { font-family:var(--font-mono); font-variant-numeric:tabular-nums; } .d2-edge-t td:first-child { font-family:inherit; }
@@ -1335,6 +1339,11 @@ b.stk, #cc-root td b.stk, #page-dashboard-di b.stk { font-weight:700; }
       <div class="d2-edge-sub"><div class="d2-label">Open book by age</div><table class="d2-edge-t" id="d2-e-age"></table></div>
     </div>
     <div class="d2-edge-foot" id="d2-edge-foot">—</div>
+  </section>
+
+  <section class="d2-panel" id="d2-score" style="margin-top:13px">
+    <div class="d2-panel-head"><div><div class="d2-title">Strategy scorecard</div><div class="d2-hint" id="d2-score-hint">Live results against the backtest, so you can see whether the strategy is behaving as tested.</div></div><span class="d2-pill muted" id="d2-score-pill">—</span></div>
+    <div class="d2-sc-wrap"><table class="d2-edge-t" id="d2-score-t" data-te="off"></table><div class="d2-edge-foot" id="d2-score-foot" style="margin-top:10px">—</div></div>
   </section>
 
   <div id="d2-shares-wrap" style="display:none;margin-top:13px"></div>
@@ -8810,13 +8819,15 @@ const WORKSPACES = {
                      closedSrc: 'the imported ND Global Transaction Report (equity only; option-hedge portfolio excluded; dh252 era from 21-Oct-26)',
                      entryRule: 'Enter only on a fresh 52-week high', lossTitle: 'Positions beyond the add-on trigger' },
              cfg: { staleDays: 3, addTriggerPct: -6, addCooldownDays: 7, addFraction: 0.1, // fallbacks; engine output wins
-                    ref: { label: 'dh252 10-yr backtest', winRate: 42.05, avgPlPct: 8.45, trades: 5203 } },
+                    ref: { label: 'dh252 10-yr backtest', winRate: 42.05, avgPlPct: 8.45, trades: 5203 },
+                    bt: { label: '10-yr backtest · Rs20L start · Rs1k + Rs1k ladder · 6% on idle cash', cagr: 28.01, maxDd: -15.42, winRate: 41.3, pf: 2.01, avgWin: 33.1, avgLoss: -9.0, holdWin: 102, holdLoss: 39, maxPos: 469, trades: 7898 } },
              pages: { live: true, covcall: true, dashboard: 'v2', performance: 'v2', analysis: 'v2' } },   // 'v2' = contract-driven page-dashboard2
   zerodha: { id: 'zerodha', label: 'AZ',      strategy: 'F&O Supertrend', source: 'MCP snapshot', status: 'live',
              snapshotUrl: 'zerodha-live/zerodha_live_signals.json',
              ordersUrl: 'zerodha-live/data/orders_snapshot.json', crosscheckUrl: 'zerodha-live/data/signal_crosscheck.json', guardUrl: 'zerodha-live/data/guardrails.json',
              ccUrl: 'zerodha-live/covered_call_signals.json',
-             cfg: { staleDays: 3, addTriggerPct: -6, addCooldownDays: 7, addFraction: 0.1 },
+             cfg: { staleDays: 3, addTriggerPct: -6, addCooldownDays: 7, addFraction: 0.1,
+                    bt: { label: '10-yr backtest · Rs30L start · Rs20k + Rs5k ladder · flip-today entry · 6% on idle cash', cagr: 20.21, maxDd: -21.32, winRate: 41.2, pf: 1.75, avgWin: 21.0, avgLoss: -6.8, holdWin: 106, holdLoss: 36, maxPos: 136, trades: 3656 } },
              copy: { refreshCmd: '/refresh-zerodha', hasCC: false, optCol: true, strat: 'F&O Supertrend', liveTitle: 'AZ Live · Nifty F&O',
                      liveSub: "AZ holdings in Nifty F&O stocks vs. the backtester's daily Supertrend signals", logoA: 'F&O', logoB: '', logoSub: 'Supertrend swing',
                      entryShort: 'Supertrend flipped to green today', addShort: 'Down 6% or more, trend green',
@@ -9960,6 +9971,8 @@ function d2Render(d) {
     + (cfgRef ? `Reference — ${cfgRef.label}: ${cfgRef.winRate}% win rate · +${cfgRef.avgPlPct}% average P&L · ${cfgRef.trades.toLocaleString('en-IN')} trades, all closed, so not comparable until your winners have also closed. ` : '')
     + `Marked to market at the last close.`);
 
+  try { d2RenderScore(d); } catch (e) { console.error('Scorecard error:', e); }
+
   // Attention queues
   const q = d2Queues(d);
   set('d2-a-sma200', q.hasSma ? q.sma200.length : '—'); set('d2-a-longloss', q.longloss.length);
@@ -9988,6 +10001,59 @@ function d2Render(d) {
   set('d2-foot', `${ws.label} workspace · ${ws.strategy} · fixed starting capital of ${d.capital.initial ? dhFmtRs(d.capital.initial) : '—'} (deposits ignored). `
     + (sma ? `200-day averages use price history through ${dhFmtDate(sma.smaAsOf)}. ` : '')
     + 'Closed trades come from ' + (dhCopy().closedSrc || 'the recorded fills') + '.');
+}
+
+
+// ── Strategy scorecard (user, 2026-11-18): live max drawdown, profit factor, CAGR, win rate etc. against the workspace's backtest (ws.cfg.bt) ──
+function d2RenderScore(d) {
+  const ws = WORKSPACES[WS.id], bt = ws.cfg && ws.cfg.bt, P = d.positions || [], closed = d.closed || [];
+  const t = document.getElementById('d2-score-t'); if (!t) return;
+  const base = d.capital.initial || 0;
+  const eq = (d.equity || []).filter(r => r && r.equity != null);
+  const mean = a => a.length ? a.reduce((x, y) => x + y, 0) / a.length : null;
+  // drawdown on the equity curve (start capital counts as the first peak)
+  let peak = base || (eq[0] ? eq[0].equity : 0), maxDd = 0, ddDate = null;
+  eq.forEach(r => { if (r.equity > peak) peak = r.equity; const dd = peak ? (r.equity - peak) / peak * 100 : 0; if (dd < maxDd) { maxDd = dd; ddDate = r.date; } });
+  const last = eq.length ? eq[eq.length - 1] : null, curDd = last && peak ? (last.equity - peak) / peak * 100 : null;
+  const days = eq.length && base ? Math.max(1, Math.round((new Date(last.date + 'T00:00:00') - new Date(eq[0].date + 'T00:00:00')) / 864e5)) : 0;
+  const totRet = last && base ? (last.equity - base) / base * 100 : null;
+  const cagr = totRet != null && days >= 90 ? (Math.pow(1 + totRet / 100, 365 / days) - 1) * 100 : null;
+  // trade-level statistics, closed and open together
+  const pl = closed.map(c => ({ rs: c.plRs || 0, pct: c.plPct, hold: c.holdDays })).concat(P.map(p => ({ rs: p.plRs || 0, pct: p.plPct, hold: p.ageDays })));
+  const wins = pl.filter(x => x.rs > 0), loss = pl.filter(x => x.rs < 0);
+  const gain = wins.reduce((a, x) => a + x.rs, 0), lossRs = Math.abs(loss.reduce((a, x) => a + x.rs, 0));
+  const pf = lossRs ? gain / lossRs : (gain ? null : null);
+  const wr = pl.length ? wins.length / pl.length * 100 : null;
+  const aW = mean(wins.map(x => x.pct).filter(x => x != null)), aL = mean(loss.map(x => x.pct).filter(x => x != null));
+  const hW = mean(wins.map(x => x.hold).filter(x => x != null)), hL = mean(loss.map(x => x.hold).filter(x => x != null));
+  const expRs = pl.length ? pl.reduce((a, x) => a + x.rs, 0) / pl.length : null;
+  const early = days < 90 || closed.length < 30;   // too little history to judge against a 10-year test
+  const chip = (st, txt) => `<span class="d2-sc-chip ${st}">${txt}</span>`;
+  const fx = (v, dp = 1) => v == null ? '—' : Number(v).toFixed(dp);
+  const cmp = (live, ref, higherBetter, tol) => { if (live == null || ref == null) return chip('', '—'); if (early) return chip('early', 'Too early'); const ok = higherBetter ? live >= ref - tol : live <= ref + tol; return ok ? chip('ok', 'On track') : chip('warn', 'Below backtest'); };
+  const row = (lab, live, ref, st, cls) => `<tr><td>${lab}</td><td class="${cls || ''}">${live}</td><td>${ref}</td><td>${st}</td></tr>`;
+  const B = bt || {};
+  const rows = [
+    row('Max drawdown', eq.length ? dhFmtPct(maxDd) : '—', bt ? dhFmtPct(B.maxDd) : '—', bt ? cmp(maxDd, B.maxDd, true, 0) : chip('', '—'), maxDd < 0 ? 'neg' : ''),
+    row('Current drawdown from peak', curDd == null ? '—' : dhFmtPct(curDd), '—', chip('', 'Live only'), curDd < 0 ? 'neg' : ''),
+    row(`Return since start${days ? ` (${days} days)` : ''}`, totRet == null ? '—' : dhFmtPct(totRet), '—', chip('', 'Live only'), d2Cls(totRet)),
+    row('Annualised return (CAGR)', cagr == null ? 'needs 3 months' : dhFmtPct(cagr), bt ? dhFmtPct(B.cagr) : '—', bt ? cmp(cagr, B.cagr, true, 3) : chip('', '—'), d2Cls(cagr)),
+    row('Profit factor (closed + open)', pf == null ? '—' : fx(pf, 2), bt ? fx(B.pf, 2) : '—', bt ? cmp(pf, B.pf, true, 0.3) : chip('', '—')),
+    row('Win rate (closed + open)', wr == null ? '—' : fx(wr) + '%', bt ? fx(B.winRate) + '% (closed only)' : '—', chip('', 'Not like for like')),
+    row('Average winner', aW == null ? '—' : dhFmtPct(aW), bt ? dhFmtPct(B.avgWin) : '—', bt ? cmp(aW, B.avgWin, true, 3) : chip('', '—'), 'pos'),
+    row('Average loser', aL == null ? '—' : dhFmtPct(aL), bt ? dhFmtPct(B.avgLoss) : '—', bt ? cmp(aL, B.avgLoss, true, 1.5) : chip('', '—'), 'neg'),
+    row('Average hold: winners / losers', `${hW == null ? '—' : Math.round(hW) + 'd'} / ${hL == null ? '—' : Math.round(hL) + 'd'}`, bt ? `${B.holdWin}d / ${B.holdLoss}d` : '—', chip('', 'Context')),
+    row('Expectancy per trade', expRs == null ? '—' : d2Signed(expRs), '—', chip('', 'Live only'), d2Cls(expRs)),
+    row('Capital invested', base ? (((d.capital.invested || 0) / base) * 100).toFixed(1) + '% of base' : '—', '—', chip('', 'Live only')),
+    row('Open positions', P.length, bt ? `up to ${B.maxPos}` : '—', chip('', 'Context'))
+  ];
+  t.innerHTML = '<tr><th>Metric</th><th>Live</th><th>Backtest</th><th>Status</th></tr>' + rows.join('');
+  const pill = document.getElementById('d2-score-pill');
+  pill.textContent = early ? `Early: ${days} days · ${closed.length} closed` : `${days} days · ${closed.length} closed`; pill.className = 'd2-pill' + (early ? ' muted' : '');
+  document.getElementById('d2-score-foot').innerHTML = (bt ? `Backtest reference: ${dhEsc(B.label)} (${B.trades.toLocaleString('en-IN')} closed trades). ` : 'No backtest reference set for this workspace. ')
+    + (early ? 'Statuses stay at "Too early" until there are 90 days of history and 30 closed trades: a short live run can look better or worse than a 10-year test by chance. ' : '')
+    + (ddDate ? `Deepest drawdown so far was on ${dhFmtDate(ddDate)}. ` : '')
+    + 'Drawdown and return use the equity curve (fixed starting capital, realised + unrealised); profit factor, win rate and averages use closed and open trades together.';
 }
 
 function d2Ensure() {
