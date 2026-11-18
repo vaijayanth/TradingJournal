@@ -170,7 +170,8 @@ def evaluate(ctx, now):
         if abs(pl - p.get("pl_pct", pl)) > max(cfg["pl_tolerance_pct"], 0.01 * abs(pl)):
             out.append(f("BLOCK", "I2", f"{s}: P&L% {p.get('pl_pct')} does not match cmp/avg ({pl:.2f})", s))
         h = held.get(s)
-        if h and (h["qty"] != p["qty"] or abs(h["avg_cost"] - p["avg_cost"]) > 0.05):
+        # Dhan sometimes reports avg cost 0 right after a corporate action (PASHUPATI, 2026-11-18): then the average is unknown, not different
+        if h and (h["qty"] != p["qty"] or (h["avg_cost"] > 0 and abs(h["avg_cost"] - p["avg_cost"]) > 0.05)):
             out.append(f("BLOCK", "I2", f"{s}: signal qty/avg {p['qty']}@{p['avg_cost']} differs from holdings {h['qty']}@{h['avg_cost']}", s))
 
     # I4 / I5 membership

@@ -84,6 +84,10 @@ c = base(); c["signals"]["holds"][0]["pl_pct"] = 50.0
 check("I2 wrong P&L% = BLOCK for the stock", has(run(c), "I2", "BLOCK", "AAA"))
 c = base(); c["holdings"][1]["qty"] = 99
 check("I2 qty differs from holdings = BLOCK", has(run(c), "I2", "BLOCK", "BBB"))
+c = base(); c["holdings"][1]["avg_cost"] = 0.0
+check("I2 Dhan avg cost 0 (unknown) is not a mismatch", not has(run(c), "I2", "BLOCK", "BBB"))
+c = base(); c["holdings"][1]["avg_cost"] = 50.0
+check("I2 a real avg cost difference is still a BLOCK", has(run(c), "I2", "BLOCK", "BBB"))
 # I3 timing vs real drift
 c = base(); c["fills"].append({"symbol": "AAA", "date": "2026-11-10", "action": "BUY", "qty": 5, "price": 100})
 check("I3 recent unsettled buy = WARN (timing), not BLOCK", has(run(c), "I3", "WARN") and not has(run(c), "I3", "BLOCK"))
