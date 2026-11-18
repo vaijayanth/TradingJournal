@@ -199,3 +199,16 @@ Live ND universe, 6% idle cash, 2016-11-07 to 2026-11-17. Files: `results/nd_1Cr
 | Rs1 Cr | Rs10k + Rs5k | 28.08% | -15.67% | 1.79 | 7,840 | 41.5 | 2.00 | Rs11.95 Cr | 21,691 | 469 |
 
 Reading: scaling the ladder 5x with capital (Rs5k + Rs5k at Rs1 Cr) reproduces the Rs20L result almost exactly (28.1% vs 28.0%, -15.4% vs -15.4%). A smaller step trades return for a shallower drawdown (Rs5k + Rs2.5k: 24.7%, -12.2%).
+
+### AZ at Rs1 Cr: scaled ladder (user request 2026-11-18)
+Flip window 0, 6% idle cash, 2016-11-07 to 2026-11-17. Scaled = both base and step multiplied by 1 Cr / Rs30L = 3.33 (Rs20k -> Rs66.7k, Rs5k -> Rs16.7k). Files: `results/az_1Cr_b66700_s16700*`.
+
+| Start capital | Ladder | CAGR | Max DD | Return / DD | Closed | Win % | PF | Final | Missed | Max pos |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Rs30L | Rs20k + Rs5k (live) | 20.21% | -21.32% | 0.95 | 3,656 | 41.2 | 1.75 | Rs1.90 Cr | 2,360 | 136 |
+| Rs1 Cr | Rs20k + Rs5k (old size) | 17.37% | -16.71% | 1.04 | 5,526 | 40.9 | 1.83 | Rs4.98 Cr | 419 | 170 |
+| Rs1 Cr | Rs50k + Rs5k | 18.35% | -17.19% | 1.07 | 5,322 | 41.1 | 1.84 | Rs5.41 Cr | 620 | 171 |
+| Rs1 Cr | Rs50k + Rs12.5k | 19.82% | -19.42% | 1.02 | 4,138 | 41.3 | 1.77 | Rs6.13 Cr | 1,865 | 137 |
+| Rs1 Cr | **Rs66.7k + Rs16.7k (scaled)** | **20.22%** | **-21.65%** | 0.93 | 3,648 | 41.1 | 1.75 | Rs6.34 Cr | 2,368 | 135 |
+
+Reading: the scaled ladder reproduces the Rs30L result (20.2% vs 20.2%, -21.7% vs -21.3%). Both strategies scale cleanly when base and step grow with capital.
