@@ -87,3 +87,17 @@ Files: `results/az_size6_*`. Percentages are of (start capital + realised P&L).
 | Rs1 Cr | 1.5% | 20.64% | -22.90% | 3,072 | 41.7 | 1.75 | Rs6.56 Cr | 2,965 | 75 |
 
 Reading: with idle cash earning 6%, CAGR rises with the percentage (16.8% at 0.67% to 20.8% at 1.5%) and so does the drawdown (-17.5% to -22.7%): a smooth return/risk trade-off, not a free lunch. 1.0% gives about the ladder's CAGR (19.9% vs 20.2% at Rs30L) with a shallower drawdown (-19.4% vs -21.3%). The percentage rule is scale-free (1.0%: 19.9% at Rs30L, 20.3% at Rs1 Cr) while the ladder is not (20.2% vs 17.4%).
+
+### Rs1 Cr start with a Rs50,000 ladder base (user request 2026-11-18)
+Flip window 0, Rs1 Cr start, 6% idle cash, ladder `--base 50000 --step S` (S per 100 trades opened). Files: `results/az_1cr_*`.
+
+| Sizing at Rs1 Cr | CAGR | Max DD | Closed | Win % | PF | Final | Missed (no cash) | Max pos |
+|---|---|---|---|---|---|---|---|---|
+| Ladder Rs20k + Rs5k (old base, reference) | 17.37% | -16.71% | 5,526 | 40.9 | 1.83 | Rs4.98 Cr | 419 | 170 |
+| Ladder Rs50k + Rs5k | 18.35% | -17.19% | 5,322 | 41.1 | 1.84 | Rs5.41 Cr | 620 | 171 |
+| Ladder Rs50k + Rs10k | 19.20% | -18.85% | 4,413 | 41.1 | 1.77 | Rs5.82 Cr | 1,580 | 137 |
+| Ladder Rs50k + Rs12.5k (old ladder scaled 2.5x) | 19.82% | -19.42% | 4,138 | 41.3 | 1.77 | Rs6.13 Cr | 1,865 | 137 |
+| 0.5% of base (realised) | 14.80% | -12.80% | 5,919 | 41.7 | 1.84 | Rs3.99 Cr | 0 | 192 |
+| 1.0% of base (realised, reference) | 20.25% | -19.62% | 4,333 | 42.1 | 1.79 | Rs6.35 Cr | 1,667 | 112 |
+
+Reading: a Rs50k start fixes the under-deployment of the Rs20k ladder at Rs1 Cr (+1.0 pt CAGR for +0.5 pt drawdown with the same Rs5k step). All the variants lie on one return/risk line (CAGR / |max DD| about 1.0-1.1): the step size, not the start size, sets where on the line you sit.

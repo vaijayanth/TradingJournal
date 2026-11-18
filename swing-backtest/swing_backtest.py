@@ -73,8 +73,12 @@ def load(data_dir, symbols, start, with_high_window):
     return raw
 
 
-def run(strategy, data_dir, symbols, start, slip, seed=0, fresh_only=True, cash_rate=0.0, tier_cap=None, flip_window=None, capital=None, size_pct=None, size_base="realised"):
+def run(strategy, data_dir, symbols, start, slip, seed=0, fresh_only=True, cash_rate=0.0, tier_cap=None, flip_window=None, capital=None, size_pct=None, size_base="realised", base=None, step=None):
     cfg = dict(CFG[strategy])
+    if base is not None:         # ladder start size per position, Rs (default: the strategy's own)
+        cfg["base"] = base
+    if step is not None:         # ladder increment per `every` trades, Rs
+        cfg["step"] = step
     if capital is not None:      # override the starting capital (default: the strategy's own)
         cfg["capital"] = capital
     if flip_window is not None:   # az only: override the entry window (0 = today's flips only, default stays 3)
@@ -228,6 +232,8 @@ def main():
     ap.add_argument("--capital", type=float, default=None, help="starting capital in Rs (default: the strategy's own, AZ 30,00,000)")
     ap.add_argument("--size-pct", type=float, default=None, help="capital-linked sizing: each new position = this %% of the base (replaces the trade-count ladder)")
     ap.add_argument("--size-base", choices=["realised", "equity"], default="realised", help="base for --size-pct: start capital + realised P&L, or total equity (cash + holdings)")
+    ap.add_argument("--base", type=float, default=None, help="ladder start size per position in Rs (AZ default 20,000)")
+    ap.add_argument("--step", type=float, default=None, help="ladder increment per 100 trades in Rs (AZ default 5,000)")
     ap.add_argument("--all-days", action="store_true", help="az: order every flip in the 3-day window, not only the freshest day")
     a = ap.parse_args()
     data_dir = Path(a.data)
@@ -240,8 +246,8 @@ def main():
         symbols = [s for s in valid if s in want]
     else:
         symbols = valid
-    res = run(a.strategy, data_dir, symbols, pd.Timestamp(a.start), a.slip, fresh_only=not a.all_days, cash_rate=a.cash_rate, tier_cap=a.tier_cap, flip_window=a.flip_window, capital=a.capital, size_pct=a.size_pct, size_base=a.size_base)
-    out, cv, tr = summarise(res, f"{a.strategy} start={a.start} slip={a.slip} cash={a.cash_rate} cap={a.tier_cap}{' all-days' if a.all_days else ''}{f' flip-window={a.flip_window}' if a.flip_window is not None else ''}{f' capital={a.capital:.0f}' if a.capital else ''}{f' size={a.size_pct}%of-{a.size_base}' if a.size_pct else ''}")
+    res = run(a.strategy, data_dir, symbols, pd.Timestamp(a.start), a.slip, fresh_only=not a.all_days, cash_rate=a.cash_rate, tier_cap=a.tier_cap, flip_window=a.flip_window, capital=a.capital, size_pct=a.size_pct, size_base=a.size_base, base=a.base, step=a.step)
+    out, cv, tr = summarise(res, f"{a.strategy} start={a.start} slip={a.slip} cash={a.cash_rate} cap={a.tier_cap}{' all-days' if a.all_days else ''}{f' flip-window={a.flip_window}' if a.flip_window is not None else ''}{f' capital={a.capital:.0f}' if a.capital else ''}{f' size={a.size_pct}%of-{a.size_base}' if a.size_pct else ''}{f' base={a.base:.0f}' if a.base else ''}{f' step={a.step:.0f}' if a.step else ''}")
     print(json.dumps(out, indent=1, default=str))
     if a.out:
         cv.to_csv(a.out + "_equity.csv")
