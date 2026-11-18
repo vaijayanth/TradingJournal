@@ -10015,6 +10015,9 @@ function d2RenderScore(d) {
   let peak = base || (eq[0] ? eq[0].equity : 0), maxDd = 0, ddDate = null;
   eq.forEach(r => { if (r.equity > peak) peak = r.equity; const dd = peak ? (r.equity - peak) / peak * 100 : 0; if (dd < maxDd) { maxDd = dd; ddDate = r.date; } });
   const last = eq.length ? eq[eq.length - 1] : null, curDd = last && peak ? (last.equity - peak) / peak * 100 : null;
+  // drawdown measured on the capital actually invested that day (user, 2026-11-18): fall of total P&L from its peak, divided by the invested capital
+  let pnlPeak = -Infinity, maxDdInv = 0;
+  eq.forEach(r => { if (r.pnl == null) return; if (r.pnl > pnlPeak) pnlPeak = r.pnl; if (r.invested > 0) maxDdInv = Math.min(maxDdInv, (r.pnl - pnlPeak) / r.invested * 100); });
   const days = eq.length && base ? Math.max(1, Math.round((new Date(last.date + 'T00:00:00') - new Date(eq[0].date + 'T00:00:00')) / 864e5)) : 0;
   const totRet = last && base ? (last.equity - base) / base * 100 : null;
   const cagr = totRet != null && days >= 90 ? (Math.pow(1 + totRet / 100, 365 / days) - 1) * 100 : null;
@@ -10035,6 +10038,7 @@ function d2RenderScore(d) {
   const B = bt || {};
   const rows = [
     row('Max drawdown', eq.length ? dhFmtPct(maxDd) : '—', bt ? dhFmtPct(B.maxDd) : '—', bt ? cmp(maxDd, B.maxDd, true, 0) : chip('', '—'), maxDd < 0 ? 'neg' : ''),
+    row('Max drawdown on invested capital', eq.length ? dhFmtPct(maxDdInv) : '—', '—', chip('', 'Live only'), maxDdInv < 0 ? 'neg' : ''),
     row('Current drawdown from peak', curDd == null ? '—' : dhFmtPct(curDd), '—', chip('', 'Live only'), curDd < 0 ? 'neg' : ''),
     row(`Return since start${days ? ` (${days} days)` : ''}`, totRet == null ? '—' : dhFmtPct(totRet), '—', chip('', 'Live only'), d2Cls(totRet)),
     row('Annualised return (CAGR)', cagr == null ? 'needs 3 months' : dhFmtPct(cagr), bt ? dhFmtPct(B.cagr) : '—', bt ? cmp(cagr, B.cagr, true, 3) : chip('', '—'), d2Cls(cagr)),
@@ -10053,7 +10057,7 @@ function d2RenderScore(d) {
   document.getElementById('d2-score-foot').innerHTML = (bt ? `Backtest reference: ${dhEsc(B.label)} (${B.trades.toLocaleString('en-IN')} closed trades). ` : 'No backtest reference set for this workspace. ')
     + (early ? 'Statuses stay at "Too early" until there are 90 days of history and 30 closed trades: a short live run can look better or worse than a 10-year test by chance. ' : '')
     + (ddDate ? `Deepest drawdown so far was on ${dhFmtDate(ddDate)}. ` : '')
-    + 'Drawdown and return use the equity curve (fixed starting capital, realised + unrealised); profit factor, win rate and averages use closed and open trades together.';
+    + 'Max drawdown (first row) is on total equity, the same basis as the backtest; the invested-capital version divides the fall in P&L by the capital invested that day, so it reads larger while only part of the base is deployed, and has no backtest comparison. Return uses the equity curve (fixed starting capital, realised + unrealised); profit factor, win rate and averages use closed and open trades together.';
 }
 
 function d2Ensure() {
