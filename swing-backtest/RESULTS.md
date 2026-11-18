@@ -153,3 +153,19 @@ Reading: at Rs20L the Rs1,000 ladder (28.0% / -15.4%, return per drawdown 1.8) s
 | Rs1 Cr | double, no cap | 23.97% | -33.64% | 1,415 | 35.7 | 1.56 | Rs8.62 Cr | 81,207 |
 
 Reading: uncapped doubling fails (about 1,200-1,400 closed trades in 10 years, win rate 36%, drawdown -34 to -36%): after about 1,000 trades one position is more than the whole account, so cash runs out and almost every entry is missed. With a cap it is a return/risk trade-off on a line slightly below the linear ladder at Rs20L (return per drawdown 1.4 for the doubling with cap Rs25k-1L vs 1.8 for the ladder), but with higher profit factors (2.1-2.6).
+
+### Dhan entry on the AZ (Nifty F&O) universe (user request 2026-11-18)
+`--strategy dhan --fno-universe`: close above the 252-session closing high + Supertrend green, whole-position Supertrend-red exit, add-on at -6%, on the 214 current Nifty F&O stocks (BSE, BEL, RECLTD excluded). 2016-11-07 to 2026-11-17, 6% idle cash. Files: `results/fno_*`. AZ rows are the flip-today strategy (window 0) from the sizing tests, for comparison.
+
+| Strategy / sizing | Start | CAGR | Max DD | Closed | Win % | Avg win / loss | PF | Final | Missed | Max pos |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Dhan entry, ladder Rs1k + Rs1k | Rs20L | 8.96% | -4.48% | 2,267 | 41.7 | +23.2 / -6.4 | 2.13 | Rs0.47 Cr | 0 | 151 |
+| Dhan entry, ladder Rs1k + Rs1k | Rs30L | 8.05% | -3.26% | 2,267 | 41.7 | +23.2 / -6.4 | 2.13 | Rs0.65 Cr | 0 | 151 |
+| Dhan entry, ladder Rs20k + Rs5k | Rs30L | 15.56% | -12.75% | 2,155 | 42.6 | +22.6 / -6.7 | 2.22 | Rs1.28 Cr | 1,138 | 107 |
+| Dhan entry, 0.25% of capital | Rs30L | 7.74% | -1.96% | 2,267 | 42.2 | +23.0 / -6.5 | 2.18 | Rs0.63 Cr | 0 | 151 |
+| Dhan entry, 0.5% | Rs30L | 9.67% | -4.20% | 2,267 | 42.4 | +22.8 / -6.6 | 2.20 | Rs0.76 Cr | 0 | 151 |
+| Dhan entry, 1.0% | Rs30L | 13.32% | -10.08% | 2,256 | 42.6 | +22.7 / -6.7 | 2.10 | Rs1.05 Cr | 138 | 123 |
+| AZ flip-today, ladder Rs20k + Rs5k (ref) | Rs30L | 20.21% | -21.32% | 3,656 | 41.2 | +21.0 / -6.8 | 1.75 | Rs1.90 Cr | 2,360 | 136 |
+| AZ flip-today, 1.0% (ref) | Rs30L | 19.87% | -19.42% | 4,363 | 42.0 | +22.1 / -6.8 | 1.78 | Rs1.85 Cr | 1,637 | 113 |
+
+Reading: on the 214-stock F&O universe the 252-day-high entry produces far fewer trades (2,267 vs 3,556-4,363 in 10 years), so the Rs1,000 ladder barely deploys capital (CAGR 8-9%, drawdown -3 to -4%, no missed entries). At equal sizing (Rs20k + Rs5k) it earns 15.6% with a shallower drawdown (-12.8% vs -21.3%) and higher PF (2.22 vs 1.75) than the AZ flip-today entry, but less return. The Dhan entry's big average win (+33%) comes from the small/mid-cap names of the full 1,483-stock universe; on F&O stocks it is +23%.

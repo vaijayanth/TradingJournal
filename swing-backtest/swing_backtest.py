@@ -238,6 +238,7 @@ def main():
     ap.add_argument("--step", type=float, default=None, help="ladder increment per 100 trades in Rs (AZ default 5,000)")
     ap.add_argument("--live-universe", action="store_true", help="dhan: apply the live ND exclusions (ETFs by name, plus the permanent InvIT/REIT list in dhan-live/data/excluded_universe.json)")
     ap.add_argument("--double", action="store_true", help="ladder that DOUBLES the size every 100 trades (base * 2^(trades/100)); combine with --tier-cap")
+    ap.add_argument("--fno-universe", action="store_true", help="dhan strategy on the AZ universe (current Nifty F&O stocks minus the AZ exclusions) instead of every validated symbol")
     ap.add_argument("--all-days", action="store_true", help="az: order every flip in the 3-day window, not only the freshest day")
     a = ap.parse_args()
     data_dir = Path(a.data)
@@ -250,6 +251,12 @@ def main():
         symbols = [s for s in valid if s in want]
     else:
         symbols = valid
+        if a.fno_universe:
+            uni = json.loads((ROOT / "zerodha-live" / "data" / "fno_universe.json").read_text())["symbols"]
+            exz = set(json.loads((ROOT / "zerodha-live" / "data" / "excluded_symbols.json").read_text())["symbols"])
+            want = {x + ".NS" for x in uni if x not in exz}
+            symbols = [x for x in symbols if x in want]
+            print(f"fno universe: {len(symbols)} symbols")
         if a.live_universe:
             ex = json.loads((ROOT / "dhan-live" / "data" / "excluded_universe.json").read_text())
             sfx = tuple(x.upper() for x in ex.get("suffixes", []))
@@ -262,7 +269,7 @@ def main():
             symbols = [x for x in symbols if keep(x)]
             print(f"live universe filter: {before} -> {len(symbols)} symbols")
     res = run(a.strategy, data_dir, symbols, pd.Timestamp(a.start), a.slip, fresh_only=not a.all_days, cash_rate=a.cash_rate, tier_cap=a.tier_cap, flip_window=a.flip_window, capital=a.capital, size_pct=a.size_pct, size_base=a.size_base, base=a.base, step=a.step, double=a.double)
-    out, cv, tr = summarise(res, f"{a.strategy} start={a.start} slip={a.slip} cash={a.cash_rate} cap={a.tier_cap}{' all-days' if a.all_days else ''}{f' flip-window={a.flip_window}' if a.flip_window is not None else ''}{f' capital={a.capital:.0f}' if a.capital else ''}{f' size={a.size_pct}%of-{a.size_base}' if a.size_pct else ''}{f' base={a.base:.0f}' if a.base else ''}{' live-universe' if a.live_universe else ''}{' double' if a.double else ''}{f' step={a.step:.0f}' if a.step else ''}")
+    out, cv, tr = summarise(res, f"{a.strategy} start={a.start} slip={a.slip} cash={a.cash_rate} cap={a.tier_cap}{' all-days' if a.all_days else ''}{f' flip-window={a.flip_window}' if a.flip_window is not None else ''}{f' capital={a.capital:.0f}' if a.capital else ''}{f' size={a.size_pct}%of-{a.size_base}' if a.size_pct else ''}{f' base={a.base:.0f}' if a.base else ''}{' live-universe' if a.live_universe else ''}{' fno-universe' if a.fno_universe else ''}{' double' if a.double else ''}{f' step={a.step:.0f}' if a.step else ''}")
     print(json.dumps(out, indent=1, default=str))
     if a.out:
         cv.to_csv(a.out + "_equity.csv")
