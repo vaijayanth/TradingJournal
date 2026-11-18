@@ -73,7 +73,7 @@ def load(data_dir, symbols, start, with_high_window):
     return raw
 
 
-def run(strategy, data_dir, symbols, start, slip, seed=0, fresh_only=True, cash_rate=0.0, tier_cap=None, flip_window=None, capital=None, size_pct=None, size_base="realised", base=None, step=None):
+def run(strategy, data_dir, symbols, start, slip, seed=0, fresh_only=True, cash_rate=0.0, tier_cap=None, flip_window=None, capital=None, size_pct=None, size_base="realised", base=None, step=None, double=False):
     cfg = dict(CFG[strategy])
     if base is not None:         # ladder start size per position, Rs (default: the strategy's own)
         cfg["base"] = base
@@ -119,6 +119,8 @@ def run(strategy, data_dir, symbols, start, slip, seed=0, fresh_only=True, cash_
             elif od["a"] == "buy" and sym not in pos:
                 n = len(closed) if cfg["count"] == "closed" else opened
                 tier = cfg["base"] + (n // cfg["every"]) * cfg["step"]
+                if double:     # geometric ladder: size doubles every `every` trades (use --tier-cap, otherwise it outgrows the capital within ~1,000 trades)
+                    tier = cfg["base"] * (2 ** min(n // cfg["every"], 50))
                 if size_pct:   # capital-linked sizing: size = size_pct % of (start capital + realised) or of total equity (cash + holdings at last close)
                     if size_base == "equity":
                         basev = cash + sum(p_["qty"] * last_seen.get(s_, p_["avg"]) for s_, p_ in pos.items())
@@ -235,6 +237,7 @@ def main():
     ap.add_argument("--base", type=float, default=None, help="ladder start size per position in Rs (AZ default 20,000)")
     ap.add_argument("--step", type=float, default=None, help="ladder increment per 100 trades in Rs (AZ default 5,000)")
     ap.add_argument("--live-universe", action="store_true", help="dhan: apply the live ND exclusions (ETFs by name, plus the permanent InvIT/REIT list in dhan-live/data/excluded_universe.json)")
+    ap.add_argument("--double", action="store_true", help="ladder that DOUBLES the size every 100 trades (base * 2^(trades/100)); combine with --tier-cap")
     ap.add_argument("--all-days", action="store_true", help="az: order every flip in the 3-day window, not only the freshest day")
     a = ap.parse_args()
     data_dir = Path(a.data)
@@ -258,8 +261,8 @@ def main():
             before = len(symbols)
             symbols = [x for x in symbols if keep(x)]
             print(f"live universe filter: {before} -> {len(symbols)} symbols")
-    res = run(a.strategy, data_dir, symbols, pd.Timestamp(a.start), a.slip, fresh_only=not a.all_days, cash_rate=a.cash_rate, tier_cap=a.tier_cap, flip_window=a.flip_window, capital=a.capital, size_pct=a.size_pct, size_base=a.size_base, base=a.base, step=a.step)
-    out, cv, tr = summarise(res, f"{a.strategy} start={a.start} slip={a.slip} cash={a.cash_rate} cap={a.tier_cap}{' all-days' if a.all_days else ''}{f' flip-window={a.flip_window}' if a.flip_window is not None else ''}{f' capital={a.capital:.0f}' if a.capital else ''}{f' size={a.size_pct}%of-{a.size_base}' if a.size_pct else ''}{f' base={a.base:.0f}' if a.base else ''}{' live-universe' if a.live_universe else ''}{f' step={a.step:.0f}' if a.step else ''}")
+    res = run(a.strategy, data_dir, symbols, pd.Timestamp(a.start), a.slip, fresh_only=not a.all_days, cash_rate=a.cash_rate, tier_cap=a.tier_cap, flip_window=a.flip_window, capital=a.capital, size_pct=a.size_pct, size_base=a.size_base, base=a.base, step=a.step, double=a.double)
+    out, cv, tr = summarise(res, f"{a.strategy} start={a.start} slip={a.slip} cash={a.cash_rate} cap={a.tier_cap}{' all-days' if a.all_days else ''}{f' flip-window={a.flip_window}' if a.flip_window is not None else ''}{f' capital={a.capital:.0f}' if a.capital else ''}{f' size={a.size_pct}%of-{a.size_base}' if a.size_pct else ''}{f' base={a.base:.0f}' if a.base else ''}{' live-universe' if a.live_universe else ''}{' double' if a.double else ''}{f' step={a.step:.0f}' if a.step else ''}")
     print(json.dumps(out, indent=1, default=str))
     if a.out:
         cv.to_csv(a.out + "_equity.csv")

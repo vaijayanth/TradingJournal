@@ -132,3 +132,24 @@ Strategy: close above the 252-session closing high + Supertrend green, whole-pos
 | Rs1 Cr | 1.0% | 31.84% | -22.41% | 4,314 | 43.0 | +36.3 / -9.3 | 1.84 | Rs15.98 Cr | 51,421 | 162 |
 
 Reading: at Rs20L the Rs1,000 ladder (28.0% / -15.4%, return per drawdown 1.8) sits on a better frontier than any fixed percentage (1.0%: 31.6% / -22.5%, 1.4; 0.25%: 19.8% / -11.7%, 1.7) because it starts at 0.05% of capital and ramps with experience. The ladder is capital-specific: at Rs1 Cr it under-deploys (18.3%). Percentage rules are scale-free (1.0%: 31.6% at Rs20L, 31.8% at Rs1 Cr). Up to 469-650 simultaneous positions: far above the live book (about 50), so liquidity and execution limits would bind in practice.
+
+### ND doubling ladder: size doubles every 100 trades (user request 2026-11-18)
+`--double` = base x 2^(closed trades / 100) (Rs1,000, 2,000, 4,000 ... Rs1,00,000 after 7 doublings = 700 trades); `--tier-cap` limits it. Live ND universe, 6% idle cash, 2016-11-07 to 2026-11-17. Files: `results/nd_*_dbl_*`.
+
+| Start capital | Sizing | CAGR | Max DD | Closed | Win % | PF | Final | Missed (no cash) |
+|---|---|---|---|---|---|---|---|---|
+| Rs20L | ladder Rs1k + Rs1k (live, ref) | 28.01% | -15.42% | 7,898 | 41.3 | 2.01 | Rs2.38 Cr | 20,957 |
+| Rs20L | double, cap Rs5k | 15.84% | -6.71% | 9,953 | 42.4 | 2.54 | Rs0.87 Cr | 132 |
+| Rs20L | double, cap Rs10k | 20.77% | -12.04% | 9,564 | 42.5 | 2.60 | Rs1.33 Cr | 3,874 |
+| Rs20L | double, cap Rs25k | 27.55% | -20.29% | 8,528 | 42.2 | 2.48 | Rs2.29 Cr | 13,813 |
+| Rs20L | double, cap Rs50k | 31.56% | -26.10% | 7,321 | 40.8 | 2.23 | Rs3.13 Cr | 26,377 |
+| Rs20L | double, cap Rs1L | 37.19% | -27.92% | 6,293 | 40.2 | 2.14 | Rs4.76 Cr | 36,447 |
+| Rs20L | double, no cap | 23.54% | -35.52% | 1,176 | 36.4 | 1.53 | Rs1.67 Cr | 83,052 |
+| Rs1 Cr | ladder Rs1k + Rs1k (ref) | 18.28% | -10.04% | 9,903 | 42.8 | 2.19 | Rs5.38 Cr | 655 |
+| Rs1 Cr | double, cap Rs10k | 11.03% | -3.61% | 9,986 | 42.7 | 2.65 | Rs2.86 Cr | 0 |
+| Rs1 Cr | double, cap Rs25k | 16.19% | -6.51% | 9,984 | 42.8 | 2.72 | Rs4.50 Cr | 14 |
+| Rs1 Cr | double, cap Rs50k | 21.10% | -11.56% | 9,581 | 42.7 | 2.70 | Rs6.82 Cr | 3,663 |
+| Rs1 Cr | double, cap Rs1L | 25.90% | -16.39% | 8,862 | 42.2 | 2.54 | Rs10.07 Cr | 10,709 |
+| Rs1 Cr | double, no cap | 23.97% | -33.64% | 1,415 | 35.7 | 1.56 | Rs8.62 Cr | 81,207 |
+
+Reading: uncapped doubling fails (about 1,200-1,400 closed trades in 10 years, win rate 36%, drawdown -34 to -36%): after about 1,000 trades one position is more than the whole account, so cash runs out and almost every entry is missed. With a cap it is a return/risk trade-off on a line slightly below the linear ladder at Rs20L (return per drawdown 1.4 for the doubling with cap Rs25k-1L vs 1.8 for the ladder), but with higher profit factors (2.1-2.6).
