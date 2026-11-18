@@ -185,3 +185,17 @@ Same setup as the table above (Rs30L, 6% idle cash, each position = that % of st
 | AZ flip-today, ladder Rs20k + Rs5k (ref) | 20.21% | -21.32% | 0.95 | 3,656 | 41.2 | 1.75 | Rs1.90 Cr | 2,360 | 136 |
 
 Reading: sized up, the Dhan entry on F&O stocks reaches AZ-like returns only at 3% (20.8% vs 20.2%) with a similar drawdown (-23.2% vs -21.3%), so its return per drawdown (0.90) falls to the AZ level (0.95); its edge is lower risk at low sizing, not more return. Cash becomes the limit: at 3% it holds at most 41 positions and misses 8,882 entries.
+
+### ND at Rs1 Cr: scaled ladder base (user request 2026-11-18)
+Live ND universe, 6% idle cash, 2016-11-07 to 2026-11-17. Files: `results/nd_1Cr_b*`.
+
+| Start capital | Ladder | CAGR | Max DD | Return / DD | Closed | Win % | PF | Final | Missed | Max pos |
+|---|---|---|---|---|---|---|---|---|---|---|
+| Rs20L | Rs1k + Rs1k (live) | 28.01% | -15.42% | 1.82 | 7,898 | 41.3 | 2.01 | Rs2.38 Cr | 20,957 | 469 |
+| Rs1 Cr | Rs1k + Rs1k (old size) | 18.28% | -10.04% | 1.82 | 9,903 | 42.8 | 2.19 | Rs5.38 Cr | 655 | 650 |
+| Rs1 Cr | Rs5k + Rs1k | 19.18% | -9.86% | 1.95 | 9,896 | 43.1 | 2.22 | Rs5.81 Cr | 730 | 598 |
+| Rs1 Cr | Rs5k + Rs2.5k | 24.68% | -12.19% | 2.02 | 8,944 | 42.4 | 2.13 | Rs9.13 Cr | 10,140 | 469 |
+| Rs1 Cr | **Rs5k + Rs5k** | **28.08%** | **-15.37%** | 1.83 | 7,897 | 41.5 | 2.01 | Rs11.95 Cr | 21,033 | 469 |
+| Rs1 Cr | Rs10k + Rs5k | 28.08% | -15.67% | 1.79 | 7,840 | 41.5 | 2.00 | Rs11.95 Cr | 21,691 | 469 |
+
+Reading: scaling the ladder 5x with capital (Rs5k + Rs5k at Rs1 Cr) reproduces the Rs20L result almost exactly (28.1% vs 28.0%, -15.4% vs -15.4%). A smaller step trades return for a shallower drawdown (Rs5k + Rs2.5k: 24.7%, -12.2%).
