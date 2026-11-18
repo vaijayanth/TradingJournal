@@ -1,5 +1,5 @@
 {
- "fetched_at": "2026-11-18T08:10:52+05:30",
+ "fetched_at": "2026-11-18T10:58:15+05:30",
  "active": {
   "TMPV26DEC310CE": [
    {
@@ -536,7 +536,7 @@
     "id": 344015712,
     "type": "trailing-single",
     "trigger_values": [
-     54
+     53
     ],
     "qty": 100
    }
@@ -549,16 +549,6 @@
      30
     ],
     "qty": 350
-   }
-  ],
-  "MUTHOOTFIN26NOV2650PE": [
-   {
-    "id": 343977413,
-    "type": "trailing-single",
-    "trigger_values": [
-     28
-    ],
-    "qty": 275
    }
   ],
   "KARURVYSYA26NOV410CE": [
@@ -616,7 +606,7 @@
     "id": 343048061,
     "type": "trailing-single",
     "trigger_values": [
-     72
+     71
     ],
     "qty": 125
    }
@@ -1379,13 +1369,13 @@
    "tradingsymbol": "CUMMINSIND26DEC5000CE",
    "last_price": 21.8,
    "triggers": [
-    54
+    53
    ],
    "orders": [
     {
      "side": "BUY",
      "qty": 100,
-     "price": 55,
+     "price": 54,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -1406,26 +1396,6 @@
      "side": "BUY",
      "qty": 350,
      "price": 31,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
-   "id": 343977413,
-   "type": "trailing-single",
-   "created_at": "2026-11-09T10:32:06+05:30",
-   "expires_at": "2026-11-24T00:00:00+05:30",
-   "tradingsymbol": "MUTHOOTFIN26NOV2650PE",
-   "last_price": 11.7,
-   "triggers": [
-    28
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 275,
-     "price": 29,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -1539,19 +1509,36 @@
    "tradingsymbol": "APOLLOHOSP26NOV9100CE",
    "last_price": 29.6,
    "triggers": [
-    72
+    71
    ],
    "orders": [
     {
      "side": "BUY",
      "qty": 125,
-     "price": 73,
+     "price": 72,
      "product": "NRML",
      "order_type": "LIMIT"
     }
    ]
   }
  ],
- "triggered": [],
- "non_option_gtts": 11
+ "triggered": [
+  {
+   "id": 343977413,
+   "type": "trailing-single",
+   "tradingsymbol": "MUTHOOTFIN26NOV2650PE",
+   "triggers": [
+    28
+   ],
+   "triggered_at": "2026-11-18T09:15:13+05:30",
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 275,
+     "price": 29
+    }
+   ]
+  }
+ ],
+ "non_option_gtts": 10
 }
