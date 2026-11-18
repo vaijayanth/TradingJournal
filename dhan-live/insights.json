@@ -1,34 +1,34 @@
 {
  "as_of": "2026-11-18",
- "written_at": "2026-11-18T22:40:15+05:30",
+ "written_at": "2026-11-18T22:49:33+05:30",
  "confidence": "low",
  "maturity": "About five weeks of history and 5 closed trades: a health check, not a verdict on the strategy.",
- "headline": "An early ramp: 106 positions, about 9% of capital deployed, and no verdict possible yet.",
+ "headline": "The ramp is on schedule: today's orders were all placed, and the only real risk is an unhedged BSE put, not the shares.",
  "points": [
   {
-   "label": "Deployment",
-   "text": "About ₹1.8L of ₹20L (9%) is invested across 106 positions of ₹1k to ₹2k each. The ladder starts small by design and grows with each 100 trades, so rupee returns look tiny for now: +₹3.7k combined (+0.19% of ₹20L, about +2% of invested capital)."
+   "label": "Market and flow",
+   "text": "7 fresh 52-week-high entries, 4 add-ons and 2 exits today, with every one already ordered for tomorrow's open (none missed, KODYTECH excluded as yesterday's signal). Breakouts are still appearing at a steady pace, so deployment (₹2.0L, 10% of base) keeps rising by design. No action."
   },
   {
    "label": "Versus the backtest",
-   "text": "Max drawdown −0.05% against −15.4% tested, profit factor 2.13 against 2.01, winners +6.6% against +33.1%, losers −4.6% against −9.0%, holds 15d / 9d against 102d / 39d. The book is about five weeks old, so winners have had roughly a seventh of the time the backtest's winners run. Nothing to flag yet."
+   "text": "Combined P&L is +₹3.9k (+0.2% of ₹20L) and the book is 57% in profit (60 of 106). The backtest reference is −15.4% max drawdown, profit factor 2.01 and winners that run about 100 days. At 5 weeks and 5 closed trades none of these can be tested yet. Watch profit factor and average winner once 30 trades have closed."
   },
   {
-   "label": "Doubling milestone",
-   "text": "Your live tier is ₹2,000 because the doubling milestone is met, while the scorecard's backtest has no doubling. Live rupee P&L will run about twice the backtest's at the same percentage returns, so compare percentages and profit factor, not rupees."
+   "label": "Money leak: BSE options",
+   "text": "BSE has two short 3200PE / 3500PE legs (400 qty) but a hedge on only 200 qty, so 200 qty of put is unhedged, and the BSE call is on a stock whose Supertrend is now green. Today's check found no other stop or hedge problems; all 13 shorts carry a stop and a target. Fix BSE first: buy the missing put hedge or close the 3200PE."
   },
   {
-   "label": "Quality so far",
-   "text": "Of the 100 steady holdings, 60% are in profit. The average is +2.85% but the median only +0.74%, so most gains are still small. The strategy depends on a few large winners (backtest: winners average +33% over about 102 days), and the book is at most about five weeks old."
+   "label": "Flipped call",
+   "text": "SHRIRAMFIN 1120CE and BSE 4200CE are short calls on stocks whose Supertrend is green. Both are small (−₹454 and +₹1,020), so the rule says close them. Leaving them costs little today but gives up the bull-put structure the rule wants."
   },
   {
-   "label": "Sector tilt",
-   "text": "Healthcare is the largest group (22 positions) and the weakest (+0.2% average). Consumer Cyclical (22, +4.2%) and Basic Materials (12, +5.1%) lead. These samples are too small to act on, but watch whether the Healthcare drag persists."
+   "label": "Check before the open",
+   "text": "SHRINGARMS: the backtester says exit (red) but a Yahoo recompute says green, and today's 1-share add-on has just filled. The pending sell is for 4 of 5 shares, so it would leave 1 share behind. PASHUPATI (−31%) carries a Dhan cost of 0, so its loss is unreliable until you confirm the split shares were credited."
   },
   {
-   "label": "Today's signals",
-   "text": "7 new 52-week-high entries, 4 add-on candidates (−7% to −12%) and 2 exits. PASHUPATI's −31% may be overstated: its 2.5-for-1 split on 13 Nov is not yet recorded, so check the cost basis before judging the trade."
+   "label": "Advice follow-up",
+   "text": "Last advice, place the exits, add-ons and entries, was followed: all 12 orders are pending and 13 earlier buys filled this morning. That advice is closed. Make no rule change before 30 closed trades."
   }
  ],
- "action": "Place today's exits, add-ons and entries through /dhan-order. Make no rule change until 30 trades have closed."
+ "action": "Before the open, fix the BSE put hedge and close the two flipped calls in the Dhan app, and confirm the SHRINGARMS sell quantity (4 vs 5)."
 }

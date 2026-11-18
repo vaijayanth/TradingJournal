@@ -1,104 +1,14 @@
 {
- "fetched_at": "2026-11-18T20:10:13+05:30",
- "source": "mcp dhan orderbook list after /dhan-order stage 3 (18 Nov)",
+ "fetched_at": "2026-11-18T22:47:35+05:30",
+ "source": "mcp dhan orderbook list (refresh 18 Nov night)",
  "orders": [
   {
-   "order_id": "3452611187875",
-   "symbol": "PASHUPATI",
-   "side": "SELL",
-   "qty": 13,
-   "order_type": "MARKET",
-   "price": null,
-   "status": "PENDING",
-   "amo": true
-  },
-  {
-   "order_id": "2352611187870",
-   "symbol": "SHRINGARMS",
-   "side": "SELL",
-   "qty": 4,
-   "order_type": "MARKET",
-   "price": null,
-   "status": "PENDING",
-   "amo": true
-  },
-  {
-   "order_id": "3452611187876",
-   "symbol": "GUFICBIO",
-   "side": "BUY",
-   "qty": 1,
-   "order_type": "LIMIT",
-   "price": 430.65,
-   "status": "PENDING",
-   "amo": true
-  },
-  {
-   "order_id": "3452611187877",
-   "symbol": "LGEINDIA",
-   "side": "BUY",
-   "qty": 1,
-   "order_type": "LIMIT",
-   "price": 1713.25,
-   "status": "PENDING",
-   "amo": true
-  },
-  {
-   "order_id": "2352611187871",
-   "symbol": "MACPOWER",
-   "side": "BUY",
-   "qty": 1,
-   "order_type": "LIMIT",
-   "price": 2212.15,
-   "status": "PENDING",
-   "amo": true
-  },
-  {
-   "order_id": "2252611189948",
-   "symbol": "TEXINFRA",
-   "side": "BUY",
-   "qty": 1,
-   "order_type": "LIMIT",
-   "price": 122.75,
-   "status": "PENDING",
-   "amo": true
-  },
-  {
-   "order_id": "3252611189952",
-   "symbol": "GREAVESCOT",
-   "side": "BUY",
-   "qty": 7,
-   "order_type": "LIMIT",
-   "price": 269.0,
-   "status": "PENDING",
-   "amo": true
-  },
-  {
-   "order_id": "3252611189953",
-   "symbol": "ICIL",
-   "side": "BUY",
-   "qty": 3,
-   "order_type": "LIMIT",
-   "price": 581.0,
-   "status": "PENDING",
-   "amo": true
-  },
-  {
-   "order_id": "3252611189954",
-   "symbol": "PGIL",
-   "side": "BUY",
-   "qty": 1,
-   "order_type": "LIMIT",
-   "price": 1442.95,
-   "status": "PENDING",
-   "amo": true
-  },
-  {
-   "order_id": "3452611187878",
-   "symbol": "SANGAMIND",
+   "order_id": "2252611189957",
+   "symbol": "SUNTV",
    "side": "BUY",
    "qty": 2,
    "order_type": "LIMIT",
-   "price": 695.8,
+   "price": 703.8,
    "status": "PENDING",
    "amo": true
   },
@@ -113,12 +23,102 @@
    "amo": true
   },
   {
-   "order_id": "2252611189957",
-   "symbol": "SUNTV",
+   "order_id": "3452611187878",
+   "symbol": "SANGAMIND",
    "side": "BUY",
    "qty": 2,
    "order_type": "LIMIT",
-   "price": 703.8,
+   "price": 695.8,
+   "status": "PENDING",
+   "amo": true
+  },
+  {
+   "order_id": "3252611189954",
+   "symbol": "PGIL",
+   "side": "BUY",
+   "qty": 1,
+   "order_type": "LIMIT",
+   "price": 1442.95,
+   "status": "PENDING",
+   "amo": true
+  },
+  {
+   "order_id": "3252611189953",
+   "symbol": "ICIL",
+   "side": "BUY",
+   "qty": 3,
+   "order_type": "LIMIT",
+   "price": 581.0,
+   "status": "PENDING",
+   "amo": true
+  },
+  {
+   "order_id": "3252611189952",
+   "symbol": "GREAVESCOT",
+   "side": "BUY",
+   "qty": 7,
+   "order_type": "LIMIT",
+   "price": 269.0,
+   "status": "PENDING",
+   "amo": true
+  },
+  {
+   "order_id": "2252611189948",
+   "symbol": "TEXINFRA",
+   "side": "BUY",
+   "qty": 1,
+   "order_type": "LIMIT",
+   "price": 122.75,
+   "status": "PENDING",
+   "amo": true
+  },
+  {
+   "order_id": "2352611187871",
+   "symbol": "MACPOWER",
+   "side": "BUY",
+   "qty": 1,
+   "order_type": "LIMIT",
+   "price": 2212.15,
+   "status": "PENDING",
+   "amo": true
+  },
+  {
+   "order_id": "3452611187877",
+   "symbol": "LGEINDIA",
+   "side": "BUY",
+   "qty": 1,
+   "order_type": "LIMIT",
+   "price": 1713.25,
+   "status": "PENDING",
+   "amo": true
+  },
+  {
+   "order_id": "3452611187876",
+   "symbol": "GUFICBIO",
+   "side": "BUY",
+   "qty": 1,
+   "order_type": "LIMIT",
+   "price": 430.65,
+   "status": "PENDING",
+   "amo": true
+  },
+  {
+   "order_id": "2352611187870",
+   "symbol": "SHRINGARMS",
+   "side": "SELL",
+   "qty": 4,
+   "order_type": "MARKET",
+   "price": null,
+   "status": "PENDING",
+   "amo": true
+  },
+  {
+   "order_id": "3452611187875",
+   "symbol": "PASHUPATI",
+   "side": "SELL",
+   "qty": 13,
+   "order_type": "MARKET",
+   "price": null,
    "status": "PENDING",
    "amo": true
   }
