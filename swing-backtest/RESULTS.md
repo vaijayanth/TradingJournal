@@ -212,3 +212,17 @@ Flip window 0, 6% idle cash, 2016-11-07 to 2026-11-17. Scaled = both base and st
 | Rs1 Cr | **Rs66.7k + Rs16.7k (scaled)** | **20.22%** | **-21.65%** | 0.93 | 3,648 | 41.1 | 1.75 | Rs6.34 Cr | 2,368 | 135 |
 
 Reading: the scaled ladder reproduces the Rs30L result (20.2% vs 20.2%, -21.7% vs -21.3%). Both strategies scale cleanly when base and step grow with capital.
+
+### Ladder step every 50 trades instead of 100 (user request 2026-11-18)
+`--every 50`. Same period and costs as above (6% idle cash). Files: `results/nd_20L_e50_*`, `results/az_30L_e50_*`.
+
+| Strategy | Ladder | CAGR | Max DD | Return / DD | Closed | Win % | PF | Final | Missed |
+|---|---|---|---|---|---|---|---|---|---|
+| ND Rs20L | Rs1k per 100 trades (live) | 28.01% | -15.42% | 1.82 | 7,898 | 41.3 | 2.01 | Rs2.38 Cr | 20,957 |
+| ND Rs20L | Rs1k per 50 trades (faster) | 31.63% | -19.32% | 1.64 | 6,769 | 40.7 | 1.93 | Rs3.14 Cr | 31,729 |
+| ND Rs20L | Rs500 per 50 trades (same ramp) | 27.92% | -15.56% | 1.79 | 7,891 | 41.2 | 2.00 | Rs2.36 Cr | 21,170 |
+| AZ Rs30L | Rs5k per 100 trades (live) | 20.21% | -21.32% | 0.95 | 3,656 | 41.2 | 1.75 | Rs1.90 Cr | 2,360 |
+| AZ Rs30L | Rs5k per 50 trades (faster) | 21.13% | -22.61% | 0.93 | 2,770 | 41.4 | 1.75 | Rs2.05 Cr | 3,270 |
+| AZ Rs30L | Rs2.5k per 50 trades (same ramp) | 20.65% | -21.06% | 0.98 | 3,701 | 41.3 | 1.76 | Rs1.97 Cr | 2,313 |
+
+Reading: stepping every 50 trades with the same step is just a faster ramp (more return, more drawdown, same return per drawdown or worse). With half the step it is the same ramp in smaller increments and changes almost nothing.

@@ -73,8 +73,10 @@ def load(data_dir, symbols, start, with_high_window):
     return raw
 
 
-def run(strategy, data_dir, symbols, start, slip, seed=0, fresh_only=True, cash_rate=0.0, tier_cap=None, flip_window=None, capital=None, size_pct=None, size_base="realised", base=None, step=None, double=False):
+def run(strategy, data_dir, symbols, start, slip, seed=0, fresh_only=True, cash_rate=0.0, tier_cap=None, flip_window=None, capital=None, size_pct=None, size_base="realised", base=None, step=None, double=False, every=None):
     cfg = dict(CFG[strategy])
+    if every is not None:        # ladder step interval in trades (default 100)
+        cfg["every"] = every
     if base is not None:         # ladder start size per position, Rs (default: the strategy's own)
         cfg["base"] = base
     if step is not None:         # ladder increment per `every` trades, Rs
@@ -239,6 +241,7 @@ def main():
     ap.add_argument("--live-universe", action="store_true", help="dhan: apply the live ND exclusions (ETFs by name, plus the permanent InvIT/REIT list in dhan-live/data/excluded_universe.json)")
     ap.add_argument("--double", action="store_true", help="ladder that DOUBLES the size every 100 trades (base * 2^(trades/100)); combine with --tier-cap")
     ap.add_argument("--fno-universe", action="store_true", help="dhan strategy on the AZ universe (current Nifty F&O stocks minus the AZ exclusions) instead of every validated symbol")
+    ap.add_argument("--every", type=int, default=None, help="ladder: add the step every N trades (default 100)")
     ap.add_argument("--all-days", action="store_true", help="az: order every flip in the 3-day window, not only the freshest day")
     a = ap.parse_args()
     data_dir = Path(a.data)
@@ -268,8 +271,8 @@ def main():
             before = len(symbols)
             symbols = [x for x in symbols if keep(x)]
             print(f"live universe filter: {before} -> {len(symbols)} symbols")
-    res = run(a.strategy, data_dir, symbols, pd.Timestamp(a.start), a.slip, fresh_only=not a.all_days, cash_rate=a.cash_rate, tier_cap=a.tier_cap, flip_window=a.flip_window, capital=a.capital, size_pct=a.size_pct, size_base=a.size_base, base=a.base, step=a.step, double=a.double)
-    out, cv, tr = summarise(res, f"{a.strategy} start={a.start} slip={a.slip} cash={a.cash_rate} cap={a.tier_cap}{' all-days' if a.all_days else ''}{f' flip-window={a.flip_window}' if a.flip_window is not None else ''}{f' capital={a.capital:.0f}' if a.capital else ''}{f' size={a.size_pct}%of-{a.size_base}' if a.size_pct else ''}{f' base={a.base:.0f}' if a.base else ''}{' live-universe' if a.live_universe else ''}{' fno-universe' if a.fno_universe else ''}{' double' if a.double else ''}{f' step={a.step:.0f}' if a.step else ''}")
+    res = run(a.strategy, data_dir, symbols, pd.Timestamp(a.start), a.slip, fresh_only=not a.all_days, cash_rate=a.cash_rate, tier_cap=a.tier_cap, flip_window=a.flip_window, capital=a.capital, size_pct=a.size_pct, size_base=a.size_base, base=a.base, step=a.step, double=a.double, every=a.every)
+    out, cv, tr = summarise(res, f"{a.strategy} start={a.start} slip={a.slip} cash={a.cash_rate} cap={a.tier_cap}{' all-days' if a.all_days else ''}{f' flip-window={a.flip_window}' if a.flip_window is not None else ''}{f' capital={a.capital:.0f}' if a.capital else ''}{f' size={a.size_pct}%of-{a.size_base}' if a.size_pct else ''}{f' base={a.base:.0f}' if a.base else ''}{' live-universe' if a.live_universe else ''}{' fno-universe' if a.fno_universe else ''}{' double' if a.double else ''}{f' every={a.every}' if a.every else ''}{f' step={a.step:.0f}' if a.step else ''}")
     print(json.dumps(out, indent=1, default=str))
     if a.out:
         cv.to_csv(a.out + "_equity.csv")
