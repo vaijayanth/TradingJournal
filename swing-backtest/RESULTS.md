@@ -69,3 +69,21 @@ Flip window 0, 2016-11-07 to 2026-11-17, 214 stocks, idle cash earns 0%, slippag
 | Rs1 Cr | 0.67% equity | 15.76% | -19.88% | 5,400 | 41.3 | 1.75 | Rs4.34 Cr | 559 | 145 |
 
 Reading: the ladder is capital-specific (Rs20k is 0.67% of Rs30L but 0.2% of Rs1 Cr, so the Rs1 Cr ladder run under-deploys: 14.9% vs 19.2%). A percentage rule gives near-identical results at both capitals (1.0%: 18.8% vs 18.5%). Low percentages leave cash idle (0% yield here), so CAGR falls as deployment falls; 1.0% matches the ladder's return (-0.4 pt at Rs30L) with a shallower drawdown (-21.0% vs -23.0%) and a higher profit factor. Equity base vs realised base: same within noise. Not yet tested: idle cash at 6%, and 1.25-1.5%.
+
+### Same test with 6% on idle cash (liquid-fund yield), flip window 0
+Files: `results/az_size6_*`. Percentages are of (start capital + realised P&L).
+
+| Start capital | Sizing | CAGR | Max DD | Closed | Win % | PF | Final | Missed (no cash) | Max pos |
+|---|---|---|---|---|---|---|---|---|---|
+| Rs30L | ladder | 20.21% | -21.32% | 3,656 | 41.2 | 1.75 | Rs1.90 Cr | 2,360 | 136 |
+| Rs30L | 0.67% | 16.77% | -17.51% | 5,751 | 41.4 | 1.75 | Rs1.42 Cr | 189 | 170 |
+| Rs30L | 1.0% | 19.87% | -19.42% | 4,363 | 42.0 | 1.78 | Rs1.85 Cr | 1,637 | 113 |
+| Rs30L | 1.25% | 20.40% | -21.94% | 3,597 | 42.0 | 1.75 | Rs1.93 Cr | 2,425 | 91 |
+| Rs30L | 1.5% | 20.79% | -22.66% | 3,083 | 41.7 | 1.75 | Rs1.99 Cr | 2,953 | 76 |
+| Rs1 Cr | ladder | 17.37% | -16.71% | 5,526 | 40.9 | 1.83 | Rs4.98 Cr | 419 | 170 |
+| Rs1 Cr | 0.67% | 16.75% | -17.64% | 5,736 | 41.5 | 1.74 | Rs4.72 Cr | 206 | 168 |
+| Rs1 Cr | 1.0% | 20.25% | -19.62% | 4,333 | 42.1 | 1.79 | Rs6.35 Cr | 1,667 | 112 |
+| Rs1 Cr | 1.25% | 20.44% | -21.12% | 3,591 | 42.0 | 1.76 | Rs6.45 Cr | 2,431 | 90 |
+| Rs1 Cr | 1.5% | 20.64% | -22.90% | 3,072 | 41.7 | 1.75 | Rs6.56 Cr | 2,965 | 75 |
+
+Reading: with idle cash earning 6%, CAGR rises with the percentage (16.8% at 0.67% to 20.8% at 1.5%) and so does the drawdown (-17.5% to -22.7%): a smooth return/risk trade-off, not a free lunch. 1.0% gives about the ladder's CAGR (19.9% vs 20.2% at Rs30L) with a shallower drawdown (-19.4% vs -21.3%). The percentage rule is scale-free (1.0%: 19.9% at Rs30L, 20.3% at Rs1 Cr) while the ladder is not (20.2% vs 17.4%).
