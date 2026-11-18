@@ -1,5 +1,26 @@
 {
- "fetched_at": "2026-11-18T19:40:57+05:30",
- "source": "mcp dhan orderbook list (18 Nov evening): no pending orders (PASHUPATI sell CANCELLED, 13 buys traded)",
- "orders": []
+ "fetched_at": "2026-11-18T20:02:19+05:30",
+ "source": "mcp dhan orderbook list after /dhan-order stage 1 (18 Nov)",
+ "orders": [
+  {
+   "order_id": "3452611187875",
+   "symbol": "PASHUPATI",
+   "side": "SELL",
+   "qty": 13,
+   "order_type": "MARKET",
+   "price": null,
+   "status": "PENDING",
+   "amo": true
+  },
+  {
+   "order_id": "2352611187870",
+   "symbol": "SHRINGARMS",
+   "side": "SELL",
+   "qty": 4,
+   "order_type": "MARKET",
+   "price": null,
+   "status": "PENDING",
+   "amo": true
+  }
+ ]
 }
