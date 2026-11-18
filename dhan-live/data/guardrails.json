@@ -1,22 +1,32 @@
 {
- "generated_at": "2026-11-17T20:55:13+05:30",
+ "generated_at": "2026-11-18T15:28:31+05:30",
  "broker": "dhan",
  "market_data_date": "2026-11-17",
- "signals_generated_at": "2026-11-17T15:25:10.554221+00:00",
- "status": "WARN",
- "global_block": false,
+ "signals_generated_at": "2026-11-18T09:58:30.069380+00:00",
+ "status": "BLOCK",
+ "global_block": true,
  "counts": {
-  "block": 0,
-  "warn": 5,
+  "block": 2,
+  "warn": 3,
   "info": 0
  },
- "per_symbol_blocks": {},
+ "per_symbol_blocks": {
+  "PASHUPATI": [
+   "I2: PASHUPATI: signal qty/avg 13@43.62 differs from holdings 13@0.0"
+  ]
+ },
  "findings": [
   {
    "id": "F5",
-   "level": "WARN",
+   "level": "BLOCK",
    "symbol": null,
-   "msg": "the cross-check flagged 3 of 15 signals (advisory only, the backtester signal stands and they are not blocked): 360ONE, KODYTECH, KPRMILL"
+   "msg": "the cross-check disagrees with 1 of 4 signals - prices are suspect (a partial same-day bar while the market is open, a hole in the price history, or a bad feed). Do not order until the close-of-day data is published and the refresh re-run."
+  },
+  {
+   "id": "I2",
+   "level": "BLOCK",
+   "symbol": "PASHUPATI",
+   "msg": "PASHUPATI: signal qty/avg 13@43.62 differs from holdings 13@0.0"
   },
   {
    "id": "I3",
@@ -27,14 +37,8 @@
   {
    "id": "I3",
    "level": "WARN",
-   "symbol": "MATRIMONY",
-   "msg": "MATRIMONY: trade log says 0, Dhan holdings say 1. Holdings are used; it usually clears after the next refresh (a recent sale or buy not yet settled)."
-  },
-  {
-   "id": "I3",
-   "level": "WARN",
    "symbol": null,
-   "msg": "8 stocks were bought in the last 3 days and are not in Dhan holdings yet (settlement timing); positions and P&L exclude them until holdings catch up: SHREEPUSHK (1->2), BHARTIARTL (0->1), UNIONBANK (0->9), HINDOILEXP (0->9), RKFORGE (0->2), LICHSGFIN (0->3), ABDL (0->2), SANATHAN (0->3)"
+   "msg": "13 stocks were bought in the last 3 days and are not in Dhan holdings yet (settlement timing); positions and P&L exclude them until holdings catch up: SHRINGARMS (4->5), CYIENT (2->3), CORONA (1->2), 360ONE (0->1), AKCAPIT (0->1), KTKBANK (0->5), HONASA (0->3), KDDL (0->1), MAHABANK (0->20), TCPLPACK (0->1), KPRMILL (0->1), AARTIPHARM (0->1) ..."
   },
   {
    "id": "P3",

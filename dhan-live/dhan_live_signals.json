@@ -1,21 +1,21 @@
 {
-  "generated_at": "2026-11-17T15:25:10.554221+00:00",
+  "generated_at": "2026-11-18T09:58:30.069380+00:00",
   "market_data_date": "2026-11-17",
   "source_generated_at": {
-    "market_screens": "2026-11-17T14:54:15.397515+00:00",
-    "supertrend": "2026-11-17T14:54:23.716267+00:00"
+    "market_screens": "2026-11-17T22:37:54.353738+00:00",
+    "supertrend": "2026-11-17T22:38:00.120793+00:00"
   },
   "sizing": {
     "closed_trades_count": 5,
     "base_tier_rs": 1000,
-    "total_positions_ever_opened": 111,
+    "total_positions_ever_opened": 121,
     "realized_pl_rs": -402.6,
-    "unrealized_pl_rs": 4760.37,
-    "combined_pl_rs": 4357.77,
+    "unrealized_pl_rs": 4737.91,
+    "combined_pl_rs": 4335.31,
     "effective_tier_rs": 2000,
     "doubled": true
   },
-  "dh252_position_count": 106,
+  "dh252_position_count": 116,
   "option_hedge_portfolio": [
     "BANKINDIA",
     "BPCL",
@@ -33,17 +33,20 @@
     "PANACHE",
     "SHREMINVIT"
   ],
-  "dhan_holdings_count_total": 111,
-  "dhan_holdings_out_of_scope": 12,
+  "dhan_holdings_count_total": 117,
+  "dhan_holdings_out_of_scope": 11,
   "no_data": [],
   "exited_outside_tracking": [
-    "ABDL",
-    "BHARTIARTL",
-    "HINDOILEXP",
-    "LICHSGFIN",
-    "RKFORGE",
-    "SANATHAN",
-    "UNIONBANK"
+    "360ONE",
+    "AARTIPHARM",
+    "AKCAPIT",
+    "AVTNPL",
+    "HONASA",
+    "KDDL",
+    "KPRMILL",
+    "KTKBANK",
+    "MAHABANK",
+    "TCPLPACK"
   ],
   "rules": {
     "add_trigger_pct": -6.0,
@@ -201,6 +204,13 @@
       "realised": -478.83,
       "invested": 177850.02,
       "equity": 2004253.09
+    },
+    {
+      "date": "2026-11-18",
+      "pnl": 3880.57,
+      "realised": -478.83,
+      "invested": 203206.62,
+      "equity": 2003880.56
     }
   ],
   "closed_trades": [
@@ -266,11 +276,7 @@
     }
   ],
   "hot_sectors": {
-    "by_52wh_entries": [
-      "Consumer Cyclical",
-      "Financial Services",
-      "Healthcare"
-    ],
+    "by_52wh_entries": [],
     "by_supertrend_turns": [
       "Consumer Cyclical",
       "Financial Services",
@@ -278,114 +284,6 @@
     ]
   },
   "entries": [
-    {
-      "symbol": "360ONE",
-      "close": 1202.85,
-      "high_52w": 1202.85,
-      "pct_from_high": 0.0,
-      "date": "2026-11-17",
-      "supertrend_color": "green",
-      "flipped_today": false,
-      "recent_bullish_flip_days_ago": null,
-      "qty_to_buy": 1,
-      "sector": "Financial Services",
-      "flip_label": "GREEN 9d",
-      "flip_date": "2026-11-04",
-      "sector_52wh_count": 4,
-      "sector_turn_count": 45,
-      "hot_52wh": true,
-      "hot_turn": true
-    },
-    {
-      "symbol": "AARTIPHARM",
-      "close": 1015.9,
-      "high_52w": 1015.9,
-      "pct_from_high": 0.0,
-      "date": "2026-11-17",
-      "supertrend_color": "green",
-      "flipped_today": false,
-      "recent_bullish_flip_days_ago": null,
-      "qty_to_buy": 1,
-      "sector": "Healthcare",
-      "flip_label": "GREEN 13d",
-      "flip_date": "2026-10-29",
-      "sector_52wh_count": 1,
-      "sector_turn_count": 20,
-      "hot_52wh": true,
-      "hot_turn": false
-    },
-    {
-      "symbol": "AKCAPIT",
-      "close": 2001.1,
-      "high_52w": 2001.1,
-      "pct_from_high": 0.0,
-      "date": "2026-11-17",
-      "supertrend_color": "green",
-      "flipped_today": false,
-      "recent_bullish_flip_days_ago": 4,
-      "qty_to_buy": 1,
-      "sector": "Financial Services",
-      "flip_label": "Flipped to GREEN (4)",
-      "flip_date": "2026-11-11",
-      "sector_52wh_count": 4,
-      "sector_turn_count": 45,
-      "hot_52wh": true,
-      "hot_turn": true
-    },
-    {
-      "symbol": "AVTNPL",
-      "close": 101.22,
-      "high_52w": 101.22,
-      "pct_from_high": 0.0,
-      "date": "2026-11-17",
-      "supertrend_color": "green",
-      "flipped_today": false,
-      "recent_bullish_flip_days_ago": null,
-      "qty_to_buy": 19,
-      "sector": "Basic Materials",
-      "flip_label": "GREEN 91d",
-      "flip_date": "2026-04-15",
-      "sector_52wh_count": 1,
-      "sector_turn_count": 36,
-      "hot_52wh": false,
-      "hot_turn": false
-    },
-    {
-      "symbol": "HONASA",
-      "close": 517.8,
-      "high_52w": 517.8,
-      "pct_from_high": 0.0,
-      "date": "2026-11-17",
-      "supertrend_color": "green",
-      "flipped_today": false,
-      "recent_bullish_flip_days_ago": null,
-      "qty_to_buy": 3,
-      "sector": "Consumer Defensive",
-      "flip_label": "GREEN 29d",
-      "flip_date": "2026-10-06",
-      "sector_52wh_count": 1,
-      "sector_turn_count": 18,
-      "hot_52wh": false,
-      "hot_turn": false
-    },
-    {
-      "symbol": "KDDL",
-      "close": 4560.4,
-      "high_52w": 4560.4,
-      "pct_from_high": 0.0,
-      "date": "2026-11-17",
-      "supertrend_color": "green",
-      "flipped_today": false,
-      "recent_bullish_flip_days_ago": null,
-      "qty_to_buy": 1,
-      "sector": "Consumer Cyclical",
-      "flip_label": "GREEN 8d",
-      "flip_date": "2026-11-05",
-      "sector_52wh_count": 3,
-      "sector_turn_count": 54,
-      "hot_52wh": true,
-      "hot_turn": true
-    },
     {
       "symbol": "KODYTECH",
       "close": 1649.4,
@@ -403,78 +301,6 @@
       "sector_turn_count": 0,
       "hot_52wh": false,
       "hot_turn": false
-    },
-    {
-      "symbol": "KPRMILL",
-      "close": 1217.1,
-      "high_52w": 1217.1,
-      "pct_from_high": 0.0,
-      "date": "2026-11-17",
-      "supertrend_color": "green",
-      "flipped_today": false,
-      "recent_bullish_flip_days_ago": null,
-      "qty_to_buy": 1,
-      "sector": "Consumer Cyclical",
-      "flip_label": "GREEN 11d",
-      "flip_date": "2026-11-02",
-      "sector_52wh_count": 3,
-      "sector_turn_count": 54,
-      "hot_52wh": true,
-      "hot_turn": true
-    },
-    {
-      "symbol": "KTKBANK",
-      "close": 368.8,
-      "high_52w": 368.8,
-      "pct_from_high": 0.0,
-      "date": "2026-11-17",
-      "supertrend_color": "green",
-      "flipped_today": false,
-      "recent_bullish_flip_days_ago": 4,
-      "qty_to_buy": 5,
-      "sector": "Financial Services",
-      "flip_label": "Flipped to GREEN (4)",
-      "flip_date": "2026-11-11",
-      "sector_52wh_count": 4,
-      "sector_turn_count": 45,
-      "hot_52wh": true,
-      "hot_turn": true
-    },
-    {
-      "symbol": "MAHABANK",
-      "close": 95.99,
-      "high_52w": 95.99,
-      "pct_from_high": 0.0,
-      "date": "2026-11-17",
-      "supertrend_color": "green",
-      "flipped_today": false,
-      "recent_bullish_flip_days_ago": null,
-      "qty_to_buy": 20,
-      "sector": "Financial Services",
-      "flip_label": "GREEN 8d",
-      "flip_date": "2026-11-05",
-      "sector_52wh_count": 4,
-      "sector_turn_count": 45,
-      "hot_52wh": true,
-      "hot_turn": true
-    },
-    {
-      "symbol": "TCPLPACK",
-      "close": 4562.8,
-      "high_52w": 4562.8,
-      "pct_from_high": 0.0,
-      "date": "2026-11-17",
-      "supertrend_color": "green",
-      "flipped_today": false,
-      "recent_bullish_flip_days_ago": null,
-      "qty_to_buy": 1,
-      "sector": "Consumer Cyclical",
-      "flip_label": "GREEN 9d",
-      "flip_date": "2026-11-04",
-      "sector_52wh_count": 3,
-      "sector_turn_count": 54,
-      "hot_52wh": true,
-      "hot_turn": true
     }
   ],
   "exits": [
@@ -482,92 +308,90 @@
       "entry_date": "2026-10-26",
       "symbol": "PASHUPATI",
       "qty": 13,
-      "avg_cost": 33.3,
+      "avg_cost": 43.62,
       "cmp": 31.69,
-      "pl_pct": -4.8348,
-      "notional_pl_rs": -20.93,
+      "pl_pct": -27.3498,
+      "notional_pl_rs": -155.09,
       "supertrend_color": "red",
       "flip_label": "RED 8d",
       "flip_date": "2026-11-05",
       "pct_from_52w_high": -78.69,
       "num_adds": 0,
-      "age_days": 22,
+      "age_days": 23,
       "rsi14": 25.6,
       "sector": "Consumer Cyclical",
       "sma200": 36.02,
-      "sma50": 36.12,
-      "sma_asof": "2026-11-17"
+      "sma50": 36.06,
+      "sma_asof": "2026-11-18"
     }
   ],
   "addons": [
     {
-      "entry_date": "2026-11-09",
-      "symbol": "CORONA",
-      "qty": 1,
-      "avg_cost": 2524.5,
-      "cmp": 2275.6,
-      "pl_pct": -9.8594,
-      "notional_pl_rs": -248.9,
-      "supertrend_color": "green",
-      "flip_label": "GREEN 14d",
-      "flip_date": "2026-10-28",
-      "pct_from_52w_high": -10.39,
-      "num_adds": 0,
-      "age_days": 8,
-      "rsi14": 53.4,
-      "sector": "Healthcare",
-      "sma200": 1872.65,
-      "sma50": 2155.62,
-      "sma_asof": "2026-11-17",
-      "add_qty": 1,
-      "cooldown_days_since_last_buy": 8
-    },
-    {
-      "entry_date": "2026-10-26",
-      "symbol": "CYIENT",
+      "entry_date": "2026-11-11",
+      "symbol": "GUFICBIO",
       "qty": 2,
-      "avg_cost": 1171.2,
-      "cmp": 1086.1,
-      "pl_pct": -7.2661,
-      "notional_pl_rs": -170.2,
+      "avg_cost": 480.95,
+      "cmp": 439.85,
+      "pl_pct": -8.5456,
+      "notional_pl_rs": -82.2,
       "supertrend_color": "green",
-      "flip_label": "GREEN 60d",
-      "flip_date": "2026-08-20",
-      "pct_from_52w_high": -11.72,
-      "num_adds": 1,
-      "age_days": 22,
-      "rsi14": 43.1,
-      "sector": "Industrials",
-      "sma200": 963.61,
-      "sma50": 1118.16,
-      "sma_asof": "2026-11-17",
+      "flip_label": "Flipped to GREEN (5)",
+      "flip_date": "2026-11-09",
+      "pct_from_52w_high": -9.68,
+      "num_adds": 0,
+      "age_days": 7,
+      "rsi14": 51.9,
+      "sector": "Healthcare",
+      "sma200": 360.58,
+      "sma50": 426.46,
+      "sma_asof": "2026-11-18",
       "add_qty": 1,
-      "cooldown_days_since_last_buy": 8
+      "cooldown_days_since_last_buy": 7
     },
     {
-      "entry_date": "2026-10-21",
-      "symbol": "SHRINGARMS",
-      "qty": 4,
-      "avg_cost": 302.78,
-      "cmp": 284.4,
-      "pl_pct": -6.0704,
-      "notional_pl_rs": -73.52,
+      "entry_date": "2026-11-11",
+      "symbol": "TEXINFRA",
+      "qty": 7,
+      "avg_cost": 131.18,
+      "cmp": 120.34,
+      "pl_pct": -8.2635,
+      "notional_pl_rs": -75.88,
       "supertrend_color": "green",
-      "flip_label": "GREEN 25d",
-      "flip_date": "2026-10-12",
-      "pct_from_52w_high": -10.9,
-      "num_adds": 1,
-      "age_days": 27,
-      "rsi14": 48.7,
-      "sector": "Consumer Cyclical",
-      "sma200": 225.66,
-      "sma50": 256.48,
-      "sma_asof": "2026-11-17",
+      "flip_label": "Flipped to GREEN (5)",
+      "flip_date": "2026-11-09",
+      "pct_from_52w_high": -8.28,
+      "num_adds": 0,
+      "age_days": 7,
+      "rsi14": 48.6,
+      "sector": "Real Estate",
+      "sma200": 106.47,
+      "sma50": 119.78,
+      "sma_asof": "2026-11-18",
       "add_qty": 1,
-      "cooldown_days_since_last_buy": 19
+      "cooldown_days_since_last_buy": 7
     }
   ],
   "holds": [
+    {
+      "entry_date": "2026-11-17",
+      "symbol": "ABDL",
+      "qty": 2,
+      "avg_cost": 791.8,
+      "cmp": 791.65,
+      "pl_pct": -0.0189,
+      "notional_pl_rs": -0.3,
+      "supertrend_color": "green",
+      "flip_label": "GREEN 41d",
+      "flip_date": "2026-09-17",
+      "pct_from_52w_high": 0.0,
+      "num_adds": 0,
+      "age_days": 1,
+      "rsi14": 73.2,
+      "sector": "Consumer Defensive",
+      "sma200": 589.78,
+      "sma50": 695.15,
+      "sma_asof": "2026-11-18"
+    },
     {
       "entry_date": "2026-10-28",
       "symbol": "ACUTAAS",
@@ -581,12 +405,12 @@
       "flip_date": "2026-10-27",
       "pct_from_52w_high": -2.38,
       "num_adds": 0,
-      "age_days": 20,
+      "age_days": 21,
       "rsi14": 62.5,
       "sector": "Basic Materials",
-      "sma200": 2940.28,
-      "sma50": 3431.38,
-      "sma_asof": "2026-11-17"
+      "sma200": 2952.02,
+      "sma50": 3447.36,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-09",
@@ -601,12 +425,12 @@
       "flip_date": "2026-09-09",
       "pct_from_52w_high": -1.32,
       "num_adds": 0,
-      "age_days": 8,
+      "age_days": 9,
       "rsi14": 60.7,
       "sector": "Industrials",
-      "sma200": 1680.59,
-      "sma50": 1792.58,
-      "sma_asof": "2026-11-17"
+      "sma200": 1683.59,
+      "sma50": 1796.61,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-16",
@@ -621,12 +445,12 @@
       "flip_date": "2026-08-03",
       "pct_from_52w_high": 0.0,
       "num_adds": 0,
-      "age_days": 1,
+      "age_days": 2,
       "rsi14": 73.1,
       "sector": "Industrials",
-      "sma200": 720.08,
-      "sma50": 812.6,
-      "sma_asof": "2026-11-17"
+      "sma200": 721.68,
+      "sma50": 818.83,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-03",
@@ -641,12 +465,12 @@
       "flip_date": "2026-10-28",
       "pct_from_52w_high": -7.11,
       "num_adds": 0,
-      "age_days": 14,
+      "age_days": 15,
       "rsi14": 54.3,
       "sector": "Healthcare",
-      "sma200": 1155.47,
-      "sma50": 1382.21,
-      "sma_asof": "2026-11-17"
+      "sma200": 1158.27,
+      "sma50": 1382.69,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-16",
@@ -661,12 +485,12 @@
       "flip_date": "2026-11-05",
       "pct_from_52w_high": 0.0,
       "num_adds": 0,
-      "age_days": 1,
+      "age_days": 2,
       "rsi14": 67.7,
       "sector": "Healthcare",
-      "sma200": 149.46,
-      "sma50": 188.89,
-      "sma_asof": "2026-11-17"
+      "sma200": 150.14,
+      "sma50": 189.84,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-10-26",
@@ -681,12 +505,12 @@
       "flip_date": "2026-10-23",
       "pct_from_52w_high": -0.5,
       "num_adds": 0,
-      "age_days": 22,
+      "age_days": 23,
       "rsi14": 72.0,
       "sector": "Financial Services",
-      "sma200": 1908.6,
-      "sma50": 2216.09,
-      "sma_asof": "2026-11-17"
+      "sma200": 1913.08,
+      "sma50": 2219.5,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-11",
@@ -701,12 +525,12 @@
       "flip_date": "2026-11-04",
       "pct_from_52w_high": -3.54,
       "num_adds": 0,
-      "age_days": 6,
+      "age_days": 7,
       "rsi14": 60.6,
       "sector": "Healthcare",
-      "sma200": 782.91,
-      "sma50": 885.14,
-      "sma_asof": "2026-11-17"
+      "sma200": 784.44,
+      "sma50": 884.44,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-09",
@@ -721,12 +545,12 @@
       "flip_date": "2026-11-04",
       "pct_from_52w_high": -0.61,
       "num_adds": 0,
-      "age_days": 8,
+      "age_days": 9,
       "rsi14": 79.3,
       "sector": "Healthcare",
-      "sma200": 787.52,
-      "sma50": 845.69,
-      "sma_asof": "2026-11-17"
+      "sma200": 788.92,
+      "sma50": 850.49,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-16",
@@ -741,12 +565,12 @@
       "flip_date": "2026-11-04",
       "pct_from_52w_high": -3.63,
       "num_adds": 0,
-      "age_days": 1,
+      "age_days": 2,
       "rsi14": 58.9,
       "sector": "Industrials",
-      "sma200": 344.04,
-      "sma50": 409.83,
-      "sma_asof": "2026-11-17"
+      "sma200": 345.16,
+      "sma50": 411.11,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-16",
@@ -761,12 +585,12 @@
       "flip_date": "2026-11-03",
       "pct_from_52w_high": 0.0,
       "num_adds": 0,
-      "age_days": 1,
+      "age_days": 2,
       "rsi14": 83.8,
       "sector": "Consumer Cyclical",
-      "sma200": 907.86,
-      "sma50": 969.06,
-      "sma_asof": "2026-11-17"
+      "sma200": 908.94,
+      "sma50": 972.98,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-02",
@@ -781,12 +605,12 @@
       "flip_date": "2026-10-27",
       "pct_from_52w_high": -1.87,
       "num_adds": 0,
-      "age_days": 15,
+      "age_days": 16,
       "rsi14": 69.8,
       "sector": "Consumer Cyclical",
-      "sma200": 1148.76,
-      "sma50": 1599.87,
-      "sma_asof": "2026-11-17"
+      "sma200": 1155.18,
+      "sma50": 1605.19,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-09",
@@ -801,12 +625,32 @@
       "flip_date": "2026-11-05",
       "pct_from_52w_high": -2.93,
       "num_adds": 0,
-      "age_days": 8,
+      "age_days": 9,
       "rsi14": 60.8,
       "sector": "Healthcare",
-      "sma200": 1490.95,
-      "sma50": 1693.33,
-      "sma_asof": "2026-11-17"
+      "sma200": 1494.28,
+      "sma50": 1696.58,
+      "sma_asof": "2026-11-18"
+    },
+    {
+      "entry_date": "2026-11-17",
+      "symbol": "BHARTIARTL",
+      "qty": 1,
+      "avg_cost": 2153.4,
+      "cmp": 2138.3,
+      "pl_pct": -0.7012,
+      "notional_pl_rs": -15.1,
+      "supertrend_color": "green",
+      "flip_label": "GREEN 22d",
+      "flip_date": "2026-10-15",
+      "pct_from_52w_high": -0.71,
+      "num_adds": 0,
+      "age_days": 1,
+      "rsi14": 70.5,
+      "sector": "Communication Services",
+      "sma200": 1893.65,
+      "sma50": 1902.61,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-02",
@@ -821,12 +665,52 @@
       "flip_date": "2026-10-15",
       "pct_from_52w_high": -2.76,
       "num_adds": 0,
-      "age_days": 15,
+      "age_days": 16,
       "rsi14": 58.1,
       "sector": "Technology",
-      "sma200": 1559.99,
-      "sma50": 1911.24,
-      "sma_asof": "2026-11-17"
+      "sma200": 1562.06,
+      "sma50": 1912.81,
+      "sma_asof": "2026-11-18"
+    },
+    {
+      "entry_date": "2026-11-09",
+      "symbol": "CORONA",
+      "qty": 1,
+      "avg_cost": 2524.5,
+      "cmp": 2275.6,
+      "pl_pct": -9.8594,
+      "notional_pl_rs": -248.9,
+      "supertrend_color": "green",
+      "flip_label": "GREEN 14d",
+      "flip_date": "2026-10-28",
+      "pct_from_52w_high": -10.39,
+      "num_adds": 1,
+      "age_days": 9,
+      "rsi14": 53.4,
+      "sector": "Healthcare",
+      "sma200": 1876.89,
+      "sma50": 2158.12,
+      "sma_asof": "2026-11-18"
+    },
+    {
+      "entry_date": "2026-10-26",
+      "symbol": "CYIENT",
+      "qty": 2,
+      "avg_cost": 1171.2,
+      "cmp": 1086.1,
+      "pl_pct": -7.2661,
+      "notional_pl_rs": -170.2,
+      "supertrend_color": "green",
+      "flip_label": "GREEN 60d",
+      "flip_date": "2026-08-20",
+      "pct_from_52w_high": -11.72,
+      "num_adds": 2,
+      "age_days": 23,
+      "rsi14": 43.1,
+      "sector": "Industrials",
+      "sma200": 963.64,
+      "sma50": 1117.78,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-16",
@@ -841,12 +725,12 @@
       "flip_date": "2026-11-09",
       "pct_from_52w_high": -2.09,
       "num_adds": 0,
-      "age_days": 1,
+      "age_days": 2,
       "rsi14": 65.2,
       "sector": "Financial Services",
-      "sma200": 192.09,
-      "sma50": 210.42,
-      "sma_asof": "2026-11-17"
+      "sma200": 192.32,
+      "sma50": 210.53,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-02",
@@ -861,12 +745,12 @@
       "flip_date": "2026-10-30",
       "pct_from_52w_high": -3.59,
       "num_adds": 0,
-      "age_days": 15,
+      "age_days": 16,
       "rsi14": 68.8,
       "sector": "Healthcare",
-      "sma200": 7559.32,
-      "sma50": 9663.2,
-      "sma_asof": "2026-11-17"
+      "sma200": 7584.77,
+      "sma50": 9700.2,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-11",
@@ -881,12 +765,12 @@
       "flip_date": "2026-09-21",
       "pct_from_52w_high": 0.0,
       "num_adds": 0,
-      "age_days": 6,
+      "age_days": 7,
       "rsi14": 71.9,
       "sector": "Healthcare",
-      "sma200": 1255.5,
-      "sma50": 1249.79,
-      "sma_asof": "2026-11-17"
+      "sma200": 1256.33,
+      "sma50": 1254.68,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-09",
@@ -901,12 +785,12 @@
       "flip_date": "2026-11-03",
       "pct_from_52w_high": -0.94,
       "num_adds": 0,
-      "age_days": 8,
+      "age_days": 9,
       "rsi14": 74.1,
       "sector": "Healthcare",
-      "sma200": 1760.18,
-      "sma50": 1966.34,
-      "sma_asof": "2026-11-17"
+      "sma200": 1764.19,
+      "sma50": 1975.91,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-09",
@@ -921,12 +805,12 @@
       "flip_date": "2026-11-04",
       "pct_from_52w_high": -7.01,
       "num_adds": 0,
-      "age_days": 8,
+      "age_days": 9,
       "rsi14": 65.8,
       "sector": "Healthcare",
-      "sma200": 1345.19,
-      "sma50": 1732.23,
-      "sma_asof": "2026-11-17"
+      "sma200": 1349.26,
+      "sma50": 1734.75,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-16",
@@ -941,12 +825,12 @@
       "flip_date": "2026-11-12",
       "pct_from_52w_high": 0.0,
       "num_adds": 0,
-      "age_days": 1,
+      "age_days": 2,
       "rsi14": 68.1,
       "sector": "Financial Services",
-      "sma200": 33.46,
-      "sma50": 41.96,
-      "sma_asof": "2026-11-17"
+      "sma200": 33.55,
+      "sma50": 42.05,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-02",
@@ -961,12 +845,12 @@
       "flip_date": "2026-10-30",
       "pct_from_52w_high": 0.0,
       "num_adds": 0,
-      "age_days": 15,
+      "age_days": 16,
       "rsi14": 72.8,
       "sector": "Consumer Cyclical",
-      "sma200": 284.59,
-      "sma50": 332.52,
-      "sma_asof": "2026-11-17"
+      "sma200": 285.12,
+      "sma50": 333.33,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-11",
@@ -981,12 +865,12 @@
       "flip_date": "2026-11-02",
       "pct_from_52w_high": -1.53,
       "num_adds": 0,
-      "age_days": 6,
+      "age_days": 7,
       "rsi14": 66.5,
       "sector": "Utilities",
-      "sma200": 167.13,
-      "sma50": 173.71,
-      "sma_asof": "2026-11-17"
+      "sma200": 167.28,
+      "sma50": 174.01,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-10-28",
@@ -1001,12 +885,12 @@
       "flip_date": "2026-08-26",
       "pct_from_52w_high": 0.0,
       "num_adds": 0,
-      "age_days": 20,
+      "age_days": 21,
       "rsi14": 82.6,
       "sector": "Financial Services",
-      "sma200": 483.22,
-      "sma50": 700.43,
-      "sma_asof": "2026-11-17"
+      "sma200": 485.91,
+      "sma50": 705.48,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-11",
@@ -1021,12 +905,12 @@
       "flip_date": "2026-04-17",
       "pct_from_52w_high": -4.06,
       "num_adds": 0,
-      "age_days": 6,
+      "age_days": 7,
       "rsi14": 58.2,
       "sector": "Healthcare",
-      "sma200": 2357.77,
-      "sma50": 3024.82,
-      "sma_asof": "2026-11-17"
+      "sma200": 2365.51,
+      "sma50": 3031.28,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-11",
@@ -1041,12 +925,12 @@
       "flip_date": "2026-11-02",
       "pct_from_52w_high": -2.29,
       "num_adds": 0,
-      "age_days": 6,
+      "age_days": 7,
       "rsi14": 66.7,
       "sector": "Healthcare",
-      "sma200": 2254.89,
-      "sma50": 2389.47,
-      "sma_asof": "2026-11-17"
+      "sma200": 2258.38,
+      "sma50": 2393.62,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-16",
@@ -1061,12 +945,12 @@
       "flip_date": "2026-10-15",
       "pct_from_52w_high": 0.0,
       "num_adds": 0,
-      "age_days": 1,
+      "age_days": 2,
       "rsi14": 71.5,
       "sector": "Financial Services",
-      "sma200": 189.79,
-      "sma50": 196.74,
-      "sma_asof": "2026-11-17"
+      "sma200": 190.07,
+      "sma50": 197.41,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-09",
@@ -1081,32 +965,32 @@
       "flip_date": "2026-10-12",
       "pct_from_52w_high": 0.0,
       "num_adds": 0,
-      "age_days": 8,
+      "age_days": 9,
       "rsi14": 66.3,
       "sector": "Basic Materials",
-      "sma200": 5789.45,
-      "sma50": 7029.76,
-      "sma_asof": "2026-11-17"
+      "sma200": 5813.95,
+      "sma50": 7044.49,
+      "sma_asof": "2026-11-18"
     },
     {
-      "entry_date": "2026-11-11",
-      "symbol": "GUFICBIO",
-      "qty": 2,
-      "avg_cost": 480.95,
-      "cmp": 439.85,
-      "pl_pct": -8.5456,
-      "notional_pl_rs": -82.2,
+      "entry_date": "2026-11-17",
+      "symbol": "HINDOILEXP",
+      "qty": 9,
+      "avg_cost": 207.38,
+      "cmp": 222.29,
+      "pl_pct": 7.1897,
+      "notional_pl_rs": 134.19,
       "supertrend_color": "green",
-      "flip_label": "Flipped to GREEN (5)",
-      "flip_date": "2026-11-09",
-      "pct_from_52w_high": -9.68,
+      "flip_label": "Flipped to GREEN (4)",
+      "flip_date": "2026-11-11",
+      "pct_from_52w_high": 0.0,
       "num_adds": 0,
-      "age_days": 6,
-      "rsi14": 51.9,
-      "sector": "Healthcare",
-      "sma200": 360.01,
-      "sma50": 426.78,
-      "sma_asof": "2026-11-17"
+      "age_days": 1,
+      "rsi14": 82.2,
+      "sector": "Energy",
+      "sma200": 159.19,
+      "sma50": 173.56,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-11",
@@ -1121,12 +1005,12 @@
       "flip_date": "2026-10-07",
       "pct_from_52w_high": 0.0,
       "num_adds": 0,
-      "age_days": 6,
+      "age_days": 7,
       "rsi14": 76.3,
       "sector": "Financial Services",
-      "sma200": 1362.06,
-      "sma50": 1400.77,
-      "sma_asof": "2026-11-17"
+      "sma200": 1363.34,
+      "sma50": 1404.15,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-10-26",
@@ -1141,12 +1025,12 @@
       "flip_date": "2026-10-22",
       "pct_from_52w_high": 0.0,
       "num_adds": 0,
-      "age_days": 22,
+      "age_days": 23,
       "rsi14": 79.3,
       "sector": "Basic Materials",
-      "sma200": 344.95,
-      "sma50": 351.15,
-      "sma_asof": "2026-11-17"
+      "sma200": 345.69,
+      "sma50": 353.51,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-03",
@@ -1161,12 +1045,12 @@
       "flip_date": "2026-08-03",
       "pct_from_52w_high": -2.62,
       "num_adds": 0,
-      "age_days": 14,
+      "age_days": 15,
       "rsi14": 62.8,
       "sector": "Healthcare",
-      "sma200": 529.69,
-      "sma50": 600.77,
-      "sma_asof": "2026-11-17"
+      "sma200": 530.59,
+      "sma50": 601.88,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-10-27",
@@ -1181,12 +1065,12 @@
       "flip_date": "2026-04-15",
       "pct_from_52w_high": 0.0,
       "num_adds": 0,
-      "age_days": 21,
+      "age_days": 22,
       "rsi14": 76.4,
       "sector": "Consumer Cyclical",
-      "sma200": 702.05,
-      "sma50": 769.74,
-      "sma_asof": "2026-11-17"
+      "sma200": 703.2,
+      "sma50": 772.6,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-10-21",
@@ -1201,12 +1085,12 @@
       "flip_date": "2026-10-13",
       "pct_from_52w_high": 0.0,
       "num_adds": 1,
-      "age_days": 27,
+      "age_days": 28,
       "rsi14": 69.8,
       "sector": "Financial Services",
-      "sma200": 315.44,
-      "sma50": 344.72,
-      "sma_asof": "2026-11-17"
+      "sma200": 316.03,
+      "sma50": 345.41,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-09",
@@ -1221,12 +1105,12 @@
       "flip_date": "2026-06-22",
       "pct_from_52w_high": 0.0,
       "num_adds": 0,
-      "age_days": 8,
+      "age_days": 9,
       "rsi14": 66.3,
       "sector": "Industrials",
-      "sma200": 462.43,
-      "sma50": 626.46,
-      "sma_asof": "2026-11-17"
+      "sma200": 464.52,
+      "sma50": 628.55,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-10-30",
@@ -1241,12 +1125,12 @@
       "flip_date": "2026-10-06",
       "pct_from_52w_high": 0.0,
       "num_adds": 0,
-      "age_days": 18,
+      "age_days": 19,
       "rsi14": 77.0,
       "sector": "Financial Services",
-      "sma200": 403.63,
-      "sma50": 438.42,
-      "sma_asof": "2026-11-17"
+      "sma200": 403.99,
+      "sma50": 439.89,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-16",
@@ -1261,7 +1145,7 @@
       "flip_date": "2026-11-12",
       "pct_from_52w_high": 0.0,
       "num_adds": 0,
-      "age_days": 1,
+      "age_days": 2,
       "rsi14": 69.8,
       "sector": "Healthcare"
     },
@@ -1278,7 +1162,7 @@
       "flip_date": "2026-09-21",
       "pct_from_52w_high": -0.05,
       "num_adds": 0,
-      "age_days": 6,
+      "age_days": 7,
       "rsi14": 63.1,
       "sector": "Healthcare"
     },
@@ -1295,12 +1179,12 @@
       "flip_date": "2026-10-14",
       "pct_from_52w_high": -2.64,
       "num_adds": 0,
-      "age_days": 27,
+      "age_days": 28,
       "rsi14": 63.9,
       "sector": "Basic Materials",
-      "sma200": 150.83,
-      "sma50": 204.35,
-      "sma_asof": "2026-11-17"
+      "sma200": 151.56,
+      "sma50": 205.47,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-10-21",
@@ -1315,12 +1199,12 @@
       "flip_date": "2026-07-20",
       "pct_from_52w_high": -9.59,
       "num_adds": 0,
-      "age_days": 27,
+      "age_days": 28,
       "rsi14": 47.5,
       "sector": "Consumer Cyclical",
-      "sma200": 211.6,
-      "sma50": 264.38,
-      "sma_asof": "2026-11-17"
+      "sma200": 212.07,
+      "sma50": 265.88,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-10-28",
@@ -1335,12 +1219,12 @@
       "flip_date": "2026-04-08",
       "pct_from_52w_high": -4.73,
       "num_adds": 0,
-      "age_days": 20,
+      "age_days": 21,
       "rsi14": 57.5,
       "sector": "Healthcare",
-      "sma200": 1521.34,
-      "sma50": 2090.95,
-      "sma_asof": "2026-11-17"
+      "sma200": 1527.9,
+      "sma50": 2100.13,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-09",
@@ -1355,12 +1239,12 @@
       "flip_date": "2026-10-28",
       "pct_from_52w_high": 0.0,
       "num_adds": 0,
-      "age_days": 8,
+      "age_days": 9,
       "rsi14": 67.2,
       "sector": "Healthcare",
-      "sma200": 564.89,
-      "sma50": 681.31,
-      "sma_asof": "2026-11-17"
+      "sma200": 566.43,
+      "sma50": 682.5,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-11",
@@ -1375,12 +1259,32 @@
       "flip_date": "2026-11-05",
       "pct_from_52w_high": -4.04,
       "num_adds": 0,
-      "age_days": 6,
+      "age_days": 7,
       "rsi14": 51.3,
       "sector": "Technology",
-      "sma200": 1585.99,
-      "sma50": 1700.07,
-      "sma_asof": "2026-11-17"
+      "sma200": 1587.4,
+      "sma50": 1700.47,
+      "sma_asof": "2026-11-18"
+    },
+    {
+      "entry_date": "2026-11-17",
+      "symbol": "LICHSGFIN",
+      "qty": 3,
+      "avg_cost": 603.6,
+      "cmp": 622.5,
+      "pl_pct": 3.1312,
+      "notional_pl_rs": 56.7,
+      "supertrend_color": "green",
+      "flip_label": "Flipped to GREEN (5)",
+      "flip_date": "2026-11-09",
+      "pct_from_52w_high": 0.0,
+      "num_adds": 0,
+      "age_days": 1,
+      "rsi14": 76.6,
+      "sector": "Financial Services",
+      "sma200": 534.12,
+      "sma50": 541.68,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-09",
@@ -1395,12 +1299,12 @@
       "flip_date": "2026-10-28",
       "pct_from_52w_high": 0.0,
       "num_adds": 0,
-      "age_days": 8,
+      "age_days": 9,
       "rsi14": 68.9,
       "sector": "Consumer Cyclical",
-      "sma200": 1738.9,
-      "sma50": 2016.07,
-      "sma_asof": "2026-11-17"
+      "sma200": 1743.54,
+      "sma50": 2022.46,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-09",
@@ -1415,12 +1319,12 @@
       "flip_date": "2026-11-04",
       "pct_from_52w_high": -5.94,
       "num_adds": 0,
-      "age_days": 8,
+      "age_days": 9,
       "rsi14": 57.0,
       "sector": "Industrials",
-      "sma200": 1392.37,
-      "sma50": 2026.62,
-      "sma_asof": "2026-11-17"
+      "sma200": 1398.98,
+      "sma50": 2030.88,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-10-26",
@@ -1435,12 +1339,12 @@
       "flip_date": "2026-10-19",
       "pct_from_52w_high": -5.43,
       "num_adds": 0,
-      "age_days": 22,
+      "age_days": 23,
       "rsi14": 55.4,
       "sector": "Basic Materials",
-      "sma200": 994.18,
-      "sma50": 1302.35,
-      "sma_asof": "2026-11-17"
+      "sma200": 997.16,
+      "sma50": 1305.61,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-09",
@@ -1455,12 +1359,12 @@
       "flip_date": "2026-06-19",
       "pct_from_52w_high": -6.72,
       "num_adds": 0,
-      "age_days": 8,
+      "age_days": 9,
       "rsi14": 62.8,
       "sector": "Industrials",
-      "sma200": 119.51,
-      "sma50": 135.24,
-      "sma_asof": "2026-11-17"
+      "sma200": 119.68,
+      "sma50": 136.06,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-11",
@@ -1475,12 +1379,12 @@
       "flip_date": "2026-10-27",
       "pct_from_52w_high": -2.18,
       "num_adds": 0,
-      "age_days": 6,
+      "age_days": 7,
       "rsi14": 61.5,
       "sector": "Healthcare",
-      "sma200": 2335.32,
-      "sma50": 2425.16,
-      "sma_asof": "2026-11-17"
+      "sma200": 2337.98,
+      "sma50": 2430.58,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-11",
@@ -1495,12 +1399,12 @@
       "flip_date": "2026-11-03",
       "pct_from_52w_high": -0.11,
       "num_adds": 0,
-      "age_days": 6,
+      "age_days": 7,
       "rsi14": 72.7,
       "sector": "Consumer Defensive",
-      "sma200": 808.88,
-      "sma50": 818.26,
-      "sma_asof": "2026-11-17"
+      "sma200": 809.73,
+      "sma50": 819.95,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-10-30",
@@ -1515,12 +1419,12 @@
       "flip_date": "2026-02-05",
       "pct_from_52w_high": -2.03,
       "num_adds": 0,
-      "age_days": 18,
+      "age_days": 19,
       "rsi14": 66.6,
       "sector": "Basic Materials",
-      "sma200": 129.76,
-      "sma50": 170.93,
-      "sma_asof": "2026-11-17"
+      "sma200": 130.32,
+      "sma50": 171.54,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-16",
@@ -1535,12 +1439,12 @@
       "flip_date": "2026-06-29",
       "pct_from_52w_high": -1.72,
       "num_adds": 0,
-      "age_days": 1,
+      "age_days": 2,
       "rsi14": 66.7,
       "sector": "Consumer Cyclical",
-      "sma200": 187.97,
-      "sma50": 226.43,
-      "sma_asof": "2026-11-17"
+      "sma200": 188.39,
+      "sma50": 227.31,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-16",
@@ -1555,12 +1459,12 @@
       "flip_date": "2026-11-06",
       "pct_from_52w_high": -2.99,
       "num_adds": 0,
-      "age_days": 1,
+      "age_days": 2,
       "rsi14": 65.2,
       "sector": "Industrials",
-      "sma200": 511.08,
-      "sma50": 576.13,
-      "sma_asof": "2026-11-17"
+      "sma200": 512.48,
+      "sma50": 576.47,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-09",
@@ -1575,12 +1479,12 @@
       "flip_date": "2026-11-05",
       "pct_from_52w_high": 0.0,
       "num_adds": 0,
-      "age_days": 8,
+      "age_days": 9,
       "rsi14": 75.3,
       "sector": "Financial Services",
-      "sma200": 889.79,
-      "sma50": 1036.92,
-      "sma_asof": "2026-11-17"
+      "sma200": 892.16,
+      "sma50": 1041.16,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-10-21",
@@ -1595,12 +1499,12 @@
       "flip_date": "2026-04-17",
       "pct_from_52w_high": -2.88,
       "num_adds": 0,
-      "age_days": 27,
+      "age_days": 28,
       "rsi14": 55.3,
       "sector": "Financial Services",
-      "sma200": 123.92,
-      "sma50": 135.09,
-      "sma_asof": "2026-11-17"
+      "sma200": 124.05,
+      "sma50": 135.1,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-09",
@@ -1615,12 +1519,12 @@
       "flip_date": "2026-10-28",
       "pct_from_52w_high": -1.87,
       "num_adds": 0,
-      "age_days": 8,
+      "age_days": 9,
       "rsi14": 69.7,
       "sector": "Basic Materials",
-      "sma200": 7412.26,
-      "sma50": 8568.34,
-      "sma_asof": "2026-11-17"
+      "sma200": 7433.91,
+      "sma50": 8599.4,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-16",
@@ -1635,12 +1539,12 @@
       "flip_date": "2026-04-17",
       "pct_from_52w_high": -1.95,
       "num_adds": 0,
-      "age_days": 1,
+      "age_days": 2,
       "rsi14": 60.1,
       "sector": "Communication Services",
-      "sma200": 313.6,
-      "sma50": 390.74,
-      "sma_asof": "2026-11-17"
+      "sma200": 314.28,
+      "sma50": 391.73,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-16",
@@ -1655,12 +1559,12 @@
       "flip_date": "2026-10-29",
       "pct_from_52w_high": 0.0,
       "num_adds": 0,
-      "age_days": 1,
+      "age_days": 2,
       "rsi14": 73.2,
       "sector": "Consumer Cyclical",
-      "sma200": 1552.9,
-      "sma50": 1922.34,
-      "sma_asof": "2026-11-17"
+      "sma200": 1557.0,
+      "sma50": 1924.26,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-02",
@@ -1675,12 +1579,12 @@
       "flip_date": "2026-09-30",
       "pct_from_52w_high": -6.63,
       "num_adds": 0,
-      "age_days": 15,
+      "age_days": 16,
       "rsi14": 56.3,
       "sector": "Technology",
-      "sma200": 638.26,
-      "sma50": 817.86,
-      "sma_asof": "2026-11-17"
+      "sma200": 641.25,
+      "sma50": 822.35,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-03",
@@ -1695,12 +1599,12 @@
       "flip_date": "2026-02-03",
       "pct_from_52w_high": -0.57,
       "num_adds": 0,
-      "age_days": 14,
+      "age_days": 15,
       "rsi14": 61.4,
       "sector": "Consumer Cyclical",
-      "sma200": 512.2,
-      "sma50": 633.21,
-      "sma_asof": "2026-11-17"
+      "sma200": 514.02,
+      "sma50": 634.04,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-10-30",
@@ -1715,12 +1619,12 @@
       "flip_date": "2026-10-29",
       "pct_from_52w_high": -1.97,
       "num_adds": 0,
-      "age_days": 18,
+      "age_days": 19,
       "rsi14": 57.7,
       "sector": "Consumer Cyclical",
-      "sma200": 297.64,
-      "sma50": 340.11,
-      "sma_asof": "2026-11-17"
+      "sma200": 298.23,
+      "sma50": 340.48,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-10-27",
@@ -1735,12 +1639,12 @@
       "flip_date": "2026-04-08",
       "pct_from_52w_high": 0.0,
       "num_adds": 1,
-      "age_days": 21,
+      "age_days": 22,
       "rsi14": 76.4,
       "sector": "Consumer Cyclical",
-      "sma200": 121.28,
-      "sma50": 150.6,
-      "sma_asof": "2026-11-17"
+      "sma200": 121.64,
+      "sma50": 151.25,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-16",
@@ -1755,12 +1659,12 @@
       "flip_date": "2026-11-12",
       "pct_from_52w_high": -1.88,
       "num_adds": 0,
-      "age_days": 1,
+      "age_days": 2,
       "rsi14": 66.1,
       "sector": "Technology",
-      "sma200": 1338.09,
-      "sma50": 1723.9,
-      "sma_asof": "2026-11-17"
+      "sma200": 1341.83,
+      "sma50": 1728.9,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-09",
@@ -1775,12 +1679,12 @@
       "flip_date": "2026-11-05",
       "pct_from_52w_high": -1.83,
       "num_adds": 0,
-      "age_days": 8,
+      "age_days": 9,
       "rsi14": 68.3,
       "sector": "Industrials",
-      "sma200": 330.57,
-      "sma50": 355.05,
-      "sma_asof": "2026-11-17"
+      "sma200": 331.05,
+      "sma50": 356.11,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-16",
@@ -1795,12 +1699,12 @@
       "flip_date": "2026-10-19",
       "pct_from_52w_high": 0.0,
       "num_adds": 0,
-      "age_days": 1,
+      "age_days": 2,
       "rsi14": 85.5,
       "sector": "Financial Services",
-      "sma200": 114.56,
-      "sma50": 120.65,
-      "sma_asof": "2026-11-17"
+      "sma200": 114.71,
+      "sma50": 121.32,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-10-29",
@@ -1815,12 +1719,12 @@
       "flip_date": "2026-10-28",
       "pct_from_52w_high": -2.3,
       "num_adds": 0,
-      "age_days": 19,
+      "age_days": 20,
       "rsi14": 64.7,
       "sector": "Healthcare",
-      "sma200": 181.26,
-      "sma50": 214.09,
-      "sma_asof": "2026-11-17"
+      "sma200": 181.7,
+      "sma50": 214.57,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-10-28",
@@ -1835,12 +1739,12 @@
       "flip_date": "2026-10-12",
       "pct_from_52w_high": 0.0,
       "num_adds": 0,
-      "age_days": 20,
+      "age_days": 21,
       "rsi14": 78.1,
       "sector": "Communication Services",
-      "sma200": 1116.96,
-      "sma50": 1377.19,
-      "sma_asof": "2026-11-17"
+      "sma200": 1120.88,
+      "sma50": 1386.52,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-10-21",
@@ -1855,12 +1759,32 @@
       "flip_date": "2026-04-13",
       "pct_from_52w_high": -5.58,
       "num_adds": 0,
-      "age_days": 27,
+      "age_days": 28,
       "rsi14": 54.3,
       "sector": "Basic Materials",
-      "sma200": 215.35,
-      "sma50": 335.58,
-      "sma_asof": "2026-11-17"
+      "sma200": 216.52,
+      "sma50": 337.27,
+      "sma_asof": "2026-11-18"
+    },
+    {
+      "entry_date": "2026-11-17",
+      "symbol": "RKFORGE",
+      "qty": 2,
+      "avg_cost": 788.35,
+      "cmp": 782.2,
+      "pl_pct": -0.7801,
+      "notional_pl_rs": -12.3,
+      "supertrend_color": "green",
+      "flip_label": "GREEN 13d",
+      "flip_date": "2026-10-29",
+      "pct_from_52w_high": -1.22,
+      "num_adds": 0,
+      "age_days": 1,
+      "rsi14": 64.4,
+      "sector": "Industrials",
+      "sma200": 616.08,
+      "sma50": 701.01,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-09",
@@ -1875,12 +1799,12 @@
       "flip_date": "2026-11-04",
       "pct_from_52w_high": -6.28,
       "num_adds": 0,
-      "age_days": 8,
+      "age_days": 9,
       "rsi14": 60.0,
       "sector": "Industrials",
-      "sma200": 151.66,
-      "sma50": 179.63,
-      "sma_asof": "2026-11-17"
+      "sma200": 152.07,
+      "sma50": 180.19,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-11",
@@ -1895,12 +1819,12 @@
       "flip_date": "2026-11-09",
       "pct_from_52w_high": -0.29,
       "num_adds": 0,
-      "age_days": 6,
+      "age_days": 7,
       "rsi14": 64.6,
       "sector": "Basic Materials",
-      "sma200": 1182.44,
-      "sma50": 1761.52,
-      "sma_asof": "2026-11-17"
+      "sma200": 1188.5,
+      "sma50": 1761.97,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-11",
@@ -1915,12 +1839,32 @@
       "flip_date": "2026-10-30",
       "pct_from_52w_high": -9.19,
       "num_adds": 0,
-      "age_days": 6,
+      "age_days": 7,
       "rsi14": 58.4,
       "sector": "Healthcare",
-      "sma200": 1243.4,
-      "sma50": 1573.44,
-      "sma_asof": "2026-11-17"
+      "sma200": 1248.36,
+      "sma50": 1577.66,
+      "sma_asof": "2026-11-18"
+    },
+    {
+      "entry_date": "2026-11-17",
+      "symbol": "SANATHAN",
+      "qty": 3,
+      "avg_cost": 607.55,
+      "cmp": 590.65,
+      "pl_pct": -2.7817,
+      "notional_pl_rs": -50.7,
+      "supertrend_color": "green",
+      "flip_label": "GREEN 91d",
+      "flip_date": "2026-06-22",
+      "pct_from_52w_high": -2.37,
+      "num_adds": 0,
+      "age_days": 1,
+      "rsi14": 64.6,
+      "sector": "Consumer Cyclical",
+      "sma200": 454.35,
+      "sma50": 517.9,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-16",
@@ -1935,12 +1879,12 @@
       "flip_date": "2026-11-09",
       "pct_from_52w_high": -3.13,
       "num_adds": 0,
-      "age_days": 1,
+      "age_days": 2,
       "rsi14": 60.0,
       "sector": "Consumer Cyclical",
-      "sma200": 3129.63,
-      "sma50": 4262.91,
-      "sma_asof": "2026-11-17"
+      "sma200": 3143.48,
+      "sma50": 4275.74,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-11",
@@ -1955,12 +1899,12 @@
       "flip_date": "2026-10-30",
       "pct_from_52w_high": 0.0,
       "num_adds": 0,
-      "age_days": 6,
+      "age_days": 7,
       "rsi14": 76.5,
       "sector": "Communication Services",
-      "sma200": 440.82,
-      "sma50": 528.91,
-      "sma_asof": "2026-11-17"
+      "sma200": 442.54,
+      "sma50": 532.59,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-10-21",
@@ -1975,12 +1919,12 @@
       "flip_date": "2026-09-02",
       "pct_from_52w_high": -1.96,
       "num_adds": 0,
-      "age_days": 27,
+      "age_days": 28,
       "rsi14": 67.3,
       "sector": "Consumer Cyclical",
-      "sma200": 41.84,
-      "sma50": 59.1,
-      "sma_asof": "2026-11-17"
+      "sma200": 42.04,
+      "sma50": 59.6,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-10-30",
@@ -1995,12 +1939,12 @@
       "flip_date": "2026-10-05",
       "pct_from_52w_high": 0.0,
       "num_adds": 0,
-      "age_days": 18,
+      "age_days": 19,
       "rsi14": 70.4,
       "sector": "Financial Services",
-      "sma200": 571.48,
-      "sma50": 663.45,
-      "sma_asof": "2026-11-17"
+      "sma200": 573.77,
+      "sma50": 666.57,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-10-30",
@@ -2015,12 +1959,12 @@
       "flip_date": "2026-10-29",
       "pct_from_52w_high": 0.0,
       "num_adds": 0,
-      "age_days": 18,
+      "age_days": 19,
       "rsi14": 79.0,
       "sector": "Industrials",
-      "sma200": 628.94,
-      "sma50": 798.63,
-      "sma_asof": "2026-11-17"
+      "sma200": 632.32,
+      "sma50": 802.83,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-03",
@@ -2035,32 +1979,52 @@
       "flip_date": "2026-11-02",
       "pct_from_52w_high": -0.5,
       "num_adds": 0,
-      "age_days": 14,
+      "age_days": 15,
       "rsi14": 70.6,
       "sector": "Industrials",
-      "sma200": 548.0,
-      "sma50": 790.43,
-      "sma_asof": "2026-11-17"
+      "sma200": 550.9,
+      "sma50": 795.17,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-10-29",
       "symbol": "SHREEPUSHK",
-      "qty": 1,
-      "avg_cost": 567.9,
+      "qty": 2,
+      "avg_cost": 553.62,
       "cmp": 525.5,
-      "pl_pct": -7.4661,
-      "notional_pl_rs": -42.4,
+      "pl_pct": -5.0793,
+      "notional_pl_rs": -56.24,
       "supertrend_color": "green",
       "flip_label": "GREEN 58d",
       "flip_date": "2026-08-24",
       "pct_from_52w_high": -15.66,
       "num_adds": 1,
-      "age_days": 19,
+      "age_days": 20,
       "rsi14": 46.8,
       "sector": "Basic Materials",
-      "sma200": 405.25,
-      "sma50": 517.07,
-      "sma_asof": "2026-11-17"
+      "sma200": 406.15,
+      "sma50": 517.91,
+      "sma_asof": "2026-11-18"
+    },
+    {
+      "entry_date": "2026-10-21",
+      "symbol": "SHRINGARMS",
+      "qty": 4,
+      "avg_cost": 302.78,
+      "cmp": 284.4,
+      "pl_pct": -6.0704,
+      "notional_pl_rs": -73.52,
+      "supertrend_color": "green",
+      "flip_label": "GREEN 25d",
+      "flip_date": "2026-10-12",
+      "pct_from_52w_high": -10.9,
+      "num_adds": 2,
+      "age_days": 28,
+      "rsi14": 48.7,
+      "sector": "Consumer Cyclical",
+      "sma200": 225.89,
+      "sma50": 257.5,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-10-21",
@@ -2075,12 +2039,12 @@
       "flip_date": "2026-04-08",
       "pct_from_52w_high": -0.84,
       "num_adds": 0,
-      "age_days": 27,
+      "age_days": 28,
       "rsi14": 73.1,
       "sector": "Basic Materials",
-      "sma200": 973.24,
-      "sma50": 1142.38,
-      "sma_asof": "2026-11-17"
+      "sma200": 975.93,
+      "sma50": 1147.19,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-10-30",
@@ -2095,12 +2059,12 @@
       "flip_date": "2026-09-04",
       "pct_from_52w_high": -7.28,
       "num_adds": 0,
-      "age_days": 18,
+      "age_days": 19,
       "rsi14": 51.6,
       "sector": "Healthcare",
-      "sma200": 399.26,
-      "sma50": 458.58,
-      "sma_asof": "2026-11-17"
+      "sma200": 400.13,
+      "sma50": 460.63,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-10-28",
@@ -2115,12 +2079,12 @@
       "flip_date": "2026-10-27",
       "pct_from_52w_high": -2.84,
       "num_adds": 0,
-      "age_days": 20,
+      "age_days": 21,
       "rsi14": 59.5,
       "sector": "Consumer Cyclical",
-      "sma200": 668.17,
-      "sma50": 828.56,
-      "sma_asof": "2026-11-17"
+      "sma200": 670.34,
+      "sma50": 830.37,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-10-21",
@@ -2135,12 +2099,12 @@
       "flip_date": "2026-09-03",
       "pct_from_52w_high": -1.88,
       "num_adds": 0,
-      "age_days": 27,
+      "age_days": 28,
       "rsi14": 69.8,
       "sector": "Financial Services",
-      "sma200": 44.59,
-      "sma50": 51.25,
-      "sma_asof": "2026-11-17"
+      "sma200": 44.67,
+      "sma50": 51.52,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-10-30",
@@ -2155,12 +2119,12 @@
       "flip_date": "2026-09-07",
       "pct_from_52w_high": -1.86,
       "num_adds": 0,
-      "age_days": 18,
+      "age_days": 19,
       "rsi14": 71.0,
       "sector": "Industrials",
-      "sma200": 2141.89,
-      "sma50": 3652.55,
-      "sma_asof": "2026-11-17"
+      "sma200": 2158.93,
+      "sma50": 3699.28,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-10-26",
@@ -2175,12 +2139,12 @@
       "flip_date": "2026-04-08",
       "pct_from_52w_high": -3.02,
       "num_adds": 0,
-      "age_days": 22,
+      "age_days": 23,
       "rsi14": 66.7,
       "sector": "Consumer Cyclical",
-      "sma200": 284.66,
-      "sma50": 436.04,
-      "sma_asof": "2026-11-17"
+      "sma200": 286.49,
+      "sma50": 439.76,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-16",
@@ -2195,12 +2159,12 @@
       "flip_date": "2026-09-22",
       "pct_from_52w_high": -6.04,
       "num_adds": 0,
-      "age_days": 1,
+      "age_days": 2,
       "rsi14": 50.2,
       "sector": "Basic Materials",
-      "sma200": 297.32,
-      "sma50": 350.28,
-      "sma_asof": "2026-11-17"
+      "sma200": 298.18,
+      "sma50": 351.05,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-16",
@@ -2215,12 +2179,12 @@
       "flip_date": "2026-11-09",
       "pct_from_52w_high": 0.0,
       "num_adds": 0,
-      "age_days": 1,
+      "age_days": 2,
       "rsi14": 81.0,
       "sector": "Consumer Cyclical",
-      "sma200": 343.81,
-      "sma50": 389.92,
-      "sma_asof": "2026-11-17"
+      "sma200": 344.83,
+      "sma50": 392.82,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-03",
@@ -2235,12 +2199,12 @@
       "flip_date": "2026-10-13",
       "pct_from_52w_high": -2.99,
       "num_adds": 0,
-      "age_days": 14,
+      "age_days": 15,
       "rsi14": 72.2,
       "sector": "Technology",
-      "sma200": 524.17,
-      "sma50": 557.88,
-      "sma_asof": "2026-11-17"
+      "sma200": 525.25,
+      "sma50": 561.53,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-10-22",
@@ -2255,32 +2219,12 @@
       "flip_date": "2026-10-15",
       "pct_from_52w_high": -3.77,
       "num_adds": 0,
-      "age_days": 26,
+      "age_days": 27,
       "rsi14": 54.5,
       "sector": "Technology",
-      "sma200": 1534.0,
-      "sma50": 1648.46,
-      "sma_asof": "2026-11-17"
-    },
-    {
-      "entry_date": "2026-11-11",
-      "symbol": "TEXINFRA",
-      "qty": 7,
-      "avg_cost": 131.18,
-      "cmp": 120.34,
-      "pl_pct": -8.2635,
-      "notional_pl_rs": -75.88,
-      "supertrend_color": "green",
-      "flip_label": "Flipped to GREEN (5)",
-      "flip_date": "2026-11-09",
-      "pct_from_52w_high": -8.28,
-      "num_adds": 0,
-      "age_days": 6,
-      "rsi14": 48.6,
-      "sector": "Real Estate",
-      "sma200": 106.34,
-      "sma50": 119.71,
-      "sma_asof": "2026-11-17"
+      "sma200": 1534.24,
+      "sma50": 1651.48,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-09",
@@ -2295,12 +2239,12 @@
       "flip_date": "2026-07-15",
       "pct_from_52w_high": -1.34,
       "num_adds": 0,
-      "age_days": 8,
+      "age_days": 9,
       "rsi14": 63.9,
       "sector": "Financial Services",
-      "sma200": 98.93,
-      "sma50": 150.33,
-      "sma_asof": "2026-11-17"
+      "sma200": 99.47,
+      "sma50": 150.79,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-10-21",
@@ -2315,12 +2259,12 @@
       "flip_date": "2026-06-15",
       "pct_from_52w_high": -2.31,
       "num_adds": 0,
-      "age_days": 27,
+      "age_days": 28,
       "rsi14": 63.2,
       "sector": "Consumer Cyclical",
-      "sma200": 488.18,
-      "sma50": 592.28,
-      "sma_asof": "2026-11-17"
+      "sma200": 489.58,
+      "sma50": 594.72,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-10-21",
@@ -2335,12 +2279,12 @@
       "flip_date": "2026-10-13",
       "pct_from_52w_high": 0.0,
       "num_adds": 0,
-      "age_days": 27,
+      "age_days": 28,
       "rsi14": 68.3,
       "sector": "Communication Services",
-      "sma200": 637.15,
-      "sma50": 706.57,
-      "sma_asof": "2026-11-17"
+      "sma200": 638.57,
+      "sma50": 709.7,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-11",
@@ -2355,12 +2299,32 @@
       "flip_date": "2026-10-28",
       "pct_from_52w_high": -2.06,
       "num_adds": 0,
-      "age_days": 6,
+      "age_days": 7,
       "rsi14": 64.0,
       "sector": "Consumer Cyclical",
-      "sma200": 3833.66,
-      "sma50": 4152.24,
-      "sma_asof": "2026-11-17"
+      "sma200": 3837.76,
+      "sma50": 4155.64,
+      "sma_asof": "2026-11-18"
+    },
+    {
+      "entry_date": "2026-11-17",
+      "symbol": "UNIONBANK",
+      "qty": 9,
+      "avg_cost": 206.45,
+      "cmp": 207.9,
+      "pl_pct": 0.7023,
+      "notional_pl_rs": 13.05,
+      "supertrend_color": "green",
+      "flip_label": "GREEN 18d",
+      "flip_date": "2026-10-22",
+      "pct_from_52w_high": 0.0,
+      "num_adds": 0,
+      "age_days": 1,
+      "rsi14": 76.5,
+      "sector": "Financial Services",
+      "sma200": 177.76,
+      "sma50": 181.88,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-11",
@@ -2375,12 +2339,12 @@
       "flip_date": "2026-11-04",
       "pct_from_52w_high": 0.0,
       "num_adds": 0,
-      "age_days": 6,
+      "age_days": 7,
       "rsi14": 72.4,
       "sector": "Consumer Cyclical",
-      "sma200": 1154.97,
-      "sma50": 1186.5,
-      "sma_asof": "2026-11-17"
+      "sma200": 1156.13,
+      "sma50": 1188.46,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-16",
@@ -2395,12 +2359,12 @@
       "flip_date": "2026-11-03",
       "pct_from_52w_high": -0.35,
       "num_adds": 0,
-      "age_days": 1,
+      "age_days": 2,
       "rsi14": 64.6,
       "sector": "Industrials",
-      "sma200": 267.92,
-      "sma50": 293.06,
-      "sma_asof": "2026-11-17"
+      "sma200": 268.37,
+      "sma50": 293.88,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-03",
@@ -2415,12 +2379,12 @@
       "flip_date": "2026-11-02",
       "pct_from_52w_high": 0.0,
       "num_adds": 0,
-      "age_days": 14,
+      "age_days": 15,
       "rsi14": 65.1,
       "sector": "Consumer Cyclical",
-      "sma200": 164.88,
-      "sma50": 225.68,
-      "sma_asof": "2026-11-17"
+      "sma200": 165.56,
+      "sma50": 226.81,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-10-28",
@@ -2435,12 +2399,12 @@
       "flip_date": "2026-07-21",
       "pct_from_52w_high": -0.42,
       "num_adds": 0,
-      "age_days": 20,
+      "age_days": 21,
       "rsi14": 67.1,
       "sector": "Consumer Cyclical",
-      "sma200": 516.47,
-      "sma50": 589.27,
-      "sma_asof": "2026-11-17"
+      "sma200": 517.39,
+      "sma50": 591.96,
+      "sma_asof": "2026-11-18"
     },
     {
       "entry_date": "2026-11-02",
@@ -2455,13 +2419,13 @@
       "flip_date": "2026-10-30",
       "pct_from_52w_high": -3.32,
       "num_adds": 0,
-      "age_days": 15,
+      "age_days": 16,
       "rsi14": 56.0,
       "sector": "Healthcare",
-      "sma200": 1050.36,
-      "sma50": 1161.4,
-      "sma_asof": "2026-11-17"
+      "sma200": 1051.93,
+      "sma50": 1162.46,
+      "sma_asof": "2026-11-18"
     }
   ],
-  "holdings_fetched_at": "2026-11-17T18:09:15+05:30"
+  "holdings_fetched_at": "2026-11-18T15:26:42+05:30"
 }
