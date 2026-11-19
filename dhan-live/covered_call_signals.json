@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-11-19T17:05:17.202249+00:00",
+  "generated_at": "2026-11-19T17:18:42.131505+00:00",
   "market_data_date": "2026-11-19",
   "live_prices_at": "2026-11-19T22:34:51+05:30",
-  "super_scan_at": "2026-11-19T22:34:51+05:30",
+  "super_scan_at": "2026-11-19T22:48:42+05:30",
   "as_of": "2026-11-19",
   "rules": {
     "short_call_delta": 0.1,
@@ -892,17 +892,6 @@
       "concern": "Supertrend GREEN but the short call is still open",
       "action": "Close it and open the bull put spread",
       "text": "BSE: Supertrend is GREEN: the open short call (4200CE 2026-12-29) is the opposite of the colour rule - close it and open the bull put spread."
-    },
-    {
-      "level": "BREACH",
-      "type": "Invalid stop order",
-      "symbol": "SHRIRAMFIN",
-      "expiry": null,
-      "strike": null,
-      "opt_type": null,
-      "concern": "Orphan: Likely orphaned: sold 825 @ 5.6 but no open short matches; stop_loss 17 + target 2.25 still pending: a stop firing would BUY a new long",
-      "action": "Check the position; if closed, cancel the legs (order 2132611092656873)",
-      "text": "SHRIRAMFIN: Likely orphaned: sold 825 @ 5.6 but no open short matches; stop_loss 17 + target 2.25 still pending: a stop firing would BUY a new long"
     },
     {
       "level": "WARN",
