@@ -1,13 +1,13 @@
 {
- "generated_at": "2026-11-19T12:08:30+05:30",
+ "generated_at": "2026-11-19T20:29:15+05:30",
  "broker": "zerodha",
- "market_data_date": "2026-11-18",
- "signals_generated_at": "2026-11-19T06:38:28.350540+00:00",
+ "market_data_date": "2026-11-19",
+ "signals_generated_at": "2026-11-19T14:59:05.385616+00:00",
  "status": "WARN",
  "global_block": false,
  "counts": {
   "block": 0,
-  "warn": 4,
+  "warn": 3,
   "info": 0
  },
  "per_symbol_blocks": {},
@@ -19,22 +19,16 @@
    "msg": "17 open option exit / strike-breach alerts on 7 stocks (CONCOR, DIVISLAB, HDFCBANK, HINDPETRO, HINDZINC, MAHABANK, PFC) - see the Covered Call alerts"
   },
   {
-   "id": "P5",
-   "level": "WARN",
-   "symbol": null,
-   "msg": "5 invalid GTT orders (5 high: e.g. buy GTTs on contracts you no longer hold) - see Covered Call > Alerts > Invalid GTT; the zerodha-gtt-order skill can delete them"
-  },
-  {
    "id": "P1",
    "level": "WARN",
    "symbol": "IEX",
-   "msg": "IEX: expiry 2026-11-23 is 5 days away (expiry week) - do not open a new option structure"
+   "msg": "IEX: expiry 2026-11-23 is 4 days away (expiry week) - do not open a new option structure"
   },
   {
    "id": "P1",
    "level": "WARN",
    "symbol": "IREDA",
-   "msg": "IREDA: expiry 2026-11-23 is 5 days away (expiry week) - do not open a new option structure"
+   "msg": "IREDA: expiry 2026-11-23 is 4 days away (expiry week) - do not open a new option structure"
   }
  ]
 }

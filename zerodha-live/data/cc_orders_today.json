@@ -1,5 +1,5 @@
 {
- "fetched_at": "2026-11-19T12:08:13+05:30",
+ "fetched_at": "2026-11-19T20:28:41+05:30",
  "orders": [
   {
    "order_id": "261119150061689",
@@ -702,20 +702,6 @@
    "time": "2026-11-19T11:57:37+05:30"
   },
   {
-   "order_id": "261119150863169",
-   "tradingsymbol": "KARURVYSYA26NOV330PE",
-   "side": "SELL",
-   "qty": 1550,
-   "filled": 0,
-   "pending": 1550,
-   "price": 0.1,
-   "avg": 0,
-   "status": "OPEN",
-   "message": "",
-   "gtt": false,
-   "time": "2026-11-19T11:57:46+05:30"
-  },
-  {
    "order_id": "261119150113627",
    "tradingsymbol": "MAHABANK26NOV89CE",
    "side": "BUY",
@@ -728,20 +714,6 @@
    "message": "",
    "gtt": false,
    "time": "2026-11-19T11:58:09+05:30"
-  },
-  {
-   "order_id": "261119150865545",
-   "tradingsymbol": "MAHABANK26NOV89CE",
-   "side": "BUY",
-   "qty": 6500,
-   "filled": 0,
-   "pending": 6500,
-   "price": 7.3,
-   "avg": 0,
-   "status": "OPEN",
-   "message": "",
-   "gtt": false,
-   "time": "2026-11-19T11:58:35+05:30"
   },
   {
    "order_id": "261119150878355",
@@ -840,6 +812,62 @@
    "message": "",
    "gtt": false,
    "time": "2026-11-19T12:06:00+05:30"
+  },
+  {
+   "order_id": "261119150897171",
+   "tradingsymbol": "MOTILALOFS26NOV840PE",
+   "side": "BUY",
+   "qty": 775,
+   "filled": 775,
+   "pending": 0,
+   "price": 0.3,
+   "avg": 0.3,
+   "status": "COMPLETE",
+   "message": "",
+   "gtt": false,
+   "time": "2026-11-19T12:08:17+05:30"
+  },
+  {
+   "order_id": "261119150898099",
+   "tradingsymbol": "MOTILALOFS26NOV840PE",
+   "side": "SELL",
+   "qty": 1550,
+   "filled": 1550,
+   "pending": 0,
+   "price": 0.15,
+   "avg": 0.15,
+   "status": "COMPLETE",
+   "message": "",
+   "gtt": false,
+   "time": "2026-11-19T12:08:31+05:30"
+  },
+  {
+   "order_id": "261119150863169",
+   "tradingsymbol": "KARURVYSYA26NOV330PE",
+   "side": "SELL",
+   "qty": 1550,
+   "filled": 0,
+   "pending": 0,
+   "price": 0.05,
+   "avg": 0,
+   "status": "CANCELLED",
+   "message": "",
+   "gtt": false,
+   "time": "2026-11-19T15:43:19+05:30"
+  },
+  {
+   "order_id": "261119150865545",
+   "tradingsymbol": "MAHABANK26NOV89CE",
+   "side": "BUY",
+   "qty": 6500,
+   "filled": 0,
+   "pending": 0,
+   "price": 7.3,
+   "avg": 0,
+   "status": "CANCELLED",
+   "message": "",
+   "gtt": false,
+   "time": "2026-11-19T15:43:19+05:30"
   }
  ]
 }

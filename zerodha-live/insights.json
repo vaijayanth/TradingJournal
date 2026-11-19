@@ -1,34 +1,30 @@
 {
- "as_of": "19 Nov, 12:15 (market open; swing signals are the 18 Nov close)",
- "written_at": "2026-11-19T12:08:37+05:30",
+ "as_of": "19 Nov close (live prices 20:29 IST)",
+ "written_at": "2026-11-19T20:29:46+05:30",
  "confidence": "low",
  "maturity": "10 days of history and 2 closed trades: a health check, not a verdict on the strategy.",
- "headline": "The GTT gap is widening: 5 stale GTTs are live and 20 shorts have no GTT, while the 4 stopped-out spreads are still open.",
+ "headline": "Swing book is fine (+Rs21k combined); the options book is where the money is leaking: 4 spreads are past max loss and 24 shorts have no GTT.",
  "points": [
   {
-   "label": "Protection is falling behind",
-   "text": "20 short options now have no protective GTT (new spreads on BAJAJFINSV, BANKINDIA and CAMS were added on top of the earlier ones). Placing GTTs through the tool failed on the first attempt, so these need placing in Kite or a retry. Every unprotected short is a loss no rule is watching."
+   "label": "Stopped-out spreads still open",
+   "text": "DIVISLAB, HDFCBANK, HINDPETRO and MAHABANK call spreads are through their hedges: about -Rs81k net, already at max loss, so holding adds nothing but delivery risk on Monday's expiry. Close all four tonight or at the open."
   },
   {
-   "label": "Stale GTTs keep multiplying",
-   "text": "5 stale GTTs are now active: APOLLOHOSP, BPCL, KARURVYSYA 370PE and 410CE, and SUNPHARMA 2100CE. Each can buy a new long if it triggers, and two such GTTs already fired today (ABB, CANBK). Delete a short's GTT in the same sitting you close it."
+   "label": "Protection gap grew",
+   "text": "24 shorts have no GTT (20 yesterday), 4 of them already past 3x so a GTT cannot help. The tool wrote 3 clean buy-backs today (PAYTM, ABB, CANBK), so GTTs work when they exist. Place the 20 protective ones before adding any new spread."
   },
   {
-   "label": "Clean-up still open",
-   "text": "The 4 stopped-out spreads are still open (about −₹97k on the short legs, hedges partly offsetting) and expire Monday. A MAHABANK buy-back order at ₹7.3 is sitting unfilled. KARURVYSYA, PFC, HINDZINC and SUNPHARMA still need closing."
+   "label": "Event rule again",
+   "text": "CONCOR (ex-dividend 20 Nov) and PFC (26 Nov est.) are inside the 15-day window and both spreads are in small profit (+Rs0.3k, +Rs0.7k): close them, the rule costs little here."
   },
   {
-   "label": "Event rule broken on entry",
-   "text": "CONCOR 410PE/400PE was opened inside the ex-dividend window (20 Nov, estimated), which the 15-day rule says to close immediately. Check results and ex-dividend dates before opening, not after."
+   "label": "Flip risk",
+   "text": "HINDZINC turned red yesterday while a put spread is open (+Rs0.6k): close it and consider the call. Five FLIP structures in total, four of them the same stopped-out calls."
   },
   {
-   "label": "Versus the backtest",
-   "text": "The swing shares are +₹8.9k combined with 20 of 36 in profit and no drawdown, so there is nothing to compare yet: 5 weeks and 2 closed trades against −21.3% max drawdown and PF 1.75 tested. The options book (about −₹68k open) is a bigger driver of your account than the shares right now."
-  },
-  {
-   "label": "Decision",
-   "text": "Stop opening new option trades until the protection and clean-up gap is closed. New spreads add margin and tail risk while today's open problems are still unresolved. Resume once every short has a GTT and the 4 stopped-out spreads are closed."
+   "label": "Swing book",
+   "text": "No exits, add-ons or entries today. 38 trades, Rs8.6L deployed, tier Rs20k. Too young to compare with the backtest (-21.3% max DD, PF 1.75): watch drawdown and win rate once 30 trades are closed."
   }
  ],
- "action": "Delete the 5 stale GTTs, close the 4 stopped-out spreads and CONCOR, protect the 20 shorts, and open no new option trades until that is done."
+ "action": "Close the 4 stopped-out spreads plus CONCOR, PFC and HINDZINC, then place the 20 protective GTTs; open nothing new before that."
 }
