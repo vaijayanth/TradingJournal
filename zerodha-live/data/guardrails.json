@@ -1,17 +1,23 @@
 {
- "generated_at": "2026-11-19T22:11:31+05:30",
+ "generated_at": "2026-11-19T22:19:23+05:30",
  "broker": "zerodha",
  "market_data_date": "2026-11-19",
- "signals_generated_at": "2026-11-19T16:41:28.627165+00:00",
+ "signals_generated_at": "2026-11-19T16:49:21.179083+00:00",
  "status": "WARN",
  "global_block": false,
  "counts": {
   "block": 0,
-  "warn": 3,
+  "warn": 4,
   "info": 0
  },
  "per_symbol_blocks": {},
  "findings": [
+  {
+   "id": "C2",
+   "level": "WARN",
+   "symbol": null,
+   "msg": "sector Financial Services is 45% of deployed capital (limit 40%)"
+  },
   {
    "id": "P3",
    "level": "WARN",
