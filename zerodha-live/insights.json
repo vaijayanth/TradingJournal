@@ -1,9 +1,9 @@
 {
- "as_of": "2026-11-18",
- "written_at": "2026-11-18T22:44:32+05:30",
+ "as_of": "2026-11-18 close, checked 19 Nov before the open",
+ "written_at": "2026-11-19T07:54:34+05:30",
  "confidence": "low",
  "maturity": "10 days of history and 2 closed trades: a health check, not a verdict on the strategy.",
- "headline": "A late-stage, overbought market with the book's profit coming from one sector: hold the shares, and finish the option clean-up at the open.",
+ "headline": "Nothing in the book changed overnight: the shares are fine, and the option clean-up is now two sessions from expiry.",
  "points": [
   {
    "label": "Market context",
@@ -18,17 +18,17 @@
    "text": "Financial Services is 33% of the invested capital (13 positions) and made +₹13.7k, while every other sector together lost ₹1.3k. Nine of the 36 holdings are above RSI 70, mostly banks and lenders. TVSMOTOR alone is 13% of the book (about 6 times a normal position). A sector pullback would hit the whole profit at once."
   },
   {
-   "label": "Options: unfinished clean-up",
-   "text": "The 4 stopped-out spreads are still open after two sessions, still about ₹94k net down, and now one trading day nearer physical settlement on Monday. Waiting has not helped. MAHABANK is the only one partly offset: your swing holding in it is up 15%, which is the covered-call logic working."
+   "label": "Options: clean-up still open",
+   "text": "The 4 stopped-out spreads are unchanged and still about ₹94k net down; Monday 23 Nov is expiry day, so only today and tomorrow are left to close them without physical settlement. Waiting has not helped in any of the last three checks."
   },
   {
    "label": "Lock in what is working",
    "text": "Close CUMMINSIND (61% decayed), HINDZINC (Supertrend turned red since entry), PFC (ex-dividend window) and the 3 calls whose Supertrend flipped green. They are small profits that only turn into losses if the market keeps rising."
   },
   {
-   "label": "Capital and sizing",
-   "text": "71% of the base is idle. Do not fix that by resizing: the backtest shows 1.0% of capital (about ₹30k) earns the same as your ₹20k ladder. Entries are limited by fresh flips, and the market is not producing them now. Your last advice (close the spreads and flipped calls at the open) is still open."
+   "label": "Advice status",
+   "text": "Last night's advice (close the spreads, flipped calls, CUMMINSIND, HINDZINC, PFC at the open) is still open: the market has not opened yet. Nothing new has appeared since, so there is no new advice. The RVNL add-on is already pending as an after-market order, so do not place it again."
   }
  ],
- "action": "At 09:15 close the 4 stopped-out spreads, the 3 flipped calls, CUMMINSIND, HINDZINC and PFC. Then do nothing: no new entries to chase and no rule to change before 30 closed trades."
+ "action": "When the market opens, close the 4 stopped-out spreads first, then the 3 flipped calls, CUMMINSIND, HINDZINC and PFC. No new entries to chase and no rule to change."
 }

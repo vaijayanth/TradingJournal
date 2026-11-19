@@ -1,5 +1,5 @@
 {
- "fetched_at": "2026-11-18T22:43:47+05:30",
+ "fetched_at": "2026-11-19T07:53:51+05:30",
  "active": {
   "TORNTPHARM26DEC5100CE": [
    {
@@ -1864,45 +1864,6 @@
    ]
   }
  ],
- "triggered": [
-  {
-   "id": 344931476,
-   "type": "two-leg",
-   "tradingsymbol": "DIVISLAB26NOV11300CE",
-   "triggers": [
-    60.45,
-    453.45
-   ],
-   "triggered_at": "2026-11-18T15:08:44+05:30",
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 100,
-     "price": 62.3
-    },
-    {
-     "side": "BUY",
-     "qty": 100,
-     "price": 467.1
-    }
-   ]
-  },
-  {
-   "id": 343977413,
-   "type": "trailing-single",
-   "tradingsymbol": "MUTHOOTFIN26NOV2650PE",
-   "triggers": [
-    28
-   ],
-   "triggered_at": "2026-11-18T09:15:13+05:30",
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 275,
-     "price": 29
-    }
-   ]
-  }
- ],
+ "triggered": [],
  "non_option_gtts": 10
 }
