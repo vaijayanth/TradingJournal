@@ -89,6 +89,14 @@ Run from the repo root of TradingJournal on branch `claude/beautiful-hamilton-fw
 - Never commit/push while a BLOCK is open without telling the user and getting their explicit go-ahead.
 - `data/trading_halt.json` is the user's kill switch; do not flip it without being asked.
 
+## One-screen report (user, 2026-11-19; overrides every longer report layout in this skill)
+The final report must fit one screen with no scrolling (about 35 lines). Working notes (verify details, scans, data fixes) are NOT printed; only what needs a decision.
+1. **Status table** (Check | Result, one line each, at most 6 rows: market data, live prices / positions time, guardrails, positions, P&L, pushed commit). Add a row only for something abnormal.
+2. **ONE action table**: `# | Type | Stock / leg | Why (max 6 words) | P&L | Do`, sorted by urgency (exits and stopped-out spreads first, then other legs, flipped calls, orphaned longs, entries). A spread is one row (both legs, net P&L). Stock orders (exits / add-ons / entries) are rows too. No empty sections: if a group has nothing, leave it out and put "none: <group>" in the status table only when that is news.
+3. **Supertrend / entry signals:** show only FLIP rows and new-entry tiers 1 to 2 in full; everything else is a count in one line.
+4. **Skills + manual steps:** ONE numbered `Next step:` list, each item tagged `[skill]` or `[manual]`, no separate tables.
+5. Cell text is a short phrase (no sentences, no repeated explanations). The long per-section tables of the older layout are produced only if the user says "details" or names a section.
+
 ## Rules (do not change without the user)
 - Fixed capital base 20,00,000; deposits ignored. Closed-trade P&L is gross of charges.
 - Equity only; the option-hedge portfolio and investment portfolio are never dh252.
