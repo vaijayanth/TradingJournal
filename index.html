@@ -10890,10 +10890,9 @@ function ccZerodhaView(d) {
   const zLegs = S.flatMap(s => (s.legs || []).map(l => ({ ...l, symbol: l.symbol || s.symbol })));
   const zMtm = zLegs.reduce((a, l) => a + (l.pnl_rs || 0), 0);
   const zNear = zLegs.filter(l => l.side === 'SHORT').sort((a, b) => Math.abs(a.dist_pct) - Math.abs(b.dist_pct))[0];
-  const tierRows = di ? [] : ccTierRows(d), tn = k => tierRows.filter(r => r.tier === k).length;
+  const tierRows = ccTierRows(d), tn = k => tierRows.filter(r => r.tier === k).length;
   const kpis = a2Metrics([
-    di ? ['Signals', `${C.call || 0} call · ${C.put_spread || 0} BPS`, `${S.length} DI stocks with options` + ((d.no_data || []).length ? ' (no data: ' + d.no_data.join(', ') + ')' : '') + ((d.no_options || []).length ? ` · no options: ${d.no_options.join(', ')}` : '')]
-      : ['Entry signals', tierRows.length, `Tier 1: ${tn(1)} · Tier 2: ${tn(2)} · Tier 3: ${tn(3)} · Tier 4: ${tn(4)} · Tier 5: ${tn(5)} · Supertrend only, open-leg stocks left out`],
+    ['Entry signals', tierRows.length, `Tier 1: ${tn(1)} · Tier 2: ${tn(2)} · Tier 3: ${tn(3)} · Tier 4: ${tn(4)} · Tier 5: ${tn(5)} · Supertrend only, open-leg stocks left out`],
     ['Open option legs', (d.positions || {}).legs || 0, 'Expiries from ' + dhFmtDate((d.positions || {}).track_from) + ' · ' + ((d.positions || {}).ignored_legs || 0) + ' earlier legs ignored'],
     ['Act now', ccActNow(d), 'Exit, 3× premium, beyond strike, profit exit (other alerts are in the Actions tab)', ccActNowBad(d) ? 'neg' : ''],
     ['Nearest short strike', zNear ? ccSigned(zNear.dist_pct) : '—', zNear ? `${zNear.symbol} ${ccStrike(zNear.strike)}${zNear.type} · ${ccSD(zNear.expiry)}` : 'No short legs', zNear && Math.abs(zNear.dist_pct) < 5 ? 'neg' : ''],
@@ -10910,10 +10909,10 @@ function ccZerodhaView(d) {
     cols: ccSigCols(d),
   });
   const lvlOrd = { EXIT: 0, BREACH: 1, WARN: 2 };
-  const alertsT = ccActionsBox(d, 'zal', tierRows, !di), nAct = ccActRows(d, tierRows).length;
+  const alertsT = ccActionsBox(d, 'zal', tierRows, true), nAct = ccActRows(d, tierRows).length;
   const trades = ccTrades(S, d.alerts, R);
   const legT = ccTbl('zlegs', {
-    title: 'Open positions', hint: 'One row per trade, from the ' + who + ' positions' + (di ? ' (uploaded ICICIdirect export, none yet)' : ' call') + ' (expiries from ' + dhFmtDate((d.positions || {}).track_from) + ' onwards). Short leg = the short option only: % of its premium already earned and its own P&L (your 60% profit exit and 3× stop work on this). Trade P&L = the whole trade including the hedge. Book profit at ' + (R.profit_exit_decay_pct ?? 60) + '%; negative = losing. Click a row for its legs. BPS = bull put spread.',
+    title: 'Open positions', hint: 'One row per trade, from the ' + who + ' positions' + (di ? ' (keyed from the ICICIdirect positions screen)' : ' call') + ' (expiries from ' + dhFmtDate((d.positions || {}).track_from) + ' onwards). Short leg = the short option only: % of its premium already earned and its own P&L (your 60% profit exit and 3× stop work on this). Trade P&L = the whole trade including the hedge. Book profit at ' + (R.profit_exit_decay_pct ?? 60) + '%; negative = losing. Click a row for its legs. BPS = bull put spread.',
     rows: trades, search: t => t.symbol, empty: `No open option legs with an expiry from ${dhFmtDate((d.positions || {}).track_from)} onwards in the ${who} positions.`, sort: [7, 1],
     rowKey: t => t.key, detail: ccTradeDetail, group: t => t.needs ? 'act' : 'ok', groups: ccTradeGroups, filters: ccTradeFilters, cols: ccTradeCols(),
   });
@@ -10931,13 +10930,13 @@ function ccZerodhaView(d) {
       ['Expiry', (d.show_expiries || []).map(dhFmtDate).join(', ') || '—'],
       ['Exit · premium', `Short option price reaches ${R.stop_premium_multiple}× the premium sold`],
       ['Exit · colour', 'Supertrend colour changes against the colour at entry (the colour when the legs were first seen): close the structure and open the opposite one'],
-      ['Positions', di ? 'Open legs come from the uploaded ICICIdirect positions export (not connected yet): until then every stock shows as a signal and no alerts are raised' : 'Open legs with an expiry on/after ' + dhFmtDate((d.positions || {}).track_from) + ' come from the AZ MCP positions call; earlier expiries are ignored'],
+      ['Positions', di ? 'Open legs are keyed by hand from the ICICIdirect positions screen (no MCP connector): paste the screen again to refresh them, otherwise they go stale' : 'Open legs with an expiry on/after ' + dhFmtDate((d.positions || {}).track_from) + ' come from the AZ MCP positions call; earlier expiries are ignored'],
       ['Universe', di ? 'The DI dividend universe: only the stocks with listed options appear here' : 'All Nifty F&O stocks except ' + ((d.excluded || []).join(', ') || 'none')],
     ]).concat(ccRulesCommon(R, di ? ['Stop protection', 'Not tracked for DI: place and watch the 3× stop in ICICIdirect'] : ['Stop protection', 'Each short should have a buy-back GTT (stop 3× + profit target); an invalid or missing one raises Invalid GTT / No GTT placed (scan_gtts.py, the zerodha-gtt-order skill)']))));
   const foot = `<div class="d2-edge-foot" style="border:0">Market data ${dhFmtDate(d.market_data_date)} · no option quotes are pulled, so strikes and premiums for new trades are not shown · positions fetched ${(d.positions || {}).fetched_at ? dhFmtDate(String(d.positions.fetched_at).slice(0, 10)) : (di ? 'never (upload not connected yet)' : 'never (run /refresh-zerodha)')}.</div>`;
-  const bar = ccTabBar('cc-otabs', [['alerts', 'Actions', nAct]].concat(di ? [['signals', 'Signals', S.length]] : [], [['legs', 'Open positions', trades.length], ['rules', 'Rules', null]]), 'ccZTab');
-  const allStocks = di ? '' : `<details class="cc-allstocks" style="margin-top:12px"><summary style="cursor:pointer;font-size:12.5px;color:var(--text-secondary)">All stocks (${S.length}): trend, flip, open legs, events</summary>${sigT}</details>`;
-  return ccStrikeBanner(d) + kpis + bar + `<div id="cc-ov-alerts" class="a2-view">${alertsT}</div>${di ? `<div id="cc-ov-signals" class="a2-view">${sigT}</div>` : ''}<div id="cc-ov-legs" class="a2-view">${legT}${allStocks}</div><div id="cc-ov-rules" class="a2-view">${rulesPanel}${foot}</div>`;
+  const bar = ccTabBar('cc-otabs', [['alerts', 'Actions', nAct]].concat([['legs', 'Open positions', trades.length], ['rules', 'Rules', null]]), 'ccZTab');
+  const allStocks = `<details class="cc-allstocks" style="margin-top:12px"><summary style="cursor:pointer;font-size:12.5px;color:var(--text-secondary)">All stocks (${S.length}): trend, flip, open legs, events</summary>${sigT}</details>`;
+  return ccStrikeBanner(d) + kpis + bar + `<div id="cc-ov-alerts" class="a2-view">${alertsT}</div><div id="cc-ov-legs" class="a2-view">${legT}${allStocks}</div><div id="cc-ov-rules" class="a2-view">${rulesPanel}${foot}</div>`;
 }
 
 function ccRender(d) {
@@ -10947,7 +10946,9 @@ function ccRender(d) {
   wsPaintFresh();
   const di = WS.id === 'icici', zer = WS.id === 'zerodha' || di, tabs = document.getElementById('cc-tabs');
   if (tabs) tabs.style.display = zer ? 'none' : '';
-  if (di && asof) { asof.textContent = 'Market data ' + dhFmtDate(d.market_data_date) + ' · built ' + (wsFmtT(d.generated_at, true) || '') + ' IST · ' + wsAgo(d.generated_at); diFreshPaint(asof, d.market_data_date); }
+  if (di && asof) { const okM = !!d.market_data_date && d.market_data_date >= dhExpectedSession(dhNowIst()), pa = (d.positions || {}).fetched_at, okP = !!pa && String(pa).slice(0, 10) >= dhExpectedSession(dhNowIst()), pill = (ok, t, tip) => `<span class="fr-pill ${ok ? 'ok' : 'bad'}" title="${dhEsc(tip)}"><b>${t[0]}</b> ${t[1]}</span>`;
+    asof.innerHTML = '<span class="fr-wrap">' + pill(okP, ['DI positions', 'keyed ' + (pa ? (wsFmtT(pa, true) || '') + ' IST · ' + wsAgo(pa) : 'never')], 'Typed in from the ICICIdirect positions screen (no MCP connector): they are only as fresh as the last paste') + pill(okM, ['Yahoo prices', dhFmtDate(d.market_data_date) + ' close · built ' + (wsFmtT(d.generated_at, true) || '') + ' IST · ' + wsAgo(d.generated_at)], 'Supertrend, RSI and prices from Yahoo Finance') + '</span>'; asof.removeAttribute('title');
+    asof.style.border = 'none'; asof.style.padding = '0'; asof.style.background = 'transparent'; asof.style.color = ''; asof.style.whiteSpace = 'normal'; }
   const pg = document.getElementById('page-covcall');
   if (pg) {
     pg.querySelector('.d2-eyebrow').textContent = di ? 'DI workspace · dividend portfolio options' : zer ? 'AZ workspace · Nifty F&O option selling' : 'ND workspace · investment portfolio options';
@@ -10960,7 +10961,7 @@ function ccRender(d) {
     document.getElementById('cc-root').innerHTML = ccZerodhaView(d);
     Object.keys(CC_T).forEach(ccTblApply);
     let zt = null; try { zt = localStorage.getItem('tj_ccz_tab'); } catch (e) {}
-    ccZTab(zt || (di ? 'signals' : 'alerts'));
+    ccZTab(zt && zt !== 'signals' ? zt : 'alerts');
     return;
   }
   document.getElementById('cc-root').innerHTML =
