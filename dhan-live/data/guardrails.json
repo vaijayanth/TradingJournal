@@ -1,13 +1,13 @@
 {
- "generated_at": "2026-11-18T22:49:10+05:30",
+ "generated_at": "2026-11-19T09:13:46+05:30",
  "broker": "dhan",
  "market_data_date": "2026-11-18",
- "signals_generated_at": "2026-11-18T17:19:07.930483+00:00",
+ "signals_generated_at": "2026-11-19T03:43:44.266915+00:00",
  "status": "WARN",
  "global_block": false,
  "counts": {
   "block": 0,
-  "warn": 3,
+  "warn": 2,
   "info": 0
  },
  "per_symbol_blocks": {},
@@ -17,12 +17,6 @@
    "level": "WARN",
    "symbol": null,
    "msg": "the cross-check flagged 2 of 13 signals (advisory only, the backtester signal stands and they are not blocked): KODYTECH, SHRINGARMS"
-  },
-  {
-   "id": "I3",
-   "level": "WARN",
-   "symbol": null,
-   "msg": "13 stocks were bought in the last 3 days and are not in Dhan holdings yet (settlement timing); positions and P&L exclude them until holdings catch up: SHRINGARMS (4->5), CYIENT (2->3), CORONA (1->2), 360ONE (0->1), AKCAPIT (0->1), KTKBANK (0->5), HONASA (0->3), KDDL (0->1), MAHABANK (0->20), TCPLPACK (0->1), KPRMILL (0->1), AARTIPHARM (0->1) ..."
   },
   {
    "id": "P3",

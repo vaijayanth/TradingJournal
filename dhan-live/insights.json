@@ -1,34 +1,34 @@
 {
- "as_of": "2026-11-18",
- "written_at": "2026-11-18T22:49:33+05:30",
+ "as_of": "2026-11-18 close, checked 19 Nov before the open",
+ "written_at": "2026-11-19T09:14:05+05:30",
  "confidence": "low",
  "maturity": "About five weeks of history and 5 closed trades: a health check, not a verdict on the strategy.",
- "headline": "The ramp is on schedule: today's orders were all placed, and the only real risk is an unhedged BSE put, not the shares.",
+ "headline": "The book is now 116 positions and 57% in profit. The unhedged BSE put is the one open risk, and all 12 AMO orders are waiting for the open.",
  "points": [
   {
-   "label": "Market and flow",
-   "text": "7 fresh 52-week-high entries, 4 add-ons and 2 exits today, with every one already ordered for tomorrow's open (none missed, KODYTECH excluded as yesterday's signal). Breakouts are still appearing at a steady pace, so deployment (₹2.0L, 10% of base) keeps rising by design. No action."
+   "label": "Deployment",
+   "text": "₹2.0L of ₹20L (10%) is invested across 116 positions after yesterday's 13 buys settled, with +₹4.0k combined (+0.2% of the base). Small by design at this stage of the ladder, so judge percentages, not rupees."
   },
   {
    "label": "Versus the backtest",
-   "text": "Combined P&L is +₹3.9k (+0.2% of ₹20L) and the book is 57% in profit (60 of 106). The backtest reference is −15.4% max drawdown, profit factor 2.01 and winners that run about 100 days. At 5 weeks and 5 closed trades none of these can be tested yet. Watch profit factor and average winner once 30 trades have closed."
+   "text": "The book is about five weeks old with 5 closed trades, so none of the backtest figures (−15.4% max drawdown, PF 2.01, winners about +33% over about 100 days) can be tested yet. Watch profit factor and average winner once 30 trades have closed. No rule change before then."
   },
   {
    "label": "Money leak: BSE options",
-   "text": "BSE has two short 3200PE / 3500PE legs (400 qty) but a hedge on only 200 qty, so 200 qty of put is unhedged, and the BSE call is on a stock whose Supertrend is now green. Today's check found no other stop or hedge problems; all 13 shorts carry a stop and a target. Fix BSE first: buy the missing put hedge or close the 3200PE."
+   "text": "BSE has 400 qty of short puts (3200PE and 3500PE) and a hedge for only 200 qty, so 200 qty is unhedged. The BSE call is on a stock that is now green. Everything else in the option book has a stop and a target. Fix BSE first: buy the missing hedge or close the 3200PE."
   },
   {
    "label": "Flipped call",
-   "text": "SHRIRAMFIN 1120CE and BSE 4200CE are short calls on stocks whose Supertrend is green. Both are small (−₹454 and +₹1,020), so the rule says close them. Leaving them costs little today but gives up the bull-put structure the rule wants."
+   "text": "SHRIRAMFIN 1120CE (−₹454) and BSE 4200CE (+₹1,090) are short calls on green stocks. The rule says close them and open the put spread. Both are small, so this is tidiness, not urgency."
   },
   {
    "label": "Check before the open",
-   "text": "SHRINGARMS: the backtester says exit (red) but a Yahoo recompute says green, and today's 1-share add-on has just filled. The pending sell is for 4 of 5 shares, so it would leave 1 share behind. PASHUPATI (−31%) carries a Dhan cost of 0, so its loss is unreliable until you confirm the split shares were credited."
+   "text": "SHRINGARMS: the backtester says exit, but a Yahoo recompute says green. Dhan's own 18 Nov candle closed at ₹269.45, down 5%. All 5 shares have settled, while the pending sell is for 4, so it would leave 1 share. PASHUPATI (−31%) still shows a Dhan cost of 0, so confirm the split shares before judging it."
   },
   {
    "label": "Advice follow-up",
-   "text": "Last advice, place the exits, add-ons and entries, was followed: all 12 orders are pending and 13 earlier buys filled this morning. That advice is closed. Make no rule change before 30 closed trades."
+   "text": "Last night's advice (check the BSE hedge, SHRINGARMS quantity, PASHUPATI cost) is still open. The 12 AMO orders (10 buys, 2 sells) are pending and none has filled yet, which is normal before the open."
   }
  ],
- "action": "Before the open, fix the BSE put hedge and close the two flipped calls in the Dhan app, and confirm the SHRINGARMS sell quantity (4 vs 5)."
+ "action": "Before the open, fix the BSE put hedge, check the SHRINGARMS sell quantity (4 vs 5), and close the two flipped calls in the Dhan app."
 }
