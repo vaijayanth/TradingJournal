@@ -1,17 +1,17 @@
 {
  "as_of": "19 Nov, 12:15 (market open; swing signals are the 18 Nov close)",
- "written_at": "2026-11-19T11:55:23+05:30",
+ "written_at": "2026-11-19T12:08:37+05:30",
  "confidence": "low",
  "maturity": "10 days of history and 2 closed trades: a health check, not a verdict on the strategy.",
- "headline": "You are opening new option spreads faster than you are protecting or closing the old ones: 17 shorts now have no GTT, and 2 stale GTTs are still live.",
+ "headline": "The GTT gap is widening: 5 stale GTTs are live and 20 shorts have no GTT, while the 4 stopped-out spreads are still open.",
  "points": [
   {
    "label": "Protection is falling behind",
-   "text": "17 short options have no protective GTT (10 this morning plus COCHINSHIP, CONCOR, HAVELLS, HDFCLIFE, NESTLEIND, RADICO and RVNL spreads opened since). Placing GTTs through the tool failed on the first HAL attempt, so these need placing in Kite, or a retry once you choose. Every unprotected short is a loss that no rule is watching."
+   "text": "20 short options now have no protective GTT (new spreads on BAJAJFINSV, BANKINDIA and CAMS were added on top of the earlier ones). Placing GTTs through the tool failed on the first attempt, so these need placing in Kite or a retry. Every unprotected short is a loss no rule is watching."
   },
   {
-   "label": "Stale GTTs keep biting",
-   "text": "Two more old GTTs fired today: ABB 6000PE bought a new long at 10:16, and CANBK 124PE earlier. APOLLOHOSP 343048061 and BPCL 300PE 343668936 are still active and will do the same if they trigger. This is a repeated process leak, not bad luck, so delete a short's GTT in the same sitting you close it."
+   "label": "Stale GTTs keep multiplying",
+   "text": "5 stale GTTs are now active: APOLLOHOSP, BPCL, KARURVYSYA 370PE and 410CE, and SUNPHARMA 2100CE. Each can buy a new long if it triggers, and two such GTTs already fired today (ABB, CANBK). Delete a short's GTT in the same sitting you close it."
   },
   {
    "label": "Clean-up still open",
@@ -30,5 +30,5 @@
    "text": "Stop opening new option trades until the protection and clean-up gap is closed. New spreads add margin and tail risk while today's open problems are still unresolved. Resume once every short has a GTT and the 4 stopped-out spreads are closed."
   }
  ],
- "action": "Today: delete the 2 stale GTTs, close the 4 stopped-out spreads and CONCOR, place GTTs on the 17 unprotected shorts, and open no new option trades until that is done."
+ "action": "Delete the 5 stale GTTs, close the 4 stopped-out spreads and CONCOR, protect the 20 shorts, and open no new option trades until that is done."
 }
