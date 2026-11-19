@@ -68,6 +68,23 @@ def event_alert(events, expiry, today, close_days):
     return "; ".join(parts), best[1]
 
 
+def held_row(s, legs, mdate):
+    """One row per stock with open option legs: Supertrend signal, what the colour rule wants, what is open, and whether they agree."""
+    legs = sorted(legs, key=lambda l: (str(l.get("expiry")), str(l.get("type")), l.get("strike") or 0))
+    opened = " ".join(f"{'S' if l.get('side') == 'SHORT' else 'L'}{l.get('strike'):g}{l.get('type')}" for l in legs)
+    td, fd = s.get("flip_trading_days"), s.get("flip_date")
+    cal = (mdate - date.fromisoformat(fd)).days if fd else None
+    want = "bull put spread" if s.get("colour") == "green" else "sell call"
+    # derived from the open legs themselves (covered_call_signals.json can be older than the positions): green wants puts only, red wants calls only
+    short_call = any(l.get("side") == "SHORT" and l.get("type") == "CE" for l in legs)
+    short_put = any(l.get("side") == "SHORT" and l.get("type") == "PE" for l in legs)
+    wrong = short_call if s.get("colour") == "green" else short_put
+    status = "FLIP" if wrong else "HOLD"
+    verdict = "colour changed: close the old structure first, then re-enter" if wrong else "matches the colour rule"
+    return {"symbol": s["symbol"], "colour": s.get("colour"), "flip_date": fd, "flip_trading_days": td, "flip_calendar_days": cal, "spot": s.get("spot"),
+            "rule": want, "open_legs": opened, "status": status, "verdict": verdict}
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--max-per-tier", type=int, default=40)
@@ -87,6 +104,15 @@ def main():
     today = ist_today()
 
     tiers = {1: [], 2: [], 3: [], 4: [], 5: []}
+    legs_by = {}
+    for l in pos.get("legs", []):
+        legs_by.setdefault(l.get("symbol") or l.get("stock"), []).append(l)
+    held_rows = []
+    for s in c["stocks"]:
+        lg = legs_by.get(s["symbol"]) or s.get("legs") or []
+        if lg:
+            held_rows.append(held_row(s, lg, mdate))
+    held_rows.sort(key=lambda r: (r["status"] != "FLIP", r["symbol"]))
     skipped = {"open option legs": 0, "no expiry/lot": 0}
     for s in c["stocks"]:
         if s["symbol"] in held:
@@ -113,11 +139,18 @@ def main():
         tiers[t].sort(key=lambda r: (r["flip_trading_days"], r["symbol"]))
 
     if a.json:
-        print(json.dumps({"market_data_date": c["market_data_date"], "positions_fetched_at": pos.get("fetched_at"), "tiers": tiers, "skipped": skipped, "held_stocks": sorted(held)}, indent=1))
+        print(json.dumps({"market_data_date": c["market_data_date"], "positions_fetched_at": pos.get("fetched_at"), "tiers": tiers, "skipped": skipped, "held_stocks": sorted(held), "held_table": held_rows}, indent=1))
         return
     print(f"AZ option entry signals - Supertrend flips only (no RSI). Market data {c['market_data_date']}; open option legs fetched {pos.get('fetched_at')}.")
     print(f"Left out: {len(held)} stocks with open option legs; {skipped['no expiry/lot']} with no listed expiry/lot.")
     print(f"ALERT: '!!' = event inside the {close_days}-day close window now; '!' = window opens before the expiry (close early); plain = event within 60 days. (est.) = date estimated.\n")
+    if held_rows:
+        print("== Stocks with open option legs: Supertrend signal and whether the open structure still matches it ==")
+        print(f"   {'stock':<12} {'Supertrend':<10} {'since':<11} {'age':<8} {'price':>9} {'rule wants':<16} {'status':<6} open legs (S = short, L = long)")
+        for r in held_rows:
+            age = "today" if r["flip_trading_days"] == 0 else f"{r['flip_trading_days']}td/{r['flip_calendar_days']}d"
+            print(f"   {r['symbol']:<12} {str(r['colour']).upper():<10} {str(r['flip_date']):<11} {age:<8} {r['spot']:>9g} {r['rule']:<16} {r['status']:<6} {r['open_legs']}  -> {r['verdict']}")
+        print()
     for t in (1, 2, 3, 4, 5):
         rows = tiers[t]
         if t not in want:
