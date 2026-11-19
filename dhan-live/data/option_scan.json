@@ -1,8 +1,8 @@
 {
- "fetched_at": "2026-11-19T14:03:03+05:30",
+ "fetched_at": "2026-11-19T22:35:27+05:30",
  "stale_inputs": [],
- "open_legs": 21,
- "shorts": 13,
+ "open_legs": 20,
+ "shorts": 12,
  "super_orders": 13,
  "fired_cleanly": [],
  "findings": [
@@ -39,12 +39,12 @@
    "action": "Watch the 3x stop and the Supertrend colour"
   },
   {
-   "section": "B",
-   "severity": "INFO",
+   "section": "F",
+   "severity": "HIGH",
    "symbol": "SHRIRAMFIN",
-   "leg": "SHRIRAMFIN 1120CE 2026-12-29",
-   "concern": "Short 1120CE (825 qty) is a naked call (by design; covered by shares you hold)",
-   "action": "Watch the 3x stop and the Supertrend colour"
+   "leg": "SHRIRAMFIN",
+   "concern": "S1 ORPHAN: Likely orphaned: sold 825 @ 5.6 but no open short matches; stop_loss 17 + target 2.25 still pending: a stop firing would BUY a new long (order 2132611092656873)",
+   "action": "Check the position; if closed, cancel the legs (order 2132611092656873)"
   }
  ]
 }

@@ -1,22 +1,22 @@
 {
- "generated_at": "2026-11-19T14:02:54+05:30",
+ "generated_at": "2026-11-19T22:35:17+05:30",
  "broker": "dhan",
- "market_data_date": "2026-11-18",
- "signals_generated_at": "2026-11-19T08:32:52.779131+00:00",
- "status": "BLOCK",
- "global_block": true,
+ "market_data_date": "2026-11-19",
+ "signals_generated_at": "2026-11-19T17:05:13.697349+00:00",
+ "status": "WARN",
+ "global_block": false,
  "counts": {
-  "block": 1,
-  "warn": 3,
+  "block": 0,
+  "warn": 5,
   "info": 0
  },
  "per_symbol_blocks": {},
  "findings": [
   {
    "id": "F5",
-   "level": "BLOCK",
+   "level": "WARN",
    "symbol": null,
-   "msg": "the cross-check disagrees with 2 of 6 signals - prices are suspect (a partial same-day bar while the market is open, a hole in the price history, or a bad feed). Do not order until the close-of-day data is published and the refresh re-run."
+   "msg": "the cross-check flagged 1 of 13 signals (advisory only, the backtester signal stands and they are not blocked): KODYTECH"
   },
   {
    "id": "I3",
@@ -34,7 +34,13 @@
    "id": "P3",
    "level": "WARN",
    "symbol": null,
-   "msg": "2 open option exit / strike-breach alerts on 2 stocks (BSE, SHRIRAMFIN) - see the Covered Call alerts"
+   "msg": "1 open option exit / strike-breach alerts on 1 stocks (BSE) - see the Covered Call alerts"
+  },
+  {
+   "id": "P5",
+   "level": "WARN",
+   "symbol": null,
+   "msg": "1 super order stop findings (1 high: likely orphaned stop legs that could BUY a new long) - see Covered Call > Alerts; the dhan-superorder skill can cancel them"
   }
  ]
 }

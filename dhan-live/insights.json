@@ -1,34 +1,26 @@
 {
- "as_of": "2026-11-18 close, checked 19 Nov before the open",
- "written_at": "2026-11-19T09:14:05+05:30",
+ "as_of": "19 Nov close (live prices 22:30 IST)",
+ "written_at": "2026-11-19T22:35:37+05:30",
  "confidence": "low",
- "maturity": "About five weeks of history and 5 closed trades: a health check, not a verdict on the strategy.",
- "headline": "The book is now 116 positions and 57% in profit. The unhedged BSE put is the one open risk, and all 12 AMO orders are waiting for the open.",
+ "maturity": "126 positions ever opened but only 5 closed trades: the swing edge cannot be judged yet.",
+ "headline": "Swing book is mildly positive (+Rs4.2k) with 4 exits and 6 entries signalled tonight; the one real leak is the options side: BSE's flipped call and a half-hedged put.",
  "points": [
   {
-   "label": "Deployment",
-   "text": "₹2.0L of ₹20L (10%) is invested across 116 positions after yesterday's 13 buys settled, with +₹4.0k combined (+0.2% of the base). Small by design at this stage of the ladder, so judge percentages, not rupees."
+   "label": "Orders tonight",
+   "text": "4 red-Supertrend exits (CORONA, PASHUPATI, PAYTM, SHRINGARMS), 6 fresh 52-week-high entries and 2 add-ons (MACPOWER, TECHM). Today's MACPOWER and LGEINDIA AMO buys were rejected, so check the price limit before re-sending."
+  },
+  {
+   "label": "SHRINGARMS trap",
+   "text": "4 of 5 shares were already sold today but holdings still show 5 until settlement. Order only the 1 remaining share, not the 5 the ticket shows, or you oversell."
+  },
+  {
+   "label": "Options book",
+   "text": "BSE call (4200CE) is still short while Supertrend is green, and BSE 3200PE has no hedge: 200 of 400 qty uncovered. Everything else matches its colour rule. The SHRIRAMFIN 1120CE call was closed today at a Rs908 loss, but its super order legs are still pending and could buy a new long: cancel them."
   },
   {
    "label": "Versus the backtest",
-   "text": "The book is about five weeks old with 5 closed trades, so none of the backtest figures (−15.4% max drawdown, PF 2.01, winners about +33% over about 100 days) can be tested yet. Watch profit factor and average winner once 30 trades have closed. No rule change before then."
-  },
-  {
-   "label": "Money leak: BSE options",
-   "text": "BSE has 400 qty of short puts (3200PE and 3500PE) and a hedge for only 200 qty, so 200 qty is unhedged. The BSE call is on a stock that is now green. Everything else in the option book has a stop and a target. Fix BSE first: buy the missing hedge or close the 3200PE."
-  },
-  {
-   "label": "Flipped call",
-   "text": "SHRIRAMFIN 1120CE (−₹454) and BSE 4200CE (+₹1,090) are short calls on green stocks. The rule says close them and open the put spread. Both are small, so this is tidiness, not urgency."
-  },
-  {
-   "label": "Check before the open",
-   "text": "SHRINGARMS: the backtester says exit, but a Yahoo recompute says green. Dhan's own 18 Nov candle closed at ₹269.45, down 5%. All 5 shares have settled, while the pending sell is for 4, so it would leave 1 share. PASHUPATI (−31%) still shows a Dhan cost of 0, so confirm the split shares before judging it."
-  },
-  {
-   "label": "Advice follow-up",
-   "text": "Last night's advice (check the BSE hedge, SHRINGARMS quantity, PASHUPATI cost) is still open. The 12 AMO orders (10 buys, 2 sells) are pending and none has filled yet, which is normal before the open."
+   "text": "Combined P&L is +Rs4.2k on Rs2.1L deployed; the sizing has doubled to Rs2,000 per trade. Too early to compare with the backtest (28% CAGR, -15.4% max DD, PF 2.01): watch drawdown and win rate after 30 closed trades."
   }
  ],
- "action": "Before the open, fix the BSE put hedge, check the SHRINGARMS sell quantity (4 vs 5), and close the two flipped calls in the Dhan app."
+ "action": "Place the 4 exits (SHRINGARMS as 1 share), the 6 entries and 2 add-ons; cancel the orphaned SHRIRAMFIN stop legs; hedge or close the BSE structure."
 }
