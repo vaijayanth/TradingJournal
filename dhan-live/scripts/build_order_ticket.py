@@ -50,6 +50,28 @@ def parse_pick(text, n):
     return nums
 
 
+def unsettled_sell_cap(fills, symbol, today, window_days=3):
+    """Quantity still sellable when the fill ledger shows a recent SELL that Dhan holdings have not caught up with.
+    Returns (ledger_qty, recent_sold). Holdings lag a sale by a session, so an exit sized from holdings would oversell
+    (found 2026-11-19: SHRINGARMS sold 4 of 5 shares, holdings still showed 5)."""
+    led, recent_sold = 0, 0
+    for fl in fills:
+        if fl.get("symbol") != symbol:
+            continue
+        q = fl.get("qty") or 0
+        if fl.get("action") == "BUY":
+            led += q
+        else:
+            led -= q
+            try:
+                d = datetime.strptime(fl["date"], "%Y-%m-%d").date()
+            except Exception:
+                continue
+            if 0 <= (today - d).days <= window_days:
+                recent_sold += q
+    return max(led, 0), recent_sold
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("kind", choices=["all", "buy", "entry", "addon", "exit"])
@@ -102,6 +124,11 @@ def main():
         sys.exit(2)
 
     tickets, skipped, blocked = [], [], []
+    notes = []
+    try:
+        fills = json.loads((ROOT / "data" / "dh252_trade_log.json").read_text(encoding="utf-8")).get("fills", [])
+    except Exception:
+        fills = []
     for kind in kinds:
         for r in srcs[kind]:
             s = r["symbol"]
@@ -125,6 +152,12 @@ def main():
                 qty = r["qty"]
                 if h["qty"] != qty:
                     skipped.append((s, f"signal qty {qty} != holdings qty {h['qty']} - refresh holdings first")); continue
+                led_q, sold_q = unsettled_sell_cap(fills, s, date.today())
+                if sold_q > 0 and led_q < qty:
+                    if led_q < 1:
+                        skipped.append((s, f"already sold {sold_q} recently and the ledger shows nothing left - holdings not updated yet")); continue
+                    notes.append(f"{s}: sold {sold_q} recently, holdings still show {qty}; exit quantity capped to the {led_q} left in the ledger")
+                    qty = led_q
                 side, ref, why = "SELL", r["cmp"], f"Supertrend red ({r.get('flip_label')}), P&L {r['pl_pct']:.1f}% - exit the whole position"
             if qty < 1:
                 skipped.append((s, "quantity < 1 share")); continue
@@ -160,6 +193,8 @@ def main():
     for t in chosen:
         st = f"ST {t.get('supertrend') or '?'}" + (f" (Yahoo {t['yahoo_supertrend']})" if t.get("yahoo_supertrend") else "")
         print(f"  {t['no']:>2}) {t['side']:4} {t['symbol']:12} x{t['qty']:<4} ref Rs{t['ref_price']:<9} ~Rs{t['est_value']:<9} {st:<24} [{t['kind']}] {t['reason']}")
+    for n in notes:
+        print(f"  NOTE {n}")
     for s, why in skipped:
         print(f"  skipped {s}: {why}")
     for kind, s, why in blocked:

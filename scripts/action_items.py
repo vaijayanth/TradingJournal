@@ -98,16 +98,24 @@ def broker(folder, name, cmd, order_cmd, orders_label):
     if folder.startswith("zerodha"):   # AZ records buys in zerodha_trades.json: an entry already bought today is no longer pending
         zt = jload(b / "data" / "zerodha_trades.json") or {}
         bought_today = {s for s, d in (zt.get("entry_dates") or {}).items() if d == today} | {s for s, d in (zt.get("last_buy") or {}).items() if d == today}
-    ent = [e for e in sig.get("entries", []) if (e.get("symbol") if isinstance(e, dict) else e) not in bought_today]
-    done = len(sig.get("entries", [])) - len(ent)
-    ex, ad, en = len(sig.get("exits", [])), len(sig.get("addons", [])), len(ent)
     orders_snap = jload(b / "data" / "orders_snapshot.json") or {}
     pending = len(orders_snap.get("orders", []))
+    # a signal that already has a pending order on the same side is not "to do" any more (the order builders skip it too)
+    pend = {(o.get("symbol"), (o.get("side") or "").upper()) for o in orders_snap.get("orders", [])}
+    sym = lambda e: e.get("symbol") if isinstance(e, dict) else e
+    md = sig.get("market_data_date")
+    def stale_entry(e):   # an entry whose signal day is not the latest session is a missed day and is never ordered
+        return isinstance(e, dict) and md and e.get("date") and e["date"] != md
+    ent = [e for e in sig.get("entries", []) if sym(e) not in bought_today and (sym(e), "BUY") not in pend and not stale_entry(e)]
+    done = len(sig.get("entries", [])) - len(ent)
+    ex = len([e for e in sig.get("exits", []) if (sym(e), "SELL") not in pend])
+    ad = len([e for e in sig.get("addons", []) if (sym(e), "BUY") not in pend])
+    en = len(ent)
     if ex or ad or en:
         why = " (blocked until the guardrail clears: refresh first)" if blk else ""
         r["skill"].append(f"{order_cmd}: {ex} exits, {ad} add-ons, {en} entries{why}")
     elif done:
-        r["skill"].append(f"No stock orders pending ({done} entry signal(s) already bought today)")
+        r["skill"].append(f"No stock orders to place ({done} entry signal(s) already ordered, bought today or a missed day)")
     sh = cc.get("shares") or {}
     sh_e, sh_x = len(sh.get("entries", [])), len(sh.get("exits", []))
     sh_a = sum(1 for x in sh.get("rows", []) if x.get("avg_status") == "ADD")
