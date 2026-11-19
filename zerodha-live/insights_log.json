@@ -54,6 +54,23 @@
     "fresh_flips_today": 0,
     "options_stopped_out_net_rs": -94254
    }
+  },
+  {
+   "date": "2026-11-19 (10:00 refresh)",
+   "headline": "You started the clean-up, but a stale GTT has already bought a position you did not want, and 3 more can do the same.",
+   "recommendations": [
+    "Delete the 3 stale GTTs now, close the 4 stopped-out spreads before Monday, then place protective GTTs on the 10 new shorts.",
+    "Delete a short's GTT in the same sitting as closing it"
+   ],
+   "metrics": {
+    "stale_gtts": 3,
+    "stale_gtt_fired": "CANBK124PE",
+    "new_shorts_without_gtt": 10,
+    "stopped_out_spreads_open": 4,
+    "open_stock_option_pl_rs": -72156,
+    "positions": 36,
+    "profitable": 20
+   }
   }
  ]
 }

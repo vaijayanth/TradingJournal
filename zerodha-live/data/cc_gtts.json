@@ -1,5 +1,5 @@
 {
- "fetched_at": "2026-11-19T07:53:51+05:30",
+ "fetched_at": "2026-11-19T09:57:48+05:30",
  "active": {
   "TORNTPHARM26DEC5100CE": [
    {
@@ -681,26 +681,6 @@
     "qty": 1550
    }
   ],
-  "CANBK26NOV124PE": [
-   {
-    "id": 344931399,
-    "type": "two-leg",
-    "trigger_values": [
-     0.15,
-     1.1
-    ],
-    "qty": 6750
-   },
-   {
-    "id": 344931399,
-    "type": "two-leg",
-    "trigger_values": [
-     0.15,
-     1.1
-    ],
-    "qty": 6750
-   }
-  ],
   "CUMMINSIND26DEC5000CE": [
    {
     "id": 344015712,
@@ -716,7 +696,7 @@
     "id": 344014614,
     "type": "trailing-single",
     "trigger_values": [
-     30
+     29
     ],
     "qty": 350
    }
@@ -726,7 +706,7 @@
     "id": 343750241,
     "type": "trailing-single",
     "trigger_values": [
-     5.1
+     4.1
     ],
     "qty": 1550
    }
@@ -756,7 +736,7 @@
     "id": 343048061,
     "type": "trailing-single",
     "trigger_values": [
-     71
+     69
     ],
     "qty": 125
    }
@@ -1716,34 +1696,6 @@
    ]
   },
   {
-   "id": 344931399,
-   "type": "two-leg",
-   "created_at": "2026-11-16T11:41:56+05:30",
-   "expires_at": "2026-11-24T00:00:00+05:30",
-   "tradingsymbol": "CANBK26NOV124PE",
-   "last_price": 0.36,
-   "triggers": [
-    0.15,
-    1.1
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 6750,
-     "price": 0.2,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    },
-    {
-     "side": "BUY",
-     "qty": 6750,
-     "price": 1.15,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
    "id": 344015712,
    "type": "trailing-single",
    "created_at": "2026-11-09T11:55:15+05:30",
@@ -1771,13 +1723,13 @@
    "tradingsymbol": "SUNPHARMA26DEC2100CE",
    "last_price": 12.15,
    "triggers": [
-    30
+    29
    ],
    "orders": [
     {
      "side": "BUY",
      "qty": 350,
-     "price": 31,
+     "price": 30,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -1791,13 +1743,13 @@
    "tradingsymbol": "KARURVYSYA26NOV410CE",
    "last_price": 1.65,
    "triggers": [
-    5.1
+    4.1
    ],
    "orders": [
     {
      "side": "BUY",
      "qty": 1550,
-     "price": 5.2,
+     "price": 4.2,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -1851,19 +1803,42 @@
    "tradingsymbol": "APOLLOHOSP26NOV9100CE",
    "last_price": 29.6,
    "triggers": [
-    71
+    69
    ],
    "orders": [
     {
      "side": "BUY",
      "qty": 125,
-     "price": 72,
+     "price": 70,
      "product": "NRML",
      "order_type": "LIMIT"
     }
    ]
   }
  ],
- "triggered": [],
+ "triggered": [
+  {
+   "id": 344931399,
+   "type": "two-leg",
+   "tradingsymbol": "CANBK26NOV124PE",
+   "triggers": [
+    0.15,
+    1.1
+   ],
+   "triggered_at": "2026-11-19T09:46:15+05:30",
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 6750,
+     "price": 0.2
+    },
+    {
+     "side": "BUY",
+     "qty": 6750,
+     "price": 1.15
+    }
+   ]
+  }
+ ],
  "non_option_gtts": 10
 }
