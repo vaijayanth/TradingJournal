@@ -1,9 +1,9 @@
 {
- "generated_at": "2026-11-19T14:59:15.914253+00:00",
+ "generated_at": "2026-11-19T16:41:31.790322+00:00",
  "market_data_date": "2026-11-19",
  "live_prices_at": "2026-11-19T20:29:02+05:30",
- "gtt_scan_at": "2026-11-19T20:29:02+05:30",
- "gtt_checked_at": "2026-11-19T20:28:41+05:30",
+ "gtt_scan_at": "2026-11-19T22:11:21+05:30",
+ "gtt_checked_at": "2026-11-19T22:11:21+05:30",
  "rules": {
   "short_call_delta": 0.1,
   "short_put_delta": 0.1,
@@ -9030,66 +9030,6 @@
   {
    "level": "WARN",
    "type": "No GTT placed",
-   "symbol": "BAJAJFINSV",
-   "expiry": "2026-12-29",
-   "strike": 1740.0,
-   "opt_type": "PE",
-   "qty": 600,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 31.35 (3x premium)",
-   "text": "BAJAJFINSV 2026-12-29 short 1740PE: no active buy-back GTT (3x premium stop = 31.35)"
-  },
-  {
-   "level": "WARN",
-   "type": "No GTT placed",
-   "symbol": "BANKINDIA",
-   "expiry": "2026-12-29",
-   "strike": 145.0,
-   "opt_type": "PE",
-   "qty": 5200,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 4.35 (3x premium)",
-   "text": "BANKINDIA 2026-12-29 short 145PE: no active buy-back GTT (3x premium stop = 4.35)"
-  },
-  {
-   "level": "WARN",
-   "type": "No GTT placed",
-   "symbol": "CAMS",
-   "expiry": "2026-12-29",
-   "strike": 660.0,
-   "opt_type": "PE",
-   "qty": 825,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 22.95 (3x premium)",
-   "text": "CAMS 2026-12-29 short 660PE: no active buy-back GTT (3x premium stop = 22.95)"
-  },
-  {
-   "level": "WARN",
-   "type": "No GTT placed",
-   "symbol": "COCHINSHIP",
-   "expiry": "2026-12-29",
-   "strike": 1020.0,
-   "opt_type": "PE",
-   "qty": 800,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 36 (3x premium)",
-   "text": "COCHINSHIP 2026-12-29 short 1020PE: no active buy-back GTT (3x premium stop = 36)"
-  },
-  {
-   "level": "WARN",
-   "type": "No GTT placed",
-   "symbol": "CONCOR",
-   "expiry": "2026-12-29",
-   "strike": 410.0,
-   "opt_type": "PE",
-   "qty": 1250,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 15.6 (3x premium)",
-   "text": "CONCOR 2026-12-29 short 410PE: no active buy-back GTT (3x premium stop = 15.6)"
-  },
-  {
-   "level": "WARN",
-   "type": "No GTT placed",
    "symbol": "DIVISLAB",
    "expiry": "2026-11-23",
    "strike": 10600.0,
@@ -9122,30 +9062,6 @@
    "concern": "Long 10800CE is in the money 4d before expiry: physical settlement, you would buy 100 shares (about Rs10.8 lakh)",
    "action": "Close it before expiry",
    "text": "DIVISLAB 2026-11-23 long 10800CE in the money, 4 days to expiry: physical settlement"
-  },
-  {
-   "level": "WARN",
-   "type": "No GTT placed",
-   "symbol": "HAL",
-   "expiry": "2026-12-29",
-   "strike": 5400.0,
-   "opt_type": "CE",
-   "qty": 150,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 58.95 (3x premium)",
-   "text": "HAL 2026-12-29 short 5400CE: no active buy-back GTT (3x premium stop = 58.95)"
-  },
-  {
-   "level": "WARN",
-   "type": "No GTT placed",
-   "symbol": "HAVELLS",
-   "expiry": "2026-12-29",
-   "strike": 1090.0,
-   "opt_type": "PE",
-   "qty": 500,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 33.6 (3x premium)",
-   "text": "HAVELLS 2026-12-29 short 1090PE: no active buy-back GTT (3x premium stop = 33.6)"
   },
   {
    "level": "WARN",
@@ -9186,18 +9102,6 @@
   {
    "level": "WARN",
    "type": "No GTT placed",
-   "symbol": "HDFCLIFE",
-   "expiry": "2026-12-29",
-   "strike": 540.0,
-   "opt_type": "PE",
-   "qty": 2200,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 12.75 (3x premium)",
-   "text": "HDFCLIFE 2026-12-29 short 540PE: no active buy-back GTT (3x premium stop = 12.75)"
-  },
-  {
-   "level": "WARN",
-   "type": "No GTT placed",
    "symbol": "HINDPETRO",
    "expiry": "2026-11-23",
    "strike": 380.0,
@@ -9230,30 +9134,6 @@
    "concern": "Long 385CE is in the money 4d before expiry: physical settlement, you would buy 2025 shares (about Rs7.8 lakh)",
    "action": "Close it before expiry",
    "text": "HINDPETRO 2026-11-23 long 385CE in the money, 4 days to expiry: physical settlement"
-  },
-  {
-   "level": "WARN",
-   "type": "No GTT placed",
-   "symbol": "ICICILIFE",
-   "expiry": "2026-12-29",
-   "strike": 410.0,
-   "opt_type": "PE",
-   "qty": 1850,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 11.55 (3x premium)",
-   "text": "ICICILIFE 2026-12-29 short 410PE: no active buy-back GTT (3x premium stop = 11.55)"
-  },
-  {
-   "level": "WARN",
-   "type": "No GTT placed",
-   "symbol": "INDUSTOWER",
-   "expiry": "2026-12-29",
-   "strike": 360.0,
-   "opt_type": "PE",
-   "qty": 1700,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 9.45 (3x premium)",
-   "text": "INDUSTOWER 2026-12-29 short 360PE: no active buy-back GTT (3x premium stop = 9.45)"
   },
   {
    "level": "WARN",
@@ -9302,126 +9182,6 @@
    "concern": "Long 90CE is in the money 4d before expiry: physical settlement, you would buy 6500 shares (about Rs5.8 lakh)",
    "action": "Close it before expiry",
    "text": "MAHABANK 2026-11-23 long 90CE in the money, 4 days to expiry: physical settlement"
-  },
-  {
-   "level": "WARN",
-   "type": "No GTT placed",
-   "symbol": "MANAPPURAM",
-   "expiry": "2026-12-29",
-   "strike": 340.0,
-   "opt_type": "CE",
-   "qty": 3000,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 4.05 (3x premium)",
-   "text": "MANAPPURAM 2026-12-29 short 340CE: no active buy-back GTT (3x premium stop = 4.05)"
-  },
-  {
-   "level": "WARN",
-   "type": "No GTT placed",
-   "symbol": "NESTLEIND",
-   "expiry": "2026-12-29",
-   "strike": 1210.0,
-   "opt_type": "PE",
-   "qty": 1000,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 20.85 (3x premium)",
-   "text": "NESTLEIND 2026-12-29 short 1210PE: no active buy-back GTT (3x premium stop = 20.85)"
-  },
-  {
-   "level": "WARN",
-   "type": "No GTT placed",
-   "symbol": "NMDC",
-   "expiry": "2026-12-29",
-   "strike": 62.0,
-   "opt_type": "PE",
-   "qty": 13500,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 1.65 (3x premium)",
-   "text": "NMDC 2026-12-29 short 62PE: no active buy-back GTT (3x premium stop = 1.65)"
-  },
-  {
-   "level": "WARN",
-   "type": "No GTT placed",
-   "symbol": "PAGEIND",
-   "expiry": "2026-12-29",
-   "strike": 36000.0,
-   "opt_type": "CE",
-   "qty": 20,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 351.75 (3x premium)",
-   "text": "PAGEIND 2026-12-29 short 36000CE: no active buy-back GTT (3x premium stop = 351.75)"
-  },
-  {
-   "level": "WARN",
-   "type": "No GTT placed",
-   "symbol": "RADICO",
-   "expiry": "2026-12-29",
-   "strike": 4200.0,
-   "opt_type": "PE",
-   "qty": 150,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 154.2 (3x premium)",
-   "text": "RADICO 2026-12-29 short 4200PE: no active buy-back GTT (3x premium stop = 154.2)"
-  },
-  {
-   "level": "WARN",
-   "type": "No GTT placed",
-   "symbol": "RBLBANK",
-   "expiry": "2026-12-29",
-   "strike": 350.0,
-   "opt_type": "PE",
-   "qty": 3175,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 9.15 (3x premium)",
-   "text": "RBLBANK 2026-12-29 short 350PE: no active buy-back GTT (3x premium stop = 9.15)"
-  },
-  {
-   "level": "WARN",
-   "type": "No GTT placed",
-   "symbol": "RVNL",
-   "expiry": "2026-12-29",
-   "strike": 170.0,
-   "opt_type": "PE",
-   "qty": 3850,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 6.57 (3x premium)",
-   "text": "RVNL 2026-12-29 short 170PE: no active buy-back GTT (3x premium stop = 6.57)"
-  },
-  {
-   "level": "WARN",
-   "type": "No GTT placed",
-   "symbol": "SYRMA",
-   "expiry": "2026-12-29",
-   "strike": 1700.0,
-   "opt_type": "CE",
-   "qty": 325,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 51.15 (3x premium)",
-   "text": "SYRMA 2026-12-29 short 1700CE: no active buy-back GTT (3x premium stop = 51.15)"
-  },
-  {
-   "level": "WARN",
-   "type": "No GTT placed",
-   "symbol": "VMM",
-   "expiry": "2026-12-29",
-   "strike": 83.0,
-   "opt_type": "PE",
-   "qty": 4850,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 3.39 (3x premium)",
-   "text": "VMM 2026-12-29 short 83PE: no active buy-back GTT (3x premium stop = 3.39)"
-  },
-  {
-   "level": "WARN",
-   "type": "No GTT placed",
-   "symbol": "WAAREEENER",
-   "expiry": "2026-12-29",
-   "strike": 2200.0,
-   "opt_type": "PE",
-   "qty": 175,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 90.45 (3x premium)",
-   "text": "WAAREEENER 2026-12-29 short 2200PE: no active buy-back GTT (3x premium stop = 90.45)"
   }
  ],
  "events_file_at": "2026-11-18T06:27:00.461891+00:00",
@@ -9441,7 +9201,7 @@
   "RECLTD"
  ],
  "positions": {
-  "fetched_at": "2026-11-19T14:58:41.623713+00:00",
+  "fetched_at": "2026-11-19T16:41:21.395460+00:00",
   "track_from": "2026-11-01",
   "legs": 92,
   "ignored_legs": 16
