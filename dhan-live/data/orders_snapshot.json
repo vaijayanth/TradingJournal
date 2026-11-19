@@ -1,5 +1,46 @@
 {
- "fetched_at": "2026-11-19T22:34:43+05:30",
- "source": "mcp__dhan_mcp__orderbook_agent_tool (list): no pending orders",
- "orders": []
+ "fetched_at": "2026-11-19T22:41:49+05:30",
+ "source": "mcp__dhan_mcp__orderbook_agent_tool (list): pending orders",
+ "orders": [
+  {
+   "order_id": "3452611197228",
+   "symbol": "SHRINGARMS",
+   "side": "SELL",
+   "qty": 1,
+   "order_type": "MARKET",
+   "price": null,
+   "status": "PENDING",
+   "amo": true
+  },
+  {
+   "order_id": "2252611199497",
+   "symbol": "PAYTM",
+   "side": "SELL",
+   "qty": 1,
+   "order_type": "MARKET",
+   "price": null,
+   "status": "PENDING",
+   "amo": true
+  },
+  {
+   "order_id": "2252611199496",
+   "symbol": "PASHUPATI",
+   "side": "SELL",
+   "qty": 13,
+   "order_type": "MARKET",
+   "price": null,
+   "status": "PENDING",
+   "amo": true
+  },
+  {
+   "order_id": "2352611197221",
+   "symbol": "CORONA",
+   "side": "SELL",
+   "qty": 2,
+   "order_type": "MARKET",
+   "price": null,
+   "status": "PENDING",
+   "amo": true
+  }
+ ]
 }
