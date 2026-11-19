@@ -1,5 +1,5 @@
 {
- "fetched_at": "2026-11-19T09:57:48+05:30",
+ "fetched_at": "2026-11-19T10:00:08+05:30",
  "active": {
   "TORNTPHARM26DEC5100CE": [
    {
@@ -379,26 +379,6 @@
      16.05
     ],
     "qty": 500
-   }
-  ],
-  "ABB26NOV6000PE": [
-   {
-    "id": 345008320,
-    "type": "two-leg",
-    "trigger_values": [
-     1.4,
-     10.65
-    ],
-    "qty": 125
-   },
-   {
-    "id": 345008320,
-    "type": "two-leg",
-    "trigger_values": [
-     1.4,
-     10.65
-    ],
-    "qty": 125
    }
   ],
   "PREMIERENE26DEC1000CE": [
@@ -1276,34 +1256,6 @@
    ]
   },
   {
-   "id": 345008320,
-   "type": "two-leg",
-   "created_at": "2026-11-16T18:24:26+05:30",
-   "expires_at": "2026-11-24T00:00:00+05:30",
-   "tradingsymbol": "ABB26NOV6000PE",
-   "last_price": 3.2,
-   "triggers": [
-    1.4,
-    10.65
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 125,
-     "price": 1.45,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    },
-    {
-     "side": "BUY",
-     "qty": 125,
-     "price": 11,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
    "id": 344976353,
    "type": "two-leg",
    "created_at": "2026-11-16T14:22:53+05:30",
@@ -1817,6 +1769,28 @@
   }
  ],
  "triggered": [
+  {
+   "id": 345008320,
+   "type": "two-leg",
+   "tradingsymbol": "ABB26NOV6000PE",
+   "triggers": [
+    1.4,
+    10.65
+   ],
+   "triggered_at": "2026-11-19T09:59:18+05:30",
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 125,
+     "price": 1.45
+    },
+    {
+     "side": "BUY",
+     "qty": 125,
+     "price": 11
+    }
+   ]
+  },
   {
    "id": 344931399,
    "type": "two-leg",
