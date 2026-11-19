@@ -10028,7 +10028,7 @@ async function d2RenderInsights() {
     document.getElementById('d2-ins-body').innerHTML = `<div class="d2-ins-head">${dhEsc(j.headline || '')}</div>${pts}`
       + (j.action ? `<div class="d2-ins-act"><b>Next:</b> ${dhEsc(j.action)}</div>` : '')
       + (j.maturity ? `<div class="d2-ins-mat">${dhEsc(j.maturity)}</div>` : '');
-    const pill = document.getElementById('d2-ins-pill'); pill.textContent = `${(j.confidence || '—')} confidence · ${j.as_of ? dhFmtDate(j.as_of) : ''}`; pill.className = 'd2-pill' + (j.confidence === 'low' ? ' muted' : '');
+    const pill = document.getElementById('d2-ins-pill'); pill.textContent = `${(j.confidence || '—')} confidence · ${j.as_of ? (/^\d{4}-\d{2}-\d{2}/.test(j.as_of) ? dhFmtDate(j.as_of) : j.as_of) : ''}`; pill.className = 'd2-pill' + (j.confidence === 'low' ? ' muted' : '');
     box.style.display = '';
   } catch (e) { box.style.display = 'none'; }
 }
