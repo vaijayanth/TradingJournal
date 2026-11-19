@@ -1,5 +1,5 @@
 {
- "fetched_at": "2026-11-19T22:41:49+05:30",
+ "fetched_at": "2026-11-19T22:43:21+05:30",
  "source": "mcp__dhan_mcp__orderbook_agent_tool (list): pending orders",
  "orders": [
   {
@@ -39,6 +39,26 @@
    "qty": 2,
    "order_type": "MARKET",
    "price": null,
+   "status": "PENDING",
+   "amo": true
+  },
+  {
+   "order_id": "3452611197229",
+   "symbol": "MACPOWER",
+   "side": "BUY",
+   "qty": 1,
+   "order_type": "LIMIT",
+   "price": 2173.4,
+   "status": "PENDING",
+   "amo": true
+  },
+  {
+   "order_id": "2352611197222",
+   "symbol": "TECHM",
+   "side": "BUY",
+   "qty": 1,
+   "order_type": "LIMIT",
+   "price": 1735.9,
    "status": "PENDING",
    "amo": true
   }
