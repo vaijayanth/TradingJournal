@@ -1,6 +1,6 @@
 {
- "generated_at": "2026-11-16T08:22:09.029646+00:00",
- "market_data_date": "2026-11-13",
+ "generated_at": "2026-11-19T09:17:45.694962+00:00",
+ "market_data_date": "2026-11-19",
  "live_prices_at": null,
  "gtt_scan_at": null,
  "gtt_checked_at": null,
@@ -28,13 +28,13 @@
  "stocks": [
   {
    "symbol": "BANKBARODA",
-   "spot": 273.84,
+   "spot": 283.24,
    "colour": "green",
-   "rsi": 76.1,
+   "rsi": 77.1,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-10-29",
-   "flip_trading_days": 11,
+   "flip_trading_days": 15,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -61,13 +61,13 @@
   },
   {
    "symbol": "BPCL",
-   "spot": 302.0,
+   "spot": 307.2,
    "colour": "green",
-   "rsi": 50.4,
+   "rsi": 54.4,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-05",
-   "flip_trading_days": 6,
+   "flip_trading_days": 10,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -75,9 +75,52 @@
     }
    ],
    "rsi_override": false,
-   "status": "ENTER",
-   "note": "Supertrend green: bull put spread",
-   "legs": [],
+   "status": "HOLD",
+   "note": "Open structure matches the rule (Supertrend green).",
+   "legs": [
+    {
+     "symbol": "BPCL",
+     "expiry": "2026-12-29",
+     "strike": 260.0,
+     "type": "PE",
+     "side": "LONG",
+     "qty": 3950,
+     "avg": 1.4,
+     "ltp": 1.25,
+     "pnl_rs": -592.5,
+     "tradingsymbol": "BPCL26DEC260PE",
+     "lot": 1975,
+     "lots": 2.0,
+     "dist_pct": -15.36,
+     "beyond_pct": -18.15,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    },
+    {
+     "symbol": "BPCL",
+     "expiry": "2026-12-29",
+     "strike": 270.0,
+     "type": "PE",
+     "side": "SHORT",
+     "qty": 3950,
+     "avg": 2.0,
+     "ltp": 2.05,
+     "pnl_rs": -197.5,
+     "tradingsymbol": "BPCL26DEC270PE",
+     "lot": 1975,
+     "lots": 2.0,
+     "dist_pct": -12.11,
+     "stop_at": 6.0,
+     "stop_hit": false,
+     "beyond_pct": -13.78,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    }
+   ],
    "events": [
     {
      "label": "Results",
@@ -94,13 +137,13 @@
   },
   {
    "symbol": "CDSL",
-   "spot": 1447.0,
+   "spot": 1423.4,
    "colour": "green",
-   "rsi": 72.1,
+   "rsi": 64.9,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-03",
-   "flip_trading_days": 8,
+   "flip_trading_days": 12,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -108,9 +151,74 @@
     }
    ],
    "rsi_override": false,
-   "status": "ENTER",
-   "note": "Supertrend green: bull put spread",
-   "legs": [],
+   "status": "FLIP",
+   "note": "Supertrend is GREEN: the open short call (1500CE 2026-12-29) is the opposite of the colour rule - close it and open the bull put spread.",
+   "legs": [
+    {
+     "symbol": "CDSL",
+     "expiry": "2026-12-29",
+     "strike": 1500.0,
+     "type": "CE",
+     "side": "SHORT",
+     "qty": 475,
+     "avg": 11.5,
+     "ltp": 31.1,
+     "pnl_rs": -9310,
+     "tradingsymbol": "CDSL26DEC1500CE",
+     "lot": 475,
+     "lots": 1.0,
+     "dist_pct": 5.38,
+     "stop_at": 34.5,
+     "stop_hit": false,
+     "beyond_pct": -5.11,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    },
+    {
+     "symbol": "CDSL",
+     "expiry": "2026-12-29",
+     "strike": 1260.0,
+     "type": "PE",
+     "side": "LONG",
+     "qty": 950,
+     "avg": 7.15,
+     "ltp": 7.15,
+     "pnl_rs": 0,
+     "tradingsymbol": "CDSL26DEC1260PE",
+     "lot": 475,
+     "lots": 2.0,
+     "dist_pct": -11.48,
+     "beyond_pct": -12.97,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    },
+    {
+     "symbol": "CDSL",
+     "expiry": "2026-12-29",
+     "strike": 1300.0,
+     "type": "PE",
+     "side": "SHORT",
+     "qty": 950,
+     "avg": 11.55,
+     "ltp": 11.55,
+     "pnl_rs": 0,
+     "tradingsymbol": "CDSL26DEC1300PE",
+     "lot": 475,
+     "lots": 2.0,
+     "dist_pct": -8.67,
+     "stop_at": 34.65,
+     "stop_hit": false,
+     "beyond_pct": -9.49,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    }
+   ],
    "events": [
     {
      "label": "Ex-dividend",
@@ -122,13 +230,13 @@
   },
   {
    "symbol": "COALINDIA",
-   "spot": 403.5,
+   "spot": 392.5,
    "colour": "red",
-   "rsi": 48.5,
+   "rsi": 42.3,
    "basis": "Supertrend red",
    "desired": "CALL",
    "flip_date": "2026-10-12",
-   "flip_trading_days": 24,
+   "flip_trading_days": 28,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -136,9 +244,33 @@
     }
    ],
    "rsi_override": false,
-   "status": "ENTER",
-   "note": "Supertrend red: sell call",
-   "legs": [],
+   "status": "HOLD",
+   "note": "Open structure matches the rule (Supertrend red).",
+   "legs": [
+    {
+     "symbol": "COALINDIA",
+     "expiry": "2026-12-29",
+     "strike": 439.75,
+     "type": "CE",
+     "side": "SHORT",
+     "qty": 1350,
+     "avg": 1.95,
+     "ltp": 0.95,
+     "pnl_rs": 1350,
+     "tradingsymbol": "COALINDIA26DEC439.75CE",
+     "stop_trigger": 2.55,
+     "lot": 1350,
+     "lots": 1.0,
+     "dist_pct": 12.04,
+     "stop_at": 5.85,
+     "stop_hit": false,
+     "beyond_pct": -10.74,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    }
+   ],
    "events": [
     {
      "label": "Results",
@@ -155,13 +287,13 @@
   },
   {
    "symbol": "CAMS",
-   "spot": 726.05,
+   "spot": 714.4,
    "colour": "green",
-   "rsi": 57.6,
+   "rsi": 52.4,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-05",
-   "flip_trading_days": 6,
+   "flip_trading_days": 10,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -169,9 +301,74 @@
     }
    ],
    "rsi_override": false,
-   "status": "ENTER",
-   "note": "Supertrend green: bull put spread",
-   "legs": [],
+   "status": "HOLD",
+   "note": "Open structure matches the rule (Supertrend green).",
+   "legs": [
+    {
+     "symbol": "CAMS",
+     "expiry": "2026-11-23",
+     "strike": 600.0,
+     "type": "PE",
+     "side": "SHORT",
+     "qty": 825,
+     "avg": 3.1,
+     "ltp": 0.05,
+     "pnl_rs": 2516.25,
+     "tradingsymbol": "CAMS26NOV600PE",
+     "lot": 825,
+     "lots": 1.0,
+     "dist_pct": -16.01,
+     "stop_at": 9.3,
+     "stop_hit": false,
+     "beyond_pct": -19.07,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    },
+    {
+     "symbol": "CAMS",
+     "expiry": "2026-12-29",
+     "strike": 640.0,
+     "type": "PE",
+     "side": "LONG",
+     "qty": 1650,
+     "avg": 5.12,
+     "ltp": 5.1,
+     "pnl_rs": -41.25,
+     "tradingsymbol": "CAMS26DEC640PE",
+     "lot": 825,
+     "lots": 2.0,
+     "dist_pct": -10.41,
+     "beyond_pct": -11.62,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    },
+    {
+     "symbol": "CAMS",
+     "expiry": "2026-12-29",
+     "strike": 660.0,
+     "type": "PE",
+     "side": "SHORT",
+     "qty": 1650,
+     "avg": 8.05,
+     "ltp": 8.2,
+     "pnl_rs": -247.5,
+     "tradingsymbol": "CAMS26DEC660PE",
+     "lot": 825,
+     "lots": 2.0,
+     "dist_pct": -7.61,
+     "stop_at": 24.15,
+     "stop_hit": false,
+     "beyond_pct": -8.24,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    }
+   ],
    "events": [
     {
      "label": "Results",
@@ -188,13 +385,13 @@
   },
   {
    "symbol": "GAIL",
-   "spot": 188.0,
+   "spot": 191.4,
    "colour": "green",
-   "rsi": 70.0,
+   "rsi": 72.6,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-02",
-   "flip_trading_days": 9,
+   "flip_trading_days": 13,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -203,8 +400,32 @@
    ],
    "rsi_override": false,
    "status": "ENTER",
-   "note": "Supertrend green: bull put spread",
-   "legs": [],
+   "note": "Supertrend green: bull put spread (you hold other legs in this stock)",
+   "legs": [
+    {
+     "symbol": "GAIL",
+     "expiry": "2026-12-29",
+     "strike": 170.0,
+     "type": "PE",
+     "side": "SHORT",
+     "qty": 3550,
+     "avg": 1.26,
+     "ltp": 0.45,
+     "pnl_rs": 2875.5,
+     "tradingsymbol": "GAIL26DEC170PE",
+     "stop_trigger": 1.32,
+     "lot": 3550,
+     "lots": 1.0,
+     "dist_pct": -11.18,
+     "stop_at": 3.78,
+     "stop_hit": false,
+     "beyond_pct": -12.59,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    }
+   ],
    "events": [
     {
      "label": "Results",
@@ -221,13 +442,13 @@
   },
   {
    "symbol": "HDFCAMC",
-   "spot": 2663.0,
+   "spot": 2659.3,
    "colour": "green",
-   "rsi": 66.6,
+   "rsi": 63.1,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-03",
-   "flip_trading_days": 8,
+   "flip_trading_days": 12,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -235,9 +456,52 @@
     }
    ],
    "rsi_override": false,
-   "status": "ENTER",
-   "note": "Supertrend green: bull put spread",
-   "legs": [],
+   "status": "HOLD",
+   "note": "Open structure matches the rule (Supertrend green).",
+   "legs": [
+    {
+     "symbol": "HDFCAMC",
+     "expiry": "2026-12-29",
+     "strike": 2360.0,
+     "type": "PE",
+     "side": "LONG",
+     "qty": 600,
+     "avg": 11.3,
+     "ltp": 11.3,
+     "pnl_rs": 0,
+     "tradingsymbol": "HDFCAMC26DEC2360PE",
+     "lot": 300,
+     "lots": 2.0,
+     "dist_pct": -11.25,
+     "beyond_pct": -12.68,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    },
+    {
+     "symbol": "HDFCAMC",
+     "expiry": "2026-12-29",
+     "strike": 2400.0,
+     "type": "PE",
+     "side": "SHORT",
+     "qty": 600,
+     "avg": 14.45,
+     "ltp": 14.45,
+     "pnl_rs": 0,
+     "tradingsymbol": "HDFCAMC26DEC2400PE",
+     "lot": 300,
+     "lots": 2.0,
+     "dist_pct": -9.75,
+     "stop_at": 43.35,
+     "stop_hit": false,
+     "beyond_pct": -10.8,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    }
+   ],
    "events": [
     {
      "label": "Results",
@@ -254,13 +518,13 @@
   },
   {
    "symbol": "HAL",
-   "spot": 4809.8,
-   "colour": "green",
-   "rsi": 45.6,
-   "basis": "Supertrend green",
-   "desired": "PUT_SPREAD",
-   "flip_date": "2026-10-16",
-   "flip_trading_days": 20,
+   "spot": 4730.0,
+   "colour": "red",
+   "rsi": 42.5,
+   "basis": "Supertrend red",
+   "desired": "CALL",
+   "flip_date": "2026-11-18",
+   "flip_trading_days": 1,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -268,9 +532,33 @@
     }
    ],
    "rsi_override": false,
-   "status": "ENTER",
-   "note": "Supertrend green: bull put spread",
-   "legs": [],
+   "status": "HOLD",
+   "note": "Open structure matches the rule (Supertrend red).",
+   "legs": [
+    {
+     "symbol": "HAL",
+     "expiry": "2026-12-29",
+     "strike": 5400.0,
+     "type": "CE",
+     "side": "SHORT",
+     "qty": 150,
+     "avg": 20.4,
+     "ltp": 20.0,
+     "pnl_rs": 60,
+     "tradingsymbol": "HAL26DEC5400CE",
+     "stop_trigger": 39.9,
+     "lot": 150,
+     "lots": 1.0,
+     "dist_pct": 14.16,
+     "stop_at": 61.2,
+     "stop_hit": false,
+     "beyond_pct": -12.41,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    }
+   ],
    "events": [
     {
      "label": "Results",
@@ -287,13 +575,13 @@
   },
   {
    "symbol": "HINDZINC",
-   "spot": 554.85,
-   "colour": "green",
-   "rsi": 52.9,
-   "basis": "Supertrend green",
-   "desired": "PUT_SPREAD",
-   "flip_date": "2026-11-04",
-   "flip_trading_days": 7,
+   "spot": 524.45,
+   "colour": "red",
+   "rsi": 41.8,
+   "basis": "Supertrend red",
+   "desired": "CALL",
+   "flip_date": "2026-11-18",
+   "flip_trading_days": 1,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -301,9 +589,52 @@
     }
    ],
    "rsi_override": false,
-   "status": "ENTER",
-   "note": "Supertrend green: bull put spread",
-   "legs": [],
+   "status": "FLIP",
+   "note": "Supertrend is RED: the open short put / put spread (470PE 2026-12-29) is the opposite of the colour rule - close it and sell the call.",
+   "legs": [
+    {
+     "symbol": "HINDZINC",
+     "expiry": "2026-12-29",
+     "strike": 450.0,
+     "type": "PE",
+     "side": "LONG",
+     "qty": 2450,
+     "avg": 2.25,
+     "ltp": 2.05,
+     "pnl_rs": -490,
+     "tradingsymbol": "HINDZINC26DEC450PE",
+     "lot": 1225,
+     "lots": 2.0,
+     "dist_pct": -14.2,
+     "beyond_pct": -16.54,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    },
+    {
+     "symbol": "HINDZINC",
+     "expiry": "2026-12-29",
+     "strike": 470.0,
+     "type": "PE",
+     "side": "SHORT",
+     "qty": 2450,
+     "avg": 3.7,
+     "ltp": 3.6,
+     "pnl_rs": 245,
+     "tradingsymbol": "HINDZINC26DEC470PE",
+     "lot": 1225,
+     "lots": 2.0,
+     "dist_pct": -10.38,
+     "stop_at": 11.1,
+     "stop_hit": false,
+     "beyond_pct": -11.59,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    }
+   ],
    "events": [
     {
      "label": "Results",
@@ -320,13 +651,13 @@
   },
   {
    "symbol": "ICICIBANK",
-   "spot": 1583.6,
+   "spot": 1603.0,
    "colour": "green",
-   "rsi": 75.8,
+   "rsi": 77.7,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-10-07",
-   "flip_trading_days": 27,
+   "flip_trading_days": 31,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -353,13 +684,13 @@
   },
   {
    "symbol": "INDHOTEL",
-   "spot": 890.3,
+   "spot": 892.6,
    "colour": "green",
-   "rsi": 76.0,
+   "rsi": 68.1,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-04-15",
-   "flip_trading_days": 152,
+   "flip_trading_days": 156,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -367,9 +698,52 @@
     }
    ],
    "rsi_override": false,
-   "status": "ENTER",
-   "note": "Supertrend green: bull put spread",
-   "legs": [],
+   "status": "HOLD",
+   "note": "Open structure matches the rule (Supertrend green).",
+   "legs": [
+    {
+     "symbol": "INDHOTEL",
+     "expiry": "2026-12-29",
+     "strike": 790.0,
+     "type": "PE",
+     "side": "LONG",
+     "qty": 3000,
+     "avg": 5.85,
+     "ltp": 4.05,
+     "pnl_rs": -5400,
+     "tradingsymbol": "INDHOTEL26DEC790PE",
+     "lot": 1000,
+     "lots": 3.0,
+     "dist_pct": -11.49,
+     "beyond_pct": -12.99,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    },
+    {
+     "symbol": "INDHOTEL",
+     "expiry": "2026-12-29",
+     "strike": 800.0,
+     "type": "PE",
+     "side": "SHORT",
+     "qty": 3000,
+     "avg": 6.4,
+     "ltp": 3.6,
+     "pnl_rs": 8400,
+     "tradingsymbol": "INDHOTEL26DEC800PE",
+     "lot": 1000,
+     "lots": 3.0,
+     "dist_pct": -10.37,
+     "stop_at": 19.2,
+     "stop_hit": false,
+     "beyond_pct": -11.58,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    }
+   ],
    "events": [
     {
      "label": "Results",
@@ -386,13 +760,13 @@
   },
   {
    "symbol": "IOC",
-   "spot": 144.04,
+   "spot": 147.1,
    "colour": "green",
-   "rsi": 64.3,
+   "rsi": 66.7,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-02",
-   "flip_trading_days": 9,
+   "flip_trading_days": 13,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -400,9 +774,54 @@
     }
    ],
    "rsi_override": false,
-   "status": "ENTER",
-   "note": "Supertrend green: bull put spread",
-   "legs": [],
+   "status": "FLIP",
+   "note": "Supertrend is GREEN: the open short call (160CE 2026-12-29) is the opposite of the colour rule - close it and open the bull put spread.",
+   "legs": [
+    {
+     "symbol": "IOC",
+     "expiry": "2026-12-29",
+     "strike": 160.0,
+     "type": "CE",
+     "side": "SHORT",
+     "qty": 4875,
+     "avg": 1.17,
+     "ltp": 1.11,
+     "pnl_rs": 292.5,
+     "tradingsymbol": "IOC26DEC160CE",
+     "lot": 4875,
+     "lots": 1.0,
+     "dist_pct": 8.77,
+     "stop_at": 3.51,
+     "stop_hit": false,
+     "beyond_pct": -8.06,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    },
+    {
+     "symbol": "IOC",
+     "expiry": "2026-12-29",
+     "strike": 130.0,
+     "type": "PE",
+     "side": "SHORT",
+     "qty": 4875,
+     "avg": 0.91,
+     "ltp": 0.75,
+     "pnl_rs": 780,
+     "tradingsymbol": "IOC26DEC130PE",
+     "lot": 4875,
+     "lots": 1.0,
+     "dist_pct": -11.62,
+     "stop_at": 2.73,
+     "stop_hit": false,
+     "beyond_pct": -13.15,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    }
+   ],
    "events": [
     {
      "label": "Ex-dividend",
@@ -419,13 +838,13 @@
   },
   {
    "symbol": "ITC",
-   "spot": 285.0,
+   "spot": 300.4,
    "colour": "green",
-   "rsi": 66.5,
+   "rsi": 74.5,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-03",
-   "flip_trading_days": 8,
+   "flip_trading_days": 12,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -434,8 +853,32 @@
    ],
    "rsi_override": false,
    "status": "ENTER",
-   "note": "Supertrend green: bull put spread",
-   "legs": [],
+   "note": "Supertrend green: bull put spread (you hold other legs in this stock)",
+   "legs": [
+    {
+     "symbol": "ITC",
+     "expiry": "2026-12-29",
+     "strike": 285.0,
+     "type": "PE",
+     "side": "SHORT",
+     "qty": 3450,
+     "avg": 2.35,
+     "ltp": 2.35,
+     "pnl_rs": 0,
+     "tradingsymbol": "ITC26DEC285PE",
+     "stop_trigger": 4.75,
+     "lot": 1725,
+     "lots": 2.0,
+     "dist_pct": -5.13,
+     "stop_at": 7.05,
+     "stop_hit": false,
+     "beyond_pct": -5.4,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    }
+   ],
    "events": [
     {
      "label": "Results",
@@ -452,13 +895,13 @@
   },
   {
    "symbol": "LICI",
-   "spot": 399.3,
+   "spot": 403.9,
    "colour": "green",
-   "rsi": 52.1,
+   "rsi": 55.5,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-04",
-   "flip_trading_days": 7,
+   "flip_trading_days": 11,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -467,8 +910,32 @@
    ],
    "rsi_override": false,
    "status": "ENTER",
-   "note": "Supertrend green: bull put spread",
-   "legs": [],
+   "note": "Supertrend green: bull put spread (you hold other legs in this stock)",
+   "legs": [
+    {
+     "symbol": "LICI",
+     "expiry": "2026-12-29",
+     "strike": 370.0,
+     "type": "PE",
+     "side": "SHORT",
+     "qty": 1400,
+     "avg": 3.65,
+     "ltp": 2.25,
+     "pnl_rs": 1960,
+     "tradingsymbol": "LICI26DEC370PE",
+     "stop_trigger": 4.9,
+     "lot": 1400,
+     "lots": 1.0,
+     "dist_pct": -8.39,
+     "stop_at": 10.95,
+     "stop_hit": false,
+     "beyond_pct": -9.16,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    }
+   ],
    "events": [
     {
      "label": "Results",
@@ -485,13 +952,13 @@
   },
   {
    "symbol": "MCX",
-   "spot": 3720.0,
+   "spot": 3618.0,
    "colour": "green",
-   "rsi": 68.6,
+   "rsi": 61.0,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-03",
-   "flip_trading_days": 8,
+   "flip_trading_days": 12,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -499,9 +966,54 @@
     }
    ],
    "rsi_override": false,
-   "status": "ENTER",
-   "note": "Supertrend green: bull put spread",
-   "legs": [],
+   "status": "FLIP",
+   "note": "Supertrend is GREEN: the open short call (4000CE 2026-12-29) is the opposite of the colour rule - close it and open the bull put spread.",
+   "legs": [
+    {
+     "symbol": "MCX",
+     "expiry": "2026-12-29",
+     "strike": 4000.0,
+     "type": "CE",
+     "side": "SHORT",
+     "qty": 225,
+     "avg": 51.05,
+     "ltp": 54.75,
+     "pnl_rs": -832.5,
+     "tradingsymbol": "MCX26DEC4000CE",
+     "lot": 225,
+     "lots": 1.0,
+     "dist_pct": 10.56,
+     "stop_at": 153.15,
+     "stop_hit": false,
+     "beyond_pct": -9.55,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    },
+    {
+     "symbol": "MCX",
+     "expiry": "2026-12-29",
+     "strike": 3000.0,
+     "type": "PE",
+     "side": "SHORT",
+     "qty": 225,
+     "avg": 25.25,
+     "ltp": 12.4,
+     "pnl_rs": 2891.25,
+     "tradingsymbol": "MCX26DEC3000PE",
+     "lot": 225,
+     "lots": 1.0,
+     "dist_pct": -17.08,
+     "stop_at": 75.75,
+     "stop_hit": false,
+     "beyond_pct": -20.6,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    }
+   ],
    "events": [
     {
      "label": "Results",
@@ -518,13 +1030,13 @@
   },
   {
    "symbol": "NATIONALUM",
-   "spot": 330.0,
+   "spot": 302.85,
    "colour": "green",
-   "rsi": 51.4,
+   "rsi": 37.9,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-12",
-   "flip_trading_days": 1,
+   "flip_trading_days": 5,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -532,9 +1044,52 @@
     }
    ],
    "rsi_override": false,
-   "status": "ENTER",
-   "note": "Supertrend green: bull put spread",
-   "legs": [],
+   "status": "HOLD",
+   "note": "Open structure matches the rule (Supertrend green).",
+   "legs": [
+    {
+     "symbol": "NATIONALUM",
+     "expiry": "2026-12-29",
+     "strike": 260.0,
+     "type": "PE",
+     "side": "LONG",
+     "qty": 3750,
+     "avg": 1.5,
+     "ltp": 1.55,
+     "pnl_rs": 187.5,
+     "tradingsymbol": "NATIONALUM26DEC260PE",
+     "lot": 1875,
+     "lots": 2.0,
+     "dist_pct": -14.15,
+     "beyond_pct": -16.48,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    },
+    {
+     "symbol": "NATIONALUM",
+     "expiry": "2026-12-29",
+     "strike": 270.0,
+     "type": "PE",
+     "side": "SHORT",
+     "qty": 3750,
+     "avg": 2.35,
+     "ltp": 2.4,
+     "pnl_rs": -187.5,
+     "tradingsymbol": "NATIONALUM26DEC270PE",
+     "lot": 1875,
+     "lots": 2.0,
+     "dist_pct": -10.85,
+     "stop_at": 7.05,
+     "stop_hit": false,
+     "beyond_pct": -12.17,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    }
+   ],
    "events": [
     {
      "label": "Results",
@@ -551,13 +1106,13 @@
   },
   {
    "symbol": "NMDC",
-   "spot": 69.8,
+   "spot": 67.94,
    "colour": "green",
-   "rsi": 43.7,
+   "rsi": 37.8,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-11",
-   "flip_trading_days": 2,
+   "flip_trading_days": 6,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -565,9 +1120,52 @@
     }
    ],
    "rsi_override": false,
-   "status": "ENTER",
-   "note": "Supertrend green: bull put spread",
-   "legs": [],
+   "status": "HOLD",
+   "note": "Open structure matches the rule (Supertrend green).",
+   "legs": [
+    {
+     "symbol": "NMDC",
+     "expiry": "2026-12-29",
+     "strike": 60.0,
+     "type": "PE",
+     "side": "LONG",
+     "qty": 13500,
+     "avg": 0.35,
+     "ltp": 0.34,
+     "pnl_rs": -135,
+     "tradingsymbol": "NMDC26DEC60PE",
+     "lot": 6750,
+     "lots": 2.0,
+     "dist_pct": -11.69,
+     "beyond_pct": -13.23,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    },
+    {
+     "symbol": "NMDC",
+     "expiry": "2026-12-29",
+     "strike": 62.0,
+     "type": "PE",
+     "side": "SHORT",
+     "qty": 13500,
+     "avg": 0.55,
+     "ltp": 0.55,
+     "pnl_rs": 0,
+     "tradingsymbol": "NMDC26DEC62PE",
+     "lot": 6750,
+     "lots": 2.0,
+     "dist_pct": -8.74,
+     "stop_at": 1.65,
+     "stop_hit": false,
+     "beyond_pct": -9.58,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    }
+   ],
    "events": [
     {
      "label": "Results",
@@ -584,13 +1182,13 @@
   },
   {
    "symbol": "ONGC",
-   "spot": 225.0,
+   "spot": 225.07,
    "colour": "green",
-   "rsi": 44.6,
+   "rsi": 45.6,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-02",
-   "flip_trading_days": 9,
+   "flip_trading_days": 13,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -617,13 +1215,13 @@
   },
   {
    "symbol": "PETRONET",
-   "spot": 324.05,
+   "spot": 329.8,
    "colour": "green",
-   "rsi": 65.3,
+   "rsi": 67.1,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-08-20",
-   "flip_trading_days": 61,
+   "flip_trading_days": 65,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -650,13 +1248,13 @@
   },
   {
    "symbol": "PFC",
-   "spot": 334.25,
+   "spot": 330.7,
    "colour": "green",
-   "rsi": 52.8,
+   "rsi": 50.2,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-11",
-   "flip_trading_days": 2,
+   "flip_trading_days": 6,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -664,14 +1262,57 @@
     }
    ],
    "rsi_override": false,
-   "status": "ENTER",
-   "note": "Supertrend green: bull put spread",
-   "legs": [],
+   "status": "HOLD",
+   "note": "Open structure matches the rule (Supertrend green).",
+   "legs": [
+    {
+     "symbol": "PFC",
+     "expiry": "2026-12-29",
+     "strike": 290.0,
+     "type": "PE",
+     "side": "LONG",
+     "qty": 3900,
+     "avg": 1.25,
+     "ltp": 1.3,
+     "pnl_rs": 195,
+     "tradingsymbol": "PFC26DEC290PE",
+     "lot": 1300,
+     "lots": 3.0,
+     "dist_pct": -12.31,
+     "beyond_pct": -14.03,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    },
+    {
+     "symbol": "PFC",
+     "expiry": "2026-12-29",
+     "strike": 300.0,
+     "type": "PE",
+     "side": "SHORT",
+     "qty": 3900,
+     "avg": 1.7,
+     "ltp": 1.9,
+     "pnl_rs": -780,
+     "tradingsymbol": "PFC26DEC300PE",
+     "lot": 1300,
+     "lots": 3.0,
+     "dist_pct": -9.28,
+     "stop_at": 5.1,
+     "stop_hit": false,
+     "beyond_pct": -10.23,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    }
+   ],
    "events": [
     {
      "label": "Ex-dividend",
-     "date": "2026-11-17",
-     "estimated": false
+     "date": "2026-11-26",
+     "estimated": true
     },
     {
      "label": "Results",
@@ -679,17 +1320,17 @@
      "estimated": false
     }
    ],
-   "event_block": "Ex-dividend 17 Nov 2026: the 15-day close window starts 02 Nov, before this expiry"
+   "event_block": null
   },
   {
    "symbol": "RECLTD",
-   "spot": 301.85,
+   "spot": 297.0,
    "colour": "green",
-   "rsi": 51.5,
+   "rsi": 48.5,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-11",
-   "flip_trading_days": 2,
+   "flip_trading_days": 6,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -697,9 +1338,52 @@
     }
    ],
    "rsi_override": false,
-   "status": "ENTER",
-   "note": "Supertrend green: bull put spread",
-   "legs": [],
+   "status": "HOLD",
+   "note": "Open structure matches the rule (Supertrend green).",
+   "legs": [
+    {
+     "symbol": "RECLTD",
+     "expiry": "2026-12-29",
+     "strike": 260.0,
+     "type": "PE",
+     "side": "LONG",
+     "qty": 4725,
+     "avg": 0.9,
+     "ltp": 0.95,
+     "pnl_rs": 236.25,
+     "tradingsymbol": "RECLTD26DEC260PE",
+     "lot": 1575,
+     "lots": 3.0,
+     "dist_pct": -12.46,
+     "beyond_pct": -14.23,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    },
+    {
+     "symbol": "RECLTD",
+     "expiry": "2026-12-29",
+     "strike": 270.0,
+     "type": "PE",
+     "side": "SHORT",
+     "qty": 4725,
+     "avg": 1.55,
+     "ltp": 1.75,
+     "pnl_rs": -945,
+     "tradingsymbol": "RECLTD26DEC270PE",
+     "lot": 1575,
+     "lots": 3.0,
+     "dist_pct": -9.09,
+     "stop_at": 4.65,
+     "stop_hit": false,
+     "beyond_pct": -10.0,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    }
+   ],
    "events": [
     {
      "label": "Results",
@@ -716,13 +1400,13 @@
   },
   {
    "symbol": "SBIN",
-   "spot": 1080.0,
+   "spot": 1154.85,
    "colour": "green",
-   "rsi": 72.3,
+   "rsi": 81.2,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-11-05",
-   "flip_trading_days": 6,
+   "flip_trading_days": 10,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -730,9 +1414,52 @@
     }
    ],
    "rsi_override": false,
-   "status": "ENTER",
-   "note": "Supertrend green: bull put spread",
-   "legs": [],
+   "status": "HOLD",
+   "note": "Open structure matches the rule (Supertrend green).",
+   "legs": [
+    {
+     "symbol": "SBIN",
+     "expiry": "2026-12-29",
+     "strike": 1040.0,
+     "type": "PE",
+     "side": "LONG",
+     "qty": 1500,
+     "avg": 3.8,
+     "ltp": 3.75,
+     "pnl_rs": -75,
+     "tradingsymbol": "SBIN26DEC1040PE",
+     "lot": 750,
+     "lots": 2.0,
+     "dist_pct": -9.95,
+     "beyond_pct": -11.04,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    },
+    {
+     "symbol": "SBIN",
+     "expiry": "2026-12-29",
+     "strike": 1060.0,
+     "type": "PE",
+     "side": "SHORT",
+     "qty": 1500,
+     "avg": 5.25,
+     "ltp": 5.2,
+     "pnl_rs": 75,
+     "tradingsymbol": "SBIN26DEC1060PE",
+     "lot": 750,
+     "lots": 2.0,
+     "dist_pct": -8.21,
+     "stop_at": 15.75,
+     "stop_hit": false,
+     "beyond_pct": -8.95,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    }
+   ],
    "events": [
     {
      "label": "Results",
@@ -749,13 +1476,13 @@
   },
   {
    "symbol": "TCS",
-   "spot": 2407.5,
+   "spot": 2340.4,
    "colour": "green",
-   "rsi": 50.4,
+   "rsi": 41.8,
    "basis": "Supertrend green",
    "desired": "PUT_SPREAD",
    "flip_date": "2026-10-13",
-   "flip_trading_days": 23,
+   "flip_trading_days": 27,
    "expiries": [
     {
      "expiry": "2026-12-29",
@@ -764,8 +1491,32 @@
    ],
    "rsi_override": false,
    "status": "ENTER",
-   "note": "Supertrend green: bull put spread",
-   "legs": [],
+   "note": "Supertrend green: bull put spread (you hold other legs in this stock)",
+   "legs": [
+    {
+     "symbol": "TCS",
+     "expiry": "2026-11-23",
+     "strike": 2300.0,
+     "type": "PE",
+     "side": "SHORT",
+     "qty": 225,
+     "avg": 17.2,
+     "ltp": 10.0,
+     "pnl_rs": 1620,
+     "tradingsymbol": "TCS26NOV2300PE",
+     "stop_trigger": 19.55,
+     "lot": 225,
+     "lots": 1.0,
+     "dist_pct": -1.73,
+     "stop_at": 51.6,
+     "stop_hit": false,
+     "beyond_pct": -1.76,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": true,
+     "touched_h": false
+    }
+   ],
    "events": [
     {
      "label": "Results",
@@ -781,8 +1532,191 @@
    "event_block": "Results 11 Jan 2027 (estimated): the 15-day close window starts 27 Dec, before this expiry"
   }
  ],
- "alerts": [],
- "events_file_at": "2026-11-16T01:32:31.191837+00:00",
+ "alerts": [
+  {
+   "expiry": "2026-12-29",
+   "strike": 1500.0,
+   "opt_type": "CE",
+   "level": "EXIT",
+   "type": "Exit",
+   "symbol": "CDSL",
+   "concern": "Supertrend GREEN but the short call is still open",
+   "action": "Close it and open the bull put spread",
+   "text": "CDSL: Supertrend is GREEN: the open short call (1500CE 2026-12-29) is the opposite of the colour rule - close it and open the bull put spread."
+  },
+  {
+   "expiry": "2026-12-29",
+   "strike": 470.0,
+   "opt_type": "PE",
+   "level": "EXIT",
+   "type": "Exit",
+   "symbol": "HINDZINC",
+   "concern": "Supertrend RED but the short put / put spread is still open",
+   "action": "Close it and sell the call",
+   "text": "HINDZINC: Supertrend is RED: the open short put / put spread (470PE 2026-12-29) is the opposite of the colour rule - close it and sell the call."
+  },
+  {
+   "expiry": "2026-12-29",
+   "strike": 160.0,
+   "opt_type": "CE",
+   "level": "EXIT",
+   "type": "Exit",
+   "symbol": "IOC",
+   "concern": "Supertrend GREEN but the short call is still open",
+   "action": "Close it and open the bull put spread",
+   "text": "IOC: Supertrend is GREEN: the open short call (160CE 2026-12-29) is the opposite of the colour rule - close it and open the bull put spread."
+  },
+  {
+   "expiry": "2026-12-29",
+   "strike": 4000.0,
+   "opt_type": "CE",
+   "level": "EXIT",
+   "type": "Exit",
+   "symbol": "MCX",
+   "concern": "Supertrend GREEN but the short call is still open",
+   "action": "Close it and open the bull put spread",
+   "text": "MCX: Supertrend is GREEN: the open short call (4000CE 2026-12-29) is the opposite of the colour rule - close it and open the bull put spread."
+  },
+  {
+   "level": "BREACH",
+   "type": "Event close",
+   "symbol": "PFC",
+   "expiry": "2026-12-29",
+   "strike": 290.0,
+   "opt_type": "PE",
+   "qty": 3900,
+   "concern": "Ex-dividend 26 Nov (estimated) is 7d away: inside the 15-day window",
+   "action": "Close it now (event rule)",
+   "text": "PFC 2026-12-29 long 290PE: Ex-dividend 26 Nov (estimated) is 7d away: inside the 15-day window - close it now (event rule)"
+  },
+  {
+   "level": "BREACH",
+   "type": "Event close",
+   "symbol": "PFC",
+   "expiry": "2026-12-29",
+   "strike": 300.0,
+   "opt_type": "PE",
+   "qty": 3900,
+   "concern": "Ex-dividend 26 Nov (estimated) is 7d away: inside the 15-day window",
+   "action": "Close it now (event rule)",
+   "text": "PFC 2026-12-29 short 300PE: Ex-dividend 26 Nov (estimated) is 7d away: inside the 15-day window - close it now (event rule)"
+  },
+  {
+   "level": "WARN",
+   "type": "No hedge",
+   "symbol": "CAMS",
+   "expiry": "2026-11-23",
+   "strike": 600.0,
+   "opt_type": "PE",
+   "concern": "825 of 825 qty uncovered (hedge 0)",
+   "action": "Buy a hedge",
+   "text": "CAMS 2026-11-23: short 600PE 825 qty, hedge 0 qty - 825 qty uncovered"
+  },
+  {
+   "level": "WARN",
+   "type": "No hedge",
+   "symbol": "GAIL",
+   "expiry": "2026-12-29",
+   "strike": 170.0,
+   "opt_type": "PE",
+   "concern": "3550 of 3550 qty uncovered (hedge 0)",
+   "action": "Buy a hedge",
+   "text": "GAIL 2026-12-29: short 170PE 3550 qty, hedge 0 qty - 3550 qty uncovered"
+  },
+  {
+   "level": "WARN",
+   "type": "No hedge",
+   "symbol": "IOC",
+   "expiry": "2026-12-29",
+   "strike": 130.0,
+   "opt_type": "PE",
+   "concern": "4875 of 4875 qty uncovered (hedge 0)",
+   "action": "Buy a hedge",
+   "text": "IOC 2026-12-29: short 130PE 4875 qty, hedge 0 qty - 4875 qty uncovered"
+  },
+  {
+   "level": "WARN",
+   "type": "No hedge",
+   "symbol": "ITC",
+   "expiry": "2026-12-29",
+   "strike": 285.0,
+   "opt_type": "PE",
+   "concern": "3450 of 3450 qty uncovered (hedge 0)",
+   "action": "Buy a hedge",
+   "text": "ITC 2026-12-29: short 285PE 3450 qty, hedge 0 qty - 3450 qty uncovered"
+  },
+  {
+   "level": "WARN",
+   "type": "No hedge",
+   "symbol": "LICI",
+   "expiry": "2026-12-29",
+   "strike": 370.0,
+   "opt_type": "PE",
+   "concern": "1400 of 1400 qty uncovered (hedge 0)",
+   "action": "Buy a hedge",
+   "text": "LICI 2026-12-29: short 370PE 1400 qty, hedge 0 qty - 1400 qty uncovered"
+  },
+  {
+   "level": "WARN",
+   "type": "No hedge",
+   "symbol": "MCX",
+   "expiry": "2026-12-29",
+   "strike": 3000.0,
+   "opt_type": "PE",
+   "concern": "225 of 225 qty uncovered (hedge 0)",
+   "action": "Buy a hedge",
+   "text": "MCX 2026-12-29: short 3000PE 225 qty, hedge 0 qty - 225 qty uncovered"
+  },
+  {
+   "expiry": "2026-11-23",
+   "strike": 2300.0,
+   "opt_type": "PE",
+   "qty": 225,
+   "spot": 2340.4,
+   "beyond_pct": -1.76,
+   "intrinsic_rs": 0,
+   "level": "WARN",
+   "type": "Near strike",
+   "symbol": "TCS",
+   "concern": "Price 1.8% from the short strike",
+   "action": "Watch; plan the roll",
+   "text": "TCS 2026-11-23: price 2340.4 is within 1.8% of the short 2300PE"
+  },
+  {
+   "level": "WARN",
+   "type": "No hedge",
+   "symbol": "TCS",
+   "expiry": "2026-11-23",
+   "strike": 2300.0,
+   "opt_type": "PE",
+   "concern": "225 of 225 qty uncovered (hedge 0)",
+   "action": "Buy a hedge",
+   "text": "TCS 2026-11-23: short 2300PE 225 qty, hedge 0 qty - 225 qty uncovered"
+  },
+  {
+   "level": "PROFIT",
+   "type": "Profit Exit",
+   "symbol": "CAMS",
+   "expiry": "2026-11-23",
+   "strike": 600.0,
+   "opt_type": "PE",
+   "concern": "Premium decayed 98% (sold 3.1, now 0.05)",
+   "action": "Book profit: buy back",
+   "text": "CAMS 2026-11-23 600PE: premium decayed 98% (sold 3.1, now 0.05) - book the profit"
+  },
+  {
+   "level": "PROFIT",
+   "type": "Profit Exit",
+   "symbol": "GAIL",
+   "expiry": "2026-12-29",
+   "strike": 170.0,
+   "opt_type": "PE",
+   "concern": "Premium decayed 64% (sold 1.26, now 0.45)",
+   "action": "Book profit: buy back",
+   "text": "GAIL 2026-12-29 170PE: premium decayed 64% (sold 1.26, now 0.45) - book the profit"
+  }
+ ],
+ "events_file_at": "2026-11-19T09:17:45.466754+00:00",
  "events_missing": [],
  "no_data": [],
  "no_options": [
@@ -795,17 +1729,17 @@
  ],
  "excluded": [],
  "positions": {
-  "fetched_at": null,
+  "fetched_at": "2026-11-19T14:47:22+05:30",
   "track_from": "2026-11-01",
-  "legs": 0,
+  "legs": 34,
   "ignored_legs": 0
  },
  "counts": {
-  "call": 1,
-  "put_spread": 22,
+  "call": 3,
+  "put_spread": 20,
   "rsi_override": 0,
-  "enter": 23,
-  "hold": 0,
-  "flip": 0
+  "enter": 8,
+  "hold": 11,
+  "flip": 4
  }
 }
