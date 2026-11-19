@@ -2,10 +2,34 @@
  "_note": "Keyed by hand from the ICICIdirect positions screen (no MCP connector); see positions_manual.json.",
  "source": "manual ICICIdirect positions screen",
  "as_of": "2026-11-19",
- "fetched_at": "2026-11-19T14:47:22+05:30",
+ "fetched_at": "2026-11-19T15:22:18+05:30",
  "track_from": "2026-11-01",
  "ignored_legs": 0,
  "legs": [
+  {
+   "symbol": "BANKBARODA",
+   "expiry": "2026-12-29",
+   "strike": 255.0,
+   "type": "PE",
+   "side": "LONG",
+   "qty": 5850,
+   "avg": 1.2,
+   "ltp": 1.14,
+   "pnl_rs": -351,
+   "tradingsymbol": "BANKBARODA26DEC255PE"
+  },
+  {
+   "symbol": "BANKBARODA",
+   "expiry": "2026-12-29",
+   "strike": 260.0,
+   "type": "PE",
+   "side": "SHORT",
+   "qty": 5850,
+   "avg": 1.65,
+   "ltp": 1.56,
+   "pnl_rs": 526.5,
+   "tradingsymbol": "BANKBARODA26DEC260PE"
+  },
   {
    "symbol": "BPCL",
    "expiry": "2026-12-29",
@@ -14,8 +38,8 @@
    "side": "LONG",
    "qty": 3950,
    "avg": 1.4,
-   "ltp": 1.25,
-   "pnl_rs": -592.5,
+   "ltp": 1.2,
+   "pnl_rs": -790,
    "tradingsymbol": "BPCL26DEC260PE"
   },
   {
@@ -26,8 +50,8 @@
    "side": "SHORT",
    "qty": 3950,
    "avg": 2.0,
-   "ltp": 2.05,
-   "pnl_rs": -197.5,
+   "ltp": 1.95,
+   "pnl_rs": 197.5,
    "tradingsymbol": "BPCL26DEC270PE"
   },
   {
@@ -38,8 +62,8 @@
    "side": "SHORT",
    "qty": 475,
    "avg": 11.5,
-   "ltp": 31.1,
-   "pnl_rs": -9310,
+   "ltp": 31.6,
+   "pnl_rs": -9547.5,
    "tradingsymbol": "CDSL26DEC1500CE"
   },
   {
@@ -50,8 +74,8 @@
    "side": "LONG",
    "qty": 950,
    "avg": 7.15,
-   "ltp": 7.15,
-   "pnl_rs": 0,
+   "ltp": 7.3,
+   "pnl_rs": 142.5,
    "tradingsymbol": "CDSL26DEC1260PE"
   },
   {
@@ -62,8 +86,8 @@
    "side": "SHORT",
    "qty": 950,
    "avg": 11.55,
-   "ltp": 11.55,
-   "pnl_rs": 0,
+   "ltp": 12.0,
+   "pnl_rs": -427.5,
    "tradingsymbol": "CDSL26DEC1300PE"
   },
   {
@@ -74,8 +98,8 @@
    "side": "SHORT",
    "qty": 1350,
    "avg": 1.95,
-   "ltp": 0.95,
-   "pnl_rs": 1350,
+   "ltp": 1.0,
+   "pnl_rs": 1282.5,
    "tradingsymbol": "COALINDIA26DEC439.75CE",
    "stop_trigger": 2.55
   },
@@ -87,8 +111,8 @@
    "side": "SHORT",
    "qty": 825,
    "avg": 3.1,
-   "ltp": 0.05,
-   "pnl_rs": 2516.25,
+   "ltp": 0.1,
+   "pnl_rs": 2475,
    "tradingsymbol": "CAMS26NOV600PE"
   },
   {
@@ -99,8 +123,8 @@
    "side": "LONG",
    "qty": 1650,
    "avg": 5.12,
-   "ltp": 5.1,
-   "pnl_rs": -41.25,
+   "ltp": 5.15,
+   "pnl_rs": 41.25,
    "tradingsymbol": "CAMS26DEC640PE"
   },
   {
@@ -111,8 +135,8 @@
    "side": "SHORT",
    "qty": 1650,
    "avg": 8.05,
-   "ltp": 8.2,
-   "pnl_rs": -247.5,
+   "ltp": 8.3,
+   "pnl_rs": -412.5,
    "tradingsymbol": "CAMS26DEC660PE"
   },
   {
@@ -120,13 +144,24 @@
    "expiry": "2026-12-29",
    "strike": 170.0,
    "type": "PE",
-   "side": "SHORT",
+   "side": "LONG",
    "qty": 3550,
-   "avg": 1.26,
-   "ltp": 0.45,
-   "pnl_rs": 2875.5,
-   "tradingsymbol": "GAIL26DEC170PE",
-   "stop_trigger": 1.32
+   "avg": 0.47,
+   "ltp": 0.44,
+   "pnl_rs": -106.5,
+   "tradingsymbol": "GAIL26DEC170PE"
+  },
+  {
+   "symbol": "GAIL",
+   "expiry": "2026-12-29",
+   "strike": 175.0,
+   "type": "PE",
+   "side": "SHORT",
+   "qty": 7100,
+   "avg": 0.75,
+   "ltp": 0.75,
+   "pnl_rs": 0,
+   "tradingsymbol": "GAIL26DEC175PE"
   },
   {
    "symbol": "HDFCAMC",
@@ -136,8 +171,8 @@
    "side": "LONG",
    "qty": 600,
    "avg": 11.3,
-   "ltp": 11.3,
-   "pnl_rs": 0,
+   "ltp": 9.95,
+   "pnl_rs": -810,
    "tradingsymbol": "HDFCAMC26DEC2360PE"
   },
   {
@@ -148,8 +183,8 @@
    "side": "SHORT",
    "qty": 600,
    "avg": 14.45,
-   "ltp": 14.45,
-   "pnl_rs": 0,
+   "ltp": 13.4,
+   "pnl_rs": 630,
    "tradingsymbol": "HDFCAMC26DEC2400PE"
   },
   {
@@ -160,34 +195,47 @@
    "side": "SHORT",
    "qty": 150,
    "avg": 20.4,
-   "ltp": 20.0,
-   "pnl_rs": 60,
+   "ltp": 21.4,
+   "pnl_rs": -150,
    "tradingsymbol": "HAL26DEC5400CE",
    "stop_trigger": 39.9
   },
   {
    "symbol": "HINDZINC",
    "expiry": "2026-12-29",
-   "strike": 450.0,
-   "type": "PE",
-   "side": "LONG",
-   "qty": 2450,
-   "avg": 2.25,
-   "ltp": 2.05,
-   "pnl_rs": -490,
-   "tradingsymbol": "HINDZINC26DEC450PE"
+   "strike": 610.0,
+   "type": "CE",
+   "side": "SHORT",
+   "qty": 1225,
+   "avg": 2.4,
+   "ltp": 2.6,
+   "pnl_rs": -245,
+   "tradingsymbol": "HINDZINC26DEC610CE",
+   "stop_trigger": 5.35
   },
   {
-   "symbol": "HINDZINC",
+   "symbol": "ICICIBANK",
    "expiry": "2026-12-29",
-   "strike": 470.0,
+   "strike": 1470.0,
+   "type": "PE",
+   "side": "LONG",
+   "qty": 1400,
+   "avg": 4.65,
+   "ltp": 4.65,
+   "pnl_rs": 0,
+   "tradingsymbol": "ICICIBANK26DEC1470PE"
+  },
+  {
+   "symbol": "ICICIBANK",
+   "expiry": "2026-12-29",
+   "strike": 1490.0,
    "type": "PE",
    "side": "SHORT",
-   "qty": 2450,
-   "avg": 3.7,
-   "ltp": 3.6,
-   "pnl_rs": 245,
-   "tradingsymbol": "HINDZINC26DEC470PE"
+   "qty": 1400,
+   "avg": 6.05,
+   "ltp": 5.9,
+   "pnl_rs": 210,
+   "tradingsymbol": "ICICIBANK26DEC1490PE"
   },
   {
    "symbol": "INDHOTEL",
@@ -209,21 +257,9 @@
    "side": "SHORT",
    "qty": 3000,
    "avg": 6.4,
-   "ltp": 3.6,
-   "pnl_rs": 8400,
+   "ltp": 3.5,
+   "pnl_rs": 8700,
    "tradingsymbol": "INDHOTEL26DEC800PE"
-  },
-  {
-   "symbol": "IOC",
-   "expiry": "2026-12-29",
-   "strike": 160.0,
-   "type": "CE",
-   "side": "SHORT",
-   "qty": 4875,
-   "avg": 1.17,
-   "ltp": 1.11,
-   "pnl_rs": 292.5,
-   "tradingsymbol": "IOC26DEC160CE"
   },
   {
    "symbol": "IOC",
@@ -233,9 +269,22 @@
    "side": "SHORT",
    "qty": 4875,
    "avg": 0.91,
-   "ltp": 0.75,
-   "pnl_rs": 780,
-   "tradingsymbol": "IOC26DEC130PE"
+   "ltp": 0.71,
+   "pnl_rs": 975,
+   "tradingsymbol": "IOC26DEC130PE",
+   "stop_trigger": 1.57
+  },
+  {
+   "symbol": "ITC",
+   "expiry": "2026-12-29",
+   "strike": 280.0,
+   "type": "PE",
+   "side": "LONG",
+   "qty": 3450,
+   "avg": 1.65,
+   "ltp": 1.5,
+   "pnl_rs": -517.5,
+   "tradingsymbol": "ITC26DEC280PE"
   },
   {
    "symbol": "ITC",
@@ -245,10 +294,9 @@
    "side": "SHORT",
    "qty": 3450,
    "avg": 2.35,
-   "ltp": 2.35,
-   "pnl_rs": 0,
-   "tradingsymbol": "ITC26DEC285PE",
-   "stop_trigger": 4.75
+   "ltp": 2.15,
+   "pnl_rs": 690,
+   "tradingsymbol": "ITC26DEC285PE"
   },
   {
    "symbol": "LICI",
@@ -258,34 +306,34 @@
    "side": "SHORT",
    "qty": 1400,
    "avg": 3.65,
-   "ltp": 2.25,
-   "pnl_rs": 1960,
+   "ltp": 2.2,
+   "pnl_rs": 2030,
    "tradingsymbol": "LICI26DEC370PE",
    "stop_trigger": 4.9
   },
   {
    "symbol": "MCX",
    "expiry": "2026-12-29",
-   "strike": 4000.0,
-   "type": "CE",
-   "side": "SHORT",
-   "qty": 225,
-   "avg": 51.05,
-   "ltp": 54.75,
-   "pnl_rs": -832.5,
-   "tradingsymbol": "MCX26DEC4000CE"
+   "strike": 3100.0,
+   "type": "PE",
+   "side": "LONG",
+   "qty": 450,
+   "avg": 18.95,
+   "ltp": 18.4,
+   "pnl_rs": -247.5,
+   "tradingsymbol": "MCX26DEC3100PE"
   },
   {
    "symbol": "MCX",
    "expiry": "2026-12-29",
-   "strike": 3000.0,
+   "strike": 3200.0,
    "type": "PE",
    "side": "SHORT",
-   "qty": 225,
-   "avg": 25.25,
-   "ltp": 12.4,
-   "pnl_rs": 2891.25,
-   "tradingsymbol": "MCX26DEC3000PE"
+   "qty": 450,
+   "avg": 29.12,
+   "ltp": 27.8,
+   "pnl_rs": 596.25,
+   "tradingsymbol": "MCX26DEC3200PE"
   },
   {
    "symbol": "NATIONALUM",
@@ -295,8 +343,8 @@
    "side": "LONG",
    "qty": 3750,
    "avg": 1.5,
-   "ltp": 1.55,
-   "pnl_rs": 187.5,
+   "ltp": 1.35,
+   "pnl_rs": -562.5,
    "tradingsymbol": "NATIONALUM26DEC260PE"
   },
   {
@@ -307,8 +355,8 @@
    "side": "SHORT",
    "qty": 3750,
    "avg": 2.35,
-   "ltp": 2.4,
-   "pnl_rs": -187.5,
+   "ltp": 2.1,
+   "pnl_rs": 937.5,
    "tradingsymbol": "NATIONALUM26DEC270PE"
   },
   {
@@ -319,8 +367,8 @@
    "side": "LONG",
    "qty": 13500,
    "avg": 0.35,
-   "ltp": 0.34,
-   "pnl_rs": -135,
+   "ltp": 0.33,
+   "pnl_rs": -270,
    "tradingsymbol": "NMDC26DEC60PE"
   },
   {
@@ -336,6 +384,30 @@
    "tradingsymbol": "NMDC26DEC62PE"
   },
   {
+   "symbol": "ONGC",
+   "expiry": "2026-12-29",
+   "strike": 212.5,
+   "type": "PE",
+   "side": "LONG",
+   "qty": 6750,
+   "avg": 1.34,
+   "ltp": 1.34,
+   "pnl_rs": 0,
+   "tradingsymbol": "ONGC26DEC212.5PE"
+  },
+  {
+   "symbol": "ONGC",
+   "expiry": "2026-12-29",
+   "strike": 215.0,
+   "type": "PE",
+   "side": "SHORT",
+   "qty": 6750,
+   "avg": 1.72,
+   "ltp": 1.71,
+   "pnl_rs": 67.5,
+   "tradingsymbol": "ONGC26DEC215PE"
+  },
+  {
    "symbol": "PFC",
    "expiry": "2026-12-29",
    "strike": 290.0,
@@ -343,8 +415,8 @@
    "side": "LONG",
    "qty": 3900,
    "avg": 1.25,
-   "ltp": 1.3,
-   "pnl_rs": 195,
+   "ltp": 1.2,
+   "pnl_rs": -195,
    "tradingsymbol": "PFC26DEC290PE"
   },
   {
@@ -355,8 +427,8 @@
    "side": "SHORT",
    "qty": 3900,
    "avg": 1.7,
-   "ltp": 1.9,
-   "pnl_rs": -780,
+   "ltp": 2.0,
+   "pnl_rs": -1170,
    "tradingsymbol": "PFC26DEC300PE"
   },
   {
@@ -379,8 +451,8 @@
    "side": "SHORT",
    "qty": 4725,
    "avg": 1.55,
-   "ltp": 1.75,
-   "pnl_rs": -945,
+   "ltp": 1.8,
+   "pnl_rs": -1181.25,
    "tradingsymbol": "RECLTD26DEC270PE"
   },
   {
@@ -391,8 +463,8 @@
    "side": "LONG",
    "qty": 1500,
    "avg": 3.8,
-   "ltp": 3.75,
-   "pnl_rs": -75,
+   "ltp": 3.65,
+   "pnl_rs": -225,
    "tradingsymbol": "SBIN26DEC1040PE"
   },
   {
@@ -403,22 +475,33 @@
    "side": "SHORT",
    "qty": 1500,
    "avg": 5.25,
-   "ltp": 5.2,
-   "pnl_rs": 75,
+   "ltp": 5.05,
+   "pnl_rs": 300,
    "tradingsymbol": "SBIN26DEC1060PE"
   },
   {
    "symbol": "TCS",
-   "expiry": "2026-11-23",
-   "strike": 2300.0,
+   "expiry": "2026-12-29",
+   "strike": 2080.0,
+   "type": "PE",
+   "side": "LONG",
+   "qty": 450,
+   "avg": 11.15,
+   "ltp": 11.15,
+   "pnl_rs": 0,
+   "tradingsymbol": "TCS26DEC2080PE"
+  },
+  {
+   "symbol": "TCS",
+   "expiry": "2026-12-29",
+   "strike": 2120.0,
    "type": "PE",
    "side": "SHORT",
-   "qty": 225,
-   "avg": 17.2,
-   "ltp": 10.0,
-   "pnl_rs": 1620,
-   "tradingsymbol": "TCS26NOV2300PE",
-   "stop_trigger": 19.55
+   "qty": 450,
+   "avg": 15.25,
+   "ltp": 15.25,
+   "pnl_rs": 0,
+   "tradingsymbol": "TCS26DEC2120PE"
   }
  ]
 }
