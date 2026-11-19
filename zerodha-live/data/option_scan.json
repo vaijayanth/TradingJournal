@@ -1,40 +1,26 @@
 {
  "fired_ok_today": [
+  "PAYTM26DEC1640PE",
+  "ABB26NOV6000PE",
   "CANBK26NOV124PE"
  ],
- "fetched_at": "2026-11-19T09:58:23+05:30",
+ "fetched_at": "2026-11-19T11:55:03+05:30",
  "inputs": {
-  "positions": "2026-11-19T04:27:48.909393+00:00",
-  "gtts": "2026-11-19T09:57:48+05:30",
-  "orders": "2026-11-19T09:58:00+05:30",
-  "gtt_scan": "2026-11-19T09:57:48+05:30"
+  "positions": "2026-11-19T06:24:43.601572+00:00",
+  "gtts": "2026-11-19T11:54:43+05:30",
+  "orders": "2026-11-19T11:54:43+05:30",
+  "gtt_scan": "2026-11-19T11:54:43+05:30"
  },
  "stale_inputs": [],
- "open_legs": 80,
- "triggered_gtts": 1,
+ "open_legs": 90,
+ "triggered_gtts": 3,
  "findings": [
-  {
-   "section": "A",
-   "severity": "WARN",
-   "symbol": "ABB",
-   "tradingsymbol": "ABB26NOV5600PE",
-   "concern": "Long 5600PE (125 qty) no short against it; P&L Rs-4,656, expiry 2026-11-23",
-   "action": "Sell it or let it expire"
-  },
-  {
-   "section": "A",
-   "severity": "WARN",
-   "symbol": "CANBK",
-   "tradingsymbol": "CANBK26NOV124PE",
-   "concern": "Long 124PE (6750 qty) no short against it; P&L Rs1,418, expiry 2026-11-23",
-   "action": "In profit: book it or let it run"
-  },
   {
    "section": "A",
    "severity": "WARN",
    "symbol": "MOTILALOFS",
    "tradingsymbol": "MOTILALOFS26NOV840PE",
-   "concern": "Long 840PE (775 qty) no short against it; P&L Rs-4,921, expiry 2026-11-23",
+   "concern": "Long 840PE (775 qty) no short against it; P&L Rs-4,960, expiry 2026-11-23",
    "action": "Sell it or let it expire"
   },
   {
@@ -282,7 +268,7 @@
    "severity": "HIGH",
    "symbol": "DIVISLAB",
    "tradingsymbol": "DIVISLAB26NOV10600CE",
-   "concern": "No active buy-back GTT (premium 406.7, sold 116.95, already 3.5x: a GTT would fire at once)",
+   "concern": "No active buy-back GTT (premium 435.45, sold 116.95, already 3.7x: a GTT would fire at once)",
    "action": "Close it now (a GTT would fire at once)"
   },
   {
@@ -290,7 +276,7 @@
    "severity": "HIGH",
    "symbol": "HDFCBANK",
    "tradingsymbol": "HDFCBANK26NOV760CE",
-   "concern": "No active buy-back GTT (premium 48.3, sold 2.8, already 17.2x: a GTT would fire at once)",
+   "concern": "No active buy-back GTT (premium 49.9, sold 2.8, already 17.8x: a GTT would fire at once)",
    "action": "Close it now (a GTT would fire at once)"
   },
   {
@@ -298,7 +284,7 @@
    "severity": "HIGH",
    "symbol": "HINDPETRO",
    "tradingsymbol": "HINDPETRO26NOV380CE",
-   "concern": "No active buy-back GTT (premium 11.65, sold 1.3, already 9.0x: a GTT would fire at once)",
+   "concern": "No active buy-back GTT (premium 10.85, sold 1.3, already 8.3x: a GTT would fire at once)",
    "action": "Close it now (a GTT would fire at once)"
   },
   {
@@ -312,9 +298,41 @@
   {
    "section": "C",
    "severity": "WARN",
+   "symbol": "COCHINSHIP",
+   "tradingsymbol": "COCHINSHIP26DEC1020PE",
+   "concern": "No active buy-back GTT (premium 12, sold 12)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "CONCOR",
+   "tradingsymbol": "CONCOR26DEC410PE",
+   "concern": "No active buy-back GTT (premium 4.7, sold 5.2)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
    "symbol": "HAL",
    "tradingsymbol": "HAL26DEC5400CE",
-   "concern": "No active buy-back GTT (premium 19.95, sold 19.65)",
+   "concern": "No active buy-back GTT (premium 20.7, sold 19.65)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "HAVELLS",
+   "tradingsymbol": "HAVELLS26DEC1090PE",
+   "concern": "No active buy-back GTT (premium 11.2, sold 11.2)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "HDFCLIFE",
+   "tradingsymbol": "HDFCLIFE26DEC540PE",
+   "concern": "No active buy-back GTT (premium 4.2, sold 4.25)",
    "action": "Place the protective GTT (zerodha-gtt-order)"
   },
   {
@@ -322,7 +340,7 @@
    "severity": "WARN",
    "symbol": "ICICILIFE",
    "tradingsymbol": "ICICILIFE26DEC410PE",
-   "concern": "No active buy-back GTT (premium 3.85, sold 3.85)",
+   "concern": "No active buy-back GTT (premium 3.5, sold 3.85)",
    "action": "Place the protective GTT (zerodha-gtt-order)"
   },
   {
@@ -330,7 +348,7 @@
    "severity": "WARN",
    "symbol": "INDUSTOWER",
    "tradingsymbol": "INDUSTOWER26DEC360PE",
-   "concern": "No active buy-back GTT (premium 3.15, sold 3.15)",
+   "concern": "No active buy-back GTT (premium 3.85, sold 3.15)",
    "action": "Place the protective GTT (zerodha-gtt-order)"
   },
   {
@@ -338,7 +356,15 @@
    "severity": "WARN",
    "symbol": "MANAPPURAM",
    "tradingsymbol": "MANAPPURAM26DEC340CE",
-   "concern": "No active buy-back GTT (premium 1.35, sold 1.35)",
+   "concern": "No active buy-back GTT (premium 1.75, sold 1.35)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "NESTLEIND",
+   "tradingsymbol": "NESTLEIND26DEC1210PE",
+   "concern": "No active buy-back GTT (premium 7.1, sold 6.95)",
    "action": "Place the protective GTT (zerodha-gtt-order)"
   },
   {
@@ -346,7 +372,7 @@
    "severity": "WARN",
    "symbol": "NMDC",
    "tradingsymbol": "NMDC26DEC62PE",
-   "concern": "No active buy-back GTT (premium 0.55, sold 0.55)",
+   "concern": "No active buy-back GTT (premium 0.54, sold 0.55)",
    "action": "Place the protective GTT (zerodha-gtt-order)"
   },
   {
@@ -354,7 +380,15 @@
    "severity": "WARN",
    "symbol": "PAGEIND",
    "tradingsymbol": "PAGEIND26DEC36000CE",
-   "concern": "No active buy-back GTT (premium 135, sold 117.25)",
+   "concern": "No active buy-back GTT (premium 144, sold 117.25)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "RADICO",
+   "tradingsymbol": "RADICO26DEC4200PE",
+   "concern": "No active buy-back GTT (premium 49.75, sold 51.4)",
    "action": "Place the protective GTT (zerodha-gtt-order)"
   },
   {
@@ -362,7 +396,15 @@
    "severity": "WARN",
    "symbol": "RBLBANK",
    "tradingsymbol": "RBLBANK26DEC350PE",
-   "concern": "No active buy-back GTT (premium 3.05, sold 3.05)",
+   "concern": "No active buy-back GTT (premium 2.9, sold 3.05)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "RVNL",
+   "tradingsymbol": "RVNL26DEC170PE",
+   "concern": "No active buy-back GTT (premium 2.2, sold 2.19)",
    "action": "Place the protective GTT (zerodha-gtt-order)"
   },
   {
@@ -370,7 +412,7 @@
    "severity": "WARN",
    "symbol": "SYRMA",
    "tradingsymbol": "SYRMA26DEC1700CE",
-   "concern": "No active buy-back GTT (premium 21, sold 17.05)",
+   "concern": "No active buy-back GTT (premium 26.5, sold 17.05)",
    "action": "Place the protective GTT (zerodha-gtt-order)"
   },
   {
@@ -378,7 +420,7 @@
    "severity": "WARN",
    "symbol": "VMM",
    "tradingsymbol": "VMM26DEC83PE",
-   "concern": "No active buy-back GTT (premium 1.13, sold 1.13)",
+   "concern": "No active buy-back GTT (premium 1.07, sold 1.13)",
    "action": "Place the protective GTT (zerodha-gtt-order)"
   },
   {
@@ -386,16 +428,8 @@
    "severity": "WARN",
    "symbol": "WAAREEENER",
    "tradingsymbol": "WAAREEENER26DEC2200PE",
-   "concern": "No active buy-back GTT (premium 30.15, sold 30.15)",
+   "concern": "No active buy-back GTT (premium 27.35, sold 30.15)",
    "action": "Place the protective GTT (zerodha-gtt-order)"
-  },
-  {
-   "section": "F",
-   "severity": "HIGH",
-   "symbol": "ABB",
-   "tradingsymbol": "ABB26NOV6000PE",
-   "concern": "G1 STALE: No open position on this contract (closed or expired): if it triggers it BUYS a new long position (GTT 345008320)",
-   "action": "Delete this GTT"
   },
   {
    "section": "F",
@@ -418,7 +452,7 @@
    "severity": "WARN",
    "symbol": "CUMMINSIND",
    "tradingsymbol": "CUMMINSIND26DEC5000CE",
-   "concern": "Active GTT 344015712 (trailing-single) has a stop but no profit target; sold 21.8, premium 11",
+   "concern": "Active GTT 344015712 (trailing-single) has a stop but no profit target; sold 21.8, premium 10.85",
    "action": "Add a profit target at about 8.72 (a two-leg GTT: /zerodha-gtt-order or the Kite app)"
   },
   {
@@ -426,7 +460,7 @@
    "severity": "WARN",
    "symbol": "HINDZINC",
    "tradingsymbol": "HINDZINC26NOV500PE",
-   "concern": "Active GTT 343262028 (trailing-single) has a stop but no profit target; sold 2.4, premium 2.8",
+   "concern": "Active GTT 343262028 (trailing-single) has a stop but no profit target; sold 2.4, premium 2",
    "action": "Add a profit target at about 0.96 (a two-leg GTT: /zerodha-gtt-order or the Kite app)"
   },
   {
@@ -434,7 +468,7 @@
    "severity": "WARN",
    "symbol": "KARURVYSYA",
    "tradingsymbol": "KARURVYSYA26NOV410CE",
-   "concern": "Active GTT 343750241 (trailing-single) has a stop but no profit target; sold 1.7, premium 0.45",
+   "concern": "Active GTT 343750241 (trailing-single) has a stop but no profit target; sold 1.7, premium 0.5",
    "action": "Add a profit target at about 0.68 (a two-leg GTT: /zerodha-gtt-order or the Kite app)"
   },
   {
@@ -442,7 +476,7 @@
    "severity": "WARN",
    "symbol": "SUNPHARMA",
    "tradingsymbol": "SUNPHARMA26DEC2100CE",
-   "concern": "Active GTT 344014614 (trailing-single) has a stop but no profit target; sold 12.15, premium 5.35",
+   "concern": "Active GTT 344014614 (trailing-single) has a stop but no profit target; sold 12.15, premium 6.3",
    "action": "Add a profit target at about 4.86 (a two-leg GTT: /zerodha-gtt-order or the Kite app)"
   }
  ]

@@ -1,34 +1,34 @@
 {
- "as_of": "19 Nov, 10:00 (market open; swing signals are the 18 Nov close)",
- "written_at": "2026-11-19T09:58:44+05:30",
+ "as_of": "19 Nov, 12:15 (market open; swing signals are the 18 Nov close)",
+ "written_at": "2026-11-19T11:55:23+05:30",
  "confidence": "low",
  "maturity": "10 days of history and 2 closed trades: a health check, not a verdict on the strategy.",
- "headline": "You started the clean-up, but a stale GTT has already bought a position you did not want, and 3 more can do the same.",
+ "headline": "You are opening new option spreads faster than you are protecting or closing the old ones: 17 shorts now have no GTT, and 2 stale GTTs are still live.",
  "points": [
   {
-   "label": "A stale GTT already fired",
-   "text": "After you closed CANBK 124PE, its old buy GTT triggered at 09:46 and bought 6,750 qty again (now a long that hedges nothing, +₹1.4k). ABB 6000PE, APOLLOHOSP 9100CE and BPCL 300PE have the same kind of leftover GTT and will buy fresh longs if they trigger. Delete these three in Kite today, and after every close from now on."
+   "label": "Protection is falling behind",
+   "text": "17 short options have no protective GTT (10 this morning plus COCHINSHIP, CONCOR, HAVELLS, HDFCLIFE, NESTLEIND, RADICO and RVNL spreads opened since). Placing GTTs through the tool failed on the first HAL attempt, so these need placing in Kite, or a retry once you choose. Every unprotected short is a loss that no rule is watching."
   },
   {
-   "label": "Clean-up: half done",
-   "text": "Done: AMBER long sold, BPCL spread, CANBK, APOLLOHOSP call and ABB put closed. Still open: DIVISLAB, HDFCBANK, HINDPETRO and MAHABANK stopped-out spreads (about −₹94k net), the flipped calls, and PFC. The MAHABANK buy-back order at ₹7.3 is sitting unfilled in the book. Monday 23 Nov is expiry day: close all four spreads before then."
+   "label": "Stale GTTs keep biting",
+   "text": "Two more old GTTs fired today: ABB 6000PE bought a new long at 10:16, and CANBK 124PE earlier. APOLLOHOSP 343048061 and BPCL 300PE 343668936 are still active and will do the same if they trigger. This is a repeated process leak, not bad luck, so delete a short's GTT in the same sitting you close it."
   },
   {
-   "label": "New trades without protection",
-   "text": "10 new Dec short options were opened today (HAL, MANAPPURAM, PAGEIND, SYRMA calls, and the ICICILIFE, INDUSTOWER, NMDC, RBLBANK, VMM, WAAREEENER spreads). None has a protective GTT yet. Given the stale-GTT lesson, place them with the skill and check each one afterwards."
+   "label": "Clean-up still open",
+   "text": "The 4 stopped-out spreads are still open (about −₹97k on the short legs, hedges partly offsetting) and expire Monday. A MAHABANK buy-back order at ₹7.3 is sitting unfilled. KARURVYSYA, PFC, HINDZINC and SUNPHARMA still need closing."
+  },
+  {
+   "label": "Event rule broken on entry",
+   "text": "CONCOR 410PE/400PE was opened inside the ex-dividend window (20 Nov, estimated), which the 15-day rule says to close immediately. Check results and ex-dividend dates before opening, not after."
   },
   {
    "label": "Versus the backtest",
-   "text": "Shares: +₹8.9k combined, 20 of 36 in profit, no drawdown so far, against −21.3% tested and PF 1.75. Five weeks and 2 closed trades cannot test any of it. Watch profit factor and average winner after 30 closed trades."
+   "text": "The swing shares are +₹8.9k combined with 20 of 36 in profit and no drawdown, so there is nothing to compare yet: 5 weeks and 2 closed trades against −21.3% max drawdown and PF 1.75 tested. The options book (about −₹68k open) is a bigger driver of your account than the shares right now."
   },
   {
-   "label": "Market and shares",
-   "text": "84% of F&O stocks are green and no entry signal exists today. The one add-on (RVNL) filled at ₹188. The shares are healthy, so the whole risk this week is in the options book (open stock-option P&L about −₹72k)."
-  },
-  {
-   "label": "Advice follow-up",
-   "text": "Yesterday's advice to close the spreads and flipped calls is partly followed. Same advice stands for the rest. One new rule worth keeping: after closing any short, delete its GTT in the same sitting."
+   "label": "Decision",
+   "text": "Stop opening new option trades until the protection and clean-up gap is closed. New spreads add margin and tail risk while today's open problems are still unresolved. Resume once every short has a GTT and the 4 stopped-out spreads are closed."
   }
  ],
- "action": "Delete the 3 stale GTTs now, close the 4 stopped-out spreads before Monday, then place protective GTTs on the 10 new shorts."
+ "action": "Today: delete the 2 stale GTTs, close the 4 stopped-out spreads and CONCOR, place GTTs on the 17 unprotected shorts, and open no new option trades until that is done."
 }

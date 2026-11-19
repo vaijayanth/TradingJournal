@@ -1,5 +1,5 @@
 {
- "fetched_at": "2026-11-19T10:19:11+05:30",
+ "fetched_at": "2026-11-19T11:54:43+05:30",
  "active": {
   "TORNTPHARM26DEC5100CE": [
    {
@@ -79,26 +79,6 @@
      6.9
     ],
     "qty": 2600
-   }
-  ],
-  "PAYTM26DEC1640PE": [
-   {
-    "id": 345419647,
-    "type": "two-leg",
-    "trigger_values": [
-     6.6,
-     45.4
-    ],
-    "qty": 725
-   },
-   {
-    "id": 345419647,
-    "type": "two-leg",
-    "trigger_values": [
-     6.6,
-     45.4
-    ],
-    "qty": 725
    }
   ],
   "OFSS26DEC11500CE": [
@@ -830,34 +810,6 @@
      "side": "BUY",
      "qty": 2600,
      "price": 7.5,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
-   "id": 345419647,
-   "type": "two-leg",
-   "created_at": "2026-11-18T19:40:09+05:30",
-   "expires_at": "2026-12-30T00:00:00+05:30",
-   "tradingsymbol": "PAYTM26DEC1640PE",
-   "last_price": 16.4,
-   "triggers": [
-    6.6,
-    45.4
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 725,
-     "price": 6.8,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    },
-    {
-     "side": "BUY",
-     "qty": 725,
-     "price": 49.5,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -1769,6 +1721,28 @@
   }
  ],
  "triggered": [
+  {
+   "id": 345419647,
+   "type": "two-leg",
+   "tradingsymbol": "PAYTM26DEC1640PE",
+   "triggers": [
+    6.6,
+    45.4
+   ],
+   "triggered_at": "2026-11-19T10:47:07+05:30",
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 725,
+     "price": 6.8
+    },
+    {
+     "side": "BUY",
+     "qty": 725,
+     "price": 49.5
+    }
+   ]
+  },
   {
    "id": 345008320,
    "type": "two-leg",

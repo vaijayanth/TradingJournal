@@ -71,6 +71,21 @@
     "positions": 36,
     "profitable": 20
    }
+  },
+  {
+   "date": "2026-11-19 (12:15 refresh)",
+   "headline": "You are opening new option spreads faster than you are protecting or closing the old ones: 17 shorts now have no GTT, and 2 stale GTTs are still live.",
+   "recommendations": [
+    "Today: delete the 2 stale GTTs, close the 4 stopped-out spreads and CONCOR, place GTTs on the 17 unprotected shorts, and open no new option trades until that is done.",
+    "Open no new option trades until protection and clean-up are done"
+   ],
+   "metrics": {
+    "shorts_without_gtt": 17,
+    "stale_gtts_active": 2,
+    "stale_gtts_fired_today": 2,
+    "open_stock_option_pl_rs": -67751,
+    "stopped_out_spreads_open": 4
+   }
   }
  ]
 }
