@@ -86,6 +86,7 @@ The final report must fit one screen with no scrolling (about 35 lines). Working
 2. **ONE action table**: `# | Type | Stock / leg | Why (max 6 words) | P&L | Do`, sorted by urgency (exits and stopped-out spreads first, then other legs, flipped calls, orphaned longs, entries). A spread is one row (both legs, net P&L). Stock orders (exits / add-ons / entries) are rows too. No empty sections: if a group has nothing, leave it out and put "none: <group>" in the status table only when that is news.
 3. **Supertrend / entry signals:** show only FLIP rows and new-entry tiers 1 to 2 in full; everything else is a count in one line.
 4. **Skills + manual steps:** ONE numbered `Next step:` list, each item tagged `[skill]` or `[manual]`, no separate tables.
+6. **Swing signals table, ALWAYS shown, even when every count is 0 (user, 2026-11-19).** Put it right after the status table: `Group | Count | Detail` with the rows Exits / Add-ons / Entries; for a 0 row say why in a short phrase (for example 'no red Supertrend', 'POLICYBZR -8.8% but cooldown to 23 Nov', 'no flip today'), and add one line naming the nearest add-on / exit candidate (stock, P&L %, how far from the trigger). Never skip it or fold it into 'nothing to do'.
 5. Cell text is a short phrase (no sentences, no repeated explanations). The long per-section tables of the older layout are produced only if the user says "details" or names a section.
 
 ## Rules (do not change without the user)
