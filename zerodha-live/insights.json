@@ -1,30 +1,26 @@
 {
- "as_of": "19 Nov close (live prices 20:29 IST)",
- "written_at": "2026-11-19T20:29:46+05:30",
+ "as_of": "20 Nov pre-open (19 Nov close, prices unchanged)",
+ "written_at": "2026-11-20T06:23:23+05:30",
  "confidence": "low",
- "maturity": "10 days of history and 2 closed trades: a health check, not a verdict on the strategy.",
- "headline": "Swing book is fine (+Rs21k combined); the options book is where the money is leaking: 4 spreads are past max loss and 24 shorts have no GTT.",
+ "maturity": "11 days of history and 2 closed trades: a health check, not a verdict on the strategy.",
+ "headline": "Nothing new since last night: the swing book is quiet (+Rs23k), but the 4 stopped-out spreads and 7 event-window legs are still open before the market opens.",
  "points": [
   {
-   "label": "Stopped-out spreads still open",
-   "text": "DIVISLAB, HDFCBANK, HINDPETRO and MAHABANK call spreads are through their hedges: about -Rs81k net, already at max loss, so holding adds nothing but delivery risk on Monday's expiry. Close all four tonight or at the open."
+   "label": "Clean-up still open",
+   "text": "DIVISLAB, HDFCBANK, HINDPETRO and MAHABANK call spreads (about -Rs81k net) are at max loss and expire Monday with physical delivery. Positions and orders are unchanged since last night, so none of the planned closes has happened yet."
   },
   {
-   "label": "Protection gap grew",
-   "text": "24 shorts have no GTT (20 yesterday), 4 of them already past 3x so a GTT cannot help. The tool wrote 3 clean buy-backs today (PAYTM, ABB, CANBK), so GTTs work when they exist. Place the 20 protective ones before adding any new spread."
+   "label": "GTT cover is now in place",
+   "text": "All 20 protective GTTs placed in Kite last night are active: 53 option contracts covered, 0 invalid, 0 stale. This was the largest process gap and it is closed."
   },
   {
-   "label": "Event rule again",
-   "text": "CONCOR (ex-dividend 20 Nov) and PFC (26 Nov est.) are inside the 15-day window and both spreads are in small profit (+Rs0.3k, +Rs0.7k): close them, the rule costs little here."
-  },
-  {
-   "label": "Flip risk",
-   "text": "HINDZINC turned red yesterday while a put spread is open (+Rs0.6k): close it and consider the call. Five FLIP structures in total, four of them the same stopped-out calls."
+   "label": "Event rule",
+   "text": "CONCOR (ex-dividend today, est.) and PFC (26 Nov, est.) are inside the 15-day window; HINDZINC flipped red. All three are in small profit, so closing them costs little."
   },
   {
    "label": "Swing book",
-   "text": "No exits, add-ons or entries today. 38 trades, Rs8.6L deployed, tier Rs20k. Too young to compare with the backtest (-21.3% max DD, PF 1.75): watch drawdown and win rate once 30 trades are closed."
+   "text": "No exits, add-ons or entries; 39 trades, tier Rs20k, combined P&L +Rs23k. POLICYBZR (-8.8%) becomes eligible for its add-on on 23 Nov. Still too young to compare with the backtest (-21.3% max DD, PF 1.75)."
   }
  ],
- "action": "Close the 4 stopped-out spreads plus CONCOR, PFC and HINDZINC, then place the 20 protective GTTs; open nothing new before that."
+ "action": "Close the 4 stopped-out spreads plus CONCOR, PFC and HINDZINC in Kite today, before Monday's expiry."
 }

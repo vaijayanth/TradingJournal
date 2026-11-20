@@ -1,9 +1,9 @@
 {
- "generated_at": "2026-11-19T16:49:23.456216+00:00",
+ "generated_at": "2026-11-20T00:53:10.755987+00:00",
  "market_data_date": "2026-11-19",
- "live_prices_at": "2026-11-19T20:29:02+05:30",
- "gtt_scan_at": "2026-11-19T22:11:21+05:30",
- "gtt_checked_at": "2026-11-19T22:11:21+05:30",
+ "live_prices_at": "2026-11-20T06:23:00+05:30",
+ "gtt_scan_at": "2026-11-20T06:22:43+05:30",
+ "gtt_checked_at": "2026-11-20T06:22:43+05:30",
  "rules": {
   "short_call_delta": 0.1,
   "short_put_delta": 0.1,
@@ -5707,14 +5707,8 @@
    "status": "ENTER",
    "note": "Supertrend green: bull put spread",
    "legs": [],
-   "events": [
-    {
-     "label": "Ex-dividend",
-     "date": "2026-11-19",
-     "estimated": true
-    }
-   ],
-   "event_block": "Ex-dividend 19 Nov 2026 (estimated): the 15-day close window starts 04 Nov, before this expiry"
+   "events": [],
+   "event_block": null
   },
   {
    "symbol": "NESTLEIND",
@@ -8987,9 +8981,9 @@
    "strike": 400.0,
    "opt_type": "PE",
    "qty": 1250,
-   "concern": "Ex-dividend 20 Nov (estimated) is 1d away: inside the 15-day window",
+   "concern": "Ex-dividend 20 Nov (estimated) is 0d away: inside the 15-day window",
    "action": "Close it now (event rule)",
-   "text": "CONCOR 2026-12-29 long 400PE: Ex-dividend 20 Nov (estimated) is 1d away: inside the 15-day window - close it now (event rule)"
+   "text": "CONCOR 2026-12-29 long 400PE: Ex-dividend 20 Nov (estimated) is 0d away: inside the 15-day window - close it now (event rule)"
   },
   {
    "level": "BREACH",
@@ -8999,9 +8993,105 @@
    "strike": 410.0,
    "opt_type": "PE",
    "qty": 1250,
-   "concern": "Ex-dividend 20 Nov (estimated) is 1d away: inside the 15-day window",
+   "concern": "Ex-dividend 20 Nov (estimated) is 0d away: inside the 15-day window",
    "action": "Close it now (event rule)",
-   "text": "CONCOR 2026-12-29 short 410PE: Ex-dividend 20 Nov (estimated) is 1d away: inside the 15-day window - close it now (event rule)"
+   "text": "CONCOR 2026-12-29 short 410PE: Ex-dividend 20 Nov (estimated) is 0d away: inside the 15-day window - close it now (event rule)"
+  },
+  {
+   "level": "BREACH",
+   "type": "Expiry risk",
+   "symbol": "DIVISLAB",
+   "expiry": "2026-11-23",
+   "strike": 10600.0,
+   "opt_type": "CE",
+   "qty": 100,
+   "concern": "Short 10600CE is in the money 3d before expiry: physical settlement, you would deliver 100 shares (you hold 0)",
+   "action": "Close it before expiry",
+   "text": "DIVISLAB 2026-11-23 short 10600CE in the money, 3 days to expiry: physical settlement"
+  },
+  {
+   "level": "BREACH",
+   "type": "Expiry risk",
+   "symbol": "DIVISLAB",
+   "expiry": "2026-11-23",
+   "strike": 10800.0,
+   "opt_type": "CE",
+   "qty": 100,
+   "concern": "Long 10800CE is in the money 3d before expiry: physical settlement, you would buy 100 shares (about Rs10.8 lakh)",
+   "action": "Close it before expiry",
+   "text": "DIVISLAB 2026-11-23 long 10800CE in the money, 3 days to expiry: physical settlement"
+  },
+  {
+   "level": "BREACH",
+   "type": "Expiry risk",
+   "symbol": "HDFCBANK",
+   "expiry": "2026-11-23",
+   "strike": 760.0,
+   "opt_type": "CE",
+   "qty": 650,
+   "concern": "Short 760CE is in the money 3d before expiry: physical settlement, you would deliver 650 shares (you hold 0)",
+   "action": "Close it before expiry",
+   "text": "HDFCBANK 2026-11-23 short 760CE in the money, 3 days to expiry: physical settlement"
+  },
+  {
+   "level": "BREACH",
+   "type": "Expiry risk",
+   "symbol": "HDFCBANK",
+   "expiry": "2026-11-23",
+   "strike": 770.0,
+   "opt_type": "CE",
+   "qty": 650,
+   "concern": "Long 770CE is in the money 3d before expiry: physical settlement, you would buy 650 shares (about Rs5.0 lakh)",
+   "action": "Close it before expiry",
+   "text": "HDFCBANK 2026-11-23 long 770CE in the money, 3 days to expiry: physical settlement"
+  },
+  {
+   "level": "BREACH",
+   "type": "Expiry risk",
+   "symbol": "HINDPETRO",
+   "expiry": "2026-11-23",
+   "strike": 380.0,
+   "opt_type": "CE",
+   "qty": 2025,
+   "concern": "Short 380CE is in the money 3d before expiry: physical settlement, you would deliver 2025 shares (you hold 0)",
+   "action": "Close it before expiry",
+   "text": "HINDPETRO 2026-11-23 short 380CE in the money, 3 days to expiry: physical settlement"
+  },
+  {
+   "level": "BREACH",
+   "type": "Expiry risk",
+   "symbol": "HINDPETRO",
+   "expiry": "2026-11-23",
+   "strike": 385.0,
+   "opt_type": "CE",
+   "qty": 2025,
+   "concern": "Long 385CE is in the money 3d before expiry: physical settlement, you would buy 2025 shares (about Rs7.8 lakh)",
+   "action": "Close it before expiry",
+   "text": "HINDPETRO 2026-11-23 long 385CE in the money, 3 days to expiry: physical settlement"
+  },
+  {
+   "level": "BREACH",
+   "type": "Expiry risk",
+   "symbol": "MAHABANK",
+   "expiry": "2026-11-23",
+   "strike": 89.0,
+   "opt_type": "CE",
+   "qty": 6500,
+   "concern": "Short 89CE is in the money 3d before expiry: physical settlement, you would deliver 6500 shares (you hold 243)",
+   "action": "Close it before expiry",
+   "text": "MAHABANK 2026-11-23 short 89CE in the money, 3 days to expiry: physical settlement"
+  },
+  {
+   "level": "BREACH",
+   "type": "Expiry risk",
+   "symbol": "MAHABANK",
+   "expiry": "2026-11-23",
+   "strike": 90.0,
+   "opt_type": "CE",
+   "qty": 6500,
+   "concern": "Long 90CE is in the money 3d before expiry: physical settlement, you would buy 6500 shares (about Rs5.8 lakh)",
+   "action": "Close it before expiry",
+   "text": "MAHABANK 2026-11-23 long 90CE in the money, 3 days to expiry: physical settlement"
   },
   {
    "level": "BREACH",
@@ -9011,9 +9101,9 @@
    "strike": 290.0,
    "opt_type": "PE",
    "qty": 2600,
-   "concern": "Ex-dividend 26 Nov (estimated) is 7d away: inside the 15-day window",
+   "concern": "Ex-dividend 26 Nov (estimated) is 6d away: inside the 15-day window",
    "action": "Close it now (event rule)",
-   "text": "PFC 2026-12-29 long 290PE: Ex-dividend 26 Nov (estimated) is 7d away: inside the 15-day window - close it now (event rule)"
+   "text": "PFC 2026-12-29 long 290PE: Ex-dividend 26 Nov (estimated) is 6d away: inside the 15-day window - close it now (event rule)"
   },
   {
    "level": "BREACH",
@@ -9023,9 +9113,9 @@
    "strike": 300.0,
    "opt_type": "PE",
    "qty": 2600,
-   "concern": "Ex-dividend 26 Nov (estimated) is 7d away: inside the 15-day window",
+   "concern": "Ex-dividend 26 Nov (estimated) is 6d away: inside the 15-day window",
    "action": "Close it now (event rule)",
-   "text": "PFC 2026-12-29 short 300PE: Ex-dividend 26 Nov (estimated) is 7d away: inside the 15-day window - close it now (event rule)"
+   "text": "PFC 2026-12-29 short 300PE: Ex-dividend 26 Nov (estimated) is 6d away: inside the 15-day window - close it now (event rule)"
   },
   {
    "level": "WARN",
@@ -9041,30 +9131,6 @@
   },
   {
    "level": "WARN",
-   "type": "Expiry risk",
-   "symbol": "DIVISLAB",
-   "expiry": "2026-11-23",
-   "strike": 10600.0,
-   "opt_type": "CE",
-   "qty": 100,
-   "concern": "Short 10600CE is in the money 4d before expiry: physical settlement, you would deliver 100 shares (you hold 0)",
-   "action": "Close it before expiry",
-   "text": "DIVISLAB 2026-11-23 short 10600CE in the money, 4 days to expiry: physical settlement"
-  },
-  {
-   "level": "WARN",
-   "type": "Expiry risk",
-   "symbol": "DIVISLAB",
-   "expiry": "2026-11-23",
-   "strike": 10800.0,
-   "opt_type": "CE",
-   "qty": 100,
-   "concern": "Long 10800CE is in the money 4d before expiry: physical settlement, you would buy 100 shares (about Rs10.8 lakh)",
-   "action": "Close it before expiry",
-   "text": "DIVISLAB 2026-11-23 long 10800CE in the money, 4 days to expiry: physical settlement"
-  },
-  {
-   "level": "WARN",
    "type": "No GTT placed",
    "symbol": "HDFCBANK",
    "expiry": "2026-11-23",
@@ -9074,30 +9140,6 @@
    "concern": "No buy-back GTT on this short",
    "action": "Place GTT at 8.4 (3x premium)",
    "text": "HDFCBANK 2026-11-23 short 760CE: no active buy-back GTT (3x premium stop = 8.4)"
-  },
-  {
-   "level": "WARN",
-   "type": "Expiry risk",
-   "symbol": "HDFCBANK",
-   "expiry": "2026-11-23",
-   "strike": 760.0,
-   "opt_type": "CE",
-   "qty": 650,
-   "concern": "Short 760CE is in the money 4d before expiry: physical settlement, you would deliver 650 shares (you hold 0)",
-   "action": "Close it before expiry",
-   "text": "HDFCBANK 2026-11-23 short 760CE in the money, 4 days to expiry: physical settlement"
-  },
-  {
-   "level": "WARN",
-   "type": "Expiry risk",
-   "symbol": "HDFCBANK",
-   "expiry": "2026-11-23",
-   "strike": 770.0,
-   "opt_type": "CE",
-   "qty": 650,
-   "concern": "Long 770CE is in the money 4d before expiry: physical settlement, you would buy 650 shares (about Rs5.0 lakh)",
-   "action": "Close it before expiry",
-   "text": "HDFCBANK 2026-11-23 long 770CE in the money, 4 days to expiry: physical settlement"
   },
   {
    "level": "WARN",
@@ -9113,39 +9155,15 @@
   },
   {
    "level": "WARN",
-   "type": "Expiry risk",
-   "symbol": "HINDPETRO",
-   "expiry": "2026-11-23",
-   "strike": 380.0,
-   "opt_type": "CE",
-   "qty": 2025,
-   "concern": "Short 380CE is in the money 4d before expiry: physical settlement, you would deliver 2025 shares (you hold 0)",
-   "action": "Close it before expiry",
-   "text": "HINDPETRO 2026-11-23 short 380CE in the money, 4 days to expiry: physical settlement"
-  },
-  {
-   "level": "WARN",
-   "type": "Expiry risk",
-   "symbol": "HINDPETRO",
-   "expiry": "2026-11-23",
-   "strike": 385.0,
-   "opt_type": "CE",
-   "qty": 2025,
-   "concern": "Long 385CE is in the money 4d before expiry: physical settlement, you would buy 2025 shares (about Rs7.8 lakh)",
-   "action": "Close it before expiry",
-   "text": "HINDPETRO 2026-11-23 long 385CE in the money, 4 days to expiry: physical settlement"
-  },
-  {
-   "level": "WARN",
    "type": "Leftover hedge",
    "symbol": "KARURVYSYA",
    "expiry": "2026-11-23",
    "strike": 330.0,
    "opt_type": "PE",
    "qty": 1550,
-   "concern": "Long 330PE (1550 qty) has no short against it - P&L Rs-2,712, 4d to expiry",
+   "concern": "Long 330PE (1550 qty) has no short against it - P&L Rs-2,712, 3d to expiry",
    "action": "Sell it or let it expire",
-   "text": "KARURVYSYA 2026-11-23: Long 330PE (1550 qty) has no short against it - P&L Rs-2,712, 4d to expiry - sell it or let it expire"
+   "text": "KARURVYSYA 2026-11-23: Long 330PE (1550 qty) has no short against it - P&L Rs-2,712, 3d to expiry - sell it or let it expire"
   },
   {
    "level": "WARN",
@@ -9158,30 +9176,6 @@
    "concern": "No buy-back GTT on this short",
    "action": "Place GTT at 0.96 (3x premium)",
    "text": "MAHABANK 2026-11-23 short 89CE: no active buy-back GTT (3x premium stop = 0.96)"
-  },
-  {
-   "level": "WARN",
-   "type": "Expiry risk",
-   "symbol": "MAHABANK",
-   "expiry": "2026-11-23",
-   "strike": 89.0,
-   "opt_type": "CE",
-   "qty": 6500,
-   "concern": "Short 89CE is in the money 4d before expiry: physical settlement, you would deliver 6500 shares (you hold 243)",
-   "action": "Close it before expiry",
-   "text": "MAHABANK 2026-11-23 short 89CE in the money, 4 days to expiry: physical settlement"
-  },
-  {
-   "level": "WARN",
-   "type": "Expiry risk",
-   "symbol": "MAHABANK",
-   "expiry": "2026-11-23",
-   "strike": 90.0,
-   "opt_type": "CE",
-   "qty": 6500,
-   "concern": "Long 90CE is in the money 4d before expiry: physical settlement, you would buy 6500 shares (about Rs5.8 lakh)",
-   "action": "Close it before expiry",
-   "text": "MAHABANK 2026-11-23 long 90CE in the money, 4 days to expiry: physical settlement"
   }
  ],
  "events_file_at": "2026-11-18T06:27:00.461891+00:00",
@@ -9201,7 +9195,7 @@
   "RECLTD"
  ],
  "positions": {
-  "fetched_at": "2026-11-19T16:41:21.395460+00:00",
+  "fetched_at": "2026-11-20T00:52:43.647488+00:00",
   "track_from": "2026-11-01",
   "legs": 92,
   "ignored_legs": 16
