@@ -1,26 +1,30 @@
 {
- "as_of": "19 Nov close (live prices 22:30 IST)",
- "written_at": "2026-11-19T22:35:37+05:30",
+ "as_of": "20 Nov close (Friday)",
+ "written_at": "2026-11-21T19:35:55+05:30",
  "confidence": "low",
- "maturity": "126 positions ever opened but only 5 closed trades: the swing edge cannot be judged yet.",
- "headline": "Swing book is mildly positive (+Rs4.2k) with 4 exits and 6 entries signalled tonight; the one real leak is the options side: BSE's flipped call and a half-hedged put.",
+ "maturity": "131 positions ever opened but only 8 closed trades: the swing edge cannot be judged yet.",
+ "headline": "Friday's orders mostly worked (3 exits, 5 entries, 2 add-ons filled), but PASHUPATI did not sell and the options book still has BSE mismatched.",
  "points": [
   {
-   "label": "Orders tonight",
-   "text": "4 red-Supertrend exits (CORONA, PASHUPATI, PAYTM, SHRINGARMS), 6 fresh 52-week-high entries and 2 add-ons (MACPOWER, TECHM). Today's MACPOWER and LGEINDIA AMO buys were rejected, so check the price limit before re-sending."
+   "label": "Orders filled",
+   "text": "CORONA, PAYTM and SHRINGARMS were sold; FLUOROCHEM, GHCLTEXTIL, NEOGEN, MINDACORP and POONAWALLA were bought, plus the MACPOWER and TECHM add-ons. CRAFTSMAN's limit did not fill, and it is not a signal any more. The sell prices are Friday-open estimates because Dhan's tradebook is today-only; confirm them in the app."
   },
   {
-   "label": "SHRINGARMS trap",
-   "text": "4 of 5 shares were already sold today but holdings still show 5 until settlement. Order only the 1 remaining share, not the 5 the ticket shows, or you oversell."
+   "label": "PASHUPATI is stuck",
+   "text": "The market sell for 13 shares did not fill: it closed at the lower circuit (27.18, -5%). It is still a red exit at -37.7%; re-send the same exit on Monday and expect it to sit at the circuit again."
+  },
+  {
+   "label": "Fresh signals",
+   "text": "The new close brings 11 entries and 3 add-ons (ENTERO, MAHASTEEL, ROLEXRINGS). EICHERMOT and ULTRACEMCO are flagged as closing below the 252-session closing high on the cross-check; the backtester signal stands, so this is advisory."
   },
   {
    "label": "Options book",
-   "text": "BSE call (4200CE) is still short while Supertrend is green, and BSE 3200PE has no hedge: 200 of 400 qty uncovered. Everything else matches its colour rule. The SHRIRAMFIN 1120CE call was closed today at a Rs908 loss, but its super order legs are still pending and could buy a new long: cancel them."
+   "text": "Only BSE is off-rule: its 4200CE call is open while Supertrend is green, and 3200PE has no hedge (200 of 400 qty). Everything else matches its colour rule, all stops are in place and the super-order scan is clean."
   },
   {
    "label": "Versus the backtest",
-   "text": "Combined P&L is +Rs4.2k on Rs2.1L deployed; the sizing has doubled to Rs2,000 per trade. Too early to compare with the backtest (28% CAGR, -15.4% max DD, PF 2.01): watch drawdown and win rate after 30 closed trades."
+   "text": "Combined P&L +Rs3.6k with 8 closed trades. Too early to compare with the backtest (28% CAGR, -15.4% max DD, PF 2.01); watch drawdown and win rate after 30 closed trades."
   }
  ],
- "action": "Place the 4 exits (SHRINGARMS as 1 share), the 6 entries and 2 add-ons; cancel the orphaned SHRIRAMFIN stop legs; hedge or close the BSE structure."
+ "action": "On Monday after the close run /dhan-order for PASHUPATI plus the new entries and add-ons, then close BSE 4200CE and hedge or close BSE 3200PE."
 }

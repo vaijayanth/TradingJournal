@@ -1,13 +1,13 @@
 {
- "generated_at": "2026-11-19T22:48:42+05:30",
+ "generated_at": "2026-11-21T19:35:39+05:30",
  "broker": "dhan",
- "market_data_date": "2026-11-19",
- "signals_generated_at": "2026-11-19T17:05:13.697349+00:00",
+ "market_data_date": "2026-11-20",
+ "signals_generated_at": "2026-11-21T14:05:36.021473+00:00",
  "status": "WARN",
  "global_block": false,
  "counts": {
   "block": 0,
-  "warn": 4,
+  "warn": 5,
   "info": 0
  },
  "per_symbol_blocks": {},
@@ -16,19 +16,25 @@
    "id": "F5",
    "level": "WARN",
    "symbol": null,
-   "msg": "the cross-check flagged 1 of 13 signals (advisory only, the backtester signal stands and they are not blocked): KODYTECH"
+   "msg": "the cross-check flagged 2 of 15 signals (advisory only, the backtester signal stands and they are not blocked): EICHERMOT, ULTRACEMCO"
   },
   {
-   "id": "I3",
+   "id": "I6",
    "level": "WARN",
-   "symbol": "SHRINGARMS",
-   "msg": "SHRINGARMS: trade log says 1, Dhan holdings say 5. Holdings are used; it usually clears after the next refresh (a recent sale or buy not yet settled)."
+   "symbol": "PASHUPATI",
+   "msg": "PASHUPATI: fill price 35.15 is 29% away from the current price 27.18 (typo / split?)"
   },
   {
-   "id": "I3",
+   "id": "I6",
    "level": "WARN",
-   "symbol": null,
-   "msg": "7 stocks were bought in the last 3 days and are not in Dhan holdings yet (settlement timing); positions and P&L exclude them until holdings catch up: GUFICBIO (2->3), TEXINFRA (7->8), SUNTV (0->2), GREAVESCOT (0->7), ICIL (0->3), SHADOWFAX (0->6), SANGAMIND (0->2)"
+   "symbol": "PASHUPATI",
+   "msg": "PASHUPATI: fill price 35.15 is 29% away from the current price 27.18 (typo / split?)"
+  },
+  {
+   "id": "I6",
+   "level": "WARN",
+   "symbol": "PASHUPATI",
+   "msg": "PASHUPATI: fill price 35.15 is 29% away from the current price 27.18 (typo / split?)"
   },
   {
    "id": "P3",
