@@ -1,26 +1,30 @@
 {
- "as_of": "20 Nov pre-open (19 Nov close, prices unchanged)",
- "written_at": "2026-11-20T06:23:23+05:30",
+ "as_of": "20 Nov close (Friday; prices as of the close)",
+ "written_at": "2026-11-21T07:50:12+05:30",
  "confidence": "low",
- "maturity": "11 days of history and 2 closed trades: a health check, not a verdict on the strategy.",
- "headline": "Nothing new since last night: the swing book is quiet (+Rs23k), but the 4 stopped-out spreads and 7 event-window legs are still open before the market opens.",
+ "maturity": "12 days of history and 2 closed trades: a health check, not a verdict on the strategy.",
+ "headline": "Swing book is up to +Rs32k, but the 4 stopped-out call spreads are still open with 2 sessions to Monday's expiry and are now deeper in the money.",
  "points": [
   {
-   "label": "Clean-up still open",
-   "text": "DIVISLAB, HDFCBANK, HINDPETRO and MAHABANK call spreads (about -Rs81k net) are at max loss and expire Monday with physical delivery. Positions and orders are unchanged since last night, so none of the planned closes has happened yet."
+   "label": "Clean-up half done",
+   "text": "CONCOR and HINDZINC were closed since last night, which is good. DIVISLAB, HDFCBANK, HINDPETRO and MAHABANK are still open and moved further against you on Friday (HDFCBANK premium 29x, MAHABANK 31x). Maximum loss is already locked, so the only open question is physical delivery on Monday: close them today or Monday morning."
   },
   {
-   "label": "GTT cover is now in place",
-   "text": "All 20 protective GTTs placed in Kite last night are active: 53 option contracts covered, 0 invalid, 0 stale. This was the largest process gap and it is closed."
+   "label": "New flips to act on",
+   "text": "PNBHOUSING turned green and its short 1280CE is now a mismatch (close it, then the put spread); it is also an old-sheet position at +2.1%. Four stocks flipped on Friday (CUB, MUTHOOTFIN, TITAN, VEDL) but only list as option candidates: no rule forces an entry."
   },
   {
-   "label": "Event rule",
-   "text": "CONCOR (ex-dividend today, est.) and PFC (26 Nov, est.) are inside the 15-day window; HINDZINC flipped red. All three are in small profit, so closing them costs little."
+   "label": "Add-on",
+   "text": "COCHINSHIP is the first add-on trigger (-6.2%, green, 11 days since the last buy): 2 shares, about Rs2,250 at the close. A small, rule-driven action."
   },
   {
-   "label": "Swing book",
-   "text": "No exits, add-ons or entries; 39 trades, tier Rs20k, combined P&L +Rs23k. POLICYBZR (-8.8%) becomes eligible for its add-on on 23 Nov. Still too young to compare with the backtest (-21.3% max DD, PF 1.75)."
+   "label": "Move candidates",
+   "text": "CUB (+4.0%) and PNBHOUSING (+2.1%) are old-sheet positions now green and profitable, so they qualify to move to this dashboard. Moving PNBHOUSING also adds to Financial Services, which is already 45% of deployed capital against the 40% guardrail."
+  },
+  {
+   "label": "Versus the backtest",
+   "text": "Combined P&L +Rs32k on 39 trades (tier Rs20k). Far too early to compare with the backtest (-21.3% max DD, PF 1.75)."
   }
  ],
- "action": "Close the 4 stopped-out spreads plus CONCOR, PFC and HINDZINC in Kite today, before Monday's expiry."
+ "action": "Close the 4 stopped-out spreads and PNBHOUSING's short call, then run /zerodha-order for the COCHINSHIP add-on."
 }

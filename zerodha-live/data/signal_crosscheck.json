@@ -1,9 +1,31 @@
 {
- "generated_at": "2026-11-20T00:53:08.777021+00:00",
- "market_data_date": "2026-11-19",
- "yahoo_last_bars": [],
+ "generated_at": "2026-11-21T02:19:14.461151+00:00",
+ "market_data_date": "2026-11-20",
+ "yahoo_last_bars": [
+  "2026-11-19"
+ ],
  "bars_after_signal_date_ignored": [],
- "checked": 0,
- "flagged": 0,
- "results": []
+ "checked": 1,
+ "flagged": 1,
+ "results": [
+  {
+   "symbol": "COCHINSHIP",
+   "kind": "addon",
+   "ok": true,
+   "reasons": [
+    "last bar is 2026-11-19 (Yahoo), signals are dated 2026-11-20",
+    "close 1138.20 differs from the signal's 1125.0"
+   ],
+   "published_colour": "green",
+   "recomputed_colour": "green",
+   "yahoo_last_bar": "2026-11-19",
+   "close": 1138.2,
+   "published_close": 1125.0,
+   "closing_high_252": 1814.7,
+   "intraday_high_252": 1842.8,
+   "flip_bars_ago": 7,
+   "pct_from_intraday_high": -38.24,
+   "flagged": true
+  }
+ ]
 }

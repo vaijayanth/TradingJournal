@@ -1,16 +1,24 @@
 {
  "fired_ok_today": [],
- "fetched_at": "2026-11-20T06:23:14+05:30",
+ "fetched_at": "2026-11-21T07:49:53+05:30",
  "inputs": {
-  "positions": "2026-11-20T00:52:43.647488+00:00",
-  "gtts": "2026-11-20T06:22:43+05:30",
-  "orders": "2026-11-20T06:22:43+05:30",
-  "gtt_scan": "2026-11-20T06:22:43+05:30"
+  "positions": "2026-11-21T02:18:49.739193+00:00",
+  "gtts": "2026-11-21T07:48:49+05:30",
+  "orders": "2026-11-21T07:48:49+05:30",
+  "gtt_scan": "2026-11-21T07:48:49+05:30"
  },
  "stale_inputs": [],
- "open_legs": 92,
+ "open_legs": 88,
  "triggered_gtts": 0,
  "findings": [
+  {
+   "section": "A",
+   "severity": "WARN",
+   "symbol": "HINDPETRO",
+   "tradingsymbol": "HINDPETRO26NOV350PE",
+   "concern": "Long 350PE (2025 qty) no short against it; P&L Rs-4,658, expiry 2026-11-23",
+   "action": "Sell it or let it expire"
+  },
   {
    "section": "A",
    "severity": "WARN",
@@ -214,14 +222,6 @@
   {
    "section": "B",
    "severity": "INFO",
-   "symbol": "SWIGGY",
-   "tradingsymbol": "SWIGGY26DEC250CE",
-   "concern": "Short 250CE (1825 qty) is a naked call (by design; covered only by shares you hold)",
-   "action": "Watch the 3x stop and the Supertrend colour"
-  },
-  {
-   "section": "B",
-   "severity": "INFO",
    "symbol": "SYRMA",
    "tradingsymbol": "SYRMA26DEC1700CE",
    "concern": "Short 1700CE (325 qty) is a naked call (by design; covered only by shares you hold)",
@@ -248,7 +248,7 @@
    "severity": "HIGH",
    "symbol": "DIVISLAB",
    "tradingsymbol": "DIVISLAB26NOV10600CE",
-   "concern": "No active buy-back GTT (premium 516.5, sold 116.95, already 4.4x: a GTT would fire at once)",
+   "concern": "No active buy-back GTT (premium 555.05, sold 116.95, already 4.7x: a GTT would fire at once)",
    "action": "Close it now (a GTT would fire at once)"
   },
   {
@@ -256,7 +256,7 @@
    "severity": "HIGH",
    "symbol": "HDFCBANK",
    "tradingsymbol": "HDFCBANK26NOV760CE",
-   "concern": "No active buy-back GTT (premium 62, sold 2.8, already 22.1x: a GTT would fire at once)",
+   "concern": "No active buy-back GTT (premium 81.45, sold 2.8, already 29.1x: a GTT would fire at once)",
    "action": "Close it now (a GTT would fire at once)"
   },
   {
@@ -264,7 +264,7 @@
    "severity": "HIGH",
    "symbol": "HINDPETRO",
    "tradingsymbol": "HINDPETRO26NOV380CE",
-   "concern": "No active buy-back GTT (premium 11.15, sold 1.3, already 8.6x: a GTT would fire at once)",
+   "concern": "No active buy-back GTT (premium 16.7, sold 1.3, already 12.8x: a GTT would fire at once)",
    "action": "Close it now (a GTT would fire at once)"
   },
   {
@@ -272,24 +272,24 @@
    "severity": "HIGH",
    "symbol": "MAHABANK",
    "tradingsymbol": "MAHABANK26NOV89CE",
-   "concern": "No active buy-back GTT (premium 7.3, sold 0.32, already 22.8x: a GTT would fire at once)",
+   "concern": "No active buy-back GTT (premium 9.8, sold 0.32, already 30.6x: a GTT would fire at once)",
    "action": "Close it now (a GTT would fire at once)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "PIIND",
+   "tradingsymbol": "PIIND26DEC2000CE",
+   "concern": "No active buy-back GTT (premium 5.2, sold 11.3)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
   },
   {
    "section": "G",
    "severity": "WARN",
    "symbol": "CUMMINSIND",
    "tradingsymbol": "CUMMINSIND26DEC5000CE",
-   "concern": "Active GTT 344015712 (trailing-single) has a stop but no profit target; sold 21.8, premium 13",
+   "concern": "Active GTT 344015712 (trailing-single) has a stop but no profit target; sold 21.8, premium 10",
    "action": "Add a profit target at about 8.72 (a two-leg GTT: /zerodha-gtt-order or the Kite app)"
-  },
-  {
-   "section": "G",
-   "severity": "WARN",
-   "symbol": "HINDZINC",
-   "tradingsymbol": "HINDZINC26NOV500PE",
-   "concern": "Active GTT 343262028 (trailing-single) has a stop but no profit target; sold 2.4, premium 1.35",
-   "action": "Add a profit target at about 0.96 (a two-leg GTT: /zerodha-gtt-order or the Kite app)"
   }
  ]
 }

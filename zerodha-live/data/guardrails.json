@@ -1,17 +1,23 @@
 {
- "generated_at": "2026-11-20T06:23:10+05:30",
+ "generated_at": "2026-11-21T07:49:53+05:30",
  "broker": "zerodha",
- "market_data_date": "2026-11-19",
- "signals_generated_at": "2026-11-20T00:53:01.577613+00:00",
+ "market_data_date": "2026-11-20",
+ "signals_generated_at": "2026-11-21T02:19:07.270874+00:00",
  "status": "WARN",
  "global_block": false,
  "counts": {
   "block": 0,
-  "warn": 4,
+  "warn": 5,
   "info": 0
  },
  "per_symbol_blocks": {},
  "findings": [
+  {
+   "id": "F5",
+   "level": "WARN",
+   "symbol": null,
+   "msg": "the cross-check flagged 1 of 1 signals (advisory only, the backtester signal stands and they are not blocked): COCHINSHIP"
+  },
   {
    "id": "C2",
    "level": "WARN",
@@ -22,19 +28,19 @@
    "id": "P3",
    "level": "WARN",
    "symbol": null,
-   "msg": "25 open option exit / strike-breach alerts on 7 stocks (CONCOR, DIVISLAB, HDFCBANK, HINDPETRO, HINDZINC, MAHABANK, PFC) - see the Covered Call alerts"
+   "msg": "23 open option exit / strike-breach alerts on 6 stocks (DIVISLAB, HDFCBANK, HINDPETRO, MAHABANK, PFC, PNBHOUSING) - see the Covered Call alerts"
   },
   {
    "id": "P1",
    "level": "WARN",
    "symbol": "IEX",
-   "msg": "IEX: expiry 2026-11-23 is 4 days away (expiry week) - do not open a new option structure"
+   "msg": "IEX: expiry 2026-11-23 is 3 days away (expiry week) - do not open a new option structure"
   },
   {
    "id": "P1",
    "level": "WARN",
    "symbol": "IREDA",
-   "msg": "IREDA: expiry 2026-11-23 is 4 days away (expiry week) - do not open a new option structure"
+   "msg": "IREDA: expiry 2026-11-23 is 3 days away (expiry week) - do not open a new option structure"
   }
  ]
 }
