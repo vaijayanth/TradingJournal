@@ -1,6 +1,166 @@
 {
- "fetched_at": "2026-11-23T10:01:19+05:30",
+ "fetched_at": "2026-11-23T10:03:32+05:30",
  "active": {
+  "WIPRO26DEC220CE": [
+   {
+    "id": 345965813,
+    "type": "two-leg",
+    "trigger_values": [
+     0.35,
+     2.3
+    ],
+    "qty": 3000
+   },
+   {
+    "id": 345965813,
+    "type": "two-leg",
+    "trigger_values": [
+     0.35,
+     2.3
+    ],
+    "qty": 3000
+   }
+  ],
+  "VEDL26DEC280CE": [
+   {
+    "id": 345965794,
+    "type": "two-leg",
+    "trigger_values": [
+     0.6,
+     4.3
+    ],
+    "qty": 2300
+   },
+   {
+    "id": 345965794,
+    "type": "two-leg",
+    "trigger_values": [
+     0.6,
+     4.3
+    ],
+    "qty": 2300
+   }
+  ],
+  "TITAN26DEC5200CE": [
+   {
+    "id": 345965785,
+    "type": "two-leg",
+    "trigger_values": [
+     7.9,
+     54.15
+    ],
+    "qty": 175
+   },
+   {
+    "id": 345965785,
+    "type": "two-leg",
+    "trigger_values": [
+     7.9,
+     54.15
+    ],
+    "qty": 175
+   }
+  ],
+  "POLYCAB26DEC8300CE": [
+   {
+    "id": 345965771,
+    "type": "two-leg",
+    "trigger_values": [
+     22,
+     151.25
+    ],
+    "qty": 125
+   },
+   {
+    "id": 345965771,
+    "type": "two-leg",
+    "trigger_values": [
+     22,
+     151.25
+    ],
+    "qty": 125
+   }
+  ],
+  "PAYTM26DEC2060CE": [
+   {
+    "id": 345965756,
+    "type": "two-leg",
+    "trigger_values": [
+     4.6,
+     31.5
+    ],
+    "qty": 725
+   },
+   {
+    "id": 345965756,
+    "type": "two-leg",
+    "trigger_values": [
+     4.6,
+     31.5
+    ],
+    "qty": 725
+   }
+  ],
+  "MUTHOOTFIN26DEC3000CE": [
+   {
+    "id": 345965741,
+    "type": "two-leg",
+    "trigger_values": [
+     5.55,
+     38.1
+    ],
+    "qty": 275
+   },
+   {
+    "id": 345965741,
+    "type": "two-leg",
+    "trigger_values": [
+     5.55,
+     38.1
+    ],
+    "qty": 275
+   }
+  ],
+  "MAZDOCK26DEC2200CE": [
+   {
+    "id": 345965726,
+    "type": "two-leg",
+    "trigger_values": [
+     4.65,
+     31.9
+    ],
+    "qty": 225
+   },
+   {
+    "id": 345965726,
+    "type": "two-leg",
+    "trigger_values": [
+     4.65,
+     31.9
+    ],
+    "qty": 225
+   }
+  ],
+  "HINDZINC26DEC610CE": [
+   {
+    "id": 345965656,
+    "type": "two-leg",
+    "trigger_values": [
+     1.05,
+     7.3
+    ],
+    "qty": 1225
+   },
+   {
+    "id": 345965656,
+    "type": "two-leg",
+    "trigger_values": [
+     1.05,
+     7.3
+    ],
+    "qty": 1225
+   }
+  ],
   "WAAREEENER26DEC2200PE": [
    {
     "id": 345641974,
@@ -913,6 +1073,230 @@
   ]
  },
  "gtts": [
+  {
+   "id": 345965813,
+   "type": "two-leg",
+   "created_at": "2026-11-23T10:03:23+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "WIPRO26DEC220CE",
+   "last_price": 0.83,
+   "triggers": [
+    0.35,
+    2.3
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 3000,
+     "price": 0.4,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 3000,
+     "price": 2.5,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 345965794,
+   "type": "two-leg",
+   "created_at": "2026-11-23T10:03:22+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "VEDL26DEC280CE",
+   "last_price": 1.49,
+   "triggers": [
+    0.6,
+    4.3
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 2300,
+     "price": 0.65,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 2300,
+     "price": 4.7,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 345965785,
+   "type": "two-leg",
+   "created_at": "2026-11-23T10:03:20+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "TITAN26DEC5200CE",
+   "last_price": 18.15,
+   "triggers": [
+    7.9,
+    54.15
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 175,
+     "price": 8.15,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 175,
+     "price": 59.1,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 345965771,
+   "type": "two-leg",
+   "created_at": "2026-11-23T10:03:18+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "POLYCAB26DEC8300CE",
+   "last_price": 63,
+   "triggers": [
+    22,
+    151.25
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 125,
+     "price": 22.7,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 125,
+     "price": 165,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 345965756,
+   "type": "two-leg",
+   "created_at": "2026-11-23T10:03:17+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "PAYTM26DEC2060CE",
+   "last_price": 11.5,
+   "triggers": [
+    4.6,
+    31.5
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 725,
+     "price": 4.75,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 725,
+     "price": 34.35,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 345965741,
+   "type": "two-leg",
+   "created_at": "2026-11-23T10:03:15+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "MUTHOOTFIN26DEC3000CE",
+   "last_price": 14.35,
+   "triggers": [
+    5.55,
+    38.1
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 275,
+     "price": 5.75,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 275,
+     "price": 41.55,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 345965726,
+   "type": "two-leg",
+   "created_at": "2026-11-23T10:03:13+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "MAZDOCK26DEC2200CE",
+   "last_price": 6,
+   "triggers": [
+    4.65,
+    31.9
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 225,
+     "price": 4.8,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 225,
+     "price": 34.8,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 345965656,
+   "type": "two-leg",
+   "created_at": "2026-11-23T10:03:05+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "HINDZINC26DEC610CE",
+   "last_price": 2.65,
+   "triggers": [
+    1.05,
+    7.3
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 1225,
+     "price": 1.1,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 1225,
+     "price": 7.95,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
   {
    "id": 345641974,
    "type": "trailing-two-leg",
