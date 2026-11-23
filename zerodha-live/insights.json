@@ -1,30 +1,30 @@
 {
- "as_of": "23 Nov 09:30 IST (20 Nov close; live prices)",
- "written_at": "2026-11-23T09:27:39+05:30",
+ "as_of": "23 Nov 10:50 IST (20 Nov close; live prices)",
+ "written_at": "2026-11-23T10:46:00+05:30",
  "confidence": "low",
  "maturity": "15 days of history and 2 closed trades: a health check, not a verdict on the strategy.",
- "headline": "Three of the four expiring spreads are closed; DIVISLAB is still open and expires today, and one stale GTT now needs deleting.",
+ "headline": "DIVISLAB is still open and has got worse (premium 680, buy-back order stuck at 555); five new call shorts and one stuck MAZDOCK buy-back need attention today.",
  "points": [
   {
-   "label": "Clean-up mostly done",
-   "text": "HDFCBANK, MAHABANK and HINDPETRO spreads were closed this morning, and the orphaned longs (KARURVYSYA 330PE, HINDPETRO 350PE) are on offer for pennies. Only DIVISLAB 10600CE/10800CE is left, at about -Rs67k intrinsic and expiring today at 3:30 pm."
+   "label": "DIVISLAB expiry",
+   "text": "The 10600CE buy-back order was placed at 555.05 but the premium is now 680, so it never fills. The spread expires at 3:30 pm and is at maximum loss (about -Rs65k); close both legs at market or modify the limit now."
   },
   {
-   "label": "Stale GTT",
-   "text": "You bought back the MANAPPURAM 340CE, but its GTT (345641434) is still active. If it ever triggered it would open a new long, so delete it."
+   "label": "MAZDOCK stuck",
+   "text": "A GTT fired and its buy-back (limit 4.80) is open but unfilled because the premium moved back above it, so the short is still open. Modify the limit or close it by hand."
   },
   {
-   "label": "GTT cover worked",
-   "text": "The PIIND GTT fired at its 4.65 profit target and bought the call back cleanly, the first live proof of the protective GTTs."
+   "label": "New shorts, no GTT",
+   "text": "INOXWIND, NAUKRI, OIL, SUPREMEIND and SWIGGY were sold this morning and GODFRYPHLP is working; none has a protective GTT yet. With GTT writes now working, place them from the next /zerodha-gtt-order run."
   },
   {
-   "label": "Add-ons filled",
-   "text": "COCHINSHIP and POLICYBZR filled at the open (1,126 and 1,032.10). No new swing signals this morning; PNBHOUSING's short call and the PFC spread are the remaining option items."
+   "label": "F&O ban",
+   "text": "MANAPPURAM is the only banned stock today, and you hold no option in it. New call shorts on red-Supertrend stocks match the colour rule."
   },
   {
    "label": "Edge",
-   "text": "Combined P&L +Rs34k on 41 trades, tier Rs20k. Too early to compare with the backtest (-21.3% max DD, PF 1.75)."
+   "text": "Combined P&L +Rs34k on 41 trades, tier Rs20k. No swing signals today; too early to compare with the backtest (-21.3% max DD, PF 1.75)."
   }
  ],
- "action": "Close DIVISLAB before 3:30 pm, delete the MANAPPURAM GTT, then close the PNBHOUSING call and PFC legs."
+ "action": "Close DIVISLAB (both legs) before 3:30 pm, fix the MAZDOCK buy-back, then place GTTs on the five new shorts."
 }
