@@ -10783,6 +10783,8 @@ function ccBookCheck(d) {
       else if (a.type === '3× premium') { if (!iss.some(x => /past /.test(x.t))) { shortsOk = Math.max(0, shortsOk - 1); iss.push({ sev: 0, t: `❌ past ${stopX}x stop`, a: sa[1] || 'Close now' }); } }
       else if (['Exit', '3× premium', 'Through hedge', 'Beyond strike', 'Expiry risk', 'Profit Exit', 'Leftover hedge'].includes(a.type) && !iss.some(x => x.t.includes(a.type))) iss.push({ sev: a.type === 'Profit Exit' || a.type === 'Leftover hedge' ? 1 : 0, t: (a.type === 'Profit Exit' || a.type === 'Leftover hedge' ? '⚠ ' : '❌ ') + a.type, a: sa[1] || '' });
     });
+    // a leg already past its stop can't take a GTT (it would fire at once): the action is "close", so drop the 'no stop' issue
+    if (iss.some(x => /past /.test(x.t))) for (let k = iss.length - 1; k >= 0; k--) if (/no stop/.test(iss[k].t)) iss.splice(k, 1);
     if (ccInBan(s.symbol)) iss.push({ sev: 1, t: '⚠ F&O ban', a: 'No new positions' });
     if (iss.length) {
       const seen = new Set(), u = iss.filter(x => !seen.has(x.t) && seen.add(x.t)).sort((a, b) => a.sev - b.sev);
