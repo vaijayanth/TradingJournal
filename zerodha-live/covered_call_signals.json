@@ -1,9 +1,9 @@
 {
- "generated_at": "2026-11-23T03:13:50.262457+00:00",
+ "generated_at": "2026-11-23T03:16:22.892889+00:00",
  "market_data_date": "2026-11-20",
  "live_prices_at": "2026-11-23T08:35:51+05:30",
- "gtt_scan_at": "2026-11-23T08:43:50+05:30",
- "gtt_checked_at": "2026-11-23T08:43:50+05:30",
+ "gtt_scan_at": "2026-11-23T08:46:22+05:30",
+ "gtt_checked_at": "2026-11-23T08:46:22+05:30",
  "rules": {
   "short_call_delta": 0.1,
   "short_put_delta": 0.1,
@@ -9026,17 +9026,6 @@
    "concern": "Ex-dividend 26 Nov (estimated) is 3d away: inside the 15-day window",
    "action": "Close it now (event rule)",
    "text": "PFC 2026-12-29 short 300PE: Ex-dividend 26 Nov (estimated) is 3d away: inside the 15-day window - close it now (event rule)"
-  },
-  {
-   "level": "WARN",
-   "type": "Invalid GTT",
-   "symbol": "PIIND",
-   "expiry": "2026-12-29",
-   "strike": 2000.0,
-   "opt_type": "CE",
-   "concern": "Off-Rule: Stop is 0.7x the sold price (rule 3x)",
-   "action": "Re-set to 33.90 (GTT 345920492)",
-   "text": "PIIND PIIND26DEC2000CE: Stop is 0.7x the sold price (rule 3x)"
   },
   {
    "level": "WARN",
