@@ -1,6 +1,86 @@
 {
- "fetched_at": "2026-11-23T17:28:53+05:30",
+ "fetched_at": "2026-11-23T17:39:38+05:30",
  "active": {
+  "SOLARINDS26DEC21000CE": [
+   {
+    "id": 346094492,
+    "type": "two-leg",
+    "trigger_values": [
+     44.9,
+     308.7
+    ],
+    "qty": 25
+   },
+   {
+    "id": 346094492,
+    "type": "two-leg",
+    "trigger_values": [
+     44.9,
+     308.7
+    ],
+    "qty": 25
+   }
+  ],
+  "KAYNES26DEC3500CE": [
+   {
+    "id": 346094490,
+    "type": "two-leg",
+    "trigger_values": [
+     10.55,
+     72.6
+    ],
+    "qty": 150
+   },
+   {
+    "id": 346094490,
+    "type": "two-leg",
+    "trigger_values": [
+     10.55,
+     72.6
+    ],
+    "qty": 150
+   }
+  ],
+  "COALINDIA26DEC425CE": [
+   {
+    "id": 346094484,
+    "type": "two-leg",
+    "trigger_values": [
+     0.55,
+     3.7
+    ],
+    "qty": 2700
+   },
+   {
+    "id": 346094484,
+    "type": "two-leg",
+    "trigger_values": [
+     0.55,
+     3.7
+    ],
+    "qty": 2700
+   }
+  ],
+  "CANBK26DEC120PE": [
+   {
+    "id": 346094475,
+    "type": "two-leg",
+    "trigger_values": [
+     0.35,
+     2.5
+    ],
+    "qty": 6750
+   },
+   {
+    "id": 346094475,
+    "type": "two-leg",
+    "trigger_values": [
+     0.35,
+     2.5
+    ],
+    "qty": 6750
+   }
+  ],
   "PNBHOUSING26DEC1040PE": [
    {
     "id": 346023030,
@@ -1153,6 +1233,118 @@
   ]
  },
  "gtts": [
+  {
+   "id": 346094492,
+   "type": "two-leg",
+   "created_at": "2026-11-23T17:39:30+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "SOLARINDS26DEC21000CE",
+   "last_price": 104,
+   "triggers": [
+    44.9,
+    308.7
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 25,
+     "price": 46.25,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 25,
+     "price": 336.75,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 346094490,
+   "type": "two-leg",
+   "created_at": "2026-11-23T17:39:29+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "KAYNES26DEC3500CE",
+   "last_price": 21,
+   "triggers": [
+    10.55,
+    72.6
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 150,
+     "price": 10.9,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 150,
+     "price": 79.2,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 346094484,
+   "type": "two-leg",
+   "created_at": "2026-11-23T17:39:24+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "COALINDIA26DEC425CE",
+   "last_price": 1.1,
+   "triggers": [
+    0.55,
+    3.7
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 2700,
+     "price": 0.6,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 2700,
+     "price": 4.05,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 346094475,
+   "type": "two-leg",
+   "created_at": "2026-11-23T17:39:15+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "CANBK26DEC120PE",
+   "last_price": 0.99,
+   "triggers": [
+    0.35,
+    2.5
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 6750,
+     "price": 0.4,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 6750,
+     "price": 2.75,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
   {
    "id": 346023030,
    "type": "two-leg",

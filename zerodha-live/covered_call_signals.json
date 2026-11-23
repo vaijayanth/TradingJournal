@@ -1,9 +1,9 @@
 {
- "generated_at": "2026-11-23T12:03:02.492071+00:00",
+ "generated_at": "2026-11-23T12:09:38.430665+00:00",
  "market_data_date": "2026-11-23",
  "live_prices_at": "2026-11-23T17:29:06+05:30",
- "gtt_scan_at": "2026-11-23T17:29:06+05:30",
- "gtt_checked_at": "2026-11-23T17:28:53+05:30",
+ "gtt_scan_at": "2026-11-23T17:39:38+05:30",
+ "gtt_checked_at": "2026-11-23T17:39:38+05:30",
  "rules": {
   "short_call_delta": 0.1,
   "short_put_delta": 0.1,
@@ -9018,30 +9018,6 @@
   {
    "level": "WARN",
    "type": "No GTT placed",
-   "symbol": "CANBK",
-   "expiry": "2026-12-29",
-   "strike": 120.0,
-   "opt_type": "PE",
-   "qty": 6750,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 2.73 (3x premium)",
-   "text": "CANBK 2026-12-29 short 120PE: no active buy-back GTT (3x premium stop = 2.73)"
-  },
-  {
-   "level": "WARN",
-   "type": "No GTT placed",
-   "symbol": "COALINDIA",
-   "expiry": "2026-12-29",
-   "strike": 425.0,
-   "opt_type": "CE",
-   "qty": 2700,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 4.05 (3x premium)",
-   "text": "COALINDIA 2026-12-29 short 425CE: no active buy-back GTT (3x premium stop = 4.05)"
-  },
-  {
-   "level": "WARN",
-   "type": "No GTT placed",
    "symbol": "DIVISLAB",
    "expiry": "2026-11-23",
    "strike": 10600.0,
@@ -9062,30 +9038,6 @@
    "concern": "Long 1520PE (325 qty) has no short against it - P&L Rs-1,316, 36d to expiry",
    "action": "Sell it or let it expire",
    "text": "ICICIGI 2026-12-29: Long 1520PE (325 qty) has no short against it - P&L Rs-1,316, 36d to expiry - sell it or let it expire"
-  },
-  {
-   "level": "WARN",
-   "type": "No GTT placed",
-   "symbol": "KAYNES",
-   "expiry": "2026-12-29",
-   "strike": 3500.0,
-   "opt_type": "CE",
-   "qty": 150,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 79.2 (3x premium)",
-   "text": "KAYNES 2026-12-29 short 3500CE: no active buy-back GTT (3x premium stop = 79.2)"
-  },
-  {
-   "level": "WARN",
-   "type": "No GTT placed",
-   "symbol": "SOLARINDS",
-   "expiry": "2026-12-29",
-   "strike": 21000.0,
-   "opt_type": "CE",
-   "qty": 25,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 336.75 (3x premium)",
-   "text": "SOLARINDS 2026-12-29 short 21000CE: no active buy-back GTT (3x premium stop = 336.75)"
   }
  ],
  "events_file_at": "2026-11-23T03:06:34.617293+00:00",
@@ -9105,7 +9057,7 @@
   "RECLTD"
  ],
  "positions": {
-  "fetched_at": "2026-11-23T11:58:53.485685+00:00",
+  "fetched_at": "2026-11-23T12:06:00.795091+00:00",
   "track_from": "2026-11-01",
   "legs": 96,
   "ignored_legs": 16
