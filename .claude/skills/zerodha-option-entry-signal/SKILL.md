@@ -33,3 +33,7 @@ This skill only READS and REPORTS. It never places, modifies or cancels an order
 - Read-only: no order, GTT, cancel, modify or file edit other than refreshing the local data files named in step 1, and only if the user agrees to a data pull.
 - Facts, alerts and the next command only; the user chooses the stocks. Never call a stock a certain winner.
 - ND and AZ stay separate: do not mention Dhan stocks or signals unless asked.
+
+
+## Re-sell PE rows (user, 2026-11-23)
+Also list, above the tiers, every stock whose short put was closed (GTT target / profit exit) but whose long PE hedge is still open while the Supertrend is green and the stock is not in the F&O ban: the stock is moving up, so a new PE sell above the hedge strike can be opened (the Covered Call Entry tab shows these as `Re-sell PE`). Show Stock | Long hedge | Expiry | P&L | Results / ex-dividend alert. Read-only; placing is the separate order skill.

@@ -31,6 +31,7 @@ Run from the repo root of TradingJournal on branch `claude/beautiful-hamilton-fw
    - **3 Other legs that need a decision** (event close, unhedged short, profit exit on a single leg): Stock | Leg | Reason | P&L | Action.
    - **4 Supertrend flipped but the old structure is still open** (status FLIP: green with a short call, red with a short put): Stock | Colour since | Open legs | Action.
    - **5 Orphaned long legs** (a long that hedges nothing): Stock | Leg | P&L | Action.
+   - **Re-sell PE (user, 2026-11-23):** an orphaned long PE on a green-Supertrend stock (not in the F&O ban) is also an entry signal - the Entry tab shows a `Re-sell PE` row; mark it `green: re-sell PE` here.
    - **6 Watch list** (HOLD structures near the strike or inside 7 days of expiry) and **Position changes** since the last paste (new / closed legs, only when a new upload was made) plus the untracked NIFTY P&L.
    - **7 Skills:** one row per skill: `/refresh-icici` (Done / run again after the next close); no DI order skill (Nothing to run).
    - **8 Your steps in ICICIdirect (manual):** numbered table of every close, hedge and share buy.
