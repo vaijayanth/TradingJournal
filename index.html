@@ -10455,11 +10455,23 @@ function ccActRows(d, tierRows) {
     .map(a => Object.assign({}, a, { kind: ccKind(a.type), ord: ccTypeOrd(a) }));
   const en = tierRows.slice().sort((a, b) => a.tier - b.tier || a.td - b.td || a.symbol.localeCompare(b.symbol))
     .map(r => Object.assign({}, r, { kind: 'entry', type: 'Tier ' + r.tier, level: 'ENTER', ord: 100 + r.tier }));
-  return al.concat(en);
+  // BPS re-sell prompt (user, 2026-11-23): the short put was bought back (GTT target / profit exit) but its long PE hedge is still held
+  // and the Supertrend is still green = the stock is moving up, so a NEW short PE can be sold above the hedge
+  const rs = [], stk = Object.fromEntries((d.stocks || []).map(x => [x.symbol, x]));
+  (d.alerts || []).filter(a => a.type === 'Leftover hedge' && a.opt_type === 'PE').forEach(a => {
+    const s = stk[a.symbol];
+    if (!s || s.colour !== 'green' || ccInBan(a.symbol)) return;
+    if ((s.legs || []).some(l => (l.type || l.opt_type) === 'PE' && l.side === 'SHORT')) return;   // a short PE is open: nothing to re-sell
+    rs.push({ symbol: a.symbol, kind: 'entry', type: 'Re-sell PE', level: 'ENTER', ord: 99, resell: true, desired: 'PUT_SPREAD', strike: a.strike, opt_type: 'PE', expiry: a.expiry,
+      concern: `Long ${a.strike}PE (${a.qty} qty) is still held after the short put was closed; Supertrend is green, the stock is moving up`,
+      action: 'Open a new PE sell above the long hedge' });
+  });
+  return al.concat(rs, en);
 }
+const ccIsResell = r => !!r.resell;
 const ccIsTier = r => r.kind === 'entry' && r.tier != null;
-const ccActIssueTxt = r => ccIsTier(r) ? (ccInBan(r.symbol) ? 'F&O BAN: do not open; ' : '') + (r.td === 0 ? 'Flipped today' : `Flipped ${r.td}d ago`) + (r.evs && r.evs.length ? '; ' + r.evs.map(e => e.txt).join('; ') : '') + (r.short ? '; short expiry' : '') : ccShortAlert(r)[0];
-const ccActDoTxt = r => ccIsTier(r) ? (ccInBan(r.symbol) || r.lvl >= 3 ? 'Do not open' : r.desired === 'PUT_SPREAD' ? 'Open BPS' : 'Sell the call') : ccShortAlert(r)[1];
+const ccActIssueTxt = r => ccIsResell(r) ? `Long ${r.strike}PE hedge left; short put closed, stock moving up` : ccIsTier(r) ? (ccInBan(r.symbol) ? 'F&O BAN: do not open; ' : '') + (r.td === 0 ? 'Flipped today' : `Flipped ${r.td}d ago`) + (r.evs && r.evs.length ? '; ' + r.evs.map(e => e.txt).join('; ') : '') + (r.short ? '; short expiry' : '') : ccShortAlert(r)[0];
+const ccActDoTxt = r => ccIsResell(r) ? 'Sell new PE above ' + r.strike : ccIsTier(r) ? (ccInBan(r.symbol) || r.lvl >= 3 ? 'Do not open' : r.desired === 'PUT_SPREAD' ? 'Open BPS' : 'Sell the call') : ccShortAlert(r)[1];
 const ccActCols = () => [
   { h: 'Type', v: r => r.ord, x: r => r.type, c: r => ccTypePill(r), txt: true },
   { h: 'Stock', v: r => r.symbol, c: r => `<b class="stk">${dhEsc(r.symbol)}</b>`, txt: true },
