@@ -38,7 +38,7 @@ STARTING_CAPITAL = 3_000_000
 BASE_POSITION_RS = 20_000
 POSITION_INCREMENT_RS = 5_000
 POSITION_INCREMENT_TRADES = 100
-ENTRY_WINDOW_TRADING_DAYS = 0   # today's flips only (user, 2026-11-09)
+ENTRY_WINDOW_TRADING_DAYS = 3   # a flip to green within the last 3 trading days (user, 2026-11-23; was 0 = today only, 2026-11-09)
 ADD_FRACTION = 0.10
 ADD_COOLDOWN_DAYS = 7
 ADD_TRIGGER_PCT = -6.0     # user rule (2026-11-09): same as ND - add when the loss is -6% or worse

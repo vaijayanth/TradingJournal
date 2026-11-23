@@ -63,7 +63,7 @@ def main():
     ap.add_argument("--signals", default=str(ROOT / "zerodha_live_signals.json"))
     ap.add_argument("--holdings", default=str(ROOT / "data" / "holdings_snapshot.json"))
     ap.add_argument("--excluded", default=str(ROOT / "data" / "excluded_symbols.json"))
-    ap.add_argument("--all-days", action="store_true", help="list entry signals from every flip day in the window (default: only today's flips)")
+    ap.add_argument("--all-days", action="store_true", help="list entry signals from every flip day (default: flips within the entry window, 3 trading days)")
     ap.add_argument("--allow-big-batch", action="store_true", help="user-approved: skip the batch size / value caps")
     args = ap.parse_args()
 
@@ -154,10 +154,11 @@ def main():
     older = []
     fresh_note = ""
     if not args.all_days:
-        older = [t for t in tickets if t["kind"] == "entry" and t["flip_days_ago"] != 0]
+        win = int((sig.get("rules") or {}).get("entry_window_trading_days", 0) if isinstance(sig.get("rules"), dict) else sig.get("entry_window_trading_days", 0) or 0)
+        older = [t for t in tickets if t["kind"] == "entry" and (t["flip_days_ago"] is None or t["flip_days_ago"] > win)]
         tickets = [t for t in tickets if t not in older]
         if older:
-            fresh_note = f"entry signals shown: flips today only ({len(older)} older flip(s) hidden - missed day, not ordered; --all-days shows them)"
+            fresh_note = f"entry signals shown: flips within the last {win} trading days ({len(older)} older flip(s) hidden - not ordered; --all-days shows them)"
     for i, t in enumerate(tickets, 1):
         t["no"] = i
 

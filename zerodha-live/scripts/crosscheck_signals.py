@@ -14,7 +14,7 @@ default also does not adjust for dividends). The intraday 52-week high is report
 
 Output: data/signal_crosscheck.json (read by build_order_ticket.py, which blocks flagged signals).
 Usage:  python zerodha-live/scripts/crosscheck_signals.py [--signals PATH] [--out PATH] [--mode dh252|flip]
-  --mode flip (Zerodha, Nifty F&O): an entry needs Supertrend GREEN and a red->green flip on the last trading bar
+  --mode flip (Zerodha, Nifty F&O): an entry needs Supertrend GREEN and a red->green flip within the entry window (ENTRY_WINDOW, 3 trading bars since 2026-11-23)
   (recomputed from Yahoo); the 252-session closing-high test is not applied. Add-ons and exits are checked as above.
 """
 import argparse
@@ -49,6 +49,7 @@ def supertrend(h, l, c, period=PERIOD, mult=MULT):
     return d
 
 
+ENTRY_WINDOW = 3   # trading bars since the red-to-green flip that still count as a fresh entry (user, 2026-11-23); keep equal to ENTRY_WINDOW_TRADING_DAYS in compute_zerodha_live_signals.py
 BACKTESTER_FINAL = True   # user 2026-11-16: per-signal cross-check flags are advisory only (set False to block flagged signals again)
 
 
@@ -137,8 +138,8 @@ def main():
             res["reasons"].append(f"Supertrend is {colour.upper()} on complete data (signal says {published}) - not an exit")
         if kind == "entry" and args.mode == "dh252" and round(close, 2) < round(hi_close, 2):
             res["reasons"].append(f"close {close:.2f} is below the 252-session closing high {hi_close:.2f}")
-        if kind == "entry" and args.mode == "flip" and (flip_bars is None or flip_bars > 0):
-            res["reasons"].append(f"no red-to-green Supertrend flip on the last trading bar on complete data (last flip {flip_bars} bars ago)")
+        if kind == "entry" and args.mode == "flip" and (flip_bars is None or flip_bars > ENTRY_WINDOW):
+            res["reasons"].append(f"no red-to-green Supertrend flip within the last {ENTRY_WINDOW} trading bars on complete data (last flip {flip_bars} bars ago)")
         # Policy (user, 2026-11-16): the backtester's signal is FINAL. A disagreement is kept as an advisory (flagged + reasons) and shown,
         # but it no longer blocks the signal (ok stays True). A mass disagreement still raises the global guardrail F5 (broken data).
         res["flagged"] = bool(res["reasons"])
