@@ -10769,7 +10769,7 @@ function ccBookCheck(d) {
         if (l.ltp >= stopX * sold) { ok = false; iss.push({ sev: 0, t: `❌ past ${stopX}x stop (${l.ltp} vs ${(stopX * sold).toFixed(2)})`, a: `Close ${ccStrike(l.strike)}${l.type} now` }); }
         else if (l.ltp >= 0.8 * stopX * sold) { ok = false; iss.push({ sev: 1, t: `⚠ near stop (${l.ltp} vs ${(stopX * sold).toFixed(2)})`, a: `Watch ${ccStrike(l.strike)}${l.type}` }); }
         else if (l.ltp <= tgtF * sold) { ok = false; iss.push({ sev: 1, t: `⚠ target hit (${l.ltp} vs ${(tgtF * sold).toFixed(2)})`, a: `Book profit ${ccStrike(l.strike)}${l.type}` }); }
-        else if (Math.abs(l.dist_pct) <= 7) iss.push({ sev: 2, t: `watch: ${ccStrike(l.strike)}${l.type} ${Math.abs(l.dist_pct).toFixed(1)}% out`, a: `Watch` });
+        else if (l.ltp >= 2 * sold) iss.push({ sev: 2, t: `watch: ${ccStrike(l.strike)}${l.type} at ${(l.ltp / sold).toFixed(1)}x sold (loss = 100% of premium)`, a: `Watch` });   // watch mode (user, 2026-11-23): the option price has reached 2x the premium sold
       } else if (!(sold > 0)) { /* no sold average: not checked */ }
       if (ok) shortsOk++;
     });
