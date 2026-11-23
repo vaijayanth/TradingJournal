@@ -96,3 +96,9 @@ Plain: placed (as AMO) / status / still pending / failed (verbatim error). Never
 When the last group is done, do not stop at the summary: say what is left on tonight's checklist and the exact next command: close the flagged option legs in the Dhan app, then `/dhan-superorder` (clean-up, new options), and tomorrow's `/refresh-dhan`. If the refresh checklist is not in this conversation, run `python scripts/action_items.py` to rebuild it.
 
 **Format (user, 2026-11-17):** end with two separate parts: **A. Run a skill (I take the action)** - the exact next command(s); **B. Manual steps (only you, in the broker app)** - the legs to close or decide. Never mix them. **Then end with one line `Next step: ...` naming the single thing to do now.**
+
+## Concise output (user, 2026-11-23: "your tables are not concise"; applies to everything this skill prints)
+- **After an action** (placed, cancelled, modified, deleted, recorded): ONE line of result, for example "7 GTTs placed and verified: 60 contracts covered, scan 0 findings, pushed `abc1234`". No table of order ids, GTT ids or prices (the broker's order book and GTT list already hold them), no recap of earlier steps.
+- **Tables:** at most 3 to 4 short columns, short cells (no sentences), and only for something the user must choose or still has to do. Never repeat a list that was shown earlier in the same run; point to it.
+- **Before an action** the confirm ticket is still a compact table, but only the numbers needed to say yes (name, qty, limit or triggers, total). Warnings go in one line under it.
+- **Close** with a single `Next step:` line. Add a short "still open" table only when items remain, and then only: item | who does it.

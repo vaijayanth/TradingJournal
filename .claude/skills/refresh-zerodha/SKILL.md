@@ -100,3 +100,9 @@ The final report must fit one screen with no scrolling (about 35 lines). Working
 - Nifty F&O stocks only. Never invent numbers; if a source is missing, say so.
 - The Google Sheet is NEVER re-read after the baseline is frozen.
 - This skill never places an order. The order skills are user-invoked only; step 7c tells the user which command to type.
+
+## Concise output (user, 2026-11-23: "your tables are not concise"; applies to everything this skill prints)
+- **After an action** (placed, cancelled, modified, deleted, recorded): ONE line of result, for example "7 GTTs placed and verified: 60 contracts covered, scan 0 findings, pushed `abc1234`". No table of order ids, GTT ids or prices (the broker's order book and GTT list already hold them), no recap of earlier steps.
+- **Tables:** at most 3 to 4 short columns, short cells (no sentences), and only for something the user must choose or still has to do. Never repeat a list that was shown earlier in the same run; point to it.
+- **Before an action** the confirm ticket is still a compact table, but only the numbers needed to say yes (name, qty, limit or triggers, total). Warnings go in one line under it.
+- **Close** with a single `Next step:` line. Add a short "still open" table only when items remain, and then only: item | who does it.
