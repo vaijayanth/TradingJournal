@@ -1,6 +1,20 @@
 {
- "fetched_at": "2026-11-23T08:39:09+05:30",
- "gtts_fetched_at": "2026-11-23T08:39:09+05:30",
- "checked": 49,
- "findings": []
+ "fetched_at": "2026-11-23T08:43:50+05:30",
+ "gtts_fetched_at": "2026-11-23T08:43:50+05:30",
+ "checked": 50,
+ "findings": [
+  {
+   "check": "G6",
+   "name": "OFF-RULE",
+   "severity": "WARN",
+   "tradingsymbol": "PIIND26DEC2000CE",
+   "gtt_id": 345920492,
+   "symbol": "PIIND",
+   "expiry": "2026-12-29",
+   "strike": 2000.0,
+   "opt_type": "CE",
+   "concern": "Stop is 0.7x the sold price (rule 3x)",
+   "action": "Re-set to 33.90"
+  }
+ ]
 }

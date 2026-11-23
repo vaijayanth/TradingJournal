@@ -1,9 +1,9 @@
 {
- "generated_at": "2026-11-23T03:08:35.127818+00:00",
+ "generated_at": "2026-11-23T03:13:50.262457+00:00",
  "market_data_date": "2026-11-20",
  "live_prices_at": "2026-11-23T08:35:51+05:30",
- "gtt_scan_at": "2026-11-23T08:35:40+05:30",
- "gtt_checked_at": "2026-11-23T08:35:40+05:30",
+ "gtt_scan_at": "2026-11-23T08:43:50+05:30",
+ "gtt_checked_at": "2026-11-23T08:43:50+05:30",
  "rules": {
   "short_call_delta": 0.1,
   "short_put_delta": 0.1,
@@ -9029,6 +9029,17 @@
   },
   {
    "level": "WARN",
+   "type": "Invalid GTT",
+   "symbol": "PIIND",
+   "expiry": "2026-12-29",
+   "strike": 2000.0,
+   "opt_type": "CE",
+   "concern": "Off-Rule: Stop is 0.7x the sold price (rule 3x)",
+   "action": "Re-set to 33.90 (GTT 345920492)",
+   "text": "PIIND PIIND26DEC2000CE: Stop is 0.7x the sold price (rule 3x)"
+  },
+  {
+   "level": "WARN",
    "type": "No GTT placed",
    "symbol": "DIVISLAB",
    "expiry": "2026-11-23",
@@ -9098,18 +9109,6 @@
    "concern": "No buy-back GTT on this short",
    "action": "Place GTT at 0.96 (3x premium)",
    "text": "MAHABANK 2026-11-23 short 89CE: no active buy-back GTT (3x premium stop = 0.96)"
-  },
-  {
-   "level": "WARN",
-   "type": "No GTT placed",
-   "symbol": "PIIND",
-   "expiry": "2026-12-29",
-   "strike": 2000.0,
-   "opt_type": "CE",
-   "qty": 175,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 33.9 (3x premium)",
-   "text": "PIIND 2026-12-29 short 2000CE: no active buy-back GTT (3x premium stop = 33.9)"
   }
  ],
  "events_file_at": "2026-11-23T03:06:34.617293+00:00",
@@ -9129,7 +9128,7 @@
   "RECLTD"
  ],
  "positions": {
-  "fetched_at": "2026-11-23T03:05:40.812230+00:00",
+  "fetched_at": "2026-11-23T03:13:50.098741+00:00",
   "track_from": "2026-11-01",
   "legs": 88,
   "ignored_legs": 16
