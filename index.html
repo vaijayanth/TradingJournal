@@ -10749,6 +10749,55 @@ function ccStrikeBanner(d) {
   return `<details class="dh-stale ${hot.length ? 'high' : ''}" role="alert" style="padding:8px 14px;margin-bottom:10px"><summary style="cursor:pointer;display:flex;flex-wrap:wrap;align-items:center;gap:4px 14px;font-size:12.5px;list-style:none"><b>⚠ Strike alert: ${dhEsc(head)} ▾</b><span style="color:var(--text-secondary)">${when}</span></summary>`
     + `<div class="al-wrap"><table class="al-tbl" data-te="off"><thead><tr><th>Alert type</th><th>Stock</th><th>Leg</th><th>Expiry</th><th class="n">Price</th><th class="n">From strike</th><th class="n">Intrinsic</th><th>Action</th></tr></thead><tbody>${hot.concat(near).map(row).join('')}</tbody></table></div></details>`;
 }
+// Options book check (user, 2026-11-23): ONE small table of only the stocks that need attention (trend mismatch, hedge, stop / target, event close, watch), most urgent first; the clean ones are counted in one line
+function ccBookCheck(d) {
+  const R = d.rules || {}, stopX = R.stop_premium_multiple || 3, tgtF = 1 - (R.profit_exit_decay_pct == null ? 60 : R.profit_exit_decay_pct) / 100;
+  const S = (d.stocks || []).filter(s => (s.legs || []).length), al = d.alerts || [];
+  if (!S.length) return '';
+  const hasStops = WS.id !== 'icici';   // DI has no stop orders / GTTs: the stop and target are calculated from the rules
+  const rows = []; let onTrend = 0, shorts = 0, shortsOk = 0, mtm = 0;
+  S.forEach(s => {
+    const iss = [];   // {sev: 0 bad, 1 warn, 2 watch, t, a}
+    const L = s.legs || [], sh = L.filter(l => l.side === 'SHORT'), g = s.colour === 'green', r = s.colour === 'red';
+    L.forEach(l => { mtm += l.pnl_rs || 0; });
+    const wrong = sh.filter(l => (g && l.type === 'CE') || (r && l.type === 'PE'));
+    if (wrong.length) iss.push({ sev: 0, t: `❌ ${wrong[0].type === 'CE' ? 'call' : 'put'} vs ${s.colour}`, a: `Close ${ccStrike(wrong[0].strike)}${wrong[0].type}` });
+    else onTrend++;
+    sh.forEach(l => {
+      shorts++; let ok = true; const sold = l.sell_avg;
+      if (sold > 0 && l.ltp != null) {
+        if (l.ltp >= stopX * sold) { ok = false; iss.push({ sev: 0, t: `❌ past ${stopX}x stop (${l.ltp} vs ${(stopX * sold).toFixed(2)})`, a: `Close ${ccStrike(l.strike)}${l.type} now` }); }
+        else if (l.ltp >= 0.8 * stopX * sold) { ok = false; iss.push({ sev: 1, t: `⚠ near stop (${l.ltp} vs ${(stopX * sold).toFixed(2)})`, a: `Watch ${ccStrike(l.strike)}${l.type}` }); }
+        else if (l.ltp <= tgtF * sold) { ok = false; iss.push({ sev: 1, t: `⚠ target hit (${l.ltp} vs ${(tgtF * sold).toFixed(2)})`, a: `Book profit ${ccStrike(l.strike)}${l.type}` }); }
+        else if (Math.abs(l.dist_pct) <= 7) iss.push({ sev: 2, t: `watch: ${ccStrike(l.strike)}${l.type} ${Math.abs(l.dist_pct).toFixed(1)}% out`, a: `Watch` });
+      } else if (!(sold > 0)) { /* no sold average: not checked */ }
+      if (ok) shortsOk++;
+    });
+    al.filter(a => a.symbol === s.symbol).forEach(a => {
+      const sa = ccShortAlert(a);
+      if (a.type === 'No hedge' || a.type === 'Partly hedged') iss.push({ sev: 1, t: '⚠ ' + (a.type === 'No hedge' ? 'no hedge' : 'part-hedged') + (a.strike ? ' ' + ccStrike(a.strike) + (a.opt_type || '') : ''), a: 'Hedge or close' });
+      else if (hasStops && (a.type === 'No stop placed' || a.type === 'No GTT placed')) iss.push({ sev: 0, t: '❌ no stop' + (a.strike ? ' ' + ccStrike(a.strike) + (a.opt_type || '') : ''), a: sa[1] || 'Place a stop' });
+      else if (hasStops && (a.type === 'Invalid stop order' || a.type === 'Invalid GTT')) iss.push({ sev: 0, t: '❌ ' + (sa[0] || 'invalid stop'), a: sa[1] || 'Fix the stop' });
+      else if (a.type === 'Event close') iss.push({ sev: a.level === 'BREACH' ? 0 : 1, t: '⚠ ' + (sa[0] || 'event close'), a: sa[1] || 'Close before the event' });
+      else if (a.type === 'Exit' && wrong.length) { /* same finding as the trend mismatch above */ }
+      else if (a.type === '3× premium') { if (!iss.some(x => /past /.test(x.t))) { shortsOk = Math.max(0, shortsOk - 1); iss.push({ sev: 0, t: `❌ past ${stopX}x stop`, a: sa[1] || 'Close now' }); } }
+      else if (['Exit', '3× premium', 'Through hedge', 'Beyond strike', 'Expiry risk', 'Profit Exit', 'Leftover hedge'].includes(a.type) && !iss.some(x => x.t.includes(a.type))) iss.push({ sev: a.type === 'Profit Exit' || a.type === 'Leftover hedge' ? 1 : 0, t: (a.type === 'Profit Exit' || a.type === 'Leftover hedge' ? '⚠ ' : '❌ ') + a.type, a: sa[1] || '' });
+    });
+    if (ccInBan(s.symbol)) iss.push({ sev: 1, t: '⚠ F&O ban', a: 'No new positions' });
+    if (iss.length) {
+      const seen = new Set(), u = iss.filter(x => !seen.has(x.t) && seen.add(x.t)).sort((a, b) => a.sev - b.sev);
+      const struct = sh.concat(L.filter(l => l.side === 'LONG')).map(l => (l.side === 'LONG' ? 'L' : 'S') + ccStrike(l.strike) + l.type).join(' ');
+      rows.push({ sym: s.symbol, sev: u[0].sev, col: s.colour, want: s.desired === 'PUT_SPREAD' ? 'BPS' : 'Call', struct, iss: u });
+    }
+  });
+  rows.sort((a, b) => a.sev - b.sev || a.sym.localeCompare(b.sym));
+  const tot = `${S.length} stocks with open legs · ${onTrend}/${S.length} on trend · ${hasStops ? shortsOk + '/' + shorts + ' shorts inside stop and target' : shortsOk + '/' + shorts + ' shorts inside the calculated stop and target'} · options P&amp;L ${dhFmtRs(mtm)}`;
+  const head = `<div class="d2-panel-head"><div><div class="d2-title">Options book check</div><div class="d2-sub">Only stocks that need attention, most urgent first; the rest are counted below</div></div></div>`;
+  if (!rows.length) return `<div class="d2-panel" style="margin-bottom:10px">${head}<div class="d2-edge-foot" style="border:0">✅ All ${S.length} stocks on trend, hedged and stopped · ${tot.split(' · ').slice(2).join(' · ')}</div></div>`;
+  const dot = c => `<span class="cc-dot ${c === 'green' ? 'g' : 'r'}">●</span>`;
+  const body = rows.map(r => `<tr><td><b class="stk">${dhEsc(r.sym)}</b></td><td>${dot(r.col)} ${r.col === 'green' ? 'G' : 'R'}, ${r.want}</td><td style="white-space:nowrap">${dhEsc(r.struct)}</td><td>${r.iss.map(x => dhEsc(x.t)).join('<br>')}</td><td><b>${r.iss.map(x => dhEsc(x.a)).filter(Boolean).join('; ')}</b></td></tr>`).join('');
+  return `<div class="d2-panel" style="margin-bottom:10px">${head}<div class="al-wrap"><table class="al-tbl" data-te="off"><thead><tr><th>Stock</th><th>Trend</th><th>Structure</th><th>Issue</th><th>Action</th></tr></thead><tbody>${body}</tbody></table></div><div class="d2-edge-foot" style="border:0">${tot}</div></div>`;
+}
 function ccOptionsView(d) {
   const S = d.stocks || [];
   const legs = S.flatMap(s => (s.legs || []).map(l => ({ ...l, stock: s })));
@@ -10803,7 +10852,7 @@ function ccOptionsView(d) {
   const foot = `<div class="d2-edge-foot" style="border:0">Market data ${dhFmtDate(d.market_data_date)} · deltas are estimates (Black-Scholes from the chain’s IV, no dividends) · option chains loaded: ${Object.keys(d.chains_loaded || {}).join(', ') || 'none'}.${other}</div>`;
   const bar = ccTabBar('cc-otabs', [['alerts', 'Actions', nAct], ['legs', 'Open positions', trades.length], ['rules', 'Rules', null]], 'ccOTab');
   const allStocks = `<details class="cc-allstocks" style="margin-top:12px"><summary style="cursor:pointer;font-size:12.5px;color:var(--text-secondary)">All stocks (${CC_T.signals.def.rows.length}): trend, flip, open legs, events</summary>${sigT}</details>`;
-  return ccStrikeBanner(d) + kpis + bar + `<div id="cc-ov-alerts" class="a2-view">${alertsT}</div><div id="cc-ov-legs" class="a2-view">${legT}${allStocks}</div><div id="cc-ov-rules" class="a2-view">${rulesPanel}${foot}</div>`;
+  return ccStrikeBanner(d) + ccBookCheck(d) + kpis + bar + `<div id="cc-ov-alerts" class="a2-view">${alertsT}</div><div id="cc-ov-legs" class="a2-view">${legT}${allStocks}</div><div id="cc-ov-rules" class="a2-view">${rulesPanel}${foot}</div>`;
 }
 
 function ccSharesView(d) {
@@ -10960,7 +11009,7 @@ function ccZerodhaView(d) {
   const foot = `<div class="d2-edge-foot" style="border:0">Market data ${dhFmtDate(d.market_data_date)} · no option quotes are pulled, so strikes and premiums for new trades are not shown · positions fetched ${(d.positions || {}).fetched_at ? dhFmtDate(String(d.positions.fetched_at).slice(0, 10)) : (di ? 'never (upload not connected yet)' : 'never (run /refresh-zerodha)')}.</div>`;
   const bar = ccTabBar('cc-otabs', [['alerts', 'Actions', nAct]].concat([['legs', 'Open positions', trades.length], ['rules', 'Rules', null]]), 'ccZTab');
   const allStocks = `<details class="cc-allstocks" style="margin-top:12px"><summary style="cursor:pointer;font-size:12.5px;color:var(--text-secondary)">All stocks (${S.length}): trend, flip, open legs, events</summary>${sigT}</details>`;
-  return ccStrikeBanner(d) + kpis + bar + `<div id="cc-ov-alerts" class="a2-view">${alertsT}</div><div id="cc-ov-legs" class="a2-view">${legT}${allStocks}</div><div id="cc-ov-rules" class="a2-view">${rulesPanel}${foot}</div>`;
+  return ccStrikeBanner(d) + ccBookCheck(d) + kpis + bar + `<div id="cc-ov-alerts" class="a2-view">${alertsT}</div><div id="cc-ov-legs" class="a2-view">${legT}${allStocks}</div><div id="cc-ov-rules" class="a2-view">${rulesPanel}${foot}</div>`;
 }
 
 function ccRender(d) {
