@@ -1,6 +1,43 @@
 {
- "fetched_at": "2026-11-23T12:04:10+05:30",
+ "fetched_at": "2026-11-23T12:54:02+05:30",
  "orders_checked": 12,
- "shorts": 12,
- "findings": []
+ "shorts": 13,
+ "findings": [
+  {
+   "check": "S1",
+   "name": "ORPHAN",
+   "severity": "HIGH",
+   "order_id": "3132611173120673",
+   "symbol": "BANKINDIA",
+   "expiry": null,
+   "strike": null,
+   "opt_type": null,
+   "concern": "Likely orphaned: sold 10400 @ 1.05 but no open short matches; stop_loss 3.15 + target 0.4 still pending: a stop firing would BUY a new long",
+   "action": "Check the position; if closed, cancel the legs (order 3132611173120673)"
+  },
+  {
+   "check": "S2",
+   "name": "NO STOP",
+   "severity": "WARN",
+   "order_id": null,
+   "symbol": "BANKINDIA",
+   "expiry": "2026-12-29",
+   "strike": 140.0,
+   "opt_type": "PE",
+   "concern": "No super order matches this short (15600 @ 1.02): no stop protects it",
+   "action": "Close and re-enter as a super order, or use a daily stop order"
+  },
+  {
+   "check": "S2",
+   "name": "NO STOP",
+   "severity": "WARN",
+   "order_id": null,
+   "symbol": "BPCL",
+   "expiry": "2026-12-29",
+   "strike": 270.0,
+   "opt_type": "PE",
+   "concern": "No super order matches this short (7900 @ 2.15): no stop protects it",
+   "action": "Close and re-enter as a super order, or use a daily stop order"
+  }
+ ]
 }
