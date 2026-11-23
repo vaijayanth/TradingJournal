@@ -1,9 +1,9 @@
 {
- "generated_at": "2026-11-23T03:57:29.729928+00:00",
+ "generated_at": "2026-11-23T04:00:30.688943+00:00",
  "market_data_date": "2026-11-20",
  "live_prices_at": "2026-11-23T09:27:26+05:30",
- "gtt_scan_at": "2026-11-23T09:27:12+05:30",
- "gtt_checked_at": "2026-11-23T09:27:12+05:30",
+ "gtt_scan_at": "2026-11-23T09:30:30+05:30",
+ "gtt_checked_at": "2026-11-23T09:30:30+05:30",
  "rules": {
   "short_call_delta": 0.1,
   "short_put_delta": 0.1,
@@ -8618,17 +8618,6 @@
    "concern": "Supertrend turned GREEN since entry",
    "action": "Close it and open the bull put spread",
    "text": "PNBHOUSING: Supertrend turned GREEN since entry (red): close the short call and open the bull put spread."
-  },
-  {
-   "level": "BREACH",
-   "type": "Invalid GTT",
-   "symbol": "MANAPPURAM",
-   "expiry": "2026-12-29",
-   "strike": 340.0,
-   "opt_type": "CE",
-   "concern": "Stale: No open position on this contract (closed or expired): if it triggers it BUYS a new long position",
-   "action": "Delete this GTT (GTT 345641434)",
-   "text": "MANAPPURAM MANAPPURAM26DEC340CE: No open position on this contract (closed or expired): if it triggers it BUYS a new long position"
   },
   {
    "level": "BREACH",

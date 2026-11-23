@@ -1,5 +1,5 @@
 {
- "fetched_at": "2026-11-23T09:27:12+05:30",
+ "fetched_at": "2026-11-23T09:30:30+05:30",
  "active": {
   "WAAREEENER26DEC2200PE": [
    {
@@ -179,26 +179,6 @@
      18.1
     ],
     "qty": 1000
-   }
-  ],
-  "MANAPPURAM26DEC340CE": [
-   {
-    "id": 345641434,
-    "type": "two-leg",
-    "trigger_values": [
-     0.55,
-     3.7
-    ],
-    "qty": 3000
-   },
-   {
-    "id": 345641434,
-    "type": "two-leg",
-    "trigger_values": [
-     0.55,
-     3.7
-    ],
-    "qty": 3000
    }
   ],
   "INDUSTOWER26DEC360PE": [
@@ -1220,34 +1200,6 @@
      "side": "BUY",
      "qty": 1000,
      "price": 19.85,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
-   "id": 345641434,
-   "type": "two-leg",
-   "created_at": "2026-11-19T22:02:28+05:30",
-   "expires_at": "2026-12-30T00:00:00+05:30",
-   "tradingsymbol": "MANAPPURAM26DEC340CE",
-   "last_price": 1.45,
-   "triggers": [
-    0.55,
-    3.7
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 3000,
-     "price": 0.6,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    },
-    {
-     "side": "BUY",
-     "qty": 3000,
-     "price": 4.05,
      "product": "NRML",
      "order_type": "LIMIT"
     }
