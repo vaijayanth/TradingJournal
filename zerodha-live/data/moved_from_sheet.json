@@ -32,7 +32,9 @@
   "SBIN",
   "EICHERMOT",
   "CHOLAFIN",
-  "ABCAPITAL"
+  "ABCAPITAL",
+  "CUB",
+  "PNBHOUSING"
  ],
  "include_baseline_closed": false,
  "kept_on_sheet": {
@@ -69,7 +71,9 @@
   "SBIN": "2026-08-07",
   "EICHERMOT": "2026-07-28",
   "CHOLAFIN": "2026-08-03",
-  "ABCAPITAL": "2026-08-03"
+  "ABCAPITAL": "2026-08-03",
+  "CUB": "2026-09-07",
+  "PNBHOUSING": "2026-08-10"
  },
  "last_buy": {
   "ANANDRATHI": "2026-08-13",
@@ -102,7 +106,9 @@
   "SBIN": "2026-08-07",
   "EICHERMOT": "2026-07-28",
   "CHOLAFIN": "2026-08-03",
-  "ABCAPITAL": "2026-08-03"
+  "ABCAPITAL": "2026-08-03",
+  "CUB": "2026-09-07",
+  "PNBHOUSING": "2026-08-10"
  },
  "sheet_qty": {
   "ANANDRATHI": 9,
@@ -135,7 +141,9 @@
   "SBIN": 19,
   "EICHERMOT": 3,
   "CHOLAFIN": 11,
-  "ABCAPITAL": 490
+  "ABCAPITAL": 490,
+  "CUB": 125,
+  "PNBHOUSING": 17
  },
  "moved_batch_2": {
   "date": "2026-11-16",
@@ -170,5 +178,13 @@
    "ABCAPITAL"
   ],
   "rule": "user 2026-11-19: green and profitable (+1.0% at the 2026-11-19 close), in the F&O universe"
+ },
+ "moved_batch_6": {
+  "date": "2026-11-23",
+  "symbols": [
+   "CUB",
+   "PNBHOUSING"
+  ],
+  "rule": "user 2026-11-23: green and profitable (CUB +4.0%, PNBHOUSING +2.1% at the 2026-11-20 close), in the F&O universe"
  }
 }

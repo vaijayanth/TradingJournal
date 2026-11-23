@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-23T03:05:52.723328+00:00",
+  "generated_at": "2026-11-23T03:08:32.509967+00:00",
   "market_data_date": "2026-11-20",
   "source_generated_at": {
     "supertrend": "2026-11-20T21:59:01.803872+00:00",
@@ -8,18 +8,18 @@
   "sizing": {
     "closed_trades_count": 2,
     "base_tier_rs": 20000,
-    "total_positions_ever_opened": 39,
+    "total_positions_ever_opened": 41,
     "realized_pl_rs": -3517.05,
-    "unrealized_pl_rs": 35879.45,
-    "combined_pl_rs": 32362.4,
+    "unrealized_pl_rs": 37495.95,
+    "combined_pl_rs": 33978.9,
     "effective_tier_rs": 20000,
     "doubled": false,
-    "tier_note": "39 trades (open + closed) \u00b7 next +5,000 at 100"
+    "tier_note": "41 trades (open + closed) \u00b7 next +5,000 at 100"
   },
-  "dh252_position_count": 37,
+  "dh252_position_count": 39,
   "option_hedge_portfolio": [],
   "holdings_count_total": 190,
-  "holdings_out_of_scope": 153,
+  "holdings_out_of_scope": 151,
   "no_data": [],
   "exited_outside_tracking": [],
   "rules": {
@@ -93,10 +93,10 @@
     },
     {
       "date": "2026-11-20",
-      "pnl": 32362.4,
+      "pnl": 33978.9,
       "realised": -3517.05,
-      "invested": 1066779.52,
-      "equity": 3032362.4
+      "invested": 1116515.12,
+      "equity": 3033978.9
     }
   ],
   "closed_trades": [
@@ -377,6 +377,23 @@
       "age_days": 13,
       "rsi14": 61.1,
       "sector": "Consumer Cyclical"
+    },
+    {
+      "entry_date": "2026-09-07",
+      "symbol": "CUB",
+      "qty": 125,
+      "avg_cost": 239.2816,
+      "cmp": 248.8,
+      "pl_pct": 3.9779,
+      "notional_pl_rs": 1189.8,
+      "supertrend_color": "green",
+      "flip_label": "Flipped to GREEN (0)",
+      "flip_date": "2026-11-20",
+      "pct_from_52w_high": 0.0,
+      "num_adds": 0,
+      "age_days": 77,
+      "rsi14": 68.1,
+      "sector": "Financial Services"
     },
     {
       "entry_date": "2026-08-24",
@@ -668,6 +685,23 @@
       "sector": "Technology"
     },
     {
+      "entry_date": "2026-08-10",
+      "symbol": "PNBHOUSING",
+      "qty": 17,
+      "avg_cost": 1166.2,
+      "cmp": 1191.3,
+      "pl_pct": 2.1523,
+      "notional_pl_rs": 426.7,
+      "supertrend_color": "green",
+      "flip_label": "Flipped to GREEN (0)",
+      "flip_date": "2026-11-20",
+      "pct_from_52w_high": -2.74,
+      "num_adds": 0,
+      "age_days": 105,
+      "rsi14": 64.2,
+      "sector": "Financial Services"
+    },
+    {
       "entry_date": "2026-11-16",
       "symbol": "POWERINDIA",
       "qty": 1,
@@ -849,7 +883,9 @@
       "SBIN",
       "EICHERMOT",
       "CHOLAFIN",
-      "ABCAPITAL"
+      "ABCAPITAL",
+      "CUB",
+      "PNBHOUSING"
     ],
     "moved_at": "2026-11-09"
   },
