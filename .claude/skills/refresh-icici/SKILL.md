@@ -50,6 +50,7 @@ The final report must fit one screen with no scrolling (about 35 lines). Working
 3. **Supertrend / entry signals:** show only FLIP rows and new-entry tiers 1 to 2 in full; everything else is a count in one line.
 4. **Skills + manual steps:** ONE numbered `Next step:` list, each item tagged `[skill]` or `[manual]`, no separate tables.
 6. **Share-entry table, ALWAYS shown, even when there are no entries (user, 2026-11-19).** Right after the status table: `Group | Count | Detail` with the row Entries (52-week closing lows), and when 0 name the 5 stocks nearest a 52-week low (price, % above the low, yield) and any COOLDOWN rows. Never skip it.
+7. **F&O ban line, ALWAYS in the report (user, 2026-11-23).** `refresh_icici.py` runs `fetch_fno_ban.py` (`data/fno_ban.json`). In the status table add a row `F&O ban`: the symbols in ban, and which are DI option stocks with open legs or entry candidates. `ok: false` = say the list could not be fetched, never 'none'.
 5. Cell text is a short phrase (no sentences, no repeated explanations). The long per-section tables of the older layout are produced only if the user says "details" or names a section.
 
 ## Rules (do not change without the user)

@@ -53,6 +53,10 @@ def main():
          "--signals", ROOT / "zerodha_live_signals.json", "--out", DATA / "signal_crosscheck.json"])
     # covered call (signals only): lot sizes / expiries from Zerodha's public instrument list, then the rule per stock
     run([py, SCRIPTS / "update_options_master.py"])
+    try:   # NSE F&O ban list (informational; a failure keeps the old file and never stops the refresh)
+        run([py, SCRIPTS / "fetch_fno_ban.py"])
+    except subprocess.CalledProcessError:
+        print("WARNING: fetch_fno_ban.py failed - keeping the previous data/fno_ban.json")
     try:   # results / ex-dividend dates for the 15-day close rule; cached 2 days, a Yahoo failure must not stop the refresh (the old file is kept)
         run([py, SCRIPTS / "fetch_option_events.py"])
     except subprocess.CalledProcessError:

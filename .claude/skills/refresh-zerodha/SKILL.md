@@ -93,6 +93,7 @@ The final report must fit one screen with no scrolling (about 35 lines). Working
 3. **Supertrend / entry signals:** show only FLIP rows and new-entry tiers 1 to 2 in full; everything else is a count in one line.
 4. **Skills + manual steps:** ONE numbered `Next step:` list, each item tagged `[skill]` or `[manual]`, no separate tables.
 6. **Swing signals table, ALWAYS shown, even when every count is 0 (user, 2026-11-19).** Put it right after the status table: `Group | Count | Detail` with the rows Exits / Add-ons / Entries; for a 0 row say why in a short phrase (for example 'no red Supertrend', 'POLICYBZR -8.8% but cooldown to 23 Nov', 'no flip today'), and add one line naming the nearest add-on / exit candidate (stock, P&L %, how far from the trigger). Never skip it or fold it into 'nothing to do'.
+7. **F&O ban line, ALWAYS in the report (user, 2026-11-23).** `refresh_zerodha.py` runs `fetch_fno_ban.py` (NSE's daily list, `data/fno_ban.json`; needs the `nsearchives.nseindia.com` host, allowed in the environment 2026-11-23). In the status table add a row `F&O ban`: the symbols in ban for the trade date, and which of them are an open option stock or a Tier 1-2 entry candidate (a ban stock takes no new positions: do not open or add; reducing trades are fine). `ok: false` = say the list could not be fetched, never 'none'.
 5. Cell text is a short phrase (no sentences, no repeated explanations). The long per-section tables of the older layout are produced only if the user says "details" or names a section.
 
 ## Rules (do not change without the user)

@@ -8818,7 +8818,7 @@ function renderClosedTradesReal(closed) {
 const WS_KEY = 'tj_workspace';
 const WORKSPACES = {
   dhan:    { id: 'dhan',    label: 'ND',      strategy: 'dh252', source: 'MCP snapshot',  status: 'live',
-             snapshotUrl: 'dhan-live/dhan_live_signals.json', insightsUrl: 'dhan-live/insights.json',
+             snapshotUrl: 'dhan-live/dhan_live_signals.json', insightsUrl: 'dhan-live/insights.json', banUrl: 'dhan-live/data/fno_ban.json',
              ordersUrl: 'dhan-live/data/orders_snapshot.json', crosscheckUrl: 'dhan-live/data/signal_crosscheck.json', guardUrl: 'dhan-live/data/guardrails.json',
              copy: { refreshCmd: '/refresh-dhan', hasCC: true, strat: 'dh252', liveTitle: 'ND Live · dh252',
                      liveSub: "Live ND positions vs. backtester's daily Supertrend / 52-week-high signals", logoA: 'dh', logoB: '252', logoSub: '52-week-high swing',
@@ -8834,7 +8834,7 @@ const WORKSPACES = {
                     bt: { label: '10-yr backtest · Rs20L start · Rs1k + Rs1k ladder · 6% on idle cash', cagr: 28.01, maxDd: -15.42, winRate: 41.3, pf: 2.01, avgWin: 33.1, avgLoss: -9.0, holdWin: 102, holdLoss: 39, maxPos: 469, trades: 7898 } },
              pages: { live: true, covcall: true, dashboard: 'v2', performance: 'v2', analysis: 'v2' } },   // 'v2' = contract-driven page-dashboard2
   zerodha: { id: 'zerodha', label: 'AZ',      strategy: 'F&O Supertrend', source: 'MCP snapshot', status: 'live',
-             snapshotUrl: 'zerodha-live/zerodha_live_signals.json', insightsUrl: 'zerodha-live/insights.json',
+             snapshotUrl: 'zerodha-live/zerodha_live_signals.json', insightsUrl: 'zerodha-live/insights.json', banUrl: 'zerodha-live/data/fno_ban.json',
              ordersUrl: 'zerodha-live/data/orders_snapshot.json', crosscheckUrl: 'zerodha-live/data/signal_crosscheck.json', guardUrl: 'zerodha-live/data/guardrails.json',
              ccUrl: 'zerodha-live/covered_call_signals.json',
              cfg: { staleDays: 3, addTriggerPct: -6, addCooldownDays: 7, addFraction: 0.1,
@@ -8851,7 +8851,7 @@ const WORKSPACES = {
              // 'sheet' = the old Google-Sheet dashboard, kept as one tab; every other page reads the MCP snapshot
              pages: { sheet: true, live: true, covcall: true, dashboard: 'v2', performance: 'v2', analysis: 'v2' } },
   icici:   { id: 'icici',   label: 'DI',      strategy: 'Dividend · 52-week-low averaging', source: 'Yahoo + uploads', status: 'live',
-             snapshotUrl: 'icici-live/icici_live_signals.json', ccUrl: 'icici-live/covered_call_signals.json',
+             snapshotUrl: 'icici-live/icici_live_signals.json', ccUrl: 'icici-live/covered_call_signals.json', banUrl: 'icici-live/data/fno_ban.json',
              copy: { refreshCmd: '/refresh-icici' },
              alt: { dashboard: { el: 'page-dashboard-di', fn: 'diEnsure' } },   // DI has its own Dashboard (universe, dividends, entry signals)
              pages: { dashboard: 'v2', covcall: true } },                      // no Live Trading / Performance / Analysis: a dividend-only portfolio
@@ -10220,12 +10220,21 @@ const ccUrlFor = id => (WORKSPACES[id] || {}).ccUrl || CC_URL;
 const ccUrl = () => ccUrlFor(WS.id);
 // Covered-call data is cached PER WORKSPACE (WS.cc[id]); window._cc / _ccWs are only an alias of the active workspace's entry, kept in step on every switch.
 WS.cc = WS.cc || {};
+// NSE F&O ban list (user, 2026-11-23): each workspace reads only its own data/fno_ban.json; a stock in ban takes no NEW positions (reducing trades are allowed)
+WS.ban = WS.ban || {};
+async function ccBanLoad(ws) {
+  const u = (WORKSPACES[ws] || {}).banUrl; if (!u) return;
+  try { const r = await fetch(u + '?t=' + Date.now()); if (!r.ok) return; const j = await r.json(); WS.ban[ws] = { ok: j.ok !== false, date: j.trade_date, symbols: new Set((j.symbols || []).map(String)) }; } catch (e) {}
+}
+const ccInBan = sym => { const b = (WS.ban || {})[WS.id]; return !!(b && b.symbols && b.symbols.has(sym)); };
+const ccBanChip = (closing) => `<b class="cc-ban" style="color:var(--red);font-weight:800;white-space:nowrap" title="NSE F&O ban period: no new positions in this stock, only reducing trades">⛔ F&amp;O BAN · ${closing ? 'closing only' : 'do not open'}</b>`;
 function ccAlias() { const c = WS.cc[WS.id] || null; window._cc = c; window._ccWs = c ? WS.id : null; return c; }
 function ccPut(ws, j) { WS.cc[ws] = j; if (ws === WS.id) ccAlias(); }
 async function ccPrefetch(ws) {   // load a workspace's covered-call file in the background so the freshness chip (live-price time) never depends on having opened Covered Call
   if (WS.cc[ws]) return WS.cc[ws];
   try {
     const res = await fetch(ccUrlFor(ws) + '?t=' + Date.now()); if (!res.ok) return null;
+    await ccBanLoad(ws);
     ccPut(ws, await res.json());
     if (ws === WS.id) { try { wsPaintFresh(); } catch (e) {} try { if (dhCopy().optCol && dhLiveData()) dhLiveApply('pos'); } catch (e) {} }   // the Open positions table shows each stock's option trade
     return WS.cc[ws];
@@ -10238,6 +10247,7 @@ async function ccRefresh(spin) {
     const ws = WS.id, res = await fetch(ccUrl() + '?t=' + Date.now());
     if (!res.ok) throw new Error('HTTP ' + res.status);
     const j = await res.json();
+    await ccBanLoad(ws);
     ccPut(ws, j);                       // always cache it under the workspace it was fetched for
     if (ws !== WS.id) return;           // workspace switched while loading: never paint another broker's data
     ccRender(window._cc);
@@ -10247,7 +10257,7 @@ async function ccRefresh(spin) {
     console.error('Covered call load error:', e);
   }
 }
-function ccEnsure() { const c = ccAlias(); if (c) ccRender(c); else ccRefresh(false); }
+function ccEnsure() { const c = ccAlias(); if (c) { ccBanLoad(WS.id).then(() => ccRender(c)); } else ccRefresh(false); }
 
 function ccSuggest(g, lot) {
   const x = dhFmtDate(g.expiry), tag = `<b>${x}</b>${g.expiry_week ? ' <span class="neg">expiry week</span>' : ''} · `;
@@ -10409,11 +10419,11 @@ const ccTrendCell = r => { const c = ccTrendOf(r.symbol); return c ? `<span clas
 const ccRightPos = r => { const c = ccTrendOf(r.symbol); return c === 'green' ? 'Open BPS' : c === 'red' ? 'Sell call' : '—'; };
 const ccAlertCols = withType => (withType ? [{ h: 'Alert type', v: r => ccTypeOrd(r), c: r => ccTypePill(r) }] : []).concat([
   { h: 'Stock', v: r => r.symbol, c: r => `<b class="stk">${dhEsc(r.symbol)}</b>` },
-  { h: 'Trend', v: r => ccTrendOf(r.symbol), c: ccTrendCell, txt: true },
+  { h: 'Supertrend', v: r => ccTrendOf(r.symbol), c: ccTrendCell, txt: true },
   { h: 'Right position', v: r => ccRightPos(r), c: r => { const p = ccRightPos(r); return p === '—' ? '<span style="color:var(--text-muted)">—</span>' : `<b title="The structure the Supertrend colour wants: green = bull put spread, red = sell call">${p}</b>`; }, txt: true },
   { h: 'Leg', v: r => r.strike == null ? '' : r.strike, c: r => r.strike == null ? '—' : ccStrike(r.strike) + ' ' + (r.opt_type || '') },
   { h: 'Expiry', v: r => r.expiry || '', c: r => r.expiry ? dhFmtDate(r.expiry) : '—' },
-  { h: 'Issue', v: r => ccShortAlert(r)[0], c: r => `<span title="${dhEsc(r.concern || ccAlertDetail(r) || '')}">${dhEsc(ccShortAlert(r)[0])}</span>`, txt: true },
+  { h: 'Issue', v: r => ccShortAlert(r)[0], c: r => `<span title="${dhEsc(r.concern || ccAlertDetail(r) || '')}">${dhEsc(ccShortAlert(r)[0])}</span>${ccInBan(r.symbol) ? '<br>' + ccBanChip(true) : ''}`, txt: true },
   { h: 'Action', v: r => ccShortAlert(r)[1], c: r => `<b title="${dhEsc(r.action || '')}">${dhEsc(ccShortAlert(r)[1])}</b>`, txt: true },
 ]);
 // ── ACTIONS tab (user, 2026-11-17): alerts AND entry signals in one place, three segments in workflow order: Exit -> Fix -> Entry (+ All) ──
@@ -10448,18 +10458,18 @@ function ccActRows(d, tierRows) {
   return al.concat(en);
 }
 const ccIsTier = r => r.kind === 'entry' && r.tier != null;
-const ccActIssueTxt = r => ccIsTier(r) ? (r.td === 0 ? 'Flipped today' : `Flipped ${r.td}d ago`) + (r.evs && r.evs.length ? '; ' + r.evs.map(e => e.txt).join('; ') : '') + (r.short ? '; short expiry' : '') : ccShortAlert(r)[0];
-const ccActDoTxt = r => ccIsTier(r) ? (r.lvl >= 3 ? 'Do not open' : r.desired === 'PUT_SPREAD' ? 'Open BPS' : 'Sell the call') : ccShortAlert(r)[1];
+const ccActIssueTxt = r => ccIsTier(r) ? (ccInBan(r.symbol) ? 'F&O BAN: do not open; ' : '') + (r.td === 0 ? 'Flipped today' : `Flipped ${r.td}d ago`) + (r.evs && r.evs.length ? '; ' + r.evs.map(e => e.txt).join('; ') : '') + (r.short ? '; short expiry' : '') : ccShortAlert(r)[0];
+const ccActDoTxt = r => ccIsTier(r) ? (ccInBan(r.symbol) || r.lvl >= 3 ? 'Do not open' : r.desired === 'PUT_SPREAD' ? 'Open BPS' : 'Sell the call') : ccShortAlert(r)[1];
 const ccActCols = () => [
   { h: 'Type', v: r => r.ord, x: r => r.type, c: r => ccTypePill(r), txt: true },
   { h: 'Stock', v: r => r.symbol, c: r => `<b class="stk">${dhEsc(r.symbol)}</b>`, txt: true },
-  { h: 'Trend', v: r => ccTrendOf(r.symbol), c: ccTrendCell, txt: true },
+  { h: 'Supertrend', v: r => ccTrendOf(r.symbol), c: ccTrendCell, txt: true },
   { h: 'Right position', v: r => ccRightPos(r), c: r => { const p = ccRightPos(r); return p === '—' ? '<span style="color:var(--text-muted)">—</span>' : `<b title="The structure the Supertrend colour wants: green = bull put spread, red = sell call">${p}</b>`; }, txt: true },
   { h: 'Leg', v: r => r.strike == null ? '' : r.strike, c: r => r.strike == null ? '<span style="color:var(--text-muted)">—</span>' : ccStrike(r.strike) + ' ' + (r.opt_type || '') },
   { h: 'Expiry', v: r => r.expiry || '', c: r => r.expiry ? dhFmtDate(r.expiry) : '—' },
   { h: 'Issue', v: r => ccActIssueTxt(r), c: r => ccIsTier(r)
       ? `${r.td === 0 ? '<b>Flipped today</b>' : `Flipped ${r.td}d ago`}${ccTierAlert(r) !== '<span style="color:var(--text-muted)">—</span>' ? '<br>' + ccTierAlert(r) : ''}`
-      : `<span title="${dhEsc(r.concern || ccAlertDetail(r) || '')}">${dhEsc(ccShortAlert(r)[0])}</span>`, txt: true, nw: 190 },
+      : `<span title="${dhEsc(r.concern || ccAlertDetail(r) || '')}">${dhEsc(ccShortAlert(r)[0])}</span>${ccInBan(r.symbol) ? '<br>' + ccBanChip(true) : ''}`, txt: true, nw: 190 },
   { h: 'Action', v: r => ccActDoTxt(r), c: r => `<b title="${dhEsc(r.action || '')}">${dhEsc(ccActDoTxt(r))}</b>`, txt: true },
 ];
 function ccActionsBox(d, pfx, tierRows, showEntry) {
@@ -10480,7 +10490,7 @@ function ccActionsBox(d, pfx, tierRows, showEntry) {
   const entryFilters = rows => [['all', 'All entry signals', () => true]].concat([1, 2, 3, 4, 5].filter(t => rows.some(r => r.tier === t)).map(t => ['t' + t, 'Tier ' + t, r => r.tier === t]),
     [['put', 'BPS', r => r.desired === 'PUT_SPREAD' || /BPS|bull put/i.test(r.action || '')], ['call', 'Sell call', r => r.desired === 'CALL'], ['clear', 'Clear to open (no event alert)', r => !(r.lvl >= 2)], ['alert', 'Has an event alert', r => r.lvl >= 2]]);
   const R = d.rules || {};
-  const tierIntro = 'Supertrend only, no RSI: green = BPS (bull put spread), red = sell call. Tier = when the current colour began: 1 today, 2 within a week, 3 within 30 days, 4 within 90 days, 5 older. Stocks with open option legs are not listed. The Issue column warns of results / ex-dividend dates: <b>✕ Do not open</b> = inside the ' + (R.event_close_days ?? 15) + '-day close window now, <b>⚠ Close by</b> = the window opens before the expiry. Click a tier row for details. ' + (WS.id === 'zerodha' ? 'Place with /zerodha-option-order' : 'Place with /dhan-superorder (Part 3)') + ' (strikes and premiums come from live quotes there).';
+  const tierIntro = 'Supertrend only, no RSI: green = BPS (bull put spread), red = sell call. Tier = when the current colour began: 1 today, 2 within a week, 3 within 30 days, 4 within 90 days, 5 older. Stocks with open option legs are not listed. The Issue column warns of results / ex-dividend dates and, in bold red, the NSE F&amp;O ban (no new position in a banned stock): <b>✕ Do not open</b> = inside the ' + (R.event_close_days ?? 15) + '-day close window now, <b>⚠ Close by</b> = the window opens before the expiry. Click a tier row for details. ' + (WS.id === 'zerodha' ? 'Place with /zerodha-option-order' : 'Place with /dhan-superorder (Part 3)') + ' (strikes and premiums come from live quotes there).';
   const meta = {
     exit: { title: 'Exit', hint: 'Close or watch an open leg, most urgent first (3× premium, through hedge, beyond strike, colour flipped, expiry or event close, profit exit).', empty: 'Nothing to exit: no open leg has an exit alert.' },
     fix: { title: 'Fix', hint: 'Open positions that are not properly protected: stop or GTT problems, missing or partial hedge, leftover long legs.', empty: 'Nothing to fix: every short has its stop and hedge.' },
@@ -10592,8 +10602,10 @@ function ccTierRows(d) {
   return out;
 }
 const ccTierAlert = r => {
+  const banned = ccInBan(r.symbol);
   const chip = (bg, fg, t, tip) => `<span class="trend-pill" style="background:${bg};color:${fg};white-space:nowrap" title="${dhEsc(tip || '')}">${t}</span>`;
   const parts = [];
+  if (banned) parts.push(ccBanChip(false));
   if (r.main && r.main.l === 3) parts.push(chip('var(--red)', '#fff', '✕ Do not open · ' + dhEsc(r.main.txt), 'This event is inside the ' + 'close window right now: a new option would have to be closed at once'));
   else if (r.main && r.main.l === 2) parts.push(chip('var(--amber-soft, var(--surface2))', 'var(--amber)', '⚠ Close by ' + dhFmtDate(r.main.start.getFullYear() + '-' + String(r.main.start.getMonth() + 1).padStart(2, '0') + '-' + String(r.main.start.getDate()).padStart(2, '0')) + ' · ' + dhEsc(r.main.txt), 'The close window opens before the expiry: the trade must be closed early'));
   else if (r.main) parts.push(`<span style="color:var(--text-muted)">${dhEsc(r.main.txt)}</span>`);
@@ -10672,7 +10684,7 @@ const ccTradeDetail = t => {
 const ccHeldMatch = t => { const c = ccTrendOf(t.symbol); if (!c || !t.shorts_n) return null; return c === 'green' ? t.type === 'PE' : t.type === 'CE'; };
 const ccTradeCols = () => [
   { h: 'Stock', v: t => t.symbol, c: t => `<b class="stk">${dhEsc(t.symbol)}</b>`, txt: true },
-  { h: 'Trend', v: t => ccTrendOf(t.symbol), c: t => ccTrendCell(t), txt: true },
+  { h: 'Supertrend', v: t => ccTrendOf(t.symbol), c: t => ccTrendCell(t), txt: true },
   { h: 'Right position', v: t => ccRightPos(t), c: t => { const p = ccRightPos(t), m = ccHeldMatch(t); const mk = m == null ? '' : m ? ' <span class="pos" title="This trade is the structure the colour wants">✓</span>' : ' <span class="neg" title="This trade is the opposite of what the colour wants">≠</span>'; return p === '—' ? '<span style="color:var(--text-muted)">—</span>' : `<b>${p}</b>${mk}`; }, txt: true },
   { h: 'Trade', v: t => t.label, c: t => dhEsc(t.label), txt: true },
   { h: 'Expiry', v: t => t.expiry, c: t => `${dhFmtDate(t.expiry)} <span style="color:${t.days <= 7 ? 'var(--red)' : 'var(--text-muted)'}">(${t.days}d)</span>`, txt: true },
