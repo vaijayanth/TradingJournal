@@ -1,13 +1,13 @@
 {
- "generated_at": "2026-11-23T11:24:15+05:30",
+ "generated_at": "2026-11-23T12:24:51+05:30",
  "broker": "zerodha",
  "market_data_date": "2026-11-20",
- "signals_generated_at": "2026-11-23T05:15:45.692624+00:00",
+ "signals_generated_at": "2026-11-23T06:54:43.719952+00:00",
  "status": "WARN",
  "global_block": false,
  "counts": {
   "block": 0,
-  "warn": 4,
+  "warn": 5,
   "info": 0
  },
  "per_symbol_blocks": {},
@@ -22,7 +22,13 @@
    "id": "P3",
    "level": "WARN",
    "symbol": null,
-   "msg": "8 open option exit / strike-breach alerts on 3 stocks (DIVISLAB, PFC, PNBHOUSING) - see the Covered Call alerts"
+   "msg": "6 open option exit / strike-breach alerts on 2 stocks (DIVISLAB, PNBHOUSING) - see the Covered Call alerts"
+  },
+  {
+   "id": "P5",
+   "level": "WARN",
+   "symbol": null,
+   "msg": "1 invalid GTT orders (1 high: e.g. buy GTTs on contracts you no longer hold) - see Covered Call > Alerts > Invalid GTT; the zerodha-gtt-order skill can delete them"
   },
   {
    "id": "P1",

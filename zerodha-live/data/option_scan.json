@@ -1,27 +1,21 @@
 {
  "fired_ok_today": [
+  "SOLARINDS26DEC22000CE",
+  "COALINDIA26DEC440CE",
   "POLYCAB26DEC8400CE",
   "PIIND26DEC2000CE"
  ],
- "fetched_at": "2026-11-23T10:45:48+05:30",
+ "fetched_at": "2026-11-23T12:24:56+05:30",
  "inputs": {
-  "positions": "2026-11-23T05:15:31.317503+00:00",
-  "gtts": "2026-11-23T10:45:31+05:30",
-  "orders": "2026-11-23T10:45:31+05:30",
-  "gtt_scan": "2026-11-23T10:45:31+05:30"
+  "positions": "2026-11-23T06:54:29.439580+00:00",
+  "gtts": "2026-11-23T12:24:29+05:30",
+  "orders": "2026-11-23T12:24:13+05:30",
+  "gtt_scan": "2026-11-23T12:24:29+05:30"
  },
  "stale_inputs": [],
- "open_legs": 90,
- "triggered_gtts": 3,
+ "open_legs": 95,
+ "triggered_gtts": 5,
  "findings": [
-  {
-   "section": "A",
-   "severity": "WARN",
-   "symbol": "KARURVYSYA",
-   "tradingsymbol": "KARURVYSYA26NOV330PE",
-   "concern": "Long 330PE (1550 qty) no short against it; P&L Rs-2,712, expiry 2026-11-23",
-   "action": "Sell it or let it expire"
-  },
   {
    "section": "B",
    "severity": "INFO",
@@ -52,14 +46,6 @@
    "symbol": "CGPOWER",
    "tradingsymbol": "CGPOWER26DEC960CE",
    "concern": "Short 960CE (850 qty) is a naked call (by design; covered only by shares you hold)",
-   "action": "Watch the 3x stop and the Supertrend colour"
-  },
-  {
-   "section": "B",
-   "severity": "INFO",
-   "symbol": "COALINDIA",
-   "tradingsymbol": "COALINDIA26DEC440CE",
-   "concern": "Short 440CE (1350 qty) is a naked call (by design; covered only by shares you hold)",
    "action": "Watch the 3x stop and the Supertrend colour"
   },
   {
@@ -185,6 +171,14 @@
   {
    "section": "B",
    "severity": "INFO",
+   "symbol": "PIIND",
+   "tradingsymbol": "PIIND26DEC1880CE",
+   "concern": "Short 1880CE (350 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
    "symbol": "PNBHOUSING",
    "tradingsymbol": "PNBHOUSING26DEC1280CE",
    "concern": "Short 1280CE (650 qty) is a naked call (by design; covered only by shares you hold)",
@@ -212,14 +206,6 @@
    "symbol": "SAIL",
    "tradingsymbol": "SAIL26DEC200CE",
    "concern": "Short 200CE (4700 qty) is a naked call (by design; covered only by shares you hold)",
-   "action": "Watch the 3x stop and the Supertrend colour"
-  },
-  {
-   "section": "B",
-   "severity": "INFO",
-   "symbol": "SOLARINDS",
-   "tradingsymbol": "SOLARINDS26DEC22000CE",
-   "concern": "Short 22000CE (50 qty) is a naked call (by design; covered only by shares you hold)",
    "action": "Watch the 3x stop and the Supertrend colour"
   },
   {
@@ -273,6 +259,14 @@
   {
    "section": "B",
    "severity": "INFO",
+   "symbol": "UJJIVANSFB",
+   "tradingsymbol": "UJJIVANSFB26DEC72CE",
+   "concern": "Short 72CE (8000 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
    "symbol": "VEDL",
    "tradingsymbol": "VEDL26DEC280CE",
    "concern": "Short 280CE (2300 qty) is a naked call (by design; covered only by shares you hold)",
@@ -291,47 +285,39 @@
    "severity": "HIGH",
    "symbol": "DIVISLAB",
    "tradingsymbol": "DIVISLAB26NOV10600CE",
-   "concern": "No active buy-back GTT (premium 680.1, sold 116.95, already 5.8x: a GTT would fire at once)",
+   "concern": "No active buy-back GTT (premium 729.65, sold 116.95, already 6.2x: a GTT would fire at once)",
    "action": "Close it now (a GTT would fire at once)"
   },
   {
    "section": "C",
    "severity": "WARN",
-   "symbol": "INOXWIND",
-   "tradingsymbol": "INOXWIND26DEC72CE",
-   "concern": "No active buy-back GTT (premium 0.42, sold 0.42)",
+   "symbol": "ABB",
+   "tradingsymbol": "ABB26DEC6200PE",
+   "concern": "No active buy-back GTT (premium 43.4, sold 45.45)",
    "action": "Place the protective GTT (zerodha-gtt-order)"
   },
   {
    "section": "C",
    "severity": "WARN",
-   "symbol": "NAUKRI",
-   "tradingsymbol": "NAUKRI26DEC1360CE",
-   "concern": "No active buy-back GTT (premium 5.2, sold 5.2)",
+   "symbol": "CUB",
+   "tradingsymbol": "CUB26DEC210PE",
+   "concern": "No active buy-back GTT (premium 2.24, sold 2.21)",
    "action": "Place the protective GTT (zerodha-gtt-order)"
   },
   {
    "section": "C",
    "severity": "WARN",
-   "symbol": "OIL",
-   "tradingsymbol": "OIL26DEC490CE",
-   "concern": "No active buy-back GTT (premium 1.8, sold 1.8)",
+   "symbol": "ENRIN",
+   "tradingsymbol": "ENRIN26DEC2500PE",
+   "concern": "No active buy-back GTT (premium 30.8, sold 30.8)",
    "action": "Place the protective GTT (zerodha-gtt-order)"
   },
   {
    "section": "C",
    "severity": "WARN",
-   "symbol": "SUPREMEIND",
-   "tradingsymbol": "SUPREMEIND26DEC3600CE",
-   "concern": "No active buy-back GTT (premium 21.9, sold 21.45)",
-   "action": "Place the protective GTT (zerodha-gtt-order)"
-  },
-  {
-   "section": "C",
-   "severity": "WARN",
-   "symbol": "SWIGGY",
-   "tradingsymbol": "SWIGGY26DEC220CE",
-   "concern": "No active buy-back GTT (premium 1.18, sold 1.17)",
+   "symbol": "PNBHOUSING",
+   "tradingsymbol": "PNBHOUSING26DEC1040PE",
+   "concern": "No active buy-back GTT (premium 7.75, sold 8.4)",
    "action": "Place the protective GTT (zerodha-gtt-order)"
   },
   {
@@ -343,11 +329,19 @@
    "action": "Modify the limit or close it by hand in Kite"
   },
   {
+   "section": "F",
+   "severity": "HIGH",
+   "symbol": "PFC",
+   "tradingsymbol": "PFC26DEC300PE",
+   "concern": "G1 STALE: No open position on this contract (closed or expired): if it triggers it BUYS a new long position (GTT 345419658)",
+   "action": "Delete this GTT"
+  },
+  {
    "section": "G",
    "severity": "WARN",
    "symbol": "CUMMINSIND",
    "tradingsymbol": "CUMMINSIND26DEC5000CE",
-   "concern": "Active GTT 344015712 (trailing-single) has a stop but no profit target; sold 21.8, premium 11.15",
+   "concern": "Active GTT 344015712 (trailing-single) has a stop but no profit target; sold 21.8, premium 10",
    "action": "Add a profit target at about 8.72 (a two-leg GTT: /zerodha-gtt-order or the Kite app)"
   }
  ]
