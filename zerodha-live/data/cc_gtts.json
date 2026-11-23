@@ -1,5 +1,5 @@
 {
- "fetched_at": "2026-11-23T12:28:42+05:30",
+ "fetched_at": "2026-11-23T17:28:53+05:30",
  "active": {
   "PNBHOUSING26DEC1040PE": [
    {
@@ -427,7 +427,7 @@
     "type": "trailing-two-leg",
     "trigger_values": [
      6.8,
-     42.9
+     41.9
     ],
     "qty": 325
    },
@@ -436,7 +436,7 @@
     "type": "trailing-two-leg",
     "trigger_values": [
      6.8,
-     42.9
+     41.9
     ],
     "qty": 325
    }
@@ -647,7 +647,7 @@
     "type": "trailing-two-leg",
     "trigger_values": [
      7.85,
-     53.05
+     51.05
     ],
     "qty": 150
    },
@@ -656,7 +656,7 @@
     "type": "trailing-two-leg",
     "trigger_values": [
      7.85,
-     53.05
+     51.05
     ],
     "qty": 150
    }
@@ -759,26 +759,6 @@
      27.75
     ],
     "qty": 600
-   }
-  ],
-  "TORNTPHARM26DEC5100CE": [
-   {
-    "id": 345419691,
-    "type": "two-leg",
-    "trigger_values": [
-     10,
-     68.9
-    ],
-    "qty": 125
-   },
-   {
-    "id": 345419691,
-    "type": "two-leg",
-    "trigger_values": [
-     10,
-     68.9
-    ],
-    "qty": 125
    }
   ],
   "SIEMENS26DEC3150PE": [
@@ -901,26 +881,6 @@
     "qty": 9275
    }
   ],
-  "ICICIGI26DEC1560PE": [
-   {
-    "id": 345419594,
-    "type": "two-leg",
-    "trigger_values": [
-     5.4,
-     37.15
-    ],
-    "qty": 325
-   },
-   {
-    "id": 345419594,
-    "type": "two-leg",
-    "trigger_values": [
-     5.4,
-     37.15
-    ],
-    "qty": 325
-   }
-  ],
   "COLPAL26DEC1540PE": [
    {
     "id": 345419589,
@@ -1039,26 +999,6 @@
      16.05
     ],
     "qty": 500
-   }
-  ],
-  "PREMIERENE26DEC1000CE": [
-   {
-    "id": 344976353,
-    "type": "two-leg",
-    "trigger_values": [
-     1.6,
-     12
-    ],
-    "qty": 650
-   },
-   {
-    "id": 344976353,
-    "type": "two-leg",
-    "trigger_values": [
-     1.6,
-     12
-    ],
-    "qty": 650
    }
   ],
   "LUPIN26DEC2240CE": [
@@ -1810,7 +1750,7 @@
    "last_price": 23.5,
    "triggers": [
     6.8,
-    42.9
+    41.9
    ],
    "orders": [
     {
@@ -1823,7 +1763,7 @@
     {
      "side": "BUY",
      "qty": 325,
-     "price": 47.15,
+     "price": 46.15,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -2118,7 +2058,7 @@
    "last_price": 21.5,
    "triggers": [
     7.85,
-    53.05
+    51.05
    ],
    "orders": [
     {
@@ -2131,7 +2071,7 @@
     {
      "side": "BUY",
      "qty": 150,
-     "price": 57.95,
+     "price": 55.95,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -2272,34 +2212,6 @@
      "side": "BUY",
      "qty": 600,
      "price": 30.35,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
-   "id": 345419691,
-   "type": "two-leg",
-   "created_at": "2026-11-18T19:40:45+05:30",
-   "expires_at": "2026-12-30T00:00:00+05:30",
-   "tradingsymbol": "TORNTPHARM26DEC5100CE",
-   "last_price": 23.55,
-   "triggers": [
-    10,
-    68.9
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 125,
-     "price": 10.3,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    },
-    {
-     "side": "BUY",
-     "qty": 125,
-     "price": 75.15,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -2474,34 +2386,6 @@
    ]
   },
   {
-   "id": 345419594,
-   "type": "two-leg",
-   "created_at": "2026-11-18T19:39:31+05:30",
-   "expires_at": "2026-12-30T00:00:00+05:30",
-   "tradingsymbol": "ICICIGI26DEC1560PE",
-   "last_price": 14.9,
-   "triggers": [
-    5.4,
-    37.15
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 325,
-     "price": 5.6,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    },
-    {
-     "side": "BUY",
-     "qty": 325,
-     "price": 40.5,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
    "id": 345419589,
    "type": "two-leg",
    "created_at": "2026-11-18T19:39:25+05:30",
@@ -2664,34 +2548,6 @@
      "side": "BUY",
      "qty": 500,
      "price": 16.55,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
-   "id": 344976353,
-   "type": "two-leg",
-   "created_at": "2026-11-16T14:22:53+05:30",
-   "expires_at": "2026-12-30T00:00:00+05:30",
-   "tradingsymbol": "PREMIERENE26DEC1000CE",
-   "last_price": 4,
-   "triggers": [
-    1.6,
-    12
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 650,
-     "price": 1.65,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    },
-    {
-     "side": "BUY",
-     "qty": 650,
-     "price": 12.4,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -2916,6 +2772,72 @@
  ],
  "triggered": [
   {
+   "id": 345419594,
+   "type": "two-leg",
+   "tradingsymbol": "ICICIGI26DEC1560PE",
+   "triggers": [
+    5.4,
+    37.15
+   ],
+   "triggered_at": "2026-11-23T15:34:30+05:30",
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 325,
+     "price": 5.6
+    },
+    {
+     "side": "BUY",
+     "qty": 325,
+     "price": 40.5
+    }
+   ]
+  },
+  {
+   "id": 344976353,
+   "type": "two-leg",
+   "tradingsymbol": "PREMIERENE26DEC1000CE",
+   "triggers": [
+    1.6,
+    12
+   ],
+   "triggered_at": "2026-11-23T15:17:52+05:30",
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 650,
+     "price": 1.65
+    },
+    {
+     "side": "BUY",
+     "qty": 650,
+     "price": 12.4
+    }
+   ]
+  },
+  {
+   "id": 345419691,
+   "type": "two-leg",
+   "tradingsymbol": "TORNTPHARM26DEC5100CE",
+   "triggers": [
+    10,
+    68.9
+   ],
+   "triggered_at": "2026-11-23T12:51:10+05:30",
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 125,
+     "price": 10.3
+    },
+    {
+     "side": "BUY",
+     "qty": 125,
+     "price": 75.15
+    }
+   ]
+  },
+  {
    "id": 344968413,
    "type": "two-leg",
    "tradingsymbol": "SOLARINDS26DEC22000CE",
@@ -3026,5 +2948,5 @@
    ]
   }
  ],
- "non_option_gtts": 7
+ "non_option_gtts": 6
 }

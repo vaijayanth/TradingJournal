@@ -1,9 +1,60 @@
 {
- "generated_at": "2026-11-23T06:54:49.281074+00:00",
- "market_data_date": "2026-11-20",
- "yahoo_last_bars": [],
+ "generated_at": "2026-11-23T11:59:24.967986+00:00",
+ "market_data_date": "2026-11-23",
+ "yahoo_last_bars": [
+  "2026-11-23"
+ ],
  "bars_after_signal_date_ignored": [],
- "checked": 0,
+ "checked": 3,
  "flagged": 0,
- "results": []
+ "results": [
+  {
+   "symbol": "APLAPOLLO",
+   "kind": "exit",
+   "ok": true,
+   "reasons": [],
+   "published_colour": "red",
+   "recomputed_colour": "red",
+   "yahoo_last_bar": "2026-11-23",
+   "close": 1670.0,
+   "published_close": 1670.0,
+   "closing_high_252": 2280.8,
+   "intraday_high_252": 2312.3,
+   "flip_bars_ago": 18,
+   "pct_from_intraday_high": -27.78,
+   "flagged": false
+  },
+  {
+   "symbol": "COCHINSHIP",
+   "kind": "exit",
+   "ok": true,
+   "reasons": [],
+   "published_colour": "red",
+   "recomputed_colour": "red",
+   "yahoo_last_bar": "2026-11-23",
+   "close": 1090.0,
+   "published_close": 1090.0,
+   "closing_high_252": 1814.7,
+   "intraday_high_252": 1842.8,
+   "flip_bars_ago": 9,
+   "pct_from_intraday_high": -40.85,
+   "flagged": false
+  },
+  {
+   "symbol": "RVNL",
+   "kind": "exit",
+   "ok": true,
+   "reasons": [],
+   "published_colour": "red",
+   "recomputed_colour": "red",
+   "yahoo_last_bar": "2026-11-23",
+   "close": 185.1,
+   "published_close": 185.1,
+   "closing_high_252": 387.95,
+   "intraday_high_252": 400.7,
+   "flip_bars_ago": 9,
+   "pct_from_intraday_high": -53.81,
+   "flagged": false
+  }
+ ]
 }

@@ -1,34 +1,34 @@
 {
- "as_of": "23 Nov 12:25 IST (20 Nov close; live prices)",
- "written_at": "2026-11-23T12:30:00+05:30",
+ "as_of": "23 Nov close (market data 23 Nov)",
+ "written_at": "2026-11-23T17:40:00+05:30",
  "confidence": "low",
  "maturity": "15 days of history and 2 closed trades: a health check, not a verdict on the strategy.",
- "headline": "DIVISLAB is the one emergency: it expires today, both legs are in the money and the buy-back is still stuck; everything else is routine (4 new shorts need GTTs, 1 stale PFC GTT to delete).",
+ "headline": "Three swing exits fired today (APLAPOLLO -23%, COCHINSHIP -9%, RVNL -8%), the DIVISLAB spread is still open on expiry day, and four new call shorts have no GTT.",
  "points": [
   {
-   "label": "DIVISLAB expiry",
-   "text": "The 10600CE short is 6.8% in the money, through the 10800CE hedge, and expires at 3:30 pm today. Premium is 730 against the 555 buy-back limit that never fills. Close both legs at market now; a spread left to settle becomes a physical delivery. Combined options P&L is -Rs47k, almost all of it this one spread."
+   "label": "Swing exits",
+   "text": "Supertrend turned red today on APLAPOLLO, COCHINSHIP and RVNL, so the rule is to exit all three at tomorrow's open. APLAPOLLO is the large one (-23%, a grandfathered position that has now flipped after the cut-off); the two others are -9% and -8%. All three signals are fresh and cross-checked."
   },
   {
-   "label": "Since 10:50",
-   "text": "The five morning call shorts now have GTTs; PFC and KARURVYSYA were closed cleanly. New since then: ABB, CUB, ENRIN and PNBHOUSING put spreads have no protective GTT yet, and the PFC 300PE GTT (345419658) is now stale and would buy a fresh long if it triggered."
+   "label": "Options on the same stocks",
+   "text": "COCHINSHIP and RVNL carry bull put spreads that now fight a red colour: close those spreads alongside the shares, then the call-side entry is available. This is the same flip rule that cost money on DIVISLAB, so do it the same day."
   },
   {
-   "label": "MAZDOCK",
-   "text": "The fired GTT buy-back (limit 4.80, 225 qty) is still open and the short is still open. The stock is 17% below the strike so the risk is small, but the order should be modified or closed by hand."
+   "label": "DIVISLAB",
+   "text": "Both legs are still on the book on expiry day, in the money and through the hedge (premium 640 against 117 sold). It will settle physically unless closed or exercised out; this is the largest single loss in the options book."
   },
   {
-   "label": "Rule check",
-   "text": "PNBHOUSING flipped green on 20 Nov: the 1280CE is the old structure and should be closed, the put spread is already on. DIVISLAB is the same story, a call open against a green colour. Closing on the flip is what avoids a DIVISLAB repeat."
+   "label": "Protection",
+   "text": "CANBK, COALINDIA, KAYNES and SOLARINDS shorts were added today with no GTT yet; MAZDOCK's fired GTT was cancelled and its call is still open. The GTT run covers the first four; MAZDOCK needs a manual close."
   },
   {
-   "label": "Swing book",
-   "text": "39 swing positions, tier Rs20k, combined +Rs34k. No exits, add-ons or entries today; the two morning add-ons (COCHINSHIP, POLICYBZR) filled. Financial Services is 48% of deployed capital against a 40% guardrail; no action, but no new financials until it eases."
+   "label": "Breadth and risk",
+   "text": "172 of 215 F&O stocks are green and 5 flipped today, so the tape is still supportive, but today's three reds are the stocks that rolled over first. Financial Services is 48% of deployed capital against the 40% guardrail; hold off new financials."
   },
   {
    "label": "Versus the backtest",
-   "text": "Too early to compare: 2 closed trades against the reference of -21.3% max drawdown and PF 1.75. Watch the first 30 closed trades and the options tail, not the swing P&L."
+   "text": "Combined P&L is positive but the book is 15 days old with 2 closed trades; too early to compare with the -21.3% max drawdown and PF 1.75 reference. Watch the first 30 closed trades; today's exits start that count."
   }
  ],
- "action": "Close DIVISLAB (both legs) before 3:30 pm, then delete the stale PFC GTT and place GTTs on ABB, CUB, ENRIN and PNBHOUSING."
+ "action": "Sell APLAPOLLO, COCHINSHIP and RVNL at the open; close the COCHINSHIP and RVNL put spreads; settle DIVISLAB; place GTTs on CANBK, COALINDIA, KAYNES and SOLARINDS."
 }

@@ -1,21 +1,32 @@
 {
  "fired_ok_today": [
+  "ICICIGI26DEC1560PE",
+  "PREMIERENE26DEC1000CE",
+  "TORNTPHARM26DEC5100CE",
   "SOLARINDS26DEC22000CE",
   "COALINDIA26DEC440CE",
   "POLYCAB26DEC8400CE",
   "PIIND26DEC2000CE"
  ],
- "fetched_at": "2026-11-23T12:24:56+05:30",
+ "fetched_at": "2026-11-23T17:29:28+05:30",
  "inputs": {
-  "positions": "2026-11-23T06:54:29.439580+00:00",
-  "gtts": "2026-11-23T12:24:29+05:30",
-  "orders": "2026-11-23T12:24:13+05:30",
-  "gtt_scan": "2026-11-23T12:24:29+05:30"
+  "positions": "2026-11-23T11:58:53.485685+00:00",
+  "gtts": "2026-11-23T17:28:53+05:30",
+  "orders": "2026-11-23T17:28:53+05:30",
+  "gtt_scan": "2026-11-23T17:28:53+05:30"
  },
  "stale_inputs": [],
- "open_legs": 95,
- "triggered_gtts": 5,
+ "open_legs": 96,
+ "triggered_gtts": 8,
  "findings": [
+  {
+   "section": "A",
+   "severity": "WARN",
+   "symbol": "ICICIGI",
+   "tradingsymbol": "ICICIGI26DEC1520PE",
+   "concern": "Long 1520PE (325 qty) no short against it; P&L Rs-1,316, expiry 2026-12-29",
+   "action": "Sell it or let it expire"
+  },
   {
    "section": "B",
    "severity": "INFO",
@@ -46,6 +57,14 @@
    "symbol": "CGPOWER",
    "tradingsymbol": "CGPOWER26DEC960CE",
    "concern": "Short 960CE (850 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "COALINDIA",
+   "tradingsymbol": "COALINDIA26DEC425CE",
+   "concern": "Short 425CE (2700 qty) is a naked call (by design; covered only by shares you hold)",
    "action": "Watch the 3x stop and the Supertrend colour"
   },
   {
@@ -86,6 +105,14 @@
    "symbol": "INOXWIND",
    "tradingsymbol": "INOXWIND26DEC72CE",
    "concern": "Short 72CE (6400 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "KAYNES",
+   "tradingsymbol": "KAYNES26DEC3500CE",
+   "concern": "Short 3500CE (150 qty) is a naked call (by design; covered only by shares you hold)",
    "action": "Watch the 3x stop and the Supertrend colour"
   },
   {
@@ -179,14 +206,6 @@
   {
    "section": "B",
    "severity": "INFO",
-   "symbol": "PNBHOUSING",
-   "tradingsymbol": "PNBHOUSING26DEC1280CE",
-   "concern": "Short 1280CE (650 qty) is a naked call (by design; covered only by shares you hold)",
-   "action": "Watch the 3x stop and the Supertrend colour"
-  },
-  {
-   "section": "B",
-   "severity": "INFO",
    "symbol": "POLYCAB",
    "tradingsymbol": "POLYCAB26DEC8300CE",
    "concern": "Short 8300CE (125 qty) is a naked call (by design; covered only by shares you hold)",
@@ -195,17 +214,17 @@
   {
    "section": "B",
    "severity": "INFO",
-   "symbol": "PREMIERENE",
-   "tradingsymbol": "PREMIERENE26DEC1000CE",
-   "concern": "Short 1000CE (650 qty) is a naked call (by design; covered only by shares you hold)",
+   "symbol": "SAIL",
+   "tradingsymbol": "SAIL26DEC200CE",
+   "concern": "Short 200CE (4700 qty) is a naked call (by design; covered only by shares you hold)",
    "action": "Watch the 3x stop and the Supertrend colour"
   },
   {
    "section": "B",
    "severity": "INFO",
-   "symbol": "SAIL",
-   "tradingsymbol": "SAIL26DEC200CE",
-   "concern": "Short 200CE (4700 qty) is a naked call (by design; covered only by shares you hold)",
+   "symbol": "SOLARINDS",
+   "tradingsymbol": "SOLARINDS26DEC21000CE",
+   "concern": "Short 21000CE (25 qty) is a naked call (by design; covered only by shares you hold)",
    "action": "Watch the 3x stop and the Supertrend colour"
   },
   {
@@ -251,14 +270,6 @@
   {
    "section": "B",
    "severity": "INFO",
-   "symbol": "TORNTPHARM",
-   "tradingsymbol": "TORNTPHARM26DEC5100CE",
-   "concern": "Short 5100CE (125 qty) is a naked call (by design; covered only by shares you hold)",
-   "action": "Watch the 3x stop and the Supertrend colour"
-  },
-  {
-   "section": "B",
-   "severity": "INFO",
    "symbol": "UJJIVANSFB",
    "tradingsymbol": "UJJIVANSFB26DEC72CE",
    "concern": "Short 72CE (8000 qty) is a naked call (by design; covered only by shares you hold)",
@@ -285,39 +296,39 @@
    "severity": "HIGH",
    "symbol": "DIVISLAB",
    "tradingsymbol": "DIVISLAB26NOV10600CE",
-   "concern": "No active buy-back GTT (premium 729.65, sold 116.95, already 6.2x: a GTT would fire at once)",
+   "concern": "No active buy-back GTT (premium 640, sold 116.95, already 5.5x: a GTT would fire at once)",
    "action": "Close it now (a GTT would fire at once)"
   },
   {
    "section": "C",
    "severity": "WARN",
-   "symbol": "ABB",
-   "tradingsymbol": "ABB26DEC6200PE",
-   "concern": "No active buy-back GTT (premium 43.4, sold 45.45)",
+   "symbol": "CANBK",
+   "tradingsymbol": "CANBK26DEC120PE",
+   "concern": "No active buy-back GTT (premium 0.99, sold 0.91)",
    "action": "Place the protective GTT (zerodha-gtt-order)"
   },
   {
    "section": "C",
    "severity": "WARN",
-   "symbol": "CUB",
-   "tradingsymbol": "CUB26DEC210PE",
-   "concern": "No active buy-back GTT (premium 2.24, sold 2.21)",
+   "symbol": "COALINDIA",
+   "tradingsymbol": "COALINDIA26DEC425CE",
+   "concern": "No active buy-back GTT (premium 1.1, sold 1.35)",
    "action": "Place the protective GTT (zerodha-gtt-order)"
   },
   {
    "section": "C",
    "severity": "WARN",
-   "symbol": "ENRIN",
-   "tradingsymbol": "ENRIN26DEC2500PE",
-   "concern": "No active buy-back GTT (premium 30.8, sold 30.8)",
+   "symbol": "KAYNES",
+   "tradingsymbol": "KAYNES26DEC3500CE",
+   "concern": "No active buy-back GTT (premium 21, sold 26.4)",
    "action": "Place the protective GTT (zerodha-gtt-order)"
   },
   {
    "section": "C",
    "severity": "WARN",
-   "symbol": "PNBHOUSING",
-   "tradingsymbol": "PNBHOUSING26DEC1040PE",
-   "concern": "No active buy-back GTT (premium 7.75, sold 8.4)",
+   "symbol": "SOLARINDS",
+   "tradingsymbol": "SOLARINDS26DEC21000CE",
+   "concern": "No active buy-back GTT (premium 104, sold 112.25)",
    "action": "Place the protective GTT (zerodha-gtt-order)"
   },
   {
@@ -325,23 +336,15 @@
    "severity": "HIGH",
    "symbol": "MAZDOCK",
    "tradingsymbol": "MAZDOCK26DEC2200CE",
-   "concern": "GTT 344968233 fired but its buy-back order 261123150262757 is still OPEN (limit 4.8 not reached; 0 of 225 filled); the short (225 qty) is still open",
-   "action": "Modify the limit or close it by hand in Kite"
-  },
-  {
-   "section": "F",
-   "severity": "HIGH",
-   "symbol": "PFC",
-   "tradingsymbol": "PFC26DEC300PE",
-   "concern": "G1 STALE: No open position on this contract (closed or expired): if it triggers it BUYS a new long position (GTT 345419658)",
-   "action": "Delete this GTT"
+   "concern": "GTT 344968233 fired at 09:31 but its buy-back order 261123150262757 was CANCELLED; the short (225 qty) is still open",
+   "action": "Close it by hand in Kite now"
   },
   {
    "section": "G",
    "severity": "WARN",
    "symbol": "CUMMINSIND",
    "tradingsymbol": "CUMMINSIND26DEC5000CE",
-   "concern": "Active GTT 344015712 (trailing-single) has a stop but no profit target; sold 21.8, premium 10",
+   "concern": "Active GTT 344015712 (trailing-single) has a stop but no profit target; sold 21.8, premium 9.1",
    "action": "Add a profit target at about 8.72 (a two-leg GTT: /zerodha-gtt-order or the Kite app)"
   }
  ]
