@@ -1,5 +1,5 @@
 {
- "fetched_at": "2026-11-23T09:30:30+05:30",
+ "fetched_at": "2026-11-23T10:01:19+05:30",
  "active": {
   "WAAREEENER26DEC2200PE": [
    {
@@ -127,7 +127,7 @@
     "type": "trailing-two-leg",
     "trigger_values": [
      46.9,
-     287
+     282
     ],
     "qty": 20
    },
@@ -136,7 +136,7 @@
     "type": "trailing-two-leg",
     "trigger_values": [
      46.9,
-     287
+     282
     ],
     "qty": 20
    }
@@ -641,26 +641,6 @@
     "qty": 1600
    }
   ],
-  "POLYCAB26DEC8400CE": [
-   {
-    "id": 345199337,
-    "type": "two-leg",
-    "trigger_values": [
-     45.7,
-     342.75
-    ],
-    "qty": 125
-   },
-   {
-    "id": 345199337,
-    "type": "two-leg",
-    "trigger_values": [
-     45.7,
-     342.75
-    ],
-    "qty": 125
-   }
-  ],
   "PNBHOUSING26DEC1280CE": [
    {
     "id": 345199333,
@@ -819,26 +799,6 @@
      57.9
     ],
     "qty": 350
-   }
-  ],
-  "MAZDOCK26DEC2200CE": [
-   {
-    "id": 344968233,
-    "type": "two-leg",
-    "trigger_values": [
-     4.65,
-     34.8
-    ],
-    "qty": 225
-   },
-   {
-    "id": 344968233,
-    "type": "two-leg",
-    "trigger_values": [
-     4.65,
-     34.8
-    ],
-    "qty": 225
    }
   ],
   "COALINDIA26DEC440CE": [
@@ -1130,7 +1090,7 @@
    "last_price": 132,
    "triggers": [
     46.9,
-    287
+    282
    ],
    "orders": [
     {
@@ -1143,7 +1103,7 @@
     {
      "side": "BUY",
      "qty": 20,
-     "price": 290,
+     "price": 285,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -1850,34 +1810,6 @@
    ]
   },
   {
-   "id": 345199337,
-   "type": "two-leg",
-   "created_at": "2026-11-17T14:57:26+05:30",
-   "expires_at": "2026-12-30T00:00:00+05:30",
-   "tradingsymbol": "POLYCAB26DEC8400CE",
-   "last_price": 115.05,
-   "triggers": [
-    45.7,
-    342.75
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 125,
-     "price": 47.1,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    },
-    {
-     "side": "BUY",
-     "qty": 125,
-     "price": 353.05,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
    "id": 345199333,
    "type": "two-leg",
    "created_at": "2026-11-17T14:57:25+05:30",
@@ -2102,34 +2034,6 @@
    ]
   },
   {
-   "id": 344968233,
-   "type": "two-leg",
-   "created_at": "2026-11-16T13:56:36+05:30",
-   "expires_at": "2026-12-30T00:00:00+05:30",
-   "tradingsymbol": "MAZDOCK26DEC2200CE",
-   "last_price": 11.6,
-   "triggers": [
-    4.65,
-    34.8
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 225,
-     "price": 4.8,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    },
-    {
-     "side": "BUY",
-     "qty": 225,
-     "price": 35.85,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
    "id": 344968151,
    "type": "two-leg",
    "created_at": "2026-11-16T13:56:21+05:30",
@@ -2291,6 +2195,50 @@
   }
  ],
  "triggered": [
+  {
+   "id": 345199337,
+   "type": "two-leg",
+   "tradingsymbol": "POLYCAB26DEC8400CE",
+   "triggers": [
+    45.7,
+    342.75
+   ],
+   "triggered_at": "2026-11-23T09:34:15+05:30",
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 125,
+     "price": 47.1
+    },
+    {
+     "side": "BUY",
+     "qty": 125,
+     "price": 353.05
+    }
+   ]
+  },
+  {
+   "id": 344968233,
+   "type": "two-leg",
+   "tradingsymbol": "MAZDOCK26DEC2200CE",
+   "triggers": [
+    4.65,
+    34.8
+   ],
+   "triggered_at": "2026-11-23T09:31:18+05:30",
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 225,
+     "price": 4.8
+    },
+    {
+     "side": "BUY",
+     "qty": 225,
+     "price": 35.85
+    }
+   ]
+  },
   {
    "id": 345920492,
    "type": "two-leg",
