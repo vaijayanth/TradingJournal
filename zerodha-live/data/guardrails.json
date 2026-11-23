@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-23T17:40:19+05:30",
+ "generated_at": "2026-11-23T20:42:41+05:30",
  "broker": "zerodha",
  "market_data_date": "2026-11-23",
  "signals_generated_at": "2026-11-23T12:02:57.969241+00:00",
@@ -7,11 +7,17 @@
  "global_block": false,
  "counts": {
   "block": 0,
-  "warn": 4,
+  "warn": 5,
   "info": 0
  },
  "per_symbol_blocks": {},
  "findings": [
+  {
+   "id": "F3",
+   "level": "WARN",
+   "symbol": null,
+   "msg": "signals were built before the latest holdings pull - re-run the refresh"
+  },
   {
    "id": "C2",
    "level": "WARN",
