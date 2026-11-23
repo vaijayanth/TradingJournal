@@ -15,11 +15,12 @@ Checks (the user's pattern: SELL entry, stop-loss leg at ~3x the sold price, opt
                 If that stop leg fires it BUYS a new long position (HIGH, "likely": matching is approximate).
   S2 NO STOP    an open short option leg with no matching super order stop leg, so nothing protects it.
   S3 OFF-RULE   the stop is not near stop_premium_multiple x the sold price (outside +-1x).
-  S4 QUANTITY   the super order quantity differs from the open short quantity.
+  S4 QUANTITY   the super order quantity differs from the open short quantity (unless several orders on the stock add up to it).
 """
 import json
 import re
 import sys
+from itertools import combinations
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
@@ -57,27 +58,32 @@ def parse_super(text):
     return [o for o in orders if "entry" in o]
 
 
-def main():
-    cfg = json.loads((DATA / "cc_config.json").read_text(encoding="utf-8"))
-    mult = cfg["rules"].get("stop_premium_multiple", 3)
-    now_day = datetime.now(IST).strftime("%Y-%m-%d")
-    for nm in ("positions.txt", "super_orders.txt"):
-        f = DATA / "cc_raw" / nm
-        if not f.exists() or datetime.fromtimestamp(f.stat().st_mtime, IST).strftime("%Y-%m-%d") != now_day:
-            sys.exit(f"REFUSED: data/cc_raw/{nm} is missing or not from today. Pull it from the Dhan MCP first (portfolio positions / orderbook super_list).")
-    exp = cfg.get("expiries", [])
-    legs = parse_positions((DATA / "cc_raw" / "positions.txt").read_text(encoding="utf-8"), exp)
-    shorts = [l for l in legs if l["side"] == "SHORT"]
-    orders = [o for o in parse_super((DATA / "cc_raw" / "super_orders.txt").read_text(encoding="utf-8")) if o["side"] == "SELL"]
-    findings, used = [], set()
-
-    def add(check, sev, o, leg, concern, action):
-        findings.append({"check": check, "name": NAMES[check], "severity": sev, "order_id": o["order_id"] if o else None,
-                         "symbol": (o or leg)["symbol"], "expiry": leg.get("expiry") if leg else None, "strike": leg.get("strike") if leg else None,
-                         "opt_type": leg.get("type") if leg else None, "concern": concern, "action": action})
-
-    matched = {}
+def match_orders(shorts, orders, mult):
+    """Match SELL super orders to open short legs. Returns (matched {order index: leg}, used {short index})."""
+    used, matched = set(), {}
+    # pass 0 (user, 2026-11-23): several orders on one stock can together cover ONE short (BANKINDIA: 10,400 + 5,200 = 15,600 after
+    # averaging, blended average 1.02 while the orders show 1.05 and 1.02). When 2-4 not-yet-matched orders of the symbol, each with an
+    # entry within 6% of the short's sold average, add up to exactly the short's quantity, they are all matched to it.
+    for j, l in enumerate(shorts):
+        cand = [i for i, o in enumerate(orders) if i not in matched and o["symbol"] == l["symbol"] and l["sell_avg"] > 0
+                and abs(o["entry"] - l["sell_avg"]) <= 0.06 * l["sell_avg"]]
+        if any(abs(orders[i]["entry"] - l["sell_avg"]) <= 0.0051 and orders[i]["qty"] == l["qty"] for i in cand):
+            continue   # one order already covers it exactly: the normal passes handle it
+        done = False
+        for n in (2, 3, 4):
+            for combo in combinations(cand, n):
+                if sum(orders[i]["qty"] for i in combo) == l["qty"]:
+                    for i in combo:
+                        matched[i] = l
+                        orders[i]["group"] = True
+                    used.add(j)
+                    done = True
+                    break
+            if done:
+                break
     for i, o in enumerate(orders):
+        if i in matched:
+            continue
         for j, l in enumerate(shorts):
             if j in used or l["symbol"] != o["symbol"] or abs(l["sell_avg"] - o["entry"]) > 0.0051:
                 continue
@@ -99,6 +105,29 @@ def main():
                 matched[i] = l
                 o["entry_stale"] = True
                 break
+    return matched, used
+
+
+def main():
+    cfg = json.loads((DATA / "cc_config.json").read_text(encoding="utf-8"))
+    mult = cfg["rules"].get("stop_premium_multiple", 3)
+    now_day = datetime.now(IST).strftime("%Y-%m-%d")
+    for nm in ("positions.txt", "super_orders.txt"):
+        f = DATA / "cc_raw" / nm
+        if not f.exists() or datetime.fromtimestamp(f.stat().st_mtime, IST).strftime("%Y-%m-%d") != now_day:
+            sys.exit(f"REFUSED: data/cc_raw/{nm} is missing or not from today. Pull it from the Dhan MCP first (portfolio positions / orderbook super_list).")
+    exp = cfg.get("expiries", [])
+    legs = parse_positions((DATA / "cc_raw" / "positions.txt").read_text(encoding="utf-8"), exp)
+    shorts = [l for l in legs if l["side"] == "SHORT"]
+    orders = [o for o in parse_super((DATA / "cc_raw" / "super_orders.txt").read_text(encoding="utf-8")) if o["side"] == "SELL"]
+    findings = []
+
+    def add(check, sev, o, leg, concern, action):
+        findings.append({"check": check, "name": NAMES[check], "severity": sev, "order_id": o["order_id"] if o else None,
+                         "symbol": (o or leg)["symbol"], "expiry": leg.get("expiry") if leg else None, "strike": leg.get("strike") if leg else None,
+                         "opt_type": leg.get("type") if leg else None, "concern": concern, "action": action})
+
+    matched, used = match_orders(shorts, orders, mult)
     for i, o in enumerate(orders):
         pending = {k: v for k, v in o["legs"].items() if v["status"] == "PENDING" and k != "ENTRY_LEG"}
         l = matched.get(i)
@@ -116,7 +145,7 @@ def main():
                 add("S3", "WARN", o, l, f"Stop {sl['price']:g} is {r:.1f}x the sold {o['entry']:g} (rule {mult}x)", f"Move the stop leg to {mult * o['entry']:.2f}")
         else:
             add("S2", "WARN", o, l, "Super order has no pending stop leg", "Place a protective stop")
-        if o["qty"] != l["qty"]:
+        if o["qty"] != l["qty"] and not o.get("group"):
             add("S4", "WARN", o, l, f"Super order covers {o['qty']} but {l['qty']} are open", "Check the legs")
     for j, l in enumerate(shorts):
         if j not in used:
