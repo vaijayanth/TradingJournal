@@ -1,30 +1,30 @@
 {
- "as_of": "23 Nov pre-open (20 Nov close)",
- "written_at": "2026-11-23T08:36:46+05:30",
+ "as_of": "23 Nov 09:30 IST (20 Nov close; live prices)",
+ "written_at": "2026-11-23T09:27:39+05:30",
  "confidence": "low",
- "maturity": "14 days of history and 2 closed trades: a health check, not a verdict on the strategy.",
- "headline": "Today is expiry day: the 4 stopped-out call spreads (about -Rs81k at max loss) are still open and will be physically settled tonight unless closed before 3:30 pm.",
+ "maturity": "15 days of history and 2 closed trades: a health check, not a verdict on the strategy.",
+ "headline": "Three of the four expiring spreads are closed; DIVISLAB is still open and expires today, and one stale GTT now needs deleting.",
  "points": [
   {
-   "label": "Expiry day",
-   "text": "DIVISLAB, HDFCBANK, HINDPETRO and MAHABANK 23-Nov spreads are in the money on both legs. Nothing was closed over the weekend. Maximum loss is already locked, so the decision is only about avoiding delivery: close both legs of each spread before the close."
+   "label": "Clean-up mostly done",
+   "text": "HDFCBANK, MAHABANK and HINDPETRO spreads were closed this morning, and the orphaned longs (KARURVYSYA 330PE, HINDPETRO 350PE) are on offer for pennies. Only DIVISLAB 10600CE/10800CE is left, at about -Rs67k intrinsic and expiring today at 3:30 pm."
   },
   {
-   "label": "Expired-today longs",
-   "text": "HINDPETRO 350PE and KARURVYSYA 330PE are worthless orphaned longs expiring today. No action is needed beyond letting them expire."
+   "label": "Stale GTT",
+   "text": "You bought back the MANAPPURAM 340CE, but its GTT (345641434) is still active. If it ever triggered it would open a new long, so delete it."
   },
   {
-   "label": "Add-ons due",
-   "text": "COCHINSHIP (-6.2%) and POLICYBZR (-8.1%, cooldown over) each qualify for a 2-share add-on, about Rs4,300 together."
+   "label": "GTT cover worked",
+   "text": "The PIIND GTT fired at its 4.65 profit target and bought the call back cleanly, the first live proof of the protective GTTs."
   },
   {
-   "label": "Move candidates",
-   "text": "CUB (+4.0%) and PNBHOUSING (+2.1%) are old-sheet positions now green and profitable. PNBHOUSING also has a short call that conflicts with its green colour."
+   "label": "Add-ons filled",
+   "text": "COCHINSHIP and POLICYBZR filled at the open (1,126 and 1,032.10). No new swing signals this morning; PNBHOUSING's short call and the PFC spread are the remaining option items."
   },
   {
    "label": "Edge",
-   "text": "Combined P&L +Rs32k on 39 trades; too early to compare with the backtest (-21.3% max DD, PF 1.75)."
+   "text": "Combined P&L +Rs34k on 41 trades, tier Rs20k. Too early to compare with the backtest (-21.3% max DD, PF 1.75)."
   }
  ],
- "action": "Close the 4 expiring spreads before 3:30 pm today; run /zerodha-order for the 2 add-ons after the close."
+ "action": "Close DIVISLAB before 3:30 pm, delete the MANAPPURAM GTT, then close the PNBHOUSING call and PFC legs."
 }

@@ -1,33 +1,13 @@
 {
- "fetched_at": "2026-11-23T08:46:22+05:30",
+ "fetched_at": "2026-11-23T09:27:12+05:30",
  "active": {
-  "PIIND26DEC2000CE": [
-   {
-    "id": 345920492,
-    "type": "two-leg",
-    "trigger_values": [
-     4.5,
-     31.1
-    ],
-    "qty": 175
-   },
-   {
-    "id": 345920492,
-    "type": "two-leg",
-    "trigger_values": [
-     4.5,
-     31.1
-    ],
-    "qty": 175
-   }
-  ],
   "WAAREEENER26DEC2200PE": [
    {
     "id": 345641974,
     "type": "trailing-two-leg",
     "trigger_values": [
      12.05,
-     79.9
+     77.9
     ],
     "qty": 175
    },
@@ -36,7 +16,7 @@
     "type": "trailing-two-leg",
     "trigger_values": [
      12.05,
-     79.9
+     77.9
     ],
     "qty": 175
    }
@@ -994,34 +974,6 @@
  },
  "gtts": [
   {
-   "id": 345920492,
-   "type": "two-leg",
-   "created_at": "2026-11-23T08:43:20+05:30",
-   "expires_at": "2026-12-30T00:00:00+05:30",
-   "tradingsymbol": "PIIND26DEC2000CE",
-   "last_price": 5,
-   "triggers": [
-    4.5,
-    31.1
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 175,
-     "price": 4.65,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    },
-    {
-     "side": "BUY",
-     "qty": 175,
-     "price": 33.9,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
    "id": 345641974,
    "type": "trailing-two-leg",
    "created_at": "2026-11-19T22:10:56+05:30",
@@ -1030,7 +982,7 @@
    "last_price": 24.7,
    "triggers": [
     12.05,
-    79.9
+    77.9
    ],
    "orders": [
     {
@@ -1043,7 +995,7 @@
     {
      "side": "BUY",
      "qty": 175,
-     "price": 87.45,
+     "price": 85.45,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -2386,6 +2338,29 @@
    ]
   }
  ],
- "triggered": [],
+ "triggered": [
+  {
+   "id": 345920492,
+   "type": "two-leg",
+   "tradingsymbol": "PIIND26DEC2000CE",
+   "triggers": [
+    4.5,
+    31.1
+   ],
+   "triggered_at": "2026-11-23T09:25:26+05:30",
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 175,
+     "price": 4.65
+    },
+    {
+     "side": "BUY",
+     "qty": 175,
+     "price": 33.9
+    }
+   ]
+  }
+ ],
  "non_option_gtts": 9
 }
