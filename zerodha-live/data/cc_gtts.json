@@ -1,5 +1,5 @@
 {
- "fetched_at": "2026-11-23T10:45:31+05:30",
+ "fetched_at": "2026-11-23T11:23:13+05:30",
  "active": {
   "WIPRO26DEC220CE": [
    {
@@ -367,7 +367,7 @@
     "type": "trailing-two-leg",
     "trigger_values": [
      1.55,
-     10.6
+     9.6
     ],
     "qty": 1850
    },
@@ -376,7 +376,7 @@
     "type": "trailing-two-leg",
     "trigger_values": [
      1.55,
-     10.6
+     9.6
     ],
     "qty": 1850
    }
@@ -959,26 +959,6 @@
      57.9
     ],
     "qty": 350
-   }
-  ],
-  "COALINDIA26DEC440CE": [
-   {
-    "id": 344968151,
-    "type": "two-leg",
-    "trigger_values": [
-     0.7,
-     5.1
-    ],
-    "qty": 1350
-   },
-   {
-    "id": 344968151,
-    "type": "two-leg",
-    "trigger_values": [
-     0.7,
-     5.1
-    ],
-    "qty": 1350
    }
   ],
   "CGPOWER26DEC960CE": [
@@ -1586,7 +1566,7 @@
    "last_price": 3.2,
    "triggers": [
     1.55,
-    10.6
+    9.6
    ],
    "orders": [
     {
@@ -1599,7 +1579,7 @@
     {
      "side": "BUY",
      "qty": 1850,
-     "price": 11.55,
+     "price": 10.55,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -2418,34 +2398,6 @@
    ]
   },
   {
-   "id": 344968151,
-   "type": "two-leg",
-   "created_at": "2026-11-16T13:56:21+05:30",
-   "expires_at": "2026-12-30T00:00:00+05:30",
-   "tradingsymbol": "COALINDIA26DEC440CE",
-   "last_price": 1.6,
-   "triggers": [
-    0.7,
-    5.1
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 1350,
-     "price": 0.75,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    },
-    {
-     "side": "BUY",
-     "qty": 1350,
-     "price": 5.3,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
    "id": 344968113,
    "type": "two-leg",
    "created_at": "2026-11-16T13:56:13+05:30",
@@ -2580,6 +2532,28 @@
  ],
  "triggered": [
   {
+   "id": 344968151,
+   "type": "two-leg",
+   "tradingsymbol": "COALINDIA26DEC440CE",
+   "triggers": [
+    0.7,
+    5.1
+   ],
+   "triggered_at": "2026-11-23T11:06:16+05:30",
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 1350,
+     "price": 0.75
+    },
+    {
+     "side": "BUY",
+     "qty": 1350,
+     "price": 5.3
+    }
+   ]
+  },
+  {
    "id": 345199337,
    "type": "two-leg",
    "tradingsymbol": "POLYCAB26DEC8400CE",
@@ -2646,5 +2620,5 @@
    ]
   }
  ],
- "non_option_gtts": 9
+ "non_option_gtts": 8
 }
