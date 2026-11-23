@@ -1,5 +1,39 @@
 {
- "fetched_at": "2026-11-23T17:28:53+05:30",
+ "fetched_at": "2026-11-23T17:41:40+05:30",
  "source": "mcp__claude_ai_Zerodha_Mcp__orders list: pending equity orders",
- "orders": []
+ "orders": [
+  {
+   "order_id": "261123151769657",
+   "symbol": "APLAPOLLO",
+   "side": "SELL",
+   "qty": 10,
+   "order_type": "MARKET",
+   "price": null,
+   "status": "AMO REQ RECEIVED",
+   "amo": true,
+   "placed": "2026-11-23T17:41:23+05:30"
+  },
+  {
+   "order_id": "261123151769662",
+   "symbol": "COCHINSHIP",
+   "side": "SELL",
+   "qty": 15,
+   "order_type": "MARKET",
+   "price": null,
+   "status": "AMO REQ RECEIVED",
+   "amo": true,
+   "placed": "2026-11-23T17:41:29+05:30"
+  },
+  {
+   "order_id": "261123151769663",
+   "symbol": "RVNL",
+   "side": "SELL",
+   "qty": 109,
+   "order_type": "MARKET",
+   "price": null,
+   "status": "AMO REQ RECEIVED",
+   "amo": true,
+   "placed": "2026-11-23T17:41:30+05:30"
+  }
+ ]
 }
