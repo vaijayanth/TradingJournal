@@ -80,6 +80,12 @@ AZ trades one kind of stock: **swing shares** (the Nifty F&O Supertrend stocks).
 - Never commit/push while a BLOCK is open without telling the user and getting their explicit go-ahead.
 - `data/trading_halt.json` is the user's kill switch; do not flip it without being asked.
 
+## Refresh run table (user, 2026-11-23; applies to the start and end of every run, overrides the report order below)
+1. **At the very start**, before any tool call, print ONE table of every step this run will take: `# | Step | What I do | Tool | Status` with every Status = ⏳. Steps for this skill: 1 Prep (git) | 2 Login (Zerodha) | 3 Holdings and fills | 4 Orders and trades | 5 Option positions | 6 GTTs and GTT scan | 7 Live prices | 8 Rebuild (signals, covered call, guardrails) | 9 Scans (options, GTT, move candidates, entry tiers) | 10 Insights | 11 Push.
+2. **Run the steps** in that order. A step that fails shows ❌ with the reason and the run stops there (no silent skips); a step with nothing new still gets its line.
+3. **At the very end**, print the SAME table again with the final Status (✅ / ⚠ / ❌ / ⏭ skipped) and a **Comments** column (one short phrase per step: what it found, for example "no changes since last refresh", "2 stopped-out spreads", "GTT scan 0 findings", "prices pulled 08:35 IST") so the user sees at a glance whether the run went well.
+4. **Right after the end table, prompt the next steps** as a numbered "Do these in order" table: `Step | Do | Command or app | Deadline`, most urgent first, each with the exact command to type (`/zerodha-order`, `/zerodha-gtt-order`, `/zerodha-option-entry-signal`, `/refresh-zerodha`) or the broker-app action; mark finished items ✓. The closing `Next step:` line names the first one. Everything else in the one-screen report below follows after, in its short form.
+
 ## One-screen report (user, 2026-11-19; overrides every longer report layout in this skill)
 The final report must fit one screen with no scrolling (about 35 lines). Working notes (verify details, scans, data fixes) are NOT printed; only what needs a decision.
 1. **Status table** (Check | Result, one line each, at most 6 rows: market data, live prices / positions time, guardrails, positions, P&L, pushed commit). Add a row only for something abnormal.
