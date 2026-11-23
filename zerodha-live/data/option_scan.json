@@ -1,11 +1,11 @@
 {
  "fired_ok_today": [],
- "fetched_at": "2026-11-21T07:49:53+05:30",
+ "fetched_at": "2026-11-23T08:36:35+05:30",
  "inputs": {
-  "positions": "2026-11-21T02:18:49.739193+00:00",
-  "gtts": "2026-11-21T07:48:49+05:30",
-  "orders": "2026-11-21T07:48:49+05:30",
-  "gtt_scan": "2026-11-21T07:48:49+05:30"
+  "positions": "2026-11-23T03:05:40.812230+00:00",
+  "gtts": "2026-11-23T08:35:40+05:30",
+  "orders": "2026-11-23T08:35:40+05:30",
+  "gtt_scan": "2026-11-23T08:35:40+05:30"
  },
  "stale_inputs": [],
  "open_legs": 88,
@@ -256,7 +256,7 @@
    "severity": "HIGH",
    "symbol": "HDFCBANK",
    "tradingsymbol": "HDFCBANK26NOV760CE",
-   "concern": "No active buy-back GTT (premium 81.45, sold 2.8, already 29.1x: a GTT would fire at once)",
+   "concern": "No active buy-back GTT (premium 84.05, sold 2.8, already 30.0x: a GTT would fire at once)",
    "action": "Close it now (a GTT would fire at once)"
   },
   {
@@ -264,7 +264,7 @@
    "severity": "HIGH",
    "symbol": "HINDPETRO",
    "tradingsymbol": "HINDPETRO26NOV380CE",
-   "concern": "No active buy-back GTT (premium 16.7, sold 1.3, already 12.8x: a GTT would fire at once)",
+   "concern": "No active buy-back GTT (premium 16, sold 1.3, already 12.3x: a GTT would fire at once)",
    "action": "Close it now (a GTT would fire at once)"
   },
   {
@@ -280,7 +280,7 @@
    "severity": "WARN",
    "symbol": "PIIND",
    "tradingsymbol": "PIIND26DEC2000CE",
-   "concern": "No active buy-back GTT (premium 5.2, sold 11.3)",
+   "concern": "No active buy-back GTT (premium 5, sold 11.3)",
    "action": "Place the protective GTT (zerodha-gtt-order)"
   },
   {

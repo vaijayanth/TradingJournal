@@ -1,30 +1,30 @@
 {
- "as_of": "20 Nov close (Friday; prices as of the close)",
- "written_at": "2026-11-21T07:50:12+05:30",
+ "as_of": "23 Nov pre-open (20 Nov close)",
+ "written_at": "2026-11-23T08:36:46+05:30",
  "confidence": "low",
- "maturity": "12 days of history and 2 closed trades: a health check, not a verdict on the strategy.",
- "headline": "Swing book is up to +Rs32k, but the 4 stopped-out call spreads are still open with 2 sessions to Monday's expiry and are now deeper in the money.",
+ "maturity": "14 days of history and 2 closed trades: a health check, not a verdict on the strategy.",
+ "headline": "Today is expiry day: the 4 stopped-out call spreads (about -Rs81k at max loss) are still open and will be physically settled tonight unless closed before 3:30 pm.",
  "points": [
   {
-   "label": "Clean-up half done",
-   "text": "CONCOR and HINDZINC were closed since last night, which is good. DIVISLAB, HDFCBANK, HINDPETRO and MAHABANK are still open and moved further against you on Friday (HDFCBANK premium 29x, MAHABANK 31x). Maximum loss is already locked, so the only open question is physical delivery on Monday: close them today or Monday morning."
+   "label": "Expiry day",
+   "text": "DIVISLAB, HDFCBANK, HINDPETRO and MAHABANK 23-Nov spreads are in the money on both legs. Nothing was closed over the weekend. Maximum loss is already locked, so the decision is only about avoiding delivery: close both legs of each spread before the close."
   },
   {
-   "label": "New flips to act on",
-   "text": "PNBHOUSING turned green and its short 1280CE is now a mismatch (close it, then the put spread); it is also an old-sheet position at +2.1%. Four stocks flipped on Friday (CUB, MUTHOOTFIN, TITAN, VEDL) but only list as option candidates: no rule forces an entry."
+   "label": "Expired-today longs",
+   "text": "HINDPETRO 350PE and KARURVYSYA 330PE are worthless orphaned longs expiring today. No action is needed beyond letting them expire."
   },
   {
-   "label": "Add-on",
-   "text": "COCHINSHIP is the first add-on trigger (-6.2%, green, 11 days since the last buy): 2 shares, about Rs2,250 at the close. A small, rule-driven action."
+   "label": "Add-ons due",
+   "text": "COCHINSHIP (-6.2%) and POLICYBZR (-8.1%, cooldown over) each qualify for a 2-share add-on, about Rs4,300 together."
   },
   {
    "label": "Move candidates",
-   "text": "CUB (+4.0%) and PNBHOUSING (+2.1%) are old-sheet positions now green and profitable, so they qualify to move to this dashboard. Moving PNBHOUSING also adds to Financial Services, which is already 45% of deployed capital against the 40% guardrail."
+   "text": "CUB (+4.0%) and PNBHOUSING (+2.1%) are old-sheet positions now green and profitable. PNBHOUSING also has a short call that conflicts with its green colour."
   },
   {
-   "label": "Versus the backtest",
-   "text": "Combined P&L +Rs32k on 39 trades (tier Rs20k). Far too early to compare with the backtest (-21.3% max DD, PF 1.75)."
+   "label": "Edge",
+   "text": "Combined P&L +Rs32k on 39 trades; too early to compare with the backtest (-21.3% max DD, PF 1.75)."
   }
  ],
- "action": "Close the 4 stopped-out spreads and PNBHOUSING's short call, then run /zerodha-order for the COCHINSHIP add-on."
+ "action": "Close the 4 expiring spreads before 3:30 pm today; run /zerodha-order for the 2 add-ons after the close."
 }

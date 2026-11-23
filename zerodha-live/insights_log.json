@@ -139,6 +139,18 @@
     "trades": 39,
     "addons": 1
    }
+  },
+  {
+   "date": "2026-11-23 (pre-open)",
+   "headline": "Today is expiry day: the 4 stopped-out call spreads (about -Rs81k at max loss) are still open and will be physically settled tonight unless closed before 3:30 pm.",
+   "recommendations": [
+    "Close the 4 expiring spreads before 3:30 pm today; run /zerodha-order for the 2 add-ons after the close."
+   ],
+   "metrics": {
+    "expiring_spreads": 4,
+    "combined_pl_rs": 32362,
+    "addons": 2
+   }
   }
  ]
 }
