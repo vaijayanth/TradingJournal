@@ -1,17 +1,23 @@
 {
- "generated_at": "2026-11-23T13:01:49+05:30",
+ "generated_at": "2026-11-23T20:54:01+05:30",
  "broker": "dhan",
- "market_data_date": "2026-11-20",
- "signals_generated_at": "2026-11-23T06:34:05.466446+00:00",
+ "market_data_date": "2026-11-23",
+ "signals_generated_at": "2026-11-23T15:23:57.425011+00:00",
  "status": "WARN",
  "global_block": false,
  "counts": {
   "block": 0,
-  "warn": 3,
+  "warn": 4,
   "info": 0
  },
  "per_symbol_blocks": {},
  "findings": [
+  {
+   "id": "F5",
+   "level": "WARN",
+   "symbol": null,
+   "msg": "the cross-check flagged 1 of 15 signals (advisory only, the backtester signal stands and they are not blocked): KODYTECH"
+  },
   {
    "id": "I3",
    "level": "WARN",

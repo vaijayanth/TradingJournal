@@ -1,30 +1,30 @@
 {
- "as_of": "23 Nov midday (20 Nov close)",
- "written_at": "2026-11-23T12:10:00+05:30",
+ "as_of": "23 Nov close (market data 23 Nov)",
+ "written_at": "2026-11-23T21:05:00+05:30",
  "confidence": "low",
- "maturity": "139 positions ever opened but only 9 closed trades (day 28 of live trading): the swing edge cannot be judged yet.",
- "headline": "The morning orders all filled: PASHUPATI exited, 6 add-ons and 8 entries bought; nothing is left to order on the swing side, and BSE is the one off-rule option position.",
+ "maturity": "139 positions ever opened but only 9 closed trades: the swing edge cannot be judged yet.",
+ "headline": "Monday's close fires 2 exits, 4 add-ons and 7 entries; the options book is clean except BSE.",
  "points": [
   {
-   "label": "Process",
-   "text": "This morning the plan was followed in full: the PASHUPATI exit (13 shares at Rs27.16, a -30% closed loss), 6 one-share add-ons and 8 of 11 entries filled. PGIL and APOLLOHOSP limit orders are still pending; the other entries were rejected or missed (NILKAMAL, MAHASTEEL were re-sent and filled)."
+   "label": "Signals",
+   "text": "Exits: GUFICBIO (-10.2%, the worst position, one share cluster of 3) and SSWL (+0.9%). Add-ons due on AMANTA, ESAFSFB, MANAKCOAT, SMSPHARMA (all -6% to -12%, cooldown over). Entries: LALPATHLAB, PGIL, SAMBHV, SCPL, SHALPAINTS, SPORTKING, WINDMACHIN. All are tiny at the Rs2k tier, so the rupee risk is small; follow the rule."
   },
   {
    "label": "Book health",
-   "text": "122 positions in scope (settled holdings), 78 in profit (64%), 11 at or beyond -6%, none worse than -10%, all 122 on a green Supertrend. Deepest are GUFICBIO -9.5% and APOLLO -9.2%, both one-share positions, so the rupee risk is small."
+   "text": "116 settled positions, 69 in profit (59%, just under the 60% comfort line), 12 at or beyond -6%. Combined P&L is +Rs2.4k on the Rs20L base (it was +Rs3.5k at midday, so today's drift is price, not a lapse)."
   },
   {
    "label": "Options book",
-   "text": "BSE is the only off-rule structure: Supertrend is green but the 4200CE call is still open, and 200 of the 3200PE has no hedge. Super orders are clean (12 against 12 shorts), no stop has fired. MCX 3300PE (-Rs5.2k) and BSE 3500PE (-Rs5.8k) are the largest open option losses, both inside their 3x stops."
+   "text": "13 shorts, all with a stop and target, including the extra BANKINDIA 5,200 and BPCL 270PE 7,900 you added today; the scan shows 0 findings. BSE is the one off-rule structure: the 4200CE call fights a green colour and the 3200PE has no hedge."
+  },
+  {
+   "label": "Orders",
+   "text": "APOLLOHOSP's old limit order is still pending and KODYTECH is a missed day (not ordered); PGIL's earlier order was cancelled and it is a fresh signal tonight."
   },
   {
    "label": "Versus the backtest",
-   "text": "Combined P&L is +Rs3.5k on the Rs20L base with 9 closed trades; the backtest reference is 28% CAGR, -15.4% max drawdown, PF 2.01. Too early to compare. Watch the win rate once 30 trades have closed and the deepest drawdown."
-  },
-  {
-   "label": "Do not touch",
-   "text": "No rule change is justified on 9 closed trades. The add-on rule at -6% is working as designed: it is averaging the one-share positions, which is slow but cheap."
+   "text": "9 closed trades against a reference of 28% CAGR, -15.4% max drawdown and PF 2.01: too early to compare. Watch the first 30 closed trades."
   }
  ],
- "action": "Close BSE 4200CE and hedge or close BSE 3200PE in the Dhan app; nothing else is due until tomorrow's refresh brings the 24 Nov signals."
+ "action": "Run /dhan-order for the 2 exits, 4 add-ons and 7 entries, then close BSE 4200CE and hedge or close BSE 3200PE."
 }
