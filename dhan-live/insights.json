@@ -1,30 +1,30 @@
 {
- "as_of": "20 Nov close (Friday)",
- "written_at": "2026-11-21T19:35:55+05:30",
+ "as_of": "23 Nov pre-open (20 Nov close)",
+ "written_at": "2026-11-23T08:54:37+05:30",
  "confidence": "low",
  "maturity": "131 positions ever opened but only 8 closed trades: the swing edge cannot be judged yet.",
- "headline": "Friday's orders mostly worked (3 exits, 5 entries, 2 add-ons filled), but PASHUPATI did not sell and the options book still has BSE mismatched.",
+ "headline": "Nothing changed since Saturday: 1 exit, 6 add-ons and 11 entries are signalled, and today is the last day these 20 Nov signals are fresh enough to order.",
  "points": [
   {
-   "label": "Orders filled",
-   "text": "CORONA, PAYTM and SHRINGARMS were sold; FLUOROCHEM, GHCLTEXTIL, NEOGEN, MINDACORP and POONAWALLA were bought, plus the MACPOWER and TECHM add-ons. CRAFTSMAN's limit did not fill, and it is not a signal any more. The sell prices are Friday-open estimates because Dhan's tradebook is today-only; confirm them in the app."
+   "label": "Signals age out",
+   "text": "The 20 Nov signals are 3 days old today, the order builders' limit. If you want them ordered, run /dhan-order before the next refresh; after tonight's close the 23 Nov signals replace them."
   },
   {
-   "label": "PASHUPATI is stuck",
-   "text": "The market sell for 13 shares did not fill: it closed at the lower circuit (27.18, -5%). It is still a red exit at -37.7%; re-send the same exit on Monday and expect it to sit at the circuit again."
+   "label": "Add-ons grew",
+   "text": "Cooldowns have lapsed, so 6 add-ons are due: APOLLO, ENTERO, MAHASTEEL, MMFL, NILKAMAL, ROLEXRINGS (1 share each, all at or beyond -6%). That is a lot of averaging on a young book, but it is the rule."
   },
   {
-   "label": "Fresh signals",
-   "text": "The new close brings 11 entries and 3 add-ons (ENTERO, MAHASTEEL, ROLEXRINGS). EICHERMOT and ULTRACEMCO are flagged as closing below the 252-session closing high on the cross-check; the backtester signal stands, so this is advisory."
+   "label": "PASHUPATI",
+   "text": "Friday's market sell did not fill (lower circuit). It is still a red exit at -37.7%; send it again and expect it to sit at the circuit."
   },
   {
    "label": "Options book",
-   "text": "Only BSE is off-rule: its 4200CE call is open while Supertrend is green, and 3200PE has no hedge (200 of 400 qty). Everything else matches its colour rule, all stops are in place and the super-order scan is clean."
+   "text": "Only BSE is off-rule (green Supertrend with the 4200CE call open; 3200PE has no hedge). Super orders are clean (12 against 12 shorts)."
   },
   {
    "label": "Versus the backtest",
-   "text": "Combined P&L +Rs3.6k with 8 closed trades. Too early to compare with the backtest (28% CAGR, -15.4% max DD, PF 2.01); watch drawdown and win rate after 30 closed trades."
+   "text": "Combined P&L +Rs3.6k, 8 closed trades. Too early to compare with the backtest (28% CAGR, -15.4% max DD, PF 2.01)."
   }
  ],
- "action": "On Monday after the close run /dhan-order for PASHUPATI plus the new entries and add-ons, then close BSE 4200CE and hedge or close BSE 3200PE."
+ "action": "Run /dhan-order for the PASHUPATI exit, 6 add-ons and 11 entries, then close BSE 4200CE and hedge or close BSE 3200PE."
 }
