@@ -1,6 +1,6 @@
 {
- "fetched_at": "2026-11-23T12:54:02+05:30",
- "orders_checked": 12,
+ "fetched_at": "2026-11-23T12:59:50+05:30",
+ "orders_checked": 14,
  "shorts": 13,
  "findings": [
   {
@@ -16,28 +16,16 @@
    "action": "Check the position; if closed, cancel the legs (order 3132611173120673)"
   },
   {
-   "check": "S2",
-   "name": "NO STOP",
+   "check": "S4",
+   "name": "QUANTITY",
    "severity": "WARN",
-   "order_id": null,
+   "order_id": "2132611232009073",
    "symbol": "BANKINDIA",
    "expiry": "2026-12-29",
    "strike": 140.0,
    "opt_type": "PE",
-   "concern": "No super order matches this short (15600 @ 1.02): no stop protects it",
-   "action": "Close and re-enter as a super order, or use a daily stop order"
-  },
-  {
-   "check": "S2",
-   "name": "NO STOP",
-   "severity": "WARN",
-   "order_id": null,
-   "symbol": "BPCL",
-   "expiry": "2026-12-29",
-   "strike": 270.0,
-   "opt_type": "PE",
-   "concern": "No super order matches this short (7900 @ 2.15): no stop protects it",
-   "action": "Close and re-enter as a super order, or use a daily stop order"
+   "concern": "Super order covers 5200 but 15600 are open",
+   "action": "Check the legs"
   }
  ]
 }

@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-11-23T07:24:09.008276+00:00",
+  "generated_at": "2026-11-23T07:29:50.590479+00:00",
   "market_data_date": "2026-11-20",
   "live_prices_at": "2026-11-23T12:02:22+05:30",
-  "super_scan_at": "2026-11-23T12:54:02+05:30",
+  "super_scan_at": "2026-11-23T12:59:50+05:30",
   "as_of": "2026-11-20",
   "rules": {
     "short_call_delta": 0.1,
@@ -930,25 +930,14 @@
     },
     {
       "level": "WARN",
-      "type": "No stop placed",
+      "type": "Invalid stop order",
       "symbol": "BANKINDIA",
       "expiry": "2026-12-29",
       "strike": 140.0,
       "opt_type": "PE",
-      "concern": "No Stop: No super order matches this short (15600 @ 1.02): no stop protects it",
-      "action": "Close and re-enter as a super order, or use a daily stop order",
-      "text": "BANKINDIA: No super order matches this short (15600 @ 1.02): no stop protects it"
-    },
-    {
-      "level": "WARN",
-      "type": "No stop placed",
-      "symbol": "BPCL",
-      "expiry": "2026-12-29",
-      "strike": 270.0,
-      "opt_type": "PE",
-      "concern": "No Stop: No super order matches this short (7900 @ 2.15): no stop protects it",
-      "action": "Close and re-enter as a super order, or use a daily stop order",
-      "text": "BPCL: No super order matches this short (7900 @ 2.15): no stop protects it"
+      "concern": "Quantity: Super order covers 5200 but 15600 are open",
+      "action": "Check the legs (order 2132611232009073)",
+      "text": "BANKINDIA: Super order covers 5200 but 15600 are open"
     },
     {
       "level": "WARN",
