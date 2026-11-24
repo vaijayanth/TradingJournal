@@ -1,17 +1,17 @@
 {
- "as_of": "23 Nov close (market data 23 Nov)",
- "written_at": "2026-11-23T21:05:00+05:30",
+ "as_of": "24 Nov evening (market data still 23 Nov)",
+ "written_at": "2026-11-24T20:15:00+05:30",
  "confidence": "low",
  "maturity": "139 positions ever opened but only 9 closed trades: the swing edge cannot be judged yet.",
- "headline": "Monday's close fires 2 exits, 4 add-ons and 7 entries; the options book is clean except BSE.",
+ "headline": "Nothing new since Monday's close except two more add-ons coming off cooldown; the order list is the same and still unplaced.",
  "points": [
   {
    "label": "Signals",
-   "text": "Exits: GUFICBIO (-10.2%, the worst position, one share cluster of 3) and SSWL (+0.9%). Add-ons due on AMANTA, ESAFSFB, MANAKCOAT, SMSPHARMA (all -6% to -12%, cooldown over). Entries: LALPATHLAB, PGIL, SAMBHV, SCPL, SHALPAINTS, SPORTKING, WINDMACHIN. All are tiny at the Rs2k tier, so the rupee risk is small; follow the rule."
+   "text": "Exits: GUFICBIO (-10.2%) and SSWL (+0.9%). Add-ons now 6: AMANTA, ESAFSFB, MANAKCOAT, SMSPHARMA plus SANATHAN and SHREEPUSHK (7-day cooldown ended, both about -6% to -7%). Entries unchanged: LALPATHLAB, PGIL, SAMBHV, SCPL, SHALPAINTS, SPORTKING, WINDMACHIN. Signals are 23 Nov data; the backtester has not published a 24 Nov bar, so no new flips yet."
   },
   {
    "label": "Book health",
-   "text": "116 settled positions, 69 in profit (59%, just under the 60% comfort line), 12 at or beyond -6%. Combined P&L is +Rs2.4k on the Rs20L base (it was +Rs3.5k at midday, so today's drift is price, not a lapse)."
+   "text": "Holdings caught up with Monday's fills (6 add-ons settled, 8 new names), 130 positions in scope. No P&L change worth a point: market data is unchanged since the last refresh."
   },
   {
    "label": "Options book",
@@ -19,12 +19,12 @@
   },
   {
    "label": "Orders",
-   "text": "APOLLOHOSP's old limit order is still pending and KODYTECH is a missed day (not ordered); PGIL's earlier order was cancelled and it is a fresh signal tonight."
+   "text": "No orders placed since the last run; APOLLOHOSP's limit order is still pending. A signal that waits another day risks a worse price but the rule is unchanged: place after the close, never chase."
   },
   {
    "label": "Versus the backtest",
    "text": "9 closed trades against a reference of 28% CAGR, -15.4% max drawdown and PF 2.01: too early to compare. Watch the first 30 closed trades."
   }
  ],
- "action": "Run /dhan-order for the 2 exits, 4 add-ons and 7 entries, then close BSE 4200CE and hedge or close BSE 3200PE."
+ "action": "Run /dhan-order for the 2 exits, 6 add-ons and 7 entries, then close BSE 4200CE and hedge or close BSE 3200PE."
 }

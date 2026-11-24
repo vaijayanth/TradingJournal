@@ -1,13 +1,12 @@
 {
- "generated_at": "2026-11-23T15:24:01.375301+00:00",
+ "generated_at": "2026-11-24T14:36:26.155135+00:00",
  "market_data_date": "2026-11-23",
  "yahoo_last_bars": [
-  "2026-11-20",
   "2026-11-23"
  ],
  "bars_after_signal_date_ignored": [],
- "checked": 15,
- "flagged": 1,
+ "checked": 16,
+ "flagged": 0,
  "results": [
   {
    "symbol": "APOLLOHOSP",
@@ -24,29 +23,6 @@
    "flip_bars_ago": 15,
    "pct_from_intraday_high": -1.63,
    "flagged": false
-  },
-  {
-   "symbol": "KODYTECH",
-   "kind": "entry",
-   "ok": true,
-   "reasons": [
-    "last bar is 2026-11-20 (Yahoo + Dhan), signals are dated 2026-11-23"
-   ],
-   "dhan_bars_added": [
-    "2026-11-16",
-    "2026-11-17",
-    "2026-11-18"
-   ],
-   "published_colour": "green",
-   "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-20",
-   "close": 1792.35,
-   "published_close": 1792.35,
-   "closing_high_252": 1792.35,
-   "intraday_high_252": 1840.0,
-   "flip_bars_ago": 135,
-   "pct_from_intraday_high": -2.59,
-   "flagged": true
   },
   {
    "symbol": "LALPATHLAB",
@@ -211,6 +187,38 @@
    "intraday_high_252": 184.81,
    "flip_bars_ago": 106,
    "pct_from_intraday_high": -15.84,
+   "flagged": false
+  },
+  {
+   "symbol": "SANATHAN",
+   "kind": "addon",
+   "ok": true,
+   "reasons": [],
+   "published_colour": "green",
+   "recomputed_colour": "green",
+   "yahoo_last_bar": "2026-11-23",
+   "close": 570.15,
+   "published_close": 570.15,
+   "closing_high_252": 605.0,
+   "intraday_high_252": 617.45,
+   "flip_bars_ago": 105,
+   "pct_from_intraday_high": -7.66,
+   "flagged": false
+  },
+  {
+   "symbol": "SHREEPUSHK",
+   "kind": "addon",
+   "ok": true,
+   "reasons": [],
+   "published_colour": "green",
+   "recomputed_colour": "green",
+   "yahoo_last_bar": "2026-11-23",
+   "close": 514.9,
+   "published_close": 514.9,
+   "closing_high_252": 623.1,
+   "intraday_high_252": 653.0,
+   "flip_bars_ago": 61,
+   "pct_from_intraday_high": -21.15,
    "flagged": false
   },
   {
