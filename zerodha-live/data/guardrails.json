@@ -1,22 +1,22 @@
 {
- "generated_at": "2026-11-23T20:42:41+05:30",
+ "generated_at": "2026-11-24T19:58:45+05:30",
  "broker": "zerodha",
  "market_data_date": "2026-11-23",
- "signals_generated_at": "2026-11-23T12:02:57.969241+00:00",
+ "signals_generated_at": "2026-11-24T14:28:41.714120+00:00",
  "status": "WARN",
  "global_block": false,
  "counts": {
   "block": 0,
-  "warn": 5,
+  "warn": 3,
   "info": 0
  },
  "per_symbol_blocks": {},
  "findings": [
   {
-   "id": "F3",
+   "id": "F1",
    "level": "WARN",
    "symbol": null,
-   "msg": "signals were built before the latest holdings pull - re-run the refresh"
+   "msg": "market data 2026-11-23 is 1 session behind the last published session (2026-11-24)"
   },
   {
    "id": "C2",
@@ -28,19 +28,7 @@
    "id": "P3",
    "level": "WARN",
    "symbol": null,
-   "msg": "7 open option exit / strike-breach alerts on 3 stocks (COCHINSHIP, DIVISLAB, RVNL) - see the Covered Call alerts"
-  },
-  {
-   "id": "P1",
-   "level": "WARN",
-   "symbol": "IEX",
-   "msg": "IEX: expiry 2026-11-23 is 0 days away (expiry week) - do not open a new option structure"
-  },
-  {
-   "id": "P1",
-   "level": "WARN",
-   "symbol": "IREDA",
-   "msg": "IREDA: expiry 2026-11-23 is 0 days away (expiry week) - do not open a new option structure"
+   "msg": "2 open option exit / strike-breach alerts on 2 stocks (COCHINSHIP, RVNL) - see the Covered Call alerts"
   }
  ]
 }

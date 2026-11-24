@@ -1,23 +1,15 @@
 {
- "fired_ok_today": [
-  "ICICIGI26DEC1560PE",
-  "PREMIERENE26DEC1000CE",
-  "TORNTPHARM26DEC5100CE",
-  "SOLARINDS26DEC22000CE",
-  "COALINDIA26DEC440CE",
-  "POLYCAB26DEC8400CE",
-  "PIIND26DEC2000CE"
- ],
- "fetched_at": "2026-11-23T20:42:41+05:30",
+ "fired_ok_today": [],
+ "fetched_at": "2026-11-24T19:58:36+05:30",
  "inputs": {
-  "positions": "2026-11-23T15:12:28.754781+00:00",
-  "gtts": "2026-11-23T20:42:28+05:30",
-  "orders": "2026-11-23T20:42:28+05:30",
-  "gtt_scan": "2026-11-23T20:42:28+05:30"
+  "positions": "2026-11-24T14:28:04.587609+00:00",
+  "gtts": "2026-11-24T19:58:04+05:30",
+  "orders": "2026-11-24T19:58:04+05:30",
+  "gtt_scan": "2026-11-24T19:58:04+05:30"
  },
  "stale_inputs": [],
- "open_legs": 96,
- "triggered_gtts": 8,
+ "open_legs": 94,
+ "triggered_gtts": 0,
  "findings": [
   {
    "section": "A",
@@ -73,14 +65,6 @@
    "symbol": "CUMMINSIND",
    "tradingsymbol": "CUMMINSIND26DEC5000CE",
    "concern": "Short 5000CE (100 qty) is a naked call (by design; covered only by shares you hold)",
-   "action": "Watch the 3x stop and the Supertrend colour"
-  },
-  {
-   "section": "B",
-   "severity": "INFO",
-   "symbol": "DIVISLAB",
-   "tradingsymbol": "DIVISLAB26NOV10600CE",
-   "concern": "Short 10600CE (100 qty) is a naked call (by design; covered only by shares you hold)",
    "action": "Watch the 3x stop and the Supertrend colour"
   },
   {
@@ -292,27 +276,11 @@
    "action": "Watch the 3x stop and the Supertrend colour"
   },
   {
-   "section": "C",
-   "severity": "HIGH",
-   "symbol": "DIVISLAB",
-   "tradingsymbol": "DIVISLAB26NOV10600CE",
-   "concern": "No active buy-back GTT (premium 640, sold 116.95, already 5.5x: a GTT would fire at once)",
-   "action": "Close it now (a GTT would fire at once)"
-  },
-  {
-   "section": "D",
-   "severity": "HIGH",
-   "symbol": "MAZDOCK",
-   "tradingsymbol": "MAZDOCK26DEC2200CE",
-   "concern": "GTT 344968233 fired at 09:31 but its buy-back order 261123150262757 was CANCELLED; the short (225 qty) is still open",
-   "action": "Close it by hand in Kite now"
-  },
-  {
    "section": "G",
    "severity": "WARN",
    "symbol": "CUMMINSIND",
    "tradingsymbol": "CUMMINSIND26DEC5000CE",
-   "concern": "Active GTT 344015712 (trailing-single) has a stop but no profit target; sold 21.8, premium 9.1",
+   "concern": "Active GTT 344015712 (trailing-single) has a stop but no profit target; sold 21.8, premium 8.9",
    "action": "Add a profit target at about 8.72 (a two-leg GTT: /zerodha-gtt-order or the Kite app)"
   }
  ]

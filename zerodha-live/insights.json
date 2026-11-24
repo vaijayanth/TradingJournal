@@ -1,34 +1,30 @@
 {
- "as_of": "23 Nov 20:45 IST (23 Nov close; no change since 17:40)",
- "written_at": "2026-11-23T20:45:00+05:30",
+ "as_of": "24 Nov evening (no trading today; 23 Nov close)",
+ "written_at": "2026-11-24T20:10:00+05:30",
  "confidence": "low",
- "maturity": "15 days of history and 2 closed trades: a health check, not a verdict on the strategy.",
- "headline": "Three swing exits fired today (APLAPOLLO -23%, COCHINSHIP -9%, RVNL -8%), the DIVISLAB spread is still open on expiry day, and four new call shorts have no GTT.",
+ "maturity": "16 days of history and 2 closed trades: a health check, not a verdict on the strategy.",
+ "headline": "No session today, so the three exit orders are still queued; COCHINSHIP's order is 2 shares short of the position, and DIVISLAB has cleared off the options book.",
  "points": [
   {
-   "label": "Swing exits",
-   "text": "Supertrend turned red today on APLAPOLLO, COCHINSHIP and RVNL, so the rule is to exit all three at tomorrow's open. APLAPOLLO is the large one (-23%, a grandfathered position that has now flipped after the cut-off); the two others are -9% and -8%. All three signals are fresh and cross-checked."
+   "label": "Exit orders",
+   "text": "The APLAPOLLO, COCHINSHIP and RVNL AMO sells are still pending: there were no trades and prices are unchanged, so they should fire at the next open. COCHINSHIP is held at 17 shares (the 2 add-on shares settled into holdings) but the order is for 15, so 2 shares would stay. Fix the order to 17 before the open."
   },
   {
-   "label": "Options on the same stocks",
-   "text": "COCHINSHIP and RVNL carry bull put spreads that now fight a red colour: close those spreads alongside the shares, then the call-side entry is available. This is the same flip rule that cost money on DIVISLAB, so do it the same day."
+   "label": "Options book",
+   "text": "DIVISLAB is gone from the positions, and options MTM is back to +Rs5.0k from -Rs42k, so that one spread was the whole options loss. 62 contracts have a GTT, scan 0 findings. The COCHINSHIP and RVNL put spreads are still open against a red colour: close them with the share exits."
   },
   {
-   "label": "DIVISLAB",
-   "text": "Both legs are still on the book on expiry day, in the money and through the hedge (premium 640 against 117 sold). It will settle physically unless closed or exercised out; this is the largest single loss in the options book."
+   "label": "Swing book",
+   "text": "39 positions, tier Rs20k, combined +Rs15.4k. No add-ons and no entries (the only recent green flips, CUB and PNBHOUSING, are already held). Financial Services is 48% of deployed capital against the 40% guardrail."
   },
   {
-   "label": "Protection",
-   "text": "CANBK, COALINDIA, KAYNES and SOLARINDS shorts were added today with no GTT yet; MAZDOCK's fired GTT was cancelled and its call is still open. The GTT run covers the first four; MAZDOCK needs a manual close."
-  },
-  {
-   "label": "Breadth and risk",
-   "text": "172 of 215 F&O stocks are green and 5 flipped today, so the tape is still supportive, but today's three reds are the stocks that rolled over first. Financial Services is 48% of deployed capital against the 40% guardrail; hold off new financials."
+   "label": "Process",
+   "text": "Three red flips fired on the same day while two of those stocks carried put spreads: closing the option side the same day as the share exit is the part that has cost money before (DIVISLAB), so do it."
   },
   {
    "label": "Versus the backtest",
-   "text": "Combined P&L is positive but the book is 15 days old with 2 closed trades; too early to compare with the -21.3% max drawdown and PF 1.75 reference. Watch the first 30 closed trades; today's exits start that count."
+   "text": "Too early: 2 closed trades against the -21.3% drawdown and PF 1.75 reference. Tomorrow's fills book the first three exits and start the 30-trade count."
   }
  ],
- "action": "Sell APLAPOLLO, COCHINSHIP and RVNL at the open; close the COCHINSHIP and RVNL put spreads; settle DIVISLAB; place GTTs on CANBK, COALINDIA, KAYNES and SOLARINDS."
+ "action": "Before the open fix the COCHINSHIP sell to 17 shares, then after the fills run /refresh-zerodha; close the COCHINSHIP and RVNL put spreads in Kite."
 }
