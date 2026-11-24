@@ -72,6 +72,7 @@ The final report must fit one screen with no scrolling (about 35 lines). Working
 - ND, AZ and DI share no code or data: edit DI's copy only.
 
 ## Concise output (user, 2026-11-23: "your tables are not concise"; applies to everything this skill prints)
+- **Next steps are ALWAYS a table (user, 2026-11-24: 'provide next steps in nice table format, always remember').** The closing next-steps block is one table: `# | Type | Do | Command or app | When`, `Type` = `skill` (I run it, or the user types the command) or `manual` (broker app), most urgent first, finished items left out. Keep the single `Next step:` line under it naming step 1.
 - **Table size (user, 2026-11-23: 'your table is again big... remember this table size').** A confirm / pick list is TWO tiny tables at most: (1) things to delete or close: 2 columns (name, id); (2) things to place: 3 columns (name, qty, the one key number such as `stop (limit)`). Drop sold price, LTP, target levels and rupee totals unless the user asks; one line under the tables for the single warning.
 - **After an action** (placed, cancelled, modified, deleted, recorded): ONE line of result, for example "7 GTTs placed and verified: 60 contracts covered, scan 0 findings, pushed `abc1234`". No table of order ids, GTT ids or prices (the broker's order book and GTT list already hold them), no recap of earlier steps.
 - **Tables:** at most 3 to 4 short columns, short cells (no sentences), and only for something the user must choose or still has to do. Never repeat a list that was shown earlier in the same run; point to it.

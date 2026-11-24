@@ -73,8 +73,10 @@ def load(data_dir, symbols, start, with_high_window):
     return raw
 
 
-def run(strategy, data_dir, symbols, start, slip, seed=0, fresh_only=True, cash_rate=0.0, tier_cap=None, flip_window=None, capital=None, size_pct=None, size_base="realised", base=None, step=None, double=False, every=None):
+def run(strategy, data_dir, symbols, start, slip, seed=0, fresh_only=True, cash_rate=0.0, tier_cap=None, flip_window=None, capital=None, size_pct=None, size_base="realised", base=None, step=None, double=False, every=None, block=None, block_adds=False):
     cfg = dict(CFG[strategy])
+    # market gate (user test, 2026-11-24): `block` = {date: True} on days when NEW entries are not allowed (e.g. Nifty Supertrend red); `block_adds` also stops
+    # add-ons on those days. Exits are never blocked. Signals are read at the day's close, so the gate uses the same close.
     if every is not None:        # ladder step interval in trades (default 100)
         cfg["every"] = every
     if base is not None:         # ladder start size per position, Rs (default: the strategy's own)
@@ -175,10 +177,10 @@ def run(strategy, data_dir, symbols, start, slip, seed=0, fresh_only=True, cash_
                     pending[sym] = {"a": "sell"}
                     continue
                 pl = (c / p["avg"] - 1) * 100
-                if pl <= ADD_TRIGGER and d == "up" and (dt - p["last"]).days >= ADD_COOLDOWN and sym not in pending:
+                if pl <= ADD_TRIGGER and d == "up" and (dt - p["last"]).days >= ADD_COOLDOWN and sym not in pending and not (block_adds and block and block.get(dt)):
                     q = p["qty"] * 0.10
                     pending[sym] = {"a": "add", "q": max(1, int(q) if cfg["add"] == "int" else round(q))}
-            elif sym not in pending and d == "up":
+            elif sym not in pending and d == "up" and not (block and block.get(dt)):
                 if strategy == "dhan":
                     if roll is not None and not pd.isna(roll) and c > roll:
                         cands.append((c / roll - 1, sym))
