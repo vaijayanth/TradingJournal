@@ -1,0 +1,871 @@
+# Legacy Google-Sheet dashboard (Zerodha SST) and UI session history
+
+> ARCHIVE (moved out of CLAUDE.md on 2026-11-25). Applies ONLY to the Sheet Dashboard tab (Apps Script feed, TRADES/NSEFO sheets, SST rules, Rs50L base) and the 2026-06 to 2026-09 UI work. It does NOT describe ND, AZ or DI. Win-rate targets in here (>=70% SST, >=40% calibrated) are for that sheet strategy only; the dh252 and AZ backtests run at about 41% win rate and that is normal.
+> Not loaded automatically. Read it only when the task touches this area. Where it contradicts the dated notes in CLAUDE.md, CLAUDE.md wins.
+
+# TradingJournal — Project Context for Claude
+
+## What this is
+Single-file HTML trading journal (`index.html`) hosted on GitHub Pages at `https://vaijayanth.github.io/TradingJournal`.
+Connected to a Google Sheet via Apps Script as a JSON middleware.
+
+## SYSTEM DESIGN — READ BEFORE SUGGESTING ANYTHING
+
+This is an **SST (Sharegenius Swing Trading) high-WR momentum system**. It is fundamentally different from Minervini/O'Neil fixed-stop systems. Read every point below before making any suggestion.
+
+### Core System Philosophy
+- **Target ≥70% win rate** — this is a HIGH win rate system, not a low-WR large-winner system. A 30-40% WR would be a sign something is wrong.
+- **NO hard stop loss** — losses are held, not cut. Risk is managed via diversification (up to 200 positions) and the add-on rule (below).
+- **GTT (Good Till Triggered) orders** handle both entries and exits — fully automated, no screen-watching needed.
+- **Losers are HELD until recovery** — this is intentional system design, not a mistake. Do NOT suggest cutting losses fast.
+- **Winners are HELD indefinitely** via GTT trailing — as long as the trend and fundamentals are intact.
+- **True performance = realised + unrealised combined** — closed-only P&L looks misleadingly bad because losses sit open. Never judge system health from closed trades alone.
+
+### Entry Rules
+- **Universe**: Fundamentally strong stocks above 200 EMA AND 50 EMA
+- **Signal**: Stock touches 21-Day High (21DH) — breakout candidate
+- **Action**: Place GTT order at the 21DH price — entry triggers automatically when price breaks out
+- **Setup types** (col S): Breakout, Pullback, 21 EMA Pullback, 10 EMA Pullback
+- **Never chase** — if GTT misses the breakout, wait for the next 21DH signal
+
+### Stop / Hold Rules (TWO STATES — no fixed stop)
+**In Profit (P&L > 0):**
+- Hold — do nothing unless at lock-in or target zone
+- At 6% profit: trailing SL activates — verify GTT is set 6% below CMP
+- At 7%+: raise GTT further to lock in more profit
+- Hold indefinitely while fundamentals are intact
+
+**In Loss (P&L < 0):**
+- If stock is **above 200 EMA AND 50 EMA**: place a NEW GTT at 21DH for **50% add-on qty** — average into the position, the stock is still fundamentally intact
+- If stock drops **below 50 EMA**: HOLD, do nothing — wait for structure to return. No exit.
+- **Never exit on a loss** unless there is genuine fundamental deterioration (earnings collapse, fraud, sector disruption)
+- **Add-on rule**: when open position loss > −7% AND stock is above BOTH 200 EMA AND 50 EMA → add 1/10 of that position's qty. All stocks meeting this signal get an add-on. Max 1 add-on per week **per stock** (not 1 total across portfolio).
+
+### Profit Taking
+- Lock-in at **6%**: trailing SL activates, minimum 6% profit protected
+- At **7%+**: raise trailing SL higher to capture more of the move
+- Continue trailing as long as stock holds above support
+- **No fixed profit target** — let the trailing GTT SL do the exiting
+- Hold for weeks or months if the trend is intact
+
+### Position Sizing
+- Base position: **₹20,000 per trade**
+- Increases: **+₹5,000 every 100 closed trades** → ₹20k → ₹25k → ₹30k → ... → ₹1,00,000 cap
+- Hard cap: **₹1,00,000 per trade** (16 tiers of 100 trades each)
+- Add-on size: **1/10 of current position size** (when stock recovers above 200+50 EMA — signal condition), max 1 add-on per week
+- Max open positions: **200**
+
+### Exit Rules
+- Exit ONLY when trailing GTT SL is hit (fires automatically)
+- In profit: GTT trailing SL at 6%+ handles exit
+- In loss above 200+50 EMA: wait, consider adding — SST expects recovery on fundamentally strong stocks
+- In loss below 50 EMA: hold indefinitely, no exit
+- Full exit only on fundamental company issue
+
+### What NOT to suggest for this system
+- ❌ Do NOT suggest "cut losses fast" — losses are held by design
+- ❌ Do NOT flag a 30-40% WR as bad — target is ≥70%, anything below signals a problem
+- ❌ Do NOT suggest stop-loss slippage metrics
+- ❌ Do NOT suggest position count limits — 200 is the intended max
+- ❌ Do NOT suggest loss streak alerts — losers held open don't count as a streak
+- ❌ Do NOT suggest R-multiple analysis — this system doesn't use fixed risk per trade
+
+### The right health checks for this system
+1. Win rate on closed trades ≥ 70%?
+2. Are losses being held (not cut) — avg loss hold time should be long?
+3. Are add-ons being taken correctly (above 200+50 EMA only)?
+4. Is the combined P&L (realised + open MTM) positive?
+5. Are GTT trailing SLs set on all profitable positions?
+
+### "Init Risk ₹" (col K) / "Init Risk %" (col L)
+These columns may be partially populated or irrelevant for SST. Never assume every trade has initRiskRs. Position size metric = `entryPrice × qty`, not initRiskRs.
+
+## Repo & Branch
+- Repo: `vaijayanth/TradingJournal`
+- Active branch: `claude/beautiful-hamilton-fwa55n`
+- Always push to this branch. GitHub Pages serves from it directly.
+
+## Apps Script URL
+`https://script.google.com/macros/s/AKfycbwh85dD1AlNlMFRk4M4A8yCA5YAs5gvnCIMgq6ixQUhdxmes-CqU3OYOdxtzDRLRgLq/exec`
+
+## Google Sheet
+- Sheet name: `TRADES`
+- Portfolio value cell: `AK26` (realised only — initial capital + closed trade P&L. Does NOT include open position MTM from col Y)
+- Initial capital cell: `AK20`
+
+## Column Mapping (DEFAULT_CONFIG)
+| Field | Column |
+|---|---|
+| Flag | B |
+| Stock | E |
+| Open Date | C |
+| Close Date | D |
+| EMA21 context | F (LIVE formula — not reliable for analysis) |
+| CMP | H |
+| 7-Day Low | I |
+| Stop Loss | J |
+| Init Risk ₹ | K |
+| Init Risk % | L |
+| Entry Price | R |
+| Setup Type | S (plain label: "Breakout" or "Pullback" — see below) |
+| % From Stop | W |
+| Notional P&L% | X (plPct — blank for closed trades) |
+| Notional P&L ₹ | Y (notionalPl — MTM, only filled for OPEN positions) |
+| Partial Qty | Z |
+| Partial Price | AA |
+| Partial P&L | AB |
+| Final Exit Price | AC |
+| Final P&L ₹ | AD |
+| Final P&L % | AE |
+| Age (days) | AF |
+| MAE% | AL |
+| MFE% | AM |
+
+**⚠ This table is STALE (confirmed 2026-11-07) — do not trust it for column letters.** The sheet has had columns inserted since this was written (e.g. `ema200Col:'F'`/`ema50Col:'G'` were added, shifting everything after). The live `DEFAULT_CONFIG` object in `index.html` (search for `const DEFAULT_CONFIG = {`, just above `const MKT_DIR_KEY`) is the actual source of truth — e.g. it currently has `cmpCol:'J'` (not H), `portfolioCell:'AH3'`/`initialCapCell:'AH2'` (not AK26/AK20). Also note: the code comment on `setupTypeCol:'S'` in that object says *"col S: Total Invested ₹ (parsed as number in sstProcess)"* — i.e. col S is currently read as a numeric invested-amount field in `sstProcess()` (`t.totalInvested = parseFloat(t.setupType)`), not as the Setup Type label described in this table. This is a real naming mismatch in the live code (the JS field is still called `setupTypeCol`/`t.setupType` but holds a different value than its name implies) — verify against the actual sheet before trusting either this table or the variable name alone.
+
+## Critical Data Facts
+- **Column Y (notionalPl)**: mark-to-market, only populated for OPEN positions. Zero/blank for closed trades.
+- **Column X (plPct)**: also blank for closed trades in this sheet.
+- **Column F (ema21)**: live formula showing current EMA position — NOT entry-time value. Do NOT use for analysis.
+- **Setup Type (col S)**: SIMPLIFIED — plain text label only. Four valid values:
+  - `"Breakout"` — smooth breakout of 52-week high
+  - `"Pullback"` — generic pullback entry
+  - `"21 EMA Pullback"` — clear pullback to 21 EMA on a breakout stock
+  - `"10 EMA Pullback"` — tight pullback to 10 EMA on a strongly trending stock
+  - Old compound codes (BKT/VCP/VCL_SL_LT10 etc.) are fully retired.
+  - `parseSetupType(code)` is a direct passthrough: `{ label: code.trim(), pattern: code.trim() }`. No SETUP_PATTERN_LABELS, SETUP_TIER_LABELS, or patternMap. Any new setup type added to the sheet automatically appears in Analysis breakdown with no code changes needed.
+- **portfolioValue (AK26)**: realised only — does NOT include open position unrealized P&L. True combined P&L = `(portfolioValue - initialCapital) + sum(notionalPl)` = `totalFinalPl + totalUnrealisedPl`.
+- **Date format from Apps Script**: `dd-MMM-yyyy` (e.g., `21-Apr-2026`) — NOT parseable by `new Date()`. Use `parseDate()` helper everywhere.
+
+## Trading Strategy (IMPORTANT — read SYSTEM DESIGN section above first)
+
+The canonical strategy is stored in `STRAT_DEFAULT_RULES` in index.html (around line 9209). That is the source of truth. Summary:
+
+- **Entry**: GTT at 21-Day High — auto-triggers on breakout. Universe = above 200 EMA + 50 EMA.
+- **In profit**: Trail via GTT. Lock-in at 6%, raise at 7%+. Hold indefinitely.
+- **In loss, above 200+50 EMA**: Hold + add 50% qty via new GTT at 21DH.
+- **In loss, below 50 EMA**: Hold. Do nothing. Wait for structure.
+- **Exit**: Only when GTT trailing SL fires, or fundamental collapse.
+- **Sizing**: ₹20,000 base, +₹5k per 100 closed trades (₹25k → ₹30k → ... → ₹1L cap), max 200 positions.
+- **Initial capital**: ₹50,00,000 (₹50L)
+- **Notional P&L** = open trade unrealized MTM from col Y — NOT a what-if on closed trades.
+- **True performance** = realised + unrealised combined.
+
+## SST Health Metrics (what to show and track)
+| Metric | Target | Note |
+|---|---|---|
+| Win rate (closed) | ≥ 70% | High-WR system — below 60% signals a problem |
+| Combined P&L (realised + MTM) | Positive | Closed-only always looks bad — don't use alone |
+| Open portfolio profitable | ≥ 60% | Portfolio breadth health |
+| GTT coverage | 100% of profitable positions | Every in-profit trade should have active GTT |
+| Add-ons executed | When eligible | Loss above 200+50 EMA → 50% add-on should be placed |
+| Combined profit factor | ≥ 2.0 | High WR system should have high PF |
+
+## UI Changes Made (2026-08-24 session)
+
+### Performance Tab — SST Recalibration (full pass)
+
+#### New JS wired (HTML already existed from prior session):
+- **Position Sizing Tier card**: `sizeForCount = n => Math.min(20000 + Math.floor(n/100)*5000, 100000)` — shows current tier ₹ size, progress bar to next tier, badge with tier number. Elements: `#perf-tier-size`, `#perf-tier-label`, `#perf-tier-badge`, `#perf-tier-next-size`, `#perf-tier-next-label`, `#perf-tier-bar`
+- **Capital Efficiency card**: avg return % on deployed capital per winning trade (entryPrice × qty). Falls back to `avgFinalWin` if qty missing. Elements: `#perf-cap-eff-pct`, `#perf-cap-eff-rs`, `#perf-cap-eff-badge`, `#perf-cap-avg-pos`, `#perf-cap-loss-pct`
+- **Win Rate Health card** (replaced R-Expectancy): Breakeven WR = avgLoss/(avgWin+avgLoss). Shows gap cushion above breakeven. Elements: `#perf-r-expectancy`, `#perf-r-expectancy-badge`, `#perf-r-expectancy-closed`
+
+#### SST Health Banner fixes:
+- **H1** changed from "HOLD ASYMMETRY (winners longer = good)" → **"WIN RATE (CLOSED) ≥70%"** — the actual SST metric
+- **H2** label: "AVG LOSS SIZE" → "AVG LOSS AT EXIT", sub: removed "Target: <7%", replaced with "Closed losses — hold open per SST"
+- **H2 sub text**: "Stops taken tight ✓" → "Losses contained ✓"; "tighten stops" → "hold, do not cut"
+- **H1 verdict fallback**: removed "cut losses faster", replaced with "win rate below target — review entry signals"
+- **Multi-fail verdict**: removed "stop discipline", replaced with GTT/entry-quality framing
+
+#### Hold Time badge (Performance tab):
+- Old: `⚠ Losers held Nx longer than winners — reverse this` (hostile for SST)
+- New: `✓ Losers held Nx longer than winners — SST system holding correctly`
+
+#### Rolling WR and chart thresholds:
+- Rolling WR annotation: 30% → 70% SST target
+- Win Rate by Day of Week: bar colors 40%/20% → 70%/50%; annotation 30% → 70%
+- Rolling WR insight thresholds: alert at <50% (not <20%), green at ≥70%
+- Rolling WR sub: "target ≥20%" → "target ≥70%"
+- Winner vs Loser Hold Duration chart: reframed as SST expected behavior
+
+### Analysis Tab — SST Recalibration (full pass)
+
+#### Analysis Health Banner C1:
+- Old: "EXIT SPEED" — passes when losses exit in ≤10 days (hostile — SST holds losses)
+- New: "LOSS HOLD DURATION" — passes when `avgLossDays ≥ avgWinDays` (losers held longer = system working correctly per SST)
+
+#### Discipline Scorecard — completely rewritten:
+| Old (hostile) | New (SST) |
+|---|---|
+| Stop Discipline % | Win Rate (target ≥70%) |
+| Hold Asymmetry winners/losers ratio | Loss Hold Duration (losers longer = correct) |
+| Position Sizing | Position Sizing (kept — tier-based, still relevant) |
+| Avg Stop Overrun | Winner Hold (target ≥20d — GTT trailing active) |
+
+#### Insight text SST-calibrated:
+- Equity curve: removed "cutting losses fast enough?" / "tight stops, fast cuts" → GTT trailing language
+- P&L distribution: removed "planned risk" / "stops not taken on time" → SST framing
+- R-Multiple: removed "Cut losses faster — stop = 7-day low" → "focus on entry quality"
+- Open losers note: "monitor stops" → "hold per SST; check for add-on eligibility (above 200+50 EMA)"
+- "losses are tight (all within ~1R)" → "Closed losses contained (all within ~1R at exit)"
+
+#### Chart annotations:
+- Win Rate by Sector: 30% → 70% reference line, bar colors 40%/20% → 70%/50%
+- Hold Duration tables (both): green ≥40% → ≥70%, amber ≥20% → ≥50%
+- Same day exit note: "immediate stop" → "GTT triggered same day"
+- "Cut Fast, Run Long?" chart → "Hold Duration vs P&L% (All Trades)"
+- Winner vs Loser chart detail: "serious discipline issue if losers held longer" → "SST: losers held longer = working correctly"
+
+---
+
+## UI Changes Made (2026-08-11 session)
+
+### Tabs removed
+- **Today tab** removed — `#page-today` hidden, nav button deleted, momentum strip links cleaned up
+- **Positions tab** removed — `#page-positions` hidden, nav button deleted
+- Nav now: Dashboard · Performance · Analysis · Strategy · Config
+
+### Dashboard — KPI Cards Redesigned for SST
+- **Open Book card** (was "Open Positions"): Total Open, At Target ≥7%, Book Health % (`#dash-open-pct-profitable`, ≥60% = green), Unrealised MTM (`#dash-sys-exp`), Avg Hold (Open)
+- **System Edge card** (was "System · Closed Trades"): Win Rate LARGE (`#dash-sys-wr`, ≥70% = green, last-30 in sub `#dash-sys-wr-recent`), Profit Factor LARGE (`#dash-sys-pf`, ≥2.0 = green), Avg Win % / Avg Loss %, Win:Loss ₹ Ratio (`#dash-win-loss-rs-ratio`), Avg Hold Closed W/L split
+- Removed: Calmar/DD from peak, Lock-in Zone, raw win/loss counts as headline KPIs
+- Fixed: WR threshold ≥70% green (was 40%), removed SST-hostile "cut losses fast" language
+- Win:Loss ₹ ratio JS: `avgWinRs / avgLossRs` — shows e.g. `2.4× · ₹9,100 ÷ ₹3,800`
+
+### Dashboard — Avg Holding Period
+- **Avg Hold (Open)**: `#dash-open-avg-hold` — average `t.age` across all open positions (e.g. `42d`). In Open Book card, last slot.
+- **Avg Hold (Closed)**: `#dash-closed-avg-hold` — average age across all closed trades. Sub-label `#dash-closed-hold-split` shows `W: Xd · L: Yd` split. In System Edge card.
+- JS wired in `renderDashboard` just before `renderDashCalendar(closed)` call — two try-catch blocks computing from `t.age` (col AF).
+
+### Dashboard — Portfolio Heatmap Collapsed by Default
+- Heatmap card (`#dash-heatmap-card`) now collapsed on load — click header to expand/collapse.
+- Body wrapped in `#dash-heatmap-body` (hidden by default). Chevron `#dash-heatmap-chevron` shows ▼/▲.
+- Toggle: `toggleHeatmap()` function.
+- `renderPortfolioHeatMap` sets `el.style.cssText` to apply flex layout since inline style moved to body wrapper.
+
+### Dashboard — P&L Calendar Redesigned
+- One month at a time (‹ › prev/next via `dashCalNav(dir)`, `window._dashCalOffset`)
+- Large P&L value per cell (14px bold), small day number (10px faded)
+- Rounded cells (8px), dark green/red backgrounds
+- Empty days show faint day number on grey background
+
+## UI Changes Made (2026-08-03 session)
+- **Performance tab**: SST System Health Banner (5 checks), renamed R-Multiple → Win:Loss Ratio, removed "planned risk" language, added avg win/loss ₹, Copy Summary button
+- **Analysis tab**: SST Analysis Health Banner (5 checks), replaced all stop-loss/risk-tier language with SST framing, Loss:Winner Ratio replaces Stop Slippage, "If WR improves to 40%" projection replaces "full risk cap" projection, Open Portfolio Quality replaces Risk Tier card
+
+## UI Changes Made (2026-08-07 session)
+
+### Re-entry Watchlist (Dashboard)
+- Card `#dash-reentry-card` shows stocks eligible for re-entry consideration
+- **Logic**: group all closed trades by stock → exclude any stock currently in open positions → keep only stocks where most recent close was **≥ 6 trading days ago** (Mon–Fri only, not calendar days)
+- Shows one row per stock: #, Stock, Last Closed, Days Since (trading days), Last P&L%, Times Traded, W/L history
+- Sorted by days since close (ascending — most recently eligible first)
+- If a stock has been traded multiple times, uses the MOST RECENT close date to check eligibility
+- JS: IIFE inside `renderDashboard`, uses `tradingDaysBetween(from, to)` helper (counts Mon–Fri only)
+- Collapsed by default, toggled via `toggleReentryList()`
+
+### Equity Curve (Dashboard) — `_renderDashEqChart()`
+- **Default mode changed**: `window._dashEqMode = '₹'` (absolute portfolio value, not % return)
+- **Aggregated by date**: trades grouped by close date before plotting — one data point per unique date. Multiple trades closing same day merge into one point. Tooltip lists all stocks for that date.
+- **X-axis**: sparse labels formatted as "Aug 26" style, max 8 labels, duplicates suppressed
+- **Y-axis**: compact format — ₹50.2L, ₹1.5k etc. Dynamic decimals for % mode (3dp if range <0.5%, 2dp if <5%, 1dp otherwise)
+- **Simplified style**: thin line (2px), very light fill (opacity 0.01–0.2), subtle horizontal grid lines, no Break-even annotation, legend top-right only when combined series visible
+- Toggle button still available to switch to % Return mode
+
+## Key Helpers in index.html
+```javascript
+// Date parsing — MUST use this everywhere, not new Date()
+function parseDate(s) {
+  if (!s) return new Date(0);
+  const m = s.match(/^(\d{1,2})-([A-Za-z]{3})-(\d{4})$/);
+  if (m) return new Date(`${m[2]} ${parseInt(m[1])}, ${m[3]}`);
+  return new Date(s);
+}
+
+// Config
+const CONFIG_KEY = 'tj_config_v1';
+function loadConfig() { ... }
+function saveConfig(cfg) { localStorage.setItem(CONFIG_KEY, JSON.stringify(cfg)); }
+```
+
+## Architecture
+- `fetchData()` — calls Apps Script, returns `{ open, closed, portfolioValue, initialCapital }`
+- `renderDashboard(data, cfg)` — Dashboard tab
+- `renderPerfStats(closed, open, portfolioValue, initialCapital)` — Performance tab stats
+- `initPerfCharts(closed, initialCapital, open)` — Performance tab charts
+- `renderPositionsReal(open, cfg)` — Positions tab
+- `renderClosedTradesReal(closed)` — closed trades table
+- `initAnalysisCharts(open, closed)` — Analysis tab
+- `populateConfigPage()` — fills Config form from localStorage
+- `saveAllConfig()` — saves Config form to localStorage
+- `setPeriod(btn, period)` — filters Performance tab by 30/90/all days
+
+## What "Notional" means to the user
+Open trades only — unrealized mark-to-market P&L from col Y. NOT a what-if calculation on closed trades.
+
+## What drives KPIs
+All KPIs (expectancy, win rate, RoP, equity curve) must show **combined realized + unrealized** picture, not closed-only. Closed-only looks like a losing system because stops are taken fast.
+
+## Expectancy Card (3 lines)
+1. Realised: avg finalPlPct% across closed trades
+2. Unrealised: avg notionalPl ₹ per open trade (not % — too small)
+3. Combined: (totalFinalPl + totalNotionalPl) / totalTrades / initialCapital × 100
+
+## Equity Curve
+- Main series: cumulative realised P&L from closed trades (area chart)
+- Dashed amber series: extends to "Today" = realised + total open MTM
+- Drawdown chart: closed trades only (no Today point — unrealised MTM is not a true drawdown)
+
+## Analysis Tab
+`initAnalysisCharts(open, closed)` reads `BE_TRIGGER`/`PARTIAL_TRIGGER` from Config and `window._data.initialCapital` (NOT a function param — must read from global, `destroyAndReinitAnalysis()` calls this fn standalone). All 8+ ApexCharts calls wrapped in try-catch so one bad chart doesn't abort the rest of the function.
+
+Sections, top to bottom:
+1. **Setup Type breakdown table** (col S) — win rate, **WR (Last 30)** recency column with ↑↓ arrow vs all-time WR, R-multiple, Expectancy R, avg P&L%/win%/loss%, total P&L per setup
+2. **Win Rate by Setup** + **Avg P&L% by Setup** bar charts
+3. **Trade Management** — ₹ Risk per Trade distribution, Winner vs Loser Hold Duration, Closed Winner Size Distribution, Loss Size Distribution. KPI cards: avg risk, avg actual loss, **Stop Slippage** (negative/saved = green, positive/over-stop = red/amber), median winner
+4. **Partial Exit Analysis** — comparison of trades that took partial at trigger vs those that reached trigger but held full position; "Action Now" card lists pending partials
+5. **Behavioural Patterns**:
+   - After 3+ Consecutive Losses — next-trade WR vs overall WR
+   - Risk per Trade vs Recommended Tier
+   - **Current Streak** — live win/loss streak count, colour-coded (red 🚨 at 3+ losses, green ✓ on hot streak)
+   - **Learning Curve** — first 30 vs last 30 closed trades: WR + avg P&L% with improving/declining/stable verdict
+6. **Pattern Analysis** — "Cut Fast, Run Long?" scatter (hold days vs P&L%, red/green/amber for loss/win/open), Entry Velocity by week (with high-velocity-week performance comparison), **Monthly P&L bar chart** (realised + current-month unrealised MTM — same chart as Performance tab, now also here)
+7. Unlock Advanced Analytics (collapsible) — MAE/MFE, entry time, trade quality tag, sector: all need new sheet columns, see Pending Backlog
+
+EMA analysis REMOVED (col F is live formula, not entry-time — never use for analysis).
+
+## Authentication
+**⚠ Currently DISABLED in the live code (confirmed 2026-11-07).** `AUTH_HASH`, `checkPassword()`, `sha256()`, and the `#auth-overlay` markup are all still intact and look fully wired — but `initAuth()` (called once on `DOMContentLoaded`) has been stubbed down to just set the Config page's password-status label text; it never checks `sessionStorage`/`AUTH_SESSION_EXPIRY` or shows the overlay. The overlay's `display:none` is never flipped to visible, so **anyone with the URL currently gets straight in, no password prompt at all.** If password protection is wanted again, `initAuth()` needs its real logic restored (check session/expiry, show `#auth-overlay` if not authed) — this was not touched/fixed as part of the 2026-11-07 UI session below, just discovered and left as-is pending a decision on whether it's intentional.
+
+- Password gate is hardcoded in source — works on ALL devices without setup
+- Password: (removed from this file 2026-11-25; auth is disabled in code)
+- Hash: (see AUTH_HASH in index.html)
+- Stored in `AUTH_HASH` constant in index.html
+- To change password globally: update `AUTH_HASH` in source with new SHA-256 hash and push
+- localStorage override still works — setting password via Config tab overrides for that browser only
+- Reset URL: append `?reset=1` to clear localStorage auth
+
+## Apps Script — Key Rules
+- Flag col B: `YES` = open trade, `NO` = closed trade or watchlist
+- **Closed trade filter**: `flag === 'NO' && trade.finalPl !== 0` — excludes watchlist rows (NO flag but blank col AD)
+- Col AH (haChanged): sheet stores TRUE/FALSE boolean — Apps Script converts to `'Y'`/`'N'` string
+- Portfolio cell: `AK26`, Initial capital cell: `AK20` (shifted when AG/AH columns were added)
+
+## Heikin-Ashi Columns (AG/AH)
+- Col AG: current HA candle colour ("Red"/"Green") — `haColour`
+- Col AH: did colour change today? (TRUE/FALSE boolean in sheet) — `haChanged` = 'Y'/'N'
+- `haWarn`: profit ≥ 5% AND haColour = "red" — momentum fading on a winner
+
+## Alert Groups (Dashboard) — priority order
+1. 🔴 Exit Triggered — effPct ≤ 0
+2. 📉 Below 21 EMA — ema21 = "Below" AND plPct > 0
+3. 🛡 Move Stop to Breakeven — plPct ≥ 5% AND stopLoss < entryPrice
+4. ⚠ Profit at Risk — HA Red — plPct ≥ 5% AND haColour = "red"
+5. 🔄 HA Momentum Shift — haChanged = 'Y'
+6. 🟡 Near Stop / Review — effPct ≤ stopProximity
+7. 🟢 Partial Exit Pending — plPct ≥ partialTrigger AND partialTaken = 'N'
+
+## Stop Logic
+```javascript
+const effStop = t.stopLoss || 0;  // col J only — 7DL is NOT a mechanical stop
+const effPct = (t.cmp && effStop) ? ((t.cmp - effStop) / t.cmp * 100) : t.pctFromStop;
+```
+- `effStop = t.stopLoss` (col J) — never MAX(J,I). 7-day low is informational only.
+- "Exit Triggered" alert fires only when CMP ≤ col J
+- 7DL breach renders as a grey `info` group alert — "watch 21 EMA, no action required"
+- Positions table header: "Stop ₹" (col J mechanical stop)
+- Expand row shows: col J stop, 7-Day Low (informational), separately labelled
+
+## Risk Tier Card (Dashboard)
+- Shows current recommended risk per trade based on closed trade count
+- `riskTierRs = Math.min(1000 + Math.floor(closed.length / 100) * 500, riskCapRs)`
+- `riskCapRs = initialCapital * 0.008`
+- Badge shows "Next tier in N trades" or "At cap"
+
+## Recent Fixes Applied
+- Drawdown Y-axis: `toFixed(2)` to prevent floating-point scientific notation
+- Date parsing: `parseDate()` everywhere (Apps Script returns `dd-MMM-yyyy`)
+- Period filter (30/90 days): actually filters closed trades and re-renders
+- Config URL: auto-saves on blur (no need to click Save)
+- `portfolioValue` from sheet cell AK26 is the source of truth for portfolio headline
+- `alertCount` badge uses effective stop MAX(J,I) not col W
+- Closed trade count: Apps Script filters `flag === 'NO' && finalPl !== 0` to exclude watchlist
+- Analysis tab: `initialCapital` read from `window._data` (was crashing on standalone re-init)
+- Analysis tab: all chart instantiations wrapped in try-catch (one bad chart no longer aborts KPI population)
+- Analysis tab: Stop Slippage colour fixed (negative/saved = green, was backwards)
+- Analysis tab: added Current Streak, Learning Curve, Setup Type WR (Last 30), Monthly P&L chart — completed 2026-06-16
+- **Setup type SIMPLIFIED** (2026-07-25): `parseSetupType(code)` now does direct passthrough — label = raw col S value. Sheet values changed to plain "Breakout" / "Pullback". All old compound-code parsing removed (no SETUP_PATTERN_LABELS, patternMap etc.). Analysis setup breakdown now shows Breakout vs Pullback head-to-head.
+- Position count limit alert REMOVED — system scales by 0.8% portfolio risk cap (not a fixed 15-position limit). Do NOT add a position count alert.
+
+## Changes — 2026-07-04 Session
+
+### Edge Diagnostics (Analysis tab) — Key Bug Fixes
+- **R-Multiple**: was using `finalPlPct / initRiskPct` (different denominators). Fixed to `finalPl / initRiskRs` (₹ ÷ ₹ = true R).
+- **Hold Duration**: filter was `&& t.age` (passes negative/0, truthy). Fixed to `parseInt(t.age||0) > 0` everywhere.
+- **Partial Execution %**: was counting all closed 'Y' trades, not just eligible ones. Fixed to scope to `partialEligible.filter(...)`.
+- **`t.ageDays`**: field doesn't exist — it's `t.age`. Fixed across all Edge Diagnostic code.
+- **Dead `slippage` variable**: removed (was subtracting `initRiskPct` from `finalPlPct` — meaningless cross-denominator).
+
+### MAR Ratio Card (Performance tab, line ~4053)
+- Always shows all-time MAR as headline (short periods give inflated/misleading CAGR)
+- `calcMAR(sliceClosed, ic, openMTM)` helper — computes CAGR + max drawdown from closed dates
+- Trend bar compares all-time vs 90d vs 30d — shows direction without implying short-period is comparable
+- Plain-English explanation + "short-period inflation warning" for < 6-month windows
+
+### Edge Diagnostics — 7 New Charts Added (Analysis tab)
+All in `initAnalysisCharts`, section `asec-edge`. Uses `_chartQ` async queue. Charts:
+1. **R-Multiple Distribution** — histogram of `finalPl/initRiskRs`, reference lines at 0R and 2R
+2. **Rolling Profit Factor** (last 20 trades) — line chart, reference at PF=1.0
+3. **Cumulative R by Trade #** — running sum of R across all closed trades
+4. **Win Rate by Hold Duration** — bucketed (1–5d, 6–10d, 11–20d, 21–40d, 40d+), WR per bucket
+5. **Risk-Reward Scatter** — `initRiskPct` vs `finalPlPct`, coloured by win/loss
+6. **Trade Frequency by Month** — bar chart of entry count per month
+7. **Drawdown Recovery** — days to recover from each drawdown trough (closed equity curve)
+
+### Stop Trigger Calibration (Analysis tab, replaces "2% vs 5% comparison")
+Section id: `asec-be-impact`. Renamed and rebuilt forward-looking:
+- **Card 1**: trades reaching +`beTrigger`% that became big winners (>+15%)
+- **Card 2**: trades that reversed to ~0% (BE stop caught them)
+- **Card 3**: full outcome breakdown bar
+- **Chart 1**: final P&L distribution for all trades that hit the trigger
+- **Chart 2**: MFE (peak) distribution — shows runway for 21 EMA trail
+- All labels dynamically read from `cfg.beTrigger` — adapts if user changes Config
+- Removed "Old BE Trigger" Config field (no longer needed)
+
+### `calcStats` Helper (Analysis tab, line ~5703)
+True R-multiple computation — canonical version for all setup-breakdown calculations:
+```javascript
+const winsR = wins.filter(t => t.initRiskRs > 0);
+const lossR = losses.filter(t => t.initRiskRs > 0);
+const useRs = winsR.length > 0 && lossR.length > 0;
+const avgWinR  = useRs ? winsR.reduce((s,t) => s + t.finalPl/t.initRiskRs, 0)/winsR.length : aw;
+const avgLossR = useRs ? Math.abs(lossR.reduce((s,t) => s + t.finalPl/t.initRiskRs, 0)/lossR.length) : al;
+```
+
+### Changes — 2026-07-25 Session
+
+#### Setup Type Simplification
+- Removed all compound-code parsing (BKT/VCP/VCL_SL_LT10 etc.)
+- Sheet col S now contains plain `"Breakout"` or `"Pullback"` — user updated sheet directly
+- `parseSetupType()` is now a 3-line passthrough
+- Analysis breakdown compares Breakout vs Pullback head-to-head (no more pattern/tier sub-groups)
+- Positions table, closed trades table, and all analysis charts updated
+
+#### Strategy Tab Updated
+- Entry: four setup types — Breakout, Pullback, 21 EMA Pullback, 10 EMA Pullback
+- Stop: Phase 1 = hold initial risk-defined stop (col J fixed). Phase 2 at ≥7% profit = move col J ONCE to breakeven. After BE, watch 21 EMA support manually and trail/exit there.
+- 7-day low is NOT a mechanical stop — informational only
+- Profit: 50% at +10%, trail rest watching 21 EMA support
+
+#### Market Regime / Portfolio Breadth (Today Tab)
+- **Portfolio Breadth Panel** (`#today-breadth-panel`) — collapsible panel in Today tab above action sections
+- Shows open position health bars: above 21 EMA %, profitable %, risk-free %
+- **Market Regime section** — inside breadth panel, fetches from NSEFO sheet (F&O watchlist) silently in background
+  - Three ETFs tracked: NIFTYBEES (`/NIFTY.*BEES|NIFTYBEES/i`), MIDCAPETF (`/MIDCAP/i`), SMALLCAP (`/SMALLCAP/i`)
+  - `haColour` normalised: `typeof v === 'string' ? v : (v === true ? 'Green' : v === false ? 'Red' : '')`
+  - Combined regime score = avg of [ema200, ema50, ema20, haGreen] across all found ETFs (0–4 range)
+  - Bull ≥ 3, Bear < 2, Neutral in between
+- **`window._breadthData`** — cached F&O watchlist for swing breadth panel (set after silent background fetch in `refreshData()`)
+- Silent F&O fetch in `refreshData()`:
+  ```javascript
+  if (cfg.url && !window._breadthData) {
+    fetchFnoData().then(d => {
+      if (d && d.watchlist) {
+        window._breadthData = d.watchlist;
+        if (window._data) renderTodayActions(window._data.open, loadConfig());
+      }
+    }).catch(() => {});
+  }
+  ```
+
+#### F&O Breadth Section Extended
+- `fnoRenderBreadth(watchlist)` rewritten with INDEX_ETFS array
+- F&O breadth now shows NIFTYBEES + MIDCAPETF + SMALLCAP ETF cards with EMA/HA status
+- Divergence note shown when ETFs disagree on direction
+- Stock breadth bars exclude ETF rows (filtered by name regex)
+
+#### 5 Minervini-Standard Improvements (2026-07-25)
+1. **Market Direction toggle** (`#mkt-direction-bar`) — top of Today tab, 3 states:
+   - 📈 Confirmed Uptrend → full size, seek breakouts
+   - ⚠ Under Pressure → 50% size, no new breakouts, tighten stops
+   - 📉 In Correction → no new entries, protect profits, raise all stops to BE
+   - Persists in `localStorage` key `MKT_DIR_KEY = 'tj_mkt_direction'`
+   - Functions: `setMktDirection(state)`, `renderMktDirection()` — called at start of every `renderTodayActions()`
+   - Bar colour and background change to match active state
+
+2. **No-winner-in-30-days alert** (`#dash-no-winner-alert`) — Dashboard
+   - Amber pill shown when `daysSinceWin > 30`
+   - Asks: "is your system still producing? Review open positions and market conditions"
+   - Hidden (display:none) when daysSinceWin ≤ 30 or no closed trades
+
+3. **Edge Diagnostics jump link** — Analysis sub-nav
+   - Added `<a href="#asec-edge">Edge Diagnostics</a>` after MAE/MFE link
+
+4. **Entry Precision proxy card** — Trade Management section (spans 2 columns)
+   - Splits closed trades by `initRiskPct ≤ 5%` (tight, near pivot) vs `> 5%` (extended)
+   - Shows WR and avg P&L% for each tier — O'Neil entry discipline check
+   - Elements: `#ep-tight-wr`, `#ep-tight-sub`, `#ep-wide-wr`, `#ep-wide-sub`, `#ep-insight`
+   - Wrapped in try-catch
+
+5. **Init Risk ₹ column** — Positions table
+   - New `<th>Risk ₹</th>` after Entry ₹
+   - Shows `t.initRiskRs` formatted as ₹ amount (or "—")
+   - Expand row colspan bumped from 12 → 13
+
+### Pending — Next Logical Enhancements
+- **Position Concentration Risk card (Dashboard)** — top-3 positions as % of portfolio notional. No new sheet columns needed, can implement immediately.
+- **Market Timing / Tape Health** — NIFTY trend status on Dashboard (needs data feed decision; Market Direction toggle is manual workaround for now).
+- **Alpha vs NIFTY** — monthly return overlay on equity curve (needs NIFTY monthly data).
+- **Equity curve red/green gradient** — indexed colorStops based on cumulative P&L direction.
+
+## Performance Tab — Calibrated Metric Rules (CRITICAL)
+
+These metrics were audited 2026-06-19 and corrected for trailing-stop system behaviour. Do NOT revert these calibrations:
+
+### Combined vs Closed-only
+- **Profit Factor**: numerator = closed wins ₹ + open unrealised MTM; denominator = closed losses ₹. NOT closed-only. Closed-only PF shown as footnote.
+- **R-Expectancy**: uses **combined WR** (closed wins + open profitable / all trades), not closed WR. Closed-only WR of ~25% gives false negative (-0.38R); combined WR gives true edge (+0.19R). Footnote shows closed-only for context.
+- **MAR Ratio CAGR**: uses combined equity (realised + open MTM), not AK26 alone. Max DD still uses realised-only equity path (documented in card footnote).
+- **Combined Expectancy**: shown as ₹/trade (not % — rounds to 0.0% and is meaningless).
+
+### Win Rate Colour Thresholds (calibrated for this system)
+- **Closed WR**: green ≥40%, amber ≥20%, red <20% — (25-30% is NORMAL and HEALTHY)
+- **Combined WR**: green ≥40%, amber ≥28%, red <28%
+- **Win Rate Trend chart / Win Rate by Entry Day / Setup WR chart**: reference line at **30%** (not 50%). Bar colours: green ≥40%, amber ≥20%, red <20%.
+
+### Cards with "expected negative / closed-only" context
+- **Expectancy headline**: labelled "Realised (closed stops — expected negative)" — do not make it green
+- **Sharpe ratio**: closed-only, expected negative for this system → amber (not red) unless below -0.5. Label: "Closed trades only — expected negative; open winners excluded"
+- **Max Streaks**: loss count shown in amber (not red), with note "open winners not counted here"
+
+### Equity Curve
+- Main solid series: cumulative realised P&L (red/green area)
+- **Second dashed amber series**: all null for closed dates, connects from last closed value, extends to "Today" = realised + total open MTM. Renders as dashed amber with legend. **This is the true portfolio value line.**
+- Drawdown: closed trades only (no Today point)
+
+### Closed Trades Table
+- Column shows **"Final P&L ₹"** (actual exit P&L in ₹) — NOT "Notional P&L%" which is blank for all closed trades
+- Setup column shows parsed friendly label (e.g. "Breakout · <10% SL") not raw code
+
+### Alert System
+- No position count limit alert — user scales by 0.8% risk cap
+- Exit Triggered alerts only show genuine stop/EMA breaches
+
+---
+
+## F&O Module
+
+### Overview
+Second strategy module — NSE credit spreads watchlist. Toggled via top-level strategy switcher.
+- Sheet: `NSEFO` (same Google Sheet, different tab)
+- Apps Script: same URL, pass `?mode=fno` (or body param `mode=fno`)
+- No trading journal — just a watchlist with signal scoring and spread recommendation
+
+### Strategy
+- **Uptrend** → open **Put Spread** (sell 0.2 delta PE, buy hedge 2 strikes lower)
+- **Downtrend** → open **Call Spread** (sell 0.2 delta CE, buy hedge 2 strikes higher)
+- **Exit sell leg** if premium doubles (risk management)
+- **Add Call Spread** when HA turns Red on an existing spread position (downtrend accelerates profit)
+
+### NSEFO Sheet Column Mapping
+Cols A–E are empty. Data starts at col F (index 5).
+
+| Index | Column | Field | JS key |
+|---|---|---|---|
+| 5 | F | BROKER | broker (string, e.g. "Zerodha"/"Upstox" — used to split risk across brokers) |
+| 6 | G | STOCK | stock |
+| 7 | H | CMP | cmp |
+| 8 | I | 200 EMA ABOVE | ema200 (bool) |
+| 9 | J | 50 EMA ABOVE | ema50 (bool) |
+| 10 | K | 20 EMA ABOVE | ema20 (bool) |
+| 11 | L | HK COLOR | haColour ("Red"/"Green") |
+| 12 | M | HK CHANGED TODAY? | haChanged (bool) |
+| 13 | N | ATH | ath (bool) |
+| 14 | O | 52WH | wk52h (bool) |
+| 15 | P | 21DH | dh21 (bool) |
+| 16 | Q | 7DH | dh7 (bool) |
+| 17 | R | GAPUP | hasGapUp (bool) |
+| 18 | S | 200 EMA CROSS | ema200cross (bool) |
+| 19 | T | 50 EMA CROSS | ema50cross (bool) |
+| 20 | U | 21 EMA CROSS | ema21cross (bool) |
+| 21 | V | 7DL | sevenDayLow |
+| 22 | W | %FROM 7DL | pctFrom7DL |
+| 23 | X | SPREAD ACTIVE | spreadActive — string: `'CALL'` \| `'PUT'` \| `'CALLPUT'` \| `''` (empty = no spread active) |
+
+### Signal Scoring
+```javascript
+function fnoScore(s) {
+  const bull = [s.ema200, s.ema50, s.ema20, s.haColour.toLowerCase()==='green',
+    s.ath||s.wk52h||s.dh21||s.dh7, s.hasGapUp].filter(Boolean).length; // max 6
+  const bear = [!s.ema200, !s.ema50, !s.ema20, s.haColour.toLowerCase()==='red'].filter(Boolean).length; // max 4
+  return { bull, bear };
+}
+function fnoTrend(s) {
+  const { bull, bear } = fnoScore(s);
+  if (bull >= 4) return 'bullish';
+  if (bear >= 3) return 'bearish';
+  return 'mixed';
+}
+// Helpers for spreadActive string type
+function fnoHasSpread(s)    { return s.spreadActive === 'CALL' || s.spreadActive === 'PUT' || s.spreadActive === 'CALLPUT'; }
+function fnoHasPutSpread(s) { return s.spreadActive === 'PUT'  || s.spreadActive === 'CALLPUT'; }
+function fnoHasCallSpread(s){ return s.spreadActive === 'CALL' || s.spreadActive === 'CALLPUT'; }
+function fnoSpreadLabel(s)  { return s.spreadActive === 'CALLPUT' ? 'CALL+PUT' : s.spreadActive || ''; }
+
+function fnoAction(s) {
+  const trend = fnoTrend(s);
+  const haRed = s.haColour.toLowerCase() === 'red';
+  const haRedToday = haRed && s.haChanged;
+  if (fnoHasPutSpread(s) && haRedToday) return 'add-call'; // only when PUT active
+  if (trend === 'bullish' && !haRed) return 'put-spread';
+  if (trend === 'bearish' || (haRedToday && !fnoHasSpread(s))) return 'call-spread';
+  return 'wait';
+}
+```
+
+### Apps Script — F&O Mode
+When `mode=fno`, Apps Script reads NSEFO sheet and returns:
+```json
+{ "success": true, "watchlist": [...], "fetchedAt": "..." }
+```
+Each watchlist item maps NSEFO columns using row indices 5–23 (0-based).
+
+**CRITICAL**: Apps Script must use `row[6]` for STOCK (col G), not `row[0]`. All column offsets are 5+ from 0.
+
+**CRITICAL**: Apps Script must map `row[5]` (col F) to JS key **`broker`** (not `date` — col F header is BROKER, the doc previously said DATE which was wrong/stale). The front-end (`fnoRenderBrokerPills`, `renderFnoWatchlist`, `fnoRenderActiveSpreads`, `fnoRenderTopCandidates`, `fnoRenderAlerts`) reads `s.broker` directly and will show "—" for every row until the Apps Script returns it under that key. Also confirm the Apps Script actually populates `ema200cross`/`ema50cross`/`ema21cross` (cols S/T/U) and `sevenDayLow` (col V) in the response — the front-end now consumes all of these (`fnoFreshCross()` for the "Fresh Cross" badge, raw 7DL value as a tooltip on the "% from 7DL" column) but they were previously fetched-and-unused, so it's unverified whether the script was ever actually wired to return them.
+
+### Code Structure (F&O Isolation)
+- All F&O JS functions prefixed `fno*`
+- `window._fnoData` stores F&O data (never mixed with `window._data`)
+- `window._strategy` = `'swing'` | `'fno'`
+- HTML: `#fno-pages` (hidden by default), `#fno-nav-tabs` (hidden by default)
+- HTML: `#swing-pages` (visible by default)
+- Boundary comments in index.html mark SWING MODULE END / F&O MODULE START
+
+### Strategy Switcher
+```html
+<div class="strategy-bar">
+  <button class="sw-btn active" id="sw-swing" onclick="switchStrategy('swing')">📈 Swing</button>
+  <button class="sw-btn" id="sw-fno" onclick="switchStrategy('fno')">📊 F&amp;O</button>
+</div>
+```
+`switchStrategy(mode)` toggles visibility of `#swing-pages`/`#fno-pages` and `#fno-nav-tabs`, sets `window._strategy`, triggers data fetch for the selected module.
+
+### F&O Entry Points
+- `refreshFnoData()` — fetches from Apps Script with `mode=fno`, stores in `window._fnoData`
+- `renderFnoDashboard(data)` — summary cards for F&O tab
+- `renderFnoWatchlist(data)` — watchlist table with signal badges and action recommendation
+
+---
+
+## Pending Backlog (Guru Audit — Minervini / O'Neil)
+
+These were identified in a guru-perspective audit and deferred. Implement when ready.
+
+**Status as of 2026-06-16**: Analysis tab UI audit fully implemented (bugs + 4 features). MAE/MFE Analysis (item 2 below) also fully implemented and verified live — see below. All changes pushed, working tree clean. Next logical step: item 7 (Position Concentration Risk — no new sheet columns needed, can implement immediately) or item 1 (Market Timing — highest strategic value but needs a NIFTY data feed decision first).
+
+### ✅ Done
+
+**MAE / MFE Analysis** — completed 2026-06-16.
+- Sheet: cols `AL` (MAE%) / `AM` (MFE%) added — chosen because `O`/`P`/`M`/`N`/`T`/`U`/`V`/`G` were all already in use for other calcs, and `AI`/`AK` border the existing summary block. `AL`/`AM` were the first genuinely free columns past the summary section.
+- Formula (per row, drag down): `=IFERROR((R2-MIN(INDEX(GOOGLEFINANCE("NSE:"&E2,"low",C2,IF(D2="",TODAY(),D2)),0,2)))/R2*100,"")` for MAE, mirrored with `MAX`/`"high"` for MFE.
+  - **Critical gotcha**: `GOOGLEFINANCE(...,"low"/"high",start,end)` returns a 2-column `{Date, Price}` array. Wrapping the whole thing in `MIN()`/`MAX()` without `INDEX(...,0,2)` lets the numeric date serials (e.g. ~46200 for 2026) leak into the comparison — `MAX()` picks the date instead of the price, producing absurd values like `57127`. `MIN()` looked fine by coincidence (date serials are always bigger than any stock low), `MAX()` broke visibly. Always use `INDEX(...,0,2)` to extract just the price column.
+  - Cell format: plain **Number**, not Percentage — the formula already multiplies by 100, so the value is e.g. `5.49` meaning 5.49%.
+- Config: `maeCol: 'AL'`, `mfeCol: 'AM'` added to `DEFAULT_CONFIG`, `fetchData()` params, and Config page column-mapping UI (optional fields).
+- Apps Script (hosted on Google, not in this repo): patched to add `mae`/`mfe` to the column index map (`c.mae`/`c.mfe`) and the per-trade response object, using `toNum()` not `toPct()` (sheet already stores the percentage directly, not a fraction).
+- Analysis tab: new "How Your Trades Behave Before They Resolve" section (between Pattern Analysis and Unlock Advanced Analytics). Simplified 2026-06-16 from two bucketed histograms + jargon insight cards down to 3 plain-language cards ("Pain Before It Works", "Profit You Give Back", "Early Tell — Does This One Look Like a Winner?") plus a single "Best Point Reached vs Where You Ended Up" bar chart (winners vs losers, MFE peak vs final P&L). Verified live: ≥3x MFE:MAE ratio trades win 94% vs 7% below, n=16/58 — phrased as a plain win-rate comparison, not raw ratio jargon. Explicitly states this is informational and never overrides the stop-loss.
+- Positions tab: each open trade's expand row shows a live "Early Read (MAE/MFE)" tag — "Tracking like a winner" (green, ratio ≥3x) vs "Tracking like a struggler" (amber) vs "Too early to tell" (age < 3 days). Always paired with the disclaimer "does not override your 7-day-low / 21-EMA stop" — added 2026-06-16 per explicit safety requirement (this signal must never be used to skip or delay an actual stop-loss exit).
+- "Unlock Advanced Analytics" collapsible: MAE/MFE cards removed (now live above), renamed to "Unlock **More** Advanced Analytics" — Entry Time / Trade Quality Tag / Sector remain as pending columns there.
+
+### 🔴 High Priority (needs external data or new sheet columns)
+
+1. **Market Timing / Tape Health signal**
+   - NIFTY trend status on Dashboard: "Confirmed Uptrend / Under Pressure / Correction"
+   - Distribution day count (NIFTY close lower on higher volume = 1 distribution day)
+   - % of NIFTY500 stocks above 200-day MA (breadth gauge)
+   - *Needs: NIFTY OHLCV data feed or manual input cell in sheet*
+
+3. **Relative Performance vs NIFTY**
+   - Monthly return overlay vs NIFTY on equity curve
+   - Alpha = your return − NIFTY return for the same period
+   - *Needs: NIFTY monthly return data (can be a static lookup table or sheet column)*
+
+4. **Trade Grade (A/B/C Setup Quality)**
+   - Grade entered at time of trade (A = perfect VCP/pivot, B = good, C = marginal)
+   - Analysis tab breakdown: win rate, avg P&L, R-multiple by grade
+   - Minervini data: A-grade ~70% WR, C-grade ~35% WR
+   - *Needs: new column in TRADES sheet — setup grade*
+
+### 🟡 Medium Priority (mostly computation, minimal new data)
+
+5. **Pivot Entry Precision**
+   - % extended at entry = (entryPrice − pivotPrice) / pivotPrice
+   - O'Neil rule: never buy more than 5% above pivot
+   - *Needs: pivot price column in TRADES sheet*
+
+6. **Base Stage Count**
+   - 1st-stage base success ~65%, 3rd-stage ~25%
+   - Track which stage breakout this was
+   - *Needs: base count column in TRADES sheet*
+
+7. **Position Concentration Risk card (Dashboard)**
+   - Top-3 positions as % of total portfolio notional
+   - Sector concentration (if sector column added)
+   - *Can be computed from existing open positions data*
+
+8. **Pyramid / Add-on Entry Tracking**
+   - Minervini adds to winners at first pullback/flag
+   - Track initial entries vs add-on entries separately
+   - *Needs: entry type column (Initial / Add-on) in TRADES sheet*
+
+### 🟢 Lower Priority
+
+9. **Win Rate in first 10 days vs after** — most breakout failures resolve quickly; compute from age column
+10. **Peak MTM "gave back" metric** — requires MFE column (see item 2)
+11. **Sector rotation view** — requires sector column in sheet
+12. **Psychology / discipline log** — free-text note per trade; *needs notes column in sheet*
+
+## UI Changes Made (2026-08-25 session)
+
+### Performance Summary Card Redesigned (Dashboard)
+- Replaced old 2-column table (`#dash-summary-tbody`) with a 3-row metric card grid matching the System Edge card style
+- **Row 1** (capital & returns): Initial Capital · Current Value · Total Return · CAGR
+- **Row 2** (edge metrics): Win Rate · Profit Factor · Avg Win · Avg Loss
+- **Row 3** (risk & hold): Win:Loss ₹ Ratio · Max Drawdown · Calmar Ratio · Avg Hold
+- **Footer** (`#ds-footer`): trade count summary line
+- All values large bold (22px), color-coded: WR green ≥70%, PF green ≥2.0, Max DD green <15%, Calmar green ≥0.5
+- Combined Profit Factor (open MTM included in numerator) — consistent with SST true-performance view
+- New element IDs: `ds-initial-cap`, `ds-current-val`, `ds-total-return`, `ds-cagr`, `ds-wr`, `ds-pf`, `ds-avg-win`, `ds-avg-loss`, `ds-wl-ratio`, `ds-max-dd`, `ds-calmar`, `ds-avg-hold`, `ds-footer`
+
+### Avg Hold (Open) Added to System Edge Card (Dashboard)
+- New cell added to the System Edge 2-column grid as 8th item (below Avg Hold Closed)
+- HTML element: `#dash-open-avg-hold-sys` (NOT `#dash-open-avg-hold` — that ID already exists in Open Book card)
+- JS: populated in same try-catch block as `dash-open-avg-hold`, immediately after line setting `el1`
+- **Bug fixed**: duplicate ID `dash-open-avg-hold` existed at lines 908 (Open Book) and 954 (System Edge) — `getElementById` only sets the first match, leaving System Edge blank. Renamed System Edge element to `dash-open-avg-hold-sys` to resolve.
+
+### Dashboard Section Order (confirmed)
+Final order on Dashboard page:
+1. FY Summary Card
+2. KPI Row (Portfolio Value · Open Book · System Edge)
+3. Equity Curve
+4. Alert Strip
+5. System Momentum (`#dash-momentum-card`)
+6. Re-entry Watchlist (`#dash-reentry-card`)
+7. P&L Calendar
+8. P&L Distribution
+9. Top Gainers / Biggest Losers
+10. Portfolio Heatmap (collapsed by default)
+11. Performance Summary Card (redesigned grid)
+
+## UI Changes Made (2026-08-29 session)
+
+### Average Down Watchlist Card (Dashboard)
+- New card between Re-entry Watchlist and P&L Calendar
+- Amber-bordered collapsible card (`#dash-avgdown-card`)
+- **Logic**: show all open positions with `plPct < -7%`, sorted worst first
+- **SMA filter**: if `t.ema200` and `t.ema50` are available from Apps Script, only show those above both; if unknown (Apps Script not yet returning these), show all and display "? Check"
+- **Columns**: # · Stock · P&L% · Loss ₹ · Invested · Add Qty (1/10 of current qty) · 200 SMA · 50 SMA
+- **Add qty rule**: `Math.ceil(t.qty / 10)` shares
+- Toggle: `toggleAvgDown()` function
+- If no positions qualify: shows "✓ No open positions with loss greater than −7%", border dims to grey
+
+### EMA 200/50 Column Mapping (TRADES sheet)
+- `ema200Col: 'F'` and `ema50Col: 'G'` added to `DEFAULT_CONFIG`
+- Passed in `fetchData()` params to Apps Script
+- `sstProcess()` normalises: `toBool = v => v === true || ['true','yes','above'].includes(String(v||'').trim().toLowerCase())`
+- Apps Script updated: reads col F as `ema200` and col G as `ema50` (YES/NO values from sheet)
+- Apps Script change: added `ema200: colToIndex(p.ema200Col || 'F')` and `ema50: colToIndex(p.ema50Col || 'G')` to `c = {}` block; added boolean fields to trade object
+
+### Rolling 3-Month Win Rate Chart (Performance tab)
+- Fixed to use **closed trades only** (was incorrectly using combined open+closed)
+- Groups by **exit date** (closeDate), not entry date
+- Win defined as `finalPl > 0` — now matches System Edge card's 89.1% WR
+- Subtitle updated: "closed trades only, by exit date"
+- Annotations: 50% floor (amber) · 70% SST target (green) — fixed from wrong 20%/40% values
+
+## UI Changes Made (2026-09-01 session)
+
+### 5 Dashboard Improvements
+
+#### 1. Q1–Q4 Breakdown Row (FY Summary Card)
+- New `#dash-qtr-row` div at bottom of FY Summary card (`#dash-fy-card`)
+- 4-column grid showing Q1 (Apr–Jun) · Q2 (Jul–Sep) · Q3 (Oct–Dec) · Q4 (Jan–Mar)
+- Current quarter highlighted with accent top border and ← arrow
+- Each cell: quarter name · P&L (fmtK) · W/L count
+- JS: computed inside FY IIFE, after existing quarter block
+- Mobile: wraps to 2×2 grid at ≤640px
+
+#### 2. Long-Held Losers Alert (`#dash-long-loss-card`)
+- Red-bordered card between Alert Strip and Momentum Strip
+- Shows all open positions: `age > 90 days AND plPct < 0`
+- Sorted by age ascending (oldest first)
+- Each chip: Stock name · P&L% (red) · age in days
+- Hidden (`display:none`) when no positions qualify
+- JS: try-catch IIFE after tier progress bar block
+
+#### 3. Next Position Size Tier Progress Bar (System Edge Card)
+- Added below the footer line in System Edge card
+- Element IDs: `#dash-tier-progress-wrap`, `#dash-tier-bar`, `#dash-tier-label`, `#dash-tier-next-label`
+- Logic: `sizeForCount = c => Math.min(20000 + Math.floor(c/100)*5000, 100000)`
+- Shows: "Size: ₹20k / trade · 8 trades → ₹25k" + progress bar (% through current tier)
+- At cap (₹1L): shows "🎯 Max tier reached" and bar at 100%
+
+#### 4. Mobile Layout Polish (≤640px CSS)
+- `#dash-pv` font-size 26px (was 38px)
+- `#dash-return` font-size 16px
+- `#dash-qtr-row` 2×2 grid on mobile
+- `#dash-refresh-bar` stacks vertically on mobile
+
+#### 5. Last Refreshed Timestamp (`#dash-refresh-bar`)
+- Sits between FY Summary card and KPI row
+- Left: `#dash-refresh-ts` — "Last refreshed: 9:32 am · 4 min ago" (reads from `localStorage 'tj_last_refresh'`)
+- Right: `#dash-stale-warn` — amber "⚠ Data may be stale — tap ↻ to refresh" shown when >30 min since last refresh
+- Hidden on mobile (stacks under timestamp)
+
+## UI Changes Made (2026-09-23 session)
+
+### Strike Rate Metric (Dashboard — System Edge Card)
+- New metric added to System Edge card grid, right after Win Rate
+- **Definition**: (open positions with `notionalPl > 0`) + (closed wins with `finalPl > 0`) ÷ (all open + all closed trades)
+- Answers "how often am I picking correctly across everything I've ever entered"
+- **Element IDs**: `#dash-strike-rate` (value), `#dash-strike-rate-sub` (count breakdown)
+- Sub-label shows exact counts: e.g. "195 open + 34 closed / 251 total"
+- Colour: green ≥60%, amber ≥45%, red <45%
+- JS: uses pre-computed `entryHitPct`, `openWinning`, `dWins.length`, `allEntries` — no new computation needed
+- System Edge card now has 8 cells (1fr 1fr grid stays balanced)
+
+### Deferred — Dhan API Integration
+- Dhan HQ API can provide: live CMP, NIFTY 50 price, option chain, GTT status, Greeks
+- Integration path: Apps Script calls Dhan REST API → updates sheet → index.html reads as normal
+- Will unlock: live NIFTY for alpha calculation, auto-updated CMPs, auto-flag when spread premium doubles
+- Needs: Dhan API client ID + access token (from DhanHQ developer portal)
+- **Deferred** — user to come back when ready
+
+### App Assessment Notes (2026-09-23)
+- Swing trading goal: ~85% complete — core loop done, gaps are market context (live Nifty) and CDN fallback for ApexCharts in offline env
+- Wealth scaling goal: tier tracker live, math correct, discipline framework in place
+- F&O goal: ~20% — fine-tune strategy first, then build journal
+- Biggest single improvement available: wire Dhan API for live Nifty + CMPs
+
+## Architecture Note — Modularity (2026-09-27)
+- App is a single 735 KB / 12,117-line HTML file — zero modularity, no imports
+- This is intentional: GitHub Pages static hosting, no build step, works on mobile
+- **Flag for refactor when**: a bug fix breaks unrelated code, file crosses ~900 KB, or renderDashboard/initAnalysisCharts become too large to edit safely
+- Natural split when needed: css/styles.css · js/config.js · js/data.js · js/dashboard.js · js/performance.js · js/analysis.js · js/fno.js · index.html (thin shell)
+- **Do NOT suggest refactor until one of the above triggers is hit**
+
+## UI Changes Made (2026-09-27 session)
+
+### Max Positions Alert — Moved to Top of Dashboard
+- Alert `#dash-maxpos-alert` moved from after equity curve → very first element inside `#page-dashboard`
+- Slightly larger styling: border 2px (was 1.5px), icon 22px (was 20px), title 13px (was 12px)
+- Fires at `open.length >= 200` (unchanged), hides when < 200
+
+### Open Trade Count Discrepancy — Diagnosed (not fixed in code)
+- App showed 199 when user had 200 open trades in sheet
+- Root cause: Apps Script silently skips rows where col E (Stock) or col R (Entry Price) is blank
+- Fix: in Google Sheet, filter col B = "YES" + col R = blank → find and fill the missing entry price row
+- No code change needed in index.html — the app count is always correct per what Apps Script returns
+
+---
+
