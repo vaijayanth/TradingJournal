@@ -1,13 +1,13 @@
 {
- "generated_at": "2026-11-24T20:06:27+05:30",
+ "generated_at": "2026-11-25T14:31:19+05:30",
  "broker": "dhan",
  "market_data_date": "2026-11-23",
- "signals_generated_at": "2026-11-24T14:36:24.140158+00:00",
+ "signals_generated_at": "2026-11-25T09:01:15.588852+00:00",
  "status": "WARN",
  "global_block": false,
  "counts": {
   "block": 0,
-  "warn": 2,
+  "warn": 3,
   "info": 0
  },
  "per_symbol_blocks": {},
@@ -17,6 +17,12 @@
    "level": "WARN",
    "symbol": null,
    "msg": "market data 2026-11-23 is 1 session behind the last published session (2026-11-24)"
+  },
+  {
+   "id": "I3",
+   "level": "WARN",
+   "symbol": null,
+   "msg": "1 stocks were bought in the last 3 days and are not in Dhan holdings yet (settlement timing); positions and P&L exclude them until holdings catch up: APOLLOHOSP (0->1)"
   },
   {
    "id": "P3",

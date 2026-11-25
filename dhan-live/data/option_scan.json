@@ -1,10 +1,12 @@
 {
- "fetched_at": "2026-11-24T20:06:33+05:30",
+ "fetched_at": "2026-11-25T14:31:22+05:30",
  "stale_inputs": [],
  "open_legs": 21,
  "shorts": 13,
  "super_orders": 14,
- "fired_cleanly": [],
+ "fired_cleanly": [
+  "CUMMINSIND @ 21.75"
+ ],
  "findings": [
   {
    "section": "B",
@@ -34,9 +36,33 @@
    "section": "B",
    "severity": "INFO",
    "symbol": "CUMMINSIND",
-   "leg": "CUMMINSIND 5300CE 2026-12-29",
-   "concern": "Short 5300CE (100 qty) is a naked call (by design; covered by shares you hold)",
+   "leg": "CUMMINSIND 4650CE 2026-12-29",
+   "concern": "Short 4650CE (200 qty) is a naked call (by design; covered by shares you hold)",
    "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "CUMMINSIND",
+   "leg": "CUMMINSIND 4650CE 2026-12-29",
+   "concern": "No super order matches this short (200 @ 19.23, premium 19.21)",
+   "action": "Close and re-enter as a super order, or place a daily stop order"
+  },
+  {
+   "section": "F",
+   "severity": "WARN",
+   "symbol": "CUMMINSIND",
+   "leg": "CUMMINSIND 4650CE 2026-12-29",
+   "concern": "S2 NO STOP: No super order matches this short (200 @ 19.23): no stop protects it",
+   "action": "Close and re-enter as a super order, or use a daily stop order"
+  },
+  {
+   "section": "F",
+   "severity": "WARN",
+   "symbol": "SHRIRAMFIN",
+   "leg": "SHRIRAMFIN 900PE 2026-12-29",
+   "concern": "S2 NO STOP: Super order has no pending stop leg (order 2132611132429973)",
+   "action": "Place a protective stop"
   }
  ]
 }

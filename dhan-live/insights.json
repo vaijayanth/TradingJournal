@@ -1,30 +1,30 @@
 {
- "as_of": "24 Nov evening (market data still 23 Nov)",
- "written_at": "2026-11-24T20:15:00+05:30",
+ "as_of": "25 Nov 14:30 (market data 23 Nov; 24 Nov had no cash session)",
+ "written_at": "2026-11-25T14:40:00+05:30",
  "confidence": "low",
  "maturity": "139 positions ever opened but only 9 closed trades: the swing edge cannot be judged yet.",
- "headline": "Nothing new since Monday's close except two more add-ons coming off cooldown; the order list is the same and still unplaced.",
+ "headline": "Two of your short-option targets hit and booked +Rs6.8k today, but the two replacement shorts (SHRIRAMFIN 900PE, CUMMINSIND 4650CE) have no stop and BSE is still the off-rule structure.",
  "points": [
   {
+   "label": "Options P&L",
+   "text": "SHRIRAMFIN 880PE (+Rs5.2k) and CUMMINSIND 5300CE (+Rs1.6k) were bought back at their 60% targets, so the exits worked as designed. Open options are about +Rs0.3k and realised today is +Rs6.8k."
+  },
+  {
+   "label": "Risk",
+   "text": "You re-sold SHRIRAMFIN 900PE (825) and CUMMINSIND 4650CE (200). Neither has a stop: the old super orders' stop legs were cancelled when their target filled. A stop cannot be attached to an existing position, so protect them by closing and re-entering as super orders (3x stop, 40% target), or accept the exposure knowingly."
+  },
+  {
+   "label": "BSE",
+   "text": "The 4200CE still fights a green colour and the 3200PE is 200 qty unhedged. That is the one structure out of line with the rules and the largest tail among the 13 shorts."
+  },
+  {
    "label": "Signals",
-   "text": "Exits: GUFICBIO (-10.2%) and SSWL (+0.9%). Add-ons now 6: AMANTA, ESAFSFB, MANAKCOAT, SMSPHARMA plus SANATHAN and SHREEPUSHK (7-day cooldown ended, both about -6% to -7%). Entries unchanged: LALPATHLAB, PGIL, SAMBHV, SCPL, SHALPAINTS, SPORTKING, WINDMACHIN. Signals are 23 Nov data; the backtester has not published a 24 Nov bar, so no new flips yet."
-  },
-  {
-   "label": "Book health",
-   "text": "Holdings caught up with Monday's fills (6 add-ons settled, 8 new names), 130 positions in scope. No P&L change worth a point: market data is unchanged since the last refresh."
-  },
-  {
-   "label": "Options book",
-   "text": "13 shorts, all with a stop and target, including the extra BANKINDIA 5,200 and BPCL 270PE 7,900 you added today; the scan shows 0 findings. BSE is the one off-rule structure: the 4200CE call fights a green colour and the 3200PE has no hedge."
-  },
-  {
-   "label": "Orders",
-   "text": "No orders placed since the last run; APOLLOHOSP's limit order is still pending. A signal that waits another day risks a worse price but the rule is unchanged: place after the close, never chase."
+   "text": "The order list grew to 2 exits, 8 add-ons (KTKBANK and TCPLPACK joined as their cooldowns ended) and 7 entries, all from the 23 Nov close and now two sessions old. Nothing is lost by waiting, but the add-on limits only help if they are placed after a clean close."
   },
   {
    "label": "Versus the backtest",
-   "text": "9 closed trades against a reference of 28% CAGR, -15.4% max drawdown and PF 2.01: too early to compare. Watch the first 30 closed trades."
+   "text": "9 closed trades against 28% CAGR, -15.4% drawdown and PF 2.0: too early to compare. Plan on 20 to 23% since 2022; watch the first 30 closed trades."
   }
  ],
- "action": "Run /dhan-order for the 2 exits, 6 add-ons and 7 entries, then close BSE 4200CE and hedge or close BSE 3200PE."
+ "action": "Place tonight's 2 exits, 8 add-ons and 7 entries with /dhan-order after the close, and decide on stops for the two new shorts and the BSE legs."
 }
