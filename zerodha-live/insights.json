@@ -1,30 +1,30 @@
 {
- "as_of": "25 Nov close (market data 25 Nov)",
- "written_at": "2026-11-25T20:55:00+05:30",
+ "as_of": "25 Nov close (market data 25 Nov); updated after the GTT clean-up",
+ "written_at": "2026-11-25T21:40:00+05:30",
  "confidence": "low",
  "maturity": "41 positions opened since the cut-off, 5 closed trades: the swing edge cannot be judged yet.",
- "headline": "Signals are back to a fresh bar: one new entry (TORNTPHARM), two add-ons (one disputed), and 14 new shorts with no stop after a busy option day.",
+ "headline": "All 69 shorts now carry a stop and target GTT and the stale ones are gone; what is left is two flipped put spreads to close and tonight's three stock orders.",
  "points": [
   {
    "label": "Signals",
-   "text": "TORNTPHARM flipped green today (4 shares, about Rs19.6k). Add-ons: ASHOKLEY x13 (-7.2%) and POWERINDIA x1 (-6.7%). The independent cross-check says ASHOKLEY's Supertrend is RED on complete data while the backtester says green: advisory only under the standing policy, but it is the one order I would look at twice before placing."
+   "text": "TORNTPHARM flipped green today (4 shares, about Rs19.6k). Add-ons: ASHOKLEY x13 (-7.2%) and POWERINDIA x1 (-6.7%). The independent cross-check says ASHOKLEY's Supertrend is RED on complete data while the backtester says green: advisory only under the standing policy, but it is the one order to look at twice before placing."
   },
   {
    "label": "Options process",
-   "text": "You added 14+ new shorts today (ALKEM, APLAPOLLO, CGPOWER, COCHINSHIP, COLPAL, ICICIGI, ICICILIFE, LICHSGFIN, MFSL, POLICYBZR, RVNL, SBILIFE, TATAPOWER, TATASTEEL) and none has a stop GTT yet. Five GTTs fired and bought back cleanly today, so the stops work when they exist."
+   "text": "The 2 stale GTTs (COCHINSHIP 1020PE, RVNL 170PE) were deleted and protective two-leg GTTs were placed on all 14 new shorts (ALKEM, APLAPOLLO, CGPOWER, COCHINSHIP, COLPAL, ICICIGI, ICICILIFE, LICHSGFIN, MFSL, POLICYBZR, RVNL, SBILIFE, TATAPOWER, TATASTEEL). The GTT scan shows 0 findings across 69 contracts, and five GTTs fired and bought back cleanly today."
   },
   {
    "label": "Risk",
-   "text": "Two stale GTTs (COCHINSHIP 1020PE, RVNL 170PE) would BUY new longs if triggered: delete them. NATIONALUM and NMDC flipped red today, so their put spreads need closing. Financial Services is still 51% of deployed capital against a 40% limit."
+   "text": "NATIONALUM and NMDC flipped red today, so their put spreads need closing before they run further against a red colour. Financial Services is still 51% of deployed swing capital against a 40% limit, so a gap down in banks and NBFCs hits the book disproportionately."
   },
   {
    "label": "Book",
-   "text": "Unrealised swing P&L is +Rs38.5k against realised -Rs13.7k from 5 closed trades; the Supertrend exits cost money this week while winners run. Too few closed trades to judge the rule."
+   "text": "Unrealised swing P&L is +Rs38.5k against realised -Rs13.7k from 5 closed trades. The Supertrend exits cost money this week while winners run; too few closed trades to judge the rule."
   },
   {
    "label": "Versus the backtest",
    "text": "5 closed trades against 20.2% CAGR, -21.3% drawdown, 41% win rate: too early to compare. Watch the first 30 closed trades."
   }
  ],
- "action": "Delete the 2 stale GTTs, protect the 14 new shorts, close the NATIONALUM and NMDC spreads, and decide on ASHOKLEY before placing tonight's 3 stock orders."
+ "action": "Close the NATIONALUM and NMDC put spreads, then place the TORNTPHARM entry and POWERINDIA add-on with /zerodha-order (decide on ASHOKLEY first)."
 }
