@@ -1,17 +1,17 @@
 {
- "as_of": "25 Nov close (market data 25 Nov)",
- "written_at": "2026-11-25T21:20:00+05:30",
+ "as_of": "25 Nov close; updated after the super-order check",
+ "written_at": "2026-11-25T21:50:00+05:30",
  "confidence": "low",
  "maturity": "139 positions ever opened but only 9 closed trades: the swing edge cannot be judged yet.",
- "headline": "Tonight's list is the biggest yet: 7 swing exits, 6 add-ons, 4 entries and 5 investment-share averaging buys, plus two shorts (SHRIRAMFIN 900PE, CUMMINSIND 4650CE) still without a stop.",
+ "headline": "All 13 shorts now carry a stop and target and tonight's 22 stock orders are placed; the one structure still out of line is BSE (4200CE against green, 3200PE unhedged).",
  "points": [
   {
    "label": "Signals",
-   "text": "Exits: ESAFSFB, NAZARA, NILKAMAL, SGFIN, SGMART flipped red today and GUFICBIO, SSWL are still unplaced from the 23 Nov close. Most are -10% to -13% at the Rs2k tier, so the rupee loss is small; the rule is whole-position exit at the open. Add-ons: AMANTA, KTKBANK, MANAKCOAT, SANATHAN, SHREEPUSHK, TCPLPACK. Entries: AGARWALEYE, MEDANTA, SHALPAINTS, SHARDAMOTR. The 23 Nov entries lapsed: only today's signals are ordered."
+   "text": "Tonight's orders are in: 7 swing exits (ESAFSFB, GUFICBIO, NAZARA, NILKAMAL, SGFIN, SGMART, SSWL), 6 add-ons, 4 entries (AGARWALEYE, MEDANTA, SHALPAINTS, SHARDAMOTR) and 5 investment-share averaging buys, all as after-market orders for the open. NILKAMAL and SHARDAMOTR went in on the backtester signal although the independent check disagreed (your rule: the backtester wins)."
   },
   {
-   "label": "Cross-check",
-   "text": "The independent check disagrees on two signals: NILKAMAL's exit (Yahoo still shows green) and SHARDAMOTR's entry. Advisory only under the standing policy; they are the two orders to look at before placing."
+   "label": "BSE",
+   "text": "The BSE 4200CE still fights a green colour and the 3200PE is 200 qty unhedged. Both have stops, but this is the one structure out of line with the rules and the largest remaining tail among the 13 shorts."
   },
   {
    "label": "Investment shares",
@@ -19,12 +19,12 @@
   },
   {
    "label": "Options",
-   "text": "Rs6.8k of options profit was booked today (SHRIRAMFIN 880PE, CUMMINSIND 5300CE). The replacement shorts have no stop, and BSE is still off-rule (4200CE against green, 3200PE unhedged). A stop cannot be attached to an existing position, so these need a decision."
+   "text": "Rs6.8k of options profit was booked today (SHRIRAMFIN 880PE, CUMMINSIND 5300CE). You then added stops and targets to the two replacement shorts in the app (SHRIRAMFIN 900PE 32.70 / 4.35, CUMMINSIND 4650CE 57.70 / 7.70, trail 0.05), so the super-order scan shows 0 findings across 13 shorts."
   },
   {
    "label": "Versus the backtest",
    "text": "9 closed trades against 28% CAGR, -15.4% drawdown and PF 2.0: too early to compare. With 7 exits at once this is the first real test of how the live exits compare with the backtest's average loser (-9%)."
   }
  ],
- "action": "Place tonight's orders with /dhan-order after checking the two cross-check flags, then decide on stops for SHRIRAMFIN 900PE and CUMMINSIND 4650CE and on the BSE legs."
+ "action": "Close the BSE 4200CE and hedge or close the BSE 3200PE, then run /refresh-dhan after tomorrow's open to book the 22 orders."
 }

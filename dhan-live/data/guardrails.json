@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-25T21:11:18+05:30",
+ "generated_at": "2026-11-25T21:24:05+05:30",
  "broker": "dhan",
  "market_data_date": "2026-11-25",
  "signals_generated_at": "2026-11-25T15:36:05.714970+00:00",
@@ -7,7 +7,7 @@
  "global_block": false,
  "counts": {
   "block": 0,
-  "warn": 4,
+  "warn": 3,
   "info": 0
  },
  "per_symbol_blocks": {},
@@ -29,12 +29,6 @@
    "level": "WARN",
    "symbol": null,
    "msg": "1 open option exit / strike-breach alerts on 1 stocks (BSE) - see the Covered Call alerts"
-  },
-  {
-   "id": "P5",
-   "level": "WARN",
-   "symbol": null,
-   "msg": "2 super order stop findings (0 high: likely orphaned stop legs that could BUY a new long) - see Covered Call > Alerts; the dhan-superorder skill can cancel them"
   }
  ]
 }

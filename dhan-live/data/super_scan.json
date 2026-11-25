@@ -1,31 +1,6 @@
 {
- "fetched_at": "2026-11-25T14:31:22+05:30",
- "orders_checked": 14,
+ "fetched_at": "2026-11-25T21:24:04+05:30",
+ "orders_checked": 16,
  "shorts": 13,
- "findings": [
-  {
-   "check": "S2",
-   "name": "NO STOP",
-   "severity": "WARN",
-   "order_id": null,
-   "symbol": "CUMMINSIND",
-   "expiry": "2026-12-29",
-   "strike": 4650.0,
-   "opt_type": "CE",
-   "concern": "No super order matches this short (200 @ 19.23): no stop protects it",
-   "action": "Close and re-enter as a super order, or use a daily stop order"
-  },
-  {
-   "check": "S2",
-   "name": "NO STOP",
-   "severity": "WARN",
-   "order_id": "2132611132429973",
-   "symbol": "SHRIRAMFIN",
-   "expiry": "2026-12-29",
-   "strike": 900.0,
-   "opt_type": "PE",
-   "concern": "Super order has no pending stop leg",
-   "action": "Place a protective stop"
-  }
- ]
+ "findings": []
 }

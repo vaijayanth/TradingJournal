@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-11-25T15:36:08.913759+00:00",
+  "generated_at": "2026-11-25T15:54:04.983190+00:00",
   "market_data_date": "2026-11-25",
   "live_prices_at": "2026-11-25T21:05:33+05:30",
-  "super_scan_at": "2026-11-25T14:31:22+05:30",
+  "super_scan_at": "2026-11-25T21:24:04+05:30",
   "as_of": "2026-11-25",
   "rules": {
     "short_call_delta": 0.1,
@@ -916,28 +916,6 @@
       "concern": "Supertrend GREEN but the short call is still open",
       "action": "Close it and open the bull put spread",
       "text": "BSE: Supertrend is GREEN: the open short call (4200CE 2026-12-29) is the opposite of the colour rule - close it and open the bull put spread."
-    },
-    {
-      "level": "WARN",
-      "type": "No stop placed",
-      "symbol": "CUMMINSIND",
-      "expiry": "2026-12-29",
-      "strike": 4650.0,
-      "opt_type": "CE",
-      "concern": "No Stop: No super order matches this short (200 @ 19.23): no stop protects it",
-      "action": "Close and re-enter as a super order, or use a daily stop order",
-      "text": "CUMMINSIND: No super order matches this short (200 @ 19.23): no stop protects it"
-    },
-    {
-      "level": "WARN",
-      "type": "No stop placed",
-      "symbol": "SHRIRAMFIN",
-      "expiry": "2026-12-29",
-      "strike": 900.0,
-      "opt_type": "PE",
-      "concern": "No Stop: Super order has no pending stop leg",
-      "action": "Place a protective stop (order 2132611132429973)",
-      "text": "SHRIRAMFIN: Super order has no pending stop leg"
     },
     {
       "level": "WARN",
