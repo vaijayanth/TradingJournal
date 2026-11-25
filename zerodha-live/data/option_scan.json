@@ -1,28 +1,29 @@
 {
  "fired_ok_today": [
+  "COLPAL26DEC1540PE",
   "MAZDOCK26DEC2200CE",
   "CGPOWER26DEC960CE",
   "ICICILIFE26DEC410PE",
   "POLICYBZR26DEC900PE"
  ],
- "fetched_at": "2026-11-25T11:52:28+05:30",
+ "fetched_at": "2026-11-25T20:41:29+05:30",
  "inputs": {
-  "positions": "2026-11-25T05:05:05.621542+00:00",
-  "gtts": "2026-11-25T10:35:05+05:30",
-  "orders": "2026-11-25T10:35:05+05:30",
-  "gtt_scan": "2026-11-25T10:35:05+05:30"
+  "positions": "2026-11-25T15:10:56.578415+00:00",
+  "gtts": "2026-11-25T20:40:56+05:30",
+  "orders": "2026-11-25T20:40:56+05:30",
+  "gtt_scan": "2026-11-25T20:40:56+05:30"
  },
  "stale_inputs": [],
- "open_legs": 90,
- "triggered_gtts": 4,
+ "open_legs": 103,
+ "triggered_gtts": 5,
  "findings": [
   {
-   "section": "A",
-   "severity": "WARN",
-   "symbol": "ICICIGI",
-   "tradingsymbol": "ICICIGI26DEC1520PE",
-   "concern": "Long 1520PE (325 qty) no short against it; P&L Rs-1,544, expiry 2026-12-29",
-   "action": "Sell it or let it expire"
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "APLAPOLLO",
+   "tradingsymbol": "APLAPOLLO26DEC1920CE",
+   "concern": "Short 1920CE (350 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
   },
   {
    "section": "B",
@@ -46,6 +47,14 @@
    "symbol": "BHEL",
    "tradingsymbol": "BHEL26DEC500CE",
    "concern": "Short 500CE (2625 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "CGPOWER",
+   "tradingsymbol": "CGPOWER26DEC910CE",
+   "concern": "Short 910CE (850 qty) is a naked call (by design; covered only by shares you hold)",
    "action": "Watch the 3x stop and the Supertrend colour"
   },
   {
@@ -243,6 +252,22 @@
   {
    "section": "B",
    "severity": "INFO",
+   "symbol": "TATAPOWER",
+   "tradingsymbol": "TATAPOWER26DEC370CE",
+   "concern": "Short 370CE (1450 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "TATASTEEL",
+   "tradingsymbol": "TATASTEEL26DEC190CE",
+   "concern": "Short 190CE (2750 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
    "symbol": "TITAN",
    "tradingsymbol": "TITAN26DEC5200CE",
    "concern": "Short 5200CE (175 qty) is a naked call (by design; covered only by shares you hold)",
@@ -283,9 +308,49 @@
   {
    "section": "C",
    "severity": "WARN",
+   "symbol": "ALKEM",
+   "tradingsymbol": "ALKEM26DEC4750PE",
+   "concern": "No active buy-back GTT (premium 29.8, sold 30)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "APLAPOLLO",
+   "tradingsymbol": "APLAPOLLO26DEC1920CE",
+   "concern": "No active buy-back GTT (premium 12.9, sold 15.9)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "CGPOWER",
+   "tradingsymbol": "CGPOWER26DEC910CE",
+   "concern": "No active buy-back GTT (premium 4.9, sold 4.5)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
    "symbol": "COCHINSHIP",
    "tradingsymbol": "COCHINSHIP26DEC1300CE",
-   "concern": "No active buy-back GTT (premium 5.45, sold 6.05)",
+   "concern": "No active buy-back GTT (premium 5.05, sold 6.05)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "COLPAL",
+   "tradingsymbol": "COLPAL26DEC1620PE",
+   "concern": "No active buy-back GTT (premium 6.9, sold 7.8)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "ICICIGI",
+   "tradingsymbol": "ICICIGI26DEC1600PE",
+   "concern": "No active buy-back GTT (premium 9.4, sold 7.7)",
    "action": "Place the protective GTT (zerodha-gtt-order)"
   },
   {
@@ -293,7 +358,23 @@
    "severity": "WARN",
    "symbol": "ICICILIFE",
    "tradingsymbol": "ICICILIFE26DEC420PE",
-   "concern": "No active buy-back GTT (premium 1.5, sold 1.7)",
+   "concern": "No active buy-back GTT (premium 2.3, sold 1.7)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "LICHSGFIN",
+   "tradingsymbol": "LICHSGFIN26DEC550PE",
+   "concern": "No active buy-back GTT (premium 4.5, sold 4.2)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "MFSL",
+   "tradingsymbol": "MFSL26DEC1340PE",
+   "concern": "No active buy-back GTT (premium 18.1, sold 14.1)",
    "action": "Place the protective GTT (zerodha-gtt-order)"
   },
   {
@@ -301,7 +382,7 @@
    "severity": "WARN",
    "symbol": "POLICYBZR",
    "tradingsymbol": "POLICYBZR26DEC920PE",
-   "concern": "No active buy-back GTT (premium 10, sold 9.45)",
+   "concern": "No active buy-back GTT (premium 9.8, sold 9.45)",
    "action": "Place the protective GTT (zerodha-gtt-order)"
   },
   {
@@ -309,7 +390,31 @@
    "severity": "WARN",
    "symbol": "RVNL",
    "tradingsymbol": "RVNL26DEC225CE",
-   "concern": "No active buy-back GTT (premium 1.46, sold 1.42)",
+   "concern": "No active buy-back GTT (premium 1.26, sold 1.42)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "SBILIFE",
+   "tradingsymbol": "SBILIFE26DEC1700PE",
+   "concern": "No active buy-back GTT (premium 11.2, sold 11.8)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "TATAPOWER",
+   "tradingsymbol": "TATAPOWER26DEC370CE",
+   "concern": "No active buy-back GTT (premium 1.25, sold 1.6)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "TATASTEEL",
+   "tradingsymbol": "TATASTEEL26DEC190CE",
+   "concern": "No active buy-back GTT (premium 0.77, sold 1)",
    "action": "Place the protective GTT (zerodha-gtt-order)"
   },
   {
@@ -333,7 +438,7 @@
    "severity": "WARN",
    "symbol": "CUMMINSIND",
    "tradingsymbol": "CUMMINSIND26DEC5000CE",
-   "concern": "Active GTT 344015712 (trailing-single) has a stop but no profit target; sold 21.8, premium 8",
+   "concern": "Active GTT 344015712 (trailing-single) has a stop but no profit target; sold 21.8, premium 6.4",
    "action": "Add a profit target at about 8.72 (a two-leg GTT: /zerodha-gtt-order or the Kite app)"
   }
  ]

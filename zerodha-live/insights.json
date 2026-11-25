@@ -1,30 +1,30 @@
 {
- "as_of": "25 Nov 10:50 (market data 23 Nov; 24 Nov had no cash session)",
- "written_at": "2026-11-25T10:50:00+05:30",
+ "as_of": "25 Nov close (market data 25 Nov)",
+ "written_at": "2026-11-25T20:55:00+05:30",
  "confidence": "low",
  "maturity": "41 positions opened since the cut-off, 5 closed trades: the swing edge cannot be judged yet.",
- "headline": "You closed both flipped put spreads and re-sold calls on the red stocks; the book now has 60 shorts and 4 of them have no stop GTT, plus 2 stale GTTs that would buy new longs if hit.",
+ "headline": "Signals are back to a fresh bar: one new entry (TORNTPHARM), two add-ons (one disputed), and 14 new shorts with no stop after a busy option day.",
  "points": [
   {
-   "label": "Process",
-   "text": "COCHINSHIP and RVNL: put spreads closed at 09:30 and 10:18 and replaced by short 1300CE and 225CE calls, which is what the red colour asks. The three exits had already filled at the open (-Rs10.2k)."
+   "label": "Signals",
+   "text": "TORNTPHARM flipped green today (4 shares, about Rs19.6k). Add-ons: ASHOKLEY x13 (-7.2%) and POWERINDIA x1 (-6.7%). The independent cross-check says ASHOKLEY's Supertrend is RED on complete data while the backtester says green: advisory only under the standing policy, but it is the one order I would look at twice before placing."
+  },
+  {
+   "label": "Options process",
+   "text": "You added 14+ new shorts today (ALKEM, APLAPOLLO, CGPOWER, COCHINSHIP, COLPAL, ICICIGI, ICICILIFE, LICHSGFIN, MFSL, POLICYBZR, RVNL, SBILIFE, TATAPOWER, TATASTEEL) and none has a stop GTT yet. Five GTTs fired and bought back cleanly today, so the stops work when they exist."
   },
   {
    "label": "Risk",
-   "text": "Two GTTs now point at contracts you closed (COCHINSHIP 1020PE and RVNL 170PE): if either triggers it buys a new long. Delete them first. Four shorts have no stop (COCHINSHIP 1300CE, RVNL 225CE, POLICYBZR 920PE, ICICILIFE 420PE)."
+   "text": "Two stale GTTs (COCHINSHIP 1020PE, RVNL 170PE) would BUY new longs if triggered: delete them. NATIONALUM and NMDC flipped red today, so their put spreads need closing. Financial Services is still 51% of deployed capital against a 40% limit."
   },
   {
-   "label": "Options",
-   "text": "Four GTTs fired and bought back cleanly today (MAZDOCK 2200CE, CGPOWER 960CE, ICICILIFE 410PE, POLICYBZR 900PE), so the stops work. Options P&L is about +Rs9.7k open. ICICIGI 1520PE is the last orphaned long (-Rs1.5k)."
-  },
-  {
-   "label": "Concentration",
-   "text": "Financial Services is 51% of deployed swing capital against a 40% guardrail, so a gap down in banks and NBFCs hits the book disproportionately. It is a warning, not a rule, and no new add-on there is due."
+   "label": "Book",
+   "text": "Unrealised swing P&L is +Rs38.5k against realised -Rs13.7k from 5 closed trades; the Supertrend exits cost money this week while winners run. Too few closed trades to judge the rule."
   },
   {
    "label": "Versus the backtest",
-   "text": "5 closed trades against 20.2% CAGR, -21.3% drawdown and 41% win rate: too early to compare. Watch the first 30 closed trades."
+   "text": "5 closed trades against 20.2% CAGR, -21.3% drawdown, 41% win rate: too early to compare. Watch the first 30 closed trades."
   }
  ],
- "action": "Delete GTTs 345641029 and 345641831, protect the four unstopped shorts, then place the ASHOKLEY add-on after tonight's close."
+ "action": "Delete the 2 stale GTTs, protect the 14 new shorts, close the NATIONALUM and NMDC spreads, and decide on ASHOKLEY before placing tonight's 3 stock orders."
 }

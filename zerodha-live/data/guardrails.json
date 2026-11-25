@@ -1,28 +1,40 @@
 {
- "generated_at": "2026-11-25T11:52:24+05:30",
+ "generated_at": "2026-11-25T20:41:24+05:30",
  "broker": "zerodha",
- "market_data_date": "2026-11-23",
- "signals_generated_at": "2026-11-25T06:22:16.021343+00:00",
+ "market_data_date": "2026-11-25",
+ "signals_generated_at": "2026-11-25T15:11:13.592564+00:00",
  "status": "WARN",
  "global_block": false,
  "counts": {
   "block": 0,
-  "warn": 2,
+  "warn": 4,
   "info": 0
  },
  "per_symbol_blocks": {},
  "findings": [
   {
-   "id": "F1",
+   "id": "F5",
    "level": "WARN",
    "symbol": null,
-   "msg": "market data 2026-11-23 is 1 session behind the last published session (2026-11-24)"
+   "msg": "the cross-check flagged 1 of 3 signals (advisory only, the backtester signal stands and they are not blocked): ASHOKLEY"
   },
   {
    "id": "C2",
    "level": "WARN",
    "symbol": null,
    "msg": "sector Financial Services is 51% of deployed capital (limit 40%)"
+  },
+  {
+   "id": "P3",
+   "level": "WARN",
+   "symbol": null,
+   "msg": "2 open option exit / strike-breach alerts on 2 stocks (NATIONALUM, NMDC) - see the Covered Call alerts"
+  },
+  {
+   "id": "P5",
+   "level": "WARN",
+   "symbol": null,
+   "msg": "2 invalid GTT orders (2 high: e.g. buy GTTs on contracts you no longer hold) - see Covered Call > Alerts > Invalid GTT; the zerodha-gtt-order skill can delete them"
   }
  ]
 }

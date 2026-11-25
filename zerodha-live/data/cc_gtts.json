@@ -1,5 +1,5 @@
 {
- "fetched_at": "2026-11-25T10:35:05+05:30",
+ "fetched_at": "2026-11-25T20:40:56+05:30",
  "active": {
   "SOLARINDS26DEC21000CE": [
    {
@@ -547,7 +547,7 @@
     "type": "trailing-two-leg",
     "trigger_values": [
      20.55,
-     129
+     128
     ],
     "qty": 150
    },
@@ -556,7 +556,7 @@
     "type": "trailing-two-leg",
     "trigger_values": [
      20.55,
-     129
+     128
     ],
     "qty": 150
    }
@@ -607,7 +607,7 @@
     "type": "trailing-two-leg",
     "trigger_values": [
      2.8,
-     17.1
+     16.1
     ],
     "qty": 1000
    },
@@ -616,7 +616,7 @@
     "type": "trailing-two-leg",
     "trigger_values": [
      2.8,
-     17.1
+     16.1
     ],
     "qty": 1000
    }
@@ -667,7 +667,7 @@
     "type": "trailing-two-leg",
     "trigger_values": [
      4.5,
-     29.8
+     28.8
     ],
     "qty": 500
    },
@@ -676,7 +676,7 @@
     "type": "trailing-two-leg",
     "trigger_values": [
      4.5,
-     29.8
+     28.8
     ],
     "qty": 500
    }
@@ -787,7 +787,7 @@
     "type": "trailing-two-leg",
     "trigger_values": [
      4.2,
-     26.75
+     23.75
     ],
     "qty": 600
    },
@@ -796,7 +796,7 @@
     "type": "trailing-two-leg",
     "trigger_values": [
      4.2,
-     26.75
+     23.75
     ],
     "qty": 600
    }
@@ -919,26 +919,6 @@
      1.85
     ],
     "qty": 9275
-   }
-  ],
-  "COLPAL26DEC1540PE": [
-   {
-    "id": 345419589,
-    "type": "two-leg",
-    "trigger_values": [
-     4.9,
-     33.85
-    ],
-    "qty": 550
-   },
-   {
-    "id": 345419589,
-    "type": "two-leg",
-    "trigger_values": [
-     4.9,
-     33.85
-    ],
-    "qty": 550
    }
   ],
   "BHEL26DEC500CE": [
@@ -1146,7 +1126,7 @@
     "id": 344015712,
     "type": "trailing-single",
     "trigger_values": [
-     51
+     50
     ],
     "qty": 100
    }
@@ -1918,7 +1898,7 @@
    "last_price": 37.8,
    "triggers": [
     20.55,
-    129
+    128
    ],
    "orders": [
     {
@@ -1931,7 +1911,7 @@
     {
      "side": "BUY",
      "qty": 150,
-     "price": 133,
+     "price": 132,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -2002,7 +1982,7 @@
    "last_price": 6.5,
    "triggers": [
     2.8,
-    17.1
+    16.1
    ],
    "orders": [
     {
@@ -2015,7 +1995,7 @@
     {
      "side": "BUY",
      "qty": 1000,
-     "price": 18.85,
+     "price": 17.85,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -2086,7 +2066,7 @@
    "last_price": 10.75,
    "triggers": [
     4.5,
-    29.8
+    28.8
    ],
    "orders": [
     {
@@ -2099,7 +2079,7 @@
     {
      "side": "BUY",
      "qty": 500,
-     "price": 31,
+     "price": 30,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -2254,7 +2234,7 @@
    "last_price": 11.05,
    "triggers": [
     4.2,
-    26.75
+    23.75
    ],
    "orders": [
     {
@@ -2267,7 +2247,7 @@
     {
      "side": "BUY",
      "qty": 600,
-     "price": 29.35,
+     "price": 26.35,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -2436,34 +2416,6 @@
      "side": "BUY",
      "qty": 9275,
      "price": 2,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
-   "id": 345419589,
-   "type": "two-leg",
-   "created_at": "2026-11-18T19:39:25+05:30",
-   "expires_at": "2026-12-30T00:00:00+05:30",
-   "tradingsymbol": "COLPAL26DEC1540PE",
-   "last_price": 10.95,
-   "triggers": [
-    4.9,
-    33.85
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 550,
-     "price": 5.05,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    },
-    {
-     "side": "BUY",
-     "qty": 550,
-     "price": 36.9,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -2757,13 +2709,13 @@
    "tradingsymbol": "CUMMINSIND26DEC5000CE",
    "last_price": 21.8,
    "triggers": [
-    51
+    50
    ],
    "orders": [
     {
      "side": "BUY",
      "qty": 100,
-     "price": 52,
+     "price": 51,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -2771,6 +2723,28 @@
   }
  ],
  "triggered": [
+  {
+   "id": 345419589,
+   "type": "two-leg",
+   "tradingsymbol": "COLPAL26DEC1540PE",
+   "triggers": [
+    4.9,
+    33.85
+   ],
+   "triggered_at": "2026-11-25T11:25:34+05:30",
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 550,
+     "price": 5.05
+    },
+    {
+     "side": "BUY",
+     "qty": 550,
+     "price": 36.9
+    }
+   ]
+  },
   {
    "id": 345965726,
    "type": "two-leg",
