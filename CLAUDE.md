@@ -9,6 +9,7 @@ Single-file `index.html` on GitHub Pages (https://vaijayanth.github.io/TradingJo
 
 | Topic | File |
 |---|---|
+| **Architecture, daily flow, skills, how to change things (start here for any future change)** | `docs/PROCESS_FLOW.md` |
 | Legacy Sheet dashboard, SST rules, columns, UI history to 2026-09 | `docs/legacy-sheet-dashboard.md` |
 | Options Terminal plan and watchlist (not built) | `docs/options-terminal-plan.md` |
 | Equity Journal data model, slide decks | `docs/equity-journal-and-decks.md` |
