@@ -1,5 +1,5 @@
 {
- "fetched_at": "2026-11-25T21:45:00+05:30",
+ "fetched_at": "2026-11-25T21:55:00+05:30",
  "source": "mcp__dhan_mcp__orderbook_agent_tool (list): pending",
  "orders": [
   {
@@ -169,6 +169,56 @@
    "qty": 2,
    "order_type": "LIMIT",
    "price": 1007.95,
+   "status": "PENDING",
+   "amo": true
+  },
+  {
+   "order_id": "2252611259980",
+   "symbol": "SHRIRAMFIN",
+   "side": "BUY",
+   "qty": 13,
+   "order_type": "LIMIT",
+   "price": 1009.7,
+   "status": "PENDING",
+   "amo": true
+  },
+  {
+   "order_id": "3252611259874",
+   "symbol": "DIXON",
+   "side": "BUY",
+   "qty": 1,
+   "order_type": "LIMIT",
+   "price": 13237.55,
+   "status": "PENDING",
+   "amo": true
+  },
+  {
+   "order_id": "2252611259981",
+   "symbol": "HCLTECH",
+   "side": "BUY",
+   "qty": 2,
+   "order_type": "LIMIT",
+   "price": 1396.0,
+   "status": "PENDING",
+   "amo": true
+  },
+  {
+   "order_id": "3252611259875",
+   "symbol": "INFY",
+   "side": "BUY",
+   "qty": 2,
+   "order_type": "LIMIT",
+   "price": 1151.9,
+   "status": "PENDING",
+   "amo": true
+  },
+  {
+   "order_id": "3252611259876",
+   "symbol": "BPCL",
+   "side": "BUY",
+   "qty": 9,
+   "order_type": "LIMIT",
+   "price": 310.7,
    "status": "PENDING",
    "amo": true
   }
