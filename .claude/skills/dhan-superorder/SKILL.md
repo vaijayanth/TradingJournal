@@ -38,7 +38,7 @@ Real money, opens a short. Do it only when the user names the contract(s) in thi
 - Leftover LONG legs (hedges whose short is gone) are not an order problem: the Covered Call page raises the `Leftover hedge` alert for them (sell or let expire).
 
 ## After any change
-Re-run Part 1 steps 1-3 so the alerts clear; nothing is committed ("push" handles that). Record fills the next trading day through `/refresh-dhan` as usual (the Dhan tradebook is today-only).
+Re-run Part 1 steps 1-3 so the alerts clear. **Then refresh the insights box (user, 2026-11-25):** the dashboard's "Strategy insights" box is a snapshot, so after ANY cancel, modify or placement here, update `dhan-live/insights.json` (the points that mention stops, orphaned stop legs, unprotected shorts and the `action` line, plus `as_of` / `written_at`) and append a short entry to `dhan-live/insights_log.json` (what changed and the new coverage). State only what the files now show; never leave the box describing a problem you just fixed. These two data files and the refreshed scan data may be committed and pushed without asking (standing data-refresh permission); code and skill edits still wait for "push". Record fills the next trading day through `/refresh-dhan` as usual (the Dhan tradebook is today-only).
 
 ## Reporting
 Plain: scanned / cancelled / modified / placed / failed (with the verbatim error). A pending order is not a fill; an unconfirmed leg field name is reported, not guessed.
