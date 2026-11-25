@@ -234,6 +234,7 @@ A win rate near 41% is normal for these systems. Tables of record: `swing-backte
 | Fresh buys are absent from holdings until settlement | Expected; the guardrail warns |
 | Dhan's pre-trade funds check returns a wrong shortfall | `/dhan-order` retries with the check skipped after your "yes" for the group; real errors still stop |
 | Zerodha rejects prices off the tick size | Round down to the tick |
+| GTT writes fail with a bare 'Failed to place/delete GTT order' | Needs one browser order approval first; recipe in `.claude/skills/zerodha-gtt-order/SKILL.md` (harmless out-of-band AMO order, only with your yes) |
 | Tiny-premium, large-quantity GTTs can be refused with no reason | Use a stop-only GTT or place it in Kite |
 | Yahoo has no bar on an Indian holiday | `/market-direction` flags "no cash session since <date>" |
 | Daily candles pulled late can carry the last traded price | Re-pull after settlement before trusting a flag |
