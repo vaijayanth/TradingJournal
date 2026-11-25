@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-25T22:50:53+05:30",
+ "generated_at": "2026-11-25T23:23:20+05:30",
  "market_data_date": "2026-11-25",
  "source": "Yahoo Finance daily bars (unadjusted) and dividend history",
  "rules": {
@@ -10,12 +10,10 @@
  },
  "universe_count": 29,
  "failed": [],
- "entries": [
-  "GOLDBEES"
- ],
+ "entries": [],
  "summary": {
   "stocks": 29,
-  "entry_signals": 1,
+  "entry_signals": 0,
   "touched_low_today": 1,
   "with_options": 23,
   "stale": [],
@@ -242,11 +240,11 @@
    "rsi": 20.3,
    "has_options": false,
    "lot": null,
-   "last_buy": null,
-   "days_since_buy": null,
+   "last_buy": "2026-11-26",
+   "days_since_buy": -1,
    "qty_to_buy": 199,
    "stale": false,
-   "signal": "ENTRY",
+   "signal": "COOLDOWN",
    "cost_at_signal": 19921.89
   },
   {
