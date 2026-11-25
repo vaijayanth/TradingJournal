@@ -1,0 +1,11 @@
+{
+ "_note": "AZ trading rules: the ONE place these numbers are set. Read by compute_zerodha_live_signals.py, crosscheck_signals.py and guardrails.py; scripts/check_rules_consistency.py fails if docs, skills or the page disagree. Change here only on the user's word.",
+ "starting_capital": 3000000,
+ "base_position_rs": 20000,
+ "position_increment_rs": 5000,
+ "position_increment_trades": 100,
+ "entry_window_trading_days": 3,
+ "add_trigger_pct": -6.0,
+ "add_fraction": 0.1,
+ "add_cooldown_days": 7
+}

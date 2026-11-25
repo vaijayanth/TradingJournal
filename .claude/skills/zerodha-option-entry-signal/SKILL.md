@@ -1,11 +1,11 @@
 ---
 name: zerodha-option-entry-signal
-description: Read-only scan of the AZ (Zerodha) option ENTRY signals, in 5 tiers by how recently the Supertrend flipped (Tier 1 flipped on the latest session, Tier 2 within the last trading week, Tier 3 within 30 days, Tier 4 within 90 days, Tier 5 older than 90 days), Supertrend only (no RSI), stocks with open option legs left out, with a clear results / ex-dividend alert on every row. Places nothing. Use when the user says "option entry signals", "/zerodha-option-entry-signal", "what options should I open", or wants the Zerodha option signals before placing. Placing is the separate user-invoked skill zerodha-option-order.
+description: Read-only scan of the AZ (Zerodha) option ENTRY signals, in 5 tiers by how recently the Supertrend flipped (Tier 1 flipped on the latest session, Tier 2 within the last trading week, Tier 3 within 30 days, Tier 4 within 90 days, Tier 5 older than 90 days), Supertrend only (no RSI), stocks with open option legs left out, with a clear results / ex-dividend alert on every row. Places nothing. Use when the user says "option entry signals", "/zerodha-option-entry-signal", "what options should I open", or wants the Zerodha option signals before placing. Placing is the separate user-invoked skill zerodha-option-order, currently ON HOLD (never suggest it).
 ---
 
 # zerodha-option-entry-signal - AZ option entry signals in tiers (read-only)
 
-This skill only READS and REPORTS. It never places, modifies or cancels an order and never writes a GTT. Placing a trade is `/zerodha-option-order` (user-invoked only); protecting it is `/zerodha-gtt-order`. AZ only: ND (Dhan) has its own signals and shares no code or data with this skill; never read from `dhan-live/`.
+This skill only READS and REPORTS. It never places, modifies or cancels an order and never writes a GTT. Placing a trade is `/zerodha-option-order` (user-invoked only, ON HOLD: never suggest it); protecting it is `/zerodha-gtt-order`. AZ only: ND (Dhan) has its own signals and shares no code or data with this skill; never read from `dhan-live/`.
 
 ## The rules (user, 2026-11-16)
 - **Supertrend only. RSI is NOT used** (the old RSI > 70 / < 30 override is ignored here). Green = BULL PUT SPREAD (sell a put, buy the hedge put 2 listed strikes lower); red = SELL CALL (no hedge on the call side, by the user's choice).
@@ -26,8 +26,8 @@ This skill only READS and REPORTS. It never places, modifies or cancels an order
    - Rows with `!!` (do not open now) and `!` (close early), grouped by date.
    - Any stock in Tier 1 or 2 that the AZ stock strategy entered today (an AZ stock position bought on the same signal), as a fact, not a judgement.
    - Rows with SHORT EXPIRY.
-4. **Say what is not known:** premium, credit and margin are not available here (no option quotes are pulled); `/zerodha-option-order` shows them from live quotes. Never invent a number.
-5. **Hand-off, always.** "To place any of these, run `/zerodha-option-order` and name up to 4 stocks (market hours only). It picks the strike (about 10% away this month, 15% for a later month), sizes to about Rs2,000 credit, quotes live, places the hedge first and then the short, and offers the protective GTT separately." Because this list uses colour only and `zerodha-option-order` takes its structure from the engine (which still applies RSI), tell the user to name the structure when it could differ: **pass `--structure put-spread` for a green stock and `--structure call` for a red one** in the order skill, so the placed trade matches this list. If the market is closed, say placing waits for the next session.
+4. **Say what is not known:** premium, credit and margin are not available here (no option quotes are pulled); the (ON HOLD) `/zerodha-option-order` would show them from live quotes. Never invent a number.
+5. **Hand-off.** `/zerodha-option-order` is ON HOLD (see `.claude/skills/_shared/holds.md`): do NOT suggest it and do not hand off to it. End with the list; the user decides and places in the Kite app.
 
 ## Rules
 - Read-only: no order, GTT, cancel, modify or file edit other than refreshing the local data files named in step 1, and only if the user agrees to a data pull.

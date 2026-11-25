@@ -21,7 +21,7 @@ Single-file `index.html` on GitHub Pages (https://vaijayanth.github.io/TradingJo
 |---|---|---|---|
 | Entry | close above the 252-session closing high + Supertrend(10,3) green, today's signal only | Supertrend flipped green within the last 3 trading days, still green, not held | close at a new 252-session closing low, Rs20,000, once a week per stock |
 | Exit | Supertrend red, whole position, any P&L | same (grandfathered positions only after a post-cutoff red flip) | none (dividend holding) |
-| Add-on | green and P&L <= -6%: 1/10 of qty (min 1), once per 7 days | same | n/a |
+| Add-on | green and P&L <= -6%: 1/10 of qty (min 1), once per 7 days | green and P&L <= -6%: 1/10 of qty (min 1), once per 7 days | n/a |
 | Sizing | Rs1,000 + Rs1,000 per 100 closed trades, base Rs20L | Rs20,000 + Rs5,000 per 100 trades (open + closed), base Rs30L | Rs20,000 |
 | Options | Supertrend colour only (no RSI): red = sell call, green = bull put spread | RSI > 70 sell call, RSI < 30 bull put, else colour | ND rules on the 23 stocks with options |
 
@@ -29,7 +29,7 @@ Single-file `index.html` on GitHub Pages (https://vaijayanth.github.io/TradingJo
 - **ND live:** 28.0% CAGR, -15.4% max drawdown, PF 2.01, win rate **41%** (a normal result for this system, not a warning). **AZ live (flip-today):** 20.2% / -21.3% / PF 1.75 / 41%.
 - **Walk-forward (2026-11-24, `walk_forward_tt.py`):** ND ran 35.8% CAGR before 2022 and about 20-23% after (2020: +52%, 2021: +189% carried the headline). Set expectations near 20% CAGR and -15% drawdown going forward; survivorship bias applies.
 - **Tested and rejected for ND (2026-11-24):** Minervini Trend Template overlay (drawdown benefit does not survive a restart on 2022-01-01), volume and +4%-day filters, Bonde EP/Momentum Burst sleeves (flat to negative at 3-5 day holds), Nifty-red entry gates (hurt AZ), gold hedge overlay (no drawdown reduction). Files: `bonde_minervini_*.csv`, `walk_forward_tt*.csv`, `nifty_gate_*.csv`, `gold_*.csv`; reports in `reports/`.
-- **Known open items from the 2026-11-25 audit:** numeric rules (entry window, add-on trigger) are duplicated in the engine, the cross-check, `guardrails_config.json` and page copy; skills share copied "Concise output" blocks; the `zerodha-option-order` hold rule lives only here. Next planned step: one shared rules JSON plus a consistency test.
+- **Rules have one source (2026-11-25 audit):** `dhan-live/data/rules.json` (ND) and `zerodha-live/data/rules.json` (AZ) hold entry window, add-on trigger / fraction / cooldown, sizing ladder and capital; the engines, the AZ cross-check and guardrails read them. **Change a rule there, then run `python scripts/check_rules_consistency.py`**: it fails if the page copy, the strategy table above, the zerodha-order skill, the signals files, the shared skill blocks or the skill hold list disagree. The shared "Concise output" block lives in `.claude/skills/_shared/output-format.md` (edit there, then `python scripts/sync_skill_blocks.py`; `zerodha-option-order` keeps its own frozen copy). Skills on hold are listed in `.claude/skills/_shared/holds.md` (`zerodha-option-order` is ON HOLD: never suggest it). Still open: the 72 KB dated-bullet section below is not yet split by topic.
 
 ## VJ TradeIQ 2.0 rebuild — architecture (Step 0, 2026-11-08)
 

@@ -49,7 +49,7 @@ def supertrend(h, l, c, period=PERIOD, mult=MULT):
     return d
 
 
-ENTRY_WINDOW = 3   # trading bars since the red-to-green flip that still count as a fresh entry (user, 2026-11-23); keep equal to ENTRY_WINDOW_TRADING_DAYS in compute_zerodha_live_signals.py
+ENTRY_WINDOW = json.loads((Path(__file__).resolve().parent.parent / "data" / "rules.json").read_text())["entry_window_trading_days"]   # trading bars since the red-to-green flip that still count as a fresh entry (data/rules.json, user 2026-11-23: 3)
 BACKTESTER_FINAL = True   # user 2026-11-16: per-signal cross-check flags are advisory only (set False to block flagged signals again)
 
 

@@ -34,14 +34,15 @@ sys.path.insert(0, str(HERE))
 from zerodha_common import (compute_hot_sectors, days_since, entry_flip_label, flip_label,  # noqa: E402
                                         index_rsi, index_supertrend, index_week52, load_json)
 
-STARTING_CAPITAL = 3_000_000
-BASE_POSITION_RS = 20_000
-POSITION_INCREMENT_RS = 5_000
-POSITION_INCREMENT_TRADES = 100
-ENTRY_WINDOW_TRADING_DAYS = 3   # a flip to green within the last 3 trading days (user, 2026-11-23; was 0 = today only, 2026-11-09)
-ADD_FRACTION = 0.10
-ADD_COOLDOWN_DAYS = 7
-ADD_TRIGGER_PCT = -6.0     # user rule (2026-11-09): same as ND - add when the loss is -6% or worse
+RULES = load_json(DATA / "rules.json")     # the single source of the trading numbers (data/rules.json); scripts/check_rules_consistency.py guards the copies
+STARTING_CAPITAL = RULES["starting_capital"]
+BASE_POSITION_RS = RULES["base_position_rs"]
+POSITION_INCREMENT_RS = RULES["position_increment_rs"]
+POSITION_INCREMENT_TRADES = RULES["position_increment_trades"]
+ENTRY_WINDOW_TRADING_DAYS = RULES["entry_window_trading_days"]   # a flip to green within the last N trading days (user, 2026-11-23: 3; was 0 = today only)
+ADD_FRACTION = RULES["add_fraction"]
+ADD_COOLDOWN_DAYS = RULES["add_cooldown_days"]
+ADD_TRIGGER_PCT = RULES["add_trigger_pct"]     # user rule (2026-11-09): same as ND - add when the loss is -6% or worse
 
 
 def tier_for(trades):

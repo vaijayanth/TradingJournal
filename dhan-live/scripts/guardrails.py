@@ -45,6 +45,8 @@ DEFAULTS = {
     "single_stock_warn_pct": 20, "sector_warn_pct": 40, "deployed_warn_pct_of_base": 100, "pending_buy_warn_pct_of_base": 25,
     "expiry_week_days": 5, "add_trigger_pct": -6.0, "add_cooldown_days": 7, "entry_max_pct_below_high": 0.5,
 }
+RULES = json.loads((DATA / "rules.json").read_text())   # single source of the trading numbers (data/rules.json)
+RULE_CFG = {"add_trigger_pct": RULES["add_trigger_pct"], "add_cooldown_days": RULES["add_cooldown_days"]}
 IST = timezone(timedelta(hours=5, minutes=30))
 
 
@@ -93,7 +95,7 @@ def walk_bad_numbers(o, path=""):
 
 # ---------------- the checks ----------------
 def evaluate(ctx, now):
-    cfg = {**DEFAULTS, **ctx.get("config", {})}
+    cfg = {**DEFAULTS, **RULE_CFG, **ctx.get("config", {})}
     sig, hold, orders, fills = ctx["signals"], ctx["holdings"], ctx.get("orders") or [], ctx.get("fills")
     base = (sig.get("capital_base") or {}).get("initial_capital") or BROKER["base"]
     tier = (sig.get("sizing") or {}).get(BROKER["tier_key"]) or (sig.get("sizing") or {}).get("effective_tier_rs") or 0

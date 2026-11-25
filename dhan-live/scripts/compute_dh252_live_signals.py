@@ -66,13 +66,14 @@ DHAN_OPTION_HEDGE_PORTFOLIO = {
     "SHRIRAMFIN", "MCX", "HCLTECH", "DIXON", "LIQUIDCASE",
 }
 
-ADD_TRIGGER_PCT = -6.0
-ADD_FRACTION = 0.10
-ADD_COOLDOWN_DAYS = 7
-BASE_POSITION_RS = 1000
-POSITION_INCREMENT_RS = 1000
-POSITION_INCREMENT_TRADES = 100
-SIZE_DOUBLE_POSITIONS_THRESHOLD = 100
+RULES = json.loads((Path(__file__).resolve().parent.parent / "data" / "rules.json").read_text())   # the single source of the trading numbers; scripts/check_rules_consistency.py guards the copies
+ADD_TRIGGER_PCT = RULES["add_trigger_pct"]
+ADD_FRACTION = RULES["add_fraction"]
+ADD_COOLDOWN_DAYS = RULES["add_cooldown_days"]
+BASE_POSITION_RS = RULES["base_position_rs"]
+POSITION_INCREMENT_RS = RULES["position_increment_rs"]
+POSITION_INCREMENT_TRADES = RULES["position_increment_trades"]
+SIZE_DOUBLE_POSITIONS_THRESHOLD = RULES["size_double_positions_threshold"]
 
 
 def load_excluded_universe():

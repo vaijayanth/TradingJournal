@@ -1,0 +1,11 @@
+{
+ "_note": "ND (dh252) trading rules: the ONE place these numbers are set. Read by compute_dh252_live_signals.py and guardrails.py; scripts/check_rules_consistency.py fails if docs, skills or the page disagree. Change here only on the user's word.",
+ "starting_capital": 2000000,
+ "base_position_rs": 1000,
+ "position_increment_rs": 1000,
+ "position_increment_trades": 100,
+ "size_double_positions_threshold": 100,
+ "add_trigger_pct": -6.0,
+ "add_fraction": 0.1,
+ "add_cooldown_days": 7
+}

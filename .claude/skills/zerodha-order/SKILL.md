@@ -77,10 +77,11 @@ Summarise per group: placed / verified / skipped / excluded / failed (verbatim e
 Plain: placed (as AMO) / status / still pending / failed (verbatim error). Never call a pending AMO filled.
 
 ## Next-step nudge (user, 2026-11-16)
-When the last group is done, do not stop at the summary: say what is left on tonight's checklist and the exact next command: close the flagged option legs in Kite, then `/zerodha-gtt-order` (stale GTT deletes + protective GTTs), then `/zerodha-option-entry-signal` and `/zerodha-option-order` if there are new option trades, and tomorrow's `/refresh-zerodha`. If the refresh checklist is not in this conversation, run `python scripts/action_items.py` to rebuild it.
+When the last group is done, do not stop at the summary: say what is left on tonight's checklist and the exact next command: close the flagged option legs in Kite, then `/zerodha-gtt-order` (stale GTT deletes + protective GTTs), then `/zerodha-option-entry-signal` if there are new option trades (`/zerodha-option-order` is ON HOLD, never suggest it), and tomorrow's `/refresh-zerodha`. If the refresh checklist is not in this conversation, run `python scripts/action_items.py` to rebuild it.
 
 **Format (user, 2026-11-17):** end with two separate parts: **A. Run a skill (I take the action)** - the exact next command(s); **B. Manual steps (only you, in the broker app)** - the legs to close or decide. Never mix them. **Then end with one line `Next step: ...` naming the single thing to do now.**
 
+<!-- shared:output-format:begin -->
 ## Concise output (user, 2026-11-23: "your tables are not concise"; applies to everything this skill prints)
 - **Next steps are ALWAYS a table (user, 2026-11-24: 'provide next steps in nice table format, always remember').** The closing next-steps block is one table: `# | Type | Do | Command or app | When`, `Type` = `skill` (I run it, or the user types the command) or `manual` (broker app), most urgent first, finished items left out. Keep the single `Next step:` line under it naming step 1.
 - **Table size (user, 2026-11-23: 'your table is again big... remember this table size').** A confirm / pick list is TWO tiny tables at most: (1) things to delete or close: 2 columns (name, id); (2) things to place: 3 columns (name, qty, the one key number such as `stop (limit)`). Drop sold price, LTP, target levels and rupee totals unless the user asks; one line under the tables for the single warning.
@@ -88,3 +89,4 @@ When the last group is done, do not stop at the summary: say what is left on ton
 - **Tables:** at most 3 to 4 short columns, short cells (no sentences), and only for something the user must choose or still has to do. Never repeat a list that was shown earlier in the same run; point to it.
 - **Before an action** the confirm ticket is still a compact table, but only the numbers needed to say yes (name, qty, limit or triggers, total). Warnings go in one line under it.
 - **Close** with a single `Next step:` line. Add a short "still open" table only when items remain, and then only: item | who does it.
+<!-- shared:output-format:end -->
