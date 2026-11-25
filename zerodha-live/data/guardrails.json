@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-25T20:41:24+05:30",
+ "generated_at": "2026-11-25T20:47:56+05:30",
  "broker": "zerodha",
  "market_data_date": "2026-11-25",
  "signals_generated_at": "2026-11-25T15:11:13.592564+00:00",
@@ -7,7 +7,7 @@
  "global_block": false,
  "counts": {
   "block": 0,
-  "warn": 4,
+  "warn": 3,
   "info": 0
  },
  "per_symbol_blocks": {},
@@ -29,12 +29,6 @@
    "level": "WARN",
    "symbol": null,
    "msg": "2 open option exit / strike-breach alerts on 2 stocks (NATIONALUM, NMDC) - see the Covered Call alerts"
-  },
-  {
-   "id": "P5",
-   "level": "WARN",
-   "symbol": null,
-   "msg": "2 invalid GTT orders (2 high: e.g. buy GTTs on contracts you no longer hold) - see Covered Call > Alerts > Invalid GTT; the zerodha-gtt-order skill can delete them"
   }
  ]
 }
