@@ -264,6 +264,10 @@ def main():
                 if l["stop_hit"]:
                     alerts.append({"level": "EXIT", "type": "3× premium", "symbol": sym, "expiry": l["expiry"], "strike": l["strike"], "opt_type": l["type"], "text": f"{sym} {l['expiry']} {l['strike']:g}{l['type']}: premium {l['ltp']} >= {mult}x sold {l['avg']} - close it",
                                    "concern": f"Premium {l['ltp']:g} is {l['ltp'] / l['avg']:.1f}x the {l['avg']:g} sold", "action": "Close now (3x stop hit)"})
+                elif l["ltp"] >= l["avg"] * rules.get("near_stop_multiple", 2.5):
+                    alerts.append({"level": "WARN", "type": "Near 3× stop", "symbol": sym, "expiry": l["expiry"], "strike": l["strike"], "opt_type": l["type"],
+                                   "concern": f"Premium {l['ltp']:g} is {l['ltp'] / l['avg']:.1f}x the {l['avg']:g} sold (stop at {l['stop_at']:g})", "action": "Watch: close or tighten before the 3x stop",
+                                   "text": f"{sym} {l['expiry']} {l['strike']:g}{l['type']}: premium {l['ltp']} is {l['ltp'] / l['avg']:.1f}x sold {l['avg']}, near the {mult}x stop {l['stop_at']}"})
                 elif l["ltp"] <= l["avg"] * (1 - rules.get("profit_exit_decay_pct", 60) / 100):
                     alerts.append({"level": "PROFIT", "type": "Profit Exit", "symbol": sym, "expiry": l["expiry"], "strike": l["strike"], "opt_type": l["type"],
                                    "concern": f"Premium decayed {(1 - l['ltp'] / l['avg']) * 100:.0f}% (sold {l['avg']:g}, now {l['ltp']:g})", "action": "Book profit: buy back",

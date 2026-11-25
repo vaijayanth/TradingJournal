@@ -10381,7 +10381,7 @@ const ccTabBar = (id, tabs, extra) => `<div class="dhm-tabs" id="${id}" role="ta
   `<button class="dhm-tab" data-tab="${k}" onclick="${extra}('${k}')">${l}${n == null ? '' : `<span class="dhm-count">${n}</span>`}</button>`).join('') + '</div>';
 
 // Alert type pill: the label is the alert's own type (3× premium, Near strike, Beyond strike, No GTT placed ...), the colour follows its severity
-const CC_TYPE_ORDER = ['Exit', '3× premium', 'Through hedge', 'Beyond strike', 'Expiry risk', 'Event close', 'Near strike', 'Profit Exit', 'Invalid GTT', 'Invalid stop order', 'No GTT placed', 'No stop placed', 'No hedge', 'Partly hedged', 'Leftover hedge', 'New trade'];
+const CC_TYPE_ORDER = ['Exit', '3× premium', 'Near 3× stop', 'Through hedge', 'Beyond strike', 'Expiry risk', 'Event close', 'Near strike', 'Profit Exit', 'Invalid GTT', 'Invalid stop order', 'No GTT placed', 'No stop placed', 'No hedge', 'Partly hedged', 'Leftover hedge', 'New trade'];
 function ccTypePill(a) {
   const m = { EXIT: ['var(--red-soft)', 'var(--red)'], BREACH: ['var(--red)', '#fff'], WARN: ['var(--amber-soft, var(--surface2))', 'var(--amber)'], ENTER: ['rgba(76,134,255,.16)', 'var(--accent)'], PROFIT: ['var(--green-soft)', 'var(--green)'] };
   const [bg, fg] = m[a.level] || ['var(--surface2)', 'var(--text-muted)'];
@@ -10395,6 +10395,7 @@ function ccShortAlert0(r) {
   let x;
   switch (r.type) {
     case '3× premium': x = m(/Premium ([\d.]+) is ([\d.]+)x the ([\d.]+) sold/); return [x ? `${x[2]}× sold price (${x[1]} vs ${x[3]})` : 'Premium 3× sold', 'Close now'];
+    case 'Near 3× stop': x = m(/Premium ([\d.]+) is ([\d.]+)x the ([\d.]+) sold/); return [x ? `${x[2]}× sold (${x[1]} vs ${x[3]})` : 'Near 3× stop', 'Watch or close'];
     case 'Profit Exit': x = m(/decayed (\d+)%/); return [x ? `${x[1]}% decayed` : 'Premium decayed', 'Buy back'];
     case 'Beyond strike': x = m(/price ([\d.]+)% past the strike, Rs([\d,]+)/); return [x ? `${x[1]}% in the money · ₹${x[2]}` : 'In the money', 'Roll, close or hold'];
     case 'Through hedge': x = m(/Rs([\d,]+) intrinsic/); return [x ? `Past hedge · max loss ₹${x[1]}` : 'Past hedge', 'Close or roll'];
@@ -10428,7 +10429,7 @@ const ccAlertCols = withType => (withType ? [{ h: 'Alert type', v: r => ccTypeOr
 ]);
 // ── ACTIONS tab (user, 2026-11-17): alerts AND entry signals in one place, three segments in workflow order: Exit -> Fix -> Entry (+ All) ──
 // Exit = close or watch an open leg; Fix = stop / GTT / hedge problems; Entry = new trades (the 5 tiers become a Tier column + filter).
-const CC_EXIT_TYPES = ['Exit', '3× premium', 'Through hedge', 'Beyond strike', 'Expiry risk', 'Event close', 'Near strike', 'Profit Exit'];
+const CC_EXIT_TYPES = ['Exit', '3× premium', 'Near 3× stop', 'Through hedge', 'Beyond strike', 'Expiry risk', 'Event close', 'Near strike', 'Profit Exit'];
 const CC_FIX_TYPES = ['Invalid GTT', 'Invalid stop order', 'No GTT placed', 'No stop placed', 'No hedge', 'Partly hedged', 'Leftover hedge'];
 const ccKind = t => CC_EXIT_TYPES.includes(t) ? 'exit' : CC_FIX_TYPES.includes(t) ? 'fix' : 'entry';
 const CC_SEG_LABEL = { exit: 'Exit', fix: 'Fix', entry: 'Entry', all: 'All' };
@@ -10641,7 +10642,7 @@ const ccTierFilters = [['all', 'All entry signals', () => true], ['put', 'BPS', 
   ['clear', 'Clear to open (no event alert)', r => r.lvl < 2], ['alert', 'Has an event alert', r => r.lvl >= 2]];
 
 // ── Open positions as TRADES (one row per structure, not per leg): % of max profit vs the profit target, distance to the short strike, stop in place, next step ──
-const CC_TRADE_ORDER = ['3× premium', 'Through hedge', 'Expiry risk', 'Event close', 'Exit', 'Beyond strike', 'Profit Exit', 'No stop placed', 'No GTT placed', 'Invalid GTT', 'Near strike', 'Leftover hedge'];
+const CC_TRADE_ORDER = ['3× premium', 'Near 3× stop', 'Through hedge', 'Expiry risk', 'Event close', 'Exit', 'Beyond strike', 'Profit Exit', 'No stop placed', 'No GTT placed', 'Invalid GTT', 'Near strike', 'Leftover hedge'];
 function ccTrades(S, alerts, R) {
   window._ccTrend = Object.fromEntries((S || []).filter(s => s.colour).map(s => [s.symbol, s.colour]));   // this broker's Supertrend colours (Trend / Right position columns)
   const t0 = new Date(); t0.setHours(0, 0, 0, 0);
