@@ -1,5 +1,28 @@
 {
- "fetched_at": "2026-11-25T20:36:00+05:30",
- "source": "mcp__Zerodha__orders list: pending / open orders",
- "orders": []
+ "fetched_at": "2026-11-25T21:05:00+05:30",
+ "source": "mcp__Zerodha__orders list: open AMO orders",
+ "orders": [
+  {
+   "order_id": "261125151562218",
+   "symbol": "ASHOKLEY",
+   "side": "BUY",
+   "qty": 13,
+   "order_type": "LIMIT",
+   "price": 161.16,
+   "status": "AMO REQ RECEIVED",
+   "amo": true,
+   "placed": "2026-11-25T21:03:20+05:30"
+  },
+  {
+   "order_id": "261125151562221",
+   "symbol": "POWERINDIA",
+   "side": "BUY",
+   "qty": 1,
+   "order_type": "LIMIT",
+   "price": 30350,
+   "status": "AMO REQ RECEIVED",
+   "amo": true,
+   "placed": "2026-11-25T21:03:26+05:30"
+  }
+ ]
 }
