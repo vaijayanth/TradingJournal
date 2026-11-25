@@ -1,15 +1,18 @@
 {
- "fired_ok_today": [],
- "fetched_at": "2026-11-24T19:58:36+05:30",
+ "fired_ok_today": [
+  "ICICILIFE26DEC410PE",
+  "POLICYBZR26DEC900PE"
+ ],
+ "fetched_at": "2026-11-25T09:23:54+05:30",
  "inputs": {
-  "positions": "2026-11-24T14:28:04.587609+00:00",
-  "gtts": "2026-11-24T19:58:04+05:30",
-  "orders": "2026-11-24T19:58:04+05:30",
-  "gtt_scan": "2026-11-24T19:58:04+05:30"
+  "positions": "2026-11-25T03:52:46.059866+00:00",
+  "gtts": "2026-11-25T09:22:46+05:30",
+  "orders": "2026-11-25T09:22:46+05:30",
+  "gtt_scan": "2026-11-25T09:22:46+05:30"
  },
  "stale_inputs": [],
- "open_legs": 94,
- "triggered_gtts": 0,
+ "open_legs": 93,
+ "triggered_gtts": 2,
  "findings": [
   {
    "section": "A",
@@ -17,6 +20,14 @@
    "symbol": "ICICIGI",
    "tradingsymbol": "ICICIGI26DEC1520PE",
    "concern": "Long 1520PE (325 qty) no short against it; P&L Rs-1,316, expiry 2026-12-29",
+   "action": "Sell it or let it expire"
+  },
+  {
+   "section": "A",
+   "severity": "WARN",
+   "symbol": "ICICILIFE",
+   "tradingsymbol": "ICICILIFE26DEC400PE",
+   "concern": "Long 400PE (1850 qty) no short against it; P&L Rs-2,035, expiry 2026-12-29",
    "action": "Sell it or let it expire"
   },
   {
@@ -274,6 +285,14 @@
    "tradingsymbol": "WIPRO26DEC220CE",
    "concern": "Short 220CE (3000 qty) is a naked call (by design; covered only by shares you hold)",
    "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "POLICYBZR",
+   "tradingsymbol": "POLICYBZR26DEC920PE",
+   "concern": "No active buy-back GTT (premium 9.45, sold 9.45)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
   },
   {
    "section": "G",

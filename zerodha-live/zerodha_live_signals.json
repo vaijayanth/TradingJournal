@@ -1,24 +1,24 @@
 {
-  "generated_at": "2026-11-24T14:28:41.714120+00:00",
+  "generated_at": "2026-11-25T03:53:48.712933+00:00",
   "market_data_date": "2026-11-23",
   "source_generated_at": {
-    "supertrend": "2026-11-24T12:56:37.919546+00:00",
-    "market_screens": "2026-11-24T12:56:26.570887+00:00"
+    "supertrend": "2026-11-24T23:16:30.003327+00:00",
+    "market_screens": "2026-11-24T23:16:19.949033+00:00"
   },
   "sizing": {
-    "closed_trades_count": 2,
+    "closed_trades_count": 5,
     "base_tier_rs": 20000,
     "total_positions_ever_opened": 41,
-    "realized_pl_rs": -3517.05,
-    "unrealized_pl_rs": 18945.66,
-    "combined_pl_rs": 15428.61,
+    "realized_pl_rs": -13667.65,
+    "unrealized_pl_rs": 27531.86,
+    "combined_pl_rs": 13864.21,
     "effective_tier_rs": 20000,
     "doubled": false,
     "tier_note": "41 trades (open + closed) \u00b7 next +5,000 at 100"
   },
-  "dh252_position_count": 39,
+  "dh252_position_count": 36,
   "option_hedge_portfolio": [],
-  "holdings_count_total": 188,
+  "holdings_count_total": 185,
   "holdings_out_of_scope": 149,
   "no_data": [],
   "exited_outside_tracking": [],
@@ -100,10 +100,10 @@
     },
     {
       "date": "2026-11-23",
-      "pnl": 15428.61,
-      "realised": -3517.05,
-      "invested": 1120831.32,
-      "equity": 3015428.61
+      "pnl": 13864.21,
+      "realised": -13667.65,
+      "invested": 1056839.22,
+      "equity": 3013864.21
     }
   ],
   "closed_trades": [
@@ -128,6 +128,39 @@
       "pl_rs": -4642.05,
       "pl_pct": -12.72,
       "hold_days": 6
+    },
+    {
+      "symbol": "APLAPOLLO",
+      "entry_date": "2026-08-27",
+      "exit_date": "2026-11-25",
+      "qty": 10,
+      "entry_price": 2176.03,
+      "exit_price": 1501.35,
+      "pl_rs": -6746.8,
+      "pl_pct": -31.01,
+      "hold_days": 90
+    },
+    {
+      "symbol": "COCHINSHIP",
+      "entry_date": "2026-11-10",
+      "exit_date": "2026-11-25",
+      "qty": 17,
+      "entry_price": 1191.2941176470588,
+      "exit_price": 1085.0,
+      "pl_rs": -1807.0,
+      "pl_pct": -8.92,
+      "hold_days": 15
+    },
+    {
+      "symbol": "RVNL",
+      "entry_date": "2026-11-10",
+      "exit_date": "2026-11-25",
+      "qty": 109,
+      "entry_price": 201.649541,
+      "exit_price": 187.0,
+      "pl_rs": -1596.8,
+      "pl_pct": -7.26,
+      "hold_days": 15
     }
   ],
   "hot_sectors": {
@@ -138,66 +171,34 @@
     ]
   },
   "entries": [],
-  "exits": [
+  "exits": [],
+  "addons": [
     {
-      "entry_date": "2026-08-27",
-      "symbol": "APLAPOLLO",
-      "qty": 10,
-      "avg_cost": 2176.03,
-      "cmp": 1670.0,
-      "pl_pct": -23.2547,
-      "notional_pl_rs": -5060.3,
-      "supertrend_color": "red",
-      "flip_label": "Flipped to RED (0)",
-      "flip_date": "2026-11-23",
-      "pct_from_52w_high": -26.5,
+      "entry_date": "2026-08-03",
+      "symbol": "ASHOKLEY",
+      "qty": 131,
+      "avg_cost": 170.210381,
+      "cmp": 158.7,
+      "pl_pct": -6.7624,
+      "notional_pl_rs": -1507.86,
+      "supertrend_color": "green",
+      "flip_label": "GREEN 12d",
+      "flip_date": "2026-11-05",
+      "pct_from_52w_high": -23.37,
       "num_adds": 0,
-      "age_days": 89,
-      "rsi14": 19.4,
-      "sector": "Basic Materials"
-    },
-    {
-      "entry_date": "2026-11-10",
-      "symbol": "COCHINSHIP",
-      "qty": 17,
-      "avg_cost": 1191.2941176470588,
-      "cmp": 1090.0,
-      "pl_pct": -8.5029,
-      "notional_pl_rs": -1722.0,
-      "supertrend_color": "red",
-      "flip_label": "Flipped to RED (0)",
-      "flip_date": "2026-11-23",
-      "pct_from_52w_high": -39.71,
-      "num_adds": 0,
-      "age_days": 14,
-      "rsi14": 33.7,
-      "sector": "Industrials"
-    },
-    {
-      "entry_date": "2026-11-10",
-      "symbol": "RVNL",
-      "qty": 109,
-      "avg_cost": 201.649541,
-      "cmp": 185.1,
-      "pl_pct": -8.2071,
-      "notional_pl_rs": -1803.9,
-      "supertrend_color": "red",
-      "flip_label": "Flipped to RED (0)",
-      "flip_date": "2026-11-23",
-      "pct_from_52w_high": -51.99,
-      "num_adds": 0,
-      "age_days": 14,
-      "rsi14": 42.3,
-      "sector": "Industrials"
+      "age_days": 114,
+      "rsi14": 49.6,
+      "sector": "Industrials",
+      "add_qty": 13,
+      "cooldown_days_since_last_buy": 7
     }
   ],
-  "addons": [],
   "holds": [
     {
       "entry_date": "2026-08-04",
       "symbol": "360ONE",
       "qty": 17,
-      "avg_cost": 1170,
+      "avg_cost": 1170.0,
       "cmp": 1201.15,
       "pl_pct": 2.6624,
       "notional_pl_rs": 529.55,
@@ -206,7 +207,7 @@
       "flip_date": "2026-11-04",
       "pct_from_52w_high": -0.82,
       "num_adds": 0,
-      "age_days": 112,
+      "age_days": 113,
       "rsi14": 66.7,
       "sector": "Financial Services"
     },
@@ -214,7 +215,7 @@
       "entry_date": "2026-11-16",
       "symbol": "ABB",
       "qty": 2,
-      "avg_cost": 7100,
+      "avg_cost": 7100.0,
       "cmp": 6868.5,
       "pl_pct": -3.2606,
       "notional_pl_rs": -463.0,
@@ -223,7 +224,7 @@
       "flip_date": "2026-11-13",
       "pct_from_52w_high": -10.91,
       "num_adds": 0,
-      "age_days": 8,
+      "age_days": 9,
       "rsi14": 51.3,
       "sector": "Industrials"
     },
@@ -240,7 +241,7 @@
       "flip_date": "2026-11-02",
       "pct_from_52w_high": -2.1,
       "num_adds": 0,
-      "age_days": 113,
+      "age_days": 114,
       "rsi14": 62.5,
       "sector": "Financial Services"
     },
@@ -248,7 +249,7 @@
       "entry_date": "2026-08-13",
       "symbol": "ANANDRATHI",
       "qty": 9,
-      "avg_cost": 2222,
+      "avg_cost": 2222.0,
       "cmp": 2355.9,
       "pl_pct": 6.0261,
       "notional_pl_rs": 1205.1,
@@ -257,7 +258,7 @@
       "flip_date": "2026-10-23",
       "pct_from_52w_high": -1.32,
       "num_adds": 0,
-      "age_days": 103,
+      "age_days": 104,
       "rsi14": 63.3,
       "sector": "Financial Services"
     },
@@ -274,32 +275,15 @@
       "flip_date": "2026-11-05",
       "pct_from_52w_high": -4.27,
       "num_adds": 0,
-      "age_days": 40,
+      "age_days": 41,
       "rsi14": 58.5,
       "sector": "Financial Services"
-    },
-    {
-      "entry_date": "2026-08-03",
-      "symbol": "ASHOKLEY",
-      "qty": 131,
-      "avg_cost": 170.210381,
-      "cmp": 158.7,
-      "pl_pct": -6.7624,
-      "notional_pl_rs": -1507.86,
-      "supertrend_color": "green",
-      "flip_label": "GREEN 12d",
-      "flip_date": "2026-11-05",
-      "pct_from_52w_high": -23.37,
-      "num_adds": 0,
-      "age_days": 113,
-      "rsi14": 49.6,
-      "sector": "Industrials"
     },
     {
       "entry_date": "2026-11-06",
       "symbol": "AXISBANK",
       "qty": 20,
-      "avg_cost": 1310,
+      "avg_cost": 1310.0,
       "cmp": 1388.6,
       "pl_pct": 6.0,
       "notional_pl_rs": 1572.0,
@@ -308,7 +292,7 @@
       "flip_date": "2026-10-15",
       "pct_from_52w_high": -3.97,
       "num_adds": 0,
-      "age_days": 18,
+      "age_days": 19,
       "rsi14": 63.9,
       "sector": "Financial Services"
     },
@@ -325,7 +309,7 @@
       "flip_date": "2026-11-04",
       "pct_from_52w_high": -5.46,
       "num_adds": 0,
-      "age_days": 116,
+      "age_days": 117,
       "rsi14": 60.4,
       "sector": "Financial Services"
     },
@@ -342,7 +326,7 @@
       "flip_date": "2026-11-03",
       "pct_from_52w_high": -14.17,
       "num_adds": 0,
-      "age_days": 92,
+      "age_days": 93,
       "rsi14": 57.6,
       "sector": "Financial Services"
     },
@@ -359,7 +343,7 @@
       "flip_date": "2026-10-29",
       "pct_from_52w_high": -5.62,
       "num_adds": 0,
-      "age_days": 113,
+      "age_days": 114,
       "rsi14": 62.0,
       "sector": "Financial Services"
     },
@@ -376,7 +360,7 @@
       "flip_date": "2026-11-09",
       "pct_from_52w_high": -26.6,
       "num_adds": 0,
-      "age_days": 14,
+      "age_days": 15,
       "rsi14": 56.6,
       "sector": "Consumer Cyclical"
     },
@@ -393,7 +377,7 @@
       "flip_date": "2026-11-20",
       "pct_from_52w_high": -1.31,
       "num_adds": 0,
-      "age_days": 78,
+      "age_days": 79,
       "rsi14": 64.5,
       "sector": "Financial Services"
     },
@@ -401,7 +385,7 @@
       "entry_date": "2026-08-24",
       "symbol": "DLF",
       "qty": 30,
-      "avg_cost": 685,
+      "avg_cost": 685.0,
       "cmp": 794.1,
       "pl_pct": 15.927,
       "notional_pl_rs": 3273.0,
@@ -410,7 +394,7 @@
       "flip_date": "2026-09-23",
       "pct_from_52w_high": 0.0,
       "num_adds": 0,
-      "age_days": 92,
+      "age_days": 93,
       "rsi14": 74.3,
       "sector": "Real Estate"
     },
@@ -418,7 +402,7 @@
       "entry_date": "2026-07-28",
       "symbol": "EICHERMOT",
       "qty": 3,
-      "avg_cost": 7791,
+      "avg_cost": 7791.0,
       "cmp": 8172.5,
       "pl_pct": 4.8967,
       "notional_pl_rs": 1144.5,
@@ -427,7 +411,7 @@
       "flip_date": "2026-10-16",
       "pct_from_52w_high": 0.0,
       "num_adds": 0,
-      "age_days": 119,
+      "age_days": 120,
       "rsi14": 71.5,
       "sector": "Consumer Cyclical"
     },
@@ -444,7 +428,7 @@
       "flip_date": "2026-11-02",
       "pct_from_52w_high": -3.38,
       "num_adds": 0,
-      "age_days": 119,
+      "age_days": 120,
       "rsi14": 56.9,
       "sector": "Utilities"
     },
@@ -461,7 +445,7 @@
       "flip_date": "2026-10-13",
       "pct_from_52w_high": -18.07,
       "num_adds": 0,
-      "age_days": 112,
+      "age_days": 113,
       "rsi14": 50.0,
       "sector": "Technology"
     },
@@ -478,7 +462,7 @@
       "flip_date": "2026-10-19",
       "pct_from_52w_high": -3.9,
       "num_adds": 0,
-      "age_days": 109,
+      "age_days": 110,
       "rsi14": 63.6,
       "sector": "Financial Services"
     },
@@ -495,7 +479,7 @@
       "flip_date": "2026-11-02",
       "pct_from_52w_high": -6.69,
       "num_adds": 0,
-      "age_days": 110,
+      "age_days": 111,
       "rsi14": 63.1,
       "sector": "Industrials"
     },
@@ -512,7 +496,7 @@
       "flip_date": "2026-11-04",
       "pct_from_52w_high": -12.06,
       "num_adds": 0,
-      "age_days": 96,
+      "age_days": 97,
       "rsi14": 55.1,
       "sector": "Basic Materials"
     },
@@ -529,7 +513,7 @@
       "flip_date": "2026-10-26",
       "pct_from_52w_high": -3.33,
       "num_adds": 0,
-      "age_days": 117,
+      "age_days": 118,
       "rsi14": 52.3,
       "sector": "Basic Materials"
     },
@@ -546,7 +530,7 @@
       "flip_date": "2026-11-05",
       "pct_from_52w_high": -8.16,
       "num_adds": 0,
-      "age_days": 118,
+      "age_days": 119,
       "rsi14": 59.3,
       "sector": "Consumer Cyclical"
     },
@@ -563,7 +547,7 @@
       "flip_date": "2026-11-09",
       "pct_from_52w_high": -2.65,
       "num_adds": 0,
-      "age_days": 14,
+      "age_days": 15,
       "rsi14": 67.0,
       "sector": "Financial Services"
     },
@@ -571,7 +555,7 @@
       "entry_date": "2026-08-06",
       "symbol": "LT",
       "qty": 5,
-      "avg_cost": 4067,
+      "avg_cost": 4067.0,
       "cmp": 4099.9,
       "pl_pct": 0.809,
       "notional_pl_rs": 164.5,
@@ -580,7 +564,7 @@
       "flip_date": "2026-10-30",
       "pct_from_52w_high": -6.3,
       "num_adds": 0,
-      "age_days": 110,
+      "age_days": 111,
       "rsi14": 59.1,
       "sector": "Industrials"
     },
@@ -597,7 +581,7 @@
       "flip_date": "2026-11-05",
       "pct_from_52w_high": -1.9,
       "num_adds": 0,
-      "age_days": 90,
+      "age_days": 91,
       "rsi14": 72.3,
       "sector": "Financial Services"
     },
@@ -605,7 +589,7 @@
       "entry_date": "2026-07-29",
       "symbol": "MANKIND",
       "qty": 8,
-      "avg_cost": 2640,
+      "avg_cost": 2640.0,
       "cmp": 2615.1,
       "pl_pct": -0.9432,
       "notional_pl_rs": -199.2,
@@ -614,7 +598,7 @@
       "flip_date": "2026-10-27",
       "pct_from_52w_high": -1.99,
       "num_adds": 0,
-      "age_days": 118,
+      "age_days": 119,
       "rsi14": 59.0,
       "sector": "Healthcare"
     },
@@ -631,7 +615,7 @@
       "flip_date": "2026-11-03",
       "pct_from_52w_high": -0.59,
       "num_adds": 0,
-      "age_days": 119,
+      "age_days": 120,
       "rsi14": 67.5,
       "sector": "Consumer Defensive"
     },
@@ -648,7 +632,7 @@
       "flip_date": "2026-10-13",
       "pct_from_52w_high": -14.19,
       "num_adds": 0,
-      "age_days": 106,
+      "age_days": 107,
       "rsi14": 52.2,
       "sector": "Technology"
     },
@@ -665,7 +649,7 @@
       "flip_date": "2026-10-29",
       "pct_from_52w_high": -2.25,
       "num_adds": 0,
-      "age_days": 116,
+      "age_days": 117,
       "rsi14": 54.5,
       "sector": "Consumer Cyclical"
     },
@@ -673,7 +657,7 @@
       "entry_date": "2026-10-12",
       "symbol": "PERSISTENT",
       "qty": 5,
-      "avg_cost": 5862,
+      "avg_cost": 5862.0,
       "cmp": 6282.5,
       "pl_pct": 7.1733,
       "notional_pl_rs": 2102.5,
@@ -682,7 +666,7 @@
       "flip_date": "2026-10-09",
       "pct_from_52w_high": -3.6,
       "num_adds": 0,
-      "age_days": 43,
+      "age_days": 44,
       "rsi14": 67.9,
       "sector": "Technology"
     },
@@ -699,7 +683,7 @@
       "flip_date": "2026-11-20",
       "pct_from_52w_high": -3.64,
       "num_adds": 0,
-      "age_days": 106,
+      "age_days": 107,
       "rsi14": 61.2,
       "sector": "Financial Services"
     },
@@ -716,7 +700,7 @@
       "flip_date": "2026-11-13",
       "pct_from_52w_high": -44.36,
       "num_adds": 0,
-      "age_days": 8,
+      "age_days": 9,
       "rsi14": 53.6,
       "sector": "Financial Services"
     },
@@ -724,7 +708,7 @@
       "entry_date": "2026-11-16",
       "symbol": "POWERINDIA",
       "qty": 1,
-      "avg_cost": 31895,
+      "avg_cost": 31895.0,
       "cmp": 30240.0,
       "pl_pct": -5.1889,
       "notional_pl_rs": -1655.0,
@@ -733,7 +717,7 @@
       "flip_date": "2026-11-13",
       "pct_from_52w_high": -21.32,
       "num_adds": 0,
-      "age_days": 8,
+      "age_days": 9,
       "rsi14": 53.9,
       "sector": "Industrials"
     },
@@ -750,7 +734,7 @@
       "flip_date": "2026-11-09",
       "pct_from_52w_high": -2.04,
       "num_adds": 0,
-      "age_days": 103,
+      "age_days": 104,
       "rsi14": 58.5,
       "sector": "Consumer Defensive"
     },
@@ -758,7 +742,7 @@
       "entry_date": "2026-08-07",
       "symbol": "SBIN",
       "qty": 19,
-      "avg_cost": 1090,
+      "avg_cost": 1090.0,
       "cmp": 1132.65,
       "pl_pct": 3.9128,
       "notional_pl_rs": 810.35,
@@ -767,7 +751,7 @@
       "flip_date": "2026-11-05",
       "pct_from_52w_high": -6.09,
       "num_adds": 0,
-      "age_days": 109,
+      "age_days": 110,
       "rsi14": 70.3,
       "sector": "Financial Services"
     },
@@ -784,7 +768,7 @@
       "flip_date": "2026-10-28",
       "pct_from_52w_high": -1.59,
       "num_adds": 0,
-      "age_days": 90,
+      "age_days": 91,
       "rsi14": 61.1,
       "sector": "Consumer Cyclical"
     },
@@ -801,7 +785,7 @@
       "flip_date": "2026-10-22",
       "pct_from_52w_high": -4.87,
       "num_adds": 0,
-      "age_days": 106,
+      "age_days": 107,
       "rsi14": 64.7,
       "sector": "Financial Services"
     }
@@ -816,10 +800,6 @@
       "ASHOKLEY": {
         "holdings_qty": 131,
         "sheet_qty_at_cutoff": 119
-      },
-      "COCHINSHIP": {
-        "holdings_qty": 17,
-        "sheet_qty_at_cutoff": 0
       },
       "CROMPTON": {
         "holdings_qty": 91,
@@ -836,14 +816,10 @@
       "POWERINDIA": {
         "holdings_qty": 1,
         "sheet_qty_at_cutoff": 0
-      },
-      "RVNL": {
-        "holdings_qty": 109,
-        "sheet_qty_at_cutoff": 0
       }
     }
   },
-  "holdings_fetched_at": "2026-11-24T19:58:04+05:30",
+  "holdings_fetched_at": "2026-11-25T09:22:00+05:30",
   "universe": {
     "month": "2026-11",
     "count": 215,

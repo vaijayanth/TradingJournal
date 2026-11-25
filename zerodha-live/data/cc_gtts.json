@@ -1,5 +1,5 @@
 {
- "fetched_at": "2026-11-24T19:58:04+05:30",
+ "fetched_at": "2026-11-25T09:22:46+05:30",
  "active": {
   "SOLARINDS26DEC21000CE": [
    {
@@ -661,26 +661,6 @@
     "qty": 1700
    }
   ],
-  "ICICILIFE26DEC410PE": [
-   {
-    "id": 345641339,
-    "type": "trailing-two-leg",
-    "trigger_values": [
-     1.55,
-     9.6
-    ],
-    "qty": 1850
-   },
-   {
-    "id": 345641339,
-    "type": "trailing-two-leg",
-    "trigger_values": [
-     1.55,
-     9.6
-    ],
-    "qty": 1850
-   }
-  ],
   "HDFCLIFE26DEC540PE": [
    {
     "id": 345641223,
@@ -1119,26 +1099,6 @@
      1593
     ],
     "qty": 25
-   }
-  ],
-  "POLICYBZR26DEC900PE": [
-   {
-    "id": 344968346,
-    "type": "two-leg",
-    "trigger_values": [
-     7.7,
-     57.9
-    ],
-    "qty": 350
-   },
-   {
-    "id": 344968346,
-    "type": "two-leg",
-    "trigger_values": [
-     7.7,
-     57.9
-    ],
-    "qty": 350
    }
   ],
   "CGPOWER26DEC960CE": [
@@ -2158,34 +2118,6 @@
    ]
   },
   {
-   "id": 345641339,
-   "type": "trailing-two-leg",
-   "created_at": "2026-11-19T22:01:14+05:30",
-   "expires_at": "2026-12-30T00:00:00+05:30",
-   "tradingsymbol": "ICICILIFE26DEC410PE",
-   "last_price": 3.2,
-   "triggers": [
-    1.55,
-    9.6
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 1850,
-     "price": 1.6,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    },
-    {
-     "side": "BUY",
-     "qty": 1850,
-     "price": 10.55,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
    "id": 345641223,
    "type": "trailing-two-leg",
    "created_at": "2026-11-19T21:59:31+05:30",
@@ -2802,34 +2734,6 @@
    ]
   },
   {
-   "id": 344968346,
-   "type": "two-leg",
-   "created_at": "2026-11-16T13:57:00+05:30",
-   "expires_at": "2026-12-30T00:00:00+05:30",
-   "tradingsymbol": "POLICYBZR26DEC900PE",
-   "last_price": 22.15,
-   "triggers": [
-    7.7,
-    57.9
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 350,
-     "price": 7.95,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    },
-    {
-     "side": "BUY",
-     "qty": 350,
-     "price": 59.65,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
    "id": 344968113,
    "type": "two-leg",
    "created_at": "2026-11-16T13:56:13+05:30",
@@ -2962,6 +2866,51 @@
    ]
   }
  ],
- "triggered": [],
+ "triggered": [
+  {
+   "id": 345641339,
+   "type": "trailing-two-leg",
+   "tradingsymbol": "ICICILIFE26DEC410PE",
+   "triggers": [
+    1.55,
+    9.6
+   ],
+   "triggered_at": "2026-11-25T09:17:11+05:30",
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 1850,
+     "price": 1.6
+    },
+    {
+     "side": "BUY",
+     "qty": 1850,
+     "price": 10.55
+    }
+   ]
+  },
+  {
+   "id": 344968346,
+   "type": "two-leg",
+   "tradingsymbol": "POLICYBZR26DEC900PE",
+   "triggers": [
+    7.7,
+    57.9
+   ],
+   "triggered_at": "2026-11-25T09:15:24+05:30",
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 350,
+     "price": 7.95
+    },
+    {
+     "side": "BUY",
+     "qty": 350,
+     "price": 59.65
+    }
+   ]
+  }
+ ],
  "non_option_gtts": 6
 }
