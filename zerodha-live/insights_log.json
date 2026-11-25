@@ -234,6 +234,22 @@
     "unrealised": 27532,
     "fired_gtts_today": 2
    }
+  },
+  {
+   "date": "2026-11-25 (10:50)",
+   "headline": "You closed both flipped put spreads and re-sold calls on the red stocks; the book now has 60 shorts and 4 of them have no stop GTT, plus 2 stale GTTs that would buy new longs if hit.",
+   "recommendations": [
+    "Delete stale GTTs 345641029, 345641831",
+    "Protective GTTs on 4 shorts",
+    "ASHOKLEY add-on after close"
+   ],
+   "metrics": {
+    "shorts": 60,
+    "unstopped_shorts": 4,
+    "stale_gtts": 2,
+    "options_mtm": 9712,
+    "fired_gtts_today": 4
+   }
   }
  ]
 }

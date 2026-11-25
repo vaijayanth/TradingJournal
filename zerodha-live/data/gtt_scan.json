@@ -1,6 +1,33 @@
 {
- "fetched_at": "2026-11-25T09:23:53+05:30",
- "gtts_fetched_at": "2026-11-25T09:22:46+05:30",
- "checked": 60,
- "findings": []
+ "fetched_at": "2026-11-25T11:52:27+05:30",
+ "gtts_fetched_at": "2026-11-25T10:35:05+05:30",
+ "checked": 58,
+ "findings": [
+  {
+   "check": "G1",
+   "name": "STALE",
+   "severity": "HIGH",
+   "tradingsymbol": "COCHINSHIP26DEC1020PE",
+   "gtt_id": 345641029,
+   "symbol": "COCHINSHIP",
+   "expiry": "2026-12-29",
+   "strike": 1020.0,
+   "opt_type": "PE",
+   "concern": "No open position on this contract (closed or expired): if it triggers it BUYS a new long position",
+   "action": "Delete this GTT"
+  },
+  {
+   "check": "G1",
+   "name": "STALE",
+   "severity": "HIGH",
+   "tradingsymbol": "RVNL26DEC170PE",
+   "gtt_id": 345641831,
+   "symbol": "RVNL",
+   "expiry": "2026-12-29",
+   "strike": 170.0,
+   "opt_type": "PE",
+   "concern": "No open position on this contract (closed or expired): if it triggers it BUYS a new long position",
+   "action": "Delete this GTT"
+  }
+ ]
 }

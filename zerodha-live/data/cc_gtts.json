@@ -1,5 +1,5 @@
 {
- "fetched_at": "2026-11-25T09:22:46+05:30",
+ "fetched_at": "2026-11-25T10:35:05+05:30",
  "active": {
   "SOLARINDS26DEC21000CE": [
    {
@@ -421,26 +421,6 @@
     "qty": 275
    }
   ],
-  "MAZDOCK26DEC2200CE": [
-   {
-    "id": 345965726,
-    "type": "two-leg",
-    "trigger_values": [
-     4.65,
-     31.9
-    ],
-    "qty": 225
-   },
-   {
-    "id": 345965726,
-    "type": "two-leg",
-    "trigger_values": [
-     4.65,
-     31.9
-    ],
-    "qty": 225
-   }
-  ],
   "HINDZINC26DEC610CE": [
    {
     "id": 345965656,
@@ -507,7 +487,7 @@
     "type": "trailing-two-leg",
     "trigger_values": [
      6.8,
-     41.9
+     34.9
     ],
     "qty": 325
    },
@@ -516,7 +496,7 @@
     "type": "trailing-two-leg",
     "trigger_values": [
      6.8,
-     41.9
+     34.9
     ],
     "qty": 325
    }
@@ -567,7 +547,7 @@
     "type": "trailing-two-leg",
     "trigger_values": [
      20.55,
-     141
+     129
     ],
     "qty": 150
    },
@@ -576,7 +556,7 @@
     "type": "trailing-two-leg",
     "trigger_values": [
      20.55,
-     141
+     129
     ],
     "qty": 150
    }
@@ -587,7 +567,7 @@
     "type": "trailing-two-leg",
     "trigger_values": [
      46.9,
-     277
+     272
     ],
     "qty": 20
    },
@@ -596,7 +576,7 @@
     "type": "trailing-two-leg",
     "trigger_values": [
      46.9,
-     277
+     272
     ],
     "qty": 20
    }
@@ -627,7 +607,7 @@
     "type": "trailing-two-leg",
     "trigger_values": [
      2.8,
-     18.1
+     17.1
     ],
     "qty": 1000
    },
@@ -636,7 +616,7 @@
     "type": "trailing-two-leg",
     "trigger_values": [
      2.8,
-     18.1
+     17.1
     ],
     "qty": 1000
    }
@@ -667,7 +647,7 @@
     "type": "trailing-two-leg",
     "trigger_values": [
      1.7,
-     10.7
+     9.7
     ],
     "qty": 2200
    },
@@ -676,7 +656,7 @@
     "type": "trailing-two-leg",
     "trigger_values": [
      1.7,
-     10.7
+     9.7
     ],
     "qty": 2200
    }
@@ -807,7 +787,7 @@
     "type": "trailing-two-leg",
     "trigger_values": [
      4.2,
-     27.75
+     26.75
     ],
     "qty": 600
    },
@@ -816,7 +796,7 @@
     "type": "trailing-two-leg",
     "trigger_values": [
      4.2,
-     27.75
+     26.75
     ],
     "qty": 600
    }
@@ -1099,26 +1079,6 @@
      1593
     ],
     "qty": 25
-   }
-  ],
-  "CGPOWER26DEC960CE": [
-   {
-    "id": 344968113,
-    "type": "two-leg",
-    "trigger_values": [
-     2.5,
-     18.9
-    ],
-    "qty": 850
-   },
-   {
-    "id": 344968113,
-    "type": "two-leg",
-    "trigger_values": [
-     2.5,
-     18.9
-    ],
-    "qty": 850
    }
   ],
   "BDL26DEC900PE": [
@@ -1782,34 +1742,6 @@
    ]
   },
   {
-   "id": 345965726,
-   "type": "two-leg",
-   "created_at": "2026-11-23T10:03:13+05:30",
-   "expires_at": "2026-12-30T00:00:00+05:30",
-   "tradingsymbol": "MAZDOCK26DEC2200CE",
-   "last_price": 6,
-   "triggers": [
-    4.65,
-    31.9
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 225,
-     "price": 4.8,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    },
-    {
-     "side": "BUY",
-     "qty": 225,
-     "price": 34.8,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
    "id": 345965656,
    "type": "two-leg",
    "created_at": "2026-11-23T10:03:05+05:30",
@@ -1902,7 +1834,7 @@
    "last_price": 23.5,
    "triggers": [
     6.8,
-    41.9
+    34.9
    ],
    "orders": [
     {
@@ -1915,7 +1847,7 @@
     {
      "side": "BUY",
      "qty": 325,
-     "price": 46.15,
+     "price": 39.15,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -1986,7 +1918,7 @@
    "last_price": 37.8,
    "triggers": [
     20.55,
-    141
+    129
    ],
    "orders": [
     {
@@ -1999,7 +1931,7 @@
     {
      "side": "BUY",
      "qty": 150,
-     "price": 145,
+     "price": 133,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -2014,7 +1946,7 @@
    "last_price": 132,
    "triggers": [
     46.9,
-    277
+    272
    ],
    "orders": [
     {
@@ -2027,7 +1959,7 @@
     {
      "side": "BUY",
      "qty": 20,
-     "price": 280,
+     "price": 275,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -2070,7 +2002,7 @@
    "last_price": 6.5,
    "triggers": [
     2.8,
-    18.1
+    17.1
    ],
    "orders": [
     {
@@ -2083,7 +2015,7 @@
     {
      "side": "BUY",
      "qty": 1000,
-     "price": 19.85,
+     "price": 18.85,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -2126,7 +2058,7 @@
    "last_price": 4.8,
    "triggers": [
     1.7,
-    10.7
+    9.7
    ],
    "orders": [
     {
@@ -2139,7 +2071,7 @@
     {
      "side": "BUY",
      "qty": 2200,
-     "price": 11.75,
+     "price": 10.75,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -2322,7 +2254,7 @@
    "last_price": 11.05,
    "triggers": [
     4.2,
-    27.75
+    26.75
    ],
    "orders": [
     {
@@ -2335,7 +2267,7 @@
     {
      "side": "BUY",
      "qty": 600,
-     "price": 30.35,
+     "price": 29.35,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -2734,34 +2666,6 @@
    ]
   },
   {
-   "id": 344968113,
-   "type": "two-leg",
-   "created_at": "2026-11-16T13:56:13+05:30",
-   "expires_at": "2026-12-30T00:00:00+05:30",
-   "tradingsymbol": "CGPOWER26DEC960CE",
-   "last_price": 5.6,
-   "triggers": [
-    2.5,
-    18.9
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 850,
-     "price": 2.6,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    },
-    {
-     "side": "BUY",
-     "qty": 850,
-     "price": 19.5,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
    "id": 344968063,
    "type": "two-leg",
    "created_at": "2026-11-16T13:56:05+05:30",
@@ -2867,6 +2771,50 @@
   }
  ],
  "triggered": [
+  {
+   "id": 345965726,
+   "type": "two-leg",
+   "tradingsymbol": "MAZDOCK26DEC2200CE",
+   "triggers": [
+    4.65,
+    31.9
+   ],
+   "triggered_at": "2026-11-25T09:53:31+05:30",
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 225,
+     "price": 4.8
+    },
+    {
+     "side": "BUY",
+     "qty": 225,
+     "price": 34.8
+    }
+   ]
+  },
+  {
+   "id": 344968113,
+   "type": "two-leg",
+   "tradingsymbol": "CGPOWER26DEC960CE",
+   "triggers": [
+    2.5,
+    18.9
+   ],
+   "triggered_at": "2026-11-25T09:22:20+05:30",
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 850,
+     "price": 2.6
+    },
+    {
+     "side": "BUY",
+     "qty": 850,
+     "price": 19.5
+    }
+   ]
+  },
   {
    "id": 345641339,
    "type": "trailing-two-leg",

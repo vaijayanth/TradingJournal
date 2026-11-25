@@ -1,33 +1,27 @@
 {
  "fired_ok_today": [
+  "MAZDOCK26DEC2200CE",
+  "CGPOWER26DEC960CE",
   "ICICILIFE26DEC410PE",
   "POLICYBZR26DEC900PE"
  ],
- "fetched_at": "2026-11-25T09:23:54+05:30",
+ "fetched_at": "2026-11-25T11:52:28+05:30",
  "inputs": {
-  "positions": "2026-11-25T03:52:46.059866+00:00",
-  "gtts": "2026-11-25T09:22:46+05:30",
-  "orders": "2026-11-25T09:22:46+05:30",
-  "gtt_scan": "2026-11-25T09:22:46+05:30"
+  "positions": "2026-11-25T05:05:05.621542+00:00",
+  "gtts": "2026-11-25T10:35:05+05:30",
+  "orders": "2026-11-25T10:35:05+05:30",
+  "gtt_scan": "2026-11-25T10:35:05+05:30"
  },
  "stale_inputs": [],
- "open_legs": 93,
- "triggered_gtts": 2,
+ "open_legs": 90,
+ "triggered_gtts": 4,
  "findings": [
   {
    "section": "A",
    "severity": "WARN",
    "symbol": "ICICIGI",
    "tradingsymbol": "ICICIGI26DEC1520PE",
-   "concern": "Long 1520PE (325 qty) no short against it; P&L Rs-1,316, expiry 2026-12-29",
-   "action": "Sell it or let it expire"
-  },
-  {
-   "section": "A",
-   "severity": "WARN",
-   "symbol": "ICICILIFE",
-   "tradingsymbol": "ICICILIFE26DEC400PE",
-   "concern": "Long 400PE (1850 qty) no short against it; P&L Rs-2,035, expiry 2026-12-29",
+   "concern": "Long 1520PE (325 qty) no short against it; P&L Rs-1,544, expiry 2026-12-29",
    "action": "Sell it or let it expire"
   },
   {
@@ -57,17 +51,17 @@
   {
    "section": "B",
    "severity": "INFO",
-   "symbol": "CGPOWER",
-   "tradingsymbol": "CGPOWER26DEC960CE",
-   "concern": "Short 960CE (850 qty) is a naked call (by design; covered only by shares you hold)",
+   "symbol": "COALINDIA",
+   "tradingsymbol": "COALINDIA26DEC425CE",
+   "concern": "Short 425CE (2700 qty) is a naked call (by design; covered only by shares you hold)",
    "action": "Watch the 3x stop and the Supertrend colour"
   },
   {
    "section": "B",
    "severity": "INFO",
-   "symbol": "COALINDIA",
-   "tradingsymbol": "COALINDIA26DEC425CE",
-   "concern": "Short 425CE (2700 qty) is a naked call (by design; covered only by shares you hold)",
+   "symbol": "COCHINSHIP",
+   "tradingsymbol": "COCHINSHIP26DEC1300CE",
+   "concern": "Short 1300CE (800 qty) is a naked call (by design; covered only by shares you hold)",
    "action": "Watch the 3x stop and the Supertrend colour"
   },
   {
@@ -124,14 +118,6 @@
    "symbol": "LUPIN",
    "tradingsymbol": "LUPIN26DEC2240CE",
    "concern": "Short 2240CE (425 qty) is a naked call (by design; covered only by shares you hold)",
-   "action": "Watch the 3x stop and the Supertrend colour"
-  },
-  {
-   "section": "B",
-   "severity": "INFO",
-   "symbol": "MAZDOCK",
-   "tradingsymbol": "MAZDOCK26DEC2200CE",
-   "concern": "Short 2200CE (225 qty) is a naked call (by design; covered only by shares you hold)",
    "action": "Watch the 3x stop and the Supertrend colour"
   },
   {
@@ -204,6 +190,14 @@
    "symbol": "POLYCAB",
    "tradingsymbol": "POLYCAB26DEC8300CE",
    "concern": "Short 8300CE (125 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "RVNL",
+   "tradingsymbol": "RVNL26DEC225CE",
+   "concern": "Short 225CE (1925 qty) is a naked call (by design; covered only by shares you hold)",
    "action": "Watch the 3x stop and the Supertrend colour"
   },
   {
@@ -289,17 +283,57 @@
   {
    "section": "C",
    "severity": "WARN",
+   "symbol": "COCHINSHIP",
+   "tradingsymbol": "COCHINSHIP26DEC1300CE",
+   "concern": "No active buy-back GTT (premium 5.45, sold 6.05)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "ICICILIFE",
+   "tradingsymbol": "ICICILIFE26DEC420PE",
+   "concern": "No active buy-back GTT (premium 1.5, sold 1.7)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
    "symbol": "POLICYBZR",
    "tradingsymbol": "POLICYBZR26DEC920PE",
-   "concern": "No active buy-back GTT (premium 9.45, sold 9.45)",
+   "concern": "No active buy-back GTT (premium 10, sold 9.45)",
    "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "RVNL",
+   "tradingsymbol": "RVNL26DEC225CE",
+   "concern": "No active buy-back GTT (premium 1.46, sold 1.42)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "F",
+   "severity": "HIGH",
+   "symbol": "COCHINSHIP",
+   "tradingsymbol": "COCHINSHIP26DEC1020PE",
+   "concern": "G1 STALE: No open position on this contract (closed or expired): if it triggers it BUYS a new long position (GTT 345641029)",
+   "action": "Delete this GTT"
+  },
+  {
+   "section": "F",
+   "severity": "HIGH",
+   "symbol": "RVNL",
+   "tradingsymbol": "RVNL26DEC170PE",
+   "concern": "G1 STALE: No open position on this contract (closed or expired): if it triggers it BUYS a new long position (GTT 345641831)",
+   "action": "Delete this GTT"
   },
   {
    "section": "G",
    "severity": "WARN",
    "symbol": "CUMMINSIND",
    "tradingsymbol": "CUMMINSIND26DEC5000CE",
-   "concern": "Active GTT 344015712 (trailing-single) has a stop but no profit target; sold 21.8, premium 8.9",
+   "concern": "Active GTT 344015712 (trailing-single) has a stop but no profit target; sold 21.8, premium 8",
    "action": "Add a profit target at about 8.72 (a two-leg GTT: /zerodha-gtt-order or the Kite app)"
   }
  ]
