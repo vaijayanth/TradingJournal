@@ -10418,9 +10418,17 @@ window._ccTrend = window._ccTrend || {};
 const ccTrendOf = sym => (window._ccTrend || {})[sym] || '';
 const ccTrendCell = r => { const c = ccTrendOf(r.symbol); return c ? `<span class="cc-dot ${c === 'green' ? 'g' : 'r'}" title="Supertrend ${dhEsc(c)}">●</span> ${c === 'green' ? 'Green' : 'Red'}` : '<span style="color:var(--text-muted)">—</span>'; };
 const ccRightPos = r => { const c = ccTrendOf(r.symbol); return c === 'green' ? 'Open BPS' : c === 'red' ? 'Sell call' : '—'; };
+// IV percentile cell (user, 2026-11-26): 70+ green (premium rich), 50-70 normal, 30-50 amber, below 30 muted. Information only: no rule uses it.
+const ccIvpOf = sym => ((window._ccIvp || {})[sym] || {}).ivp ?? -1;
+const ccIvpCell = sym => {
+  const x = (window._ccIvp || {})[sym]; if (!x) return '<span style="color:var(--text-muted)">—</span>';
+  const col = x.ivp >= 70 ? 'var(--green)' : x.ivp >= 50 ? 'var(--text)' : x.ivp >= 30 ? 'var(--amber)' : 'var(--text-muted)';
+  return `<b style="color:${col}" title="IV percentile ${x.ivp}: share of the last 252 sessions with a lower ATM IV · IV ${x.iv}% · IV rank ${x.ivr} · ${x.asof || '?'} close. 70+ = premium rich, below 30 = cheap. Information only.">${x.ivp}</b>`;
+};
 const ccAlertCols = withType => (withType ? [{ h: 'Alert type', v: r => ccTypeOrd(r), c: r => ccTypePill(r) }] : []).concat([
   { h: 'Stock', v: r => r.symbol, c: r => `<b class="stk">${dhEsc(r.symbol)}</b>` },
   { h: 'Supertrend', v: r => ccTrendOf(r.symbol), c: ccTrendCell, txt: true },
+  { h: 'IVP', v: r => ccIvpOf(r.symbol), c: r => ccIvpCell(r.symbol) },
   { h: 'Right position', v: r => ccRightPos(r), c: r => { const p = ccRightPos(r); return p === '—' ? '<span style="color:var(--text-muted)">—</span>' : `<b title="The structure the Supertrend colour wants: green = bull put spread, red = sell call">${p}</b>`; }, txt: true },
   { h: 'Leg', v: r => r.strike == null ? '' : r.strike, c: r => r.strike == null ? '—' : ccStrike(r.strike) + ' ' + (r.opt_type || '') },
   { h: 'Expiry', v: r => r.expiry || '', c: r => r.expiry ? dhFmtDate(r.expiry) : '—' },
@@ -10477,6 +10485,7 @@ const ccActCols = () => [
   { h: 'Type', v: r => r.ord, x: r => r.type, c: r => ccTypePill(r), txt: true },
   { h: 'Stock', v: r => r.symbol, c: r => `<b class="stk">${dhEsc(r.symbol)}</b>`, txt: true },
   { h: 'Supertrend', v: r => ccTrendOf(r.symbol), c: ccTrendCell, txt: true },
+  { h: 'IVP', v: r => ccIvpOf(r.symbol), c: r => ccIvpCell(r.symbol) },
   { h: 'Right position', v: r => ccRightPos(r), c: r => { const p = ccRightPos(r); return p === '—' ? '<span style="color:var(--text-muted)">—</span>' : `<b title="The structure the Supertrend colour wants: green = bull put spread, red = sell call">${p}</b>`; }, txt: true },
   { h: 'Leg', v: r => r.strike == null ? '' : r.strike, c: r => r.strike == null ? '<span style="color:var(--text-muted)">—</span>' : ccStrike(r.strike) + ' ' + (r.opt_type || '') },
   { h: 'Expiry', v: r => r.expiry || '', c: r => r.expiry ? dhFmtDate(r.expiry) : '—' },
@@ -10486,6 +10495,7 @@ const ccActCols = () => [
   { h: 'Action', v: r => ccActDoTxt(r), c: r => `<b title="${dhEsc(r.action || '')}">${dhEsc(ccActDoTxt(r))}</b>`, txt: true },
 ];
 function ccActionsBox(d, pfx, tierRows, showEntry) {
+  window._ccIvp = Object.fromEntries((d.stocks || []).filter(x => x.ivp != null).map(x => [x.symbol, { ivp: x.ivp, iv: x.iv, ivr: x.ivr, asof: d.ivp_as_of }]));   // this broker's own IV percentile (data/ivp.json, via its engine)
   window._ccTrend = Object.fromEntries((d.stocks || []).filter(s => s.colour).map(s => [s.symbol, s.colour]));   // this broker's Supertrend colours (Trend / Right position columns)
   window._ccActPfx = pfx;
   const all = ccActRows(d, tierRows);
@@ -10698,6 +10708,7 @@ const ccHeldMatch = t => { const c = ccTrendOf(t.symbol); if (!c || !t.shorts_n)
 const ccTradeCols = () => [
   { h: 'Stock', v: t => t.symbol, c: t => `<b class="stk">${dhEsc(t.symbol)}</b>`, txt: true },
   { h: 'Supertrend', v: t => ccTrendOf(t.symbol), c: t => ccTrendCell(t), txt: true },
+  { h: 'IVP', v: t => ccIvpOf(t.symbol), c: t => ccIvpCell(t.symbol) },
   { h: 'Right position', v: t => ccRightPos(t), c: t => { const p = ccRightPos(t), m = ccHeldMatch(t); const mk = m == null ? '' : m ? ' <span class="pos" title="This trade is the structure the colour wants">✓</span>' : ' <span class="neg" title="This trade is the opposite of what the colour wants">≠</span>'; return p === '—' ? '<span style="color:var(--text-muted)">—</span>' : `<b>${p}</b>${mk}`; }, txt: true },
   { h: 'Trade', v: t => t.label, c: t => dhEsc(t.label), txt: true },
   { h: 'Expiry', v: t => t.expiry, c: t => `${dhFmtDate(t.expiry)} <span style="color:${t.days <= 7 ? 'var(--red)' : 'var(--text-muted)'}">(${t.days}d)</span>`, txt: true },

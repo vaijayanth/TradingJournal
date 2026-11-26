@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-11-25T15:54:04.983190+00:00",
+  "generated_at": "2026-11-26T01:27:18.662025+00:00",
   "market_data_date": "2026-11-25",
-  "live_prices_at": "2026-11-25T21:05:33+05:30",
-  "super_scan_at": "2026-11-25T21:24:04+05:30",
+  "live_prices_at": null,
+  "super_scan_at": null,
   "as_of": "2026-11-25",
   "rules": {
     "short_call_delta": 0.1,
@@ -111,7 +111,10 @@
           "estimated": true
         }
       ],
-      "event_block": null
+      "event_block": null,
+      "ivp": 37,
+      "iv": 36.4,
+      "ivr": 34
     },
     {
       "symbol": "SHRIRAMFIN",
@@ -195,7 +198,10 @@
           "estimated": true
         }
       ],
-      "event_block": null
+      "event_block": null,
+      "ivp": 63,
+      "iv": 33.8,
+      "ivr": 37
     },
     {
       "symbol": "CGPOWER",
@@ -257,7 +263,10 @@
           "estimated": true
         }
       ],
-      "event_block": null
+      "event_block": null,
+      "ivp": 67,
+      "iv": 36.2,
+      "ivr": 61
     },
     {
       "symbol": "BSE",
@@ -401,7 +410,10 @@
           "estimated": true
         }
       ],
-      "event_block": null
+      "event_block": null,
+      "ivp": 15,
+      "iv": 34.6,
+      "ivr": 23
     },
     {
       "symbol": "DIXON",
@@ -485,7 +497,10 @@
           "estimated": true
         }
       ],
-      "event_block": null
+      "event_block": null,
+      "ivp": 31,
+      "iv": 35.5,
+      "ivr": 28
     },
     {
       "symbol": "HCLTECH",
@@ -569,7 +584,10 @@
           "estimated": true
         }
       ],
-      "event_block": null
+      "event_block": null,
+      "ivp": 61,
+      "iv": 28.7,
+      "ivr": 54
     },
     {
       "symbol": "INFY",
@@ -653,7 +671,10 @@
           "estimated": true
         }
       ],
-      "event_block": null
+      "event_block": null,
+      "ivp": 63,
+      "iv": 31.9,
+      "ivr": 58
     },
     {
       "symbol": "BANKINDIA",
@@ -732,7 +753,10 @@
           "estimated": true
         }
       ],
-      "event_block": null
+      "event_block": null,
+      "ivp": 65,
+      "iv": 34.6,
+      "ivr": 47
     },
     {
       "symbol": "BPCL",
@@ -840,7 +864,10 @@
           "estimated": true
         }
       ],
-      "event_block": null
+      "event_block": null,
+      "ivp": 46,
+      "iv": 27.7,
+      "ivr": 26
     },
     {
       "symbol": "CUMMINSIND",
@@ -902,9 +929,13 @@
           "estimated": true
         }
       ],
-      "event_block": null
+      "event_block": null,
+      "ivp": 33,
+      "iv": 27.9,
+      "ivr": 35
     }
   ],
+  "ivp_as_of": "2026-11-25",
   "alerts": [
     {
       "expiry": "2026-12-29",

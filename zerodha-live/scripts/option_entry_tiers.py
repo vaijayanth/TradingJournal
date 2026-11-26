@@ -133,7 +133,7 @@ def main():
         if dte < cfg["rules"].get("expiry_min_days", 30):   # only a near expiry is listed for this stock: say so
             alert = f"SHORT EXPIRY: only {dte}d to {e['expiry']}" + (f"; {alert}" if alert else "")
             lvl = max(lvl, 2)
-        tiers[t].append({"symbol": s["symbol"], "structure": structure, "colour": s["colour"], "spot": s["spot"], "flip_date": fd, "flip_trading_days": td,
+        tiers[t].append({"symbol": s["symbol"], "ivp": s.get("ivp"), "structure": structure, "colour": s["colour"], "spot": s["spot"], "flip_date": fd, "flip_trading_days": td,
                          "flip_calendar_days": cal, "expiry": e["expiry"], "lot": e["lot"], "alert": alert or "-", "alert_level": lvl})
     for t in tiers:
         tiers[t].sort(key=lambda r: (r["flip_trading_days"], r["symbol"]))
@@ -160,10 +160,10 @@ def main():
             print("   (none)\n")
             continue
         n_shown = rows[: a.max_per_tier]
-        print(f"   {'#':>3} {'stock':<12} {'structure':<16} {'price':>9} {'flip':<11} {'age':<8} {'expiry':<11} {'lot':>5}  alert")
+        print(f"   {'#':>3} {'stock':<12} {'structure':<16} {'price':>9} {'IVP':>4} {'flip':<11} {'age':<8} {'expiry':<11} {'lot':>5}  alert")
         for i, r in enumerate(n_shown, 1):
             age = "today" if r["flip_trading_days"] == 0 else f"{r['flip_trading_days']}td/{r['flip_calendar_days']}d"
-            print(f"   {i:>3} {r['symbol']:<12} {r['structure']:<16} {r['spot']:>9g} {r['flip_date']:<11} {age:<8} {r['expiry']:<11} {r['lot']:>5}  {r['alert']}")
+            print(f"   {i:>3} {r['symbol']:<12} {r['structure']:<16} {r['spot']:>9g} {(r['ivp'] if r.get('ivp') is not None else '-'):>4} {r['flip_date']:<11} {age:<8} {r['expiry']:<11} {r['lot']:>5}  {r['alert']}")
         if len(rows) > len(n_shown):
             print(f"   ... {len(rows) - len(n_shown)} more in this tier (use --max-per-tier)")
         print()

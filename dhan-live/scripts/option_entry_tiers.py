@@ -105,7 +105,7 @@ def main():
         cal = (mdate - date.fromisoformat(fd)).days
         t = tier_of(td, cal)
         alert, lvl = event_alert(s.get("events"), exp, today, close_days)
-        tiers[t].append({"symbol": s["symbol"], "structure": "bull put spread" if s["colour"] == "green" else "sell call", "colour": s["colour"], "spot": s["spot"],
+        tiers[t].append({"symbol": s["symbol"], "ivp": s.get("ivp"), "structure": "bull put spread" if s["colour"] == "green" else "sell call", "colour": s["colour"], "spot": s["spot"],
                          "flip_date": fd, "flip_trading_days": td, "flip_calendar_days": cal, "expiry": exp, "lot": lot, "alert": alert or "-", "alert_level": lvl})
     for t in tiers:
         tiers[t].sort(key=lambda r: (r["flip_trading_days"], r["symbol"]))
@@ -132,10 +132,10 @@ def main():
         if not rows:
             print("   (none)\n")
             continue
-        print(f"   {'#':>3} {'stock':<12} {'structure':<16} {'price':>9} {'flip':<11} {'age':<8} {'expiry':<11} {'lot':>5}  alert")
+        print(f"   {'#':>3} {'stock':<12} {'structure':<16} {'price':>9} {'IVP':>4} {'flip':<11} {'age':<8} {'expiry':<11} {'lot':>5}  alert")
         for i, r in enumerate(rows, 1):
             age = "today" if r["flip_trading_days"] == 0 else f"{r['flip_trading_days']}td/{r['flip_calendar_days']}d"
-            print(f"   {i:>3} {r['symbol']:<12} {r['structure']:<16} {r['spot']:>9g} {r['flip_date']:<11} {age:<8} {r['expiry'] or '-':<11} {r['lot'] or '-':>5}  {r['alert']}")
+            print(f"   {i:>3} {r['symbol']:<12} {r['structure']:<16} {r['spot']:>9g} {(r['ivp'] if r.get('ivp') is not None else '-'):>4} {r['flip_date']:<11} {age:<8} {r['expiry'] or '-':<11} {r['lot'] or '-':>5}  {r['alert']}")
         print()
 
 

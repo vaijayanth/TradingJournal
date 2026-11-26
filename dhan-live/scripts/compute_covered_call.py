@@ -561,9 +561,17 @@ def main():
 
     order = {"EXIT": 0, "BREACH": 1, "WARN": 2, "ENTER": 3}
     alerts.sort(key=lambda a: order.get(a["level"], 9))
+    # IV percentile (user, 2026-11-26): this broker's own data/ivp.json, written by scripts/ivp_update.py (information only, no rule uses it)
+    ivp_file = DATA / "ivp.json"
+    ivp_rows = json.loads(ivp_file.read_text()).get("rows", {}) if ivp_file.exists() else {}
+    ivp_asof = json.loads(ivp_file.read_text()).get("as_of") if ivp_file.exists() else None
+    for s_ in stocks:
+        r_ = ivp_rows.get(s_.get("symbol"))
+        if r_:
+            s_["ivp"], s_["iv"], s_["ivr"] = r_["ivp"], r_["iv"], r_["ivr"]
     result = {
         "generated_at": datetime.now(timezone.utc).isoformat(), "market_data_date": market_date, "live_prices_at": live.get("fetched_at") if live_px else None, "super_scan_at": scan.get("fetched_at") if scan_ok else None, "as_of": today.isoformat(),
-        "rules": rules, "show_expiries": show_exp, "stocks": stocks, "alerts": alerts, "events_file_at": events.get("generated_at"), "events_missing": events.get("missing", []),
+        "rules": rules, "show_expiries": show_exp, "stocks": stocks, "ivp_as_of": ivp_asof, "alerts": alerts, "events_file_at": events.get("generated_at"), "events_missing": events.get("missing", []),
         "shares": {"rows": shares_rows, "entries": share_entries, "exits": share_exits,
                    "exit_rule": "Supertrend red and the position is in profit: sell the whole position",
                    "entry_window": rules["share_entry_window_trading_days"]},
