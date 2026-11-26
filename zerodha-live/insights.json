@@ -1,9 +1,9 @@
 {
- "as_of": "26 Nov 10:05 (positions and GTTs live)",
- "written_at": "2026-11-26T09:59:11+05:30",
+ "as_of": "26 Nov 10:10 (positions and GTTs live)",
+ "written_at": "2026-11-26T10:00:40+05:30",
  "confidence": "low",
  "maturity": "41 positions opened since the cut-off, 5 closed trades: the swing edge cannot be judged yet.",
- "headline": "78 contracts are covered with 0 scan findings; five spreads opened in the last minutes (AMBER, AMBUJACEM, ANGELONE, ASHOKLEY, AUROPHARMA) still need GTTs.",
+ "headline": "Every short option is now protected: 83 GTT contracts with 0 scan findings after 18 new two-leg GTTs this morning.",
  "points": [
   {
    "label": "Signals",
@@ -11,11 +11,11 @@
   },
   {
    "label": "Options process",
-   "text": "78 GTT contracts, 0 scan findings after placing 13 protective GTTs this morning. Five short puts opened since (AMBER 6200, AMBUJACEM 365, ANGELONE 310, ASHOKLEY 140, AUROPHARMA 1700) have no GTT yet. CUMMINSIND's buy-back at 6.35 is resting and its old trailing stop is still live."
+   "text": "83 GTT contracts, 0 scan findings, 0 shorts without a GTT. This morning: 3 stale GTTs deleted and 18 protective two-leg GTTs placed on the spreads and calls you opened. CUMMINSIND's buy-back at 6.35 is still resting and its old trailing stop (50) is live."
   },
   {
    "label": "Risk",
-   "text": "Five new short puts have a hedge but no stop until their GTTs are placed. Financial Services remains above its 40% limit."
+   "text": "All shorts have a stop, so the open risk is the gap past a stop. Financial Services remains above its 40% limit; the HDFCBANK spread added to it."
   },
   {
    "label": "Book",
@@ -26,5 +26,5 @@
    "text": "5 closed trades against 20.2% CAGR, -21.3% drawdown, 41% win rate: too early to compare. Watch the first 30 closed trades."
   }
  ],
- "action": "Place GTTs on the five new short puts once you finish opening trades, then cancel the CUMMINSIND trailing GTT after its buy-back at 6.35 fills."
+ "action": "Cancel the CUMMINSIND trailing GTT once its buy-back at 6.35 fills; any short you open from now needs a GTT (run /zerodha-gtt-order after you finish trading)."
 }

@@ -1,6 +1,106 @@
 {
- "fetched_at": "2026-11-26T09:59:01+05:30",
+ "fetched_at": "2026-11-26T10:00:33+05:30",
  "active": {
+  "AUROPHARMA26DEC1700PE": [
+   {
+    "id": 346423050,
+    "type": "two-leg",
+    "trigger_values": [
+     3.6,
+     24.9
+    ],
+    "qty": 1100
+   },
+   {
+    "id": 346423050,
+    "type": "two-leg",
+    "trigger_values": [
+     3.6,
+     24.9
+    ],
+    "qty": 1100
+   }
+  ],
+  "ASHOKLEY26DEC140PE": [
+   {
+    "id": 346422987,
+    "type": "two-leg",
+    "trigger_values": [
+     0.45,
+     3.2
+    ],
+    "qty": 5000
+   },
+   {
+    "id": 346422987,
+    "type": "two-leg",
+    "trigger_values": [
+     0.45,
+     3.2
+    ],
+    "qty": 5000
+   }
+  ],
+  "ANGELONE26DEC310PE": [
+   {
+    "id": 346422943,
+    "type": "two-leg",
+    "trigger_values": [
+     1.35,
+     9.2
+    ],
+    "qty": 5000
+   },
+   {
+    "id": 346422943,
+    "type": "two-leg",
+    "trigger_values": [
+     1.35,
+     9.2
+    ],
+    "qty": 5000
+   }
+  ],
+  "AMBUJACEM26DEC365PE": [
+   {
+    "id": 346422904,
+    "type": "two-leg",
+    "trigger_values": [
+     1.4,
+     9.65
+    ],
+    "qty": 1200
+   },
+   {
+    "id": 346422904,
+    "type": "two-leg",
+    "trigger_values": [
+     1.4,
+     9.65
+    ],
+    "qty": 1200
+   }
+  ],
+  "AMBER26DEC6200PE": [
+   {
+    "id": 346422850,
+    "type": "two-leg",
+    "trigger_values": [
+     23.2,
+     159.5
+    ],
+    "qty": 100
+   },
+   {
+    "id": 346422850,
+    "type": "two-leg",
+    "trigger_values": [
+     23.2,
+     159.5
+    ],
+    "qty": 100
+   }
+  ],
   "SUNPHARMA26DEC1800PE": [
    {
     "id": 346422248,
@@ -1553,6 +1653,146 @@
   ]
  },
  "gtts": [
+  {
+   "id": 346423050,
+   "type": "two-leg",
+   "created_at": "2026-11-26T10:00:25+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "AUROPHARMA26DEC1700PE",
+   "last_price": 9,
+   "triggers": [
+    3.6,
+    24.9
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 1100,
+     "price": 3.75,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 1100,
+     "price": 27.15,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 346422987,
+   "type": "two-leg",
+   "created_at": "2026-11-26T10:00:20+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "ASHOKLEY26DEC140PE",
+   "last_price": 1.17,
+   "triggers": [
+    0.45,
+    3.2
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 5000,
+     "price": 0.5,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 5000,
+     "price": 3.5,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 346422943,
+   "type": "two-leg",
+   "created_at": "2026-11-26T10:00:15+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "ANGELONE26DEC310PE",
+   "last_price": 3.55,
+   "triggers": [
+    1.35,
+    9.2
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 5000,
+     "price": 1.4,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 5000,
+     "price": 10.05,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 346422904,
+   "type": "two-leg",
+   "created_at": "2026-11-26T10:00:10+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "AMBUJACEM26DEC365PE",
+   "last_price": 3.55,
+   "triggers": [
+    1.4,
+    9.65
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 1200,
+     "price": 1.45,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 1200,
+     "price": 10.5,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 346422850,
+   "type": "two-leg",
+   "created_at": "2026-11-26T10:00:04+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "AMBER26DEC6200PE",
+   "last_price": 58,
+   "triggers": [
+    23.2,
+    159.5
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 100,
+     "price": 23.9,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 100,
+     "price": 174,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
   {
    "id": 346422248,
    "type": "two-leg",
