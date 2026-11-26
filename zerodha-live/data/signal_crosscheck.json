@@ -1,15 +1,29 @@
 {
- "generated_at": "2026-11-26T06:42:57.389233+00:00",
- "market_data_date": "2026-11-25",
+ "generated_at": "2026-11-26T13:38:44.845904+00:00",
+ "market_data_date": "2026-11-26",
  "yahoo_last_bars": [
-  "2026-11-25"
- ],
- "bars_after_signal_date_ignored": [
   "2026-11-26"
  ],
- "checked": 1,
+ "bars_after_signal_date_ignored": [],
+ "checked": 3,
  "flagged": 0,
  "results": [
+  {
+   "symbol": "SAGILITY",
+   "kind": "entry",
+   "ok": true,
+   "reasons": [],
+   "published_colour": "green",
+   "recomputed_colour": "green",
+   "yahoo_last_bar": "2026-11-26",
+   "close": 46.6,
+   "published_close": 46.6,
+   "closing_high_252": 53.84,
+   "intraday_high_252": 54.3,
+   "flip_bars_ago": 0,
+   "pct_from_intraday_high": -14.18,
+   "flagged": false
+  },
   {
    "symbol": "TORNTPHARM",
    "kind": "entry",
@@ -17,13 +31,29 @@
    "reasons": [],
    "published_colour": "green",
    "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-25",
-   "close": 4895.5,
-   "published_close": 4895.5,
+   "yahoo_last_bar": "2026-11-26",
+   "close": 5019.1,
+   "published_close": 5019.1,
    "closing_high_252": 5122.8,
    "intraday_high_252": 5250.0,
-   "flip_bars_ago": 0,
-   "pct_from_intraday_high": -6.75,
+   "flip_bars_ago": 1,
+   "pct_from_intraday_high": -4.4,
+   "flagged": false
+  },
+  {
+   "symbol": "ASHOKLEY",
+   "kind": "exit",
+   "ok": true,
+   "reasons": [],
+   "published_colour": "red",
+   "recomputed_colour": "red",
+   "yahoo_last_bar": "2026-11-26",
+   "close": 156.15,
+   "published_close": 156.15,
+   "closing_high_252": 211.92,
+   "intraday_high_252": 215.42,
+   "flip_bars_ago": 13,
+   "pct_from_intraday_high": -27.51,
    "flagged": false
   }
  ]

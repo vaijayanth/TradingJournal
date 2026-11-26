@@ -1,30 +1,30 @@
 {
- "as_of": "26 Nov 14:43 (positions and GTTs live)",
- "written_at": "2026-11-26T14:43:37+05:30",
+ "as_of": "26 Nov 19:09 (26 Nov close, positions, GTTs and prices live)",
+ "written_at": "2026-11-26T19:09:13+05:30",
  "confidence": "low",
  "maturity": "42 positions opened since the cut-off, 5 closed trades: the swing edge cannot be judged yet.",
- "headline": "All 37 swing holds are green and nothing is due to exit; every short option is protected (109 GTT contracts, 0 scan findings).",
+ "headline": "ASHOKLEY flipped red (exit signal, -8.3%, the add-on bought this morning is in it) and two entries are live (SAGILITY, TORNTPHARM); every short option has a GTT.",
  "points": [
   {
    "label": "Signals",
-   "text": "No exits, no add-ons (ASHOKLEY -7.2% and POWERINDIA -6.7% qualify on loss but sit inside the 7-day cooldown after this morning's fills). One entry: TORNTPHARM x4 at 4,895.50 is still resting; price is 4,970, above the limit."
+   "text": "One exit: ASHOKLEY x131 at about 156.15 (Supertrend red, -8.3%), the stock you averaged into at the open. Two entries: SAGILITY x429 (flipped green today) and TORNTPHARM x3 (flipped 25 Nov; the x4 order was cancelled and the new tier size gives x3). 36 of 36 other swing holds are green."
   },
   {
    "label": "Options process",
-   "text": "109 GTT contracts, 0 scan findings, 0 shorts without a GTT. New rule (stop trigger 3x sold, limit trigger +1%; target limit +1%): 94 two-leg GTTs re-levelled today; 13 trailing and 6 single GTTs left as they were; INOXWIND 72CE and IDFCFIRSTB 75PE refused the modify and keep their old 2.75x / 3x levels."
+   "text": "108 GTT contracts, 0 scan findings, 0 shorts without a GTT, 4 GTTs fired today and bought back cleanly (UJJIVANSFB, KEI 4500CE, VMM 83PE, ENRIN 2500PE). ASHOKLEY's put spread (long 135PE, short 140PE) is now against a red colour: close it and consider the short call."
   },
   {
    "label": "Risk",
-   "text": "All shorts have a stop, so the open risk is the gap past a stop. Financial Services remains above its 40% limit (50%). WIPRO (0.7%) and LUPIN (1.4%) are close to flipping green."
+   "text": "Financial Services is 50% of deployed capital against a 40% limit (unchanged). WIPRO (0.2%) and LUPIN (1.5%) are about to flip green, CONCOR (1.4%) could flip red; 108 shorts all carry a stop, so the open risk is the gap past a stop."
   },
   {
    "label": "Book",
-   "text": "Unrealised swing P&L is +Rs38.9k against realised -Rs13.7k from 5 closed trades. The nearest holds to a Supertrend flip are JSWSTEEL (3.6%) and JINDALSTEL (3.7%)."
+   "text": "Unrealised swing P&L is +Rs33.0k against realised -Rs13.7k from 5 closed trades (combined +Rs19.3k). Two old-sheet positions are now green and profitable (LODHA, KFINTECH): move candidates."
   },
   {
    "label": "Versus the backtest",
-   "text": "5 closed trades against 20.2% CAGR, -21.3% drawdown, 41% win rate: too early to compare. Watch the first 30 closed trades."
+   "text": "5 closed trades against 20.2% CAGR, -21.3% drawdown, 41% win rate: too early to compare; the first exit of the averaged-down ASHOKLEY will be the sixth closed trade. Watch the first 30 closed trades."
   }
  ],
- "action": "Any short you open from now needs a GTT (run /zerodha-gtt-order after you finish trading). INOXWIND 72CE and IDFCFIRSTB 75PE still sit on the old stop levels: leave them or set them in Kite."
+ "action": "After the close run /zerodha-order for the ASHOKLEY exit and the SAGILITY and TORNTPHARM entries; close the ASHOKLEY put spread in Kite; decide on LODHA and KFINTECH."
 }

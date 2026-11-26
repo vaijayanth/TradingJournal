@@ -1,13 +1,13 @@
 {
- "generated_at": "2026-11-26T14:34:22+05:30",
+ "generated_at": "2026-11-26T19:08:47+05:30",
  "broker": "zerodha",
- "market_data_date": "2026-11-25",
- "signals_generated_at": "2026-11-26T06:42:56.481357+00:00",
+ "market_data_date": "2026-11-26",
+ "signals_generated_at": "2026-11-26T13:38:43.239913+00:00",
  "status": "WARN",
  "global_block": false,
  "counts": {
   "block": 0,
-  "warn": 1,
+  "warn": 2,
   "info": 0
  },
  "per_symbol_blocks": {},
@@ -17,6 +17,12 @@
    "level": "WARN",
    "symbol": null,
    "msg": "sector Financial Services is 50% of deployed capital (limit 40%)"
+  },
+  {
+   "id": "P3",
+   "level": "WARN",
+   "symbol": null,
+   "msg": "1 open option exit / strike-breach alerts on 1 stocks (ASHOKLEY) - see the Covered Call alerts"
   }
  ]
 }

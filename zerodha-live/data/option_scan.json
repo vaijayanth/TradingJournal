@@ -1,18 +1,20 @@
 {
  "fired_ok_today": [
+  "UJJIVANSFB26DEC72CE",
+  "KEI26DEC4500CE",
   "VMM26DEC83PE",
   "ENRIN26DEC2500PE"
  ],
- "fetched_at": "2026-11-26T14:34:09+05:30",
+ "fetched_at": "2026-11-26T19:08:53+05:30",
  "inputs": {
-  "positions": "2026-11-26T09:04:09.036923+00:00",
-  "gtts": "2026-11-26T14:34:09+05:30",
-  "orders": "2026-11-26T12:12:13+05:30",
-  "gtt_scan": "2026-11-26T14:34:09+05:30"
+  "positions": "2026-11-26T13:37:56.708132+00:00",
+  "gtts": "2026-11-26T19:07:56+05:30",
+  "orders": "2026-11-26T19:07:56+05:30",
+  "gtt_scan": "2026-11-26T19:07:56+05:30"
  },
  "stale_inputs": [],
- "open_legs": 181,
- "triggered_gtts": 4,
+ "open_legs": 180,
+ "triggered_gtts": 5,
  "findings": [
   {
    "section": "B",
@@ -297,14 +299,6 @@
   {
    "section": "B",
    "severity": "INFO",
-   "symbol": "UJJIVANSFB",
-   "tradingsymbol": "UJJIVANSFB26DEC72CE",
-   "concern": "Short 72CE (8000 qty) is a naked call (by design; covered only by shares you hold)",
-   "action": "Watch the 3x stop and the Supertrend colour"
-  },
-  {
-   "section": "B",
-   "severity": "INFO",
    "symbol": "VEDL",
    "tradingsymbol": "VEDL26DEC280CE",
    "concern": "Short 280CE (2300 qty) is a naked call (by design; covered only by shares you hold)",
@@ -324,14 +318,6 @@
    "symbol": "APLAPOLLO",
    "tradingsymbol": "APLAPOLLO26DEC1920CE",
    "concern": "GTT 346355154 fired today (09:40) but no buy-back order from a GTT is in today's order list",
-   "action": "Check the order book in Kite"
-  },
-  {
-   "section": "D",
-   "severity": "WARN",
-   "symbol": "KEI",
-   "tradingsymbol": "KEI26DEC4500CE",
-   "concern": "GTT 345199325 fired today (13:22) but no buy-back order from a GTT is in today's order list",
    "action": "Check the order book in Kite"
   }
  ]
