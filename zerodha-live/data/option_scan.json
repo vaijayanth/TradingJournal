@@ -3,16 +3,16 @@
   "VMM26DEC83PE",
   "ENRIN26DEC2500PE"
  ],
- "fetched_at": "2026-11-26T12:17:45+05:30",
+ "fetched_at": "2026-11-26T13:57:45+05:30",
  "inputs": {
-  "positions": "2026-11-26T06:46:55.842685+00:00",
-  "gtts": "2026-11-26T12:17:45+05:30",
+  "positions": "2026-11-26T08:27:21.168317+00:00",
+  "gtts": "2026-11-26T13:57:21+05:30",
   "orders": "2026-11-26T12:12:13+05:30",
-  "gtt_scan": "2026-11-26T12:17:45+05:30"
+  "gtt_scan": "2026-11-26T13:57:21+05:30"
  },
  "stale_inputs": [],
- "open_legs": 127,
- "triggered_gtts": 3,
+ "open_legs": 159,
+ "triggered_gtts": 4,
  "findings": [
   {
    "section": "B",
@@ -98,8 +98,8 @@
    "section": "B",
    "severity": "INFO",
    "symbol": "KEI",
-   "tradingsymbol": "KEI26DEC4500CE",
-   "concern": "Short 4500CE (175 qty) is a naked call (by design; covered only by shares you hold)",
+   "tradingsymbol": "KEI26DEC4300CE",
+   "concern": "Short 4300CE (175 qty) is a naked call (by design; covered only by shares you hold)",
    "action": "Watch the 3x stop and the Supertrend colour"
   },
   {
@@ -324,6 +324,14 @@
    "symbol": "APLAPOLLO",
    "tradingsymbol": "APLAPOLLO26DEC1920CE",
    "concern": "GTT 346355154 fired today (09:40) but no buy-back order from a GTT is in today's order list",
+   "action": "Check the order book in Kite"
+  },
+  {
+   "section": "D",
+   "severity": "WARN",
+   "symbol": "KEI",
+   "tradingsymbol": "KEI26DEC4500CE",
+   "concern": "GTT 345199325 fired today (13:22) but no buy-back order from a GTT is in today's order list",
    "action": "Check the order book in Kite"
   }
  ]

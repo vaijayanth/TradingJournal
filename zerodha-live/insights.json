@@ -1,9 +1,9 @@
 {
- "as_of": "26 Nov 12:17 (positions and GTTs live)",
- "written_at": "2026-11-26T12:17:45+05:30",
+ "as_of": "26 Nov 13:57 (positions and GTTs live)",
+ "written_at": "2026-11-26T13:57:54+05:30",
  "confidence": "low",
  "maturity": "42 positions opened since the cut-off, 5 closed trades: the swing edge cannot be judged yet.",
- "headline": "All 37 swing holds are green and nothing is due to exit; every short option is protected again (82 GTT contracts, 0 scan findings).",
+ "headline": "All 37 swing holds are green and nothing is due to exit; every short option is protected (98 GTT contracts, 0 scan findings).",
  "points": [
   {
    "label": "Signals",
@@ -11,7 +11,7 @@
   },
   {
    "label": "Options process",
-   "text": "82 GTT contracts, 0 scan findings, 0 shorts without a GTT. Just now: stale CUMMINSIND 5000CE GTT deleted, COLPAL 1620PE GTT raised to 550 qty, VMM 86PE two-leg GTT placed."
+   "text": "98 GTT contracts, 0 scan findings, 0 shorts without a GTT. This afternoon: 17 two-leg GTTs placed on the new spreads and calls (DIVISLAB, FEDERALBNK, INDUSINDBK, JUBLFOOD, KALYANKJIL, KEI, MAHABANK, MAXHEALTH, MOTHERSON, MOTILALOFS, NAM-INDIA, OBEROIRLTY, PATANJALI, PNB, RELIANCE, UNITDSPR, UPL), after the earlier stale delete, COLPAL fix and VMM."
   },
   {
    "label": "Risk",
@@ -26,5 +26,5 @@
    "text": "5 closed trades against 20.2% CAGR, -21.3% drawdown, 41% win rate: too early to compare. Watch the first 30 closed trades."
   }
  ],
- "action": "Any short you open from now needs a GTT (run /zerodha-gtt-order after you finish trading); check the APLAPOLLO fired-GTT entry in the Kite order book."
+ "action": "Any short you open from now needs a GTT (run /zerodha-gtt-order after you finish trading). RELIANCE 1270PE is the leg moving against you (8.35 vs sold 7.20)."
 }
