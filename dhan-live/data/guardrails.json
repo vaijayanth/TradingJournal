@@ -1,13 +1,13 @@
 {
- "generated_at": "2026-11-25T21:24:05+05:30",
+ "generated_at": "2026-11-26T09:16:12+05:30",
  "broker": "dhan",
  "market_data_date": "2026-11-25",
- "signals_generated_at": "2026-11-25T15:36:05.714970+00:00",
+ "signals_generated_at": "2026-11-26T03:45:30.603054+00:00",
  "status": "WARN",
  "global_block": false,
  "counts": {
   "block": 0,
-  "warn": 3,
+  "warn": 2,
   "info": 0
  },
  "per_symbol_blocks": {},
@@ -16,13 +16,7 @@
    "id": "F5",
    "level": "WARN",
    "symbol": null,
-   "msg": "the cross-check flagged 2 of 17 signals (advisory only, the backtester signal stands and they are not blocked): NILKAMAL, SHARDAMOTR"
-  },
-  {
-   "id": "I3",
-   "level": "WARN",
-   "symbol": null,
-   "msg": "1 stocks were bought in the last 3 days and are not in Dhan holdings yet (settlement timing); positions and P&L exclude them until holdings catch up: APOLLOHOSP (0->1)"
+   "msg": "the cross-check flagged 1 of 19 signals (advisory only, the backtester signal stands and they are not blocked): NILKAMAL"
   },
   {
    "id": "P3",

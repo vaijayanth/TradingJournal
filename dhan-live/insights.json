@@ -1,13 +1,13 @@
 {
- "as_of": "25 Nov close; updated after the super-order check",
- "written_at": "2026-11-25T21:50:00+05:30",
+ "as_of": "26 Nov pre-open (market data 25 Nov close)",
+ "written_at": "2026-11-26T09:16:24+05:30",
  "confidence": "low",
  "maturity": "139 positions ever opened but only 9 closed trades: the swing edge cannot be judged yet.",
- "headline": "All 13 shorts now carry a stop and target and tonight's 22 stock orders are placed; the one structure still out of line is BSE (4200CE against green, 3200PE unhedged).",
+ "headline": "Last night's 22 orders are resting for the open and two new add-ons (SUNTV, TEXINFRA) cleared the data check; BSE is still the one structure out of line.",
  "points": [
   {
    "label": "Signals",
-   "text": "Tonight's orders are in: 7 swing exits (ESAFSFB, GUFICBIO, NAZARA, NILKAMAL, SGFIN, SGMART, SSWL), 6 add-ons, 4 entries (AGARWALEYE, MEDANTA, SHALPAINTS, SHARDAMOTR) and 5 investment-share averaging buys, all as after-market orders for the open. NILKAMAL and SHARDAMOTR went in on the backtester signal although the independent check disagreed (your rule: the backtester wins)."
+   "text": "The 22 orders from last night are pending for the open (7 swing exits, 6 add-ons, 4 entries, 5 averaging buys). Dhan's own candles confirmed all 12 stocks the price check had flagged, so two add-ons held back by that check, SUNTV x1 (-11%) and TEXINFRA x1 (-7%), are now orderable. NILKAMAL's exit is still advisory-flagged (the independent Supertrend reads green); the backtester signal stands under your rule."
   },
   {
    "label": "BSE",
@@ -26,5 +26,5 @@
    "text": "9 closed trades against 28% CAGR, -15.4% drawdown and PF 2.0: too early to compare. With 7 exits at once this is the first real test of how the live exits compare with the backtest's average loser (-9%)."
   }
  ],
- "action": "Close the BSE 4200CE and hedge or close the BSE 3200PE, then run /refresh-dhan after tomorrow's open to book the 22 orders."
+ "action": "Place the SUNTV and TEXINFRA add-ons with /dhan-order after the open; close the BSE 4200CE and hedge or close the BSE 3200PE in the Dhan app."
 }

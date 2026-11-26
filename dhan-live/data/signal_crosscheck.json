@@ -1,12 +1,14 @@
 {
- "generated_at": "2026-11-25T15:36:07.846153+00:00",
+ "generated_at": "2026-11-26T03:45:32.623104+00:00",
  "market_data_date": "2026-11-25",
  "yahoo_last_bars": [
   "2026-11-25"
  ],
- "bars_after_signal_date_ignored": [],
- "checked": 17,
- "flagged": 2,
+ "bars_after_signal_date_ignored": [
+  "2026-11-26"
+ ],
+ "checked": 19,
+ "flagged": 1,
  "results": [
   {
    "symbol": "AGARWALEYE",
@@ -45,6 +47,11 @@
    "kind": "entry",
    "ok": true,
    "reasons": [],
+   "dhan_bars_added": [
+    "2026-11-23",
+    "2026-11-24",
+    "2026-11-25"
+   ],
    "published_colour": "green",
    "recomputed_colour": "green",
    "yahoo_last_bar": "2026-11-25",
@@ -52,7 +59,7 @@
    "published_close": 107.61,
    "closing_high_252": 107.61,
    "intraday_high_252": 116.8,
-   "flip_bars_ago": 7,
+   "flip_bars_ago": 8,
    "pct_from_intraday_high": -7.87,
    "flagged": false
   },
@@ -60,25 +67,33 @@
    "symbol": "SHARDAMOTR",
    "kind": "entry",
    "ok": true,
-   "reasons": [
-    "close 998.05 is below the 252-session closing high 1018.00"
+   "reasons": [],
+   "dhan_bars_added": [
+    "2026-11-23",
+    "2026-11-24",
+    "2026-11-25"
    ],
    "published_colour": "green",
    "recomputed_colour": "green",
    "yahoo_last_bar": "2026-11-25",
    "close": 998.05,
    "published_close": 998.05,
-   "closing_high_252": 1018.0,
-   "intraday_high_252": 1038.3,
-   "flip_bars_ago": 7,
-   "pct_from_intraday_high": -3.88,
-   "flagged": true
+   "closing_high_252": 998.05,
+   "intraday_high_252": 1034.4,
+   "flip_bars_ago": 8,
+   "pct_from_intraday_high": -3.51,
+   "flagged": false
   },
   {
    "symbol": "AMANTA",
    "kind": "addon",
    "ok": true,
    "reasons": [],
+   "dhan_bars_added": [
+    "2026-11-23",
+    "2026-11-24",
+    "2026-11-25"
+   ],
    "published_colour": "green",
    "recomputed_colour": "green",
    "yahoo_last_bar": "2026-11-25",
@@ -86,7 +101,7 @@
    "published_close": 218.4,
    "closing_high_252": 239.08,
    "intraday_high_252": 245.7,
-   "flip_bars_ago": 12,
+   "flip_bars_ago": 13,
    "pct_from_intraday_high": -11.11,
    "flagged": false
   },
@@ -111,6 +126,11 @@
    "kind": "addon",
    "ok": true,
    "reasons": [],
+   "dhan_bars_added": [
+    "2026-11-23",
+    "2026-11-24",
+    "2026-11-25"
+   ],
    "published_colour": "green",
    "recomputed_colour": "green",
    "yahoo_last_bar": "2026-11-25",
@@ -118,7 +138,7 @@
    "published_close": 153.4,
    "closing_high_252": 176.54,
    "intraday_high_252": 184.81,
-   "flip_bars_ago": 107,
+   "flip_bars_ago": 108,
    "pct_from_intraday_high": -17.0,
    "flagged": false
   },
@@ -127,6 +147,11 @@
    "kind": "addon",
    "ok": true,
    "reasons": [],
+   "dhan_bars_added": [
+    "2026-11-23",
+    "2026-11-24",
+    "2026-11-25"
+   ],
    "published_colour": "green",
    "recomputed_colour": "green",
    "yahoo_last_bar": "2026-11-25",
@@ -134,7 +159,7 @@
    "published_close": 558.15,
    "closing_high_252": 605.0,
    "intraday_high_252": 617.45,
-   "flip_bars_ago": 106,
+   "flip_bars_ago": 107,
    "pct_from_intraday_high": -9.6,
    "flagged": false
   },
@@ -155,10 +180,36 @@
    "flagged": false
   },
   {
+   "symbol": "SUNTV",
+   "kind": "addon",
+   "ok": true,
+   "reasons": [],
+   "dhan_bars_added": [
+    "2026-11-23",
+    "2026-11-24",
+    "2026-11-25"
+   ],
+   "published_colour": "green",
+   "recomputed_colour": "green",
+   "yahoo_last_bar": "2026-11-25",
+   "close": 616.25,
+   "published_close": 616.25,
+   "closing_high_252": 696.35,
+   "intraday_high_252": 713.85,
+   "flip_bars_ago": 43,
+   "pct_from_intraday_high": -13.67,
+   "flagged": false
+  },
+  {
    "symbol": "TCPLPACK",
    "kind": "addon",
    "ok": true,
    "reasons": [],
+   "dhan_bars_added": [
+    "2026-11-23",
+    "2026-11-24",
+    "2026-11-25"
+   ],
    "published_colour": "green",
    "recomputed_colour": "green",
    "yahoo_last_bar": "2026-11-25",
@@ -166,8 +217,29 @@
    "published_close": 4262.1,
    "closing_high_252": 4562.8,
    "intraday_high_252": 4719.0,
-   "flip_bars_ago": 13,
+   "flip_bars_ago": 14,
    "pct_from_intraday_high": -9.68,
+   "flagged": false
+  },
+  {
+   "symbol": "TEXINFRA",
+   "kind": "addon",
+   "ok": true,
+   "reasons": [],
+   "dhan_bars_added": [
+    "2026-11-23",
+    "2026-11-24",
+    "2026-11-25"
+   ],
+   "published_colour": "green",
+   "recomputed_colour": "green",
+   "yahoo_last_bar": "2026-11-25",
+   "close": 120.47,
+   "published_close": 120.47,
+   "closing_high_252": 131.21,
+   "intraday_high_252": 133.71,
+   "flip_bars_ago": 11,
+   "pct_from_intraday_high": -9.9,
    "flagged": false
   },
   {
@@ -192,9 +264,9 @@
    "ok": true,
    "reasons": [],
    "dhan_bars_added": [
-    "2026-11-16",
-    "2026-11-17",
-    "2026-11-18"
+    "2026-11-23",
+    "2026-11-24",
+    "2026-11-25"
    ],
    "published_colour": "red",
    "recomputed_colour": "red",
@@ -203,7 +275,7 @@
    "published_close": 413.35,
    "closing_high_252": 487.0,
    "intraday_high_252": 493.95,
-   "flip_bars_ago": 10,
+   "flip_bars_ago": 11,
    "pct_from_intraday_high": -16.32,
    "flagged": false
   },
@@ -212,6 +284,11 @@
    "kind": "exit",
    "ok": true,
    "reasons": [],
+   "dhan_bars_added": [
+    "2026-11-23",
+    "2026-11-24",
+    "2026-11-25"
+   ],
    "published_colour": "red",
    "recomputed_colour": "red",
    "yahoo_last_bar": "2026-11-25",
@@ -219,7 +296,7 @@
    "published_close": 377.45,
    "closing_high_252": 430.4,
    "intraday_high_252": 435.25,
-   "flip_bars_ago": 150,
+   "flip_bars_ago": 151,
    "pct_from_intraday_high": -13.28,
    "flagged": false
   },
@@ -230,6 +307,11 @@
    "reasons": [
     "Supertrend is GREEN on complete data (signal says red) - not an exit"
    ],
+   "dhan_bars_added": [
+    "2026-11-23",
+    "2026-11-24",
+    "2026-11-25"
+   ],
    "published_colour": "red",
    "recomputed_colour": "green",
    "yahoo_last_bar": "2026-11-25",
@@ -237,7 +319,7 @@
    "published_close": 1943.8,
    "closing_high_252": 2258.1,
    "intraday_high_252": 2280.0,
-   "flip_bars_ago": 17,
+   "flip_bars_ago": 18,
    "pct_from_intraday_high": -14.75,
    "flagged": true
   },
@@ -278,6 +360,11 @@
    "kind": "exit",
    "ok": true,
    "reasons": [],
+   "dhan_bars_added": [
+    "2026-11-23",
+    "2026-11-24",
+    "2026-11-25"
+   ],
    "published_colour": "red",
    "recomputed_colour": "red",
    "yahoo_last_bar": "2026-11-25",
@@ -285,7 +372,7 @@
    "published_close": 494.2,
    "closing_high_252": 572.8,
    "intraday_high_252": 588.8,
-   "flip_bars_ago": 156,
+   "flip_bars_ago": 157,
    "pct_from_intraday_high": -16.07,
    "flagged": false
   }
