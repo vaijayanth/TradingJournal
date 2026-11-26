@@ -1,5 +1,5 @@
 {
- "fetched_at": "2026-11-26T20:02:50+05:30",
+ "fetched_at": "2026-11-26T20:04:49+05:30",
  "source": "mcp__dhan_mcp__orderbook_agent_tool list: pending orders",
  "orders": [
   {
@@ -49,6 +49,56 @@
    "qty": 1,
    "order_type": "LIMIT",
    "price": 321.2,
+   "status": "PENDING",
+   "amo": true
+  },
+  {
+   "order_id": "2252611269644",
+   "symbol": "ACE",
+   "side": "BUY",
+   "qty": 1,
+   "order_type": "LIMIT",
+   "price": 1299.0,
+   "status": "PENDING",
+   "amo": true
+  },
+  {
+   "order_id": "2252611269645",
+   "symbol": "ANGELONE",
+   "side": "BUY",
+   "qty": 5,
+   "order_type": "LIMIT",
+   "price": 361.7,
+   "status": "PENDING",
+   "amo": true
+  },
+  {
+   "order_id": "2252611269646",
+   "symbol": "BAJAJHLDNG",
+   "side": "BUY",
+   "qty": 1,
+   "order_type": "LIMIT",
+   "price": 12012.0,
+   "status": "PENDING",
+   "amo": true
+  },
+  {
+   "order_id": "3452611267584",
+   "symbol": "PRESTIGE",
+   "side": "BUY",
+   "qty": 1,
+   "order_type": "LIMIT",
+   "price": 1840.7,
+   "status": "PENDING",
+   "amo": true
+  },
+  {
+   "order_id": "2352611267590",
+   "symbol": "SCPL",
+   "side": "BUY",
+   "qty": 2,
+   "order_type": "LIMIT",
+   "price": 726.85,
    "status": "PENDING",
    "amo": true
   }
