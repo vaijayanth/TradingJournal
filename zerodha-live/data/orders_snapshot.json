@@ -1,5 +1,17 @@
 {
- "fetched_at": "2026-11-26T19:07:56+05:30",
- "source": "mcp__Zerodha__orders list: open AMO orders (AZ swing-share orders only; TORNTPHARM entry x4 was CANCELLED, none open)",
- "orders": []
+ "fetched_at": "2026-11-26T19:15:31+05:30",
+ "source": "mcp__Zerodha__orders: open AMO orders (AZ swing-share orders only)",
+ "orders": [
+  {
+   "order_id": "261126151619000",
+   "symbol": "ASHOKLEY",
+   "side": "SELL",
+   "qty": 131,
+   "order_type": "MARKET",
+   "price": null,
+   "status": "AMO REQ RECEIVED",
+   "amo": true,
+   "placed": "2026-11-26T19:15:12+05:30"
+  }
+ ]
 }
