@@ -2,16 +2,16 @@
  "fired_ok_today": [
   "ENRIN26DEC2500PE"
  ],
- "fetched_at": "2026-11-26T09:35:59+05:30",
+ "fetched_at": "2026-11-26T09:47:13+05:30",
  "inputs": {
-  "positions": "2026-11-26T04:05:37.287466+00:00",
-  "gtts": "2026-11-26T09:35:37+05:30",
+  "positions": "2026-11-26T04:17:13.197419+00:00",
+  "gtts": "2026-11-26T09:47:13+05:30",
   "orders": "2026-11-26T09:35:37+05:30",
-  "gtt_scan": "2026-11-26T09:35:37+05:30"
+  "gtt_scan": "2026-11-26T09:47:13+05:30"
  },
  "stale_inputs": [],
- "open_legs": 108,
- "triggered_gtts": 1,
+ "open_legs": 116,
+ "triggered_gtts": 2,
  "findings": [
   {
    "section": "B",
@@ -328,90 +328,42 @@
   {
    "section": "C",
    "severity": "WARN",
-   "symbol": "ENRIN",
-   "tradingsymbol": "ENRIN26DEC2600PE",
-   "concern": "No active buy-back GTT (premium 17.8, sold 19.25)",
+   "symbol": "APOLLOHOSP",
+   "tradingsymbol": "APOLLOHOSP26DEC8400PE",
+   "concern": "No active buy-back GTT (premium 40, sold 39.175)",
    "action": "Place the protective GTT (zerodha-gtt-order)"
   },
   {
    "section": "C",
    "severity": "WARN",
-   "symbol": "FORTIS",
-   "tradingsymbol": "FORTIS26DEC740PE",
-   "concern": "No active buy-back GTT (premium 6.4, sold 6.55)",
+   "symbol": "DABUR",
+   "tradingsymbol": "DABUR26DEC375PE",
+   "concern": "No active buy-back GTT (premium 2.3, sold 2.05)",
    "action": "Place the protective GTT (zerodha-gtt-order)"
   },
   {
    "section": "C",
    "severity": "WARN",
-   "symbol": "HDFCBANK",
-   "tradingsymbol": "HDFCBANK26DEC790PE",
-   "concern": "No active buy-back GTT (premium 5.85, sold 6.05)",
+   "symbol": "GODREJCP",
+   "tradingsymbol": "GODREJCP26DEC870PE",
+   "concern": "No active buy-back GTT (premium 6.7, sold 6.7)",
    "action": "Place the protective GTT (zerodha-gtt-order)"
   },
   {
    "section": "C",
    "severity": "WARN",
-   "symbol": "MAZDOCK",
-   "tradingsymbol": "MAZDOCK26DEC2100CE",
-   "concern": "No active buy-back GTT (premium 10.75, sold 9.6)",
+   "symbol": "SHRIRAMFIN",
+   "tradingsymbol": "SHRIRAMFIN26DEC860PE",
+   "concern": "No active buy-back GTT (premium 5.95, sold 6.45)",
    "action": "Place the protective GTT (zerodha-gtt-order)"
   },
   {
-   "section": "C",
+   "section": "D",
    "severity": "WARN",
-   "symbol": "NATIONALUM",
-   "tradingsymbol": "NATIONALUM26DEC345CE",
-   "concern": "No active buy-back GTT (premium 1.75, sold 1.8)",
-   "action": "Place the protective GTT (zerodha-gtt-order)"
-  },
-  {
-   "section": "C",
-   "severity": "WARN",
-   "symbol": "NMDC",
-   "tradingsymbol": "NMDC26DEC77CE",
-   "concern": "No active buy-back GTT (premium 0.35, sold 0.35)",
-   "action": "Place the protective GTT (zerodha-gtt-order)"
-  },
-  {
-   "section": "C",
-   "severity": "WARN",
-   "symbol": "PREMIERENE",
-   "tradingsymbol": "PREMIERENE26DEC940CE",
-   "concern": "No active buy-back GTT (premium 4.15, sold 4)",
-   "action": "Place the protective GTT (zerodha-gtt-order)"
-  },
-  {
-   "section": "C",
-   "severity": "WARN",
-   "symbol": "TORNTPHARM",
-   "tradingsymbol": "TORNTPHARM26DEC4600PE",
-   "concern": "No active buy-back GTT (premium 19.95, sold 19.8)",
-   "action": "Place the protective GTT (zerodha-gtt-order)"
-  },
-  {
-   "section": "F",
-   "severity": "HIGH",
    "symbol": "APLAPOLLO",
    "tradingsymbol": "APLAPOLLO26DEC1920CE",
-   "concern": "G1 STALE: No open position on this contract (closed or expired): if it triggers it BUYS a new long position (GTT 346355154)",
-   "action": "Delete this GTT"
-  },
-  {
-   "section": "F",
-   "severity": "HIGH",
-   "symbol": "NATIONALUM",
-   "tradingsymbol": "NATIONALUM26DEC280PE",
-   "concern": "G1 STALE: No open position on this contract (closed or expired): if it triggers it BUYS a new long position (GTT 345419621)",
-   "action": "Delete this GTT"
-  },
-  {
-   "section": "F",
-   "severity": "HIGH",
-   "symbol": "NMDC",
-   "tradingsymbol": "NMDC26DEC62PE",
-   "concern": "G1 STALE: No open position on this contract (closed or expired): if it triggers it BUYS a new long position (GTT 345641519)",
-   "action": "Delete this GTT"
+   "concern": "GTT 346355154 fired today (09:40) but no buy-back order from a GTT is in today's order list",
+   "action": "Check the order book in Kite"
   },
   {
    "section": "G",

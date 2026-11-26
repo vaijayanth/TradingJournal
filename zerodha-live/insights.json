@@ -1,9 +1,9 @@
 {
- "as_of": "26 Nov 09:45 (market data 25 Nov close, positions live)",
- "written_at": "2026-11-26T09:36:15+05:30",
+ "as_of": "26 Nov 09:50 (positions and GTTs live)",
+ "written_at": "2026-11-26T09:47:41+05:30",
  "confidence": "low",
  "maturity": "41 positions opened since the cut-off, 5 closed trades: the swing edge cannot be judged yet.",
- "headline": "The morning's work is done: add-ons filled, the NATIONALUM, NMDC and APLAPOLLO structures were closed and re-opened, and FORTIS plus six other new shorts now need protective GTTs.",
+ "headline": "The 3 stale GTTs are deleted and the 8 new shorts are protected; 4 more shorts opened since (SHRIRAMFIN, DABUR, APOLLOHOSP, GODREJCP) still need GTTs.",
  "points": [
   {
    "label": "Signals",
@@ -11,11 +11,11 @@
   },
   {
    "label": "Options process",
-   "text": "You closed NATIONALUM, NMDC and APLAPOLLO and opened new structures: FORTIS 740/720 PE, HDFCBANK 790/770 PE, TORNTPHARM 4600/4500 PE (bull put spreads) and calls on NATIONALUM 345, NMDC 77, MAZDOCK 2100 and PREMIERENE 940. The ENRIN stop GTT fired cleanly and you closed the hedge. 8 new shorts have no GTT and 3 old GTTs are stale and would BUY a new long if triggered."
+   "text": "GTT coverage is 73 contracts with 0 scan findings: the 3 stale GTTs (APLAPOLLO 1920CE, NATIONALUM 280PE, NMDC 62PE) were deleted and two-leg GTTs were placed on ENRIN, FORTIS, HDFCBANK, MAZDOCK, NATIONALUM 345CE, NMDC 77CE, PREMIERENE and TORNTPHARM. Four spreads opened after the pull still have no GTT. CUMMINSIND's buy-back at 6.35 is resting and its old trailing stop (50) is still live."
   },
   {
    "label": "Risk",
-   "text": "Until the 8 shorts have GTTs, a gap against any of them has no stop. The 3 stale GTTs are the bigger hazard: delete them first. Financial Services is still the heaviest sector; the new HDFCBANK spread adds to it."
+   "text": "Four new short puts (SHRIRAMFIN, DABUR, APOLLOHOSP, GODREJCP) have a hedge but no stop until their GTTs are placed. Financial Services is still above its 40% limit."
   },
   {
    "label": "Book",
@@ -26,5 +26,5 @@
    "text": "5 closed trades against 20.2% CAGR, -21.3% drawdown, 41% win rate: too early to compare. Watch the first 30 closed trades."
   }
  ],
- "action": "Run /zerodha-gtt-order: delete the 3 stale GTTs (APLAPOLLO 1920CE, NATIONALUM 280PE, NMDC 62PE) and place GTTs on the 8 new shorts; cancel the CUMMINSIND trailing GTT once its buy-back at 6.35 fills."
+ "action": "Place GTTs on SHRIRAMFIN 860PE, DABUR 375PE, APOLLOHOSP 8400PE and GODREJCP 870PE with /zerodha-gtt-order; cancel the CUMMINSIND trailing GTT once its buy-back at 6.35 fills."
 }
