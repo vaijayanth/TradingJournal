@@ -1,5 +1,5 @@
 {
- "fetched_at": "2026-11-26T20:04:49+05:30",
+ "fetched_at": "2026-11-26T20:06:01+05:30",
  "source": "mcp__dhan_mcp__orderbook_agent_tool list: pending orders",
  "orders": [
   {
@@ -99,6 +99,36 @@
    "qty": 2,
    "order_type": "LIMIT",
    "price": 726.85,
+   "status": "PENDING",
+   "amo": true
+  },
+  {
+   "order_id": "2252611269649",
+   "symbol": "DIXON",
+   "side": "BUY",
+   "qty": 1,
+   "order_type": "LIMIT",
+   "price": 12972.35,
+   "status": "PENDING",
+   "amo": true
+  },
+  {
+   "order_id": "3252611269538",
+   "symbol": "HCLTECH",
+   "side": "BUY",
+   "qty": 2,
+   "order_type": "LIMIT",
+   "price": 1468.6,
+   "status": "PENDING",
+   "amo": true
+  },
+  {
+   "order_id": "3252611269539",
+   "symbol": "INFY",
+   "side": "BUY",
+   "qty": 2,
+   "order_type": "LIMIT",
+   "price": 1185.0,
    "status": "PENDING",
    "amo": true
   }
