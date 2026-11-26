@@ -1226,6 +1226,15 @@ b.stk, #cc-root td b.stk, #page-dashboard-di b.stk { font-weight:700; }
     </section>
   </div>
 
+  <section class="d2-panel" id="p2-proj-panel" style="display:none">
+    <div class="d2-panel-head">
+      <div><div class="d2-title">Equity projection · next 12 months</div><div class="d2-hint" id="p2-proj-hint">Total P&amp;L (realised + unrealised) from today's book and sizing, simulated from the backtest trades</div></div>
+      <div class="d2-filters" id="p2-proj-tabs"></div>
+    </div>
+    <div class="d2-chart" id="p2-proj-chart" style="height:340px"></div>
+    <div class="p2-body"><table class="p2-table" id="p2-proj-table"></table><div class="d2-title" style="margin:16px 0 6px;font-size:13px">Sizing and capital assumptions</div><table class="p2-table" id="p2-proj-size"></table><div class="d2-note" id="p2-proj-note" style="margin-top:12px"></div></div>
+  </section>
+
   <div class="p2-grid3" id="p2-grid3" style="grid-template-columns:1fr 1fr">
     <section class="d2-panel">
       <div class="d2-panel-head"><div><div class="d2-title">Trade quality</div><div class="d2-hint">Closed-trade statistics · not live positions</div></div></div>
@@ -8819,7 +8828,7 @@ const WS_KEY = 'tj_workspace';
 const WORKSPACES = {
   dhan:    { id: 'dhan',    label: 'ND',      strategy: 'dh252', source: 'MCP snapshot',  status: 'live',
              snapshotUrl: 'dhan-live/dhan_live_signals.json', insightsUrl: 'dhan-live/insights.json', banUrl: 'dhan-live/data/fno_ban.json',
-             ordersUrl: 'dhan-live/data/orders_snapshot.json', crosscheckUrl: 'dhan-live/data/signal_crosscheck.json', guardUrl: 'dhan-live/data/guardrails.json',
+             ordersUrl: 'dhan-live/data/orders_snapshot.json', projectionUrl: 'dhan-live/data/projection.json', crosscheckUrl: 'dhan-live/data/signal_crosscheck.json', guardUrl: 'dhan-live/data/guardrails.json',
              copy: { refreshCmd: '/refresh-dhan', hasCC: true, strat: 'dh252', liveTitle: 'ND Live · dh252',
                      liveSub: "Live ND positions vs. backtester's daily Supertrend / 52-week-high signals", logoA: 'dh', logoB: '252', logoSub: '52-week-high swing',
                      entryShort: '52-week high, trend green', addShort: 'Down 6%+, trend green',
@@ -8835,7 +8844,7 @@ const WORKSPACES = {
              pages: { live: true, covcall: true, dashboard: 'v2', performance: 'v2', analysis: 'v2' } },   // 'v2' = contract-driven page-dashboard2
   zerodha: { id: 'zerodha', label: 'AZ',      strategy: 'F&O Supertrend', source: 'MCP snapshot', status: 'live',
              snapshotUrl: 'zerodha-live/zerodha_live_signals.json', insightsUrl: 'zerodha-live/insights.json', banUrl: 'zerodha-live/data/fno_ban.json',
-             ordersUrl: 'zerodha-live/data/orders_snapshot.json', crosscheckUrl: 'zerodha-live/data/signal_crosscheck.json', guardUrl: 'zerodha-live/data/guardrails.json',
+             ordersUrl: 'zerodha-live/data/orders_snapshot.json', projectionUrl: 'zerodha-live/data/projection.json', crosscheckUrl: 'zerodha-live/data/signal_crosscheck.json', guardUrl: 'zerodha-live/data/guardrails.json',
              ccUrl: 'zerodha-live/covered_call_signals.json',
              cfg: { staleDays: 3, addTriggerPct: -6, addCooldownDays: 7, addFraction: 0.1,
                     bt: { label: '10-yr backtest · Rs30L start · Rs20k + Rs5k ladder · flip-today entry · 6% on idle cash', cagr: 20.21, maxDd: -21.32, winRate: 41.2, pf: 1.75, avgWin: 21.0, avgLoss: -6.8, holdWin: 106, holdLoss: 36, maxPos: 136, trades: 3656 } },
@@ -11237,6 +11246,7 @@ function p2Render(d) {
   set('p2-k-closed', closedFy.length);
 
   document.getElementById('p2-chart').innerHTML = d2CurveSvg(d, 'p2');
+  p2Projection(d);
 
   // Monthly returns
   const ms = p2MonthSums(ser), keys = Object.keys(ms).sort();
@@ -11310,6 +11320,59 @@ function p2Render(d) {
   set('p2-foot', `${ws.label} workspace · ${ws.strategy} · fixed starting capital of ${base ? dhFmtRs(base) : '—'} (deposits ignored). Net P&L combines realised and open-book MTM; closed trades come from ${dhCopy().closedSrc || 'the recorded fills'}.`);
 }
 
+
+// ── Equity projection panel (user, 2026-11-26): this workspace's own data/projection.json (compute_projection.py, run by the refresh). Information only.
+WS.proj = WS.proj || {}; WS.projScen = WS.projScen || 'since_2022';
+function p2Projection(d) {
+  const id = WS.id, panel = document.getElementById('p2-proj-panel'); if (!panel) return;
+  const url = (WORKSPACES[id] || {}).projectionUrl;
+  if (!url) { panel.style.display = 'none'; return; }
+  const draw = j => { if (id !== WS.id) return; p2ProjDraw(d, j); };
+  if (WS.proj[id]) { draw(WS.proj[id]); return; }
+  fetch(url + '?t=' + Date.now()).then(r => r.ok ? r.json() : Promise.reject()).then(j => { WS.proj[id] = j; draw(j); }).catch(() => { if (id === WS.id) panel.style.display = 'none'; });
+}
+function p2ProjSet(k) { WS.projScen = k; const j = WS.proj[WS.id]; if (j && WS.data[WS.id]) p2ProjDraw(WS.data[WS.id], j); }
+function p2ProjDraw(d, j) {
+  const panel = document.getElementById('p2-proj-panel'); panel.style.display = '';
+  const sc = j.scenarios[WS.projScen] || j.scenarios.since_2022, keys = Object.keys(j.scenarios);
+  document.getElementById('p2-proj-tabs').innerHTML = keys.map(k => `<button class="d2-chip d2-chip-btn" style="${k === WS.projScen ? 'background:var(--surface2);font-weight:700' : ''}" onclick="p2ProjSet('${k}')">${dhEsc(j.scenarios[k].label)}</button>`).join('');
+  const act = (d.equity || []).filter(r => r && r.pnl != null).map(r => ({ t: new Date(r.date + 'T00:00:00').getTime(), y: r.pnl }));
+  const fut = j.dates.map((x, i) => ({ t: new Date(x + 'T00:00:00').getTime(), lo: sc.p10[i], mid: sc.p50[i], hi: sc.p90[i] }));
+  const W = 1150, H = 300, L = 66, R = 22, T = 16, B = 26;
+  const ys = act.map(p => p.y).concat(fut.map(p => p.lo), fut.map(p => p.hi), [0, j.stop_out.pnl_if_all_hit_line]);
+  let lo = Math.min(...ys), hi = Math.max(...ys); const pad = (hi - lo) * 0.08 || 1000; lo -= pad; hi += pad;
+  const t0 = act.length ? act[0].t : fut[0].t, t1 = fut[fut.length - 1].t;
+  const X = t => L + (t - t0) / (t1 - t0) * (W - L - R), Y = v => T + (1 - (v - lo) / (hi - lo)) * (H - T - B);
+  let g = '';
+  for (let i = 0; i <= 4; i++) { const v = lo + (hi - lo) * i / 4, y = Y(v); g += `<path d="M${L} ${y.toFixed(1)}H${W - R}" stroke="var(--border)" stroke-dasharray="3 5"/><text x="${L - 7}" y="${(y + 3).toFixed(1)}" text-anchor="end" fill="var(--text-muted)" font-size="10">${d2Compact(v)}</text>`; }
+  const band = fut.map((p, i) => (i ? 'L' : 'M') + X(p.t).toFixed(1) + ' ' + Y(p.hi).toFixed(1)).join(' ') + ' ' + fut.slice().reverse().map(p => 'L' + X(p.t).toFixed(1) + ' ' + Y(p.lo).toFixed(1)).join(' ') + 'Z';
+  const line = (arr, f) => arr.map((p, i) => (i ? 'L' : 'M') + X(p.t).toFixed(1) + ' ' + Y(f(p)).toFixed(1)).join(' ');
+  let ticks = ''; for (let i = 0; i <= 5; i++) { const t = t0 + (t1 - t0) * i / 5; ticks += `<text x="${X(t).toFixed(1)}" y="${H - 8}" text-anchor="${i === 0 ? 'start' : i === 5 ? 'end' : 'middle'}" fill="var(--text-muted)" font-size="10">${new Date(t).toLocaleDateString('en-IN', { month: 'short', year: '2-digit' })}</text>`; }
+  const floorY = Y(j.stop_out.pnl_if_all_hit_line), zeroY = Y(0);
+  document.getElementById('p2-proj-chart').innerHTML = `<svg viewBox="0 0 ${W} ${H}" width="100%" role="img" aria-label="Equity projection">${g}
+    <path d="M${L} ${zeroY.toFixed(1)}H${W - R}" stroke="var(--text-muted)" stroke-width="1"/>
+    <path d="M${L} ${floorY.toFixed(1)}H${W - R}" stroke="var(--red)" stroke-width="1" stroke-dasharray="4 4"/><text x="${W - R}" y="${(floorY - 4).toFixed(1)}" text-anchor="end" fill="var(--red)" font-size="10">stop-out floor ${d2Compact(j.stop_out.pnl_if_all_hit_line)}</text>
+    <path d="${band}" fill="var(--accent)" opacity="0.15"/>
+    <path d="${line(fut, p => p.lo)}" fill="none" stroke="var(--accent)" stroke-width="1" stroke-dasharray="3 3"/><path d="${line(fut, p => p.hi)}" fill="none" stroke="var(--accent)" stroke-width="1" stroke-dasharray="3 3"/>
+    <path d="${line(fut, p => p.mid)}" fill="none" stroke="var(--accent)" stroke-width="2.2"/>
+    ${act.length > 1 ? `<path d="${line(act, p => p.y)}" fill="none" stroke="var(--green)" stroke-width="2.4"/>` : ''}${ticks}</svg>`;
+  const row = (lbl, i) => `<tr><td>${lbl}</td><td class="${d2Cls(sc.p10[i])}">${d2Signed(sc.p10[i])}</td><td class="${d2Cls(sc.p50[i])}"><b>${d2Signed(sc.p50[i])}</b></td><td class="${d2Cls(sc.p90[i])}">${d2Signed(sc.p90[i])}</td></tr>`;
+  document.getElementById('p2-proj-table').innerHTML = `<thead><tr><th>Total P&amp;L at</th><th>Bad year (P10)</th><th>Median</th><th>Good year (P90)</th></tr></thead><tbody>${row('3 months', 3)}${row('6 months', 6)}${row('12 months', 12)}</tbody>`;
+  const z = j.sizing || {}, kv = (k, v) => `<tr><td>${k}</td><td style="text-align:right">${v}</td></tr>`;
+  document.getElementById('p2-proj-size').innerHTML = '<tbody>'
+    + kv('Capital base', dhFmtRs(j.base) + ' (fixed; deposits ignored)')
+    + kv('Position size now', `<b>${dhFmtRs(z.effective_tier_rs)}</b> per new position (base ${dhFmtRs(z.base_tier_rs)}${z.doubled ? ' × 2: doubled while the book has 100+ positions ever opened and P&L is not negative' : ''})`)
+    + kv('Size ladder', `+${dhFmtRs(z.increment_rs)} for every ${z.increment_per_trades} ${dhEsc(z.ladder_basis)} · counted so far ${z.trades_counted_now} · next step at ${z.next_step_at_trades}`)
+    + kv('Invested now', `${dhFmtRs(z.invested_now)} in ${j.open_positions} positions (average ${dhFmtRs(z.avg_position_now)} each)`)
+    + kv('New entries per year (assumed)', `${sc.entries_per_year}, from the backtest rate · after the cash limit about ${sc.new_trades_12m_median} are taken and ${sc.entries_skipped_no_cash_12m_median} skipped for lack of cash`)
+    + kv('Position size in 12 months', `<b>${dhFmtRs(sc.tier_at_12m_median)}</b> (median) as closed trades pile up and the ladder steps up`)
+    + kv('Peak invested', `about ${sc.peak_invested_pct_of_base}% of the capital base (cash-limited, no leverage)`)
+    + '</tbody>';
+  const base = j.base || 0, med = sc.p50[12];
+  document.getElementById('p2-proj-note').innerHTML = `Today ${d2Signed(j.pnl_now)} · ${j.open_positions} open positions · tier ${dhFmtRs(j.tier_now)} · about ${sc.entries_per_year} new entries a year · chance of a loss at 12 months ${sc.prob_loss_12m_pct}% · median 12-month result is ${base ? (med / base * 100).toFixed(1) + '% of the ' + dhFmtRs(base) + ' base' : '—'}.<br>`
+    + `<b>Stop-out floor:</b> if every open position closed on its own Supertrend line today (${j.positions_with_stop_line} of ${j.open_positions} have a green line), total P&amp;L would be about ${d2Signed(j.stop_out.pnl_if_all_hit_line)} (a further ${d2Signed(j.stop_out.extra_loss_if_all_hit_line)} from here, before any gap).<br>`
+    + `<span style="color:var(--text-muted)">${(j.caveats || []).map(dhEsc).join(' ')} Simulated ${j.runs} runs on ${dhEsc(j.market_data_date)} data. Information only.</span>`;
+}
 function p2Ensure() {
   const id = WS.id;
   if (WS.data[id]) { p2Render(WS.data[id]); return; }
