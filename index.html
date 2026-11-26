@@ -1051,6 +1051,9 @@ tr.cc-det td { background:var(--surface2); white-space:normal !important; paddin
 .dhm-tab { background:transparent; border:1px solid transparent; color:var(--text-secondary, var(--text-muted)); font:inherit; font-size:13px; padding:7px 14px; border-radius:6px; cursor:pointer; white-space:nowrap; }
 .dhm-tab:hover { background:var(--surface2); }
 .dhm-tab.active { background:var(--accent-soft); border-color:var(--accent); color:var(--accent); font-weight:600; }
+#cc-otabs .dhm-tab.dhm-zero:not(.active) { opacity:.55; }
+#cc-otabs .dhm-sep { flex:0 0 1px; background:var(--border); margin:4px 8px; }
+@media (max-width:700px) { #cc-otabs { -webkit-mask-image:linear-gradient(90deg,#000 88%,transparent); mask-image:linear-gradient(90deg,#000 88%,transparent); } #cc-otabs .dhm-tab { min-height:40px; } }
 .dhm-tab .dhm-count { font-family:var(--font-mono); font-size:11px; margin-left:6px; opacity:.75; }
 .dhm-toolbar { display:flex; justify-content:space-between; align-items:flex-end; gap:12px; flex-wrap:wrap; margin-bottom:12px; }
 .dhm-toolbar h3 { margin:0; font-size:15px; font-weight:700; }
@@ -9741,7 +9744,7 @@ function dhGuardGo(id) {
   const step = () => {   // the page renders from the loaded snapshot; wait for its section to exist, then pick the tab
     tries++;
     if (g.page === 'covcall') {
-      const bar = document.getElementById('cc-alert-subs');
+      const bar = document.getElementById('cc-otabs');
       if (!bar && tries < 25) return setTimeout(step, 150);
       try { ccTab('options'); ccOTab('alerts'); } catch (e) {}
       if (bar) {
@@ -10301,7 +10304,7 @@ function ccPick(bar, prefix, keys, name, store) {
   try { localStorage.setItem(store, name); } catch (e) {}
 }
 function ccTab(name) { ccPick('cc-tabs', 'cc-v-', CC_TABS, CC_TABS.includes(name) ? name : 'options', CC_TAB_KEY); }
-function ccOTab(name) { ccPick('cc-otabs', 'cc-ov-', CC_OTABS, CC_OTABS.includes(name) && document.getElementById('cc-ov-' + name) ? name : 'alerts', CC_OTAB_KEY); }
+function ccOTab(name) { ccTop(['legs', 'rules'].includes(name) && document.getElementById('cc-ov-' + name) ? name : 'alerts'); }
 function ccSTab(name) { ccPick('cc-stabs', 'cc-sv-', CC_STABS, CC_STABS.includes(name) ? name : 'entry', CC_STAB_KEY); }
 
 const ccSD = iso => { const m = /^\d{4}-(\d{2})-(\d{2})/.exec(iso || ''); return m ? m[2] + '-' + P2_MONTHS[+m[1] - 1] : '—'; };
@@ -10469,11 +10472,36 @@ const ccKind = t => CC_EXIT_TYPES.includes(t) ? 'exit' : CC_FIX_TYPES.includes(t
 const CC_SEG_LABEL = { exit: 'Exit', fix: 'Fix', entry: 'Entry', all: 'All' };
 const CC_SEG_KEY = 'tj_cc_seg';
 window._ccSeg = window._ccSeg || null;
-function ccActSeg(k) {
+function ccSegShow(k) {
   window._ccSeg = k; try { localStorage.setItem(CC_SEG_KEY, k); } catch (e) {}
-  document.querySelectorAll('#cc-alert-subs button').forEach(b => b.classList.toggle('active', b.dataset.k === k));
   document.querySelectorAll('.cc-asub').forEach(v => { v.style.display = v.dataset.k === k ? '' : 'none'; });
 }
+// Flat top bar (user, 2026-11-26): Exit / Fix / Entry / All sit on the SAME level as Open positions and Rules (the old 'Actions' tab with a second row of sub-tabs is gone).
+// ccTop(key): key is an action segment (exit, fix, entry, all), 'legs' or 'rules'; 'alerts' (old callers, Dashboard jumps) means the current segment.
+function ccTopBar(segs, nLegs, nActAll) {
+  const btn = (k, l, n, hot) => `<button class="dhm-tab${n === 0 ? ' dhm-zero' : ''}" role="tab" aria-selected="false" data-tab="${k}" onclick="ccTop('${k}')">${l}${n == null ? '' : `<span class="dhm-count"${hot ? ' style="color:var(--red)"' : ''}>${n}</span>`}</button>`;
+  const first = segs.length ? segs.map(g => btn(g.k, g.label, g.n, g.k === 'exit' && g.n > 0)).join('') : btn('alerts', 'Actions', nActAll);
+  return `<div class="dhm-tabs" id="cc-otabs" role="tablist" onkeydown="ccTabKey(event)" style="margin-top:14px">` + first + '<span class="dhm-sep" aria-hidden="true"></span>' + btn('legs', 'Open positions', nLegs) + btn('rules', 'Rules', null) + '</div>';
+}
+// Arrow / Home / End move between the tabs (tab pattern)
+function ccTabKey(e) {
+  const t = [...document.querySelectorAll('#cc-otabs .dhm-tab')], i = t.indexOf(document.activeElement);
+  if (i < 0 || !['ArrowLeft', 'ArrowRight', 'Home', 'End'].includes(e.key)) return;
+  e.preventDefault();
+  const n = e.key === 'Home' ? 0 : e.key === 'End' ? t.length - 1 : (i + (e.key === 'ArrowRight' ? 1 : -1) + t.length) % t.length;
+  t[n].focus(); t[n].click();
+}
+function ccTop(key) {
+  const segs = (window._ccSegs || []).map(g => g.k);
+  let k = key === 'alerts' ? (segs.includes(window._ccSeg) ? window._ccSeg : (segs.find(x => x !== 'all' && (window._ccSegN || {})[x] > 0) || segs[0] || 'alerts')) : key;
+  if (!segs.includes(k) && !['alerts', 'legs', 'rules'].includes(k)) k = segs[0] || 'alerts';
+  const view = segs.includes(k) || k === 'alerts' ? 'alerts' : k;
+  if (segs.includes(k)) ccSegShow(k);
+  ['alerts', 'legs', 'rules'].forEach(v => { const el = document.getElementById('cc-ov-' + v); if (el) el.classList.toggle('active', v === view); });
+  document.querySelectorAll('#cc-otabs .dhm-tab').forEach(b => { const on = b.dataset.tab === k; b.classList.toggle('active', on); b.setAttribute('aria-selected', on); b.tabIndex = on ? 0 : -1; if (on && b.scrollIntoView) { try { b.scrollIntoView({ inline: 'nearest', block: 'nearest' }); } catch (e) {} } });
+  try { localStorage.setItem(CC_OTAB_KEY, view); localStorage.setItem('tj_ccz_tab', view); } catch (e) {}
+}
+function ccActSeg(k) { if (document.querySelector('#cc-otabs .dhm-tab[data-tab="' + k + '"]')) ccTop(k); else ccSegShow(k); }
 // jump from the Dashboard: open the segment that holds this alert type and filter it to that type
 function ccAlertSub(type) {
   const k = ccKind(type), id = (window._ccActPfx || '') + '_' + k;
@@ -10527,6 +10555,7 @@ function ccActionsBox(d, pfx, tierRows, showEntry) {
   window._ccTrend = Object.fromEntries((d.stocks || []).filter(s => s.colour).map(s => [s.symbol, s.colour]));   // this broker's Supertrend colours (Trend / Right position columns)
   window._ccActPfx = pfx;
   const all = ccActRows(d, tierRows);
+  window._ccSegs = []; window._ccSegN = {};
   if (!all.length) return `<div class="d2-panel"><div class="d2-panel-head"><div><div class="d2-title">Actions</div></div></div><div class="d2-edge-foot" style="border:0">Nothing to act on: no alerts on the open option legs${showEntry ? ' and no entry signals' : ''}.</div></div>`;
   const segs = ['exit', 'fix'].concat(showEntry ? ['entry', 'all'] : []);
   const n = k => k === 'all' ? all.length : all.filter(r => r.kind === k).length;
@@ -10534,9 +10563,7 @@ function ccActionsBox(d, pfx, tierRows, showEntry) {
   let stored = null; try { stored = localStorage.getItem(CC_SEG_KEY); } catch (e) {}
   const cur = segs.includes(window._ccSeg) ? window._ccSeg : segs.includes(stored) ? stored : (first || segs[0]);
   window._ccSeg = cur;
-  const bar = `<div class="dhm-tabs" id="cc-alert-subs" style="margin:10px 0 0">` + segs.map(k => {
-    const c = n(k), hot = k === 'exit' && c > 0;
-    return `<button class="dhm-tab${k === cur ? ' active' : ''}" data-k="${k}" onclick="ccActSeg('${k}')">${CC_SEG_LABEL[k]}<span class="dhm-count"${hot ? ' style="color:var(--red)"' : ''}>${c}</span></button>`; }).join('') + '</div>';
+  window._ccSegs = segs.map(k => ({ k, label: CC_SEG_LABEL[k], n: n(k) })); window._ccSegN = Object.fromEntries(segs.map(k => [k, n(k)]));
   const typeFilters = rows => [['all', 'All types', () => true]].concat(CC_TYPE_ORDER.filter(t => rows.some(r => r.type === t)).map(t => [t, t, r => r.type === t]));
   const entryFilters = rows => [['all', 'All entry signals', () => true]].concat([1, 2, 3, 4, 5].filter(t => rows.some(r => r.tier === t)).map(t => ['t' + t, 'Tier ' + t, r => r.tier === t]),
     [['put', 'BPS', r => r.desired === 'PUT_SPREAD' || /BPS|bull put/i.test(r.action || '')], ['call', 'Sell call', r => r.desired === 'CALL'], ['clear', 'Clear to open (no event alert)', r => !(r.lvl >= 2)], ['alert', 'Has an event alert', r => r.lvl >= 2]]);
@@ -10556,7 +10583,7 @@ function ccActionsBox(d, pfx, tierRows, showEntry) {
       filters: k === 'entry' ? entryFilters(rs) : typeFilters(rs),
       group: k === 'all' ? (r => r.kind) : undefined, groups: k === 'all' ? [{ key: 'exit', label: 'Exit' }, { key: 'fix', label: 'Fix' }, { key: 'entry', label: 'Entry' }] : undefined,
       cols: ccActCols() }) + '</div>'; }).join('');
-  return bar + body;
+  return body;
 }
 // Option entry priority: stocks that need an option trade (ENTER / FLIP), most recent Supertrend flip first
 const CC_NEW_FLIP_DAYS = 5;
@@ -10629,6 +10656,7 @@ function ccTierRows(d) {
   const out = [];
   (d.stocks || []).forEach(s => {
     if ((s.legs || []).length || s.flip_date == null || s.flip_trading_days == null) return;   // open option legs: not an entry candidate
+    if (R.min_entry_price && (s.spot || 0) < R.min_entry_price) return;   // AZ (user, 2026-11-26): no option entry suggestions on stocks priced below Rs50 (config rules.min_entry_price)
     const e = (s.expiries || [])[0] || (d.show_expiries && d.show_expiries[0] && s.lot ? { expiry: d.show_expiries[0], lot: s.lot } : null); if (!e || !e.lot) return;
     const td = s.flip_trading_days, cal = diff(md, day(s.flip_date));
     const tier = td === 0 ? 1 : td <= 5 ? 2 : cal <= 30 ? 3 : cal <= 90 ? 4 : 5;   // tier 5 = flipped more than 90 days ago
@@ -10854,7 +10882,7 @@ function ccOptionsView(d) {
   const kpis = a2Metrics([
     ['Signals', `${S.filter(s => s.desired === 'CALL').length} call · ${S.filter(s => s.desired === 'PUT_SPREAD').length} BPS`, `${S.length} stocks · red = sell call, green = BPS` + ((d.rules || {}).rsi_override === false ? '' : ` · RSI overrides: ${S.filter(s => s.rsi != null && (s.rsi > (d.rules || {}).rsi_sell_call_above || s.rsi < (d.rules || {}).rsi_sell_put_below)).length}`)],
     ['Open option legs', legs.length, `${shorts.length} short · ${legs.length - shorts.length} hedge`],
-    ['Act now', ccActNow(d), 'Exit, 3× premium, beyond strike, profit exit (other alerts are in the Actions tab)', ccActNowBad(d) ? 'neg' : ''],
+    ['Act now', ccActNow(d), 'Exit, 3× premium, beyond strike, profit exit (other alerts are in the Exit / Fix / Entry tabs)', ccActNowBad(d) ? 'neg' : ''],
     ['Nearest short strike', nearest ? ccSigned(nearest.dist_pct) : '—', nearest ? `${nearest.symbol} ${ccStrike(nearest.strike)}${nearest.type} · ${ccSD(nearest.expiry)}` : 'No short legs', nearest && Math.abs(nearest.dist_pct) < 5 ? 'neg' : ''],
     ['Options MTM', (mtm >= 0 ? '+' : '−') + dhFmtRs(Math.abs(mtm)), 'Unrealised on the legs', mtm >= 0 ? 'pos' : 'neg'],
   ]);
@@ -10895,7 +10923,7 @@ function ccOptionsView(d) {
     ].concat(ccRulesCommon(R, ['Stop protection', 'Each short should have a super order stop leg (about 3× the sold price); an orphaned or missing one raises Invalid stop order / No stop placed (scan_super_orders.py, the dhan-superorder skill)']))));
   const other = (d.other_positions || []).length ? ` Other option positions not in this universe: ${d.other_positions.join(', ')}.` : '';
   const foot = `<div class="d2-edge-foot" style="border:0">Market data ${dhFmtDate(d.market_data_date)} · deltas are estimates (Black-Scholes from the chain’s IV, no dividends) · option chains loaded: ${Object.keys(d.chains_loaded || {}).join(', ') || 'none'}.${other}</div>`;
-  const bar = ccTabBar('cc-otabs', [['alerts', 'Actions', nAct], ['legs', 'Open positions', trades.length], ['rules', 'Rules', null]], 'ccOTab');
+  const bar = ccTopBar(window._ccSegs || [], trades.length, nAct);
   const allStocks = `<details class="cc-allstocks" style="margin-top:12px"><summary style="cursor:pointer;font-size:12.5px;color:var(--text-secondary)">All stocks (${CC_T.signals.def.rows.length}): trend, flip, open legs, events</summary>${sigT}</details>`;
   return ccStrikeBanner(d) + ccBookCheck(d) + kpis + bar + `<div id="cc-ov-alerts" class="a2-view">${alertsT}</div><div id="cc-ov-legs" class="a2-view">${legT}${allStocks}</div><div id="cc-ov-rules" class="a2-view">${rulesPanel}${foot}</div>`;
 }
@@ -11001,7 +11029,7 @@ function ccSharesView(d) {
 
 // Zerodha covered call: signals only (no option quotes / positions are pulled), every Nifty F&O stock
 const CCZ_TABS = ['alerts', 'signals', 'legs', 'rules'];
-function ccZTab(name) { ccPick('cc-otabs', 'cc-ov-', CCZ_TABS, CCZ_TABS.includes(name) && document.getElementById('cc-ov-' + name) ? name : 'alerts', 'tj_ccz_tab'); }
+function ccZTab(name) { ccTop(['legs', 'rules'].includes(name) && document.getElementById('cc-ov-' + name) ? name : 'alerts'); }
 function ccZerodhaView(d) {
   const S = d.stocks || [], R = d.rules || {}, C = d.counts || {};
   const di = WS.id === 'icici', rcmd = di ? '/refresh-icici' : '/refresh-zerodha', dir = di ? 'icici-live' : 'zerodha-live', who = di ? 'DI' : 'AZ';
@@ -11012,7 +11040,7 @@ function ccZerodhaView(d) {
   const kpis = a2Metrics([
     ['Entry signals', tierRows.length, `Tier 1: ${tn(1)} · Tier 2: ${tn(2)} · Tier 3: ${tn(3)} · Tier 4: ${tn(4)} · Tier 5: ${tn(5)} · Supertrend only, open-leg stocks left out`],
     ['Open option legs', (d.positions || {}).legs || 0, 'Expiries from ' + dhFmtDate((d.positions || {}).track_from) + ' · ' + ((d.positions || {}).ignored_legs || 0) + ' earlier legs ignored'],
-    ['Act now', ccActNow(d), 'Exit, 3× premium, beyond strike, profit exit (other alerts are in the Actions tab)', ccActNowBad(d) ? 'neg' : ''],
+    ['Act now', ccActNow(d), 'Exit, 3× premium, beyond strike, profit exit (other alerts are in the Exit / Fix / Entry tabs)', ccActNowBad(d) ? 'neg' : ''],
     ['Nearest short strike', zNear ? ccSigned(zNear.dist_pct) : '—', zNear ? `${zNear.symbol} ${ccStrike(zNear.strike)}${zNear.type} · ${ccSD(zNear.expiry)}` : 'No short legs', zNear && Math.abs(zNear.dist_pct) < 5 ? 'neg' : ''],
     ['Options MTM', (zMtm >= 0 ? '+' : '−') + dhFmtRs(Math.abs(zMtm)), 'Unrealised on the legs (broker P&L)', zMtm >= 0 ? 'pos' : 'neg'],
   ]);
@@ -11052,7 +11080,7 @@ function ccZerodhaView(d) {
       ['Universe', di ? 'The DI dividend universe: only the stocks with listed options appear here' : 'All Nifty F&O stocks except ' + ((d.excluded || []).join(', ') || 'none')],
     ]).concat(ccRulesCommon(R, di ? ['Stop protection', 'Not tracked for DI: place and watch the 3× stop in ICICIdirect'] : ['Stop protection', 'Each short should have a buy-back GTT (stop 3× + profit target); an invalid or missing one raises Invalid GTT / No GTT placed (scan_gtts.py, the zerodha-gtt-order skill)']))));
   const foot = `<div class="d2-edge-foot" style="border:0">Market data ${dhFmtDate(d.market_data_date)} · no option quotes are pulled, so strikes and premiums for new trades are not shown · positions fetched ${(d.positions || {}).fetched_at ? dhFmtDate(String(d.positions.fetched_at).slice(0, 10)) : (di ? 'never (upload not connected yet)' : 'never (run /refresh-zerodha)')}.</div>`;
-  const bar = ccTabBar('cc-otabs', [['alerts', 'Actions', nAct]].concat([['legs', 'Open positions', trades.length], ['rules', 'Rules', null]]), 'ccZTab');
+  const bar = ccTopBar(window._ccSegs || [], trades.length, nAct);
   const allStocks = `<details class="cc-allstocks" style="margin-top:12px"><summary style="cursor:pointer;font-size:12.5px;color:var(--text-secondary)">All stocks (${S.length}): trend, flip, open legs, events</summary>${sigT}</details>`;
   return ccStrikeBanner(d) + ccBookCheck(d) + kpis + bar + `<div id="cc-ov-alerts" class="a2-view">${alertsT}</div><div id="cc-ov-legs" class="a2-view">${legT}${allStocks}</div><div id="cc-ov-rules" class="a2-view">${rulesPanel}${foot}</div>`;
 }

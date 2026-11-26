@@ -8,6 +8,7 @@ description: Read-only scan of the AZ (Zerodha) option ENTRY signals, in 5 tiers
 This skill only READS and REPORTS. It never places, modifies or cancels an order and never writes a GTT. Placing a trade is `/zerodha-option-order` (user-invoked only, ON HOLD: never suggest it); protecting it is `/zerodha-gtt-order`. AZ only: ND (Dhan) has its own signals and shares no code or data with this skill; never read from `dhan-live/`.
 
 ## The rules (user, 2026-11-16)
+- **Price floor (user, 2026-11-26): no option entry suggestions on stocks whose CMP is below Rs50** (`zerodha-live/data/cc_config.json` `rules.min_entry_price`; the script drops them and prints how many). Never add one back by hand.
 - **Supertrend only. RSI is NOT used** (the old RSI > 70 / < 30 override is ignored here). Green = BULL PUT SPREAD (sell a put, buy the hedge put 2 listed strikes lower); red = SELL CALL (no hedge on the call side, by the user's choice).
 - **Tiers** (by when the CURRENT Supertrend colour began; each stock appears once, in the freshest tier it fits):
   - **Tier 1:** flipped on the latest published session ("today").

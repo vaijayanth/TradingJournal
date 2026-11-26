@@ -113,13 +113,17 @@ def main():
         if lg:
             held_rows.append(held_row(s, lg, mdate))
     held_rows.sort(key=lambda r: (r["status"] != "FLIP", r["symbol"]))
-    skipped = {"open option legs": 0, "no expiry/lot": 0}
+    min_px = cfg["rules"].get("min_entry_price")      # user, 2026-11-26: AZ does not suggest option entries on stocks priced below Rs50
+    skipped = {"open option legs": 0, "no expiry/lot": 0, "price below minimum": 0}
     for s in c["stocks"]:
         if s["symbol"] in held:
             skipped["open option legs"] += 1
             continue
         fd, td = s.get("flip_date"), s.get("flip_trading_days")
         if fd is None or td is None:
+            continue
+        if min_px and (s.get("spot") or 0) < min_px:
+            skipped["price below minimum"] += 1
             continue
         cal = (mdate - date.fromisoformat(fd)).days
         t = tier_of(td, cal)
@@ -142,7 +146,7 @@ def main():
         print(json.dumps({"market_data_date": c["market_data_date"], "positions_fetched_at": pos.get("fetched_at"), "tiers": tiers, "skipped": skipped, "held_stocks": sorted(held), "held_table": held_rows}, indent=1))
         return
     print(f"AZ option entry signals - Supertrend flips only (no RSI). Market data {c['market_data_date']}; open option legs fetched {pos.get('fetched_at')}.")
-    print(f"Left out: {len(held)} stocks with open option legs; {skipped['no expiry/lot']} with no listed expiry/lot.")
+    print(f"Left out: {len(held)} stocks with open option legs; {skipped['no expiry/lot']} with no listed expiry/lot" + (f"; {skipped['price below minimum']} priced below Rs{min_px:g}." if min_px else "."))
     print(f"ALERT: '!!' = event inside the {close_days}-day close window now; '!' = window opens before the expiry (close early); plain = event within 60 days. (est.) = date estimated.\n")
     if held_rows:
         print("== Stocks with open option legs: Supertrend signal and whether the open structure still matches it ==")
