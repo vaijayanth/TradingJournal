@@ -1,8 +1,8 @@
 {
-  "generated_at": "2026-11-26T14:07:06.477750+00:00",
+  "generated_at": "2026-11-26T14:43:45.834292+00:00",
   "market_data_date": "2026-11-26",
   "live_prices_at": "2026-11-26T19:36:30+05:30",
-  "super_scan_at": "2026-11-26T15:07:42+05:30",
+  "super_scan_at": "2026-11-26T20:13:42+05:30",
   "as_of": "2026-11-26",
   "rules": {
     "short_call_delta": 0.1,
@@ -1006,17 +1006,6 @@
       "concern": "Supertrend GREEN but the short call is still open",
       "action": "Close it and open the bull put spread",
       "text": "BSE: Supertrend is GREEN: the open short call (4200CE 2026-12-29) is the opposite of the colour rule - close it and open the bull put spread."
-    },
-    {
-      "level": "WARN",
-      "type": "No stop placed",
-      "symbol": "HCLTECH",
-      "expiry": "2026-12-29",
-      "strike": 1280.0,
-      "opt_type": "PE",
-      "concern": "No Stop: No super order matches this short (400 @ 7.15): no stop protects it",
-      "action": "Close and re-enter as a super order, or use a daily stop order",
-      "text": "HCLTECH: No super order matches this short (400 @ 7.15): no stop protects it"
     }
   ],
   "events_file_at": "2026-11-25T15:35:41.860688+00:00",
