@@ -10390,7 +10390,7 @@ const ccTabBar = (id, tabs, extra) => `<div class="dhm-tabs" id="${id}" role="ta
   `<button class="dhm-tab" data-tab="${k}" onclick="${extra}('${k}')">${l}${n == null ? '' : `<span class="dhm-count">${n}</span>`}</button>`).join('') + '</div>';
 
 // Alert type pill: the label is the alert's own type (3× premium, Near strike, Beyond strike, No GTT placed ...), the colour follows its severity
-const CC_TYPE_ORDER = ['Exit', 'F&O ban', '3× premium', 'Near 3× stop', 'Through hedge', 'Beyond strike', 'Expiry risk', 'Event close', 'Near strike', 'Profit Exit', 'Invalid GTT', 'Invalid stop order', 'No GTT placed', 'No stop placed', 'No hedge', 'Partly hedged', 'Leftover hedge', 'New trade'];
+const CC_TYPE_ORDER = ['Exit', 'F&O ban', '3× premium', 'Near 3× stop', 'Through hedge', 'Beyond strike', 'Expiry risk', 'Event close', 'Near strike', 'Profit Exit', 'Invalid GTT', 'Invalid stop order', 'No GTT placed', 'No stop placed', 'No hedge', 'Partly hedged', 'Over-hedged', 'Leftover hedge', 'New trade'];
 function ccTypePill(a) {
   const m = { EXIT: ['var(--red-soft)', 'var(--red)'], BREACH: ['var(--red)', '#fff'], WARN: ['var(--amber-soft, var(--surface2))', 'var(--amber)'], ENTER: ['rgba(76,134,255,.16)', 'var(--accent)'], PROFIT: ['var(--green-soft)', 'var(--green)'] };
   const [bg, fg] = m[a.level] || ['var(--surface2)', 'var(--text-muted)'];
@@ -10411,6 +10411,7 @@ function ccShortAlert0(r) {
     case 'F&O ban': return ['In F&O ban: close only', 'Close the structure'];
     case 'Near strike': x = m(/([\d.]+)% from/); return [x ? `${x[1]}% from strike` : 'Near strike', 'Watch'];
     case 'No hedge': case 'Partly hedged': x = m(/(\d+) of (\d+) qty uncovered/); return [x ? `${x[1]} of ${x[2]} uncovered` : 'Not fully hedged', /shares/i.test(a) ? 'Buy hedge or hold shares' : 'Buy hedge'];
+    case 'Over-hedged': x = m(/(\d+) of (\d+) hedge qty/); return [x ? `${x[1]} of ${x[2]} hedge qty covers nothing` : 'More hedge than short', 'Sell the extra long'];
     case 'Leftover hedge': x = m(/Long ([\d.]+)(PE|CE) \((\d+) qty\) (has no short|is not beyond)/); return [x ? (x[4] === 'has no short' ? `Long ${x[1]}${x[2]} · no short` : `Long ${x[1]}${x[2]} · hedges nothing`) : 'Long leg hedges nothing', a || 'Sell it or let it expire'];
     case 'Expiry risk': x = m(/(\d+)d before expiry/); return [x ? `In the money · ${x[1]}d to expiry` : 'In the money near expiry', /today/i.test(a) ? 'Close today' : 'Close before expiry'];
     case 'No GTT placed': x = /Place GTT at ([\d.]+)/.exec(a); return ['No buy-back GTT', x ? `Place GTT at ${x[1]}` : 'Place GTT'];
@@ -10448,7 +10449,7 @@ const ccAlertCols = withType => (withType ? [{ h: 'Alert type', v: r => ccTypeOr
 // ── ACTIONS tab (user, 2026-11-17): alerts AND entry signals in one place, three segments in workflow order: Exit -> Fix -> Entry (+ All) ──
 // Exit = close or watch an open leg; Fix = stop / GTT / hedge problems; Entry = new trades (the 5 tiers become a Tier column + filter).
 const CC_EXIT_TYPES = ['Exit', 'F&O ban', '3× premium', 'Near 3× stop', 'Through hedge', 'Beyond strike', 'Expiry risk', 'Event close', 'Near strike', 'Profit Exit'];
-const CC_FIX_TYPES = ['Invalid GTT', 'Invalid stop order', 'No GTT placed', 'No stop placed', 'No hedge', 'Partly hedged', 'Leftover hedge'];
+const CC_FIX_TYPES = ['Invalid GTT', 'Invalid stop order', 'No GTT placed', 'No stop placed', 'No hedge', 'Partly hedged', 'Over-hedged', 'Leftover hedge'];
 const ccKind = t => CC_EXIT_TYPES.includes(t) ? 'exit' : CC_FIX_TYPES.includes(t) ? 'fix' : 'entry';
 const CC_SEG_LABEL = { exit: 'Exit', fix: 'Fix', entry: 'Entry', all: 'All' };
 const CC_SEG_KEY = 'tj_cc_seg';
@@ -10798,6 +10799,7 @@ function ccBookCheck(d) {
     });
     al.filter(a => a.symbol === s.symbol).forEach(a => {
       const sa = ccShortAlert(a);
+      if (a.type === 'Over-hedged') iss.push({ sev: 1, t: '⚠ over-hedged', a: 'Sell the extra long' });
       if (a.type === 'No hedge' || a.type === 'Partly hedged') iss.push({ sev: 1, t: '⚠ ' + (a.type === 'No hedge' ? 'no hedge' : 'part-hedged') + (a.strike ? ' ' + ccStrike(a.strike) + (a.opt_type || '') : ''), a: 'Hedge or close' });
       else if (hasStops && (a.type === 'No stop placed' || a.type === 'No GTT placed')) iss.push({ sev: 0, t: '❌ no stop' + (a.strike ? ' ' + ccStrike(a.strike) + (a.opt_type || '') : ''), a: sa[1] || 'Place a stop' });
       else if (hasStops && (a.type === 'Invalid stop order' || a.type === 'Invalid GTT')) iss.push({ sev: 0, t: '❌ ' + (sa[0] || 'invalid stop'), a: sa[1] || 'Fix the stop' });

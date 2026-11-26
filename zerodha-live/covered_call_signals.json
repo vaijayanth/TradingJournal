@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-26T04:30:33.863315+00:00",
+ "generated_at": "2026-11-26T04:49:25.536460+00:00",
  "market_data_date": "2026-11-25",
  "live_prices_at": "2026-11-26T09:35:54+05:30",
  "gtt_scan_at": "2026-11-26T10:00:33+05:30",
@@ -10221,6 +10221,17 @@
  ],
  "ivp_as_of": "2026-11-25",
  "alerts": [
+  {
+   "level": "WARN",
+   "type": "Over-hedged",
+   "symbol": "COLPAL",
+   "expiry": "2026-12-29",
+   "strike": 1500.0,
+   "opt_type": "PE",
+   "concern": "275 of 550 hedge qty has no short to cover (short 275)",
+   "action": "Sell the extra long puts or confirm it is deliberate",
+   "text": "COLPAL 2026-12-29: short 1620PE 275 qty, hedge 550 qty - 275 qty over-hedged"
+  },
   {
    "level": "PROFIT",
    "type": "Profit Exit",

@@ -33,7 +33,7 @@ GROUPS = [
     (7.5, "F&O ban: stock in the NSE ban period, close the open legs (no rolling or new legs allowed)", lambda a: a["type"] == "F&O ban"),
     (8, "Profit exit (60% or more decayed)", lambda a: a["type"] == "Profit Exit"),
     (9, "Near the short strike (watch)", lambda a: a["type"] == "Near strike"),
-    (10, "Hedge gaps (orphaned long / not fully hedged)", lambda a: a["type"] in ("Leftover hedge", "Partly hedged", "No hedge")),
+    (10, "Hedge gaps (orphaned long / not fully hedged)", lambda a: a["type"] in ("Leftover hedge", "Partly hedged", "No hedge", "Over-hedged")),
 ]
 
 

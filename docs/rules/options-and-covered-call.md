@@ -52,4 +52,8 @@ Raised by each broker's `compute_covered_call.py` (thresholds in `data/cc_config
 | 9 | Profit exit | premium decayed 60%+ (price <= 40% of sold) | buy back |
 | 10 | Near strike | stock within 2% of the short strike | watch |
 | 11 | Leftover hedge | a long leg hedges nothing | sell it or book the profit |
+| 12 | Over-hedged (2026-11-26) | long puts exceed the short puts of the same stock and expiry (the extra long qty covers nothing) | sell the extra long qty or confirm it is deliberate |
 DI only: `Near 3x stop` WARN at 2.5x sold. Not criteria: IVP (information), news (not read), delta (strike choice only), a loss on its own.
+
+## Over-hedge check (user, 2026-11-26)
+`structure_alerts` in each broker's `compute_covered_call.py` raises a WARN `Over-hedged` when the long PE quantity of a stock and expiry is larger than its short PE quantity (the other direction, short larger than long, was already `No hedge` / `Partly hedged`). Plain short calls are skipped (the call side is unhedged by design), but a call SPREAD (a long call exists for the stock and expiry) is checked the same way, both directions (updated 2026-11-26: under-hedged call spread = `Partly hedged`, over-hedged = `Over-hedged`). It shows in the Fix tab, the Trades table issue column and the AZ / ND `*-option-exit-signal` list (AZ group 11, ND group 10 with the hedge gaps). First hit: COLPAL 1620PE short 275 vs 1500PE long 550.

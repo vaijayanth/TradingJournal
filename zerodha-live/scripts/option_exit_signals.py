@@ -33,6 +33,7 @@ GROUPS = [
     (8, "Profit exit (60% or more decayed)", lambda a: a["type"] == "Profit Exit"),
     (9, "Near the short strike (watch)", lambda a: a["type"] == "Near strike"),
     (10, "Orphaned long leg (hedges nothing)", lambda a: a["type"] == "Leftover hedge"),
+    (11, "Over-hedged (more long puts than shorts)", lambda a: a["type"] == "Over-hedged"),
 ]
 
 

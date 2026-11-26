@@ -109,19 +109,25 @@ def structure_alerts(sym, my_legs, shares_held, gtt_active):
     for l in my_legs:
         groups.setdefault((l["type"], l["expiry"]), []).append(l)
     for (typ, exp), ls in groups.items():
-        if typ == "CE":
-            continue   # call side is intentionally unhedged (user, 2026-11-13): its protection is the 3x-premium stop and the Supertrend flip alert
         short_q = sum(l["qty"] for l in ls if l["side"] == "SHORT")
         if not short_q:
             continue
         long_q = sum(l["qty"] for l in ls if l["side"] == "LONG")
-        cover = long_q + (shares_held if typ == "CE" else 0)
+        if typ == "CE" and not long_q:
+            continue   # a plain short call is intentionally unhedged (user, 2026-11-13): its protection is the 3x-premium stop and the Supertrend flip alert
+        # a call spread (a long call exists, user 2026-11-26) is checked like the put side: under-hedged and over-hedged quantities are flagged
+        cover = long_q
         if cover < short_q:
             strikes = "/".join(f"{l['strike']:g}" for l in ls if l["side"] == "SHORT")
-            extra = f" + {shares_held} shares" if typ == "CE" and shares_held else ""
+            extra = ""
             out.append({"level": "WARN", "type": "No hedge" if cover == 0 else "Partly hedged", "symbol": sym, "expiry": exp, "strike": ls[0]["strike"], "opt_type": typ,
-                        "concern": f"{short_q - cover} of {short_q} qty uncovered (hedge {long_q}{extra})", "action": "Buy a hedge" + (" or hold shares" if typ == "CE" else ""),
+                        "concern": f"{short_q - cover} of {short_q} qty uncovered (hedge {long_q}{extra})", "action": "Buy a hedge",
                         "text": f"{sym} {exp}: short {strikes}{typ} {short_q} qty, hedge {long_q} qty{extra} - {short_q - cover} qty uncovered"})
+        elif long_q > short_q:   # over-hedged (user, 2026-11-26): more long puts than shorts, the extra long qty covers nothing
+            strikes = "/".join(f"{l['strike']:g}" for l in ls if l["side"] == "SHORT")
+            out.append({"level": "WARN", "type": "Over-hedged", "symbol": sym, "expiry": exp, "strike": ls[0]["strike"], "opt_type": typ,
+                        "concern": f"{long_q - short_q} of {long_q} hedge qty has no short to cover (short {short_q})", "action": "Sell the extra long puts or confirm it is deliberate",
+                        "text": f"{sym} {exp}: short {strikes}{typ} {short_q} qty, hedge {long_q} qty - {long_q - short_q} qty over-hedged"})
     if gtt_active is not None:
         for l in my_legs:
             if l["side"] == "SHORT" and l.get("tradingsymbol") and l["tradingsymbol"] not in gtt_active:
