@@ -1,6 +1,46 @@
 {
- "fetched_at": "2026-11-26T09:05:36+05:30",
- "gtts_fetched_at": "2026-11-26T09:05:08+05:30",
- "checked": 69,
- "findings": []
+ "fetched_at": "2026-11-26T09:35:59+05:30",
+ "gtts_fetched_at": "2026-11-26T09:35:37+05:30",
+ "checked": 68,
+ "findings": [
+  {
+   "check": "G1",
+   "name": "STALE",
+   "severity": "HIGH",
+   "tradingsymbol": "APLAPOLLO26DEC1920CE",
+   "gtt_id": 346355154,
+   "symbol": "APLAPOLLO",
+   "expiry": "2026-12-29",
+   "strike": 1920.0,
+   "opt_type": "CE",
+   "concern": "No open position on this contract (closed or expired): if it triggers it BUYS a new long position",
+   "action": "Delete this GTT"
+  },
+  {
+   "check": "G1",
+   "name": "STALE",
+   "severity": "HIGH",
+   "tradingsymbol": "NATIONALUM26DEC280PE",
+   "gtt_id": 345419621,
+   "symbol": "NATIONALUM",
+   "expiry": "2026-12-29",
+   "strike": 280.0,
+   "opt_type": "PE",
+   "concern": "No open position on this contract (closed or expired): if it triggers it BUYS a new long position",
+   "action": "Delete this GTT"
+  },
+  {
+   "check": "G1",
+   "name": "STALE",
+   "severity": "HIGH",
+   "tradingsymbol": "NMDC26DEC62PE",
+   "gtt_id": 345641519,
+   "symbol": "NMDC",
+   "expiry": "2026-12-29",
+   "strike": 62.0,
+   "opt_type": "PE",
+   "concern": "No open position on this contract (closed or expired): if it triggers it BUYS a new long position",
+   "action": "Delete this GTT"
+  }
+ ]
 }

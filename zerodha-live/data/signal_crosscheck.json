@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-26T03:39:02.232778+00:00",
+ "generated_at": "2026-11-26T04:05:57.166452+00:00",
  "market_data_date": "2026-11-25",
  "yahoo_last_bars": [
   "2026-11-25"
@@ -7,8 +7,8 @@
  "bars_after_signal_date_ignored": [
   "2026-11-26"
  ],
- "checked": 3,
- "flagged": 1,
+ "checked": 1,
+ "flagged": 0,
  "results": [
   {
    "symbol": "TORNTPHARM",
@@ -24,46 +24,6 @@
    "intraday_high_252": 5250.0,
    "flip_bars_ago": 0,
    "pct_from_intraday_high": -6.75,
-   "flagged": false
-  },
-  {
-   "symbol": "ASHOKLEY",
-   "kind": "addon",
-   "ok": true,
-   "reasons": [
-    "Supertrend is RED on complete data (signal says green)"
-   ],
-   "published_colour": "green",
-   "recomputed_colour": "red",
-   "yahoo_last_bar": "2026-11-25",
-   "close": 158.0,
-   "published_close": 158.0,
-   "closing_high_252": 211.92,
-   "intraday_high_252": 215.42,
-   "flip_bars_ago": 12,
-   "pct_from_intraday_high": -26.65,
-   "flagged": true
-  },
-  {
-   "symbol": "POWERINDIA",
-   "kind": "addon",
-   "ok": true,
-   "reasons": [],
-   "zerodha_bars_added": [
-    "2026-11-09",
-    "2026-11-11",
-    "2026-11-12",
-    "2026-11-13"
-   ],
-   "published_colour": "green",
-   "recomputed_colour": "green",
-   "yahoo_last_bar": "2026-11-25",
-   "close": 29770.0,
-   "published_close": 29770.0,
-   "closing_high_252": 38445.0,
-   "intraday_high_252": 38785.0,
-   "flip_bars_ago": 7,
-   "pct_from_intraday_high": -23.24,
    "flagged": false
   }
  ]

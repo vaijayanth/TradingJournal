@@ -1,34 +1,22 @@
 {
- "generated_at": "2026-11-26T09:09:04+05:30",
+ "generated_at": "2026-11-26T09:36:10+05:30",
  "broker": "zerodha",
  "market_data_date": "2026-11-25",
- "signals_generated_at": "2026-11-26T03:39:00.435893+00:00",
+ "signals_generated_at": "2026-11-26T04:05:55.351621+00:00",
  "status": "WARN",
  "global_block": false,
  "counts": {
   "block": 0,
-  "warn": 3,
+  "warn": 1,
   "info": 0
  },
  "per_symbol_blocks": {},
  "findings": [
   {
-   "id": "F5",
-   "level": "WARN",
-   "symbol": null,
-   "msg": "the cross-check flagged 1 of 3 signals (advisory only, the backtester signal stands and they are not blocked): ASHOKLEY"
-  },
-  {
    "id": "C2",
    "level": "WARN",
    "symbol": null,
    "msg": "sector Financial Services is 50% of deployed capital (limit 40%)"
-  },
-  {
-   "id": "P3",
-   "level": "WARN",
-   "symbol": null,
-   "msg": "3 open option exit / strike-breach alerts on 3 stocks (APLAPOLLO, NATIONALUM, NMDC) - see the Covered Call alerts"
   }
  ]
 }

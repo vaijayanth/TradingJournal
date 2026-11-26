@@ -1,21 +1,21 @@
 {
- "as_of": "26 Nov pre-open (market data 25 Nov close)",
- "written_at": "2026-11-26T09:05:57+05:30",
+ "as_of": "26 Nov 09:45 (market data 25 Nov close, positions live)",
+ "written_at": "2026-11-26T09:36:15+05:30",
  "confidence": "low",
  "maturity": "41 positions opened since the cut-off, 5 closed trades: the swing edge cannot be judged yet.",
- "headline": "Last night's three stock orders are in and resting for the open; the open risks are three option structures to close, one of them new: APLAPOLLO is in the F&O ban.",
+ "headline": "The morning's work is done: add-ons filled, the NATIONALUM, NMDC and APLAPOLLO structures were closed and re-opened, and FORTIS plus six other new shorts now need protective GTTs.",
  "points": [
   {
    "label": "Signals",
-   "text": "The three signals from last night (TORNTPHARM entry x4, ASHOKLEY add-on x13, POWERINDIA add-on x1) were placed as after-market orders and are resting at the open; nothing new today. The independent cross-check still says ASHOKLEY's Supertrend is RED on complete data while the backtester says green: advisory only, but it is the order to watch."
+   "text": "ASHOKLEY x13 (158.90) and POWERINDIA x1 (30,150) add-ons filled at the open; the TORNTPHARM entry x4 is still resting at 4,895.50 with the price at 4,979 (above the limit, so it may not fill)."
   },
   {
    "label": "Options process",
-   "text": "The GTT scan shows 0 findings across 69 contracts. CUMMINSIND 5000CE has decayed 71% (past the 60% target) and the buy-back is queued at 6.30; its old trailing stop (50) must be cancelled once the buy-back fills, or it would buy a new long. APLAPOLLO 1920CE is a new exit signal: the stock entered the NSE F&O ban, so the call cannot be rolled or replaced."
+   "text": "You closed NATIONALUM, NMDC and APLAPOLLO and opened new structures: FORTIS 740/720 PE, HDFCBANK 790/770 PE, TORNTPHARM 4600/4500 PE (bull put spreads) and calls on NATIONALUM 345, NMDC 77, MAZDOCK 2100 and PREMIERENE 940. The ENRIN stop GTT fired cleanly and you closed the hedge. 8 new shorts have no GTT and 3 old GTTs are stale and would BUY a new long if triggered."
   },
   {
    "label": "Risk",
-   "text": "NATIONALUM (-Rs10.3k) and NMDC (-Rs1.9k) put spreads are against a red colour and still open; the NATIONALUM loss grew overnight. Financial Services is still 51% of deployed swing capital against a 40% limit. If every position closed on its Supertrend line the book would be about -Rs53k, so a bad open is survivable."
+   "text": "Until the 8 shorts have GTTs, a gap against any of them has no stop. The 3 stale GTTs are the bigger hazard: delete them first. Financial Services is still the heaviest sector; the new HDFCBANK spread adds to it."
   },
   {
    "label": "Book",
@@ -26,5 +26,5 @@
    "text": "5 closed trades against 20.2% CAGR, -21.3% drawdown, 41% win rate: too early to compare. Watch the first 30 closed trades."
   }
  ],
- "action": "Before or at the open: close the NATIONALUM and NMDC put spreads and the APLAPOLLO 1920CE; the CUMMINSIND buy-back is already queued at 6.30, so leave it. Then place nothing new: the TORNTPHARM, ASHOKLEY and POWERINDIA orders are already in."
+ "action": "Run /zerodha-gtt-order: delete the 3 stale GTTs (APLAPOLLO 1920CE, NATIONALUM 280PE, NMDC 62PE) and place GTTs on the 8 new shorts; cancel the CUMMINSIND trailing GTT once its buy-back at 6.35 fills."
 }

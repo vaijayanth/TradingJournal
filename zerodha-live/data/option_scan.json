@@ -1,24 +1,18 @@
 {
- "fired_ok_today": [],
- "fetched_at": "2026-11-26T09:05:36+05:30",
+ "fired_ok_today": [
+  "ENRIN26DEC2500PE"
+ ],
+ "fetched_at": "2026-11-26T09:35:59+05:30",
  "inputs": {
-  "positions": "2026-11-26T03:35:08.183855+00:00",
-  "gtts": "2026-11-26T09:05:08+05:30",
-  "orders": "2026-11-26T09:05:08+05:30",
-  "gtt_scan": "2026-11-26T09:05:08+05:30"
+  "positions": "2026-11-26T04:05:37.287466+00:00",
+  "gtts": "2026-11-26T09:35:37+05:30",
+  "orders": "2026-11-26T09:35:37+05:30",
+  "gtt_scan": "2026-11-26T09:35:37+05:30"
  },
  "stale_inputs": [],
- "open_legs": 103,
- "triggered_gtts": 0,
+ "open_legs": 108,
+ "triggered_gtts": 1,
  "findings": [
-  {
-   "section": "B",
-   "severity": "INFO",
-   "symbol": "APLAPOLLO",
-   "tradingsymbol": "APLAPOLLO26DEC1920CE",
-   "concern": "Short 1920CE (350 qty) is a naked call (by design; covered only by shares you hold)",
-   "action": "Watch the 3x stop and the Supertrend colour"
-  },
   {
    "section": "B",
    "severity": "INFO",
@@ -126,9 +120,25 @@
   {
    "section": "B",
    "severity": "INFO",
+   "symbol": "MAZDOCK",
+   "tradingsymbol": "MAZDOCK26DEC2100CE",
+   "concern": "Short 2100CE (225 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
    "symbol": "MUTHOOTFIN",
    "tradingsymbol": "MUTHOOTFIN26DEC3000CE",
    "concern": "Short 3000CE (275 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "NATIONALUM",
+   "tradingsymbol": "NATIONALUM26DEC345CE",
+   "concern": "Short 345CE (1875 qty) is a naked call (by design; covered only by shares you hold)",
    "action": "Watch the 3x stop and the Supertrend colour"
   },
   {
@@ -145,6 +155,14 @@
    "symbol": "NHPC",
    "tradingsymbol": "NHPC26DEC85CE",
    "concern": "Short 85CE (6950 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "NMDC",
+   "tradingsymbol": "NMDC26DEC77CE",
+   "concern": "Short 77CE (6750 qty) is a naked call (by design; covered only by shares you hold)",
    "action": "Watch the 3x stop and the Supertrend colour"
   },
   {
@@ -193,6 +211,14 @@
    "symbol": "POLYCAB",
    "tradingsymbol": "POLYCAB26DEC8300CE",
    "concern": "Short 8300CE (125 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "PREMIERENE",
+   "tradingsymbol": "PREMIERENE26DEC940CE",
+   "concern": "Short 940CE (650 qty) is a naked call (by design; covered only by shares you hold)",
    "action": "Watch the 3x stop and the Supertrend colour"
   },
   {
@@ -298,6 +324,94 @@
    "tradingsymbol": "WIPRO26DEC220CE",
    "concern": "Short 220CE (3000 qty) is a naked call (by design; covered only by shares you hold)",
    "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "ENRIN",
+   "tradingsymbol": "ENRIN26DEC2600PE",
+   "concern": "No active buy-back GTT (premium 17.8, sold 19.25)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "FORTIS",
+   "tradingsymbol": "FORTIS26DEC740PE",
+   "concern": "No active buy-back GTT (premium 6.4, sold 6.55)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "HDFCBANK",
+   "tradingsymbol": "HDFCBANK26DEC790PE",
+   "concern": "No active buy-back GTT (premium 5.85, sold 6.05)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "MAZDOCK",
+   "tradingsymbol": "MAZDOCK26DEC2100CE",
+   "concern": "No active buy-back GTT (premium 10.75, sold 9.6)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "NATIONALUM",
+   "tradingsymbol": "NATIONALUM26DEC345CE",
+   "concern": "No active buy-back GTT (premium 1.75, sold 1.8)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "NMDC",
+   "tradingsymbol": "NMDC26DEC77CE",
+   "concern": "No active buy-back GTT (premium 0.35, sold 0.35)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "PREMIERENE",
+   "tradingsymbol": "PREMIERENE26DEC940CE",
+   "concern": "No active buy-back GTT (premium 4.15, sold 4)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "TORNTPHARM",
+   "tradingsymbol": "TORNTPHARM26DEC4600PE",
+   "concern": "No active buy-back GTT (premium 19.95, sold 19.8)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "F",
+   "severity": "HIGH",
+   "symbol": "APLAPOLLO",
+   "tradingsymbol": "APLAPOLLO26DEC1920CE",
+   "concern": "G1 STALE: No open position on this contract (closed or expired): if it triggers it BUYS a new long position (GTT 346355154)",
+   "action": "Delete this GTT"
+  },
+  {
+   "section": "F",
+   "severity": "HIGH",
+   "symbol": "NATIONALUM",
+   "tradingsymbol": "NATIONALUM26DEC280PE",
+   "concern": "G1 STALE: No open position on this contract (closed or expired): if it triggers it BUYS a new long position (GTT 345419621)",
+   "action": "Delete this GTT"
+  },
+  {
+   "section": "F",
+   "severity": "HIGH",
+   "symbol": "NMDC",
+   "tradingsymbol": "NMDC26DEC62PE",
+   "concern": "G1 STALE: No open position on this contract (closed or expired): if it triggers it BUYS a new long position (GTT 345641519)",
+   "action": "Delete this GTT"
   },
   {
    "section": "G",

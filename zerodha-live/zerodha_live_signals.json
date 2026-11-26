@@ -1,5 +1,5 @@
 {
-  "generated_at": "2026-11-26T03:39:00.435893+00:00",
+  "generated_at": "2026-11-26T04:05:55.351621+00:00",
   "market_data_date": "2026-11-25",
   "source_generated_at": {
     "supertrend": "2026-11-25T23:16:05.975896+00:00",
@@ -18,8 +18,8 @@
   },
   "dh252_position_count": 37,
   "option_hedge_portfolio": [],
-  "holdings_count_total": 185,
-  "holdings_out_of_scope": 148,
+  "holdings_count_total": 183,
+  "holdings_out_of_scope": 146,
   "no_data": [],
   "exited_outside_tracking": [],
   "rules": {
@@ -198,46 +198,7 @@
     }
   ],
   "exits": [],
-  "addons": [
-    {
-      "entry_date": "2026-08-03",
-      "symbol": "ASHOKLEY",
-      "qty": 131,
-      "avg_cost": 170.210381,
-      "cmp": 158.0,
-      "pl_pct": -7.1737,
-      "notional_pl_rs": -1599.56,
-      "supertrend_color": "green",
-      "flip_label": "GREEN 13d",
-      "flip_date": "2026-11-05",
-      "pct_from_52w_high": -23.71,
-      "num_adds": 0,
-      "age_days": 115,
-      "rsi14": 48.7,
-      "sector": "Industrials",
-      "add_qty": 13,
-      "cooldown_days_since_last_buy": 8
-    },
-    {
-      "entry_date": "2026-11-16",
-      "symbol": "POWERINDIA",
-      "qty": 1,
-      "avg_cost": 31895.0,
-      "cmp": 29770.0,
-      "pl_pct": -6.6625,
-      "notional_pl_rs": -2125.0,
-      "supertrend_color": "green",
-      "flip_label": "GREEN 7d",
-      "flip_date": "2026-11-13",
-      "pct_from_52w_high": -22.55,
-      "num_adds": 0,
-      "age_days": 10,
-      "rsi14": 51.1,
-      "sector": "Industrials",
-      "add_qty": 1,
-      "cooldown_days_since_last_buy": 10
-    }
-  ],
+  "addons": [],
   "holds": [
     {
       "entry_date": "2026-08-04",
@@ -323,6 +284,23 @@
       "age_days": 42,
       "rsi14": 63.8,
       "sector": "Financial Services"
+    },
+    {
+      "entry_date": "2026-08-03",
+      "symbol": "ASHOKLEY",
+      "qty": 131,
+      "avg_cost": 170.210381,
+      "cmp": 158.0,
+      "pl_pct": -7.1737,
+      "notional_pl_rs": -1599.56,
+      "supertrend_color": "green",
+      "flip_label": "GREEN 13d",
+      "flip_date": "2026-11-05",
+      "pct_from_52w_high": -23.71,
+      "num_adds": 0,
+      "age_days": 115,
+      "rsi14": 48.7,
+      "sector": "Industrials"
     },
     {
       "entry_date": "2026-11-06",
@@ -750,6 +728,23 @@
       "sector": "Financial Services"
     },
     {
+      "entry_date": "2026-11-16",
+      "symbol": "POWERINDIA",
+      "qty": 1,
+      "avg_cost": 31895.0,
+      "cmp": 29770.0,
+      "pl_pct": -6.6625,
+      "notional_pl_rs": -2125.0,
+      "supertrend_color": "green",
+      "flip_label": "GREEN 7d",
+      "flip_date": "2026-11-13",
+      "pct_from_52w_high": -22.55,
+      "num_adds": 0,
+      "age_days": 10,
+      "rsi14": 51.1,
+      "sector": "Industrials"
+    },
+    {
       "entry_date": "2026-08-13",
       "symbol": "RADICO",
       "qty": 4,
@@ -864,7 +859,7 @@
       }
     }
   },
-  "holdings_fetched_at": "2026-11-26T09:05:08+05:30",
+  "holdings_fetched_at": "2026-11-26T09:35:24+05:30",
   "universe": {
     "month": "2026-11",
     "count": 215,

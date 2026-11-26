@@ -299,6 +299,18 @@
     "options_open_to_close": 3,
     "pending_swing_orders": 3
    }
+  },
+  {
+   "date": "2026-11-26 (09:45 update)",
+   "headline": "The morning's work is done: add-ons filled, the NATIONALUM, NMDC and APLAPOLLO structures were closed and re-opened, and FORTIS plus six other new shorts now need protective GTTs.",
+   "recommendations": [
+    "Run /zerodha-gtt-order: delete the 3 stale GTTs (APLAPOLLO 1920CE, NATIONALUM 280PE, NMDC 62PE) and place GTTs on the 8 new shorts; cancel the CUMMINSIND trailing GTT once its buy-back at 6.35 fills."
+   ],
+   "metrics": {
+    "stale_gtts": 3,
+    "shorts_without_gtt": 8,
+    "swing_fills": 2
+   }
   }
  ]
 }
