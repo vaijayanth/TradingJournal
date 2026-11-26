@@ -39,6 +39,7 @@ HERE = Path(__file__).resolve().parent
 ROOT = HERE.parent
 WINDOW = 252
 ADD_TRIGGER, ADD_COOLDOWN = -6.0, 7
+ADD_FRAC = 0.10   # add-on size as a fraction of the open quantity (live = 1/10)
 CFG = {
     "dhan": {"capital": 2_000_000, "base": 1000, "step": 1000, "every": 100, "count": "closed", "add": "int", "flip_window": None},
     "az": {"capital": 3_000_000, "base": 20000, "step": 5000, "every": 100, "count": "opened", "add": "round", "flip_window": 3},
@@ -218,7 +219,7 @@ def run(strategy, data_dir, symbols, start, slip, seed=0, fresh_only=True, cash_
                     continue
                 pl = (c / p["avg"] - 1) * 100
                 if pl <= ADD_TRIGGER and d == "up" and (dt - p["last"]).days >= ADD_COOLDOWN and sym not in pending and not (block_adds and block and block.get(dt)):
-                    q = p["qty"] * 0.10
+                    q = p["qty"] * ADD_FRAC
                     pending[sym] = {"a": "add", "q": max(1, int(q) if cfg["add"] == "int" else round(q))}
             elif sym not in pending and d == "up" and not (block and block.get(dt)):
                 if strategy == "dhan":

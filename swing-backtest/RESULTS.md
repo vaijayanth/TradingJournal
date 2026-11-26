@@ -256,3 +256,20 @@ Partial profit: sell a fraction of the position ONCE at the first close with ope
 | Sell 1/2 at +100% | 25.7% | -17.6% | 20.1% | -17.6% | 1.88 |
 
 Reading: **no variant beats the live Supertrend exit on return and drawdown together; keep it.** A tighter trail (20-day MA) cuts the giveback (37%) but halves the average win and drops PF to 1.49. The 50-day MA matches the CAGR with a 4.5-point deeper drawdown. The hybrids sit within about 0.1 point of the live CAGR with a drawdown no better. Partial profit costs 1.5 to 2.7 CAGR points over the full 10 years, is neutral from 2022, and makes the drawdown 0.7 to 2.3 points WORSE in every variant (winners pay for the losers; selling a slice leaves less running through the big trends). The giveback is the price of the trend-following edge. Caveats: one in-sample run, survivorship bias, no tax (a trim also brings the tax forward). In the trim rows the giveback column is not comparable (it measures the remaining position only); use the CAGR / drawdown columns.
+
+## ND add-on (averaging) tests (2026-11-26)
+Question: is the live add-on (1/10 of the open quantity when the open P&L is -6% or worse, green Supertrend, once per 7 days) worth having? Same ND universe, 252-day-high entry, ladder, costs, 0.1% slippage, 6% idle cash, 2016-11-07 to the last bar; only the add-on changes. Code: `addon_variants_test.py` (engine copy `swing_backtest_exits.py`, new `ADD_FRAC` switch); table: `results/addon_variants.csv` (the last run).
+
+| Variant | CAGR % | Max DD % | CAGR % since 2022 | DD % since 2022 | PF | Win % | Avg loss % |
+|---|---|---|---|---|---|---|---|
+| no add-ons (`trig:off`) | 27.66 | -14.99 | 19.9 | -15.0 | 2.01 | 40.6 | -9.6 |
+| live (`trig:-6`, 1/10) | 27.88 | -15.43 | 19.8 | -15.4 | 2.00 | 41.2 | -9.0 |
+| trigger -10 | 27.80 | -15.16 | 19.8 | -15.2 | 2.01 | 40.8 | -9.2 |
+| trigger -15 | 27.71 | -14.97 | 19.8 | -15.0 | 2.01 | 40.7 | -9.5 |
+| cooldown 14 days | 27.85 | -15.21 | 19.9 | -15.2 | 2.01 | 40.9 | -9.2 |
+| size 1/4 | 27.70 | -16.61 | 19.5 | -16.6 | 1.95 | 41.2 | -8.5 |
+| size 1/2 | 27.86 | -17.96 | 19.3 | -18.0 | 1.91 | 41.8 | -8.1 |
+| size 1/1 (double down) | 27.94 | -19.58 | 18.8 | -19.6 | 1.84 | 42.2 | -7.6 |
+
+Reading: **averaging has no edge.** CAGR is flat (27.7 to 27.9) across every trigger, cooldown and size; what changes is risk: the drawdown deepens steadily with add-on size (-15.0 off, -15.4 at 1/10, -16.6, -18.0, -19.6 doubling down), the profit factor falls (2.01 to 1.84) and the CAGR since 2022 falls (19.9 to 18.8). The live 1/10 is harmless but does nothing measurable (+0.2 CAGR points for 0.4 points of drawdown, inside the noise). The raw trade split is misleading: trades with add-ons show a 20% win rate and PF 0.5, and 74% of the worst-5% trades have add-ons, but that is selection (an add-on only happens on a trade that already fell 6%), not damage. Caveats: one in-sample run, survivorship bias, ND universe only (AZ and the 10 investment-share stocks, which use a weekly 1/10 averaging rule, are not tested here).
+
