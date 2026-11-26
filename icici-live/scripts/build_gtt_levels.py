@@ -46,7 +46,7 @@ def levels(avg, ltp, rules):
 def build():
     pos = json.loads((DATA / "cc_positions.json").read_text(encoding="utf-8"))
     rules = json.loads((DATA / "cc_config.json").read_text(encoding="utf-8"))["rules"]
-    close_types = {"Exit", "Event close", "Profit Exit", "Through hedge", "Beyond strike", "3× premium", "Expiry risk"}
+    close_types = {"Exit", "Event close", "Profit Exit", "Through hedge", "Beyond strike", "3× premium", "Expiry risk", "F&O ban"}
     alerts = {}
     try:
         for a in json.loads((ROOT / "covered_call_signals.json").read_text(encoding="utf-8")).get("alerts", []):

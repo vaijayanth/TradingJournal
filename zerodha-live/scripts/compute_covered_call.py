@@ -23,6 +23,29 @@ sys.path.insert(0, str(HERE))
 from zerodha_common import load_json, strip_suffix  # noqa: E402
 
 DATA = HERE.parent / "data"
+
+
+def _ban_symbols(data_dir):
+    """Symbols in today's NSE F&O ban list (this broker's own data/fno_ban.json); empty when the list could not be fetched."""
+    p = Path(data_dir) / "fno_ban.json"
+    try:
+        j = json.loads(p.read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        return set(), None
+    return (set(j.get("symbols", [])) if j.get("ok") else set()), j.get("trade_date")
+
+
+def _ban_alert(sym, legs, data_dir):
+    """F&O ban = EXIT (user, 2026-11-26): a stock in the ban period allows reducing trades only, so an open structure cannot be rolled, added to or replaced: close it."""
+    syms, tdate = _ban_symbols(data_dir)
+    if sym not in syms or not legs:
+        return []
+    sh = [l for l in legs if l.get("side") == "SHORT"] or list(legs)
+    f = sh[0]
+    n = len(legs)
+    return [{"expiry": f.get("expiry"), "strike": f.get("strike"), "opt_type": f.get("type") or f.get("opt_type"), "level": "EXIT", "type": "F&O ban", "symbol": sym,
+             "concern": f"Stock is in the NSE F&O ban period ({tdate or 'today'}): only reducing trades are allowed, so the {n} open leg{'s' if n > 1 else ''} cannot be rolled or replaced",
+             "action": "Close the structure (shorts and hedge) while the ban lasts", "text": f"{sym}: in the F&O ban period - close the open option legs (no rolling or new legs allowed)"}]
 OUT = HERE.parent / "covered_call_signals.json"
 
 
@@ -287,6 +310,7 @@ def main():
         alerts.extend(leftover_hedge_alerts(sym, my, date.fromisoformat(ist_today)))
         alerts.extend(expiry_alerts(sym, my, spot_now, held_qty.get(sym, 0), rules))
         alerts.extend(event_alerts(sym, my, events, date.fromisoformat(ist_today), ev_days))
+        alerts.extend(_ban_alert(sym, my, DATA))
         shorts = [l for l in my if l["side"] == "SHORT"]
         has_call = any(l["type"] == "CE" for l in shorts)
         has_put_spread = any(s["type"] == "PE" and any(b["type"] == "PE" and b["side"] == "LONG" and b["expiry"] == s["expiry"] and b["strike"] < s["strike"] for b in my) for s in shorts)

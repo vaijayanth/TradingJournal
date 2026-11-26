@@ -10381,7 +10381,7 @@ const ccTabBar = (id, tabs, extra) => `<div class="dhm-tabs" id="${id}" role="ta
   `<button class="dhm-tab" data-tab="${k}" onclick="${extra}('${k}')">${l}${n == null ? '' : `<span class="dhm-count">${n}</span>`}</button>`).join('') + '</div>';
 
 // Alert type pill: the label is the alert's own type (3× premium, Near strike, Beyond strike, No GTT placed ...), the colour follows its severity
-const CC_TYPE_ORDER = ['Exit', '3× premium', 'Near 3× stop', 'Through hedge', 'Beyond strike', 'Expiry risk', 'Event close', 'Near strike', 'Profit Exit', 'Invalid GTT', 'Invalid stop order', 'No GTT placed', 'No stop placed', 'No hedge', 'Partly hedged', 'Leftover hedge', 'New trade'];
+const CC_TYPE_ORDER = ['Exit', 'F&O ban', '3× premium', 'Near 3× stop', 'Through hedge', 'Beyond strike', 'Expiry risk', 'Event close', 'Near strike', 'Profit Exit', 'Invalid GTT', 'Invalid stop order', 'No GTT placed', 'No stop placed', 'No hedge', 'Partly hedged', 'Leftover hedge', 'New trade'];
 function ccTypePill(a) {
   const m = { EXIT: ['var(--red-soft)', 'var(--red)'], BREACH: ['var(--red)', '#fff'], WARN: ['var(--amber-soft, var(--surface2))', 'var(--amber)'], ENTER: ['rgba(76,134,255,.16)', 'var(--accent)'], PROFIT: ['var(--green-soft)', 'var(--green)'] };
   const [bg, fg] = m[a.level] || ['var(--surface2)', 'var(--text-muted)'];
@@ -10399,6 +10399,7 @@ function ccShortAlert0(r) {
     case 'Profit Exit': x = m(/decayed (\d+)%/); return [x ? `${x[1]}% decayed` : 'Premium decayed', 'Buy back'];
     case 'Beyond strike': x = m(/price ([\d.]+)% past the strike, Rs([\d,]+)/); return [x ? `${x[1]}% in the money · ₹${x[2]}` : 'In the money', 'Roll, close or hold'];
     case 'Through hedge': x = m(/Rs([\d,]+) intrinsic/); return [x ? `Past hedge · max loss ₹${x[1]}` : 'Past hedge', 'Close or roll'];
+    case 'F&O ban': return ['In F&O ban: close only', 'Close the structure'];
     case 'Near strike': x = m(/([\d.]+)% from/); return [x ? `${x[1]}% from strike` : 'Near strike', 'Watch'];
     case 'No hedge': case 'Partly hedged': x = m(/(\d+) of (\d+) qty uncovered/); return [x ? `${x[1]} of ${x[2]} uncovered` : 'Not fully hedged', /shares/i.test(a) ? 'Buy hedge or hold shares' : 'Buy hedge'];
     case 'Leftover hedge': x = m(/Long ([\d.]+)(PE|CE) \((\d+) qty\) (has no short|is not beyond)/); return [x ? (x[4] === 'has no short' ? `Long ${x[1]}${x[2]} · no short` : `Long ${x[1]}${x[2]} · hedges nothing`) : 'Long leg hedges nothing', a || 'Sell it or let it expire'];
@@ -10437,7 +10438,7 @@ const ccAlertCols = withType => (withType ? [{ h: 'Alert type', v: r => ccTypeOr
 ]);
 // ── ACTIONS tab (user, 2026-11-17): alerts AND entry signals in one place, three segments in workflow order: Exit -> Fix -> Entry (+ All) ──
 // Exit = close or watch an open leg; Fix = stop / GTT / hedge problems; Entry = new trades (the 5 tiers become a Tier column + filter).
-const CC_EXIT_TYPES = ['Exit', '3× premium', 'Near 3× stop', 'Through hedge', 'Beyond strike', 'Expiry risk', 'Event close', 'Near strike', 'Profit Exit'];
+const CC_EXIT_TYPES = ['Exit', 'F&O ban', '3× premium', 'Near 3× stop', 'Through hedge', 'Beyond strike', 'Expiry risk', 'Event close', 'Near strike', 'Profit Exit'];
 const CC_FIX_TYPES = ['Invalid GTT', 'Invalid stop order', 'No GTT placed', 'No stop placed', 'No hedge', 'Partly hedged', 'Leftover hedge'];
 const ccKind = t => CC_EXIT_TYPES.includes(t) ? 'exit' : CC_FIX_TYPES.includes(t) ? 'fix' : 'entry';
 const CC_SEG_LABEL = { exit: 'Exit', fix: 'Fix', entry: 'Entry', all: 'All' };
@@ -10652,7 +10653,7 @@ const ccTierFilters = [['all', 'All entry signals', () => true], ['put', 'BPS', 
   ['clear', 'Clear to open (no event alert)', r => r.lvl < 2], ['alert', 'Has an event alert', r => r.lvl >= 2]];
 
 // ── Open positions as TRADES (one row per structure, not per leg): % of max profit vs the profit target, distance to the short strike, stop in place, next step ──
-const CC_TRADE_ORDER = ['3× premium', 'Near 3× stop', 'Through hedge', 'Expiry risk', 'Event close', 'Exit', 'Beyond strike', 'Profit Exit', 'No stop placed', 'No GTT placed', 'Invalid GTT', 'Near strike', 'Leftover hedge'];
+const CC_TRADE_ORDER = ['3× premium', 'F&O ban', 'Near 3× stop', 'Through hedge', 'Expiry risk', 'Event close', 'Exit', 'Beyond strike', 'Profit Exit', 'No stop placed', 'No GTT placed', 'Invalid GTT', 'Near strike', 'Leftover hedge'];
 function ccTrades(S, alerts, R) {
   window._ccTrend = Object.fromEntries((S || []).filter(s => s.colour).map(s => [s.symbol, s.colour]));   // this broker's Supertrend colours (Trend / Right position columns)
   const t0 = new Date(); t0.setHours(0, 0, 0, 0);
@@ -10686,6 +10687,7 @@ function ccTrades(S, alerts, R) {
     const kinds = mine.map(a => a.type), pick = CC_TRADE_ORDER.find(k => kinds.includes(k));
     const alert = mine.find(a => a.type === pick);
     t.step = hit && pick !== '3× premium' ? 'Close now' : alert ? ccShortAlert(alert)[1] : 'Hold';
+    if (ccInBan(t.symbol) && t.step === 'Hold') t.step = 'Hold · no roll or new legs (F&O ban)';   // user, 2026-11-26: a held stock in the NSE F&O ban period can only be reduced, so say it on the row
     t.prio = hit ? 0 : pick ? CC_TRADE_ORDER.indexOf(pick) : 99;
     t.needs = !!(hit || (pick && pick !== 'Near strike'));
     return t;
@@ -10706,7 +10708,7 @@ const ccTradeDetail = t => {
 // Does the structure held in this trade row match what the Supertrend colour wants? (green wants a bull put spread / put side, red wants the call side)
 const ccHeldMatch = t => { const c = ccTrendOf(t.symbol); if (!c || !t.shorts_n) return null; return c === 'green' ? t.type === 'PE' : t.type === 'CE'; };
 const ccTradeCols = () => [
-  { h: 'Stock', v: t => t.symbol, c: t => `<b class="stk">${dhEsc(t.symbol)}</b>`, txt: true },
+  { h: 'Stock', v: t => t.symbol, c: t => `<b class="stk">${dhEsc(t.symbol)}</b>${ccInBan(t.symbol) ? '<br>' + ccBanChip(true) : ''}`, txt: true },
   { h: 'Supertrend', v: t => ccTrendOf(t.symbol), c: t => ccTrendCell(t), txt: true },
   { h: 'IVP', v: t => ccIvpOf(t.symbol), c: t => ccIvpCell(t.symbol) },
   { h: 'Right position', v: t => ccRightPos(t), c: t => { const p = ccRightPos(t), m = ccHeldMatch(t); const mk = m == null ? '' : m ? ' <span class="pos" title="This trade is the structure the colour wants">✓</span>' : ' <span class="neg" title="This trade is the opposite of what the colour wants">≠</span>'; return p === '—' ? '<span style="color:var(--text-muted)">—</span>' : `<b>${p}</b>${mk}`; }, txt: true },
@@ -10724,8 +10726,8 @@ const ccTradeGroups = [{ key: 'act', label: 'Needs action' }, { key: 'ok', label
 const ccPrioCell = s => s.prio == null ? '<span style="color:var(--text-muted)">—</span>' : `<b>#${s.prio}</b>`;
 const ccFlipCell = s => ccFlip(s.flip_date, s.flip_trading_days) + ((s.status === 'ENTER' || s.status === 'FLIP') && s.flip_trading_days != null && s.flip_trading_days <= CC_NEW_FLIP_DAYS
   ? ' <span class="trend-pill" style="background:var(--accent-soft, var(--surface2));color:var(--accent)">NEW FLIP</span>' : '');
-const ccActNow = d => (d.alerts || []).filter(a => ['Exit', '3× premium', 'Through hedge', 'Beyond strike', 'Expiry risk', 'Profit Exit'].includes(a.type)).length;
-const ccActNowBad = d => (d.alerts || []).some(a => ['Exit', '3× premium', 'Through hedge', 'Beyond strike', 'Expiry risk'].includes(a.type));
+const ccActNow = d => (d.alerts || []).filter(a => ['Exit', 'F&O ban', '3× premium', 'Through hedge', 'Beyond strike', 'Expiry risk', 'Profit Exit'].includes(a.type)).length;
+const ccActNowBad = d => (d.alerts || []).some(a => ['Exit', 'F&O ban', '3× premium', 'Through hedge', 'Beyond strike', 'Expiry risk'].includes(a.type));
 const ccEventCell = s => {
   const ev = (s.events || [])[0];
   if (!ev) return '<span style="color:var(--text-muted)">no date</span>';
@@ -10793,7 +10795,7 @@ function ccBookCheck(d) {
       else if (a.type === 'Event close') iss.push({ sev: a.level === 'BREACH' ? 0 : 1, t: '⚠ ' + (sa[0] || 'event close'), a: sa[1] || 'Close before the event' });
       else if (a.type === 'Exit' && wrong.length) { /* same finding as the trend mismatch above */ }
       else if (a.type === '3× premium') { if (!iss.some(x => /past /.test(x.t))) { shortsOk = Math.max(0, shortsOk - 1); iss.push({ sev: 0, t: `❌ past ${stopX}x stop`, a: sa[1] || 'Close now' }); } }
-      else if (['Exit', '3× premium', 'Through hedge', 'Beyond strike', 'Expiry risk', 'Profit Exit', 'Leftover hedge'].includes(a.type) && !iss.some(x => x.t.includes(a.type))) iss.push({ sev: a.type === 'Profit Exit' || a.type === 'Leftover hedge' ? 1 : 0, t: (a.type === 'Profit Exit' || a.type === 'Leftover hedge' ? '⚠ ' : '❌ ') + a.type, a: sa[1] || '' });
+      else if (['Exit', 'F&O ban', '3× premium', 'Through hedge', 'Beyond strike', 'Expiry risk', 'Profit Exit', 'Leftover hedge'].includes(a.type) && !iss.some(x => x.t.includes(a.type))) iss.push({ sev: a.type === 'Profit Exit' || a.type === 'Leftover hedge' ? 1 : 0, t: (a.type === 'Profit Exit' || a.type === 'Leftover hedge' ? '⚠ ' : '❌ ') + a.type, a: sa[1] || '' });
     });
     // a leg already past its stop can't take a GTT (it would fire at once): the action is "close", so drop the 'no stop' issue
     if (iss.some(x => /past /.test(x.t))) for (let k = iss.length - 1; k >= 0; k--) if (/no stop/.test(iss[k].t)) iss.splice(k, 1);

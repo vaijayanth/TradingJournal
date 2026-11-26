@@ -32,6 +32,29 @@ import re
 from datetime import date, datetime, timedelta, timezone
 from pathlib import Path
 
+
+def _ban_symbols(data_dir):
+    """Symbols in today's NSE F&O ban list (this broker's own data/fno_ban.json); empty when the list could not be fetched."""
+    p = Path(data_dir) / "fno_ban.json"
+    try:
+        j = json.loads(p.read_text(encoding="utf-8"))
+    except Exception:  # noqa: BLE001
+        return set(), None
+    return (set(j.get("symbols", [])) if j.get("ok") else set()), j.get("trade_date")
+
+
+def _ban_alert(sym, legs, data_dir):
+    """F&O ban = EXIT (user, 2026-11-26): a stock in the ban period allows reducing trades only, so an open structure cannot be rolled, added to or replaced: close it."""
+    syms, tdate = _ban_symbols(data_dir)
+    if sym not in syms or not legs:
+        return []
+    sh = [l for l in legs if l.get("side") == "SHORT"] or list(legs)
+    f = sh[0]
+    n = len(legs)
+    return [{"expiry": f.get("expiry"), "strike": f.get("strike"), "opt_type": f.get("type") or f.get("opt_type"), "level": "EXIT", "type": "F&O ban", "symbol": sym,
+             "concern": f"Stock is in the NSE F&O ban period ({tdate or 'today'}): only reducing trades are allowed, so the {n} open leg{'s' if n > 1 else ''} cannot be rolled or replaced",
+             "action": "Close the structure (shorts and hedge) while the ban lasts", "text": f"{sym}: in the F&O ban period - close the open option legs (no rolling or new legs allowed)"}]
+
 ROOT = Path(__file__).resolve().parent.parent
 DATA = ROOT / "data"
 MONTHS = {m: i for i, m in enumerate(["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"], 1)}
@@ -451,6 +474,7 @@ def main():
         alerts.extend(leftover_hedge_alerts(sym, my_legs, today))
         alerts.extend(expiry_alerts(sym, my_legs, spot_now, held.get(sym, 0), rules))
         alerts.extend(event_alerts(sym, my_legs, events, today, ev_days))
+        alerts.extend(_ban_alert(sym, my_legs, DATA))
 
         def has_put_spread():
             sp = [l for l in my_legs if l["type"] == "PE" and l["side"] == "SHORT"]

@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-26T01:27:12.682048+00:00",
+ "generated_at": "2026-11-26T02:12:56.867719+00:00",
  "market_data_date": "2026-11-25",
  "live_prices_at": null,
  "gtt_scan_at": null,
@@ -9679,6 +9679,17 @@
  ],
  "ivp_as_of": "2026-11-25",
  "alerts": [
+  {
+   "expiry": "2026-12-29",
+   "strike": 1920.0,
+   "opt_type": "CE",
+   "level": "EXIT",
+   "type": "F&O ban",
+   "symbol": "APLAPOLLO",
+   "concern": "Stock is in the NSE F&O ban period (26-NOV-2026): only reducing trades are allowed, so the 1 open leg cannot be rolled or replaced",
+   "action": "Close the structure (shorts and hedge) while the ban lasts",
+   "text": "APLAPOLLO: in the F&O ban period - close the open option legs (no rolling or new legs allowed)"
+  },
   {
    "expiry": "2026-12-29",
    "strike": 280.0,
