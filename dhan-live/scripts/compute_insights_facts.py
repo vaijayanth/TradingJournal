@@ -53,22 +53,44 @@ def r2(x, k=2):
 
 # --------------------------------------------------------------------------- adherence and leakage
 def git_signal_history():
-    """{market_data_date: signals dict} using the newest commit of each date (empty when the clone has no history)."""
+    """{market_data_date: compact signals} using the newest commit of each date. Cached in data/signal_history_cache.json (user, 2026-11-26): only commits not seen before are read
+    with `git show`, so the run time stays flat as the history grows (it was one `git show` per commit per run). Empty when the clone has no history."""
+    cache_p = DATA / "signal_history_cache.json"
+    cache = load(cache_p, {}) or {}
+    commits, days = dict(cache.get("commits", {})), dict(cache.get("days", {}))     # copies, so the change check below sees what this run added
     try:
         hashes = subprocess.run(["git", "-C", str(REPO), "log", "--format=%H", "--", SIG_REL], capture_output=True, text=True, check=True).stdout.split()
     except Exception:  # noqa: BLE001
-        return {}
-    by = {}
+        hashes = []
+        if not days:
+            return {}
+    keep = ("symbol", "close", "cmp", "qty_to_buy", "qty")
+    chosen = {}                                        # date -> newest commit hash for it
     for h in hashes:                                   # newest first
-        try:
-            raw = subprocess.run(["git", "-C", str(REPO), "show", f"{h}:{SIG_REL}"], capture_output=True, text=True, check=True).stdout
-            d = json.loads(raw)
-        except Exception:  # noqa: BLE001
-            continue
-        md = d.get("market_data_date")
-        if md and md not in by:
-            by[md] = d
-    return dict(sorted(by.items()))
+        md = commits.get(h)
+        if md is None:
+            try:
+                raw = subprocess.run(["git", "-C", str(REPO), "show", f"{h}:{SIG_REL}"], capture_output=True, text=True, check=True).stdout
+                d = json.loads(raw)
+            except Exception:  # noqa: BLE001
+                commits[h] = ""                        # unreadable commit (deleted file, bad JSON): remember it so it is not re-read every run
+                continue
+            md = d.get("market_data_date") or ""
+            commits[h] = md
+            if md and md not in chosen:
+                days[md] = {"hash": h, **{k: [{f: s[f] for f in keep if f in s} for s in d.get(k, [])] for k in ("entries", "exits", "addons")}}
+        elif md and md not in chosen and days.get(md, {}).get("hash") != h:      # a seen commit that is the newest for its date but is not what the cache holds
+            try:
+                d = json.loads(subprocess.run(["git", "-C", str(REPO), "show", f"{h}:{SIG_REL}"], capture_output=True, text=True, check=True).stdout)
+                days[md] = {"hash": h, **{k: [{f: s[f] for f in keep if f in s} for s in d.get(k, [])] for k in ("entries", "exits", "addons")}}
+            except Exception:  # noqa: BLE001
+                pass
+        if md and md not in chosen:
+            chosen[md] = h
+    new = {"commits": commits, "days": days}
+    if new != cache:
+        cache_p.write_text(json.dumps(new, indent=0))
+    return dict(sorted(days.items()))
 
 
 def signal_ledger(hist, fills, last_date):
