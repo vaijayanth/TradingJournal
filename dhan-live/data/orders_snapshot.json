@@ -1,17 +1,7 @@
 {
- "fetched_at": "2026-11-26T09:12:49+05:30",
- "source": "mcp__dhan_mcp__orderbook_agent_tool list: pending orders",
+ "fetched_at": "2026-11-26T10:23:49+05:30",
+ "source": "mcp__dhan_mcp__orderbook_agent_tool list: pending orders (18 traded, 1 rejected: DIXON BUY 1)",
  "orders": [
-  {
-   "order_id": "3252611259876",
-   "symbol": "BPCL",
-   "side": "BUY",
-   "qty": 9,
-   "order_type": "LIMIT",
-   "price": 310.7,
-   "status": "PENDING",
-   "amo": true
-  },
   {
    "order_id": "3252611259875",
    "symbol": "INFY",
@@ -19,6 +9,16 @@
    "qty": 2,
    "order_type": "LIMIT",
    "price": 1151.9,
+   "status": "PENDING",
+   "amo": true
+  },
+  {
+   "order_id": "3452611257697",
+   "symbol": "SGFIN",
+   "side": "SELL",
+   "qty": 1,
+   "order_type": "LIMIT",
+   "price": 630.2,
    "status": "PENDING",
    "amo": true
   },
@@ -33,192 +33,12 @@
    "amo": true
   },
   {
-   "order_id": "3252611259874",
-   "symbol": "DIXON",
-   "side": "BUY",
-   "qty": 1,
-   "order_type": "LIMIT",
-   "price": 13237.55,
-   "status": "PENDING",
-   "amo": true
-  },
-  {
-   "order_id": "2252611259980",
-   "symbol": "SHRIRAMFIN",
-   "side": "BUY",
-   "qty": 13,
-   "order_type": "LIMIT",
-   "price": 1009.7,
-   "status": "PENDING",
-   "amo": true
-  },
-  {
-   "order_id": "2252611259978",
-   "symbol": "SHARDAMOTR",
-   "side": "BUY",
-   "qty": 2,
-   "order_type": "LIMIT",
-   "price": 1007.95,
-   "status": "PENDING",
-   "amo": true
-  },
-  {
-   "order_id": "2352611257704",
-   "symbol": "SHALPAINTS",
-   "side": "BUY",
-   "qty": 18,
-   "order_type": "LIMIT",
-   "price": 109.75,
-   "status": "PENDING",
-   "amo": true
-  },
-  {
-   "order_id": "3452611257702",
-   "symbol": "MEDANTA",
-   "side": "BUY",
-   "qty": 1,
-   "order_type": "LIMIT",
-   "price": 1536.0,
-   "status": "PENDING",
-   "amo": true
-  },
-  {
-   "order_id": "3452611257701",
-   "symbol": "AGARWALEYE",
-   "side": "BUY",
-   "qty": 3,
-   "order_type": "LIMIT",
-   "price": 580.05,
-   "status": "PENDING",
-   "amo": true
-  },
-  {
-   "order_id": "3452611257700",
-   "symbol": "TCPLPACK",
-   "side": "BUY",
-   "qty": 1,
-   "order_type": "LIMIT",
-   "price": 4347.3,
-   "status": "PENDING",
-   "amo": true
-  },
-  {
-   "order_id": "2352611257703",
-   "symbol": "SHREEPUSHK",
-   "side": "BUY",
-   "qty": 1,
-   "order_type": "LIMIT",
-   "price": 526.2,
-   "status": "PENDING",
-   "amo": true
-  },
-  {
-   "order_id": "3252611259858",
-   "symbol": "SANATHAN",
-   "side": "BUY",
-   "qty": 1,
-   "order_type": "LIMIT",
-   "price": 569.3,
-   "status": "PENDING",
-   "amo": true
-  },
-  {
-   "order_id": "3252611259856",
-   "symbol": "MANAKCOAT",
-   "side": "BUY",
-   "qty": 1,
-   "order_type": "LIMIT",
-   "price": 156.45,
-   "status": "PENDING",
-   "amo": true
-  },
-  {
-   "order_id": "2252611259975",
-   "symbol": "KTKBANK",
-   "side": "BUY",
-   "qty": 1,
-   "order_type": "LIMIT",
-   "price": 345.0,
-   "status": "PENDING",
-   "amo": true
-  },
-  {
-   "order_id": "3252611259853",
-   "symbol": "AMANTA",
-   "side": "BUY",
-   "qty": 1,
-   "order_type": "LIMIT",
-   "price": 221.8,
-   "status": "PENDING",
-   "amo": true
-  },
-  {
-   "order_id": "2352611257702",
-   "symbol": "SSWL",
-   "side": "SELL",
-   "qty": 2,
-   "order_type": "MARKET",
-   "price": null,
-   "status": "PENDING",
-   "amo": true
-  },
-  {
    "order_id": "2252611259966",
    "symbol": "SGMART",
    "side": "SELL",
    "qty": 1,
-   "order_type": "MARKET",
-   "price": null,
-   "status": "PENDING",
-   "amo": true
-  },
-  {
-   "order_id": "3452611257697",
-   "symbol": "SGFIN",
-   "side": "SELL",
-   "qty": 1,
-   "order_type": "MARKET",
-   "price": null,
-   "status": "PENDING",
-   "amo": true
-  },
-  {
-   "order_id": "2352611257701",
-   "symbol": "NILKAMAL",
-   "side": "SELL",
-   "qty": 2,
-   "order_type": "MARKET",
-   "price": null,
-   "status": "PENDING",
-   "amo": true
-  },
-  {
-   "order_id": "3452611257696",
-   "symbol": "NAZARA",
-   "side": "SELL",
-   "qty": 2,
-   "order_type": "MARKET",
-   "price": null,
-   "status": "PENDING",
-   "amo": true
-  },
-  {
-   "order_id": "2252611259964",
-   "symbol": "GUFICBIO",
-   "side": "SELL",
-   "qty": 3,
-   "order_type": "MARKET",
-   "price": null,
-   "status": "PENDING",
-   "amo": true
-  },
-  {
-   "order_id": "2252611259963",
-   "symbol": "ESAFSFB",
-   "side": "SELL",
-   "qty": 21,
-   "order_type": "MARKET",
-   "price": null,
+   "order_type": "LIMIT",
+   "price": 829.45,
    "status": "PENDING",
    "amo": true
   }

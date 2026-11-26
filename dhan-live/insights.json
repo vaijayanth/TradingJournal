@@ -1,17 +1,17 @@
 {
- "as_of": "26 Nov pre-open (market data 25 Nov close)",
- "written_at": "2026-11-26T09:16:24+05:30",
+ "as_of": "26 Nov 10:25 (market data 25 Nov close, positions live)",
+ "written_at": "2026-11-26T10:25:24+05:30",
  "confidence": "low",
  "maturity": "139 positions ever opened but only 9 closed trades: the swing edge cannot be judged yet.",
- "headline": "Last night's 22 orders are resting for the open and two new add-ons (SUNTV, TEXINFRA) cleared the data check; BSE is still the one structure out of line.",
+ "headline": "The open filled 17 of the 22 queued orders; five swing exits and four entries are done, and the BSE structure plus an orphaned HCLTECH hedge are the open items.",
  "points": [
   {
    "label": "Signals",
-   "text": "The 22 orders from last night are pending for the open (7 swing exits, 6 add-ons, 4 entries, 5 averaging buys). Dhan's own candles confirmed all 12 stocks the price check had flagged, so two add-ons held back by that check, SUNTV x1 (-11%) and TEXINFRA x1 (-7%), are now orderable. NILKAMAL's exit is still advisory-flagged (the independent Supertrend reads green); the backtester signal stands under your rule."
+   "text": "Filled at the open: 5 swing exits (ESAFSFB, GUFICBIO, NILKAMAL, SSWL, NAZARA), 4 entries (AGARWALEYE, MEDANTA, SHALPAINTS, SHARDAMOTR), 6 add-ons and 2 averaging buys (BPCL x9, SHRIRAMFIN x13). Still resting: SGFIN and SGMART exits, and the INFY and HCLTECH averaging limits below the market. DIXON x1 averaging was rejected by the exchange; reason unknown, re-place it."
   },
   {
    "label": "BSE",
-   "text": "The BSE 4200CE still fights a green colour and the 3200PE is 200 qty unhedged. Both have stops, but this is the one structure out of line with the rules and the largest remaining tail among the 13 shorts."
+   "text": "The BSE 4200CE still fights a green colour and the 3200PE is 200 qty unhedged (HIGH). Both have stops; this is the one structure out of line with the rules."
   },
   {
    "label": "Investment shares",
@@ -19,12 +19,12 @@
   },
   {
    "label": "Options",
-   "text": "Rs6.8k of options profit was booked today (SHRIRAMFIN 880PE, CUMMINSIND 5300CE). You then added stops and targets to the two replacement shorts in the app (SHRIRAMFIN 900PE 32.70 / 4.35, CUMMINSIND 4650CE 57.70 / 7.70, trail 0.05), so the super-order scan shows 0 findings across 13 shorts."
+   "text": "The HCLTECH 1240PE short hit its profit target at 4.65 (bought back 4.70, +Rs2,780 realised), so its super order's stop leg cancelled cleanly. The 1200PE hedge (400 qty, -Rs1,940) is now orphaned: sell it, or sell a new put above it since the colour is still green."
   },
   {
    "label": "Versus the backtest",
    "text": "9 closed trades against 28% CAGR, -15.4% drawdown and PF 2.0: too early to compare. With 7 exits at once this is the first real test of how the live exits compare with the backtest's average loser (-9%)."
   }
  ],
- "action": "Place the SUNTV and TEXINFRA add-ons with /dhan-order after the open; close the BSE 4200CE and hedge or close the BSE 3200PE in the Dhan app."
+ "action": "Place the SUNTV and TEXINFRA add-ons and the DIXON averaging buy (rejected at the open) with /dhan-order after the close; close the BSE 4200CE and fix the BSE hedge; sell or re-use the HCLTECH 1200PE."
 }

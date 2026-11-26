@@ -1,22 +1,52 @@
 {
- "generated_at": "2026-11-26T09:16:12+05:30",
+ "generated_at": "2026-11-26T10:24:44+05:30",
  "broker": "dhan",
  "market_data_date": "2026-11-25",
- "signals_generated_at": "2026-11-26T03:45:30.603054+00:00",
+ "signals_generated_at": "2026-11-26T04:54:42.009657+00:00",
  "status": "WARN",
  "global_block": false,
  "counts": {
   "block": 0,
-  "warn": 2,
+  "warn": 7,
   "info": 0
  },
  "per_symbol_blocks": {},
  "findings": [
   {
-   "id": "F5",
+   "id": "I3",
+   "level": "WARN",
+   "symbol": "SSWL",
+   "msg": "SSWL: trade log says 0, Dhan holdings say 2. Holdings are used; it usually clears after the next refresh (a recent sale or buy not yet settled)."
+  },
+  {
+   "id": "I3",
+   "level": "WARN",
+   "symbol": "GUFICBIO",
+   "msg": "GUFICBIO: trade log says 0, Dhan holdings say 3. Holdings are used; it usually clears after the next refresh (a recent sale or buy not yet settled)."
+  },
+  {
+   "id": "I3",
+   "level": "WARN",
+   "symbol": "NAZARA",
+   "msg": "NAZARA: trade log says 0, Dhan holdings say 2. Holdings are used; it usually clears after the next refresh (a recent sale or buy not yet settled)."
+  },
+  {
+   "id": "I3",
+   "level": "WARN",
+   "symbol": "ESAFSFB",
+   "msg": "ESAFSFB: trade log says 0, Dhan holdings say 21. Holdings are used; it usually clears after the next refresh (a recent sale or buy not yet settled)."
+  },
+  {
+   "id": "I3",
+   "level": "WARN",
+   "symbol": "NILKAMAL",
+   "msg": "NILKAMAL: trade log says 0, Dhan holdings say 2. Holdings are used; it usually clears after the next refresh (a recent sale or buy not yet settled)."
+  },
+  {
+   "id": "I3",
    "level": "WARN",
    "symbol": null,
-   "msg": "the cross-check flagged 1 of 19 signals (advisory only, the backtester signal stands and they are not blocked): NILKAMAL"
+   "msg": "10 stocks were bought in the last 3 days and are not in Dhan holdings yet (settlement timing); positions and P&L exclude them until holdings catch up: SHREEPUSHK (2->3), MANAKCOAT (6->7), AMANTA (4->5), SANATHAN (3->4), KTKBANK (5->6), TCPLPACK (1->2), SHARDAMOTR (0->2), SHALPAINTS (0->18), AGARWALEYE (0->3), MEDANTA (0->1)"
   },
   {
    "id": "P3",

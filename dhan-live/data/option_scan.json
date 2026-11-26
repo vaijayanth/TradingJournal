@@ -1,11 +1,21 @@
 {
- "fetched_at": "2026-11-26T09:16:12+05:30",
+ "fetched_at": "2026-11-26T10:25:13+05:30",
  "stale_inputs": [],
- "open_legs": 21,
- "shorts": 13,
+ "open_legs": 20,
+ "shorts": 12,
  "super_orders": 14,
- "fired_cleanly": [],
+ "fired_cleanly": [
+  "HCLTECH @ 11.65"
+ ],
  "findings": [
+  {
+   "section": "A",
+   "severity": "WARN",
+   "symbol": "HCLTECH",
+   "leg": "HCLTECH 1200PE 2026-12-29",
+   "concern": "Long 1200PE (400 qty) no short against it; P&L Rs-1,940, expiry 2026-12-29",
+   "action": "Sell it or let it expire"
+  },
   {
    "section": "B",
    "severity": "HIGH",
