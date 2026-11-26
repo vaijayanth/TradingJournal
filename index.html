@@ -10390,7 +10390,7 @@ const ccTabBar = (id, tabs, extra) => `<div class="dhm-tabs" id="${id}" role="ta
   `<button class="dhm-tab" data-tab="${k}" onclick="${extra}('${k}')">${l}${n == null ? '' : `<span class="dhm-count">${n}</span>`}</button>`).join('') + '</div>';
 
 // Alert type pill: the label is the alert's own type (3× premium, Near strike, Beyond strike, No GTT placed ...), the colour follows its severity
-const CC_TYPE_ORDER = ['Exit', 'F&O ban', '3× premium', 'Near 3× stop', 'Through hedge', 'Beyond strike', 'Expiry risk', 'Event close', 'Near strike', 'Profit Exit', 'Invalid GTT', 'Invalid stop order', 'No GTT placed', 'No stop placed', 'No hedge', 'Partly hedged', 'Over-hedged', 'Leftover hedge', 'New trade'];
+const CC_TYPE_ORDER = ['Exit', 'F&O ban', 'Near flip', '3× premium', 'Near 3× stop', 'Through hedge', 'Beyond strike', 'Expiry risk', 'Event close', 'Near strike', 'Profit Exit', 'Invalid GTT', 'Invalid stop order', 'No GTT placed', 'No stop placed', 'No hedge', 'Partly hedged', 'Over-hedged', 'Leftover hedge', 'New trade'];
 function ccTypePill(a) {
   const m = { EXIT: ['var(--red-soft)', 'var(--red)'], BREACH: ['var(--red)', '#fff'], WARN: ['var(--amber-soft, var(--surface2))', 'var(--amber)'], ENTER: ['rgba(76,134,255,.16)', 'var(--accent)'], PROFIT: ['var(--green-soft)', 'var(--green)'] };
   const [bg, fg] = m[a.level] || ['var(--surface2)', 'var(--text-muted)'];
@@ -10408,6 +10408,7 @@ function ccShortAlert0(r) {
     case 'Profit Exit': x = m(/decayed (\d+)%/); return [x ? `${x[1]}% decayed` : 'Premium decayed', 'Buy back'];
     case 'Beyond strike': x = m(/price ([\d.]+)% past the strike, Rs([\d,]+)/); return [x ? `${x[1]}% in the money · ₹${x[2]}` : 'In the money', 'Roll, close or hold'];
     case 'Through hedge': x = m(/Rs([\d,]+) intrinsic/); return [x ? `Past hedge · max loss ₹${x[1]}` : 'Past hedge', 'Close or roll'];
+    case 'Near flip': x = m(/is only ([\d.]+)% from turning (\w+)/); return [x ? `${x[1]}% from turning ${x[2]}` : 'Near a Supertrend flip', 'Watch the close'];
     case 'F&O ban': return ['In F&O ban: close only', 'Close the structure'];
     case 'Near strike': x = m(/([\d.]+)% from/); return [x ? `${x[1]}% from strike` : 'Near strike', 'Watch'];
     case 'No hedge': case 'Partly hedged': x = m(/(\d+) of (\d+) qty uncovered/); return [x ? `${x[1]} of ${x[2]} uncovered` : 'Not fully hedged', /shares/i.test(a) ? 'Buy hedge or hold shares' : 'Buy hedge'];
@@ -10436,10 +10437,19 @@ const ccIvpCell = sym => {
   const col = x.ivp >= 70 ? 'var(--green)' : x.ivp >= 50 ? 'var(--text)' : x.ivp >= 30 ? 'var(--amber)' : 'var(--text-muted)';
   return `<b style="color:${col}" title="IV percentile ${x.ivp}: share of the last 252 sessions with a lower ATM IV · IV ${x.iv}% · IV rank ${x.ivr} · ${x.asof || '?'} close. 70+ = premium rich, below 30 = cheap. Information only.">${x.ivp}</b>`;
 };
+// Distance to the Supertrend flip (user, 2026-11-26): green = % the price can fall to the lower line before it turns red, red = % it can rise to the upper line before it turns green.
+// Within 1.5% is amber: a feed difference of a few points could already change the colour (the HCLTECH case on 26 Nov).
+const ccToFlipOf = sym => ((window._ccSt || {})[sym] || {}).d ?? 999;
+const ccToFlipCell = sym => {
+  const x = (window._ccSt || {})[sym]; if (!x) return '<span style="color:var(--text-muted)">—</span>';
+  const edge = x.d <= 1.5, col = edge ? 'var(--amber)' : 'var(--text)';
+  return `<span style="color:${col};white-space:nowrap" title="Supertrend ${x.c}, line ${x.line} vs price ${x.px} (bar ${x.bar}). ${edge ? 'Within 1.5% of flipping: the colour is on a knife-edge. ' : ''}Green = % to fall before red, red = % to rise before green.">${edge ? '⚠ ' : ''}${x.d.toFixed(1)}%<span style="color:var(--text-muted);font-size:10px"> ${x.c === 'green' ? '↓red' : '↑green'}</span></span>`;
+};
 const ccAlertCols = withType => (withType ? [{ h: 'Alert type', v: r => ccTypeOrd(r), c: r => ccTypePill(r) }] : []).concat([
   { h: 'Stock', v: r => r.symbol, c: r => `<b class="stk">${dhEsc(r.symbol)}</b>` },
   { h: 'Supertrend', v: r => ccTrendOf(r.symbol), c: ccTrendCell, txt: true },
   { h: 'IVP', v: r => ccIvpOf(r.symbol), c: r => ccIvpCell(r.symbol) },
+  { h: 'To flip', v: r => ccToFlipOf(r.symbol), c: r => ccToFlipCell(r.symbol) },
   { h: 'Right position', v: r => ccRightPos(r), c: r => { const p = ccRightPos(r); return p === '—' ? '<span style="color:var(--text-muted)">—</span>' : `<b title="The structure the Supertrend colour wants: green = bull put spread, red = sell call">${p}</b>`; }, txt: true },
   { h: 'Leg', v: r => r.strike == null ? '' : r.strike, c: r => r.strike == null ? '—' : ccStrike(r.strike) + ' ' + (r.opt_type || '') },
   { h: 'Expiry', v: r => r.expiry || '', c: r => r.expiry ? dhFmtDate(r.expiry) : '—' },
@@ -10448,7 +10458,7 @@ const ccAlertCols = withType => (withType ? [{ h: 'Alert type', v: r => ccTypeOr
 ]);
 // ── ACTIONS tab (user, 2026-11-17): alerts AND entry signals in one place, three segments in workflow order: Exit -> Fix -> Entry (+ All) ──
 // Exit = close or watch an open leg; Fix = stop / GTT / hedge problems; Entry = new trades (the 5 tiers become a Tier column + filter).
-const CC_EXIT_TYPES = ['Exit', 'F&O ban', '3× premium', 'Near 3× stop', 'Through hedge', 'Beyond strike', 'Expiry risk', 'Event close', 'Near strike', 'Profit Exit'];
+const CC_EXIT_TYPES = ['Exit', 'F&O ban', 'Near flip', '3× premium', 'Near 3× stop', 'Through hedge', 'Beyond strike', 'Expiry risk', 'Event close', 'Near strike', 'Profit Exit'];
 const CC_FIX_TYPES = ['Invalid GTT', 'Invalid stop order', 'No GTT placed', 'No stop placed', 'No hedge', 'Partly hedged', 'Over-hedged', 'Leftover hedge'];
 const ccKind = t => CC_EXIT_TYPES.includes(t) ? 'exit' : CC_FIX_TYPES.includes(t) ? 'fix' : 'entry';
 const CC_SEG_LABEL = { exit: 'Exit', fix: 'Fix', entry: 'Entry', all: 'All' };
@@ -10497,6 +10507,7 @@ const ccActCols = () => [
   { h: 'Stock', v: r => r.symbol, c: r => `<b class="stk">${dhEsc(r.symbol)}</b>`, txt: true },
   { h: 'Supertrend', v: r => ccTrendOf(r.symbol), c: ccTrendCell, txt: true },
   { h: 'IVP', v: r => ccIvpOf(r.symbol), c: r => ccIvpCell(r.symbol) },
+  { h: 'To flip', v: r => ccToFlipOf(r.symbol), c: r => ccToFlipCell(r.symbol) },
   { h: 'Right position', v: r => ccRightPos(r), c: r => { const p = ccRightPos(r); return p === '—' ? '<span style="color:var(--text-muted)">—</span>' : `<b title="The structure the Supertrend colour wants: green = bull put spread, red = sell call">${p}</b>`; }, txt: true },
   { h: 'Leg', v: r => r.strike == null ? '' : r.strike, c: r => r.strike == null ? '<span style="color:var(--text-muted)">—</span>' : ccStrike(r.strike) + ' ' + (r.opt_type || '') },
   { h: 'Expiry', v: r => r.expiry || '', c: r => r.expiry ? dhFmtDate(r.expiry) : '—' },
@@ -10507,6 +10518,7 @@ const ccActCols = () => [
 ];
 function ccActionsBox(d, pfx, tierRows, showEntry) {
   window._ccIvp = Object.fromEntries((d.stocks || []).filter(x => x.ivp != null).map(x => [x.symbol, { ivp: x.ivp, iv: x.iv, ivr: x.ivr, asof: d.ivp_as_of }]));   // this broker's own IV percentile (data/ivp.json, via its engine)
+  window._ccSt = Object.fromEntries((d.stocks || []).filter(x => x.st_dist_pct != null).map(x => [x.symbol, { c: x.st_colour, line: x.st_line, px: x.st_price, d: x.st_dist_pct, bar: x.st_bar }]));   // distance to the Supertrend flip (this broker's engine)
   window._ccTrend = Object.fromEntries((d.stocks || []).filter(s => s.colour).map(s => [s.symbol, s.colour]));   // this broker's Supertrend colours (Trend / Right position columns)
   window._ccActPfx = pfx;
   const all = ccActRows(d, tierRows);
@@ -10721,6 +10733,7 @@ const ccTradeCols = () => [
   { h: 'Stock', v: t => t.symbol, c: t => `<b class="stk">${dhEsc(t.symbol)}</b>${ccInBan(t.symbol) ? '<br>' + ccBanChip(true) : ''}`, txt: true },
   { h: 'Supertrend', v: t => ccTrendOf(t.symbol), c: t => ccTrendCell(t), txt: true },
   { h: 'IVP', v: t => ccIvpOf(t.symbol), c: t => ccIvpCell(t.symbol) },
+  { h: 'To flip', v: t => ccToFlipOf(t.symbol), c: t => ccToFlipCell(t.symbol) },
   { h: 'Right position', v: t => ccRightPos(t), c: t => { const p = ccRightPos(t), m = ccHeldMatch(t); const mk = m == null ? '' : m ? ' <span class="pos" title="This trade is the structure the colour wants">✓</span>' : ' <span class="neg" title="This trade is the opposite of what the colour wants">≠</span>'; return p === '—' ? '<span style="color:var(--text-muted)">—</span>' : `<b>${p}</b>${mk}`; }, txt: true },
   { h: 'Trade', v: t => t.label, c: t => dhEsc(t.label), txt: true },
   { h: 'Expiry', v: t => t.expiry, c: t => `${dhFmtDate(t.expiry)} <span style="color:${t.days <= 7 ? 'var(--red)' : 'var(--text-muted)'}">(${t.days}d)</span>`, txt: true },

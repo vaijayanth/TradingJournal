@@ -35,6 +35,84 @@ def _ban_symbols(data_dir):
     return (set(j.get("symbols", [])) if j.get("ok") else set()), j.get("trade_date")
 
 
+def _st_state(highs, lows, closes, period=10, mult=3.0):
+    """Supertrend(10,3) as the backtester computes it: (direction of the last bar, final lower band, final upper band)."""
+    n = len(closes)
+    if n <= period:
+        return None, None, None
+    tr = [highs[0] - lows[0]] + [max(highs[i] - lows[i], abs(highs[i] - closes[i - 1]), abs(lows[i] - closes[i - 1])) for i in range(1, n)]
+    atr = [None] * n
+    atr[period - 1] = sum(tr[:period]) / period
+    for i in range(period, n):
+        atr[i] = (atr[i - 1] * (period - 1) + tr[i]) / period
+    s = period - 1
+    mid = (highs[s] + lows[s]) / 2
+    fu, fl = mid + mult * atr[s], mid - mult * atr[s]
+    d = "down" if closes[s] <= fu else "up"
+    for i in range(s + 1, n):
+        mid = (highs[i] + lows[i]) / 2
+        bu, bl = mid + mult * atr[i], mid - mult * atr[i]
+        fu = bu if (bu < fu or closes[i - 1] > fu) else fu
+        fl = bl if (bl > fl or closes[i - 1] < fl) else fl
+        d = ("up" if closes[i] > fu else "down") if d == "down" else ("down" if closes[i] < fl else "up")
+    return d, fl, fu
+
+
+def _st_distances(symbols, data_dir, ttl_minutes=30):
+    """Distance to the Supertrend flip per stock (user, 2026-11-26): green = % the price can fall to the lower line before the colour turns red, red = % it can rise to the upper line
+    before it turns green. Computed from Yahoo daily candles (the last bar can lag a session for some stocks: `bar` says which date it is) and cached in data/st_distance.json
+    for ttl_minutes. A failure returns what the cache has (or nothing); it never stops the engine. Information only."""
+    cache = Path(data_dir) / "st_distance.json"
+    now = datetime.now(timezone.utc)
+    rows = {}
+    try:
+        c = json.loads(cache.read_text(encoding="utf-8"))
+        rows = c.get("rows", {})
+        age = (now - datetime.fromisoformat(c["fetched_at"])).total_seconds() / 60
+        if age <= ttl_minutes and all(s in rows for s in symbols):
+            return rows
+    except Exception:  # noqa: BLE001
+        pass
+    try:
+        import yfinance as yf
+        df = yf.download([s + ".NS" for s in symbols], period="1y", interval="1d", auto_adjust=False, progress=False, group_by="ticker", threads=True)
+    except Exception:  # noqa: BLE001
+        return rows
+    out = {}
+    for s in symbols:
+        try:
+            x = df[s + ".NS"].dropna(subset=["Close"]) if len(symbols) > 1 else df.dropna(subset=["Close"])
+            d, fl, fu = _st_state(x["High"].tolist(), x["Low"].tolist(), x["Close"].tolist())
+            px = float(x["Close"].iloc[-1])
+            if d is None or px <= 0:
+                continue
+            line = fl if d == "up" else fu
+            out[s] = {"colour": "green" if d == "up" else "red", "line": round(float(line), 2), "price": round(px, 2), "dist_pct": round((px - line) / px * 100 if d == "up" else (line - px) / px * 100, 2), "bar": str(x.index[-1].date())}
+        except Exception:  # noqa: BLE001
+            continue
+    if out:
+        try:
+            cache.write_text(json.dumps({"fetched_at": now.isoformat(timespec="seconds"), "rows": out}, separators=(",", ":")), encoding="utf-8")
+        except Exception:  # noqa: BLE001
+            pass
+        return out
+    return rows
+
+
+def _near_flip_alerts(stocks, edge_pct):
+    """WARN `Near flip` for a stock with open option legs whose Supertrend is within edge_pct of flipping: a feed difference of a few points could already change the colour."""
+    out = []
+    for s in stocks:
+        d = s.get("st_dist_pct")
+        if d is None or not s.get("legs") or d > edge_pct:
+            continue
+        flip_to = "red" if s.get("st_colour") == "green" else "green"
+        out.append({"level": "WARN", "type": "Near flip", "symbol": s["symbol"], "concern": f"Supertrend {s.get('st_colour')} is only {d:.1f}% from turning {flip_to} (line {s.get('st_line'):g}, price {s.get('st_price'):g}, bar {s.get('st_bar')})",
+                    "action": f"Watch: a close {'below' if flip_to == 'red' else 'above'} the line flips the structure the colour wants",
+                    "text": f"{s['symbol']}: Supertrend within {d:.1f}% of flipping {flip_to}"})
+    return out
+
+
 def _ban_alert(sym, legs, data_dir):
     """F&O ban = EXIT (user, 2026-11-26): a stock in the ban period allows reducing trades only, so an open structure cannot be rolled, added to or replaced: close it."""
     syms, tdate = _ban_symbols(data_dir)
@@ -374,6 +452,12 @@ def main():
         r_ = ivp_rows.get(s_.get("symbol"))
         if r_:
             s_["ivp"], s_["iv"], s_["ivr"] = r_["ivp"], r_["iv"], r_["ivr"]
+    _std = _st_distances(sorted({s_["symbol"] for s_ in stocks if s_.get("colour") and s_.get("symbol")}), DATA)
+    for s_ in stocks:
+        r_ = _std.get(s_.get("symbol"))
+        if r_:
+            s_["st_colour"], s_["st_line"], s_["st_price"], s_["st_dist_pct"], s_["st_bar"] = r_["colour"], r_["line"], r_["price"], r_["dist_pct"], r_["bar"]
+    alerts.extend(_near_flip_alerts(stocks, rules.get("near_flip_pct", 1.5)))
     result = {"generated_at": datetime.now(timezone.utc).isoformat(), "market_data_date": market_date, "live_prices_at": live.get("fetched_at") if live_px else None, "gtt_scan_at": scan.get("fetched_at") if scan_ok else None, "gtt_checked_at": load_json(gf).get("fetched_at") if gtt_active is not None else None, "rules": rules,
               "show_expiries": expiries, "stocks": stocks, "ivp_as_of": ivp_asof, "alerts": alerts, "events_file_at": events.get("generated_at"), "events_missing": events.get("missing", []), "no_data": no_data, "excluded": sorted(excluded),
               "positions": {"fetched_at": pos.get("fetched_at"), "track_from": cfg.get("track_from"), "legs": sum(len(s["legs"]) for s in stocks),
