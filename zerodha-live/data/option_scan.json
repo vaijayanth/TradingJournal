@@ -1,21 +1,15 @@
 {
- "fired_ok_today": [
-  "COLPAL26DEC1540PE",
-  "MAZDOCK26DEC2200CE",
-  "CGPOWER26DEC960CE",
-  "ICICILIFE26DEC410PE",
-  "POLICYBZR26DEC900PE"
- ],
- "fetched_at": "2026-11-25T23:35:37+05:30",
+ "fired_ok_today": [],
+ "fetched_at": "2026-11-26T09:05:36+05:30",
  "inputs": {
-  "positions": "2026-11-25T18:05:35.755290+00:00",
-  "gtts": "2026-11-25T23:35:35+05:30",
-  "orders": "2026-11-25T20:40:56+05:30",
-  "gtt_scan": "2026-11-25T23:35:35+05:30"
+  "positions": "2026-11-26T03:35:08.183855+00:00",
+  "gtts": "2026-11-26T09:05:08+05:30",
+  "orders": "2026-11-26T09:05:08+05:30",
+  "gtt_scan": "2026-11-26T09:05:08+05:30"
  },
  "stale_inputs": [],
  "open_legs": 103,
- "triggered_gtts": 5,
+ "triggered_gtts": 0,
  "findings": [
   {
    "section": "B",
@@ -310,7 +304,7 @@
    "severity": "WARN",
    "symbol": "CUMMINSIND",
    "tradingsymbol": "CUMMINSIND26DEC5000CE",
-   "concern": "Active GTT 344015712 (trailing-single) has a stop but no profit target; sold 21.8, premium 6.4",
+   "concern": "Active GTT 344015712 (trailing-single) has a stop but no profit target; sold 21.8, premium 6.35",
    "action": "Add a profit target at about 8.72 (a two-leg GTT: /zerodha-gtt-order or the Kite app)"
   }
  ]

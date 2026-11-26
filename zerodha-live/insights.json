@@ -1,21 +1,21 @@
 {
- "as_of": "25 Nov close (market data 25 Nov); updated after the GTT clean-up",
- "written_at": "2026-11-25T21:40:00+05:30",
+ "as_of": "26 Nov pre-open (market data 25 Nov close)",
+ "written_at": "2026-11-26T09:05:57+05:30",
  "confidence": "low",
  "maturity": "41 positions opened since the cut-off, 5 closed trades: the swing edge cannot be judged yet.",
- "headline": "All 69 shorts now carry a stop and target GTT and the stale ones are gone; what is left is two flipped put spreads to close and tonight's three stock orders.",
+ "headline": "Last night's three stock orders are in and resting for the open; the open risks are three option structures to close, one of them new: APLAPOLLO is in the F&O ban.",
  "points": [
   {
    "label": "Signals",
-   "text": "TORNTPHARM flipped green today (4 shares, about Rs19.6k). Add-ons: ASHOKLEY x13 (-7.2%) and POWERINDIA x1 (-6.7%). The independent cross-check says ASHOKLEY's Supertrend is RED on complete data while the backtester says green: advisory only under the standing policy, but it is the one order to look at twice before placing."
+   "text": "The three signals from last night (TORNTPHARM entry x4, ASHOKLEY add-on x13, POWERINDIA add-on x1) were placed as after-market orders and are resting at the open; nothing new today. The independent cross-check still says ASHOKLEY's Supertrend is RED on complete data while the backtester says green: advisory only, but it is the order to watch."
   },
   {
    "label": "Options process",
-   "text": "The 2 stale GTTs (COCHINSHIP 1020PE, RVNL 170PE) were deleted and protective two-leg GTTs were placed on all 14 new shorts (ALKEM, APLAPOLLO, CGPOWER, COCHINSHIP, COLPAL, ICICIGI, ICICILIFE, LICHSGFIN, MFSL, POLICYBZR, RVNL, SBILIFE, TATAPOWER, TATASTEEL). The GTT scan shows 0 findings across 69 contracts, and five GTTs fired and bought back cleanly today."
+   "text": "The GTT scan shows 0 findings across 69 contracts. CUMMINSIND 5000CE has decayed 71% (past the 60% target) and the buy-back is queued at 6.30; its old trailing stop (50) must be cancelled once the buy-back fills, or it would buy a new long. APLAPOLLO 1920CE is a new exit signal: the stock entered the NSE F&O ban, so the call cannot be rolled or replaced."
   },
   {
    "label": "Risk",
-   "text": "NATIONALUM and NMDC flipped red today, so their put spreads need closing before they run further against a red colour. Financial Services is still 51% of deployed swing capital against a 40% limit, so a gap down in banks and NBFCs hits the book disproportionately."
+   "text": "NATIONALUM (-Rs10.3k) and NMDC (-Rs1.9k) put spreads are against a red colour and still open; the NATIONALUM loss grew overnight. Financial Services is still 51% of deployed swing capital against a 40% limit. If every position closed on its Supertrend line the book would be about -Rs53k, so a bad open is survivable."
   },
   {
    "label": "Book",
@@ -26,5 +26,5 @@
    "text": "5 closed trades against 20.2% CAGR, -21.3% drawdown, 41% win rate: too early to compare. Watch the first 30 closed trades."
   }
  ],
- "action": "Close the NATIONALUM and NMDC put spreads, then place the TORNTPHARM entry and POWERINDIA add-on with /zerodha-order (decide on ASHOKLEY first)."
+ "action": "Before or at the open: close the NATIONALUM and NMDC put spreads and the APLAPOLLO 1920CE; the CUMMINSIND buy-back is already queued at 6.30, so leave it. Then place nothing new: the TORNTPHARM, ASHOKLEY and POWERINDIA orders are already in."
 }
