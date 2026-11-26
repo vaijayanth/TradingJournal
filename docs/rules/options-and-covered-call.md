@@ -36,3 +36,20 @@
 
 ## F&O ban = exit signal (user, 2026-11-26)
 A stock in the NSE F&O ban period (`data/fno_ban.json`, fetched by each refresh) allows only reducing trades, so an open option structure on it cannot be rolled, added to or replaced. Each broker's covered-call engine raises an EXIT alert of type `F&O ban` (one per stock with open legs, shorts and hedge, action "Close the structure while the ban lasts"). It shows on the Covered Call tables, in the `*-option-exit-signal` list (group 7.5), in the "Act now" count and in guardrail P3. A failed ban fetch (`ok: false`) raises nothing. Entry rows for banned stocks stay "do not open".
+
+## Option exit criteria (summary, 2026-11-26)
+Raised by each broker's `compute_covered_call.py` (thresholds in `data/cc_config.json` `rules`), listed by `*-option-exit-signal`, most urgent first:
+| # | Signal | Fires when | Action |
+|---|---|---|---|
+| 1 | 3x premium | short price >= 3x the sold average | close now |
+| 2 | Through hedge | stock past the hedge strike (maximum loss) | close or roll |
+| 3 | Beyond strike | stock past the short strike (in the money) | roll, close or hold |
+| 4 | Stop problems (ND, AZ scans) | stop fired but the short is open; trigger passed but the stop is pending; short with no stop | fix in the broker app / skill |
+| 5 | Expiry risk | in the money within 7 days of expiry | close before expiry |
+| 6 | Event close | results or ex-dividend within 15 days | close before it |
+| 7 | Exit (colour flipped) | open structure is the opposite of the Supertrend colour (AZ RSI override applies) | close, open what the colour wants |
+| 8 | F&O ban | stock with open legs is in the NSE ban period | close the structure |
+| 9 | Profit exit | premium decayed 60%+ (price <= 40% of sold) | buy back |
+| 10 | Near strike | stock within 2% of the short strike | watch |
+| 11 | Leftover hedge | a long leg hedges nothing | sell it or book the profit |
+DI only: `Near 3x stop` WARN at 2.5x sold. Not criteria: IVP (information), news (not read), delta (strike choice only), a loss on its own.

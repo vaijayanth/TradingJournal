@@ -77,7 +77,8 @@ Read left to right: connectors and public data feed the refresh skills; each ref
 | `zerodha-live/` (AZ) | Same shape for Zerodha plus GTT scripts, move-from-sheet baseline, `scan_gtts.py` |
 | `icici-live/` (DI) | Dividend universe, 52-week-low entry, covered call, `build_gtt_levels.py` (calculated stop/target), manual positions import |
 | `.claude/skills/` | The skills (section 6) and `_shared/` (`output-format.md`, `holds.md`) |
-| `scripts/` | `check_rules_consistency.py`, `sync_skill_blocks.py`, `market_direction.py`, `action_items.py` |
+| `scripts/` | `check_rules_consistency.py`, `sync_skill_blocks.py`, `market_direction.py`, `action_items.py`, `ivp_update.py` (daily IV history + per-broker `data/ivp.json`), `ivp_scan.py` (rank by IVP) |
+| `market-data/` | `iv_history.json`: ATM IV per F&O stock per day from the NSE bhavcopy (committed, about 1 MB; the raw bhavcopy cache is git-ignored under `options-backtest/data/`) |
 | `swing-backtest/` | The backtest engine, scripts and `results/`; `RESULTS.md` is the table of record |
 | `docs/` | This file; `rules/` (topic rules); archives of the legacy sheet system, options plan, journal, redesign |
 | `reports/`, `research_notes/` | Research outputs (Bonde EP and Minervini entries) |
@@ -141,6 +142,10 @@ flowchart TB
 | Protection, AZ | Two-leg GTT: stop trigger 2.75x (limit 3x), target trigger at 40%. Trailing GTTs cannot be created or converted by the tool; leave existing ones |
 | DI | No broker link: stop and target are **calculated** from the rules (`/icici-gtt-order` lists them for manual placement) |
 | Alerts | Types: 3x premium, Through hedge, Beyond strike, Near strike, Exit (colour flipped), Profit Exit (60% decayed), Event close (15 days before results or ex-dividend), Expiry risk (physical delivery), Leftover hedge, No GTT / No stop placed, Invalid GTT / Invalid stop order, New trade |
+| Exit criteria | The full list (3x premium, through hedge, beyond strike, stop problems, expiry risk, event close, colour flip, F&O ban, profit exit, near strike, orphaned long) with thresholds is in `docs/rules/options-and-covered-call.md` under 'Option exit criteria' |
+| F&O ban (2026-11-26) | A held stock in the NSE ban period raises an EXIT alert `F&O ban` (close the structure: no rolling or new legs allowed). Fetched by every refresh into `data/fno_ban.json` |
+| IV percentile (2026-11-26) | `ivp_update.py` runs before the rebuild in all three refresh skills; each engine copies `ivp` / `iv` / `ivr` from its own `data/ivp.json` into `covered_call_signals.json`; IVP column on the Actions / Alerts / Trades tables and the entry-tier lists. Information only, no rule uses it |
+| DI near-stop warning (2026-11-26) | DI only: a short at 2.5x its sold average or more (below 3x) raises a WARN `Near 3x stop` (`near_stop_multiple` in `icici-live/data/cc_config.json`) |
 | Re-sell PE | A long put left after the short put hit its profit target, on a still-green stock, is an entry signal (a `Re-sell PE` row on the Entry tab) |
 | Options book check | Panel on the Covered Call page and a section of the report: trend match, hedge, stop and target per stock, attention-first; ND in the report table, AZ and DI attention-only |
 | Scans | `scan_options.py` sections A to G (orphaned longs, unhedged puts, no stop, stop fired but not fixed, trigger passed, hygiene, stop with no target), `scan_super_orders.py` (S1 to S4, multi-order coverage grouped), `scan_gtts.py` (G1 to G7) |
@@ -239,12 +244,12 @@ A win rate near 41% is normal for these systems. Tables of record: `swing-backte
 | Yahoo has no bar on an Indian holiday | `/market-direction` flags "no cash session since <date>" |
 | Daily candles pulled late can carry the last traded price | Re-pull after settlement before trusting a flag |
 
-| Open item (25 Nov 2026) | Status |
+| Open item (26 Nov 2026) | Status |
 |---|---|
-| ND orders for 23 Nov signals (2 exits, 6 add-ons, 7 entries) | Not placed; run `/dhan-order` after a clean refresh |
+| ND AMO orders (22) and AZ AMO orders (ASHOKLEY, POWERINDIA, TORNTPHARM) placed 25 Nov | Run `/refresh-dhan` and `/refresh-zerodha` after the open to book the fills |
 | BSE 4200CE against a green colour; BSE 3200PE unhedged (ND) | Close or hedge in the Dhan app |
-| COCHINSHIP and RVNL put spreads (AZ) | Close in Kite; the COCHINSHIP exit order books on the next `/refresh-zerodha` |
-| DI legs (PFC, CDSL 1500CE, COALINDIA, INDHOTEL, GAIL, IOC, LICI) | Manual in ICICIdirect |
+| NATIONALUM and NMDC put spreads, APLAPOLLO 1920CE (F&O ban), CUMMINSIND GTT swap (AZ) | Close the spreads and APLAPOLLO in Kite; the CUMMINSIND trailing stop (50) to a 59.95 / 8.70 two-leg GTT waits for the user's yes |
+| DI: NATIONALUM and NMDC spreads, CDSL 1500CE, TCS spread (profit), IOC and LICI unhedged puts, GOLDBEES buy (recorded 26 Nov) | Manual in ICICIdirect |
 | Session-start hooks | CLAUDE.md says a hook runs the stale-refresh check and the move-candidate nudge, but `.claude/settings.json` holds only the branch-switch hook; run `python dhan-live/scripts/stale_check.py` and `python zerodha-live/scripts/stale_check.py` yourself, or add the hook |
 | `zerodha-option-order` | On hold since 2026-11-17 |
 | Options strategy v2 | Agreed, not built (`OPTIONS_STRATEGY_V2.md`) |
