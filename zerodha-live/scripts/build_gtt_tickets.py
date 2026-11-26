@@ -8,8 +8,7 @@ Inputs (all must be from TODAY, IST; the zerodha-gtt-order skill pulls them firs
   data/cc_gtts.json        <- get_gtts via cc_gtts.py             (which contracts already have an active buy GTT)
 Rules: SHORT option legs only; BUY to close, NRML, quantity = the open short quantity. Default = a TWO-LEG (one-cancels-other) GTT like
 the user's own: upper trigger = the stop, gtt_stop_trigger_multiple x the sold average (3), upper limit = the stop trigger + gtt_stop_limit_buffer_pct (1%), lower trigger = the profit target, the premium
-decayed by profit_exit_decay_pct (60%), i.e. 40% of the sold average. The profit limit = its trigger + gtt_limit_buffer_pct (1%). Both limits are rounded up to
-the 0.05 tick. `--single` builds the stop only. If the premium has already decayed past the profit target the ticket is stop-only (book
+decayed by profit_exit_decay_pct (60%), i.e. 40% of the sold average. The profit limit = its trigger + gtt_limit_buffer_pct (1%). The stop limit rounds to the nearest 0.05 tick (like the triggers); the profit limit rounds up. `--single` builds the stop only. If the premium has already decayed past the profit target the ticket is stop-only (book
 the profit now: see the Profit Exit alert). A leg whose LTP is already at/above the stop is NOT ticketed (it needs closing now). Refuses when
 data/trading_halt.json says halt, when the inputs are not from today, or for a batch over 40 orders.
 """
@@ -95,7 +94,7 @@ def main():
         if l["ltp"] >= trig:
             skipped.append((l, trig))
             continue
-        lim = tick(trig * (1 + stop_buf / 100), up=True)
+        lim = tick(trig * (1 + stop_buf / 100))
         t = {"tradingsymbol": l["tradingsymbol"], "symbol": l["symbol"], "exchange": "NFO", "product": "NRML", "transaction_type": "BUY",
              "quantity": l["qty"], "sold_avg": l["avg"], "last_price": l["ltp"], "est_value": round(lim * l["qty"])}
         prof = tick(l["avg"] * (1 - decay / 100))
