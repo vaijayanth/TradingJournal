@@ -32,6 +32,11 @@ def main(path):
     for i, x in enumerate(raw):
         last[(x.get("tradingsymbol"), x.get("product"))] = i
     raw = [x for i, x in enumerate(raw) if last[(x.get("tradingsymbol"), x.get("product"))] == i]
+    # Closed contracts (net quantity 0 with activity today) = today's realised option P&L; kept for the insights facts (user, 2026-11-26: the MCP's own `realised` field returns 0).
+    closed = [{"tradingsymbol": x["tradingsymbol"], "pnl_rs": x.get("pnl"), "buy_qty": x.get("buy_quantity"), "buy_price": x.get("buy_price"), "sell_qty": x.get("sell_quantity"),
+               "sell_price": x.get("sell_price"), "day_buy_qty": x.get("day_buy_quantity"), "day_sell_qty": x.get("day_sell_quantity")}
+              for x in raw if x.get("exchange") == "NFO" and not x.get("quantity") and (x.get("day_buy_quantity") or 0) + (x.get("day_sell_quantity") or 0) > 0
+              and re.search(r"(CE|PE)$", x.get("tradingsymbol", "")) and not x["tradingsymbol"].startswith(INDEX)]
     legs, ignored = [], 0
     for x in raw:
         if x.get("exchange") != "NFO" or not x.get("quantity"):
@@ -52,8 +57,8 @@ def main(path):
                      "side": "SHORT" if x["quantity"] < 0 else "LONG", "qty": abs(x["quantity"]),
                      "avg": x["average_price"], "ltp": x["last_price"], "pnl_rs": x["pnl"], "tradingsymbol": x["tradingsymbol"]})
     (DATA / "cc_positions.json").write_text(json.dumps({"fetched_at": datetime.now(timezone.utc).isoformat(), "track_from": track_from,
-                                                        "legs": legs, "ignored_legs": ignored}, indent=1))
-    print(f"cc_positions.json: {len(legs)} option legs from {track_from} onwards tracked, {ignored} other option legs ignored")
+                                                        "legs": legs, "ignored_legs": ignored, "closed_today": closed}, indent=1))
+    print(f"cc_positions.json: {len(legs)} option legs from {track_from} onwards tracked, {ignored} other option legs ignored, {len(closed)} contracts closed today")
 
 
 if __name__ == "__main__":
