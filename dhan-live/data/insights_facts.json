@@ -1,6 +1,6 @@
 {
  "broker": "ND",
- "generated_at": "2026-11-27T00:01:56+05:30",
+ "generated_at": "2026-11-27T00:15:33+05:30",
  "as_of": "2026-11-26",
  "scope": "ND swing shares and ND stock options; Nifty index options are outside by decision",
  "adherence_leakage": {
@@ -415,7 +415,7 @@
    "rule": "put spread on green, short call on red"
   },
   "breakeven_win_rate_pct": 76.9,
-  "breakeven_note": "Loss at the stop = (multiple - 1) x credit, gain at the target = decay x credit, before gaps, slippage and costs."
+  "breakeven_note": "WORST CASE ONLY: the win rate needed if every loser ran all the way to the 3x stop. The 3x stop is the third layer (after trading only with the Supertrend direction and exiting when the trend flips), a gap backstop, so most losers close earlier and smaller. Do not present this figure as the strategy's breakeven."
  },
  "rules_in_force": {
   "add_on_off_from": "2026-11-30",
@@ -649,6 +649,24 @@
     "pnl_rs": 2820.0
    },
    "note": "Ledger starts 2026-11-26 (brokers keep no history); IVP at close is stored from that day, so the IVP and VIX split needs about 30 closed contracts per bucket. Favourites need at least 5 closed per stock."
+  },
+  "exit_reasons": {
+   "today": {
+    "profit target": {
+     "n": 2,
+     "pnl_rs": 5600.0
+    }
+   },
+   "cumulative": {
+    "profit target": {
+     "n": 2,
+     "pnl_rs": 5600.0
+    }
+   },
+   "short_legs_closed_total": 2,
+   "stop_fired_total": 0,
+   "stop_fired_today": 0,
+   "note": "Reasons are inferred by code from prices and the Supertrend colour (no manual input): profit target = bought back at 44% of the sold price or less, 3x stop = at 2.7x or more, trend flip = colour turned against the structure, else early profit exit or a loss exit outside the rules. The ledger holds reasons from 2026-11-26 only."
   },
   "premium_rich_no_position": [],
   "strategy_profitable": {

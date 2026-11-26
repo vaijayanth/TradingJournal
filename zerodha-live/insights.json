@@ -13,15 +13,16 @@
     "swing.today",
     "swing.open_book"
    ],
-   "text": "Only five trades have closed this month, and four were losses, but that is too small a sample to conclude anything, and the market has been in an uptrend. Meanwhile the open book looks healthy: most positions are in profit. Today you had two new entry signals (SAGILITY and TORNTPHARM), both bought, and one exit signal on ASHOKLEY. You cannot yet say whether you are getting better, because there is no earlier month to compare with."
+   "text": "In a trend system the closed trades are mostly the stopped-out losers, because the winners are still running, so read this next to the open book. Only five trades have closed this month, and four were losses, but that is too small a sample to conclude anything, and the market has been in an uptrend. Meanwhile the open book looks healthy: most positions are in profit. Today you had two new entry signals (SAGILITY and TORNTPHARM), both bought, and one exit signal on ASHOKLEY. You cannot yet say whether you are getting better, because there is no earlier month to compare with."
   },
   {
    "label": "Options",
    "facts": [
+    "options.structure_vs_colour",
     "options_today",
-    "options.structure_vs_colour"
+    "options_today.exit_reasons"
    ],
-   "text": "Ten option contracts closed today and eight made money, Rs9,126 in total. The best came from VMM, ENRIN and KEI, and the two losers were NATIONALUM and NMDC. That is a good day, but it is still a small sample: with a 3x stop you need to win about 77% of the time to break even, so judge the strategy after roughly 30 trades. Volatility is on the high side (India VIX about 17.7), which means decent premiums. Stocks with rich premiums and no position right now are CROMPTON, YESBANK and IRFC. It's too early to name favourites, but NATIONALUM has cost you the most so far."
+   "text": "Ten option contracts closed today and eight made money, Rs9,126 in total. Five short legs were bought back at the profit target, which is the plan working. Two spreads were closed because the trend flipped against them, NATIONALUM and NMDC, and they lost Rs3,844 and Rs1,215 after their hedges; that is your second layer doing its job. The 3x stop did not fire at all, which is how it should be. It is still a small sample, so judge the strategy after roughly 30 trades, by what the winners make against what the losers cost. Volatility is on the high side (India VIX about 17.7), which means decent premiums. Stocks with rich premiums and no position right now are CROMPTON, YESBANK and IRFC. It's too early to name favourites."
   },
   {
    "label": "Events",
@@ -37,7 +38,7 @@
     "options.stress",
     "openrisk"
    ],
-   "text": "You passed 5 of 6 discipline checks. The one miss is the ASHOKLEY put spread, which is against a red trend, so close it at tomorrow's open. Financial Services is now almost half of your capital, well above your 40% limit, so avoid adding more. Your options are the biggest risk: a 5% market fall would cost over 5% of capital, and a sharp one with higher volatility could cost more than 17%, mostly because 36 stocks carry naked short calls. If every swing position hit its Supertrend exit today, you would lose Rs60,780. From 30 November you will no longer average losers; they go to the exit line."
+   "text": "You passed 5 of 6 discipline checks. The one miss is the ASHOKLEY put spread, which is against a red trend, so close it at tomorrow's open. Financial Services is now almost half of your capital, well above your 40% limit, so avoid adding more. Your options are the biggest risk. These are worst-case figures that assume none of your exits or stops act: a 5% market fall would cost over 5% of capital, and a sharp one with higher volatility could cost more than 17%, mostly because 36 stocks carry naked short calls. If every swing position hit its Supertrend exit today, you would lose Rs60,780. From 30 November you will no longer average losers; they go to the exit line."
   }
  ],
  "action": "Close the ASHOKLEY put spread in Kite at tomorrow's open, and keep new Financial Services positions inside the 40% limit."

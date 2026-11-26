@@ -346,7 +346,7 @@ def options(sig, cc):
     out["structure_vs_colour"] = {"mismatches": mism, "count": len(mism), "pnl_rs": r2(sum(m["pnl_rs"] for m in mism), 0), "rule": "put spread on green, short call on red"}
     m_, d_ = float(rules.get("stop_premium_multiple", 3)), float(rules.get("profit_exit_decay_pct", 60)) / 100.0
     out["breakeven_win_rate_pct"] = r2((m_ - 1) / ((m_ - 1) + d_) * 100, 1)
-    out["breakeven_note"] = "Loss at the stop = (multiple - 1) x credit, gain at the target = decay x credit, before gaps, slippage and costs."
+    out["breakeven_note"] = "WORST CASE ONLY: the win rate needed if every loser ran all the way to the 3x stop. The 3x stop is the third layer (after trading only with the Supertrend direction and exiting when the trend flips), a gap backstop, so most losers close earlier and smaller. Do not present this figure as the strategy's breakeven."
     return out
 
 
@@ -452,6 +452,100 @@ def swing_section(sig, fills, facts, regime):
                            "note": "A trend-following book earns in trends: judge the month against the regime above, not in isolation. A low win rate (backtest 41%) is normal; the avg win / avg loss ratio is what carries it."}}
 
 
+# --------------------------------------------------------------------------- close reasons, inferred automatically (user, 2026-11-26: track WHY a contract closed, no manual input)
+_MON = ["JAN", "FEB", "MAR", "APR", "MAY", "JUN", "JUL", "AUG", "SEP", "OCT", "NOV", "DEC"]
+
+
+def _expkey_contract(contract):
+    m = re.match(r"^.+?-([A-Za-z]{3})(\d{4})-[\d.]+-(?:CE|PE)$", contract)          # ND style HCLTECH-Dec2026-1240-PE
+    if m:
+        return (m.group(1).upper(), int(m.group(2)))
+    m = re.match(r"^.+?(\d\d)([A-Z]{3})[\d.]+(?:CE|PE)$", contract)                  # AZ style NMDC26DEC62PE
+    return (m.group(2), 2000 + int(m.group(1))) if m else None
+
+
+def _prior_side(contract):
+    """ND: the side (SHORT / LONG) this contract had while it was still open, read from earlier committed copies of cc_raw/positions.txt (the broker text carries no side once a contract is closed)."""
+    rel = "dhan-live/data/cc_raw/positions.txt"
+    try:
+        hashes = subprocess.run(["git", "log", "-n", "12", "--format=%H", "--", rel], cwd=REPO, capture_output=True, text=True, check=True).stdout.split()
+        for h in hashes:
+            txt = subprocess.run(["git", "show", f"{h}:{rel}"], cwd=REPO, capture_output=True, text=True, check=True).stdout
+            m = re.search(r"^" + re.escape(contract) + r" \[\w+\] (SHORT|LONG)\b", txt, re.M)
+            if m:
+                return m.group(1).lower()
+    except Exception:  # noqa: BLE001
+        return None
+    return None
+
+
+def classify_closes(closed, cc):
+    """Why each contract closed, from data already on hand: price ratio vs the rules (target / 3x stop), then the Supertrend colour (trend flip), else other.
+    Side (short or long leg) comes from today's buy/sell activity when the broker gives it, else from the spread geometry (put: higher strike is the short; call: lower strike)."""
+    cfg = load(DATA / "cc_config.json", {}) or {}
+    rules = cfg.get("rules", cfg)
+    stop_x, decay = float(rules.get("stop_premium_multiple", 3)), float(rules.get("profit_exit_decay_pct", 60))
+    stocks = cc.get("stocks", {}); stocks = stocks.values() if isinstance(stocks, dict) else stocks
+    by_sym = {v["symbol"]: v for v in stocks}
+    out = {}
+    for c in closed:
+        ck = _expkey_contract(c["contract"])
+        sibs = [(o["strike"], o["type"]) for o in closed if o is not c and o["symbol"] == c["symbol"] and o["type"] == c["type"] and _expkey_contract(o["contract"]) == ck]
+        for lg in (by_sym.get(c["symbol"]) or {}).get("legs") or []:
+            try:
+                lk = (_MON[int(lg["expiry"][5:7]) - 1], int(lg["expiry"][:4]))
+            except Exception:  # noqa: BLE001
+                continue
+            if lk == ck and lg["type"] == c["type"]:
+                sibs.append((lg["strike"], lg["type"]))
+        side = None
+        db, ds = c.get("day_buy_qty"), c.get("day_sell_qty")
+        if db is not None and ds is not None:
+            side = "short" if (db or 0) > 0 and not (ds or 0) else "long" if (ds or 0) > 0 and not (db or 0) else "intraday"
+        elif _prior_side(c["contract"]):
+            side = _prior_side(c["contract"])
+        elif sibs:
+            hi = all(c["strike"] > s for s, _ in sibs); lo = all(c["strike"] < s for s, _ in sibs)
+            side = ("short" if hi else "long") if c["type"] == "PE" else ("short" if lo else "long")
+        rec = {"side": side or "unknown", "sold_avg": c.get("sell_price"), "bought_avg": c.get("buy_price")}
+        col = (by_sym.get(c["symbol"]) or {}).get("st_colour") or (by_sym.get(c["symbol"]) or {}).get("colour")
+        if side == "short" and c.get("sell_price") and c.get("buy_price") is not None:
+            ratio = c["buy_price"] / c["sell_price"]
+            rec["buyback_vs_sold"] = r2(ratio)
+            flipped = (c["type"] == "PE" and col == "red") or (c["type"] == "CE" and col == "green")
+            if ratio >= 0.9 * stop_x:
+                rec["reason"] = "3x stop (gap backstop)"
+            elif ratio <= (1 - decay / 100.0) * 1.1:
+                rec["reason"] = "profit target"
+            elif flipped:
+                rec["reason"] = "trend flip"
+            elif ratio < 1:
+                rec["reason"] = "early profit exit"
+            else:
+                rec["reason"] = "loss exit outside the rules (event or manual)"
+        elif side == "long":
+            rec["reason"] = "hedge closed"
+        else:
+            rec["reason"] = "unclear"
+        out[c["contract"]] = rec
+    return out
+
+
+def _reason_summary(ent, asof):
+    """Counts and P&L by close reason, today and cumulative; the 3x stop is the gap backstop, so how often it fires is the health signal (it should be near zero)."""
+    def agg(rows):
+        d = {}
+        for e in rows:
+            k = e.get("reason") or "not classified"
+            x = d.setdefault(k, {"n": 0, "pnl_rs": 0.0}); x["n"] += 1; x["pnl_rs"] += e["pnl_rs"]
+        return {k: {"n": v["n"], "pnl_rs": r2(v["pnl_rs"], 0)} for k, v in sorted(d.items(), key=lambda kv: -kv[1]["n"])}
+    shorts = [e for e in ent if e.get("side") == "short"]
+    stops = [e for e in shorts if e.get("reason", "").startswith("3x stop")]
+    return {"today": agg([e for e in ent if e.get("date") == asof]), "cumulative": agg(ent), "short_legs_closed_total": len(shorts), "stop_fired_total": len(stops),
+            "stop_fired_today": sum(1 for e in stops if e.get("date") == asof),
+            "note": "Reasons are inferred by code from prices and the Supertrend colour (no manual input): profit target = bought back at 44% of the sold price or less, 3x stop = at 2.7x or more, trend flip = colour turned against the structure, else early profit exit or a loss exit outside the rules. The ledger holds reasons from 2026-11-26 only."}
+
+
 def options_today(sig, cc, facts, regime):
     asof = sig["market_data_date"]
     ivp = (load(DATA / "ivp.json", {}) or {}).get("rows", {})
@@ -462,6 +556,13 @@ def options_today(sig, cc, facts, regime):
     for e in led["entries"]:
         if e.get("date") == asof and "ivp" not in e:
             e["ivp"] = (ivp.get(e["symbol"]) or {}).get("ivp"); e["vix"] = regime.get("vix"); changed = True
+    if changed:
+        ledger_p.write_text(json.dumps(led, indent=0))
+    closed_now = parse_closed_from_positions()
+    why = classify_closes(closed_now, cc)
+    for e in led["entries"]:
+        if e.get("date") == asof and e["contract"] in why and True:
+            e.update({k: v for k, v in why[e["contract"]].items() if v is not None}); changed = True
     if changed:
         ledger_p.write_text(json.dumps(led, indent=0))
     ent = led["entries"]
@@ -490,6 +591,7 @@ def options_today(sig, cc, facts, regime):
             "ledger": {"closed_contracts": len(ent), "tier": tier(len(ent)), "total_pnl_rs": r2(sum(e["pnl_rs"] for e in ent), 0), "favourites": fav, "laggards": worst,
                        "ivp_ge_50": {"n": len(hi), "pnl_rs": r2(sum(e["pnl_rs"] for e in hi), 0)}, "ivp_lt_50": {"n": len(lo), "pnl_rs": r2(sum(e["pnl_rs"] for e in lo), 0)},
                        "note": "Ledger starts 2026-11-26 (brokers keep no history); IVP at close is stored from that day, so the IVP and VIX split needs about 30 closed contracts per bucket. Favourites need at least 5 closed per stock."},
+            "exit_reasons": _reason_summary(ent, asof),
             "premium_rich_no_position": rich[:6],
             "strategy_profitable": {"breakeven_win_rate_pct": (facts.get("options") or {}).get("breakeven_win_rate_pct"), "open_short_legs": (facts.get("options") or {}).get("short_legs"),
                                     "structure_vs_colour": (facts.get("options") or {}).get("structure_vs_colour")}}
