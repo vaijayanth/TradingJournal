@@ -1,6 +1,26 @@
 {
- "fetched_at": "2026-11-26T09:51:28+05:30",
+ "fetched_at": "2026-11-26T09:59:01+05:30",
  "active": {
+  "SUNPHARMA26DEC1800PE": [
+   {
+    "id": 346422248,
+    "type": "two-leg",
+    "trigger_values": [
+     4,
+     27.55
+    ],
+    "qty": 700
+   },
+   {
+    "id": 346422248,
+    "type": "two-leg",
+    "trigger_values": [
+     4,
+     27.55
+    ],
+    "qty": 700
+   }
+  ],
   "SHRIRAMFIN26DEC860PE": [
    {
     "id": 346417676,
@@ -1533,6 +1553,34 @@
   ]
  },
  "gtts": [
+  {
+   "id": 346422248,
+   "type": "two-leg",
+   "created_at": "2026-11-26T09:58:51+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "SUNPHARMA26DEC1800PE",
+   "last_price": 9.55,
+   "triggers": [
+    4,
+    27.55
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 700,
+     "price": 4.15,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 700,
+     "price": 30.1,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
   {
    "id": 346417676,
    "type": "two-leg",

@@ -1,9 +1,9 @@
 {
- "as_of": "26 Nov 09:55 (positions and GTTs live)",
- "written_at": "2026-11-26T09:51:35+05:30",
+ "as_of": "26 Nov 10:05 (positions and GTTs live)",
+ "written_at": "2026-11-26T09:59:11+05:30",
  "confidence": "low",
  "maturity": "41 positions opened since the cut-off, 5 closed trades: the swing edge cannot be judged yet.",
- "headline": "Coverage is 77 contracts with 0 scan findings; one newly opened short (SUNPHARMA 1800PE) still needs a GTT.",
+ "headline": "78 contracts are covered with 0 scan findings; five spreads opened in the last minutes (AMBER, AMBUJACEM, ANGELONE, ASHOKLEY, AUROPHARMA) still need GTTs.",
  "points": [
   {
    "label": "Signals",
@@ -11,11 +11,11 @@
   },
   {
    "label": "Options process",
-   "text": "77 GTT contracts, 0 scan findings: stale GTTs deleted and protective two-leg GTTs placed on 12 new shorts this morning (ENRIN, FORTIS, HDFCBANK, MAZDOCK, NATIONALUM, NMDC, PREMIERENE, TORNTPHARM, APOLLOHOSP, DABUR, GODREJCP, SHRIRAMFIN). SUNPHARMA 1800PE opened after the last pull has no GTT yet. CUMMINSIND's buy-back at 6.35 is resting and its old trailing stop is still live."
+   "text": "78 GTT contracts, 0 scan findings after placing 13 protective GTTs this morning. Five short puts opened since (AMBER 6200, AMBUJACEM 365, ANGELONE 310, ASHOKLEY 140, AUROPHARMA 1700) have no GTT yet. CUMMINSIND's buy-back at 6.35 is resting and its old trailing stop is still live."
   },
   {
    "label": "Risk",
-   "text": "One short put (SUNPHARMA 1800PE) has no stop until its GTT is placed. Financial Services remains above its 40% limit."
+   "text": "Five new short puts have a hedge but no stop until their GTTs are placed. Financial Services remains above its 40% limit."
   },
   {
    "label": "Book",
@@ -26,5 +26,5 @@
    "text": "5 closed trades against 20.2% CAGR, -21.3% drawdown, 41% win rate: too early to compare. Watch the first 30 closed trades."
   }
  ],
- "action": "Place the GTT on SUNPHARMA 1800PE with /zerodha-gtt-order; cancel the CUMMINSIND trailing GTT once its buy-back at 6.35 fills."
+ "action": "Place GTTs on the five new short puts once you finish opening trades, then cancel the CUMMINSIND trailing GTT after its buy-back at 6.35 fills."
 }

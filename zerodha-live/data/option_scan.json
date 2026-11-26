@@ -2,15 +2,15 @@
  "fired_ok_today": [
   "ENRIN26DEC2500PE"
  ],
- "fetched_at": "2026-11-26T09:51:28+05:30",
+ "fetched_at": "2026-11-26T09:59:02+05:30",
  "inputs": {
-  "positions": "2026-11-26T04:21:28.095011+00:00",
-  "gtts": "2026-11-26T09:51:28+05:30",
+  "positions": "2026-11-26T04:29:01.918638+00:00",
+  "gtts": "2026-11-26T09:59:01+05:30",
   "orders": "2026-11-26T09:35:37+05:30",
-  "gtt_scan": "2026-11-26T09:51:28+05:30"
+  "gtt_scan": "2026-11-26T09:59:01+05:30"
  },
  "stale_inputs": [],
- "open_legs": 118,
+ "open_legs": 128,
  "triggered_gtts": 2,
  "findings": [
   {
@@ -328,9 +328,41 @@
   {
    "section": "C",
    "severity": "WARN",
-   "symbol": "SUNPHARMA",
-   "tradingsymbol": "SUNPHARMA26DEC1800PE",
-   "concern": "No active buy-back GTT (premium 10.05, sold 10.025)",
+   "symbol": "AMBER",
+   "tradingsymbol": "AMBER26DEC6200PE",
+   "concern": "No active buy-back GTT (premium 58, sold 58)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "AMBUJACEM",
+   "tradingsymbol": "AMBUJACEM26DEC365PE",
+   "concern": "No active buy-back GTT (premium 3.55, sold 3.5)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "ANGELONE",
+   "tradingsymbol": "ANGELONE26DEC310PE",
+   "concern": "No active buy-back GTT (premium 3.55, sold 3.35)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "ASHOKLEY",
+   "tradingsymbol": "ASHOKLEY26DEC140PE",
+   "concern": "No active buy-back GTT (premium 1.18, sold 1.17)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "AUROPHARMA",
+   "tradingsymbol": "AUROPHARMA26DEC1700PE",
+   "concern": "No active buy-back GTT (premium 9, sold 9.05)",
    "action": "Place the protective GTT (zerodha-gtt-order)"
   },
   {
