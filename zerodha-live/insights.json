@@ -1,30 +1,30 @@
 {
- "as_of": "26 Nov 10:10 (positions and GTTs live)",
- "written_at": "2026-11-26T10:00:40+05:30",
+ "as_of": "26 Nov 12:13 (positions, GTTs and prices live)",
+ "written_at": "2026-11-26T12:13:39+05:30",
  "confidence": "low",
- "maturity": "41 positions opened since the cut-off, 5 closed trades: the swing edge cannot be judged yet.",
- "headline": "Every short option is now protected: 83 GTT contracts with 0 scan findings after 18 new two-leg GTTs this morning.",
+ "maturity": "42 positions opened since the cut-off, 5 closed trades: the swing edge cannot be judged yet.",
+ "headline": "All 37 swing holds are green and nothing is due to exit; the open risk is in options: 1 short (VMM 86PE) has no GTT and a stale CUMMINSIND GTT still sits live.",
  "points": [
   {
    "label": "Signals",
-   "text": "ASHOKLEY x13 (158.90) and POWERINDIA x1 (30,150) add-ons filled at the open; the TORNTPHARM entry x4 is still resting at 4,895.50 with the price at 4,979 (above the limit, so it may not fill)."
+   "text": "No exits, no add-ons (ASHOKLEY -7.2% and POWERINDIA -6.7% qualify on loss but sit inside the 7-day cooldown after this morning's fills). One entry: TORNTPHARM x4 at 4,895.50 is still resting; price is 4,970, above the limit."
   },
   {
    "label": "Options process",
-   "text": "83 GTT contracts, 0 scan findings, 0 shorts without a GTT. This morning: 3 stale GTTs deleted and 18 protective two-leg GTTs placed on the spreads and calls you opened. CUMMINSIND's buy-back at 6.35 is still resting and its old trailing stop (50) is live."
+   "text": "82 GTT contracts, 2 scan findings: delete stale CUMMINSIND 5000CE GTT (the buy-back filled at 6.35), and COLPAL 1620PE GTT covers 275 of 550 qty. VMM 86PE (re-sold 4,850 at 0.61) has no stop."
   },
   {
    "label": "Risk",
-   "text": "All shorts have a stop, so the open risk is the gap past a stop. Financial Services remains above its 40% limit; the HDFCBANK spread added to it."
+   "text": "Financial Services is 50% of deployed capital against a 40% limit (WARN, unchanged). APLAPOLLO and MANAPPURAM are in the F&O ban today; no open legs on either."
   },
   {
    "label": "Book",
-   "text": "Unrealised swing P&L is +Rs38.5k against realised -Rs13.7k from 5 closed trades. The Supertrend exits cost money this week while winners run; too few closed trades to judge the rule."
+   "text": "Unrealised swing P&L is +Rs38.9k against realised -Rs13.7k from 5 closed trades. The nearest holds to a Supertrend flip are JSWSTEEL (3.6%) and JINDALSTEL (3.7%)."
   },
   {
    "label": "Versus the backtest",
    "text": "5 closed trades against 20.2% CAGR, -21.3% drawdown, 41% win rate: too early to compare. Watch the first 30 closed trades."
   }
  ],
- "action": "Cancel the CUMMINSIND trailing GTT once its buy-back at 6.35 fills; any short you open from now needs a GTT (run /zerodha-gtt-order after you finish trading)."
+ "action": "Delete the CUMMINSIND trailing GTT, fix COLPAL's GTT quantity and put a GTT on VMM 86PE (/zerodha-gtt-order, needs your yes)."
 }

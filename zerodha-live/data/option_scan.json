@@ -1,17 +1,18 @@
 {
  "fired_ok_today": [
+  "VMM26DEC83PE",
   "ENRIN26DEC2500PE"
  ],
- "fetched_at": "2026-11-26T10:00:33+05:30",
+ "fetched_at": "2026-11-26T12:13:05+05:30",
  "inputs": {
-  "positions": "2026-11-26T04:30:33.672926+00:00",
-  "gtts": "2026-11-26T10:00:33+05:30",
-  "orders": "2026-11-26T09:35:37+05:30",
-  "gtt_scan": "2026-11-26T10:00:33+05:30"
+  "positions": "2026-11-26T06:42:13.541908+00:00",
+  "gtts": "2026-11-26T12:12:13+05:30",
+  "orders": "2026-11-26T12:12:13+05:30",
+  "gtt_scan": "2026-11-26T12:12:13+05:30"
  },
  "stale_inputs": [],
- "open_legs": 128,
- "triggered_gtts": 2,
+ "open_legs": 127,
+ "triggered_gtts": 3,
  "findings": [
   {
    "section": "B",
@@ -59,14 +60,6 @@
    "symbol": "COCHINSHIP",
    "tradingsymbol": "COCHINSHIP26DEC1300CE",
    "concern": "Short 1300CE (800 qty) is a naked call (by design; covered only by shares you hold)",
-   "action": "Watch the 3x stop and the Supertrend colour"
-  },
-  {
-   "section": "B",
-   "severity": "INFO",
-   "symbol": "CUMMINSIND",
-   "tradingsymbol": "CUMMINSIND26DEC5000CE",
-   "concern": "Short 5000CE (100 qty) is a naked call (by design; covered only by shares you hold)",
    "action": "Watch the 3x stop and the Supertrend colour"
   },
   {
@@ -326,6 +319,14 @@
    "action": "Watch the 3x stop and the Supertrend colour"
   },
   {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "VMM",
+   "tradingsymbol": "VMM26DEC86PE",
+   "concern": "No active buy-back GTT (premium 0.64, sold 0.61)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
    "section": "D",
    "severity": "WARN",
    "symbol": "APLAPOLLO",
@@ -334,12 +335,20 @@
    "action": "Check the order book in Kite"
   },
   {
-   "section": "G",
-   "severity": "WARN",
+   "section": "F",
+   "severity": "HIGH",
    "symbol": "CUMMINSIND",
    "tradingsymbol": "CUMMINSIND26DEC5000CE",
-   "concern": "Active GTT 344015712 (trailing-single) has a stop but no profit target; sold 21.8, premium 6.35",
-   "action": "Add a profit target at about 8.72 (a two-leg GTT: /zerodha-gtt-order or the Kite app)"
+   "concern": "G1 STALE: No open position on this contract (closed or expired): if it triggers it BUYS a new long position (GTT 344015712)",
+   "action": "Delete this GTT"
+  },
+  {
+   "section": "F",
+   "severity": "WARN",
+   "symbol": "COLPAL",
+   "tradingsymbol": "COLPAL26DEC1620PE",
+   "concern": "G3 QUANTITY: GTT covers 275 of 550 qty (GTT 346355171)",
+   "action": "Modify quantity to 550"
   }
  ]
 }

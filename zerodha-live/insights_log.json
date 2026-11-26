@@ -358,6 +358,18 @@
     "contracts_covered": 83,
     "shorts_without_gtt": 0
    }
+  },
+  {
+   "date": "2026-11-26 (12:13 refresh)",
+   "headline": "All 37 swing holds are green and nothing is due to exit; the open risk is in options: 1 short (VMM 86PE) has no GTT and a stale CUMMINSIND GTT still sits live.",
+   "recommendations": [
+    "Delete the CUMMINSIND trailing GTT, fix COLPAL's GTT quantity and put a GTT on VMM 86PE (/zerodha-gtt-order, needs your yes)."
+   ],
+   "metrics": {
+    "positions": 37,
+    "open_pl_rs": 38932,
+    "closed": 5
+   }
   }
  ]
 }

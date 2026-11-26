@@ -1,5 +1,5 @@
 {
- "fetched_at": "2026-11-26T10:00:33+05:30",
+ "fetched_at": "2026-11-26T12:12:13+05:30",
  "active": {
   "AUROPHARMA26DEC1700PE": [
    {
@@ -1061,26 +1061,6 @@
     "qty": 175
    }
   ],
-  "VMM26DEC83PE": [
-   {
-    "id": 345641930,
-    "type": "two-leg",
-    "trigger_values": [
-     0.45,
-     3.1
-    ],
-    "qty": 4850
-   },
-   {
-    "id": 345641930,
-    "type": "two-leg",
-    "trigger_values": [
-     0.45,
-     3.1
-    ],
-    "qty": 4850
-   }
-  ],
   "SYRMA26DEC1700CE": [
    {
     "id": 345641883,
@@ -1287,7 +1267,7 @@
     "type": "trailing-two-leg",
     "trigger_values": [
      3.05,
-     18.05
+     17.05
     ],
     "qty": 825
    },
@@ -1296,7 +1276,7 @@
     "type": "trailing-two-leg",
     "trigger_values": [
      3.05,
-     18.05
+     17.05
     ],
     "qty": 825
    }
@@ -3138,34 +3118,6 @@
    ]
   },
   {
-   "id": 345641930,
-   "type": "two-leg",
-   "created_at": "2026-11-19T22:10:26+05:30",
-   "expires_at": "2026-12-30T00:00:00+05:30",
-   "tradingsymbol": "VMM26DEC83PE",
-   "last_price": 0.9,
-   "triggers": [
-    0.45,
-    3.1
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 4850,
-     "price": 0.5,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    },
-    {
-     "side": "BUY",
-     "qty": 4850,
-     "price": 3.4,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
    "id": 345641883,
    "type": "trailing-two-leg",
    "created_at": "2026-11-19T22:09:46+05:30",
@@ -3454,7 +3406,7 @@
    "last_price": 8.05,
    "triggers": [
     3.05,
-    18.05
+    17.05
    ],
    "orders": [
     {
@@ -3467,7 +3419,7 @@
     {
      "side": "BUY",
      "qty": 825,
-     "price": 19.95,
+     "price": 18.95,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -3971,6 +3923,28 @@
   }
  ],
  "triggered": [
+  {
+   "id": 345641930,
+   "type": "two-leg",
+   "tradingsymbol": "VMM26DEC83PE",
+   "triggers": [
+    0.45,
+    3.1
+   ],
+   "triggered_at": "2026-11-26T10:06:04+05:30",
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 4850,
+     "price": 0.5
+    },
+    {
+     "side": "BUY",
+     "qty": 4850,
+     "price": 3.4
+    }
+   ]
+  },
   {
    "id": 346355154,
    "type": "two-leg",
