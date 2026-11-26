@@ -1,30 +1,56 @@
 {
- "as_of": "26 Nov 20:24 (26 Nov close, positions, GTTs and orders live)",
- "written_at": "2026-11-26T20:24:41+05:30",
+ "as_of": "26 Nov 23:28 (26 Nov close, positions, GTTs and orders live; facts file computed by code)",
+ "written_at": "2026-11-26T23:28:10+05:30",
  "confidence": "low",
- "maturity": "44 positions opened since the cut-off (LODHA and KFINTECH moved in), 5 closed trades: the swing edge cannot be judged yet.",
- "headline": "ASHOKLEY flipped red (exit signal, -8.3%, the add-on bought this morning is in it) and two entries are live (SAGILITY, TORNTPHARM); every short option has a GTT.",
+ "maturity": "44 positions opened since the cut-off but only 5 closed trades (tier anecdote): outcome statistics are descriptive only, process and risk numbers are the signal.",
+ "headline": "The option book is the real risk: a -5% market costs -Rs161,092 (5.37% of capital) and a -8% shock with implied volatility x1.5 costs -Rs522,452 (17.42%).",
  "points": [
   {
    "label": "Signals",
-   "text": "Orders are in as AMO: ASHOKLEY x131 exit (SELL MARKET, Supertrend red, -8.3%), SAGILITY x429 at 46.95 and TORNTPHARM x3 at 5,030 entries. All other swing holds are green. LODHA and KFINTECH moved over from the old sheet today."
+   "facts": [
+    "adherence_leakage.by_kind"
+   ],
+   "text": "Orders are in as AMO: ASHOKLEY x131 exit, SAGILITY x429 and TORNTPHARM x3 entries. Adherence ledger (9 decided signals, tier anecdote): 55.6% have a recorded entry, add-on or exit; 4 entry signals show no entry (ENRIN, ICICIGI, MFSL, PAYTM), which can also be a position taken outside this dashboard. AZ keeps no per-fill ledger, so entry slippage cannot be measured yet."
   },
   {
    "label": "Options process",
-   "text": "Realised options P&L today (stock options, excluding Nifty): +Rs9.1k from 10 contracts closed, four of them by GTT targets (VMM, ENRIN, KEI, UJJIVANSFB); the NATIONALUM and NMDC spreads closed for -Rs3.8k and -Rs1.2k net. 108 GTT contracts, 0 scan findings, 0 shorts without a GTT."
+   "facts": [
+    "options.realised_today",
+    "options.ledger",
+    "options.structure_vs_colour"
+   ],
+   "text": "Realised options P&L today (stock options, excluding Nifty): +Rs9,126 from 10 contracts (puts +Rs1,407, calls +Rs7,719); the NATIONALUM and NMDC spreads closed for -Rs3,844 and -Rs1,215 net. One structure breaks the rule: ASHOKLEY, a short put against a red stock, -Rs350. Ledger of closed contracts: 10 so far (tier weak), too few to compare put spreads with short calls."
   },
   {
    "label": "Risk",
-   "text": "Financial Services is 50% of deployed capital against a 40% limit (unchanged). WIPRO (0.2%) and LUPIN (1.5%) are about to flip green, CONCOR (1.4%) could flip red; 108 shorts all carry a stop, so the open risk is the gap past a stop."
+   "facts": [
+    "options.stress",
+    "options.defined_risk",
+    "openrisk"
+   ],
+   "text": "Stress test (every open option leg repriced, all stocks shocked together): -3% = -Rs71,072, -5% = -Rs161,092, -8% with implied volatility x1.5 = -Rs522,452 (17.42% of capital); a +10% rally costs -Rs337,581 because 36 stocks carry naked short calls. Worst single-stock gap: COALINDIA up 20% = -Rs117,989. Swing book: no position is below the -6% add-on trigger, and exiting everything on its Supertrend line would leave it at -Rs60,780; Financial Services is 48.7% of invested capital."
   },
   {
-   "label": "Book",
-   "text": "Unrealised swing P&L is +Rs33.6k against realised -Rs13.7k from 5 closed trades. LODHA and KFINTECH moved from the old sheet (+1.6%, +1.2%), so 38 of 38 open swing holds are green."
+   "label": "Strategy health",
+   "facts": [
+    "bootstrap"
+   ],
+   "text": "Live closed trades: n=5 (tier anecdote), win rate 20.0%, mean -10.84%; against backtest trades that also closed within 17 days that is the 16.7th percentile, normal. Open book (n=38): 84.2% in profit, average gain +5.05%, average loss -2.08%. Five closed trades say nothing about the edge: keep logging."
   },
   {
-   "label": "Versus the backtest",
-   "text": "5 closed trades against 20.2% CAGR, -21.3% drawdown, 41% win rate: too early to compare; the first exit of the averaged-down ASHOKLEY will be the sixth closed trade. Watch the first 30 closed trades."
+   "label": "Regime and anomalies",
+   "facts": [
+    "trend"
+   ],
+   "text": "79.1% of the 215 F&O stocks have a green Supertrend (1 green and 1 red fresh flips today); all 38 swing holdings are green. Own-history percentiles start after 10 days (history day 1)."
+  },
+  {
+   "label": "Edge test",
+   "facts": [
+    "edge_tests.addon_nd_backtest"
+   ],
+   "text": "The -6% add-on has no measurable edge on the ND backtest (CAGR 27.66% without it, 27.88% with it) and bigger adds deepen the drawdown to -19.58%; AZ itself is untested, and ASHOKLEY was averaged down this morning and turned red the same evening."
   }
  ],
- "action": "Close the ASHOKLEY put spread in Kite tomorrow at the open, then run /refresh-zerodha to record the fills."
+ "action": "Close the ASHOKLEY put spread in Kite tomorrow at the open, and decide whether a Rs161,092 hit on a -5% market day is the size of option book you want to carry."
 }

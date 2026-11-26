@@ -1,0 +1,442 @@
+{
+ "broker": "ND",
+ "generated_at": "2026-11-26T23:27:41+05:30",
+ "as_of": "2026-11-26",
+ "scope": "ND swing shares and ND stock options; Nifty index options are outside by decision",
+ "adherence_leakage": {
+  "first_ledger_date": "2026-11-13",
+  "signals_total": 53,
+  "by_kind": {
+   "entry": {
+    "signals": 28,
+    "filled": 9,
+    "missed": 14,
+    "pending": 5,
+    "fill_rate_pct": 39.1,
+    "decided_n": 23,
+    "tier": "weak",
+    "avg_slippage_pct": 1.37,
+    "median_delay_days": 1.0,
+    "missed_symbols": [
+     "MSTCLTD",
+     "PANACHE",
+     "SHALPAINTS",
+     "TASTYBITE",
+     "PRIZOR",
+     "KODYTECH",
+     "PGIL",
+     "CRAFTSMAN"
+    ],
+    "missed_avg_move_since_signal_pct": null
+   },
+   "exit": {
+    "signals": 8,
+    "filled": 5,
+    "missed": 1,
+    "pending": 2,
+    "fill_rate_pct": 83.3,
+    "decided_n": 6,
+    "tier": "anecdote",
+    "avg_slippage_pct": 1.47,
+    "median_delay_days": 1.0,
+    "missed_symbols": [
+     "PASHUPATI"
+    ],
+    "missed_avg_move_since_signal_pct": null
+   },
+   "addon": {
+    "signals": 17,
+    "filled": 11,
+    "missed": 3,
+    "pending": 3,
+    "fill_rate_pct": 78.6,
+    "decided_n": 14,
+    "tier": "weak",
+    "avg_slippage_pct": 0.02,
+    "median_delay_days": 3.0,
+    "missed_symbols": [
+     "LGEINDIA",
+     "ESAFSFB",
+     "SMSPHARMA"
+    ],
+    "missed_avg_move_since_signal_pct": 4.46
+   }
+  },
+  "ledger_tail": [
+   {
+    "date": "2026-11-23",
+    "kind": "addon",
+    "symbol": "MANAKCOAT",
+    "side": "BUY",
+    "ref_price": 155.54,
+    "signal_qty": 6,
+    "outcome": "filled",
+    "fill_date": "2026-11-26",
+    "fill_price": 153.67,
+    "fill_qty": 1,
+    "slip_pct": -1.2,
+    "delay_days": 3
+   },
+   {
+    "date": "2026-11-23",
+    "kind": "addon",
+    "symbol": "SANATHAN",
+    "side": "BUY",
+    "ref_price": 570.15,
+    "signal_qty": 3,
+    "outcome": "filled",
+    "fill_date": "2026-11-26",
+    "fill_price": 566.65,
+    "fill_qty": 1,
+    "slip_pct": -0.61,
+    "delay_days": 3
+   },
+   {
+    "date": "2026-11-23",
+    "kind": "addon",
+    "symbol": "SHREEPUSHK",
+    "side": "BUY",
+    "ref_price": 514.9,
+    "signal_qty": 2,
+    "outcome": "filled",
+    "fill_date": "2026-11-26",
+    "fill_price": 515.85,
+    "fill_qty": 1,
+    "slip_pct": 0.18,
+    "delay_days": 3
+   },
+   {
+    "date": "2026-11-23",
+    "kind": "addon",
+    "symbol": "SMSPHARMA",
+    "side": "BUY",
+    "ref_price": 466.0,
+    "signal_qty": 2,
+    "outcome": "missed"
+   },
+   {
+    "date": "2026-11-23",
+    "kind": "addon",
+    "symbol": "TCPLPACK",
+    "side": "BUY",
+    "ref_price": 4308.8,
+    "signal_qty": 1,
+    "outcome": "filled",
+    "fill_date": "2026-11-26",
+    "fill_price": 4347.3,
+    "fill_qty": 1,
+    "slip_pct": 0.89,
+    "delay_days": 3
+   },
+   {
+    "date": "2026-11-25",
+    "kind": "addon",
+    "symbol": "SUNTV",
+    "side": "BUY",
+    "ref_price": 616.25,
+    "signal_qty": 2,
+    "outcome": "pending"
+   },
+   {
+    "date": "2026-11-25",
+    "kind": "addon",
+    "symbol": "TEXINFRA",
+    "side": "BUY",
+    "ref_price": 120.47,
+    "signal_qty": 8,
+    "outcome": "pending"
+   },
+   {
+    "date": "2026-11-26",
+    "kind": "entry",
+    "symbol": "ACE",
+    "side": "BUY",
+    "ref_price": 1295.0,
+    "signal_qty": 1,
+    "outcome": "pending"
+   },
+   {
+    "date": "2026-11-26",
+    "kind": "entry",
+    "symbol": "ANGELONE",
+    "side": "BUY",
+    "ref_price": 358.0,
+    "signal_qty": 5,
+    "outcome": "pending"
+   },
+   {
+    "date": "2026-11-26",
+    "kind": "entry",
+    "symbol": "BAJAJHLDNG",
+    "side": "BUY",
+    "ref_price": 11933.0,
+    "signal_qty": 1,
+    "outcome": "pending"
+   },
+   {
+    "date": "2026-11-26",
+    "kind": "entry",
+    "symbol": "PRESTIGE",
+    "side": "BUY",
+    "ref_price": 1832.1,
+    "signal_qty": 1,
+    "outcome": "pending"
+   },
+   {
+    "date": "2026-11-26",
+    "kind": "entry",
+    "symbol": "SCPL",
+    "side": "BUY",
+    "ref_price": 712.6,
+    "signal_qty": 2,
+    "outcome": "pending"
+   },
+   {
+    "date": "2026-11-26",
+    "kind": "exit",
+    "symbol": "SPECTRUM",
+    "side": "SELL",
+    "ref_price": 3878.6,
+    "signal_qty": 1,
+    "outcome": "pending"
+   },
+   {
+    "date": "2026-11-26",
+    "kind": "exit",
+    "symbol": "TANLA",
+    "side": "SELL",
+    "ref_price": 624.7,
+    "signal_qty": 1,
+    "outcome": "pending"
+   },
+   {
+    "date": "2026-11-26",
+    "kind": "addon",
+    "symbol": "VRLLOG",
+    "side": "BUY",
+    "ref_price": 314.9,
+    "signal_qty": 2,
+    "outcome": "pending"
+   }
+  ],
+  "overall_fill_rate_pct": 58.1,
+  "overall_decided_n": 43,
+  "note": "Signals come from the git history of the signals file; a fill is a same-side fill within 6 calendar days after the signal date; slippage is positive when the fill was worse than the signal close. A 'missed' signal can also be a fill the ledger never captured (a day the refresh did not run), so check the symbol before calling it an execution miss."
+ },
+ "bootstrap": {
+  "n_live_closed": 16,
+  "tier": "weak",
+  "pool_n_all": 4725,
+  "pool_n_matched": 1854,
+  "window_days": 36,
+  "pool_note": "post-2022 ND backtest trades (the walk-forward base case); matched pool = trades that closed within 36 days, like the live ones",
+  "live_mean_pct": -9.96,
+  "live_win_rate_pct": 12.5,
+  "matched_pool_mean_pct": -8.61,
+  "matched_pool_win_rate_pct": 9.9,
+  "full_pool_mean_pct": 5.57,
+  "full_pool_win_rate_pct": 40.9,
+  "mean_percentile": 28.1,
+  "win_rate_percentile": 79.2,
+  "draws": 10000,
+  "flag": "within_normal_range",
+  "open_book": {
+   "n": 119,
+   "in_profit_pct": 58.0,
+   "avg_gain_pct": 6.03,
+   "avg_loss_pct": -3.67
+  },
+  "note": "Matched comparison removes the young-book bias but still ignores that live trades are early exits only; bootstrap measures sampling noise only."
+ },
+ "openrisk": {
+  "open_positions": 119,
+  "invested_rs": 249432.0,
+  "below_minus6_count": 10,
+  "below_minus6_invested_rs": 20754.0,
+  "below_minus6_share_pct": 8.3,
+  "below_minus6_symbols": [
+   "AMANTA",
+   "APOLLO",
+   "ENTERO",
+   "KTKBANK",
+   "MACPOWER",
+   "MAHASTEEL",
+   "MMFL",
+   "ROLEXRINGS"
+  ],
+  "worst_positions": [
+   {
+    "symbol": "MMFL",
+    "pl_pct": -10.2
+   },
+   {
+    "symbol": "SANATHAN",
+    "pl_pct": -9.8
+   },
+   {
+    "symbol": "MACPOWER",
+    "pl_pct": -9.2
+   },
+   {
+    "symbol": "AMANTA",
+    "pl_pct": -7.8
+   },
+   {
+    "symbol": "ENTERO",
+    "pl_pct": -7.4
+   }
+  ],
+  "pnl_if_all_hit_line_rs": -19249,
+  "extra_loss_if_all_hit_line_rs": -21004,
+  "top_sectors": [
+   {
+    "sector": "Healthcare",
+    "share_pct": 25.3
+   },
+   {
+    "sector": "Basic Materials",
+    "share_pct": 21.9
+   },
+   {
+    "sector": "Consumer Cyclical",
+    "share_pct": 21.6
+   }
+  ],
+  "note": "Stop-out figure = projection.json: loss if every open position exited on its own Supertrend line today."
+ },
+ "trend": {
+  "holds": 119,
+  "green": 119,
+  "green_share_pct": 100.0,
+  "entries_today": 5,
+  "exits_today": 2,
+  "addons_today": 3,
+  "history_days": 1,
+  "note": "ND universe is the 1,495-stock backtester set, so breadth here is the share of YOUR holdings that are green plus today's signal counts; percentiles appear after 10 days of own history."
+ },
+ "options": {
+  "open_legs": 20,
+  "short_legs": 12,
+  "long_legs": 8,
+  "realised_today": {
+   "contracts_closed": 2,
+   "pnl_rs": 5600.0,
+   "contracts": [
+    {
+     "contract": "HCLTECH-Dec2026-1240-PE",
+     "pnl_rs": 2780.0
+    },
+    {
+     "contract": "BSE-Dec2026-3200-PE",
+     "pnl_rs": 2820.0
+    }
+   ],
+   "by_stock": {
+    "HCLTECH": 2780.0,
+    "BSE": 2820.0
+   },
+   "note": "Stock options only (Nifty index options are outside the insights by decision), gross of charges."
+  },
+  "ledger": {
+   "closed_contracts": 2,
+   "total_pnl_rs": 5600.0,
+   "tier": "anecdote",
+   "puts": {
+    "n": 2,
+    "pnl_rs": 5600.0
+   },
+   "calls": {
+    "n": 0,
+    "pnl_rs": 0.0
+   },
+   "first_date": "2026-11-26",
+   "note": "Ledger of closed contracts accumulates from the first run of this script; no earlier history is stored by the brokers. Put-vs-call comparison needs about 30 closed contracts per side."
+  },
+  "stress": {
+   "capital_base_rs": 2000000,
+   "grid_pct_of_capital": {
+    "market_-8pct": -1.93,
+    "market_-5pct": -0.76,
+    "market_-3pct": -0.28,
+    "market_+3pct": -0.26,
+    "market_+5pct": -0.71,
+    "market_+10pct": -2.76,
+    "market_-5pct_iv_x1.25": -1.97,
+    "market_-8pct_iv_x1.5": -3.65
+   },
+   "grid_pnl_rs": {
+    "market_-8pct": -38533.0,
+    "market_-5pct": -15256.0,
+    "market_-3pct": -5546.0,
+    "market_+3pct": -5120.0,
+    "market_+5pct": -14214.0,
+    "market_+10pct": -55273.0,
+    "market_-5pct_iv_x1.25": -39461.0,
+    "market_-8pct_iv_x1.5": -72917.0
+   },
+   "single_stock_gap_worst": [
+    {
+     "symbol": "BSE",
+     "move": "up 20%",
+     "pnl_rs": -106613.0
+    },
+    {
+     "symbol": "BPCL",
+     "move": "down 20%",
+     "pnl_rs": -75817.0
+    },
+    {
+     "symbol": "CUMMINSIND",
+     "move": "up 20%",
+     "pnl_rs": -69847.0
+    }
+   ],
+   "method": "Black-Scholes repricing of every open leg, implied vol solved from the live option price (fallback stock IV or 30%), all underlyings shocked together (beta 1), expiry unchanged, risk-free 0.065.",
+   "limits": "Beta 1 is an assumption; a gap through a stop fills at the gap price, not at 3x."
+  },
+  "defined_risk": {
+   "put_side_max_loss_if_stocks_to_zero_rs": 329388.0,
+   "naked_call_stocks": 3,
+   "spreads_where_3x_stop_cannot_bind": [],
+   "spreads_where_3x_stop_cannot_bind_count": 0,
+   "note": "Put-side max loss = sum(short strikes x qty) - sum(long strikes x qty) - net credit, the loss if every stock went to zero (an upper bound, not a forecast). A spread's 3x stop cannot bind when 3 x credit >= width."
+  },
+  "structure_vs_colour": {
+   "mismatches": [
+    {
+     "symbol": "BSE",
+     "colour": "green",
+     "structure": "short call against a green stock",
+     "pnl_rs": -7840.0
+    }
+   ],
+   "count": 1,
+   "pnl_rs": -7840.0,
+   "rule": "put spread on green, short call on red"
+  },
+  "breakeven_win_rate_pct": 76.9,
+  "breakeven_note": "Loss at the stop = (multiple - 1) x credit, gain at the target = decay x credit, before gaps, slippage and costs."
+ },
+ "edge_tests": {
+  "addon_nd_backtest": {
+   "tested_on": "ND universe, 10 years (AZ and the investment-share averaging are untested)",
+   "cagr_without_addons_pct": 27.66,
+   "cagr_live_rule_pct": 27.88,
+   "max_dd_without_addons_pct": -14.99,
+   "max_dd_live_rule_pct": -15.43,
+   "max_dd_doubling_pct": -19.58,
+   "pf_without_addons": 2.01,
+   "pf_doubling": 1.84
+  }
+ },
+ "backtest_reference": {
+  "cagr_pct": 28.0,
+  "max_drawdown_pct": -15.4,
+  "profit_factor": 2.01,
+  "win_rate_pct": 41.0,
+  "slippage_assumption_pct": 0.1,
+  "avg_win_pct": 33.1,
+  "avg_loss_pct": -9.0,
+  "source": "CLAUDE.md backtest reference (10 years, 6% idle cash, costs + 0.1% slippage; walk-forward since 2022 about 20-23% CAGR)"
+ }
+}

@@ -1,30 +1,57 @@
 {
- "as_of": "26 Nov 20:24 (26 Nov close, positions and orders live)",
- "written_at": "2026-11-26T20:24:41+05:30",
+ "as_of": "26 Nov 23:28 (26 Nov close, positions and orders live; facts file computed by code)",
+ "written_at": "2026-11-26T23:28:10+05:30",
  "confidence": "low",
- "maturity": "144 positions ever opened but only 16 closed trades: the swing edge cannot be judged yet.",
- "headline": "Tonight's 13 swing and investment orders are in; every short option now has a stop (HCLTECH 1280PE added), and the BSE 4200CE (-Rs7.8k) against a green stock is the one open item.",
+ "maturity": "144 positions ever opened but only 16 closed trades (tier weak): outcome statistics are descriptive only, process and risk numbers are the signal.",
+ "headline": "The process leaks at the open: entries that filled were 1.37% worse than the signal close (weak sample, n=9) against the backtest's 0.1% assumption, and the one structure out of line is the BSE 4200CE (-Rs7,840).",
  "points": [
   {
    "label": "Signals",
-   "text": "All 13 order tickets for the 26 Nov close are in as AMO orders: 2 swing exits (SPECTRUM, TANLA), 3 add-ons (SUNTV, TEXINFRA, VRLLOG), 5 entries (ACE, ANGELONE x5, BAJAJHLDNG, PRESTIGE, SCPL x2) and 3 averaging buys (DIXON, HCLTECH, INFY). The DIXON limit was edited to 12,972 after the tick-size rejection on 25 Nov."
+   "facts": [
+    "adherence_leakage.by_kind",
+    "adherence_leakage.overall_fill_rate_pct"
+   ],
+   "text": "All orders for the 26 Nov close are in as AMO. Adherence ledger (43 decided signals, tier weak): 58.1% have a recorded fill, entries 39.1% of 23; 14 entry signals have no recorded fill, which can also be a fill the ledger never captured, so check before calling it an execution miss. Add-ons took a median 3.0 days to fill."
   },
   {
    "label": "Options process",
-   "text": "All 12 shorts now carry super-order stops and targets (HCLTECH 1280PE added: stop 21.45, target 2.85). One structure is out of line: the BSE 4200CE is -Rs7.8k against a green stock (BSE 3,990) and still open. Realised options P&L today (stock options, excluding Nifty): +Rs5.6k (BSE 3200PE and HCLTECH 1240PE, +Rs2.8k each)."
+   "facts": [
+    "options.realised_today",
+    "options.structure_vs_colour",
+    "options.breakeven_win_rate_pct"
+   ],
+   "text": "Realised options P&L today (stock options, excluding Nifty): +Rs5,600 from 2 contracts, both put-side exits at their target. All 12 shorts carry super-order stops and targets; the 3x stop with the 60% target needs a 76.9% win rate to break even before gaps and costs. One structure breaks the rule: the BSE 4200CE short call against a green stock, -Rs7,840."
   },
   {
    "label": "Risk",
-   "text": "If every open position closed on its Supertrend line, the book would be at -Rs19k (stop-out floor); the BSE 4200CE would lose about Rs21.6k more at its stop (162). DIXON, SHRIRAMFIN and BPCL are the nearest to a Supertrend flip (4% to 5%)."
+   "facts": [
+    "options.stress",
+    "openrisk"
+   ],
+   "text": "Stress test (every open option leg repriced, all stocks shocked together): a -5% market costs -Rs15,256 (-0.76% of capital); -8% with implied volatility x1.5 costs -Rs72,917 (-3.65%). Worst single-stock gap: BSE up 20% = -Rs106,613. Swing book: 10 positions are below the -6% add-on trigger (8.3% of invested capital); if every position exited on its Supertrend line the book would be at -Rs19,249."
   },
   {
-   "label": "Book",
-   "text": "Swing P&L is +Rs1.8k (realised -Rs2.4k from 16 closed trades, unrealised +Rs4.3k). All 119 holds are green; the weakest are MMFL -10.2% and SANATHAN -9.8%. Ten buys from the last three days are still unsettled."
+   "label": "Strategy health",
+   "facts": [
+    "bootstrap"
+   ],
+   "text": "Live closed trades: n=16 (tier weak), win rate 12.5%, mean -9.96%. Against backtest trades that also closed within 36 days the live mean sits at the 28.1th percentile, inside the normal range; the full backtest wins 40.9% of trades, but a young book has only closed its early losers. Open book (n=119): 58.0% in profit, average gain +6.03%, average loss -3.67%."
   },
   {
-   "label": "Versus the backtest",
-   "text": "16 closed trades against 28.0% CAGR, -15.4% drawdown, 41% win rate: too early to compare; no rule change on this sample. Watch the first 30 closed trades."
+   "label": "Regime and anomalies",
+   "facts": [
+    "trend",
+    "bootstrap.flag"
+   ],
+   "text": "All 119 holdings are green and today brought 5 entry, 2 exit and 3 add-on signals. Bootstrap flag: within normal range. No anomaly beyond the ten positions below the add-on trigger. Own-history percentiles start after 10 days (history day 1)."
+  },
+  {
+   "label": "Edge test",
+   "facts": [
+    "edge_tests.addon_nd_backtest"
+   ],
+   "text": "Tested on 26 Nov: the -6% add-on has no measurable edge on 10 years of ND trades. CAGR is 27.66% without it and 27.88% with the live 1/10 size, while doubling down deepens the max drawdown from -14.99% to -19.58%. Untested: AZ and the investment-share averaging. A different result there would change this."
   }
  ],
- "action": "Close the BSE 4200CE in the Dhan app, then run /refresh-dhan tomorrow after the open to record the fills."
+ "action": "Close the BSE 4200CE in the Dhan app. Keep logging fills: the entry-slippage estimate needs about 30 samples before it can justify any change."
 }

@@ -261,6 +261,16 @@
    "headline": "Insights relabelled to the standard five and updated for the orders placed.",
    "recommendations": [],
    "metrics": {}
+  },
+  {
+   "date": "2026-11-26 (23:29 facts layer)",
+   "headline": "The process leaks at the open: entries that filled were 1.37% worse than the signal close (weak sample, n=9) against the backtest's 0.1% assumption, and the one structure out of line is the BSE 4200CE (-Rs7,840).",
+   "recommendations": [
+    "Close the BSE 4200CE in the Dhan app. Keep logging fills: the entry-slippage estimate needs about 30 samples before it can justify any change."
+   ],
+   "metrics": {
+    "note": "Insights rebuilt on the facts layer: adherence, stress test, matched bootstrap, edge test."
+   }
   }
  ]
 }
