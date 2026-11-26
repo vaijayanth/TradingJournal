@@ -889,8 +889,8 @@ tr.cc-det td { background:var(--surface2); white-space:normal !important; paddin
 .d2-edge-m { padding:15px; border-right:1px solid var(--border); } .d2-edge-m:last-child { border-right:0; }
 .d2-edge-m b, .d2-recent-s b { display:block; font-family:var(--font-mono); font-variant-numeric:tabular-nums; font-size:20px; margin-top:4px; }
 .d2-edge-foot { border-top:1px solid var(--border); padding:9px 15px; color:var(--text-muted); font-size:10px; }
-.d2-edge-split { display:grid; grid-template-columns:1fr 1fr; border-top:1px solid var(--border); }
-.d2-edge-sub { padding:13px 15px; } .d2-edge-sub:first-child { border-right:1px solid var(--border); }
+.d2-edge-split { display:grid; grid-template-columns:1fr 1fr 1fr; border-top:1px solid var(--border); }
+.d2-edge-sub { padding:13px 15px; } .d2-edge-sub:not(:last-child) { border-right:1px solid var(--border); }
 .d2-ins-body { padding:4px 16px 14px; } .d2-ins-head { font-size:15px; font-weight:650; line-height:1.4; margin:8px 0 10px; }
 .d2-ins-pt { display:grid; grid-template-columns:170px 1fr; gap:10px; padding:7px 0; border-top:1px solid var(--border); font-size:12.5px; line-height:1.5; }
 .d2-ins-pt b { font-weight:600; color:var(--text-primary); } .d2-ins-pt span { color:var(--text-secondary); }
@@ -904,7 +904,7 @@ tr.cc-det td { background:var(--surface2); white-space:normal !important; paddin
 .d2-edge-t { width:100%; border-collapse:collapse; font-size:12px; margin-top:7px; } .d2-edge-t td, .d2-edge-t th { padding:4px 0; text-align:right; font-weight:400; }
 .d2-edge-t td:first-child, .d2-edge-t th:first-child { text-align:left; color:var(--text-secondary); } .d2-edge-t th { color:var(--text-muted); font-size:10px; text-transform:uppercase; letter-spacing:.04em; }
 .d2-edge-t td { font-family:var(--font-mono); font-variant-numeric:tabular-nums; } .d2-edge-t td:first-child { font-family:inherit; }
-@media (max-width:640px) { .d2-edge-split { grid-template-columns:1fr; } .d2-edge-sub:first-child { border-right:0; border-bottom:1px solid var(--border); } }
+@media (max-width:900px) { .d2-edge-split { grid-template-columns:1fr; } .d2-edge-sub:not(:last-child) { border-right:0; border-bottom:1px solid var(--border); } }
 .d2-attn-body { display:grid; grid-template-columns:repeat(4,1fr); gap:8px; padding:12px; }
 .d2-attn-item { display:block; width:100%; background:var(--surface2); border:1px solid var(--border); border-radius:7px; padding:11px 12px; cursor:pointer; text-align:left; color:inherit; font:inherit; min-height:82px; }
 .d2-attn-item:hover, .d2-attn-item.open { border-color:var(--accent); }
@@ -1356,6 +1356,7 @@ b.stk, #cc-root td b.stk, #page-dashboard-di b.stk { font-weight:700; }
     </div>
     <div class="d2-edge-split">
       <div class="d2-edge-sub"><div class="d2-label">Closed so far (positions that turned red)</div><table class="d2-edge-t" id="d2-e-closed"></table></div>
+      <div class="d2-edge-sub"><div class="d2-label">Open so far (positions still running)</div><table class="d2-edge-t" id="d2-e-open"></table></div>
       <div class="d2-edge-sub"><div class="d2-label">Open book by age</div><table class="d2-edge-t" id="d2-e-age"></table></div>
     </div>
     <div class="d2-edge-foot" id="d2-edge-foot">—</div>
@@ -9982,6 +9983,10 @@ function d2Render(d) {
     ? cl('Closed trades', closed.length) + cl('Win rate', (cW.length / closed.length * 100).toFixed(0) + '%', '') + cl('Average win', cW.length ? dhFmtPct(avg(cW, c => c.plPct)) : '—', 'pos')
       + cl('Average loss', cL.length ? dhFmtPct(avg(cL, c => c.plPct)) : '—', 'neg') + cl('Average hold', Math.round(avg(closed, c => c.holdDays)) + ' days') + cl('Realised', d2Signed(realisedRs), d2Cls(realisedRs))
     : '<tr><td colspan="2" style="color:var(--text-muted)">No closed trades yet.</td></tr>';
+  document.getElementById('d2-e-open').innerHTML = P.length
+    ? cl('Open trades', P.length) + cl('In profit', (oW.length / P.length * 100).toFixed(0) + '%', '') + cl('Average gain', oW.length ? dhFmtPct(avg(oW, p => p.plPct)) : '—', 'pos')
+      + cl('Average loss', oL.length ? dhFmtPct(avg(oL, p => p.plPct)) : '—', 'neg') + cl('Average hold', holdAvg == null ? '—' : holdAvg + ' days') + cl('Unrealised', d2Signed(mtm), d2Cls(mtm))
+    : '<tr><td colspan="2" style="color:var(--text-muted)">No open positions.</td></tr>';
   const bands = [[0, 7, '0–7 days'], [8, 14, '8–14 days'], [15, 30, '15–30 days'], [31, 90, '31–90 days'], [91, 99999, 'Over 90 days']];
   const rowsAge = bands.map(([lo, hi, lab]) => { const g = P.filter(p => (p.ageDays || 0) >= lo && (p.ageDays || 0) <= hi); if (!g.length) return '';
     const w = g.filter(p => p.plPct > 0).length, a = mean(g.map(p => p.plPct));
