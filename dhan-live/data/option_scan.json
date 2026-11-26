@@ -1,21 +1,14 @@
 {
- "fetched_at": "2026-11-26T11:23:03+05:30",
+ "fetched_at": "2026-11-26T15:07:42+05:30",
  "stale_inputs": [],
- "open_legs": 21,
- "shorts": 13,
+ "open_legs": 20,
+ "shorts": 12,
  "super_orders": 14,
  "fired_cleanly": [
-  "HCLTECH @ 11.65"
+  "HCLTECH @ 11.65",
+  "BSE @ 23.55"
  ],
  "findings": [
-  {
-   "section": "B",
-   "severity": "HIGH",
-   "symbol": "BSE",
-   "leg": "BSE 3200PE 2026-12-29",
-   "concern": "Short 3200PE: 200 of 200 qty has no put hedge below it (expiry 2026-12-29)",
-   "action": "Buy the hedge put or close the short"
-  },
   {
    "section": "B",
    "severity": "INFO",
@@ -45,7 +38,7 @@
    "severity": "WARN",
    "symbol": "HCLTECH",
    "leg": "HCLTECH 1280PE 2026-12-29",
-   "concern": "No super order matches this short (400 @ 7.15, premium 7.2)",
+   "concern": "No super order matches this short (400 @ 7.15, premium 5.1)",
    "action": "Close and re-enter as a super order, or place a daily stop order"
   },
   {
