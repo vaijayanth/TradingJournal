@@ -1,26 +1,5 @@
 {
- "fetched_at": "2026-11-26T15:06:45+05:30",
- "source": "mcp__dhan_mcp__orderbook_agent_tool list: pending orders (22 traded, 1 rejected: DIXON BUY 1)",
- "orders": [
-  {
-   "order_id": "3252611259875",
-   "symbol": "INFY",
-   "side": "BUY",
-   "qty": 2,
-   "order_type": "LIMIT",
-   "price": 1151.9,
-   "status": "PENDING",
-   "amo": true
-  },
-  {
-   "order_id": "2252611259981",
-   "symbol": "HCLTECH",
-   "side": "BUY",
-   "qty": 2,
-   "order_type": "LIMIT",
-   "price": 1396.0,
-   "status": "PENDING",
-   "amo": true
-  }
- ]
+ "fetched_at": "2026-11-26T19:36:30+05:30",
+ "source": "mcp__dhan_mcp__orderbook_agent_tool list: no pending orders (22 traded, 1 rejected DIXON BUY 1, 2 cancelled INFY/HCLTECH AMO lapsed at the close)",
+ "orders": []
 }

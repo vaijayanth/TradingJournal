@@ -1,17 +1,23 @@
 {
- "generated_at": "2026-11-26T15:07:25+05:30",
+ "generated_at": "2026-11-26T19:37:06+05:30",
  "broker": "dhan",
- "market_data_date": "2026-11-25",
- "signals_generated_at": "2026-11-26T09:37:22.290198+00:00",
+ "market_data_date": "2026-11-26",
+ "signals_generated_at": "2026-11-26T14:07:02.107666+00:00",
  "status": "WARN",
  "global_block": false,
  "counts": {
   "block": 0,
-  "warn": 10,
+  "warn": 11,
   "info": 0
  },
  "per_symbol_blocks": {},
  "findings": [
+  {
+   "id": "I6",
+   "level": "WARN",
+   "symbol": "HMAAGRO",
+   "msg": "HMAAGRO: fill price 34.37 is 25% away from the current price 46.13 (typo / split?)"
+  },
   {
    "id": "I3",
    "level": "WARN",
