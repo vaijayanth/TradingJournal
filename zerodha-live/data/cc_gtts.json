@@ -1,5 +1,5 @@
 {
- "fetched_at": "2026-11-26T12:17:45+05:30",
+ "fetched_at": "2026-11-26T13:34:29+05:30",
  "active": {
   "VMM26DEC86PE": [
    {
@@ -1499,26 +1499,6 @@
      4.35
     ],
     "qty": 1600
-   }
-  ],
-  "KEI26DEC4500CE": [
-   {
-    "id": 345199325,
-    "type": "two-leg",
-    "trigger_values": [
-     10.8,
-     81
-    ],
-    "qty": 175
-   },
-   {
-    "id": 345199325,
-    "type": "two-leg",
-    "trigger_values": [
-     10.8,
-     81
-    ],
-    "qty": 175
    }
   ],
   "BHARATFORG26DEC2000CE": [
@@ -3744,34 +3724,6 @@
    ]
   },
   {
-   "id": 345199325,
-   "type": "two-leg",
-   "created_at": "2026-11-17T14:57:24+05:30",
-   "expires_at": "2026-12-30T00:00:00+05:30",
-   "tradingsymbol": "KEI26DEC4500CE",
-   "last_price": 26.6,
-   "triggers": [
-    10.8,
-    81
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 175,
-     "price": 11.15,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    },
-    {
-     "side": "BUY",
-     "qty": 175,
-     "price": 83.45,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
    "id": 345199193,
    "type": "two-leg",
    "created_at": "2026-11-17T14:57:00+05:30",
@@ -3941,6 +3893,28 @@
   }
  ],
  "triggered": [
+  {
+   "id": 345199325,
+   "type": "two-leg",
+   "tradingsymbol": "KEI26DEC4500CE",
+   "triggers": [
+    10.8,
+    81
+   ],
+   "triggered_at": "2026-11-26T13:22:23+05:30",
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 175,
+     "price": 11.15
+    },
+    {
+     "side": "BUY",
+     "qty": 175,
+     "price": 83.45
+    }
+   ]
+  },
   {
    "id": 345641930,
    "type": "two-leg",
