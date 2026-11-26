@@ -1,6 +1,6 @@
 {
- "as_of": "26 Nov 14:34 (positions and GTTs live)",
- "written_at": "2026-11-26T14:34:28+05:30",
+ "as_of": "26 Nov 14:43 (positions and GTTs live)",
+ "written_at": "2026-11-26T14:43:37+05:30",
  "confidence": "low",
  "maturity": "42 positions opened since the cut-off, 5 closed trades: the swing edge cannot be judged yet.",
  "headline": "All 37 swing holds are green and nothing is due to exit; every short option is protected (109 GTT contracts, 0 scan findings).",
@@ -11,7 +11,7 @@
   },
   {
    "label": "Options process",
-   "text": "109 GTT contracts, 0 scan findings, 0 shorts without a GTT. Latest batch: 11 two-leg GTTs on the new spreads (360ONE, ABCAPITAL, ADANIENSOL, ADANIENT, ADANIGREEN, ASIANPAINT, AXISBANK, BAJAJ-AUTO, BAJFINANCE, BANKBARODA, BIOCON), after 17 earlier today. The APLAPOLLO and KEI 4500CE 'fired' flags were checked in Kite: nothing open."
+   "text": "109 GTT contracts, 0 scan findings, 0 shorts without a GTT. New rule (stop trigger 3x sold, limit trigger +1%; target limit +1%): 94 two-leg GTTs re-levelled today; 13 trailing and 6 single GTTs left as they were; INOXWIND 72CE and IDFCFIRSTB 75PE refused the modify and keep their old 2.75x / 3x levels."
   },
   {
    "label": "Risk",
@@ -26,5 +26,5 @@
    "text": "5 closed trades against 20.2% CAGR, -21.3% drawdown, 41% win rate: too early to compare. Watch the first 30 closed trades."
   }
  ],
- "action": "Any short you open from now needs a GTT (run /zerodha-gtt-order after you finish trading)."
+ "action": "Any short you open from now needs a GTT (run /zerodha-gtt-order after you finish trading). INOXWIND 72CE and IDFCFIRSTB 75PE still sit on the old stop levels: leave them or set them in Kite."
 }

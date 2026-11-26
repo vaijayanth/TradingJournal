@@ -400,6 +400,17 @@
    "metrics": {
     "gtt_contracts": 109
    }
+  },
+  {
+   "date": "2026-11-26 (14:43 GTT re-level)",
+   "headline": "94 GTTs re-levelled to the new rule; 2 refused the modify (INOXWIND, IDFCFIRSTB); 109 contracts covered, scan 0 findings.",
+   "recommendations": [
+    "Any short you open from now needs a GTT (run /zerodha-gtt-order after you finish trading). INOXWIND 72CE and IDFCFIRSTB 75PE still sit on the old stop levels: leave them or set them in Kite."
+   ],
+   "metrics": {
+    "gtt_contracts": 109,
+    "relevelled": 94
+   }
   }
  ]
 }
