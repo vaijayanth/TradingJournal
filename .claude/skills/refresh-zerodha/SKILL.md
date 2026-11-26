@@ -24,6 +24,8 @@ AZ trades one kind of stock: **swing shares** (the Nifty F&O Supertrend stocks).
 - When the user moves more trades from the sheet, add the symbols to `moved_from_sheet.json` (and tell them to delete the rows from the sheet); never re-run `freeze_baseline.py`.
 
 ## Steps
+
+**Swing-share add-ons switch OFF from 2026-11-30 (user, 2026-11-26; `add_on_off_from` in this broker's `data/rules.json`).** From that date the engine emits 0 add-ons: counts, plans and checklists show `0 add-ons (off)`, never an add-on step. 
 1. **Prep.** `git status`, `git pull --ff-only`. Stop and tell the user if the tree has unrelated uncommitted changes. If `data/baseline_from_sheet.json` does not exist, run `python zerodha-live/scripts/freeze_baseline.py` ONCE (never again; re-freezing double counts).
 2. **Zerodha login.** Call `mcp__claude_ai_Zerodha_Mcp__get_holdings` with `limit: 1`. If it says to log in (or "Failed to execute"), call `mcp__claude_ai_Zerodha_Mcp__login`, show the user the warning text it returns plus the link, and wait for them to confirm they authorised it.
 3. **Holdings.** Call `get_holdings` with no limit (the result is large; the tool saves it to a file and prints the path - read it with Python, never paste it). Write `zerodha-live/data/holdings_snapshot.json` as `{"fetched_at": <ISO now, +05:30>, "source": "...get_holdings (quantity + t1_quantity)", "holdings": [{"symbol": tradingsymbol, "qty": quantity + t1_quantity, "avg_cost": average_price, "invested": qty*average_price, "exchange", "product"}]}` keeping only rows with qty > 0. Keep ALL holdings; the engine drops stocks outside the F&O universe.

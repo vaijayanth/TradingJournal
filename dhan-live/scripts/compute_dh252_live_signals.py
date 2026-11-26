@@ -67,6 +67,9 @@ DHAN_OPTION_HEDGE_PORTFOLIO = {
 }
 
 RULES = json.loads((Path(__file__).resolve().parent.parent / "data" / "rules.json").read_text())   # the single source of the trading numbers; scripts/check_rules_consistency.py guards the copies
+ADD_ON_OFF_FROM = RULES.get("add_on_off_from")   # user, 2026-11-26: no averaging on ND swing shares (investment-share averaging is separate) from this date (positions are stopped out on Supertrend red); None = always on
+def add_on_on(today):
+    return not ADD_ON_OFF_FROM or str(today)[:10] < ADD_ON_OFF_FROM
 ADD_TRIGGER_PCT = RULES["add_trigger_pct"]
 ADD_FRACTION = RULES["add_fraction"]
 ADD_COOLDOWN_DAYS = RULES["add_cooldown_days"]
@@ -346,7 +349,7 @@ def build_signals(holdings, week52, stmap, rsimap, entry_signals, trade_log, tod
             exits.append(row)
             continue  # exit takes priority over an add-on signal the same day
 
-        if pl_pct <= ADD_TRIGGER_PCT:
+        if add_on_on(today) and pl_pct <= ADD_TRIGGER_PCT:
             cooldown_days = days_since(pos["last_fill_date"], today)
             if cooldown_days >= ADD_COOLDOWN_DAYS:
                 add_qty = max(1, round(qty * ADD_FRACTION))
@@ -414,7 +417,7 @@ def build_signals(holdings, week52, stmap, rsimap, entry_signals, trade_log, tod
         "no_data": no_data,
         "exited_outside_tracking": exited_outside_tracking,
         # strategy rules the engine actually applied - the page shows these instead of hardcoding them
-        "rules": {"add_trigger_pct": ADD_TRIGGER_PCT, "add_fraction": ADD_FRACTION, "add_cooldown_days": ADD_COOLDOWN_DAYS},
+        "rules": {"add_on_off_from": ADD_ON_OFF_FROM, "add_on_enabled": add_on_on(today), "add_trigger_pct": ADD_TRIGGER_PCT, "add_fraction": ADD_FRACTION, "add_cooldown_days": ADD_COOLDOWN_DAYS},
         "capital_base": {"initial_capital": initial_capital,
                          "note": "fixed capital base; deposits ignored, equity = initial + realised + unrealised"},
         "equity_curve": equity_curve,

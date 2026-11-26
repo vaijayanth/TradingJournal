@@ -9091,7 +9091,7 @@ function wsNormalizeDhan(raw, ws) {
     signals: { entry },
     rules: {
       addTriggerPct: rules.add_trigger_pct ?? cfg.addTriggerPct, addCooldownDays: rules.add_cooldown_days ?? cfg.addCooldownDays,
-      addFraction: rules.add_fraction ?? cfg.addFraction, staleDays: cfg.staleDays,
+      addFraction: rules.add_fraction ?? cfg.addFraction, staleDays: cfg.staleDays, addOn: rules.add_on_enabled !== false,
     },
     hotSectors: raw.hot_sectors || null,
   };
@@ -9374,7 +9374,8 @@ function dhLiveRender(d) {
 
   // Strategy-specific copy comes from the workspace's rules, not hardcoded in the page
   const addSub = document.getElementById('dh-addon-sub');
-  if (addSub && rules.addTriggerPct != null) {
+  if (addSub && rules.addOn === false) addSub.textContent = 'Averaging is OFF for swing shares (user rule, from 30-Nov-26): losers are held to the Supertrend-red exit, never added to';
+  else if (addSub && rules.addTriggerPct != null) {
     addSub.textContent = rules.addTriggerPct >= 0 ? `Position in loss · Supertrend green · once every ${rules.addCooldownDays} days`
       : `P&L ≤ ${String(rules.addTriggerPct).replace('-', '−')}% vs WAC · Supertrend green · ${rules.addCooldownDays}-day cooldown met`;
   }

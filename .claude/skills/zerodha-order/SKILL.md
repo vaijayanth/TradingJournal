@@ -14,6 +14,7 @@ This skill places REAL orders on the user's Zerodha account through the Zerodha 
 AZ trades one kind of stock: **swing shares** (the Nifty F&O Supertrend stocks). Say "swing-share exits / add-ons / entries" (the Dhan side also has "investment shares", the 10 covered-call stocks: that kind does not exist on AZ). Options are always called options, never "shares".
 
 ## The AZ rules these orders come from (user, 2026-11-09)
+- **Add-ons are OFF from 2026-11-30 (user, 2026-11-26; `add_on_off_from` in `zerodha-live/data/rules.json`):** from that date the add-on group always has 0 rows, say so (A0) and move on; before it the old rule applies.
 - Universe: Nifty F&O stocks (`zerodha-live/data/fno_universe.json`), minus `excluded_symbols.json` (BSE, BEL, RECLTD). Only the dashboard's own positions (the 21 moved from the old sheet plus positions opened through it) can have exit or add-on signals; other Zerodha holdings are never ticketed.
 - **EXIT:** Supertrend RED, any profit or loss, the WHOLE position (never partial). Grandfathered: a position already red at the baseline cut-off (2026-11-08) only gets an exit signal after a red flip AFTER that date; the engine decides, this skill never overrides it.
 - **ADD-ON:** a tracked position with Supertrend green and P&L at -6% or worse (same as ND): buy 1/10 of the quantity (minimum 1), once every 7 days. Not a flip signal, so always listed.

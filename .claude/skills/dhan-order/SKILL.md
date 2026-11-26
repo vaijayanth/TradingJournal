@@ -26,6 +26,7 @@ Two kinds of stocks, never mixed in the words: **swing shares** = the dh252 52-w
 
 ## The rules these orders come from
 **dh252 swing stocks** (stages 1-3)
+- **Swing-share add-ons are OFF from 2026-11-30 (user, 2026-11-26; `add_on_off_from` in `dhan-live/data/rules.json`):** from that date stage 2 always has 0 rows, say so (A0) and move on; before it the old rule applies. Investment-share averaging (stage 5) is unchanged.
 - Entry: 52-week high (closing high) + Supertrend green, not held; size = the effective tier (base Rs1,000, +tiers, doubling milestone), floored to whole shares, minimum 1 (a stock priced above the tier costs more than the tier; the user is fine with that, no warning is raised). Add-on: P&L at -6% or worse, 1/10 of the open quantity (minimum 1), once every 7 days. Exit: Supertrend RED, the whole position, any profit or loss. Fixed capital base Rs20,00,000. InvITs / REITs are not in the universe. All of it is computed by the engine; this skill never recomputes or overrides it.
 
 **Investment-portfolio shares** (stages 4-6; the covered-call stocks in `dhan-live/data/cc_config.json` `universe`: MCX, SHRIRAMFIN, CGPOWER, BSE, DIXON, HCLTECH, INFY, BANKINDIA, BPCL, CUMMINSIND; user, 2026-11-08)

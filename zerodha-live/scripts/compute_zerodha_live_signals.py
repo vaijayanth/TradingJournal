@@ -40,6 +40,9 @@ BASE_POSITION_RS = RULES["base_position_rs"]
 POSITION_INCREMENT_RS = RULES["position_increment_rs"]
 POSITION_INCREMENT_TRADES = RULES["position_increment_trades"]
 ENTRY_WINDOW_TRADING_DAYS = RULES["entry_window_trading_days"]   # a flip to green within the last N trading days (user, 2026-11-23: 3; was 0 = today only)
+ADD_ON_OFF_FROM = RULES.get("add_on_off_from")   # user, 2026-11-26: no averaging on AZ from this date (positions are stopped out on Supertrend red); None = always on
+def add_on_on(today):
+    return not ADD_ON_OFF_FROM or str(today)[:10] < ADD_ON_OFF_FROM
 ADD_FRACTION = RULES["add_fraction"]
 ADD_COOLDOWN_DAYS = RULES["add_cooldown_days"]
 ADD_TRIGGER_PCT = RULES["add_trigger_pct"]     # user rule (2026-11-09): same as ND - add when the loss is -6% or worse
@@ -100,7 +103,7 @@ def build(holdings, uni, week52, stmap, rsimap, baseline, trades, today, market_
                 row["note"] = f"red since {streak_start} (before the {cutoff} cut-off): held under the grandfather rule until the trend flips green and then red again"
                 holds.append(row)
             continue
-        if pl_pct <= ADD_TRIGGER_PCT:
+        if add_on_on(today) and pl_pct <= ADD_TRIGGER_PCT:
             since = days_since(last_buy, today) if last_buy else None
             if since is None or since >= ADD_COOLDOWN_DAYS:
                 addons.append({**row, "add_qty": max(1, round(qty * ADD_FRACTION)), "cooldown_days_since_last_buy": since})
@@ -156,7 +159,7 @@ def build(holdings, uni, week52, stmap, rsimap, baseline, trades, today, market_
         "dh252_position_count": len(held), "option_hedge_portfolio": [],
         "holdings_count_total": len(holdings), "holdings_out_of_scope": len(holdings) - len(held),
         "no_data": no_data, "exited_outside_tracking": [],
-        "rules": {"add_trigger_pct": ADD_TRIGGER_PCT, "add_fraction": ADD_FRACTION, "add_cooldown_days": ADD_COOLDOWN_DAYS,
+        "rules": {"add_on_off_from": ADD_ON_OFF_FROM, "add_on_enabled": add_on_on(today), "add_trigger_pct": ADD_TRIGGER_PCT, "add_fraction": ADD_FRACTION, "add_cooldown_days": ADD_COOLDOWN_DAYS,
                   "entry_window_trading_days": ENTRY_WINDOW_TRADING_DAYS, "exit": "Supertrend red, any profit or loss",
                   "grandfather_cutoff": cutoff},
         "capital_base": {"initial_capital": STARTING_CAPITAL, "note": "fixed capital base; equity = base + realised + unrealised (Nifty F&O stocks only)"},

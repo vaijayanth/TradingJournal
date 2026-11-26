@@ -67,6 +67,8 @@ def broker_checks(broker, tag):
         if k in gc and key in r and gc[k] != r[key]:
             bad(f"{tag} guardrails_config.json {k}={gc[k]} conflicts with rules.json ({r[key]}); delete the duplicate key")
     sig = json.loads((ROOT / broker / sig_file).read_text()).get("rules", {})
+    if "add_on_off_from" in sig and sig["add_on_off_from"] != r.get("add_on_off_from"):
+        bad(f"{tag} {sig_file} rules.add_on_off_from={sig['add_on_off_from']} != rules.json {r.get('add_on_off_from')} (regenerate with the refresh)")
     for k in ("add_trigger_pct", "add_fraction", "add_cooldown_days"):
         if k in sig and sig[k] != r[k]:
             bad(f"{tag} {sig_file} rules.{k}={sig[k]} != rules.json {r[k]} (regenerate with the refresh)")
@@ -92,12 +94,16 @@ def doc_checks(nd, az):
     elif int(m.group(1)) != az["entry_window_trading_days"]:
         bad(f"CLAUDE.md strategy table says last {m.group(1)} trading days, AZ rules.json says {az['entry_window_trading_days']}")
     row = next((l for l in md.splitlines() if l.startswith("| Add-on |")), "")
-    nums = [float(x) for x in re.findall(r"<= *(-?\d+(?:\.\d+)?)%", row)]
-    for v, who in zip(nums, (nd, az)):
-        if v != who["add_trigger_pct"]:
-            bad(f"CLAUDE.md strategy table add-on trigger {v}% != rules.json {who['add_trigger_pct']}%")
-    if len(nums) != 2:
-        bad("CLAUDE.md strategy table: expected two add-on triggers ('<= -6%') in the '| Add-on |' row")
+    cells = [c.strip() for c in row.strip().strip("|").split("|")][1:]
+    for cell, who, tag in zip(cells, (nd, az), ("ND", "AZ")):
+        off = who.get("add_on_off_from")
+        if off:
+            if not (cell.lower().startswith("off") and off in cell):
+                bad(f"CLAUDE.md strategy table {tag} add-on cell must say 'off from {off}' (rules.json add_on_off_from)")
+        else:
+            m = re.search(r"<= *(-?\d+(?:\.\d+)?)%", cell)
+            if not m or float(m.group(1)) != who["add_trigger_pct"]:
+                bad(f"CLAUDE.md strategy table {tag} add-on cell does not show the rules.json trigger {who['add_trigger_pct']}%")
     row = next((l for l in md.splitlines() if l.startswith("| Sizing |")), "")
     for needle, who in (("Rs1,000 + Rs1,000", nd), ("Rs20,000 + Rs5,000", az)):
         if needle not in row:

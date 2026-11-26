@@ -27,7 +27,7 @@ Both brokers list it. Zerodha is the source to use; the Dhan listing gave no liv
    | **Open bias** | UP / FLAT / DOWN, confidence |
 
 3. **What it means for the books (one short line each, only the ones that apply; informational):**
-   - **AMO BUY limits** (ND and AZ entries and add-ons, limit = signal-day high capped at close +2%): a gap-up through the limit simply does not fill; the rule is never to chase. A gap-down fills at or below the limit.
+   - **AMO BUY limits** (ND and AZ entries and, until 2026-11-30, add-ons, limit = signal-day high capped at close +2%): a gap-up through the limit simply does not fill; the rule is never to chase. A gap-down fills at or below the limit.
    - **AMO exits** (MARKET sell at the open): they fill at the open price whatever the gap.
    - **Open short options** (bull put spreads, short calls): a gap-down pressures the short puts, a gap-up the short calls. Name the covered-call stocks whose short strike is within the gap size of the last close only if `covered_call_signals.json` is fresh for that broker (read-only); otherwise say "run /refresh-dhan or /refresh-zerodha after the open for live strike alerts".
    - Never turn this into a rule change, a skipped signal or a changed order size. If a bias is DOWN with a rising VIX, say it is a reason to look at the option strikes, not to override the system.

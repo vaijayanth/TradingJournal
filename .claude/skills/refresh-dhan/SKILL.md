@@ -11,6 +11,9 @@ Run from the repo root of TradingJournal on branch `claude/beautiful-hamilton-fw
 
 ## Steps
 
+**Swing-share add-ons switch OFF from 2026-11-30 (user, 2026-11-26; `add_on_off_from` in this broker's `data/rules.json`).** From that date the engine emits 0 add-ons: counts, plans and checklists show `0 add-ons (off)`, never an add-on step. Investment-share averaging (green, loss >= 6%, 1/10, 7 days) is NOT affected and stays in the plan.
+
+
 1. **Prep.** `git status`, `git pull --ff-only` on the branch. Stop and tell the user if the tree has unrelated uncommitted changes.
 2. **Dhan login check.** Call `mcp__claude_ai_dhan_mcp__portfolio_agent_tool` (action `holdings`). If it reports not logged in / expired, call the MCP `login` tool, give the user the link, wait for them to approve (`complete_login` if it asks for a code - never ask the user to paste tokens into chat beyond what that flow requires).
 3. **Holdings.** Write the result to `dhan-live/data/holdings_snapshot.json` as
