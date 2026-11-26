@@ -1,6 +1,19 @@
 {
- "fetched_at": "2026-11-26T10:24:09+05:30",
+ "fetched_at": "2026-11-26T11:22:17+05:30",
  "orders_checked": 14,
- "shorts": 12,
- "findings": []
+ "shorts": 13,
+ "findings": [
+  {
+   "check": "S2",
+   "name": "NO STOP",
+   "severity": "WARN",
+   "order_id": null,
+   "symbol": "HCLTECH",
+   "expiry": "2026-12-29",
+   "strike": 1280.0,
+   "opt_type": "PE",
+   "concern": "No super order matches this short (400 @ 7.15): no stop protects it",
+   "action": "Close and re-enter as a super order, or use a daily stop order"
+  }
+ ]
 }

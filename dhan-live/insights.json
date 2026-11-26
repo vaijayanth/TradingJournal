@@ -1,17 +1,17 @@
 {
- "as_of": "26 Nov 10:25 (market data 25 Nov close, positions live)",
- "written_at": "2026-11-26T10:25:24+05:30",
+ "as_of": "26 Nov 11:30 (market data 25 Nov close, positions live)",
+ "written_at": "2026-11-26T11:23:14+05:30",
  "confidence": "low",
  "maturity": "139 positions ever opened but only 9 closed trades: the swing edge cannot be judged yet.",
- "headline": "The open filled 17 of the 22 queued orders; five swing exits and four entries are done, and the BSE structure plus an orphaned HCLTECH hedge are the open items.",
+ "headline": "Six of seven swing exits are done; the one new problem is the HCLTECH 1280PE you just sold, which has no stop, and BSE is still the structure out of line.",
  "points": [
   {
    "label": "Signals",
-   "text": "Filled at the open: 5 swing exits (ESAFSFB, GUFICBIO, NILKAMAL, SSWL, NAZARA), 4 entries (AGARWALEYE, MEDANTA, SHALPAINTS, SHARDAMOTR), 6 add-ons and 2 averaging buys (BPCL x9, SHRIRAMFIN x13). Still resting: SGFIN and SGMART exits, and the INFY and HCLTECH averaging limits below the market. DIXON x1 averaging was rejected by the exchange; reason unknown, re-place it."
+   "text": "SGMART's exit filled at 829.45 (6 of 7 swing exits done; SGFIN still resting). INFY and HCLTECH averaging limits sit below the market and are unlikely to fill today. SUNTV x1 and TEXINFRA x1 add-ons and the rejected DIXON x1 averaging are still to place."
   },
   {
    "label": "BSE",
-   "text": "The BSE 4200CE still fights a green colour and the 3200PE is 200 qty unhedged (HIGH). Both have stops; this is the one structure out of line with the rules."
+   "text": "The BSE 4200CE is now -Rs4.9k as BSE rose to about 3,936 (the stock is above where you sold the call), and the 3200PE is still 200 qty unhedged (HIGH). This is the one structure fighting the green colour; closing the call stops the loss growing."
   },
   {
    "label": "Investment shares",
@@ -19,12 +19,12 @@
   },
   {
    "label": "Options",
-   "text": "The HCLTECH 1240PE short hit its profit target at 4.65 (bought back 4.70, +Rs2,780 realised), so its super order's stop leg cancelled cleanly. The 1200PE hedge (400 qty, -Rs1,940) is now orphaned: sell it, or sell a new put above it since the colour is still green."
+   "text": "You re-sold a HCLTECH 1280PE spread (short 1280 vs long 1200, 400 qty each, quantities match) after the 1240PE hit its target. It was placed as a plain order, so no super order protects it: its stop would be about 21.5 (3x the 7.15 sold)."
   },
   {
    "label": "Versus the backtest",
    "text": "9 closed trades against 28% CAGR, -15.4% drawdown and PF 2.0: too early to compare. With 7 exits at once this is the first real test of how the live exits compare with the backtest's average loser (-9%)."
   }
  ],
- "action": "Place the SUNTV and TEXINFRA add-ons and the DIXON averaging buy (rejected at the open) with /dhan-order after the close; close the BSE 4200CE and fix the BSE hedge; sell or re-use the HCLTECH 1200PE."
+ "action": "Protect the new HCLTECH 1280PE (close and re-enter as a super order, or place a daily stop at about 21); close the BSE 4200CE and fix the BSE hedge; place SUNTV, TEXINFRA and DIXON with /dhan-order after the close."
 }
