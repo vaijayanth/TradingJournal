@@ -1,0 +1,325 @@
+"""EXIT-RULE VARIANT of swing_backtest.py (user request 2026-11-26). Identical engine, plus two module switches used only by exit_variants_test.py:
+  EXIT_MODE  'st' (live: Supertrend red) | 'sma50' | 'sma20' | 'st_and_sma50' | 'hyb20_30' / 'hyb20_50' (Supertrend, plus close < 20-day MA once the open gain is >= 30% / 50%)
+             | 'hybpct_30_15' / 'hybpct_30_20' (Supertrend, plus a 15% / 20% drop from the peak close once the peak gain is >= 30%)
+  TRIM       None, or (open-gain threshold as a fraction, fraction of the position to sell ONCE at the next open, the rest keeps the Supertrend exit)
+Closed trades also record "peak" (best close vs average cost, %). The live engine and swing_backtest.py are NOT changed. Original docstring follows.
+
+Backtest of the two live swing strategies on the backtester's 10-year daily history (checkpoints/raw/*.parquet).
+
+  python swing-backtest/swing_backtest.py --data <dir with raw/ and manifest.csv> --strategy dhan|az [--start 2017-11-01] [--slip 0.001]
+
+Shared mechanics (same as the backtester's own engine): signals are read at a completed day's CLOSE, every order fills at the symbol's NEXT bar's
+OPEN, one position per stock, whole-position Supertrend(10,3)-red exit at any profit or loss, WAC-based add-on (price <= -6% below the CURRENT
+weighted-average cost and Supertrend green, at least 7 calendar days since the last fill), cash-limited (no leverage, no margin), quantity floored
+to whole shares with a minimum of 1, equity = initial capital + realised + open P&L (idle cash earns nothing, deposits ignored).
+
+  dhan : ND / dh252. Universe = every validated symbol. Entry = close above the highest CLOSE of the previous 252 sessions AND Supertrend green.
+         Size Rs1,000 +Rs1,000 per 100 closed trades (uncapped). Add-on = int(qty x 0.10), min 1. Capital Rs20,00,000.
+         Entries are served biggest breakout first when cash is short.
+  az   : AZ / Nifty F&O Supertrend. Universe = current Nifty F&O stocks minus BSE, BEL, RECLTD. Entry = Supertrend turned green within the last 3 sessions
+         and green now, not held; ONLY the freshest flip day that has candidates is ordered (today's flips, else 1 day old, ...).
+         Size Rs20,000 +Rs5,000 per 100 trades opened (uncapped). Add-on = round(qty x 0.10), min 1. Capital Rs30,00,000.
+Costs (Indian delivery): STT 0.1% each side, exchange 0.00297%, SEBI 0.0001%, GST 18% on those two, stamp 0.015% on buys, DP charge Rs15.93 per sale,
+brokerage 0, plus slippage (default 0.1% against you on every fill). Caveats: survivorship bias (today's index/F&O lists), dividend-adjusted prices,
+no circuit/liquidity limits (1 lot-size positions are tiny so impact is ignored), no tax.
+"""
+import argparse
+import json
+import random
+import sys
+from collections import defaultdict
+from pathlib import Path
+
+import pandas as pd
+
+sys.path.insert(0, str(Path(__file__).resolve().parent))
+from indicators import compute_supertrend  # noqa: E402
+
+HERE = Path(__file__).resolve().parent
+ROOT = HERE.parent
+WINDOW = 252
+ADD_TRIGGER, ADD_COOLDOWN = -6.0, 7
+CFG = {
+    "dhan": {"capital": 2_000_000, "base": 1000, "step": 1000, "every": 100, "count": "closed", "add": "int", "flip_window": None},
+    "az": {"capital": 3_000_000, "base": 20000, "step": 5000, "every": 100, "count": "opened", "add": "round", "flip_window": 3},
+}
+
+
+def charges(value, side):
+    exch = value * 0.0000297 + value * 0.000001
+    c = value * 0.001 + exch + 0.18 * exch
+    if side == "buy":
+        c += value * 0.00015
+    else:
+        c += 15.93
+    return c
+
+
+EXIT_MODE = "st"
+TRIM = None   # (open gain threshold as a fraction, fraction of the position to sell once)
+
+
+def load(data_dir, symbols, start, with_high_window):
+    raw = {}
+    for sym in symbols:
+        p = data_dir / "raw" / f"{sym.replace('.', '_')}.parquet"
+        if not p.exists():
+            continue
+        df = pd.read_parquet(p)
+        df.index = pd.to_datetime(df.index).tz_localize(None)
+        df = df.sort_index()
+        df = df[~df.index.duplicated()]
+        if len(df) < 60:
+            continue
+        o, h, l, c = (df[k].tolist() for k in ("Open", "High", "Low", "Close"))
+        dirs, _, _ = compute_supertrend(h, l, c, 10, 3.0)
+        roll = df["Close"].rolling(WINDOW).max().shift(1).tolist() if with_high_window else [None] * len(df)
+        age, last_up_flip = [], None
+        for i, d in enumerate(dirs):
+            if d == "up" and i > 0 and dirs[i - 1] == "down":
+                last_up_flip = i
+            age.append((i - last_up_flip) if (d == "up" and last_up_flip is not None) else None)
+        s20 = df["Close"].rolling(20).mean().tolist(); s50 = df["Close"].rolling(50).mean().tolist()
+        raw[sym] = {dt: (o[i], c[i], roll[i], dirs[i], age[i], s20[i], s50[i]) for i, dt in enumerate(df.index) if dt >= start - pd.Timedelta(days=400)}
+    return raw
+
+
+def run(strategy, data_dir, symbols, start, slip, seed=0, fresh_only=True, cash_rate=0.0, tier_cap=None, flip_window=None, capital=None, size_pct=None, size_base="realised", base=None, step=None, double=False, every=None, block=None, block_adds=False):
+    cfg = dict(CFG[strategy])
+    # market gate (user test, 2026-11-24): `block` = {date: True} on days when NEW entries are not allowed (e.g. Nifty Supertrend red); `block_adds` also stops
+    # add-ons on those days. Exits are never blocked. Signals are read at the day's close, so the gate uses the same close.
+    if every is not None:        # ladder step interval in trades (default 100)
+        cfg["every"] = every
+    if base is not None:         # ladder start size per position, Rs (default: the strategy's own)
+        cfg["base"] = base
+    if step is not None:         # ladder increment per `every` trades, Rs
+        cfg["step"] = step
+    if capital is not None:      # override the starting capital (default: the strategy's own)
+        cfg["capital"] = capital
+    if flip_window is not None:   # az only: override the entry window (0 = today's flips only, default stays 3)
+        cfg["flip_window"] = flip_window
+    data = load(data_dir, symbols, start, strategy == "dhan")
+    dates = sorted({d for s in data.values() for d in s if d >= start})
+    cash = float(cfg["capital"])
+    cap0 = cash
+    pos, pending, closed = {}, {}, []
+    realised = fees = 0.0
+    opened = 0
+    curve, missed = [], {"entry": 0, "add": 0}
+    invested_series = []
+    last_seen = {}
+    prev_dt = None
+    for dt in dates:
+        if prev_dt is not None and cash_rate:
+            cash *= (1 + cash_rate) ** ((dt - prev_dt).days / 365.0)     # idle cash sits in a liquid ETF (LIQUIDBEES) and accrues daily
+        prev_dt = dt
+        # 1. fills at today's open (sales first so they free cash)
+        order = sorted(pending.items(), key=lambda kv: (kv[1]["a"] not in ("sell", "trim"), random.Random(f"{seed}|{dt.date()}|{kv[0]}").random()))
+        for sym, od in order:
+            bar = data[sym].get(dt)
+            if bar is None:
+                continue
+            pending.pop(sym)
+            o = bar[0]
+            if od["a"] == "sell" and sym in pos:
+                p = pos.pop(sym)
+                px = o * (1 - slip)
+                val = p["qty"] * px
+                ch = charges(val, "sell")
+                cash += val - ch
+                fees += ch
+                pl = (px - p["avg"]) * p["qty"] - p["fees"] - ch + p.get("trim_pl", 0.0)
+                realised += (px - p["avg"]) * p["qty"] - ch
+                closed.append({"sym": sym, "entry": p["entry"], "exit": dt, "pl": pl, "pct": (px / p["avg"] - 1) * 100, "adds": p["adds"], "days": (dt - p["entry"]).days, "qty": p["qty"], "cost": p["avg"] * p["qty"], "peak": (p.get("pk", p["avg"]) / p["avg"] - 1) * 100})
+            elif od["a"] == "trim" and sym in pos:
+                p = pos[sym]
+                q = min(od["q"], p["qty"] - 1)
+                if q >= 1:
+                    px = o * (1 - slip)
+                    val = q * px
+                    ch = charges(val, "sell")
+                    cash += val - ch
+                    fees += ch
+                    realised += (px - p["avg"]) * q - ch
+                    p["trim_pl"] = p.get("trim_pl", 0.0) + (px - p["avg"]) * q - ch
+                    p["qty"] -= q
+                    p["trimmed"] = True
+            elif od["a"] == "buy" and sym not in pos:
+                n = len(closed) if cfg["count"] == "closed" else opened
+                tier = cfg["base"] + (n // cfg["every"]) * cfg["step"]
+                if double:     # geometric ladder: size doubles every `every` trades (use --tier-cap, otherwise it outgrows the capital within ~1,000 trades)
+                    tier = cfg["base"] * (2 ** min(n // cfg["every"], 50))
+                if size_pct:   # capital-linked sizing: size = size_pct % of (start capital + realised) or of total equity (cash + holdings at last close)
+                    if size_base == "equity":
+                        basev = cash + sum(p_["qty"] * last_seen.get(s_, p_["avg"]) for s_, p_ in pos.items())
+                    else:
+                        basev = cap0 + realised
+                    tier = size_pct / 100.0 * max(basev, 0.0)
+                if tier_cap:
+                    tier = min(tier, tier_cap)
+                px = o * (1 + slip)
+                qty = max(1, int(tier // px))
+                val = qty * px
+                ch = charges(val, "buy")
+                if cash >= val + ch:
+                    cash -= val + ch
+                    fees += ch
+                    opened += 1
+                    pos[sym] = {"entry": dt, "avg": px, "qty": qty, "last": dt, "adds": 0, "fees": ch}
+                else:
+                    missed["entry"] += 1
+            elif od["a"] == "add" and sym in pos:
+                p = pos[sym]
+                px = o * (1 + slip)
+                qty = od["q"]
+                val = qty * px
+                ch = charges(val, "buy")
+                if cash >= val + ch:
+                    cash -= val + ch
+                    fees += ch
+                    tot = p["avg"] * p["qty"] + val
+                    p["qty"] += qty
+                    p["avg"] = tot / p["qty"]
+                    p["last"] = dt
+                    p["adds"] += 1
+                    p["fees"] += ch
+                else:
+                    missed["add"] += 1
+        # 2. signals at today's close
+        cands = []
+        for sym, bars in data.items():
+            bar = bars.get(dt)
+            if bar is None:
+                continue
+            _, c, roll, d, age, s20, s50 = bar
+            last_seen[sym] = c
+            if d is None:
+                continue
+            if sym in pos:
+                p = pos[sym]
+                p["pk"] = max(p.get("pk", p["avg"]), c)
+                gain = c / p["avg"] - 1
+                ok = lambda v: v is not None and not pd.isna(v)
+                M = EXIT_MODE
+                if M == "st": xx = d == "down"
+                elif M == "sma50": xx = ok(s50) and c < s50
+                elif M == "sma20": xx = ok(s20) and c < s20
+                elif M == "st_and_sma50": xx = d == "down" and (not ok(s50) or c < s50)
+                elif M == "hyb20_30": xx = d == "down" or (gain >= 0.30 and ok(s20) and c < s20)
+                elif M == "hyb20_50": xx = d == "down" or (gain >= 0.50 and ok(s20) and c < s20)
+                elif M == "hybpct_30_15": xx = d == "down" or (p["pk"] / p["avg"] - 1 >= 0.30 and c <= p["pk"] * 0.85)
+                elif M == "hybpct_30_20": xx = d == "down" or (p["pk"] / p["avg"] - 1 >= 0.30 and c <= p["pk"] * 0.80)
+                else: raise ValueError(M)
+                if xx:
+                    pending[sym] = {"a": "sell"}
+                    continue
+                if TRIM and not p.get("trimmed") and gain >= TRIM[0] and sym not in pending and p["qty"] >= 2:
+                    pending[sym] = {"a": "trim", "q": max(1, int(p["qty"] * TRIM[1]))}
+                    continue
+                pl = (c / p["avg"] - 1) * 100
+                if pl <= ADD_TRIGGER and d == "up" and (dt - p["last"]).days >= ADD_COOLDOWN and sym not in pending and not (block_adds and block and block.get(dt)):
+                    q = p["qty"] * 0.10
+                    pending[sym] = {"a": "add", "q": max(1, int(q) if cfg["add"] == "int" else round(q))}
+            elif sym not in pending and d == "up" and not (block and block.get(dt)):
+                if strategy == "dhan":
+                    if roll is not None and not pd.isna(roll) and c > roll:
+                        cands.append((c / roll - 1, sym))
+                else:
+                    if age is not None and age <= cfg["flip_window"]:
+                        cands.append((age, sym))
+        if cands:
+            if strategy == "dhan":
+                for _, sym in cands:
+                    pending[sym] = {"a": "buy"}
+            else:
+                fresh = min(a for a, _ in cands)
+                for a, sym in cands:
+                    if a == fresh or not fresh_only:
+                        pending[sym] = {"a": "buy"}
+        mv = sum(p_["qty"] * (data[s_][dt][1] if dt in data[s_] else last_seen.get(s_, p_["avg"])) for s_, p_ in pos.items())
+        inv = sum(p_["avg"] * p_["qty"] for p_ in pos.values())
+        curve.append((dt, cash + mv, inv, len(pos)))
+    return {"curve": curve, "closed": closed, "open": pos, "fees": fees, "missed": missed, "cap0": cap0, "opened": opened, "universe": len(data), "start": dates[0], "end": dates[-1]}
+
+
+def summarise(res, label):
+    cv = pd.DataFrame(res["curve"], columns=["date", "eq", "inv", "n"]).set_index("date")
+    cap0 = res["cap0"]
+    yrs = (cv.index[-1] - cv.index[0]).days / 365.25
+    final = cv["eq"].iloc[-1]
+    cagr = ((final / cap0) ** (1 / yrs) - 1) * 100
+    dd = ((cv["eq"] / cv["eq"].cummax()) - 1).min() * 100
+    tr = pd.DataFrame(res["closed"])
+    w, l = tr[tr["pl"] > 0], tr[tr["pl"] <= 0]
+    pf = w["pl"].sum() / abs(l["pl"].sum()) if len(l) else float("nan")
+    yr = cv["eq"].resample("YE").last()
+    yr = pd.concat([pd.Series([cap0], index=[cv.index[0] - pd.Timedelta(days=1)]), yr])
+    yret = (yr.pct_change().dropna() * 100).round(1)
+    out = {"label": label, "universe": res["universe"], "period": f"{cv.index[0].date()} to {cv.index[-1].date()} ({yrs:.1f}y)", "capital": cap0,
+           "final_equity": round(final), "total_pnl": round(final - cap0), "cagr%": round(cagr, 2), "max_dd%": round(dd, 2),
+           "closed": len(tr), "win%": round(100 * len(w) / len(tr), 1), "avg_win%": round(w["pct"].mean(), 1), "avg_loss%": round(l["pct"].mean(), 1),
+           "pf": round(pf, 2), "avg_hold_win_d": round(w["days"].mean()), "avg_hold_loss_d": round(l["days"].mean()), "adds/trade": round(tr["adds"].mean(), 2),
+           "open_positions_now": len(res["open"]), "peak_invested": round(cv["inv"].max()), "peak_invested%": round(100 * cv["inv"].max() / cap0, 1),
+           "avg_invested%": round(100 * cv["inv"].mean() / cap0, 1), "max_positions": int(cv["n"].max()), "fees_rs": round(res["fees"]),
+           "missed_entries_no_cash": res["missed"]["entry"], "missed_adds_no_cash": res["missed"]["add"], "yearly_%": {str(k.year): v for k, v in yret.items()}}
+    return out, cv, tr
+
+
+def main():
+    ap = argparse.ArgumentParser()
+    ap.add_argument("--data", required=True)
+    ap.add_argument("--strategy", choices=["dhan", "az"], required=True)
+    ap.add_argument("--start", default="2017-11-01")
+    ap.add_argument("--slip", type=float, default=0.001)
+    ap.add_argument("--out", default="")
+    ap.add_argument("--tier-cap", type=float, default=None, help="maximum Rs per new position (the tier stops growing here)")
+    ap.add_argument("--cash-rate", type=float, default=0.0, help="annual yield earned by idle cash (liquid ETF), e.g. 0.06")
+    ap.add_argument("--flip-window", type=int, default=None, help="az: entry window in sessions since the green flip (0 = flipped on the signal day; default 3 as in the published results)")
+    ap.add_argument("--capital", type=float, default=None, help="starting capital in Rs (default: the strategy's own, AZ 30,00,000)")
+    ap.add_argument("--size-pct", type=float, default=None, help="capital-linked sizing: each new position = this %% of the base (replaces the trade-count ladder)")
+    ap.add_argument("--size-base", choices=["realised", "equity"], default="realised", help="base for --size-pct: start capital + realised P&L, or total equity (cash + holdings)")
+    ap.add_argument("--base", type=float, default=None, help="ladder start size per position in Rs (AZ default 20,000)")
+    ap.add_argument("--step", type=float, default=None, help="ladder increment per 100 trades in Rs (AZ default 5,000)")
+    ap.add_argument("--live-universe", action="store_true", help="dhan: apply the live ND exclusions (ETFs by name, plus the permanent InvIT/REIT list in dhan-live/data/excluded_universe.json)")
+    ap.add_argument("--double", action="store_true", help="ladder that DOUBLES the size every 100 trades (base * 2^(trades/100)); combine with --tier-cap")
+    ap.add_argument("--fno-universe", action="store_true", help="dhan strategy on the AZ universe (current Nifty F&O stocks minus the AZ exclusions) instead of every validated symbol")
+    ap.add_argument("--every", type=int, default=None, help="ladder: add the step every N trades (default 100)")
+    ap.add_argument("--all-days", action="store_true", help="az: order every flip in the 3-day window, not only the freshest day")
+    a = ap.parse_args()
+    data_dir = Path(a.data)
+    man = pd.read_csv(data_dir / "manifest.csv")
+    valid = man[man["status"] == "VALIDATED"]["symbol"].tolist()
+    if a.strategy == "az":
+        uni = json.loads((ROOT / "zerodha-live" / "data" / "fno_universe.json").read_text())["symbols"]
+        ex = set(json.loads((ROOT / "zerodha-live" / "data" / "excluded_symbols.json").read_text())["symbols"])
+        want = {s + ".NS" for s in uni if s not in ex}
+        symbols = [s for s in valid if s in want]
+    else:
+        symbols = valid
+        if a.fno_universe:
+            uni = json.loads((ROOT / "zerodha-live" / "data" / "fno_universe.json").read_text())["symbols"]
+            exz = set(json.loads((ROOT / "zerodha-live" / "data" / "excluded_symbols.json").read_text())["symbols"])
+            want = {x + ".NS" for x in uni if x not in exz}
+            symbols = [x for x in symbols if x in want]
+            print(f"fno universe: {len(symbols)} symbols")
+        if a.live_universe:
+            ex = json.loads((ROOT / "dhan-live" / "data" / "excluded_universe.json").read_text())
+            sfx = tuple(x.upper() for x in ex.get("suffixes", []))
+            perm = {x.upper() for x in ex.get("symbols", [])}
+            etf_extra = {"LIQUIDCASE", "GOLDBEES", "MIDCAPETF", "NIFTYIETF", "MON100", "MASPTOP50", "MAFANG", "MOM100", "SILVERBEES"}
+            def keep(sym):
+                b = sym.split(".")[0].upper()
+                return not (b in perm or b in etf_extra or b.endswith(("ETF", "IETF", "BEES")) or (sfx and b.endswith(sfx)))
+            before = len(symbols)
+            symbols = [x for x in symbols if keep(x)]
+            print(f"live universe filter: {before} -> {len(symbols)} symbols")
+    res = run(a.strategy, data_dir, symbols, pd.Timestamp(a.start), a.slip, fresh_only=not a.all_days, cash_rate=a.cash_rate, tier_cap=a.tier_cap, flip_window=a.flip_window, capital=a.capital, size_pct=a.size_pct, size_base=a.size_base, base=a.base, step=a.step, double=a.double, every=a.every)
+    out, cv, tr = summarise(res, f"{a.strategy} start={a.start} slip={a.slip} cash={a.cash_rate} cap={a.tier_cap}{' all-days' if a.all_days else ''}{f' flip-window={a.flip_window}' if a.flip_window is not None else ''}{f' capital={a.capital:.0f}' if a.capital else ''}{f' size={a.size_pct}%of-{a.size_base}' if a.size_pct else ''}{f' base={a.base:.0f}' if a.base else ''}{' live-universe' if a.live_universe else ''}{' fno-universe' if a.fno_universe else ''}{' double' if a.double else ''}{f' every={a.every}' if a.every else ''}{f' step={a.step:.0f}' if a.step else ''}")
+    print(json.dumps(out, indent=1, default=str))
+    if a.out:
+        cv.to_csv(a.out + "_equity.csv")
+        tr.to_csv(a.out + "_trades.csv", index=False)
+
+
+if __name__ == "__main__":
+    main()

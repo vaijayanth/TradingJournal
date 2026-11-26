@@ -226,3 +226,33 @@ Reading: the scaled ladder reproduces the Rs30L result (20.2% vs 20.2%, -21.7% v
 | AZ Rs30L | Rs2.5k per 50 trades (same ramp) | 20.65% | -21.06% | 0.98 | 3,701 | 41.3 | 1.76 | Rs1.97 Cr | 2,313 |
 
 Reading: stepping every 50 trades with the same step is just a faster ramp (more return, more drawdown, same return per drawdown or worse). With half the step it is the same ramp in smaller increments and changes almost nothing.
+
+### Exit rules and partial profit on ND (user request 2026-11-26)
+Question: does a moving-average trail or a partial sale give back less profit than the live Supertrend-red exit? Same ND universe, 252-day-high entry, ladder, costs, 0.1% slippage, 6% idle cash, 2016-11-07 to the last bar. Only the exit changes (entries, add-ons, sizing untouched). Code: `swing_backtest_exits.py` (engine copy with `EXIT_MODE` and `TRIM` switches) and `exit_variants_test.py`; table: `results/exit_variants.csv`. Baseline reproduces the live result (27.9% / -15.4%).
+
+Giveback: 2,010 of 7,894 trades (25%) reached +30% open profit; they peaked at +79% on average and exited at +50%, so the live exit gives back **46% of the peak** on them.
+
+| Exit rule | CAGR | Max DD | CAGR 2022+ | DD 2022+ | PF | Avg win | Hold (wins) | Giveback of peak |
+|---|---|---|---|---|---|---|---|---|
+| **Supertrend red (live)** | 27.9% | -15.4% | 19.8% | -15.4% | 2.00 | +33% | 102d | 46% |
+| Close below 50-day MA | 28.0% | -19.9% | 22.5% | -19.9% | 2.01 | +32% | 96d | 47% |
+| Close below 20-day MA | 26.5% | -16.9% | 16.7% | -14.0% | 1.49 | +18% | 40d | 37% |
+| Supertrend red and below 50-day MA | 27.1% | -20.9% | 22.3% | -20.9% | 2.15 | +37% | 120d | 50% |
+| Supertrend, or 20-day MA once +30% | 27.4% | -16.6% | 19.4% | -16.6% | 1.85 | +30% | 87d | 38% |
+| Supertrend, or 20-day MA once +50% | 28.0% | -16.1% | 20.3% | -16.1% | 1.95 | +32% | 95d | 43% |
+| Supertrend, or 15% off the peak once +30% | 27.4% | -15.4% | 19.3% | -15.4% | 1.94 | +32% | 98d | 44% |
+| Supertrend, or 20% off the peak once +30% | 28.0% | -15.3% | 19.9% | -15.3% | 2.00 | +33% | 102d | 46% |
+
+Partial profit: sell a fraction of the position ONCE at the first close with open gain >= the threshold (filled at the next open); the rest keeps the Supertrend exit; the cash goes back into the normal ladder.
+
+| Trim rule | CAGR | Max DD | CAGR 2022+ | DD 2022+ | PF |
+|---|---|---|---|---|---|
+| **No trim (live)** | 27.9% | -15.4% | 19.8% | -15.4% | 2.00 |
+| Sell 1/3 at +30% | 26.1% | -17.0% | 20.1% | -16.9% | 1.85 |
+| Sell 1/2 at +30% | 26.4% | -16.1% | 19.8% | -16.1% | 1.83 |
+| Sell 1/3 at +50% | 26.1% | -17.2% | 19.9% | -17.2% | 1.88 |
+| Sell 1/2 at +50% | 25.2% | -17.7% | 19.7% | -17.7% | 1.83 |
+| Sell 1/3 at +100% | 26.4% | -17.0% | 20.1% | -17.0% | 1.92 |
+| Sell 1/2 at +100% | 25.7% | -17.6% | 20.1% | -17.6% | 1.88 |
+
+Reading: **no variant beats the live Supertrend exit on return and drawdown together; keep it.** A tighter trail (20-day MA) cuts the giveback (37%) but halves the average win and drops PF to 1.49. The 50-day MA matches the CAGR with a 4.5-point deeper drawdown. The hybrids sit within about 0.1 point of the live CAGR with a drawdown no better. Partial profit costs 1.5 to 2.7 CAGR points over the full 10 years, is neutral from 2022, and makes the drawdown 0.7 to 2.3 points WORSE in every variant (winners pay for the losers; selling a slice leaves less running through the big trends). The giveback is the price of the trend-following edge. Caveats: one in-sample run, survivorship bias, no tax (a trim also brings the tax forward). In the trim rows the giveback column is not comparable (it measures the remaining position only); use the CAGR / drawdown columns.
