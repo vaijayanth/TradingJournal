@@ -1,13 +1,13 @@
 {
- "as_of": "26 Nov 19:09 (26 Nov close, positions, GTTs and prices live)",
- "written_at": "2026-11-26T19:09:13+05:30",
+ "as_of": "26 Nov 19:13 (26 Nov close, positions, GTTs and prices live)",
+ "written_at": "2026-11-26T19:13:18+05:30",
  "confidence": "low",
- "maturity": "42 positions opened since the cut-off, 5 closed trades: the swing edge cannot be judged yet.",
+ "maturity": "44 positions opened since the cut-off (LODHA and KFINTECH moved in), 5 closed trades: the swing edge cannot be judged yet.",
  "headline": "ASHOKLEY flipped red (exit signal, -8.3%, the add-on bought this morning is in it) and two entries are live (SAGILITY, TORNTPHARM); every short option has a GTT.",
  "points": [
   {
    "label": "Signals",
-   "text": "One exit: ASHOKLEY x131 at about 156.15 (Supertrend red, -8.3%), the stock you averaged into at the open. Two entries: SAGILITY x429 (flipped green today) and TORNTPHARM x3 (flipped 25 Nov; the x4 order was cancelled and the new tier size gives x3). 36 of 36 other swing holds are green."
+   "text": "One exit: ASHOKLEY x131 at about 156.15 (Supertrend red, -8.3%), the stock you averaged into at the open. Two entries: SAGILITY x429 (flipped green today) and TORNTPHARM x3 (flipped 25 Nov; the x4 order was cancelled and the new tier size gives x3). all other swing holds are green."
   },
   {
    "label": "Options process",
@@ -19,12 +19,12 @@
   },
   {
    "label": "Book",
-   "text": "Unrealised swing P&L is +Rs33.0k against realised -Rs13.7k from 5 closed trades (combined +Rs19.3k). Two old-sheet positions are now green and profitable (LODHA, KFINTECH): move candidates."
+   "text": "Unrealised swing P&L is +Rs33.6k against realised -Rs13.7k from 5 closed trades. LODHA and KFINTECH moved from the old sheet (+1.6%, +1.2%), so 38 of 38 open swing holds are green."
   },
   {
    "label": "Versus the backtest",
    "text": "5 closed trades against 20.2% CAGR, -21.3% drawdown, 41% win rate: too early to compare; the first exit of the averaged-down ASHOKLEY will be the sixth closed trade. Watch the first 30 closed trades."
   }
  ],
- "action": "After the close run /zerodha-order for the ASHOKLEY exit and the SAGILITY and TORNTPHARM entries; close the ASHOKLEY put spread in Kite; decide on LODHA and KFINTECH."
+ "action": "After the close run /zerodha-order for the ASHOKLEY exit and the SAGILITY and TORNTPHARM entries; close the ASHOKLEY put spread in Kite."
 }
