@@ -1,9 +1,9 @@
 {
- "generated_at": "2026-11-26T08:27:43.324765+00:00",
+ "generated_at": "2026-11-26T09:04:21.966469+00:00",
  "market_data_date": "2026-11-25",
  "live_prices_at": "2026-11-26T12:13:04+05:30",
- "gtt_scan_at": "2026-11-26T13:57:21+05:30",
- "gtt_checked_at": "2026-11-26T13:57:21+05:30",
+ "gtt_scan_at": "2026-11-26T14:34:09+05:30",
+ "gtt_checked_at": "2026-11-26T14:34:09+05:30",
  "rules": {
   "short_call_delta": 0.1,
   "short_put_delta": 0.1,
@@ -42,9 +42,52 @@
     }
    ],
    "rsi_override": false,
-   "status": "ENTER",
-   "note": "Supertrend green: bull put spread",
-   "legs": [],
+   "status": "HOLD",
+   "note": "Open structure matches the rule (Supertrend green).",
+   "legs": [
+    {
+     "symbol": "360ONE",
+     "expiry": "2026-12-29",
+     "strike": 1020.0,
+     "type": "PE",
+     "side": "LONG",
+     "qty": 1000,
+     "avg": 4.3,
+     "ltp": 4,
+     "pnl_rs": -300,
+     "tradingsymbol": "360ONE26DEC1020PE",
+     "lot": 500,
+     "lots": 2.0,
+     "dist_pct": -12.46,
+     "beyond_pct": -14.24,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    },
+    {
+     "symbol": "360ONE",
+     "expiry": "2026-12-29",
+     "strike": 1060.0,
+     "type": "PE",
+     "side": "SHORT",
+     "qty": 1000,
+     "avg": 7.1,
+     "ltp": 6.4,
+     "pnl_rs": 700,
+     "tradingsymbol": "360ONE26DEC1060PE",
+     "lot": 500,
+     "lots": 2.0,
+     "dist_pct": -9.03,
+     "stop_at": 21.3,
+     "stop_hit": false,
+     "beyond_pct": -9.92,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    }
+   ],
    "events": [
     {
      "label": "Results",
@@ -63,8 +106,8 @@
    "ivr": 28,
    "st_colour": "green",
    "st_line": 1106.27,
-   "st_price": 1203.85,
-   "st_dist_pct": 8.11,
+   "st_price": 1210.0,
+   "st_dist_pct": 8.57,
    "st_bar": "2026-11-26"
   },
   {
@@ -94,8 +137,8 @@
      "side": "LONG",
      "qty": 125,
      "avg": 26.9,
-     "ltp": 18.2,
-     "pnl_rs": -1087.5,
+     "ltp": 18.15,
+     "pnl_rs": -1093.75,
      "tradingsymbol": "ABB26DEC6000PE",
      "lot": 125,
      "lots": 1.0,
@@ -114,8 +157,8 @@
      "side": "SHORT",
      "qty": 125,
      "avg": 45.45,
-     "ltp": 32.75,
-     "pnl_rs": 1587.5,
+     "ltp": 32.9,
+     "pnl_rs": 1568.75,
      "tradingsymbol": "ABB26DEC6200PE",
      "lot": 125,
      "lots": 1.0,
@@ -147,8 +190,8 @@
    "ivr": 57,
    "st_colour": "green",
    "st_line": 6421.77,
-   "st_price": 6965.0,
-   "st_dist_pct": 7.8,
+   "st_price": 6973.0,
+   "st_dist_pct": 7.91,
    "st_bar": "2026-11-26"
   },
   {
@@ -167,9 +210,52 @@
     }
    ],
    "rsi_override": false,
-   "status": "ENTER",
-   "note": "Supertrend green: bull put spread",
-   "legs": [],
+   "status": "HOLD",
+   "note": "Open structure matches the rule (Supertrend green).",
+   "legs": [
+    {
+     "symbol": "ABCAPITAL",
+     "expiry": "2026-12-29",
+     "strike": 370.0,
+     "type": "PE",
+     "side": "LONG",
+     "qty": 3100,
+     "avg": 1.45,
+     "ltp": 1.4,
+     "pnl_rs": -155,
+     "tradingsymbol": "ABCAPITAL26DEC370PE",
+     "lot": 1550,
+     "lots": 2.0,
+     "dist_pct": -12.32,
+     "beyond_pct": -14.05,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    },
+    {
+     "symbol": "ABCAPITAL",
+     "expiry": "2026-12-29",
+     "strike": 380.0,
+     "type": "PE",
+     "side": "SHORT",
+     "qty": 3100,
+     "avg": 2.3,
+     "ltp": 2.35,
+     "pnl_rs": -155.0000000000009,
+     "tradingsymbol": "ABCAPITAL26DEC380PE",
+     "lot": 1550,
+     "lots": 2.0,
+     "dist_pct": -9.95,
+     "stop_at": 6.9,
+     "stop_hit": false,
+     "beyond_pct": -11.05,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    }
+   ],
    "events": [
     {
      "label": "Results",
@@ -183,8 +269,8 @@
    "ivr": 24,
    "st_colour": "green",
    "st_line": 386.83,
-   "st_price": 414.3,
-   "st_dist_pct": 6.63,
+   "st_price": 414.25,
+   "st_dist_pct": 6.62,
    "st_bar": "2026-11-26"
   },
   {
@@ -203,9 +289,52 @@
     }
    ],
    "rsi_override": false,
-   "status": "ENTER",
-   "note": "Supertrend green: bull put spread",
-   "legs": [],
+   "status": "HOLD",
+   "note": "Open structure matches the rule (Supertrend green).",
+   "legs": [
+    {
+     "symbol": "ADANIENSOL",
+     "expiry": "2026-12-29",
+     "strike": 1200.0,
+     "type": "PE",
+     "side": "LONG",
+     "qty": 675,
+     "avg": 7.7,
+     "ltp": 7.25,
+     "pnl_rs": -303.75,
+     "tradingsymbol": "ADANIENSOL26DEC1200PE",
+     "lot": 675,
+     "lots": 1.0,
+     "dist_pct": -14.77,
+     "beyond_pct": -17.33,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    },
+    {
+     "symbol": "ADANIENSOL",
+     "expiry": "2026-12-29",
+     "strike": 1260.0,
+     "type": "PE",
+     "side": "SHORT",
+     "qty": 675,
+     "avg": 14.3,
+     "ltp": 13.95,
+     "pnl_rs": 236.25,
+     "tradingsymbol": "ADANIENSOL26DEC1260PE",
+     "lot": 675,
+     "lots": 1.0,
+     "dist_pct": -10.51,
+     "stop_at": 42.9,
+     "stop_hit": false,
+     "beyond_pct": -11.75,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    }
+   ],
    "events": [
     {
      "label": "Results",
@@ -219,8 +348,8 @@
    "ivr": 28,
    "st_colour": "green",
    "st_line": 1360.12,
-   "st_price": 1393.9,
-   "st_dist_pct": 2.42,
+   "st_price": 1390.1,
+   "st_dist_pct": 2.16,
    "st_bar": "2026-11-26"
   },
   {
@@ -239,9 +368,52 @@
     }
    ],
    "rsi_override": false,
-   "status": "ENTER",
-   "note": "Supertrend green: bull put spread",
-   "legs": [],
+   "status": "HOLD",
+   "note": "Open structure matches the rule (Supertrend green).",
+   "legs": [
+    {
+     "symbol": "ADANIENT",
+     "expiry": "2026-12-29",
+     "strike": 2300.0,
+     "type": "PE",
+     "side": "LONG",
+     "qty": 309,
+     "avg": 10.25,
+     "ltp": 10.3,
+     "pnl_rs": 15.450000000000273,
+     "tradingsymbol": "ADANIENT26DEC2300PE",
+     "lot": 309,
+     "lots": 1.0,
+     "dist_pct": -13.81,
+     "beyond_pct": -16.02,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    },
+    {
+     "symbol": "ADANIENT",
+     "expiry": "2026-12-29",
+     "strike": 2400.0,
+     "type": "PE",
+     "side": "SHORT",
+     "qty": 309,
+     "avg": 19.25,
+     "ltp": 19.35,
+     "pnl_rs": -30.900000000000546,
+     "tradingsymbol": "ADANIENT26DEC2400PE",
+     "lot": 309,
+     "lots": 1.0,
+     "dist_pct": -10.06,
+     "stop_at": 57.75,
+     "stop_hit": false,
+     "beyond_pct": -11.19,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    }
+   ],
    "events": [
     {
      "label": "Results",
@@ -260,8 +432,8 @@
    "ivr": 29,
    "st_colour": "green",
    "st_line": 2516.58,
-   "st_price": 2664.5,
-   "st_dist_pct": 5.55,
+   "st_price": 2652.2,
+   "st_dist_pct": 5.11,
    "st_bar": "2026-11-26"
   },
   {
@@ -280,9 +452,52 @@
     }
    ],
    "rsi_override": false,
-   "status": "ENTER",
-   "note": "Supertrend green: bull put spread",
-   "legs": [],
+   "status": "HOLD",
+   "note": "Open structure matches the rule (Supertrend green).",
+   "legs": [
+    {
+     "symbol": "ADANIGREEN",
+     "expiry": "2026-12-29",
+     "strike": 1120.0,
+     "type": "PE",
+     "side": "LONG",
+     "qty": 1200,
+     "avg": 5.8,
+     "ltp": 5.65,
+     "pnl_rs": -180,
+     "tradingsymbol": "ADANIGREEN26DEC1120PE",
+     "lot": 600,
+     "lots": 2.0,
+     "dist_pct": -17.92,
+     "beyond_pct": -21.83,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    },
+    {
+     "symbol": "ADANIGREEN",
+     "expiry": "2026-12-29",
+     "strike": 1160.0,
+     "type": "PE",
+     "side": "SHORT",
+     "qty": 1200,
+     "avg": 8.4,
+     "ltp": 8.85,
+     "pnl_rs": -540,
+     "tradingsymbol": "ADANIGREEN26DEC1160PE",
+     "lot": 600,
+     "lots": 2.0,
+     "dist_pct": -14.99,
+     "stop_at": 25.2,
+     "stop_hit": false,
+     "beyond_pct": -17.63,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    }
+   ],
    "events": [
     {
      "label": "Results",
@@ -296,8 +511,8 @@
    "ivr": 17,
    "st_colour": "green",
    "st_line": 1304.97,
-   "st_price": 1348.0,
-   "st_dist_pct": 3.19,
+   "st_price": 1345.3,
+   "st_dist_pct": 3.0,
    "st_bar": "2026-11-26"
   },
   {
@@ -337,8 +552,8 @@
    "ivr": 24,
    "st_colour": "green",
    "st_line": 1802.82,
-   "st_price": 1911.3,
-   "st_dist_pct": 5.68,
+   "st_price": 1912.2,
+   "st_dist_pct": 5.72,
    "st_bar": "2026-11-26"
   },
   {
@@ -373,8 +588,8 @@
    "ivr": 22,
    "st_colour": "green",
    "st_line": 195.47,
-   "st_price": 207.33,
-   "st_dist_pct": 5.72,
+   "st_price": 207.11,
+   "st_dist_pct": 5.62,
    "st_bar": "2026-11-26"
   },
   {
@@ -404,8 +619,8 @@
      "side": "LONG",
      "qty": 250,
      "avg": 19.975,
-     "ltp": 16.75,
-     "pnl_rs": -806.25,
+     "ltp": 16.9,
+     "pnl_rs": -768.75,
      "tradingsymbol": "ALKEM26DEC4650PE",
      "lot": 125,
      "lots": 2.0,
@@ -457,8 +672,8 @@
    "ivr": 60,
    "st_colour": "green",
    "st_line": 5010.34,
-   "st_price": 5140.5,
-   "st_dist_pct": 2.53,
+   "st_price": 5148.0,
+   "st_dist_pct": 2.67,
    "st_bar": "2026-11-26"
   },
   {
@@ -488,8 +703,8 @@
      "side": "LONG",
      "qty": 100,
      "avg": 40.4,
-     "ltp": 50,
-     "pnl_rs": 960,
+     "ltp": 51,
+     "pnl_rs": 1060,
      "tradingsymbol": "AMBER26DEC6000PE",
      "lot": 100,
      "lots": 1.0,
@@ -508,8 +723,8 @@
      "side": "SHORT",
      "qty": 100,
      "avg": 58,
-     "ltp": 82.85,
-     "pnl_rs": -2485,
+     "ltp": 77.65,
+     "pnl_rs": -1965.000000000001,
      "tradingsymbol": "AMBER26DEC6200PE",
      "lot": 100,
      "lots": 1.0,
@@ -529,9 +744,9 @@
    "iv": 35.9,
    "ivr": 31,
    "st_colour": "green",
-   "st_line": 6074.74,
-   "st_price": 6839.0,
-   "st_dist_pct": 11.18,
+   "st_line": 6060.34,
+   "st_price": 6833.5,
+   "st_dist_pct": 11.31,
    "st_bar": "2026-11-26"
   },
   {
@@ -561,8 +776,8 @@
      "side": "LONG",
      "qty": 1200,
      "avg": 2.15,
-     "ltp": 2.1,
-     "pnl_rs": -60,
+     "ltp": 2,
+     "pnl_rs": -180,
      "tradingsymbol": "AMBUJACEM26DEC355PE",
      "lot": 1200,
      "lots": 1.0,
@@ -581,8 +796,8 @@
      "side": "SHORT",
      "qty": 1200,
      "avg": 3.5,
-     "ltp": 3.6,
-     "pnl_rs": -120,
+     "ltp": 3.65,
+     "pnl_rs": -180,
      "tradingsymbol": "AMBUJACEM26DEC365PE",
      "lot": 1200,
      "lots": 1.0,
@@ -614,8 +829,8 @@
    "ivr": 46,
    "st_colour": "green",
    "st_line": 365.09,
-   "st_price": 388.0,
-   "st_dist_pct": 5.91,
+   "st_price": 389.45,
+   "st_dist_pct": 6.26,
    "st_bar": "2026-11-26"
   },
   {
@@ -646,9 +861,9 @@
    ],
    "event_block": null,
    "st_colour": "green",
-   "st_line": 2297.64,
-   "st_price": 2412.1,
-   "st_dist_pct": 4.75,
+   "st_line": 2297.72,
+   "st_price": 2417.8,
+   "st_dist_pct": 4.97,
    "st_bar": "2026-11-26"
   },
   {
@@ -678,8 +893,8 @@
      "side": "LONG",
      "qty": 5000,
      "avg": 2.35,
-     "ltp": 2.05,
-     "pnl_rs": -1500,
+     "ltp": 1.85,
+     "pnl_rs": -2500,
      "tradingsymbol": "ANGELONE26DEC300PE",
      "lot": 2500,
      "lots": 2.0,
@@ -698,8 +913,8 @@
      "side": "SHORT",
      "qty": 5000,
      "avg": 3.35,
-     "ltp": 3.05,
-     "pnl_rs": 1500,
+     "ltp": 2.65,
+     "pnl_rs": 3500,
      "tradingsymbol": "ANGELONE26DEC310PE",
      "lot": 2500,
      "lots": 2.0,
@@ -726,8 +941,8 @@
    "ivr": 39,
    "st_colour": "green",
    "st_line": 320.22,
-   "st_price": 356.4,
-   "st_dist_pct": 10.15,
+   "st_price": 359.6,
+   "st_dist_pct": 10.95,
    "st_bar": "2026-11-26"
   },
   {
@@ -767,8 +982,8 @@
    "ivr": 100,
    "st_colour": "red",
    "st_line": 1821.43,
-   "st_price": 1486.0,
-   "st_dist_pct": 22.57,
+   "st_price": 1485.6,
+   "st_dist_pct": 22.61,
    "st_bar": "2026-11-26"
   },
   {
@@ -798,8 +1013,8 @@
      "side": "LONG",
      "qty": 250,
      "avg": 26.4,
-     "ltp": 23.35,
-     "pnl_rs": -762.5,
+     "ltp": 22.5,
+     "pnl_rs": -975,
      "tradingsymbol": "APOLLOHOSP26DEC8200PE",
      "lot": 125,
      "lots": 2.0,
@@ -818,8 +1033,8 @@
      "side": "SHORT",
      "qty": 250,
      "avg": 39.175,
-     "ltp": 36.85,
-     "pnl_rs": 581.25,
+     "ltp": 36.75,
+     "pnl_rs": 606.25,
      "tradingsymbol": "APOLLOHOSP26DEC8400PE",
      "lot": 125,
      "lots": 2.0,
@@ -851,8 +1066,8 @@
    "ivr": 62,
    "st_colour": "green",
    "st_line": 8652.99,
-   "st_price": 9227.5,
-   "st_dist_pct": 6.23,
+   "st_price": 9230.0,
+   "st_dist_pct": 6.25,
    "st_bar": "2026-11-26"
   },
   {
@@ -882,8 +1097,8 @@
      "side": "LONG",
      "qty": 5000,
      "avg": 0.74,
-     "ltp": 0.8,
-     "pnl_rs": 300,
+     "ltp": 0.77,
+     "pnl_rs": 150,
      "tradingsymbol": "ASHOKLEY26DEC135PE",
      "lot": 5000,
      "lots": 1.0,
@@ -902,8 +1117,8 @@
      "side": "SHORT",
      "qty": 5000,
      "avg": 1.17,
-     "ltp": 1.3,
-     "pnl_rs": -650,
+     "ltp": 1.26,
+     "pnl_rs": -450,
      "tradingsymbol": "ASHOKLEY26DEC140PE",
      "lot": 5000,
      "lots": 1.0,
@@ -934,9 +1149,9 @@
    "iv": 34.2,
    "ivr": 53,
    "st_colour": "red",
-   "st_line": 174.22,
-   "st_price": 156.21,
-   "st_dist_pct": 11.53,
+   "st_line": 174.21,
+   "st_price": 156.55,
+   "st_dist_pct": 11.28,
    "st_bar": "2026-11-26"
   },
   {
@@ -955,9 +1170,52 @@
     }
    ],
    "rsi_override": false,
-   "status": "ENTER",
-   "note": "Supertrend green: bull put spread",
-   "legs": [],
+   "status": "HOLD",
+   "note": "Open structure matches the rule (Supertrend green).",
+   "legs": [
+    {
+     "symbol": "ASIANPAINT",
+     "expiry": "2026-12-29",
+     "strike": 2320.0,
+     "type": "PE",
+     "side": "LONG",
+     "qty": 500,
+     "avg": 10.5,
+     "ltp": 10.1,
+     "pnl_rs": -200,
+     "tradingsymbol": "ASIANPAINT26DEC2320PE",
+     "lot": 250,
+     "lots": 2.0,
+     "dist_pct": -11.49,
+     "beyond_pct": -12.98,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    },
+    {
+     "symbol": "ASIANPAINT",
+     "expiry": "2026-12-29",
+     "strike": 2360.0,
+     "type": "PE",
+     "side": "SHORT",
+     "qty": 500,
+     "avg": 14.7,
+     "ltp": 14,
+     "pnl_rs": 350,
+     "tradingsymbol": "ASIANPAINT26DEC2360PE",
+     "lot": 250,
+     "lots": 2.0,
+     "dist_pct": -9.96,
+     "stop_at": 44.1,
+     "stop_hit": false,
+     "beyond_pct": -11.07,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    }
+   ],
    "events": [
     {
      "label": "Results",
@@ -976,8 +1234,8 @@
    "ivr": 36,
    "st_colour": "green",
    "st_line": 2419.22,
-   "st_price": 2549.4,
-   "st_dist_pct": 5.11,
+   "st_price": 2545.8,
+   "st_dist_pct": 4.97,
    "st_bar": "2026-11-26"
   },
   {
@@ -1007,8 +1265,8 @@
      "side": "SHORT",
      "qty": 425,
      "avg": 8.45,
-     "ltp": 5.1,
-     "pnl_rs": 1423.7499999999995,
+     "ltp": 5.05,
+     "pnl_rs": 1444.9999999999995,
      "tradingsymbol": "ASTRAL26DEC1440CE",
      "lot": 425,
      "lots": 1.0,
@@ -1040,8 +1298,8 @@
    "ivr": 40,
    "st_colour": "red",
    "st_line": 1338.92,
-   "st_price": 1256.6,
-   "st_dist_pct": 6.55,
+   "st_price": 1258.8,
+   "st_dist_pct": 6.36,
    "st_bar": "2026-11-26"
   },
   {
@@ -1067,8 +1325,8 @@
    "event_block": null,
    "st_colour": "green",
    "st_line": 1757.69,
-   "st_price": 1894.8,
-   "st_dist_pct": 7.24,
+   "st_price": 1903.0,
+   "st_dist_pct": 7.64,
    "st_bar": "2026-11-26"
   },
   {
@@ -1098,8 +1356,8 @@
      "side": "LONG",
      "qty": 1000,
      "avg": 6,
-     "ltp": 4.75,
-     "pnl_rs": -1250,
+     "ltp": 4.6,
+     "pnl_rs": -1400,
      "tradingsymbol": "AUBANK26DEC870PE",
      "lot": 500,
      "lots": 2.0,
@@ -1151,8 +1409,8 @@
    "ivr": 38,
    "st_colour": "green",
    "st_line": 906.35,
-   "st_price": 984.3,
-   "st_dist_pct": 7.92,
+   "st_price": 987.85,
+   "st_dist_pct": 8.25,
    "st_bar": "2026-11-26"
   },
   {
@@ -1234,9 +1492,9 @@
    "iv": 24.3,
    "ivr": 26,
    "st_colour": "green",
-   "st_line": 1709.71,
-   "st_price": 1819.0,
-   "st_dist_pct": 6.01,
+   "st_line": 1711.73,
+   "st_price": 1821.0,
+   "st_dist_pct": 6.0,
    "st_bar": "2026-11-26"
   },
   {
@@ -1255,9 +1513,52 @@
     }
    ],
    "rsi_override": false,
-   "status": "ENTER",
-   "note": "Supertrend green: bull put spread",
-   "legs": [],
+   "status": "HOLD",
+   "note": "Open structure matches the rule (Supertrend green).",
+   "legs": [
+    {
+     "symbol": "AXISBANK",
+     "expiry": "2026-12-29",
+     "strike": 1280.0,
+     "type": "PE",
+     "side": "LONG",
+     "qty": 1250,
+     "avg": 5.15,
+     "ltp": 5.1,
+     "pnl_rs": -62.5,
+     "tradingsymbol": "AXISBANK26DEC1280PE",
+     "lot": 625,
+     "lots": 2.0,
+     "dist_pct": -9.74,
+     "beyond_pct": -10.79,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    },
+    {
+     "symbol": "AXISBANK",
+     "expiry": "2026-12-29",
+     "strike": 1300.0,
+     "type": "PE",
+     "side": "SHORT",
+     "qty": 1250,
+     "avg": 7.075,
+     "ltp": 6.6,
+     "pnl_rs": 593.75,
+     "tradingsymbol": "AXISBANK26DEC1300PE",
+     "lot": 625,
+     "lots": 2.0,
+     "dist_pct": -8.33,
+     "stop_at": 21.23,
+     "stop_hit": false,
+     "beyond_pct": -9.08,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    }
+   ],
    "events": [
     {
      "label": "Results",
@@ -1276,8 +1577,8 @@
    "ivr": 38,
    "st_colour": "green",
    "st_line": 1314.31,
-   "st_price": 1403.4,
-   "st_dist_pct": 6.35,
+   "st_price": 1412.0,
+   "st_dist_pct": 6.92,
    "st_bar": "2026-11-26"
   },
   {
@@ -1296,9 +1597,52 @@
     }
    ],
    "rsi_override": false,
-   "status": "ENTER",
-   "note": "Supertrend green: bull put spread",
-   "legs": [],
+   "status": "HOLD",
+   "note": "Open structure matches the rule (Supertrend green).",
+   "legs": [
+    {
+     "symbol": "BAJAJ-AUTO",
+     "expiry": "2026-12-29",
+     "strike": 9600.0,
+     "type": "PE",
+     "side": "LONG",
+     "qty": 150,
+     "avg": 30.2,
+     "ltp": 30.2,
+     "pnl_rs": 0,
+     "tradingsymbol": "BAJAJ-AUTO26DEC9600PE",
+     "lot": 75,
+     "lots": 2.0,
+     "dist_pct": -11.67,
+     "beyond_pct": -13.21,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    },
+    {
+     "symbol": "BAJAJ-AUTO",
+     "expiry": "2026-12-29",
+     "strike": 9800.0,
+     "type": "PE",
+     "side": "SHORT",
+     "qty": 150,
+     "avg": 43.45,
+     "ltp": 43.3,
+     "pnl_rs": 22.5,
+     "tradingsymbol": "BAJAJ-AUTO26DEC9800PE",
+     "lot": 75,
+     "lots": 2.0,
+     "dist_pct": -9.83,
+     "stop_at": 130.35,
+     "stop_hit": false,
+     "beyond_pct": -10.9,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    }
+   ],
    "events": [
     {
      "label": "Results",
@@ -1317,8 +1661,8 @@
    "ivr": 32,
    "st_colour": "green",
    "st_line": 10280.74,
-   "st_price": 10794.0,
-   "st_dist_pct": 4.76,
+   "st_price": 10809.0,
+   "st_dist_pct": 4.89,
    "st_bar": "2026-11-26"
   },
   {
@@ -1348,8 +1692,8 @@
      "side": "LONG",
      "qty": 600,
      "avg": 6.75,
-     "ltp": 8.7,
-     "pnl_rs": 1170,
+     "ltp": 8.75,
+     "pnl_rs": 1200,
      "tradingsymbol": "BAJAJFINSV26DEC1700PE",
      "lot": 300,
      "lots": 2.0,
@@ -1401,8 +1745,8 @@
    "ivr": 41,
    "st_colour": "green",
    "st_line": 1781.54,
-   "st_price": 1880.6,
-   "st_dist_pct": 5.27,
+   "st_price": 1883.4,
+   "st_dist_pct": 5.41,
    "st_bar": "2026-11-26"
   },
   {
@@ -1421,9 +1765,52 @@
     }
    ],
    "rsi_override": false,
-   "status": "ENTER",
-   "note": "Supertrend green: bull put spread",
-   "legs": [],
+   "status": "HOLD",
+   "note": "Open structure matches the rule (Supertrend green).",
+   "legs": [
+    {
+     "symbol": "BAJFINANCE",
+     "expiry": "2026-12-29",
+     "strike": 1000.0,
+     "type": "PE",
+     "side": "SHORT",
+     "qty": 1500,
+     "avg": 6.05,
+     "ltp": 6.25,
+     "pnl_rs": -300,
+     "tradingsymbol": "BAJFINANCE26DEC1000PE",
+     "lot": 750,
+     "lots": 2.0,
+     "dist_pct": -11.61,
+     "stop_at": 18.15,
+     "stop_hit": false,
+     "beyond_pct": -13.13,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    },
+    {
+     "symbol": "BAJFINANCE",
+     "expiry": "2026-12-29",
+     "strike": 980.0,
+     "type": "PE",
+     "side": "LONG",
+     "qty": 1500,
+     "avg": 4.25,
+     "ltp": 4.25,
+     "pnl_rs": 0,
+     "tradingsymbol": "BAJFINANCE26DEC980PE",
+     "lot": 750,
+     "lots": 2.0,
+     "dist_pct": -13.38,
+     "beyond_pct": -15.44,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    }
+   ],
    "events": [
     {
      "label": "Results",
@@ -1442,8 +1829,8 @@
    "ivr": 31,
    "st_colour": "green",
    "st_line": 1029.52,
-   "st_price": 1109.05,
-   "st_dist_pct": 7.17,
+   "st_price": 1105.55,
+   "st_dist_pct": 6.88,
    "st_bar": "2026-11-26"
   },
   {
@@ -1473,8 +1860,8 @@
      "side": "LONG",
      "qty": 7200,
      "avg": 1.47,
-     "ltp": 0.88,
-     "pnl_rs": -4248,
+     "ltp": 0.94,
+     "pnl_rs": -3816,
      "tradingsymbol": "BANDHANBNK26DEC145PE",
      "lot": 3600,
      "lots": 2.0,
@@ -1493,8 +1880,8 @@
      "side": "SHORT",
      "qty": 7200,
      "avg": 1.92,
-     "ltp": 1.48,
-     "pnl_rs": 3168,
+     "ltp": 1.41,
+     "pnl_rs": 3672,
      "tradingsymbol": "BANDHANBNK26DEC150PE",
      "lot": 3600,
      "lots": 2.0,
@@ -1526,8 +1913,8 @@
    "ivr": 41,
    "st_colour": "green",
    "st_line": 157.34,
-   "st_price": 170.27,
-   "st_dist_pct": 7.6,
+   "st_price": 170.4,
+   "st_dist_pct": 7.67,
    "st_bar": "2026-11-26"
   },
   {
@@ -1546,9 +1933,52 @@
     }
    ],
    "rsi_override": false,
-   "status": "ENTER",
-   "note": "Supertrend green: bull put spread",
-   "legs": [],
+   "status": "HOLD",
+   "note": "Open structure matches the rule (Supertrend green).",
+   "legs": [
+    {
+     "symbol": "BANKBARODA",
+     "expiry": "2026-12-29",
+     "strike": 247.5,
+     "type": "PE",
+     "side": "LONG",
+     "qty": 5850,
+     "avg": 1.08,
+     "ltp": 1.08,
+     "pnl_rs": 0,
+     "tradingsymbol": "BANKBARODA26DEC247.5PE",
+     "lot": 2925,
+     "lots": 2.0,
+     "dist_pct": -10.47,
+     "beyond_pct": -11.69,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    },
+    {
+     "symbol": "BANKBARODA",
+     "expiry": "2026-12-29",
+     "strike": 252.5,
+     "type": "PE",
+     "side": "SHORT",
+     "qty": 5850,
+     "avg": 1.53,
+     "ltp": 1.55,
+     "pnl_rs": -117,
+     "tradingsymbol": "BANKBARODA26DEC252.5PE",
+     "lot": 2925,
+     "lots": 2.0,
+     "dist_pct": -8.66,
+     "stop_at": 4.59,
+     "stop_hit": false,
+     "beyond_pct": -9.48,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    }
+   ],
    "events": [
     {
      "label": "Results",
@@ -1567,8 +1997,8 @@
    "ivr": 29,
    "st_colour": "green",
    "st_line": 263.9,
-   "st_price": 274.21,
-   "st_dist_pct": 3.76,
+   "st_price": 275.15,
+   "st_dist_pct": 4.09,
    "st_bar": "2026-11-26"
   },
   {
@@ -1598,8 +2028,8 @@
      "side": "LONG",
      "qty": 5200,
      "avg": 0.93,
-     "ltp": 0.89,
-     "pnl_rs": -208,
+     "ltp": 0.86,
+     "pnl_rs": -364,
      "tradingsymbol": "BANKINDIA26DEC140PE",
      "lot": 5200,
      "lots": 1.0,
@@ -1618,8 +2048,8 @@
      "side": "SHORT",
      "qty": 5200,
      "avg": 1.45,
-     "ltp": 1.46,
-     "pnl_rs": -52,
+     "ltp": 1.5,
+     "pnl_rs": -260,
      "tradingsymbol": "BANKINDIA26DEC145PE",
      "lot": 5200,
      "lots": 1.0,
@@ -1646,8 +2076,8 @@
    "ivr": 47,
    "st_colour": "green",
    "st_line": 147.97,
-   "st_price": 160.73,
-   "st_dist_pct": 7.94,
+   "st_price": 160.99,
+   "st_dist_pct": 8.09,
    "st_bar": "2026-11-26"
   },
   {
@@ -1697,8 +2127,8 @@
      "side": "SHORT",
      "qty": 850,
      "avg": 11.55,
-     "ltp": 6.15,
-     "pnl_rs": 4590,
+     "ltp": 5.75,
+     "pnl_rs": 4930,
      "tradingsymbol": "BDL26DEC900PE",
      "lot": 425,
      "lots": 2.0,
@@ -1730,8 +2160,8 @@
    "ivr": 33,
    "st_colour": "green",
    "st_line": 993.81,
-   "st_price": 1029.05,
-   "st_dist_pct": 3.42,
+   "st_price": 1033.2,
+   "st_dist_pct": 3.81,
    "st_bar": "2026-11-26"
   },
   {
@@ -1761,8 +2191,8 @@
      "side": "SHORT",
      "qty": 500,
      "avg": 5.35,
-     "ltp": 5.65,
-     "pnl_rs": -150,
+     "ltp": 6.25,
+     "pnl_rs": -450,
      "tradingsymbol": "BHARATFORG26DEC2000CE",
      "lot": 500,
      "lots": 1.0,
@@ -1794,8 +2224,8 @@
    "ivr": 31,
    "st_colour": "red",
    "st_line": 1849.21,
-   "st_price": 1749.1,
-   "st_dist_pct": 5.72,
+   "st_price": 1752.1,
+   "st_dist_pct": 5.54,
    "st_bar": "2026-11-26"
   },
   {
@@ -1835,8 +2265,8 @@
    "ivr": 32,
    "st_colour": "green",
    "st_line": 2020.18,
-   "st_price": 2110.0,
-   "st_dist_pct": 4.26,
+   "st_price": 2117.0,
+   "st_dist_pct": 4.57,
    "st_bar": "2026-11-26"
   },
   {
@@ -1866,8 +2296,8 @@
      "side": "SHORT",
      "qty": 2625,
      "avg": 1.5,
-     "ltp": 1.4,
-     "pnl_rs": 262.50000000000045,
+     "ltp": 1.5,
+     "pnl_rs": 0,
      "tradingsymbol": "BHEL26DEC500CE",
      "lot": 2625,
      "lots": 1.0,
@@ -1899,8 +2329,8 @@
    "ivr": 25,
    "st_colour": "red",
    "st_line": 436.3,
-   "st_price": 420.8,
-   "st_dist_pct": 3.68,
+   "st_price": 421.6,
+   "st_dist_pct": 3.49,
    "st_bar": "2026-11-26"
   },
   {
@@ -1919,9 +2349,52 @@
     }
    ],
    "rsi_override": false,
-   "status": "ENTER",
-   "note": "Supertrend green: bull put spread",
-   "legs": [],
+   "status": "HOLD",
+   "note": "Open structure matches the rule (Supertrend green).",
+   "legs": [
+    {
+     "symbol": "BIOCON",
+     "expiry": "2026-12-29",
+     "strike": 320.0,
+     "type": "PE",
+     "side": "LONG",
+     "qty": 2500,
+     "avg": 1.2,
+     "ltp": 1.2,
+     "pnl_rs": 0,
+     "tradingsymbol": "BIOCON26DEC320PE",
+     "lot": 2500,
+     "lots": 1.0,
+     "dist_pct": -12.41,
+     "beyond_pct": -14.17,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    },
+    {
+     "symbol": "BIOCON",
+     "expiry": "2026-12-29",
+     "strike": 330.0,
+     "type": "PE",
+     "side": "SHORT",
+     "qty": 2500,
+     "avg": 1.9,
+     "ltp": 1.9,
+     "pnl_rs": 0,
+     "tradingsymbol": "BIOCON26DEC330PE",
+     "lot": 2500,
+     "lots": 1.0,
+     "dist_pct": -9.68,
+     "stop_at": 5.7,
+     "stop_hit": false,
+     "beyond_pct": -10.71,
+     "intrinsic_rs": 0,
+     "touched": false,
+     "near": false,
+     "touched_h": false
+    }
+   ],
    "events": [
     {
      "label": "Results",
@@ -1940,8 +2413,8 @@
    "ivr": 31,
    "st_colour": "green",
    "st_line": 339.98,
-   "st_price": 362.65,
-   "st_dist_pct": 6.25,
+   "st_price": 363.0,
+   "st_dist_pct": 6.34,
    "st_bar": "2026-11-26"
   },
   {
@@ -1981,8 +2454,8 @@
    "ivr": 45,
    "st_colour": "green",
    "st_line": 1628.26,
-   "st_price": 1778.8,
-   "st_dist_pct": 8.46,
+   "st_price": 1781.3,
+   "st_dist_pct": 8.59,
    "st_bar": "2026-11-26"
   },
   {
@@ -2022,8 +2495,8 @@
    "ivr": 33,
    "st_colour": "green",
    "st_line": 47724.87,
-   "st_price": 48715.0,
-   "st_dist_pct": 2.03,
+   "st_price": 48825.0,
+   "st_dist_pct": 2.25,
    "st_bar": "2026-11-26"
   },
   {
@@ -2063,8 +2536,8 @@
    "ivr": 26,
    "st_colour": "green",
    "st_line": 292.82,
-   "st_price": 307.15,
-   "st_dist_pct": 4.66,
+   "st_price": 306.95,
+   "st_dist_pct": 4.6,
    "st_bar": "2026-11-26"
   },
   {
@@ -2104,8 +2577,8 @@
    "ivr": 56,
    "st_colour": "green",
    "st_line": 4678.99,
-   "st_price": 5161.0,
-   "st_dist_pct": 9.34,
+   "st_price": 5166.5,
+   "st_dist_pct": 9.44,
    "st_bar": "2026-11-26"
   },
   {
@@ -2135,8 +2608,8 @@
      "side": "LONG",
      "qty": 825,
      "avg": 5.05,
-     "ltp": 2.5,
-     "pnl_rs": -2103.75,
+     "ltp": 2.45,
+     "pnl_rs": -2145,
      "tradingsymbol": "CAMS26DEC640PE",
      "lot": 825,
      "lots": 1.0,
@@ -2155,8 +2628,8 @@
      "side": "SHORT",
      "qty": 825,
      "avg": 7.65,
-     "ltp": 4.25,
-     "pnl_rs": 2805,
+     "ltp": 3.9,
+     "pnl_rs": 3093.75,
      "tradingsymbol": "CAMS26DEC660PE",
      "lot": 825,
      "lots": 1.0,
@@ -2188,8 +2661,8 @@
    "ivr": 48,
    "st_colour": "green",
    "st_line": 666.2,
-   "st_price": 741.65,
-   "st_dist_pct": 10.17,
+   "st_price": 746.45,
+   "st_dist_pct": 10.75,
    "st_bar": "2026-11-26"
   },
   {
@@ -2219,8 +2692,8 @@
      "side": "LONG",
      "qty": 6750,
      "avg": 0.77,
-     "ltp": 0.82,
-     "pnl_rs": 337.5,
+     "ltp": 0.74,
+     "pnl_rs": -202.5,
      "tradingsymbol": "CANBK26DEC118PE",
      "lot": 6750,
      "lots": 1.0,
@@ -2239,8 +2712,8 @@
      "side": "SHORT",
      "qty": 6750,
      "avg": 0.91,
-     "ltp": 1.04,
-     "pnl_rs": -877.5,
+     "ltp": 0.96,
+     "pnl_rs": -337.5,
      "tradingsymbol": "CANBK26DEC120PE",
      "lot": 6750,
      "lots": 1.0,
@@ -2272,8 +2745,8 @@
    "ivr": 33,
    "st_colour": "green",
    "st_line": 126.08,
-   "st_price": 131.77,
-   "st_dist_pct": 4.32,
+   "st_price": 132.76,
+   "st_dist_pct": 5.03,
    "st_bar": "2026-11-26"
   },
   {
@@ -2308,8 +2781,8 @@
    "ivr": 14,
    "st_colour": "green",
    "st_line": 1340.0,
-   "st_price": 1431.1,
-   "st_dist_pct": 6.37,
+   "st_price": 1439.5,
+   "st_dist_pct": 6.91,
    "st_bar": "2026-11-26"
   },
   {
@@ -2372,8 +2845,8 @@
    "ivr": 61,
    "st_colour": "red",
    "st_line": 862.31,
-   "st_price": 781.05,
-   "st_dist_pct": 10.4,
+   "st_price": 782.2,
+   "st_dist_pct": 10.24,
    "st_bar": "2026-11-26"
   },
   {
@@ -2413,8 +2886,8 @@
    "ivr": 38,
    "st_colour": "green",
    "st_line": 1718.69,
-   "st_price": 1840.5,
-   "st_dist_pct": 6.62,
+   "st_price": 1840.8,
+   "st_dist_pct": 6.63,
    "st_bar": "2026-11-26"
   },
   {
@@ -2454,8 +2927,8 @@
    "ivr": 49,
    "st_colour": "green",
    "st_line": 1360.71,
-   "st_price": 1451.0,
-   "st_dist_pct": 6.22,
+   "st_price": 1449.2,
+   "st_dist_pct": 6.11,
    "st_bar": "2026-11-26"
   },
   {
@@ -2485,8 +2958,8 @@
      "side": "SHORT",
      "qty": 2700,
      "avg": 1.35,
-     "ltp": 1.15,
-     "pnl_rs": 540.0000000000009,
+     "ltp": 1.1,
+     "pnl_rs": 675,
      "tradingsymbol": "COALINDIA26DEC425CE",
      "lot": 1350,
      "lots": 2.0,
@@ -2518,8 +2991,8 @@
    "ivr": 28,
    "st_colour": "red",
    "st_line": 407.33,
-   "st_price": 386.5,
-   "st_dist_pct": 5.39,
+   "st_price": 387.8,
+   "st_dist_pct": 5.04,
    "st_bar": "2026-11-26"
   },
   {
@@ -2549,8 +3022,8 @@
      "side": "SHORT",
      "qty": 800,
      "avg": 6.05,
-     "ltp": 4.8,
-     "pnl_rs": 1000,
+     "ltp": 5.55,
+     "pnl_rs": 400,
      "tradingsymbol": "COCHINSHIP26DEC1300CE",
      "lot": 400,
      "lots": 2.0,
@@ -2576,9 +3049,9 @@
    "iv": 34.2,
    "ivr": 30,
    "st_colour": "red",
-   "st_line": 1199.18,
-   "st_price": 1092.8,
-   "st_dist_pct": 9.73,
+   "st_line": 1202.7,
+   "st_price": 1100.7,
+   "st_dist_pct": 9.27,
    "st_bar": "2026-11-26"
   },
   {
@@ -2618,8 +3091,8 @@
    "ivr": 37,
    "st_colour": "green",
    "st_line": 1915.32,
-   "st_price": 1965.0,
-   "st_dist_pct": 2.53,
+   "st_price": 1972.5,
+   "st_dist_pct": 2.9,
    "st_bar": "2026-11-26"
   },
   {
@@ -2701,9 +3174,9 @@
    "iv": 27.9,
    "ivr": 73,
    "st_colour": "green",
-   "st_line": 1666.2,
-   "st_price": 1797.9,
-   "st_dist_pct": 7.33,
+   "st_line": 1669.23,
+   "st_price": 1796.7,
+   "st_dist_pct": 7.09,
    "st_bar": "2026-11-26"
   },
   {
@@ -2733,8 +3206,8 @@
      "side": "LONG",
      "qty": 1250,
      "avg": 3.6,
-     "ltp": 5.65,
-     "pnl_rs": 2562.5,
+     "ltp": 5.7,
+     "pnl_rs": 2625,
      "tradingsymbol": "CONCOR26DEC400PE",
      "lot": 1250,
      "lots": 1.0,
@@ -2753,8 +3226,8 @@
      "side": "SHORT",
      "qty": 1250,
      "avg": 5.2,
-     "ltp": 8.05,
-     "pnl_rs": -3562.5,
+     "ltp": 8.4,
+     "pnl_rs": -4000,
      "tradingsymbol": "CONCOR26DEC410PE",
      "lot": 1250,
      "lots": 1.0,
@@ -2786,8 +3259,8 @@
    "ivr": 58,
    "st_colour": "green",
    "st_line": 415.08,
-   "st_price": 422.0,
-   "st_dist_pct": 1.64,
+   "st_price": 421.45,
+   "st_dist_pct": 1.51,
    "st_bar": "2026-11-26"
   },
   {
@@ -2824,8 +3297,8 @@
    "event_block": null,
    "st_colour": "green",
    "st_line": 1803.1,
-   "st_price": 1946.3,
-   "st_dist_pct": 7.36,
+   "st_price": 1946.0,
+   "st_dist_pct": 7.34,
    "st_bar": "2026-11-26"
   },
   {
@@ -2865,8 +3338,8 @@
    "ivr": 68,
    "st_colour": "green",
    "st_line": 199.76,
-   "st_price": 214.36,
-   "st_dist_pct": 6.81,
+   "st_price": 214.59,
+   "st_dist_pct": 6.91,
    "st_bar": "2026-11-26"
   },
   {
@@ -2896,8 +3369,8 @@
      "side": "LONG",
      "qty": 2325,
      "avg": 1.26,
-     "ltp": 1.18,
-     "pnl_rs": -186,
+     "ltp": 1.27,
+     "pnl_rs": 23.25,
      "tradingsymbol": "CUB26DEC200PE",
      "lot": 2325,
      "lots": 1.0,
@@ -2946,8 +3419,8 @@
    "event_block": null,
    "st_colour": "green",
    "st_line": 218.77,
-   "st_price": 242.3,
-   "st_dist_pct": 9.71,
+   "st_price": 240.61,
+   "st_dist_pct": 9.08,
    "st_bar": "2026-11-26"
   },
   {
@@ -2987,8 +3460,8 @@
    "ivr": 35,
    "st_colour": "red",
    "st_line": 4516.0,
-   "st_price": 4131.9,
-   "st_dist_pct": 9.3,
+   "st_price": 4121.9,
+   "st_dist_pct": 9.56,
    "st_bar": "2026-11-26"
   },
   {
@@ -3018,8 +3491,8 @@
      "side": "LONG",
      "qty": 2500,
      "avg": 1.35,
-     "ltp": 1.15,
-     "pnl_rs": -500,
+     "ltp": 1.3,
+     "pnl_rs": -125,
      "tradingsymbol": "DABUR26DEC365PE",
      "lot": 1250,
      "lots": 2.0,
@@ -3071,8 +3544,8 @@
    "ivr": 74,
    "st_colour": "green",
    "st_line": 385.97,
-   "st_price": 418.6,
-   "st_dist_pct": 7.8,
+   "st_price": 416.15,
+   "st_dist_pct": 7.25,
    "st_bar": "2026-11-26"
   },
   {
@@ -3104,8 +3577,8 @@
    "event_block": null,
    "st_colour": "green",
    "st_line": 3698.91,
-   "st_price": 4162.3,
-   "st_dist_pct": 11.13,
+   "st_price": 4172.0,
+   "st_dist_pct": 11.34,
    "st_bar": "2026-11-26"
   },
   {
@@ -3139,9 +3612,9 @@
    "iv": 28.4,
    "ivr": 31,
    "st_colour": "green",
-   "st_line": 420.1,
-   "st_price": 457.1,
-   "st_dist_pct": 8.09,
+   "st_line": 420.13,
+   "st_price": 458.1,
+   "st_dist_pct": 8.29,
    "st_bar": "2026-11-26"
   },
   {
@@ -3171,8 +3644,8 @@
      "side": "LONG",
      "qty": 200,
      "avg": 54.35,
-     "ltp": 49.95,
-     "pnl_rs": -880,
+     "ltp": 54.1,
+     "pnl_rs": -50,
      "tradingsymbol": "DIVISLAB26DEC10400PE",
      "lot": 100,
      "lots": 2.0,
@@ -3191,8 +3664,8 @@
      "side": "SHORT",
      "qty": 200,
      "avg": 72.675,
-     "ltp": 77.65,
-     "pnl_rs": -995.0000000000018,
+     "ltp": 77.6,
+     "pnl_rs": -984.9999999999982,
      "tradingsymbol": "DIVISLAB26DEC10600PE",
      "lot": 100,
      "lots": 2.0,
@@ -3224,8 +3697,8 @@
    "ivr": 58,
    "st_colour": "green",
    "st_line": 10738.66,
-   "st_price": 11659.0,
-   "st_dist_pct": 7.89,
+   "st_price": 11688.0,
+   "st_dist_pct": 8.12,
    "st_bar": "2026-11-26"
   },
   {
@@ -3265,8 +3738,8 @@
    "ivr": 28,
    "st_colour": "green",
    "st_line": 12130.65,
-   "st_price": 12710.0,
-   "st_dist_pct": 4.56,
+   "st_price": 12695.0,
+   "st_dist_pct": 4.45,
    "st_bar": "2026-11-26"
   },
   {
@@ -3305,9 +3778,9 @@
    "iv": 26.8,
    "ivr": 21,
    "st_colour": "green",
-   "st_line": 747.03,
-   "st_price": 806.5,
-   "st_dist_pct": 7.37,
+   "st_line": 747.52,
+   "st_price": 807.35,
+   "st_dist_pct": 7.41,
    "st_bar": "2026-11-26"
   },
   {
@@ -3341,9 +3814,9 @@
    "iv": 24.9,
    "ivr": 32,
    "st_colour": "green",
-   "st_line": 3322.0,
-   "st_price": 3517.5,
-   "st_dist_pct": 5.56,
+   "st_line": 3321.84,
+   "st_price": 3521.9,
+   "st_dist_pct": 5.68,
    "st_bar": "2026-11-26"
   },
   {
@@ -3382,9 +3855,9 @@
    "iv": 22.6,
    "ivr": 39,
    "st_colour": "green",
-   "st_line": 1321.85,
-   "st_price": 1388.1,
-   "st_dist_pct": 4.77,
+   "st_line": 1321.21,
+   "st_price": 1391.9,
+   "st_dist_pct": 5.08,
    "st_bar": "2026-11-26"
   },
   {
@@ -3424,8 +3897,8 @@
    "ivr": 36,
    "st_colour": "green",
    "st_line": 7634.31,
-   "st_price": 8205.5,
-   "st_dist_pct": 6.96,
+   "st_price": 8209.5,
+   "st_dist_pct": 7.01,
    "st_bar": "2026-11-26"
   },
   {
@@ -3455,8 +3928,8 @@
      "side": "LONG",
      "qty": 175,
      "avg": 21.75,
-     "ltp": 9.5,
-     "pnl_rs": -2143.75,
+     "ltp": 8.95,
+     "pnl_rs": -2240,
      "tradingsymbol": "ENRIN26DEC2400PE",
      "lot": 175,
      "lots": 1.0,
@@ -3475,8 +3948,8 @@
      "side": "SHORT",
      "qty": 175,
      "avg": 19.25,
-     "ltp": 20.15,
-     "pnl_rs": -157.49999999999955,
+     "ltp": 18.55,
+     "pnl_rs": 122.5,
      "tradingsymbol": "ENRIN26DEC2600PE",
      "lot": 175,
      "lots": 1.0,
@@ -3499,8 +3972,8 @@
    ],
    "event_block": null,
    "st_colour": "green",
-   "st_line": 2771.88,
-   "st_price": 3083.8,
+   "st_line": 2775.8,
+   "st_price": 3087.9,
    "st_dist_pct": 10.11,
    "st_bar": "2026-11-26"
   },
@@ -3536,8 +4009,8 @@
    "ivr": 12,
    "st_colour": "green",
    "st_line": 345.08,
-   "st_price": 365.6,
-   "st_dist_pct": 5.61,
+   "st_price": 367.9,
+   "st_dist_pct": 6.2,
    "st_bar": "2026-11-26"
   },
   {
@@ -3587,8 +4060,8 @@
      "side": "SHORT",
      "qty": 5000,
      "avg": 1.8,
-     "ltp": 1.8,
-     "pnl_rs": 0,
+     "ltp": 1.6,
+     "pnl_rs": 1000,
      "tradingsymbol": "FEDERALBNK26DEC325PE",
      "lot": 2500,
      "lots": 2.0,
@@ -3620,8 +4093,8 @@
    "ivr": 48,
    "st_colour": "green",
    "st_line": 340.02,
-   "st_price": 356.1,
-   "st_dist_pct": 4.51,
+   "st_price": 358.85,
+   "st_dist_pct": 5.25,
    "st_bar": "2026-11-26"
   },
   {
@@ -3655,9 +4128,9 @@
    "iv": 38.8,
    "ivr": 25,
    "st_colour": "green",
-   "st_line": 18644.14,
-   "st_price": 20370.0,
-   "st_dist_pct": 8.47,
+   "st_line": 18604.94,
+   "st_price": 20367.0,
+   "st_dist_pct": 8.65,
    "st_bar": "2026-11-26"
   },
   {
@@ -3687,8 +4160,8 @@
      "side": "LONG",
      "qty": 1550,
      "avg": 4.6,
-     "ltp": 4.9,
-     "pnl_rs": 465.0000000000018,
+     "ltp": 4.7,
+     "pnl_rs": 155.0000000000009,
      "tradingsymbol": "FORTIS26DEC720PE",
      "lot": 775,
      "lots": 2.0,
@@ -3707,8 +4180,8 @@
      "side": "SHORT",
      "qty": 1550,
      "avg": 6.55,
-     "ltp": 7.4,
-     "pnl_rs": -1317.5,
+     "ltp": 7.5,
+     "pnl_rs": -1472.5,
      "tradingsymbol": "FORTIS26DEC740PE",
      "lot": 775,
      "lots": 2.0,
@@ -3739,9 +4212,9 @@
    "iv": 34.5,
    "ivr": 86,
    "st_colour": "green",
-   "st_line": 752.16,
-   "st_price": 817.55,
-   "st_dist_pct": 8.0,
+   "st_line": 753.93,
+   "st_price": 817.75,
+   "st_dist_pct": 7.8,
    "st_bar": "2026-11-26"
   },
   {
@@ -3781,8 +4254,8 @@
    "ivr": 21,
    "st_colour": "green",
    "st_line": 179.7,
-   "st_price": 188.84,
-   "st_dist_pct": 4.84,
+   "st_price": 187.95,
+   "st_dist_pct": 4.39,
    "st_bar": "2026-11-26"
   },
   {
@@ -3822,8 +4295,8 @@
    "ivr": 34,
    "st_colour": "green",
    "st_line": 2511.6,
-   "st_price": 2723.3,
-   "st_dist_pct": 7.77,
+   "st_price": 2730.6,
+   "st_dist_pct": 8.02,
    "st_bar": "2026-11-26"
   },
   {
@@ -3858,8 +4331,8 @@
    "ivr": 39,
    "st_colour": "green",
    "st_line": 96.7,
-   "st_price": 101.16,
-   "st_dist_pct": 4.41,
+   "st_price": 101.37,
+   "st_dist_pct": 4.61,
    "st_bar": "2026-11-26"
   },
   {
@@ -3894,8 +4367,8 @@
    "ivr": 39,
    "st_colour": "red",
    "st_line": 1827.73,
-   "st_price": 1755.2,
-   "st_dist_pct": 4.13,
+   "st_price": 1758.9,
+   "st_dist_pct": 3.91,
    "st_bar": "2026-11-26"
   },
   {
@@ -3925,8 +4398,8 @@
      "side": "LONG",
      "qty": 1000,
      "avg": 4.7,
-     "ltp": 4.7,
-     "pnl_rs": 0,
+     "ltp": 4.65,
+     "pnl_rs": -50,
      "tradingsymbol": "GODREJCP26DEC850PE",
      "lot": 500,
      "lots": 2.0,
@@ -3945,8 +4418,8 @@
      "side": "SHORT",
      "qty": 1000,
      "avg": 6.7,
-     "ltp": 6.8,
-     "pnl_rs": -100,
+     "ltp": 7,
+     "pnl_rs": -300,
      "tradingsymbol": "GODREJCP26DEC870PE",
      "lot": 500,
      "lots": 2.0,
@@ -3977,9 +4450,9 @@
    "iv": 24.6,
    "ivr": 42,
    "st_colour": "green",
-   "st_line": 869.14,
-   "st_price": 935.55,
-   "st_dist_pct": 7.1,
+   "st_line": 866.17,
+   "st_price": 938.65,
+   "st_dist_pct": 7.72,
    "st_bar": "2026-11-26"
   },
   {
@@ -4018,9 +4491,9 @@
    "iv": 31.0,
    "ivr": 24,
    "st_colour": "green",
-   "st_line": 1764.92,
-   "st_price": 1998.0,
-   "st_dist_pct": 11.67,
+   "st_line": 1764.3,
+   "st_price": 2004.6,
+   "st_dist_pct": 11.99,
    "st_bar": "2026-11-26"
   },
   {
@@ -4060,8 +4533,8 @@
    "ivr": 39,
    "st_colour": "green",
    "st_line": 2996.39,
-   "st_price": 3160.1,
-   "st_dist_pct": 5.18,
+   "st_price": 3170.8,
+   "st_dist_pct": 5.5,
    "st_bar": "2026-11-26"
   },
   {
@@ -4096,7 +4569,7 @@
    "ivr": 28,
    "st_colour": "green",
    "st_line": 3822.45,
-   "st_price": 4179.6,
+   "st_price": 4179.9,
    "st_dist_pct": 8.55,
    "st_bar": "2026-11-26"
   },
@@ -4127,8 +4600,8 @@
      "side": "SHORT",
      "qty": 150,
      "avg": 19.65,
-     "ltp": 30,
-     "pnl_rs": -1552.5,
+     "ltp": 33.25,
+     "pnl_rs": -2040,
      "tradingsymbol": "HAL26DEC5400CE",
      "lot": 150,
      "lots": 1.0,
@@ -4160,8 +4633,8 @@
    "ivr": 22,
    "st_colour": "red",
    "st_line": 5100.43,
-   "st_price": 4905.8,
-   "st_dist_pct": 3.97,
+   "st_price": 4921.0,
+   "st_dist_pct": 3.65,
    "st_bar": "2026-11-26"
   },
   {
@@ -4191,8 +4664,8 @@
      "side": "LONG",
      "qty": 500,
      "avg": 7.4,
-     "ltp": 5.15,
-     "pnl_rs": -1125,
+     "ltp": 5.5,
+     "pnl_rs": -950,
      "tradingsymbol": "HAVELLS26DEC1060PE",
      "lot": 500,
      "lots": 1.0,
@@ -4244,8 +4717,8 @@
    "ivr": 46,
    "st_colour": "green",
    "st_line": 1101.68,
-   "st_price": 1181.6,
-   "st_dist_pct": 6.76,
+   "st_price": 1183.9,
+   "st_dist_pct": 6.94,
    "st_bar": "2026-11-26"
   },
   {
@@ -4285,8 +4758,8 @@
    "ivr": 54,
    "st_colour": "green",
    "st_line": 1326.73,
-   "st_price": 1433.6,
-   "st_dist_pct": 7.45,
+   "st_price": 1443.1,
+   "st_dist_pct": 8.06,
    "st_bar": "2026-11-26"
   },
   {
@@ -4326,8 +4799,8 @@
    "ivr": 40,
    "st_colour": "green",
    "st_line": 2516.39,
-   "st_price": 2699.9,
-   "st_dist_pct": 6.8,
+   "st_price": 2713.7,
+   "st_dist_pct": 7.27,
    "st_bar": "2026-11-26"
   },
   {
@@ -4357,8 +4830,8 @@
      "side": "LONG",
      "qty": 1300,
      "avg": 3.8,
-     "ltp": 3.1,
-     "pnl_rs": -910,
+     "ltp": 3.2,
+     "pnl_rs": -780,
      "tradingsymbol": "HDFCBANK26DEC770PE",
      "lot": 650,
      "lots": 2.0,
@@ -4377,8 +4850,8 @@
      "side": "SHORT",
      "qty": 1300,
      "avg": 6.05,
-     "ltp": 5.1,
-     "pnl_rs": 1235.000000000001,
+     "ltp": 5.15,
+     "pnl_rs": 1169.999999999999,
      "tradingsymbol": "HDFCBANK26DEC790PE",
      "lot": 650,
      "lots": 2.0,
@@ -4410,8 +4883,8 @@
    "ivr": 45,
    "st_colour": "green",
    "st_line": 789.63,
-   "st_price": 861.85,
-   "st_dist_pct": 8.38,
+   "st_price": 859.55,
+   "st_dist_pct": 8.13,
    "st_bar": "2026-11-26"
   },
   {
@@ -4441,8 +4914,8 @@
      "side": "LONG",
      "qty": 2200,
      "avg": 3.05,
-     "ltp": 1.65,
-     "pnl_rs": -3080,
+     "ltp": 1.7,
+     "pnl_rs": -2970,
      "tradingsymbol": "HDFCLIFE26DEC530PE",
      "lot": 1100,
      "lots": 2.0,
@@ -4461,8 +4934,8 @@
      "side": "SHORT",
      "qty": 2200,
      "avg": 4.25,
-     "ltp": 2.3,
-     "pnl_rs": 4290,
+     "ltp": 2.5,
+     "pnl_rs": 3850,
      "tradingsymbol": "HDFCLIFE26DEC540PE",
      "lot": 1100,
      "lots": 2.0,
@@ -4494,8 +4967,8 @@
    "ivr": 60,
    "st_colour": "green",
    "st_line": 552.7,
-   "st_price": 600.1,
-   "st_dist_pct": 7.9,
+   "st_price": 597.95,
+   "st_dist_pct": 7.57,
    "st_bar": "2026-11-26"
   },
   {
@@ -4535,8 +5008,8 @@
    "ivr": 39,
    "st_colour": "green",
    "st_line": 5341.09,
-   "st_price": 5773.0,
-   "st_dist_pct": 7.48,
+   "st_price": 5792.5,
+   "st_dist_pct": 7.79,
    "st_bar": "2026-11-26"
   },
   {
@@ -4576,8 +5049,8 @@
    "ivr": 35,
    "st_colour": "green",
    "st_line": 883.61,
-   "st_price": 917.8,
-   "st_dist_pct": 3.73,
+   "st_price": 918.6,
+   "st_dist_pct": 3.81,
    "st_bar": "2026-11-26"
   },
   {
@@ -4617,8 +5090,8 @@
    "ivr": 26,
    "st_colour": "green",
    "st_line": 358.65,
-   "st_price": 385.1,
-   "st_dist_pct": 6.87,
+   "st_price": 385.05,
+   "st_dist_pct": 6.86,
    "st_bar": "2026-11-26"
   },
   {
@@ -4658,8 +5131,8 @@
    "ivr": 62,
    "st_colour": "green",
    "st_line": 1988.01,
-   "st_price": 2149.5,
-   "st_dist_pct": 7.51,
+   "st_price": 2135.2,
+   "st_dist_pct": 6.89,
    "st_bar": "2026-11-26"
   },
   {
@@ -4689,8 +5162,8 @@
      "side": "SHORT",
      "qty": 1225,
      "avg": 2.65,
-     "ltp": 2.5,
-     "pnl_rs": 183.75,
+     "ltp": 2.75,
+     "pnl_rs": -122.5,
      "tradingsymbol": "HINDZINC26DEC610CE",
      "lot": 1225,
      "lots": 1.0,
@@ -4722,8 +5195,8 @@
    "ivr": 23,
    "st_colour": "red",
    "st_line": 569.08,
-   "st_price": 529.55,
-   "st_dist_pct": 7.47,
+   "st_price": 530.15,
+   "st_dist_pct": 7.34,
    "st_bar": "2026-11-26"
   },
   {
@@ -4758,8 +5231,8 @@
    "ivr": 49,
    "st_colour": "green",
    "st_line": 2033.64,
-   "st_price": 2100.9,
-   "st_dist_pct": 3.2,
+   "st_price": 2105.0,
+   "st_dist_pct": 3.39,
    "st_bar": "2026-11-26"
   },
   {
@@ -4799,8 +5272,8 @@
    "ivr": 33,
    "st_colour": "green",
    "st_line": 1527.5,
-   "st_price": 1609.6,
-   "st_dist_pct": 5.1,
+   "st_price": 1611.9,
+   "st_dist_pct": 5.24,
    "st_bar": "2026-11-26"
   },
   {
@@ -4850,8 +5323,8 @@
      "side": "SHORT",
      "qty": 325,
      "avg": 7.7,
-     "ltp": 8.35,
-     "pnl_rs": -211.25,
+     "ltp": 8.15,
+     "pnl_rs": -146.25,
      "tradingsymbol": "ICICIGI26DEC1600PE",
      "lot": 325,
      "lots": 1.0,
@@ -4882,9 +5355,9 @@
    "iv": 24.7,
    "ivr": 50,
    "st_colour": "green",
-   "st_line": 1622.21,
-   "st_price": 1736.4,
-   "st_dist_pct": 6.58,
+   "st_line": 1626.34,
+   "st_price": 1734.2,
+   "st_dist_pct": 6.22,
    "st_bar": "2026-11-26"
   },
   {
@@ -4963,9 +5436,9 @@
    ],
    "event_block": null,
    "st_colour": "green",
-   "st_line": 434.24,
-   "st_price": 469.25,
-   "st_dist_pct": 7.46,
+   "st_line": 436.11,
+   "st_price": 469.05,
+   "st_dist_pct": 7.02,
    "st_bar": "2026-11-26"
   },
   {
@@ -4999,9 +5472,9 @@
    "iv": 36.2,
    "ivr": 8,
    "st_colour": "red",
-   "st_line": 12.83,
-   "st_price": 11.66,
-   "st_dist_pct": 10.0,
+   "st_line": 12.81,
+   "st_price": 11.61,
+   "st_dist_pct": 10.34,
    "st_bar": "2026-11-26"
   },
   {
@@ -5051,8 +5524,8 @@
      "side": "SHORT",
      "qty": 9275,
      "avg": 0.67,
-     "ltp": 0.32,
-     "pnl_rs": 3246.25,
+     "ltp": 0.29,
+     "pnl_rs": 3524.5,
      "tradingsymbol": "IDFCFIRSTB26DEC75PE",
      "lot": 9275,
      "lots": 1.0,
@@ -5084,8 +5557,8 @@
    "ivr": 34,
    "st_colour": "green",
    "st_line": 79.86,
-   "st_price": 86.13,
-   "st_dist_pct": 7.28,
+   "st_price": 86.83,
+   "st_dist_pct": 8.03,
    "st_bar": "2026-11-26"
   },
   {
@@ -5117,8 +5590,8 @@
    "event_block": null,
    "st_colour": "green",
    "st_line": 106.86,
-   "st_price": 111.5,
-   "st_dist_pct": 4.16,
+   "st_price": 111.96,
+   "st_dist_pct": 4.56,
    "st_bar": "2026-11-26"
   },
   {
@@ -5158,8 +5631,8 @@
    "ivr": 34,
    "st_colour": "green",
    "st_line": 843.3,
-   "st_price": 891.9,
-   "st_dist_pct": 5.45,
+   "st_price": 889.65,
+   "st_dist_pct": 5.21,
    "st_bar": "2026-11-26"
   },
   {
@@ -5199,8 +5672,8 @@
    "ivr": 23,
    "st_colour": "green",
    "st_line": 881.04,
-   "st_price": 930.9,
-   "st_dist_pct": 5.36,
+   "st_price": 932.4,
+   "st_dist_pct": 5.51,
    "st_bar": "2026-11-26"
   },
   {
@@ -5235,8 +5708,8 @@
    "ivr": 32,
    "st_colour": "green",
    "st_line": 5216.63,
-   "st_price": 5623.7,
-   "st_dist_pct": 7.24,
+   "st_price": 5628.8,
+   "st_dist_pct": 7.32,
    "st_bar": "2026-11-26"
   },
   {
@@ -5266,8 +5739,8 @@
      "side": "LONG",
      "qty": 1400,
      "avg": 4.3,
-     "ltp": 4,
-     "pnl_rs": -420,
+     "ltp": 3.7,
+     "pnl_rs": -840,
      "tradingsymbol": "INDUSINDBK26DEC860PE",
      "lot": 700,
      "lots": 2.0,
@@ -5286,8 +5759,8 @@
      "side": "SHORT",
      "qty": 1400,
      "avg": 5.9,
-     "ltp": 6.3,
-     "pnl_rs": -560,
+     "ltp": 5.55,
+     "pnl_rs": 490,
      "tradingsymbol": "INDUSINDBK26DEC880PE",
      "lot": 700,
      "lots": 2.0,
@@ -5319,8 +5792,8 @@
    "ivr": 31,
    "st_colour": "green",
    "st_line": 883.74,
-   "st_price": 961.4,
-   "st_dist_pct": 8.08,
+   "st_price": 965.4,
+   "st_dist_pct": 8.46,
    "st_bar": "2026-11-26"
   },
   {
@@ -5370,8 +5843,8 @@
      "side": "SHORT",
      "qty": 1700,
      "avg": 3.15,
-     "ltp": 3.5,
-     "pnl_rs": -595,
+     "ltp": 3.9,
+     "pnl_rs": -1275,
      "tradingsymbol": "INDUSTOWER26DEC360PE",
      "lot": 1700,
      "lots": 1.0,
@@ -5403,8 +5876,8 @@
    "ivr": 32,
    "st_colour": "green",
    "st_line": 364.63,
-   "st_price": 383.9,
-   "st_dist_pct": 5.02,
+   "st_price": 383.2,
+   "st_dist_pct": 4.85,
    "st_bar": "2026-11-26"
   },
   {
@@ -5444,8 +5917,8 @@
    "ivr": 58,
    "st_colour": "green",
    "st_line": 1057.86,
-   "st_price": 1165.6,
-   "st_dist_pct": 9.24,
+   "st_price": 1165.3,
+   "st_dist_pct": 9.22,
    "st_bar": "2026-11-26"
   },
   {
@@ -5497,8 +5970,8 @@
    "ivr": 57,
    "st_colour": "red",
    "st_line": 61.59,
-   "st_price": 52.61,
-   "st_dist_pct": 17.07,
+   "st_price": 52.8,
+   "st_dist_pct": 16.65,
    "st_bar": "2026-11-26"
   },
   {
@@ -5538,8 +6011,8 @@
    "ivr": 29,
    "st_colour": "green",
    "st_line": 137.88,
-   "st_price": 144.56,
-   "st_dist_pct": 4.62,
+   "st_price": 144.64,
+   "st_dist_pct": 4.67,
    "st_bar": "2026-11-26"
   },
   {
@@ -5566,8 +6039,8 @@
    "event_block": null,
    "st_colour": "green",
    "st_line": 114.67,
-   "st_price": 125.69,
-   "st_dist_pct": 8.77,
+   "st_price": 126.16,
+   "st_dist_pct": 9.11,
    "st_bar": "2026-11-26"
   },
   {
@@ -5607,8 +6080,8 @@
    "ivr": 63,
    "st_colour": "green",
    "st_line": 78.19,
-   "st_price": 81.48,
-   "st_dist_pct": 4.04,
+   "st_price": 81.74,
+   "st_dist_pct": 4.34,
    "st_bar": "2026-11-26"
   },
   {
@@ -5647,9 +6120,9 @@
    "iv": 19.9,
    "ivr": 52,
    "st_colour": "green",
-   "st_line": 287.11,
-   "st_price": 305.55,
-   "st_dist_pct": 6.03,
+   "st_line": 287.03,
+   "st_price": 306.15,
+   "st_dist_pct": 6.24,
    "st_bar": "2026-11-26"
   },
   {
@@ -5689,8 +6162,8 @@
    "ivr": 40,
    "st_colour": "green",
    "st_line": 1077.16,
-   "st_price": 1118.0,
-   "st_dist_pct": 3.65,
+   "st_price": 1123.2,
+   "st_dist_pct": 4.1,
    "st_bar": "2026-11-26"
   },
   {
@@ -5725,8 +6198,8 @@
    "ivr": 32,
    "st_colour": "green",
    "st_line": 214.33,
-   "st_price": 224.13,
-   "st_dist_pct": 4.37,
+   "st_price": 225.5,
+   "st_dist_pct": 4.95,
    "st_bar": "2026-11-26"
   },
   {
@@ -5766,8 +6239,8 @@
    "ivr": 45,
    "st_colour": "green",
    "st_line": 477.9,
-   "st_price": 485.1,
-   "st_dist_pct": 1.48,
+   "st_price": 483.8,
+   "st_dist_pct": 1.22,
    "st_bar": "2026-11-26"
   },
   {
@@ -5807,8 +6280,8 @@
    "ivr": 33,
    "st_colour": "green",
    "st_line": 1262.59,
-   "st_price": 1306.9,
-   "st_dist_pct": 3.39,
+   "st_price": 1306.6,
+   "st_dist_pct": 3.37,
    "st_bar": "2026-11-26"
   },
   {
@@ -5858,8 +6331,8 @@
      "side": "SHORT",
      "qty": 2500,
      "avg": 2.4,
-     "ltp": 2.4,
-     "pnl_rs": 0,
+     "ltp": 2.3,
+     "pnl_rs": 250,
      "tradingsymbol": "JUBLFOOD26DEC380PE",
      "lot": 1250,
      "lots": 2.0,
@@ -5891,8 +6364,8 @@
    "ivr": 45,
    "st_colour": "green",
    "st_line": 412.47,
-   "st_price": 423.3,
-   "st_dist_pct": 2.56,
+   "st_price": 425.15,
+   "st_dist_pct": 2.98,
    "st_bar": "2026-11-26"
   },
   {
@@ -5922,8 +6395,8 @@
      "side": "LONG",
      "qty": 1350,
      "avg": 5.45,
-     "ltp": 5.7,
-     "pnl_rs": 337.5,
+     "ltp": 5.5,
+     "pnl_rs": 67.5,
      "tradingsymbol": "KALYANKJIL26DEC540PE",
      "lot": 1350,
      "lots": 1.0,
@@ -5970,8 +6443,8 @@
    "ivr": 61,
    "st_colour": "green",
    "st_line": 614.54,
-   "st_price": 638.95,
-   "st_dist_pct": 3.82,
+   "st_price": 642.45,
+   "st_dist_pct": 4.34,
    "st_bar": "2026-11-26"
   },
   {
@@ -6008,8 +6481,8 @@
    "event_block": null,
    "st_colour": "green",
    "st_line": 354.1,
-   "st_price": 376.95,
-   "st_dist_pct": 6.06,
+   "st_price": 378.85,
+   "st_dist_pct": 6.53,
    "st_bar": "2026-11-26"
   },
   {
@@ -6060,9 +6533,9 @@
    "iv": 51.4,
    "ivr": 54,
    "st_colour": "red",
-   "st_line": 3112.87,
-   "st_price": 2679.2,
-   "st_dist_pct": 16.19,
+   "st_line": 3112.59,
+   "st_price": 2683.5,
+   "st_dist_pct": 15.99,
    "st_bar": "2026-11-26"
   },
   {
@@ -6092,8 +6565,8 @@
      "side": "SHORT",
      "qty": 175,
      "avg": 19.4,
-     "ltp": 20,
-     "pnl_rs": -105.00000000000045,
+     "ltp": 18.95,
+     "pnl_rs": 78.74999999999955,
      "tradingsymbol": "KEI26DEC4300CE",
      "lot": 175,
      "lots": 1.0,
@@ -6125,8 +6598,8 @@
    "ivr": 49,
    "st_colour": "red",
    "st_line": 4172.09,
-   "st_price": 3640.0,
-   "st_dist_pct": 14.62,
+   "st_price": 3647.8,
+   "st_dist_pct": 14.37,
    "st_bar": "2026-11-26"
   },
   {
@@ -6160,9 +6633,9 @@
    "iv": 34.4,
    "ivr": 37,
    "st_colour": "green",
-   "st_line": 862.27,
-   "st_price": 980.0,
-   "st_dist_pct": 12.01,
+   "st_line": 867.18,
+   "st_price": 997.35,
+   "st_dist_pct": 13.05,
    "st_bar": "2026-11-26"
   },
   {
@@ -6202,8 +6675,8 @@
    "ivr": 11,
    "st_colour": "green",
    "st_line": 475.7,
-   "st_price": 505.9,
-   "st_dist_pct": 5.97,
+   "st_price": 507.25,
+   "st_dist_pct": 6.22,
    "st_bar": "2026-11-26"
   },
   {
@@ -6243,8 +6716,8 @@
    "ivr": 47,
    "st_colour": "green",
    "st_line": 492.82,
-   "st_price": 518.8,
-   "st_dist_pct": 5.01,
+   "st_price": 518.7,
+   "st_dist_pct": 4.99,
    "st_bar": "2026-11-26"
   },
   {
@@ -6284,8 +6757,8 @@
    "ivr": 39,
    "st_colour": "green",
    "st_line": 2232.3,
-   "st_price": 2501.0,
-   "st_dist_pct": 10.74,
+   "st_price": 2504.1,
+   "st_dist_pct": 10.85,
    "st_bar": "2026-11-26"
   },
   {
@@ -6315,8 +6788,8 @@
      "side": "LONG",
      "qty": 2000,
      "avg": 3.25,
-     "ltp": 3.05,
-     "pnl_rs": -400,
+     "ltp": 3.15,
+     "pnl_rs": -200,
      "tradingsymbol": "LICHSGFIN26DEC540PE",
      "lot": 1000,
      "lots": 2.0,
@@ -6335,8 +6808,8 @@
      "side": "SHORT",
      "qty": 2000,
      "avg": 4.2,
-     "ltp": 4.3,
-     "pnl_rs": -200,
+     "ltp": 4.1,
+     "pnl_rs": 200,
      "tradingsymbol": "LICHSGFIN26DEC550PE",
      "lot": 1000,
      "lots": 2.0,
@@ -6368,8 +6841,8 @@
    "ivr": 56,
    "st_colour": "green",
    "st_line": 558.9,
-   "st_price": 597.0,
-   "st_dist_pct": 6.38,
+   "st_price": 598.55,
+   "st_dist_pct": 6.63,
    "st_bar": "2026-11-26"
   },
   {
@@ -6408,9 +6881,9 @@
    "iv": 24.7,
    "ivr": 34,
    "st_colour": "green",
-   "st_line": 385.55,
-   "st_price": 408.35,
-   "st_dist_pct": 5.58,
+   "st_line": 384.99,
+   "st_price": 409.5,
+   "st_dist_pct": 5.98,
    "st_bar": "2026-11-26"
   },
   {
@@ -6449,9 +6922,9 @@
    "iv": 37.8,
    "ivr": 47,
    "st_colour": "green",
-   "st_line": 1091.07,
-   "st_price": 1257.6,
-   "st_dist_pct": 13.24,
+   "st_line": 1093.23,
+   "st_price": 1260.4,
+   "st_dist_pct": 13.26,
    "st_bar": "2026-11-26"
   },
   {
@@ -6491,8 +6964,8 @@
    "ivr": 23,
    "st_colour": "green",
    "st_line": 3958.35,
-   "st_price": 4111.7,
-   "st_dist_pct": 3.73,
+   "st_price": 4120.0,
+   "st_dist_pct": 3.92,
    "st_bar": "2026-11-26"
   },
   {
@@ -6532,8 +7005,8 @@
    "ivr": 47,
    "st_colour": "green",
    "st_line": 256.81,
-   "st_price": 284.38,
-   "st_dist_pct": 9.7,
+   "st_price": 282.91,
+   "st_dist_pct": 9.23,
    "st_bar": "2026-11-26"
   },
   {
@@ -6573,8 +7046,8 @@
    "ivr": 78,
    "st_colour": "green",
    "st_line": 3969.07,
-   "st_price": 4330.1,
-   "st_dist_pct": 8.34,
+   "st_price": 4316.3,
+   "st_dist_pct": 8.04,
    "st_bar": "2026-11-26"
   },
   {
@@ -6604,8 +7077,8 @@
      "side": "SHORT",
      "qty": 425,
      "avg": 7.85,
-     "ltp": 6,
-     "pnl_rs": 786.25,
+     "ltp": 5.75,
+     "pnl_rs": 892.5,
      "tradingsymbol": "LUPIN26DEC2240CE",
      "lot": 425,
      "lots": 1.0,
@@ -6637,8 +7110,8 @@
    "ivr": 30,
    "st_colour": "red",
    "st_line": 2034.6,
-   "st_price": 2000.6,
-   "st_dist_pct": 1.7,
+   "st_price": 2006.0,
+   "st_dist_pct": 1.43,
    "st_bar": "2026-11-26"
   },
   {
@@ -6678,8 +7151,8 @@
    "ivr": 25,
    "st_colour": "green",
    "st_line": 3234.95,
-   "st_price": 3476.9,
-   "st_dist_pct": 6.96,
+   "st_price": 3485.2,
+   "st_dist_pct": 7.18,
    "st_bar": "2026-11-26"
   },
   {
@@ -6729,8 +7202,8 @@
      "side": "SHORT",
      "qty": 6500,
      "avg": 0.58,
-     "ltp": 0.58,
-     "pnl_rs": 0,
+     "ltp": 0.63,
+     "pnl_rs": -325.00000000000045,
      "tradingsymbol": "MAHABANK26DEC84PE",
      "lot": 6500,
      "lots": 1.0,
@@ -6754,8 +7227,8 @@
    "event_block": null,
    "st_colour": "green",
    "st_line": 90.39,
-   "st_price": 96.26,
-   "st_dist_pct": 6.1,
+   "st_price": 96.03,
+   "st_dist_pct": 5.87,
    "st_bar": "2026-11-26"
   },
   {
@@ -6795,8 +7268,8 @@
    "ivr": 21,
    "st_colour": "red",
    "st_line": 305.29,
-   "st_price": 271.75,
-   "st_dist_pct": 12.34,
+   "st_price": 270.75,
+   "st_dist_pct": 12.76,
    "st_bar": "2026-11-26"
   },
   {
@@ -6830,9 +7303,9 @@
    "iv": 27.2,
    "ivr": 37,
    "st_colour": "green",
-   "st_line": 2489.09,
-   "st_price": 2674.4,
-   "st_dist_pct": 6.93,
+   "st_line": 2501.87,
+   "st_price": 2679.9,
+   "st_dist_pct": 6.64,
    "st_bar": "2026-11-26"
   },
   {
@@ -6872,8 +7345,8 @@
    "ivr": 30,
    "st_colour": "green",
    "st_line": 875.31,
-   "st_price": 935.3,
-   "st_dist_pct": 6.41,
+   "st_price": 932.45,
+   "st_dist_pct": 6.13,
    "st_bar": "2026-11-26"
   },
   {
@@ -6912,9 +7385,9 @@
    "iv": 25.1,
    "ivr": 50,
    "st_colour": "green",
-   "st_line": 13014.95,
-   "st_price": 14001.0,
-   "st_dist_pct": 7.04,
+   "st_line": 13035.25,
+   "st_price": 14014.0,
+   "st_dist_pct": 6.98,
    "st_bar": "2026-11-26"
   },
   {
@@ -6964,8 +7437,8 @@
      "side": "SHORT",
      "qty": 1050,
      "avg": 8.9,
-     "ltp": 8.45,
-     "pnl_rs": 472.5,
+     "ltp": 9.55,
+     "pnl_rs": -682.5,
      "tradingsymbol": "MAXHEALTH26DEC990PE",
      "lot": 525,
      "lots": 2.0,
@@ -6997,8 +7470,8 @@
    "ivr": 61,
    "st_colour": "green",
    "st_line": 998.49,
-   "st_price": 1079.55,
-   "st_dist_pct": 7.51,
+   "st_price": 1081.5,
+   "st_dist_pct": 7.68,
    "st_bar": "2026-11-26"
   },
   {
@@ -7056,8 +7529,8 @@
    "ivr": 27,
    "st_colour": "red",
    "st_line": 1962.49,
-   "st_price": 1808.0,
-   "st_dist_pct": 8.54,
+   "st_price": 1813.3,
+   "st_dist_pct": 8.23,
    "st_bar": "2026-11-26"
   },
   {
@@ -7097,8 +7570,8 @@
    "ivr": 34,
    "st_colour": "green",
    "st_line": 3356.62,
-   "st_price": 3832.9,
-   "st_dist_pct": 12.43,
+   "st_price": 3840.3,
+   "st_dist_pct": 12.59,
    "st_bar": "2026-11-26"
   },
   {
@@ -7128,8 +7601,8 @@
      "side": "LONG",
      "qty": 800,
      "avg": 9.1,
-     "ltp": 9.1,
-     "pnl_rs": 0,
+     "ltp": 9.75,
+     "pnl_rs": 520,
      "tradingsymbol": "MFSL26DEC1300PE",
      "lot": 400,
      "lots": 2.0,
@@ -7148,8 +7621,8 @@
      "side": "SHORT",
      "qty": 800,
      "avg": 14.1,
-     "ltp": 15.85,
-     "pnl_rs": -1400,
+     "ltp": 15.3,
+     "pnl_rs": -960,
      "tradingsymbol": "MFSL26DEC1340PE",
      "lot": 400,
      "lots": 2.0,
@@ -7175,9 +7648,9 @@
    "iv": 34.7,
    "ivr": 84,
    "st_colour": "green",
-   "st_line": 1326.91,
-   "st_price": 1456.4,
-   "st_dist_pct": 8.89,
+   "st_line": 1336.62,
+   "st_price": 1456.6,
+   "st_dist_pct": 8.24,
    "st_bar": "2026-11-26"
   },
   {
@@ -7207,8 +7680,8 @@
      "side": "LONG",
      "qty": 6150,
      "avg": 0.73,
-     "ltp": 0.73,
-     "pnl_rs": 0,
+     "ltp": 0.76,
+     "pnl_rs": 184.5,
      "tradingsymbol": "MOTHERSON26DEC145PE",
      "lot": 6150,
      "lots": 1.0,
@@ -7227,8 +7700,8 @@
      "side": "SHORT",
      "qty": 6150,
      "avg": 1.19,
-     "ltp": 1.19,
-     "pnl_rs": 0,
+     "ltp": 1.29,
+     "pnl_rs": -615,
      "tradingsymbol": "MOTHERSON26DEC150PE",
      "lot": 6150,
      "lots": 1.0,
@@ -7259,9 +7732,9 @@
    "iv": 31.7,
    "ivr": 34,
    "st_colour": "green",
-   "st_line": 150.62,
-   "st_price": 165.75,
-   "st_dist_pct": 9.13,
+   "st_line": 149.86,
+   "st_price": 164.65,
+   "st_dist_pct": 8.98,
    "st_bar": "2026-11-26"
   },
   {
@@ -7311,8 +7784,8 @@
      "side": "SHORT",
      "qty": 775,
      "avg": 8.25,
-     "ltp": 8.25,
-     "pnl_rs": 0,
+     "ltp": 8,
+     "pnl_rs": 193.75,
      "tradingsymbol": "MOTILALOFS26DEC1060PE",
      "lot": 775,
      "lots": 1.0,
@@ -7338,9 +7811,9 @@
    "iv": 40.1,
    "ivr": 49,
    "st_colour": "green",
-   "st_line": 1095.51,
-   "st_price": 1220.4,
-   "st_dist_pct": 10.23,
+   "st_line": 1101.43,
+   "st_price": 1229.45,
+   "st_dist_pct": 10.41,
    "st_bar": "2026-11-26"
   },
   {
@@ -7380,8 +7853,8 @@
    "ivr": 42,
    "st_colour": "green",
    "st_line": 2319.95,
-   "st_price": 2496.8,
-   "st_dist_pct": 7.08,
+   "st_price": 2492.1,
+   "st_dist_pct": 6.91,
    "st_bar": "2026-11-26"
   },
   {
@@ -7411,8 +7884,8 @@
      "side": "SHORT",
      "qty": 275,
      "avg": 13.85,
-     "ltp": 11.25,
-     "pnl_rs": 715,
+     "ltp": 11.85,
+     "pnl_rs": 550,
      "tradingsymbol": "MUTHOOTFIN26DEC3000CE",
      "lot": 275,
      "lots": 1.0,
@@ -7444,8 +7917,8 @@
    "ivr": 46,
    "st_colour": "red",
    "st_line": 2816.65,
-   "st_price": 2554.7,
-   "st_dist_pct": 10.25,
+   "st_price": 2562.2,
+   "st_dist_pct": 9.93,
    "st_bar": "2026-11-26"
   },
   {
@@ -7495,8 +7968,8 @@
      "side": "SHORT",
      "qty": 625,
      "avg": 7.4,
-     "ltp": 7.5,
-     "pnl_rs": -62.5,
+     "ltp": 7.65,
+     "pnl_rs": -156.25,
      "tradingsymbol": "NAM-INDIA26DEC940PE",
      "lot": 625,
      "lots": 1.0,
@@ -7523,8 +7996,8 @@
    "ivr": 38,
    "st_colour": "green",
    "st_line": 985.66,
-   "st_price": 1047.8,
-   "st_dist_pct": 5.93,
+   "st_price": 1045.05,
+   "st_dist_pct": 5.68,
    "st_bar": "2026-11-26"
   },
   {
@@ -7554,8 +8027,8 @@
      "side": "SHORT",
      "qty": 1875,
      "avg": 1.8,
-     "ltp": 2.1,
-     "pnl_rs": -562.5,
+     "ltp": 1.9,
+     "pnl_rs": -187.5,
      "tradingsymbol": "NATIONALUM26DEC345CE",
      "lot": 1875,
      "lots": 1.0,
@@ -7587,8 +8060,8 @@
    "ivr": 53,
    "st_colour": "red",
    "st_line": 325.59,
-   "st_price": 296.95,
-   "st_dist_pct": 9.64,
+   "st_price": 296.4,
+   "st_dist_pct": 9.85,
    "st_bar": "2026-11-26"
   },
   {
@@ -7618,8 +8091,8 @@
      "side": "SHORT",
      "qty": 550,
      "avg": 5.2,
-     "ltp": 7.25,
-     "pnl_rs": -1127.5,
+     "ltp": 7.2,
+     "pnl_rs": -1100,
      "tradingsymbol": "NAUKRI26DEC1360CE",
      "lot": 550,
      "lots": 1.0,
@@ -7689,8 +8162,8 @@
    "event_block": null,
    "st_colour": "green",
    "st_line": 9252.27,
-   "st_price": 10183.0,
-   "st_dist_pct": 9.14,
+   "st_price": 10194.0,
+   "st_dist_pct": 9.24,
    "st_bar": "2026-11-26"
   },
   {
@@ -7725,8 +8198,8 @@
    "ivr": 31,
    "st_colour": "green",
    "st_line": 72.92,
-   "st_price": 74.75,
-   "st_dist_pct": 2.45,
+   "st_price": 75.12,
+   "st_dist_pct": 2.93,
    "st_bar": "2026-11-26"
   },
   {
@@ -7756,8 +8229,8 @@
      "side": "LONG",
      "qty": 1000,
      "avg": 4.9,
-     "ltp": 2.9,
-     "pnl_rs": -2000,
+     "ltp": 2.95,
+     "pnl_rs": -1950,
      "tradingsymbol": "NESTLEIND26DEC1190PE",
      "lot": 500,
      "lots": 2.0,
@@ -7776,8 +8249,8 @@
      "side": "SHORT",
      "qty": 1000,
      "avg": 6.95,
-     "ltp": 4.1,
-     "pnl_rs": 2850,
+     "ltp": 4.45,
+     "pnl_rs": 2500,
      "tradingsymbol": "NESTLEIND26DEC1210PE",
      "lot": 500,
      "lots": 2.0,
@@ -7808,9 +8281,9 @@
    "iv": 22.7,
    "ivr": 55,
    "st_colour": "green",
-   "st_line": 1242.78,
-   "st_price": 1327.4,
-   "st_dist_pct": 6.37,
+   "st_line": 1240.78,
+   "st_price": 1322.5,
+   "st_dist_pct": 6.18,
    "st_bar": "2026-11-26"
   },
   {
@@ -7840,8 +8313,8 @@
      "side": "SHORT",
      "qty": 6950,
      "avg": 0.4,
-     "ltp": 0.4,
-     "pnl_rs": 0,
+     "ltp": 0.43,
+     "pnl_rs": -208.5,
      "tradingsymbol": "NHPC26DEC85CE",
      "lot": 6950,
      "lots": 1.0,
@@ -7873,8 +8346,8 @@
    "ivr": 49,
    "st_colour": "red",
    "st_line": 79.91,
-   "st_price": 75.66,
-   "st_dist_pct": 5.62,
+   "st_price": 75.85,
+   "st_dist_pct": 5.35,
    "st_bar": "2026-11-26"
   },
   {
@@ -7904,8 +8377,8 @@
      "side": "SHORT",
      "qty": 6750,
      "avg": 0.35,
-     "ltp": 0.34,
-     "pnl_rs": 67.5,
+     "ltp": 0.35,
+     "pnl_rs": 0,
      "tradingsymbol": "NMDC26DEC77CE",
      "lot": 6750,
      "lots": 1.0,
@@ -7937,8 +8410,8 @@
    "ivr": 37,
    "st_colour": "red",
    "st_line": 72.07,
-   "st_price": 67.17,
-   "st_dist_pct": 7.3,
+   "st_price": 67.28,
+   "st_dist_pct": 7.12,
    "st_bar": "2026-11-26"
   },
   {
@@ -7978,8 +8451,8 @@
    "ivr": 39,
    "st_colour": "green",
    "st_line": 305.13,
-   "st_price": 320.05,
-   "st_dist_pct": 4.66,
+   "st_price": 320.55,
+   "st_dist_pct": 4.81,
    "st_bar": "2026-11-26"
   },
   {
@@ -8045,8 +8518,8 @@
      "side": "LONG",
      "qty": 700,
      "avg": 6.525,
-     "ltp": 6.6,
-     "pnl_rs": 52.5,
+     "ltp": 5.6,
+     "pnl_rs": -647.5000000000005,
      "tradingsymbol": "OBEROIRLTY26DEC1660PE",
      "lot": 350,
      "lots": 2.0,
@@ -8065,8 +8538,8 @@
      "side": "SHORT",
      "qty": 700,
      "avg": 8.8,
-     "ltp": 9,
-     "pnl_rs": -139.9999999999991,
+     "ltp": 8,
+     "pnl_rs": 560.0000000000009,
      "tradingsymbol": "OBEROIRLTY26DEC1700PE",
      "lot": 350,
      "lots": 2.0,
@@ -8097,9 +8570,9 @@
    "iv": 29.1,
    "ivr": 32,
    "st_colour": "green",
-   "st_line": 1735.06,
-   "st_price": 1899.0,
-   "st_dist_pct": 8.63,
+   "st_line": 1736.18,
+   "st_price": 1910.8,
+   "st_dist_pct": 9.14,
    "st_bar": "2026-11-26"
   },
   {
@@ -8129,8 +8602,8 @@
      "side": "SHORT",
      "qty": 50,
      "avg": 46.9,
-     "ltp": 22.4,
-     "pnl_rs": 1225,
+     "ltp": 22.15,
+     "pnl_rs": 1237.5,
      "tradingsymbol": "OFSS26DEC11500CE",
      "lot": 50,
      "lots": 1.0,
@@ -8162,8 +8635,8 @@
    "ivr": 53,
    "st_colour": "red",
    "st_line": 10222.68,
-   "st_price": 9254.5,
-   "st_dist_pct": 10.46,
+   "st_price": 9273.5,
+   "st_dist_pct": 10.24,
    "st_bar": "2026-11-26"
   },
   {
@@ -8226,8 +8699,8 @@
    "ivr": 25,
    "st_colour": "red",
    "st_line": 453.5,
-   "st_price": 428.3,
-   "st_dist_pct": 5.88,
+   "st_price": 428.0,
+   "st_dist_pct": 5.96,
    "st_bar": "2026-11-26"
   },
   {
@@ -8267,8 +8740,8 @@
    "ivr": 26,
    "st_colour": "green",
    "st_line": 220.58,
-   "st_price": 222.74,
-   "st_dist_pct": 0.97,
+   "st_price": 223.1,
+   "st_dist_pct": 1.13,
    "st_bar": "2026-11-26"
   },
   {
@@ -8298,8 +8771,8 @@
      "side": "SHORT",
      "qty": 20,
      "avg": 117.25,
-     "ltp": 75,
-     "pnl_rs": 845,
+     "ltp": 77,
+     "pnl_rs": 805,
      "tradingsymbol": "PAGEIND26DEC36000CE",
      "lot": 20,
      "lots": 1.0,
@@ -8330,9 +8803,9 @@
    "iv": 27.6,
    "ivr": 55,
    "st_colour": "red",
-   "st_line": 33859.21,
-   "st_price": 30785.0,
-   "st_dist_pct": 9.99,
+   "st_line": 33826.59,
+   "st_price": 30835.0,
+   "st_dist_pct": 9.7,
    "st_bar": "2026-11-26"
   },
   {
@@ -8362,8 +8835,8 @@
      "side": "LONG",
      "qty": 2150,
      "avg": 2.8,
-     "ltp": 2.8,
-     "pnl_rs": 0,
+     "ltp": 2.75,
+     "pnl_rs": -107.5,
      "tradingsymbol": "PATANJALI26DEC350PE",
      "lot": 1075,
      "lots": 2.0,
@@ -8415,8 +8888,8 @@
    "ivr": 50,
    "st_colour": "green",
    "st_line": 388.12,
-   "st_price": 404.45,
-   "st_dist_pct": 4.04,
+   "st_price": 405.0,
+   "st_dist_pct": 4.17,
    "st_bar": "2026-11-26"
   },
   {
@@ -8446,8 +8919,8 @@
      "side": "SHORT",
      "qty": 725,
      "avg": 11.45,
-     "ltp": 12.55,
-     "pnl_rs": -797.5,
+     "ltp": 11.85,
+     "pnl_rs": -290,
      "tradingsymbol": "PAYTM26DEC2060CE",
      "lot": 725,
      "lots": 1.0,
@@ -8474,8 +8947,8 @@
    "ivr": 50,
    "st_colour": "red",
    "st_line": 1947.16,
-   "st_price": 1772.3,
-   "st_dist_pct": 9.87,
+   "st_price": 1770.0,
+   "st_dist_pct": 10.01,
    "st_bar": "2026-11-26"
   },
   {
@@ -8515,8 +8988,8 @@
    "ivr": 29,
    "st_colour": "green",
    "st_line": 5710.19,
-   "st_price": 6149.0,
-   "st_dist_pct": 7.14,
+   "st_price": 6147.0,
+   "st_dist_pct": 7.11,
    "st_bar": "2026-11-26"
   },
   {
@@ -8555,9 +9028,9 @@
    "iv": 24.2,
    "ivr": 19,
    "st_colour": "green",
-   "st_line": 307.98,
-   "st_price": 328.2,
-   "st_dist_pct": 6.16,
+   "st_line": 308.14,
+   "st_price": 327.9,
+   "st_dist_pct": 6.03,
    "st_bar": "2026-11-26"
   },
   {
@@ -8597,8 +9070,8 @@
    "ivr": 31,
    "st_colour": "green",
    "st_line": 317.12,
-   "st_price": 331.0,
-   "st_dist_pct": 4.19,
+   "st_price": 331.15,
+   "st_dist_pct": 4.24,
    "st_bar": "2026-11-26"
   },
   {
@@ -8633,8 +9106,8 @@
    "ivr": 19,
    "st_colour": "green",
    "st_line": 528.09,
-   "st_price": 566.75,
-   "st_dist_pct": 6.82,
+   "st_price": 565.5,
+   "st_dist_pct": 6.62,
    "st_bar": "2026-11-26"
   },
   {
@@ -8674,8 +9147,8 @@
    "ivr": 26,
    "st_colour": "green",
    "st_line": 2092.79,
-   "st_price": 2293.2,
-   "st_dist_pct": 8.74,
+   "st_price": 2300.4,
+   "st_dist_pct": 9.03,
    "st_bar": "2026-11-26"
   },
   {
@@ -8714,9 +9187,9 @@
    "iv": 23.7,
    "ivr": 58,
    "st_colour": "green",
-   "st_line": 1491.92,
-   "st_price": 1598.0,
-   "st_dist_pct": 6.64,
+   "st_line": 1493.78,
+   "st_price": 1598.7,
+   "st_dist_pct": 6.56,
    "st_bar": "2026-11-26"
   },
   {
@@ -8779,8 +9252,8 @@
    "ivr": 70,
    "st_colour": "red",
    "st_line": 1754.86,
-   "st_price": 1581.5,
-   "st_dist_pct": 10.96,
+   "st_price": 1588.1,
+   "st_dist_pct": 10.5,
    "st_bar": "2026-11-26"
   },
   {
@@ -8810,8 +9283,8 @@
      "side": "LONG",
      "qty": 16000,
      "avg": 0.87,
-     "ltp": 0.88,
-     "pnl_rs": 160,
+     "ltp": 0.84,
+     "pnl_rs": -480,
      "tradingsymbol": "PNB26DEC130PE",
      "lot": 8000,
      "lots": 2.0,
@@ -8830,8 +9303,8 @@
      "side": "SHORT",
      "qty": 16000,
      "avg": 1.02,
-     "ltp": 1.02,
-     "pnl_rs": 0,
+     "ltp": 1.06,
+     "pnl_rs": -640,
      "tradingsymbol": "PNB26DEC132PE",
      "lot": 8000,
      "lots": 2.0,
@@ -8863,8 +9336,8 @@
    "ivr": 51,
    "st_colour": "green",
    "st_line": 139.63,
-   "st_price": 147.44,
-   "st_dist_pct": 5.3,
+   "st_price": 148.02,
+   "st_dist_pct": 5.67,
    "st_bar": "2026-11-26"
   },
   {
@@ -8914,8 +9387,8 @@
      "side": "SHORT",
      "qty": 650,
      "avg": 8.4,
-     "ltp": 4.9,
-     "pnl_rs": 2274.9999999999995,
+     "ltp": 5.9,
+     "pnl_rs": 1624.9999999999995,
      "tradingsymbol": "PNBHOUSING26DEC1040PE",
      "lot": 650,
      "lots": 1.0,
@@ -8941,9 +9414,9 @@
    "iv": 32.5,
    "ivr": 32,
    "st_colour": "green",
-   "st_line": 1075.99,
-   "st_price": 1172.7,
-   "st_dist_pct": 8.25,
+   "st_line": 1083.33,
+   "st_price": 1173.1,
+   "st_dist_pct": 7.65,
    "st_bar": "2026-11-26"
   },
   {
@@ -8973,8 +9446,8 @@
      "side": "LONG",
      "qty": 350,
      "avg": 13.7,
-     "ltp": 5.2,
-     "pnl_rs": -2975,
+     "ltp": 5,
+     "pnl_rs": -3045,
      "tradingsymbol": "POLICYBZR26DEC860PE",
      "lot": 350,
      "lots": 1.0,
@@ -8993,8 +9466,8 @@
      "side": "SHORT",
      "qty": 350,
      "avg": 9.45,
-     "ltp": 7.5,
-     "pnl_rs": 682.4999999999995,
+     "ltp": 7.3,
+     "pnl_rs": 752.4999999999995,
      "tradingsymbol": "POLICYBZR26DEC920PE",
      "lot": 350,
      "lots": 1.0,
@@ -9021,8 +9494,8 @@
    "ivr": 60,
    "st_colour": "green",
    "st_line": 975.02,
-   "st_price": 1167.2,
-   "st_dist_pct": 16.46,
+   "st_price": 1171.5,
+   "st_dist_pct": 16.77,
    "st_bar": "2026-11-26"
   },
   {
@@ -9052,8 +9525,8 @@
      "side": "SHORT",
      "qty": 125,
      "avg": 55,
-     "ltp": 37.35,
-     "pnl_rs": 2206.25,
+     "ltp": 38.9,
+     "pnl_rs": 2012.5,
      "tradingsymbol": "POLYCAB26DEC8300CE",
      "lot": 125,
      "lots": 1.0,
@@ -9074,8 +9547,8 @@
      "side": "LONG",
      "qty": 125,
      "avg": 84,
-     "ltp": 20,
-     "pnl_rs": -8000,
+     "ltp": 21.45,
+     "pnl_rs": -7818.75,
      "tradingsymbol": "POLYCAB26DEC8600CE",
      "lot": 125,
      "lots": 1.0,
@@ -9105,8 +9578,8 @@
    "ivr": 38,
    "st_colour": "red",
    "st_line": 8092.71,
-   "st_price": 7346.5,
-   "st_dist_pct": 10.16,
+   "st_price": 7365.5,
+   "st_dist_pct": 9.87,
    "st_bar": "2026-11-26"
   },
   {
@@ -9146,8 +9619,8 @@
    "ivr": 48,
    "st_colour": "green",
    "st_line": 248.13,
-   "st_price": 266.65,
-   "st_dist_pct": 6.94,
+   "st_price": 267.05,
+   "st_dist_pct": 7.08,
    "st_bar": "2026-11-26"
   },
   {
@@ -9177,8 +9650,8 @@
      "side": "LONG",
      "qty": 25,
      "avg": 262.3,
-     "ltp": 162,
-     "pnl_rs": -2507.5,
+     "ltp": 164,
+     "pnl_rs": -2457.5,
      "tradingsymbol": "POWERINDIA26DEC26000PE",
      "lot": 25,
      "lots": 1.0,
@@ -9197,8 +9670,8 @@
      "side": "SHORT",
      "qty": 25,
      "avg": 531,
-     "ltp": 439.8,
-     "pnl_rs": 2280,
+     "ltp": 439.3,
+     "pnl_rs": 2292.5,
      "tradingsymbol": "POWERINDIA26DEC28000PE",
      "lot": 25,
      "lots": 1.0,
@@ -9225,8 +9698,8 @@
    "ivr": 36,
    "st_colour": "green",
    "st_line": 26946.21,
-   "st_price": 30450.0,
-   "st_dist_pct": 11.51,
+   "st_price": 30390.0,
+   "st_dist_pct": 11.33,
    "st_bar": "2026-11-26"
   },
   {
@@ -9256,8 +9729,8 @@
      "side": "SHORT",
      "qty": 650,
      "avg": 4,
-     "ltp": 2.65,
-     "pnl_rs": 877.5,
+     "ltp": 2.55,
+     "pnl_rs": 942.5000000000002,
      "tradingsymbol": "PREMIERENE26DEC940CE",
      "lot": 650,
      "lots": 1.0,
@@ -9283,9 +9756,9 @@
    "iv": 31.1,
    "ivr": 12,
    "st_colour": "red",
-   "st_line": 902.54,
-   "st_price": 801.4,
-   "st_dist_pct": 12.62,
+   "st_line": 898.99,
+   "st_price": 799.0,
+   "st_dist_pct": 12.51,
    "st_bar": "2026-11-26"
   },
   {
@@ -9324,9 +9797,9 @@
    "iv": 32.0,
    "ivr": 29,
    "st_colour": "green",
-   "st_line": 1570.22,
-   "st_price": 1810.6,
-   "st_dist_pct": 13.28,
+   "st_line": 1570.5,
+   "st_price": 1828.1,
+   "st_dist_pct": 14.09,
    "st_bar": "2026-11-26"
   },
   {
@@ -9376,8 +9849,8 @@
      "side": "SHORT",
      "qty": 150,
      "avg": 51.4,
-     "ltp": 26.25,
-     "pnl_rs": 3772.5,
+     "ltp": 26,
+     "pnl_rs": 3810,
      "tradingsymbol": "RADICO26DEC4200PE",
      "lot": 150,
      "lots": 1.0,
@@ -9408,9 +9881,9 @@
    "iv": 31.3,
    "ivr": 53,
    "st_colour": "green",
-   "st_line": 4337.68,
-   "st_price": 4680.0,
-   "st_dist_pct": 7.31,
+   "st_line": 4350.84,
+   "st_price": 4687.1,
+   "st_dist_pct": 7.17,
    "st_bar": "2026-11-26"
   },
   {
@@ -9460,8 +9933,8 @@
      "side": "SHORT",
      "qty": 3175,
      "avg": 3.05,
-     "ltp": 1.85,
-     "pnl_rs": 3810,
+     "ltp": 1.75,
+     "pnl_rs": 4127.5,
      "tradingsymbol": "RBLBANK26DEC350PE",
      "lot": 3175,
      "lots": 1.0,
@@ -9493,8 +9966,8 @@
    "ivr": 41,
    "st_colour": "green",
    "st_line": 361.06,
-   "st_price": 392.2,
-   "st_dist_pct": 7.94,
+   "st_price": 392.7,
+   "st_dist_pct": 8.06,
    "st_bar": "2026-11-26"
   },
   {
@@ -9524,8 +9997,8 @@
      "side": "LONG",
      "qty": 1000,
      "avg": 5.25,
-     "ltp": 5.95,
-     "pnl_rs": 700,
+     "ltp": 4.65,
+     "pnl_rs": -600,
      "tradingsymbol": "RELIANCE26DEC1250PE",
      "lot": 500,
      "lots": 2.0,
@@ -9544,8 +10017,8 @@
      "side": "SHORT",
      "qty": 1000,
      "avg": 7.2,
-     "ltp": 8.35,
-     "pnl_rs": -1150,
+     "ltp": 6.4,
+     "pnl_rs": 800,
      "tradingsymbol": "RELIANCE26DEC1270PE",
      "lot": 500,
      "lots": 2.0,
@@ -9577,8 +10050,8 @@
    "ivr": 54,
    "st_colour": "green",
    "st_line": 1283.68,
-   "st_price": 1372.3,
-   "st_dist_pct": 6.46,
+   "st_price": 1392.2,
+   "st_dist_pct": 7.79,
    "st_bar": "2026-11-26"
   },
   {
@@ -9608,8 +10081,8 @@
      "side": "SHORT",
      "qty": 1925,
      "avg": 1.42,
-     "ltp": 1.2,
-     "pnl_rs": 423.5,
+     "ltp": 1.24,
+     "pnl_rs": 346.5,
      "tradingsymbol": "RVNL26DEC225CE",
      "lot": 1925,
      "lots": 1.0,
@@ -9636,8 +10109,8 @@
    "ivr": 44,
    "st_colour": "red",
    "st_line": 209.12,
-   "st_price": 185.82,
-   "st_dist_pct": 12.54,
+   "st_price": 186.63,
+   "st_dist_pct": 12.05,
    "st_bar": "2026-11-26"
   },
   {
@@ -9667,10 +10140,10 @@
     }
    ],
    "event_block": null,
-   "st_colour": "red",
-   "st_line": 46.39,
-   "st_price": 46.3,
-   "st_dist_pct": 0.2,
+   "st_colour": "green",
+   "st_line": 42.34,
+   "st_price": 46.64,
+   "st_dist_pct": 9.21,
    "st_bar": "2026-11-26"
   },
   {
@@ -9733,8 +10206,8 @@
    "ivr": 48,
    "st_colour": "red",
    "st_line": 179.07,
-   "st_price": 162.32,
-   "st_dist_pct": 10.32,
+   "st_price": 162.02,
+   "st_dist_pct": 10.53,
    "st_bar": "2026-11-26"
   },
   {
@@ -9774,8 +10247,8 @@
    "ivr": 45,
    "st_colour": "green",
    "st_line": 539.4,
-   "st_price": 587.65,
-   "st_dist_pct": 8.21,
+   "st_price": 587.6,
+   "st_dist_pct": 8.2,
    "st_bar": "2026-11-26"
   },
   {
@@ -9805,8 +10278,8 @@
      "side": "LONG",
      "qty": 750,
      "avg": 6.75,
-     "ltp": 4.35,
-     "pnl_rs": -1800.0000000000005,
+     "ltp": 4.1,
+     "pnl_rs": -1987.5000000000005,
      "tradingsymbol": "SBILIFE26DEC1640PE",
      "lot": 375,
      "lots": 2.0,
@@ -9825,8 +10298,8 @@
      "side": "SHORT",
      "qty": 750,
      "avg": 11.8,
-     "ltp": 8.5,
-     "pnl_rs": 2475,
+     "ltp": 8.75,
+     "pnl_rs": 2287.5,
      "tradingsymbol": "SBILIFE26DEC1700PE",
      "lot": 375,
      "lots": 2.0,
@@ -9857,9 +10330,9 @@
    "iv": 23.2,
    "ivr": 48,
    "st_colour": "green",
-   "st_line": 1700.59,
-   "st_price": 1842.8,
-   "st_dist_pct": 7.72,
+   "st_line": 1702.84,
+   "st_price": 1845.0,
+   "st_dist_pct": 7.71,
    "st_bar": "2026-11-26"
   },
   {
@@ -9899,8 +10372,8 @@
    "ivr": 37,
    "st_colour": "green",
    "st_line": 1082.16,
-   "st_price": 1136.45,
-   "st_dist_pct": 4.78,
+   "st_price": 1141.75,
+   "st_dist_pct": 5.22,
    "st_bar": "2026-11-26"
   },
   {
@@ -9940,8 +10413,8 @@
    "ivr": 30,
    "st_colour": "green",
    "st_line": 23692.33,
-   "st_price": 25155.0,
-   "st_dist_pct": 5.81,
+   "st_price": 25265.0,
+   "st_dist_pct": 6.22,
    "st_bar": "2026-11-26"
   },
   {
@@ -9971,8 +10444,8 @@
      "side": "LONG",
      "qty": 825,
      "avg": 3.35,
-     "ltp": 3.5,
-     "pnl_rs": 123.75,
+     "ltp": 4,
+     "pnl_rs": 536.25,
      "tradingsymbol": "SHRIRAMFIN26DEC820PE",
      "lot": 825,
      "lots": 1.0,
@@ -9991,8 +10464,8 @@
      "side": "SHORT",
      "qty": 825,
      "avg": 6.45,
-     "ltp": 7,
-     "pnl_rs": -453.75,
+     "ltp": 8.1,
+     "pnl_rs": -1361.25,
      "tradingsymbol": "SHRIRAMFIN26DEC860PE",
      "lot": 825,
      "lots": 1.0,
@@ -10024,8 +10497,8 @@
    "ivr": 37,
    "st_colour": "green",
    "st_line": 910.81,
-   "st_price": 967.5,
-   "st_dist_pct": 5.86,
+   "st_price": 959.3,
+   "st_dist_pct": 5.05,
    "st_bar": "2026-11-26"
   },
   {
@@ -10108,8 +10581,8 @@
    "ivr": 51,
    "st_colour": "green",
    "st_line": 3315.69,
-   "st_price": 3573.3,
-   "st_dist_pct": 7.21,
+   "st_price": 3585.0,
+   "st_dist_pct": 7.51,
    "st_bar": "2026-11-26"
   },
   {
@@ -10139,8 +10612,8 @@
      "side": "SHORT",
      "qty": 25,
      "avg": 112.25,
-     "ltp": 82.25,
-     "pnl_rs": 750,
+     "ltp": 88.4,
+     "pnl_rs": 596.25,
      "tradingsymbol": "SOLARINDS26DEC21000CE",
      "lot": 25,
      "lots": 1.0,
@@ -10172,8 +10645,8 @@
    "ivr": 31,
    "st_colour": "red",
    "st_line": 19721.51,
-   "st_price": 18183.0,
-   "st_dist_pct": 8.46,
+   "st_price": 18247.0,
+   "st_dist_pct": 8.08,
    "st_bar": "2026-11-26"
   },
   {
@@ -10213,8 +10686,8 @@
    "ivr": 22,
    "st_colour": "green",
    "st_line": 848.21,
-   "st_price": 874.75,
-   "st_dist_pct": 3.03,
+   "st_price": 887.65,
+   "st_dist_pct": 4.44,
    "st_bar": "2026-11-26"
   },
   {
@@ -10253,9 +10726,9 @@
    "iv": 23.0,
    "ivr": 17,
    "st_colour": "green",
-   "st_line": 2364.15,
-   "st_price": 2510.4,
-   "st_dist_pct": 5.83,
+   "st_line": 2366.37,
+   "st_price": 2516.3,
+   "st_dist_pct": 5.96,
    "st_bar": "2026-11-26"
   },
   {
@@ -10285,8 +10758,8 @@
      "side": "LONG",
      "qty": 700,
      "avg": 5.9,
-     "ltp": 6,
-     "pnl_rs": 70,
+     "ltp": 5.95,
+     "pnl_rs": 35,
      "tradingsymbol": "SUNPHARMA26DEC1760PE",
      "lot": 350,
      "lots": 2.0,
@@ -10305,8 +10778,8 @@
      "side": "SHORT",
      "qty": 700,
      "avg": 10.025,
-     "ltp": 10.5,
-     "pnl_rs": -332.5,
+     "ltp": 10.3,
+     "pnl_rs": -192.5000000000009,
      "tradingsymbol": "SUNPHARMA26DEC1800PE",
      "lot": 350,
      "lots": 2.0,
@@ -10338,8 +10811,8 @@
    "ivr": 39,
    "st_colour": "green",
    "st_line": 1784.94,
-   "st_price": 1905.7,
-   "st_dist_pct": 6.34,
+   "st_price": 1906.9,
+   "st_dist_pct": 6.4,
    "st_bar": "2026-11-26"
   },
   {
@@ -10369,8 +10842,8 @@
      "side": "SHORT",
      "qty": 175,
      "avg": 21.45,
-     "ltp": 14.4,
-     "pnl_rs": 1233.75,
+     "ltp": 14.1,
+     "pnl_rs": 1286.25,
      "tradingsymbol": "SUPREMEIND26DEC3600CE",
      "lot": 175,
      "lots": 1.0,
@@ -10401,9 +10874,9 @@
    "iv": 29.1,
    "ivr": 31,
    "st_colour": "red",
-   "st_line": 3456.44,
-   "st_price": 3141.9,
-   "st_dist_pct": 10.01,
+   "st_line": 3423.22,
+   "st_price": 3141.6,
+   "st_dist_pct": 8.96,
    "st_bar": "2026-11-26"
   },
   {
@@ -10438,8 +10911,8 @@
    "ivr": 52,
    "st_colour": "red",
    "st_line": 39.19,
-   "st_price": 36.2,
-   "st_dist_pct": 8.27,
+   "st_price": 36.24,
+   "st_dist_pct": 8.15,
    "st_bar": "2026-11-26"
   },
   {
@@ -10469,8 +10942,8 @@
      "side": "SHORT",
      "qty": 1825,
      "avg": 1.17,
-     "ltp": 1.15,
-     "pnl_rs": 36.5,
+     "ltp": 1.1,
+     "pnl_rs": 127.74999999999977,
      "tradingsymbol": "SWIGGY26DEC220CE",
      "lot": 1825,
      "lots": 1.0,
@@ -10491,8 +10964,8 @@
    "ivr": 47,
    "st_colour": "red",
    "st_line": 202.0,
-   "st_price": 180.58,
-   "st_dist_pct": 11.86,
+   "st_price": 180.78,
+   "st_dist_pct": 11.74,
    "st_bar": "2026-11-26"
   },
   {
@@ -10522,8 +10995,8 @@
      "side": "SHORT",
      "qty": 325,
      "avg": 17.05,
-     "ltp": 14.95,
-     "pnl_rs": 682.5,
+     "ltp": 16.1,
+     "pnl_rs": 308.7499999999991,
      "tradingsymbol": "SYRMA26DEC1700CE",
      "lot": 325,
      "lots": 1.0,
@@ -10546,9 +11019,9 @@
    ],
    "event_block": null,
    "st_colour": "red",
-   "st_line": 1642.84,
-   "st_price": 1462.8,
-   "st_dist_pct": 12.31,
+   "st_line": 1645.24,
+   "st_price": 1471.2,
+   "st_dist_pct": 11.83,
    "st_bar": "2026-11-26"
   },
   {
@@ -10588,8 +11061,8 @@
    "ivr": 37,
    "st_colour": "green",
    "st_line": 1085.98,
-   "st_price": 1163.7,
-   "st_dist_pct": 6.68,
+   "st_price": 1158.6,
+   "st_dist_pct": 6.27,
    "st_bar": "2026-11-26"
   },
   {
@@ -10629,8 +11102,8 @@
    "ivr": 49,
    "st_colour": "green",
    "st_line": 3553.04,
-   "st_price": 3825.8,
-   "st_dist_pct": 7.13,
+   "st_price": 3834.0,
+   "st_dist_pct": 7.33,
    "st_bar": "2026-11-26"
   },
   {
@@ -10693,8 +11166,8 @@
    "ivr": 40,
    "st_colour": "red",
    "st_line": 349.49,
-   "st_price": 322.45,
-   "st_dist_pct": 8.39,
+   "st_price": 323.9,
+   "st_dist_pct": 7.9,
    "st_bar": "2026-11-26"
   },
   {
@@ -10724,8 +11197,8 @@
      "side": "SHORT",
      "qty": 2750,
      "avg": 1,
-     "ltp": 0.9,
-     "pnl_rs": 275,
+     "ltp": 0.94,
+     "pnl_rs": 165,
      "tradingsymbol": "TATASTEEL26DEC190CE",
      "lot": 2750,
      "lots": 1.0,
@@ -10757,8 +11230,8 @@
    "ivr": 68,
    "st_colour": "red",
    "st_line": 179.84,
-   "st_price": 162.79,
-   "st_dist_pct": 10.47,
+   "st_price": 163.1,
+   "st_dist_pct": 10.26,
    "st_bar": "2026-11-26"
   },
   {
@@ -10797,9 +11270,9 @@
    "iv": 28.8,
    "ivr": 55,
    "st_colour": "green",
-   "st_line": 2342.87,
-   "st_price": 2581.0,
-   "st_dist_pct": 9.23,
+   "st_line": 2343.59,
+   "st_price": 2587.7,
+   "st_dist_pct": 9.43,
    "st_bar": "2026-11-26"
   },
   {
@@ -10838,9 +11311,9 @@
    "iv": 28.6,
    "ivr": 54,
    "st_colour": "green",
-   "st_line": 1684.77,
-   "st_price": 1824.6,
-   "st_dist_pct": 7.66,
+   "st_line": 1685.43,
+   "st_price": 1833.0,
+   "st_dist_pct": 8.05,
    "st_bar": "2026-11-26"
   },
   {
@@ -10880,8 +11353,8 @@
    "ivr": 54,
    "st_colour": "green",
    "st_line": 2018.03,
-   "st_price": 2191.9,
-   "st_dist_pct": 7.93,
+   "st_price": 2197.5,
+   "st_dist_pct": 8.17,
    "st_bar": "2026-11-26"
   },
   {
@@ -10911,8 +11384,8 @@
      "side": "SHORT",
      "qty": 175,
      "avg": 19.7,
-     "ltp": 14,
-     "pnl_rs": 997.5,
+     "ltp": 14.35,
+     "pnl_rs": 936.25,
      "tradingsymbol": "TITAN26DEC5200CE",
      "lot": 175,
      "lots": 1.0,
@@ -10944,8 +11417,8 @@
    "ivr": 38,
    "st_colour": "red",
    "st_line": 4977.47,
-   "st_price": 4631.0,
-   "st_dist_pct": 7.48,
+   "st_price": 4644.0,
+   "st_dist_pct": 7.18,
    "st_bar": "2026-11-26"
   },
   {
@@ -11008,8 +11481,8 @@
    "ivr": 41,
    "st_colour": "red",
    "st_line": 284.12,
-   "st_price": 260.1,
-   "st_dist_pct": 9.24,
+   "st_price": 260.65,
+   "st_dist_pct": 9.01,
    "st_bar": "2026-11-26"
   },
   {
@@ -11039,8 +11512,8 @@
      "side": "LONG",
      "qty": 250,
      "avg": 11.4,
-     "ltp": 11.4,
-     "pnl_rs": 0,
+     "ltp": 10.65,
+     "pnl_rs": -187.5,
      "tradingsymbol": "TORNTPHARM26DEC4500PE",
      "lot": 125,
      "lots": 2.0,
@@ -11059,8 +11532,8 @@
      "side": "SHORT",
      "qty": 250,
      "avg": 19.8,
-     "ltp": 18.3,
-     "pnl_rs": 375,
+     "ltp": 17.45,
+     "pnl_rs": 587.5,
      "tradingsymbol": "TORNTPHARM26DEC4600PE",
      "lot": 125,
      "lots": 2.0,
@@ -11092,8 +11565,8 @@
    "ivr": 43,
    "st_colour": "green",
    "st_line": 4650.59,
-   "st_price": 5000.1,
-   "st_dist_pct": 6.99,
+   "st_price": 5011.5,
+   "st_dist_pct": 7.2,
    "st_bar": "2026-11-26"
   },
   {
@@ -11133,8 +11606,8 @@
    "ivr": 26,
    "st_colour": "green",
    "st_line": 3031.97,
-   "st_price": 3280.7,
-   "st_dist_pct": 7.58,
+   "st_price": 3278.2,
+   "st_dist_pct": 7.51,
    "st_bar": "2026-11-26"
   },
   {
@@ -11174,8 +11647,8 @@
    "ivr": 40,
    "st_colour": "green",
    "st_line": 4234.64,
-   "st_price": 4547.2,
-   "st_dist_pct": 6.87,
+   "st_price": 4545.2,
+   "st_dist_pct": 6.83,
    "st_bar": "2026-11-26"
   },
   {
@@ -11205,8 +11678,8 @@
      "side": "SHORT",
      "qty": 8000,
      "avg": 0.51,
-     "ltp": 0.3,
-     "pnl_rs": 1680,
+     "ltp": 0.28,
+     "pnl_rs": 1840,
      "tradingsymbol": "UJJIVANSFB26DEC72CE",
      "lot": 8000,
      "lots": 1.0,
@@ -11224,8 +11697,8 @@
    "event_block": null,
    "st_colour": "red",
    "st_line": 62.78,
-   "st_price": 59.38,
-   "st_dist_pct": 5.72,
+   "st_price": 59.14,
+   "st_dist_pct": 6.15,
    "st_bar": "2026-11-26"
   },
   {
@@ -11265,8 +11738,8 @@
    "ivr": 29,
    "st_colour": "green",
    "st_line": 11962.73,
-   "st_price": 12646.0,
-   "st_dist_pct": 5.4,
+   "st_price": 12715.0,
+   "st_dist_pct": 5.92,
    "st_bar": "2026-11-26"
   },
   {
@@ -11306,8 +11779,8 @@
    "ivr": 34,
    "st_colour": "green",
    "st_line": 196.65,
-   "st_price": 210.14,
-   "st_dist_pct": 6.42,
+   "st_price": 210.84,
+   "st_dist_pct": 6.73,
    "st_bar": "2026-11-26"
   },
   {
@@ -11389,9 +11862,9 @@
    "iv": 26.3,
    "ivr": 46,
    "st_colour": "green",
-   "st_line": 1383.82,
-   "st_price": 1492.8,
-   "st_dist_pct": 7.3,
+   "st_line": 1386.34,
+   "st_price": 1493.9,
+   "st_dist_pct": 7.2,
    "st_bar": "2026-11-26"
   },
   {
@@ -11431,8 +11904,8 @@
    "ivr": 35,
    "st_colour": "green",
    "st_line": 1250.94,
-   "st_price": 1380.6,
-   "st_dist_pct": 9.39,
+   "st_price": 1382.3,
+   "st_dist_pct": 9.5,
    "st_bar": "2026-11-26"
   },
   {
@@ -11482,8 +11955,8 @@
      "side": "SHORT",
      "qty": 2710,
      "avg": 4.2,
-     "ltp": 4.15,
-     "pnl_rs": 135.49999999999818,
+     "ltp": 4.05,
+     "pnl_rs": 406.5,
      "tradingsymbol": "UPL26DEC500PE",
      "lot": 1355,
      "lots": 2.0,
@@ -11515,8 +11988,8 @@
    "ivr": 62,
    "st_colour": "green",
    "st_line": 513.57,
-   "st_price": 561.0,
-   "st_dist_pct": 8.45,
+   "st_price": 561.8,
+   "st_dist_pct": 8.59,
    "st_bar": "2026-11-26"
   },
   {
@@ -11555,9 +12028,9 @@
    "iv": 27.3,
    "ivr": 24,
    "st_colour": "green",
-   "st_line": 399.88,
-   "st_price": 427.3,
-   "st_dist_pct": 6.42,
+   "st_line": 399.31,
+   "st_price": 426.3,
+   "st_dist_pct": 6.33,
    "st_bar": "2026-11-26"
   },
   {
@@ -11587,8 +12060,8 @@
      "side": "SHORT",
      "qty": 2300,
      "avg": 1.56,
-     "ltp": 1.41,
-     "pnl_rs": 345,
+     "ltp": 1.36,
+     "pnl_rs": 460,
      "tradingsymbol": "VEDL26DEC280CE",
      "lot": 1150,
      "lots": 2.0,
@@ -11620,7 +12093,7 @@
    "ivr": 63,
    "st_colour": "red",
    "st_line": 254.92,
-   "st_price": 238.86,
+   "st_price": 238.87,
    "st_dist_pct": 6.72,
    "st_bar": "2026-11-26"
   },
@@ -11693,8 +12166,8 @@
    "ivr": 33,
    "st_colour": "green",
    "st_line": 87.46,
-   "st_price": 96.36,
-   "st_dist_pct": 9.24,
+   "st_price": 96.06,
+   "st_dist_pct": 8.95,
    "st_bar": "2026-11-26"
   },
   {
@@ -11734,8 +12207,8 @@
    "ivr": 39,
    "st_colour": "green",
    "st_line": 1112.58,
-   "st_price": 1212.3,
-   "st_dist_pct": 8.23,
+   "st_price": 1215.8,
+   "st_dist_pct": 8.49,
    "st_bar": "2026-11-26"
   },
   {
@@ -11765,8 +12238,8 @@
      "side": "LONG",
      "qty": 175,
      "avg": 18.1,
-     "ltp": 15.65,
-     "pnl_rs": -428.75000000000045,
+     "ltp": 14.85,
+     "pnl_rs": -568.7500000000005,
      "tradingsymbol": "WAAREEENER26DEC2100PE",
      "lot": 175,
      "lots": 1.0,
@@ -11785,8 +12258,8 @@
      "side": "SHORT",
      "qty": 175,
      "avg": 30.15,
-     "ltp": 30.7,
-     "pnl_rs": -96.25,
+     "ltp": 30.9,
+     "pnl_rs": -131.25,
      "tradingsymbol": "WAAREEENER26DEC2200PE",
      "lot": 175,
      "lots": 1.0,
@@ -11813,8 +12286,8 @@
    "ivr": 24,
    "st_colour": "green",
    "st_line": 2320.15,
-   "st_price": 2383.7,
-   "st_dist_pct": 2.67,
+   "st_price": 2389.6,
+   "st_dist_pct": 2.91,
    "st_bar": "2026-11-26"
   },
   {
@@ -11844,8 +12317,8 @@
      "side": "SHORT",
      "qty": 3000,
      "avg": 0.84,
-     "ltp": 1.11,
-     "pnl_rs": -810.0000000000005,
+     "ltp": 1.13,
+     "pnl_rs": -869.9999999999995,
      "tradingsymbol": "WIPRO26DEC220CE",
      "lot": 3000,
      "lots": 1.0,
@@ -11877,8 +12350,8 @@
    "ivr": 18,
    "st_colour": "red",
    "st_line": 196.86,
-   "st_price": 195.18,
-   "st_dist_pct": 0.86,
+   "st_price": 195.45,
+   "st_dist_pct": 0.72,
    "st_bar": "2026-11-26"
   },
   {
@@ -11913,8 +12386,8 @@
    "ivr": 59,
    "st_colour": "green",
    "st_line": 16.22,
-   "st_price": 17.63,
-   "st_dist_pct": 7.98,
+   "st_price": 17.74,
+   "st_dist_pct": 8.55,
    "st_bar": "2026-11-26"
   },
   {
@@ -11954,8 +12427,8 @@
    "ivr": 54,
    "st_colour": "green",
    "st_line": 1141.89,
-   "st_price": 1194.3,
-   "st_dist_pct": 4.39,
+   "st_price": 1195.5,
+   "st_dist_pct": 4.48,
    "st_bar": "2026-11-26"
   }
  ],
@@ -11964,10 +12437,18 @@
   {
    "level": "WARN",
    "type": "Near flip",
-   "symbol": "WIPRO",
-   "concern": "Supertrend red is only 0.9% from turning green (line 196.86, price 195.18, bar 2026-11-26)",
+   "symbol": "LUPIN",
+   "concern": "Supertrend red is only 1.4% from turning green (line 2034.6, price 2006, bar 2026-11-26)",
    "action": "Watch: a close above the line flips the structure the colour wants",
-   "text": "WIPRO: Supertrend within 0.9% of flipping green"
+   "text": "LUPIN: Supertrend within 1.4% of flipping green"
+  },
+  {
+   "level": "WARN",
+   "type": "Near flip",
+   "symbol": "WIPRO",
+   "concern": "Supertrend red is only 0.7% from turning green (line 196.86, price 195.45, bar 2026-11-26)",
+   "action": "Watch: a close above the line flips the structure the colour wants",
+   "text": "WIPRO: Supertrend within 0.7% of flipping green"
   }
  ],
  "events_file_at": "2026-11-25T03:53:39.480365+00:00",
@@ -11987,17 +12468,17 @@
   "RECLTD"
  ],
  "positions": {
-  "fetched_at": "2026-11-26T08:27:21.168317+00:00",
+  "fetched_at": "2026-11-26T09:04:09.036923+00:00",
   "track_from": "2026-11-01",
-  "legs": 159,
+  "legs": 181,
   "ignored_legs": 19
  },
  "counts": {
   "call": 59,
   "put_spread": 156,
   "rsi_override": 26,
-  "enter": 129,
-  "hold": 86,
+  "enter": 118,
+  "hold": 97,
   "flip": 0
  }
 }

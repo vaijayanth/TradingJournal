@@ -1,6 +1,226 @@
 {
- "fetched_at": "2026-11-26T14:32:43+05:30",
+ "fetched_at": "2026-11-26T14:34:09+05:30",
  "active": {
+  "BIOCON26DEC330PE": [
+   {
+    "id": 346527107,
+    "type": "two-leg",
+    "trigger_values": [
+     0.75,
+     5.2
+    ],
+    "qty": 2500
+   },
+   {
+    "id": 346527107,
+    "type": "two-leg",
+    "trigger_values": [
+     0.75,
+     5.2
+    ],
+    "qty": 2500
+   }
+  ],
+  "BANKBARODA26DEC252.5PE": [
+   {
+    "id": 346527029,
+    "type": "two-leg",
+    "trigger_values": [
+     0.6,
+     4.2
+    ],
+    "qty": 5850
+   },
+   {
+    "id": 346527029,
+    "type": "two-leg",
+    "trigger_values": [
+     0.6,
+     4.2
+    ],
+    "qty": 5850
+   }
+  ],
+  "BAJFINANCE26DEC1000PE": [
+   {
+    "id": 346527002,
+    "type": "two-leg",
+    "trigger_values": [
+     2.4,
+     16.65
+    ],
+    "qty": 1500
+   },
+   {
+    "id": 346527002,
+    "type": "two-leg",
+    "trigger_values": [
+     2.4,
+     16.65
+    ],
+    "qty": 1500
+   }
+  ],
+  "BAJAJ-AUTO26DEC9800PE": [
+   {
+    "id": 346526975,
+    "type": "two-leg",
+    "trigger_values": [
+     17.4,
+     119.5
+    ],
+    "qty": 150
+   },
+   {
+    "id": 346526975,
+    "type": "two-leg",
+    "trigger_values": [
+     17.4,
+     119.5
+    ],
+    "qty": 150
+   }
+  ],
+  "AXISBANK26DEC1300PE": [
+   {
+    "id": 346526951,
+    "type": "two-leg",
+    "trigger_values": [
+     2.85,
+     19.45
+    ],
+    "qty": 1250
+   },
+   {
+    "id": 346526951,
+    "type": "two-leg",
+    "trigger_values": [
+     2.85,
+     19.45
+    ],
+    "qty": 1250
+   }
+  ],
+  "ASIANPAINT26DEC2360PE": [
+   {
+    "id": 346526934,
+    "type": "two-leg",
+    "trigger_values": [
+     5.9,
+     40.4
+    ],
+    "qty": 500
+   },
+   {
+    "id": 346526934,
+    "type": "two-leg",
+    "trigger_values": [
+     5.9,
+     40.4
+    ],
+    "qty": 500
+   }
+  ],
+  "ADANIGREEN26DEC1160PE": [
+   {
+    "id": 346526906,
+    "type": "two-leg",
+    "trigger_values": [
+     3.35,
+     23.1
+    ],
+    "qty": 1200
+   },
+   {
+    "id": 346526906,
+    "type": "two-leg",
+    "trigger_values": [
+     3.35,
+     23.1
+    ],
+    "qty": 1200
+   }
+  ],
+  "ADANIENT26DEC2400PE": [
+   {
+    "id": 346526874,
+    "type": "two-leg",
+    "trigger_values": [
+     7.7,
+     52.95
+    ],
+    "qty": 309
+   },
+   {
+    "id": 346526874,
+    "type": "two-leg",
+    "trigger_values": [
+     7.7,
+     52.95
+    ],
+    "qty": 309
+   }
+  ],
+  "ADANIENSOL26DEC1260PE": [
+   {
+    "id": 346526849,
+    "type": "two-leg",
+    "trigger_values": [
+     5.7,
+     39.35
+    ],
+    "qty": 675
+   },
+   {
+    "id": 346526849,
+    "type": "two-leg",
+    "trigger_values": [
+     5.7,
+     39.35
+    ],
+    "qty": 675
+   }
+  ],
+  "ABCAPITAL26DEC380PE": [
+   {
+    "id": 346526804,
+    "type": "two-leg",
+    "trigger_values": [
+     0.9,
+     6.3
+    ],
+    "qty": 3100
+   },
+   {
+    "id": 346526804,
+    "type": "two-leg",
+    "trigger_values": [
+     0.9,
+     6.3
+    ],
+    "qty": 3100
+   }
+  ],
+  "360ONE26DEC1060PE": [
+   {
+    "id": 346526784,
+    "type": "two-leg",
+    "trigger_values": [
+     2.85,
+     19.5
+    ],
+    "qty": 1000
+   },
+   {
+    "id": 346526784,
+    "type": "two-leg",
+    "trigger_values": [
+     2.85,
+     19.5
+    ],
+    "qty": 1000
+   }
+  ],
   "UPL26DEC500PE": [
    {
     "id": 346513542,
@@ -1963,6 +2183,314 @@
   ]
  },
  "gtts": [
+  {
+   "id": 346527107,
+   "type": "two-leg",
+   "created_at": "2026-11-26T14:33:58+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "BIOCON26DEC330PE",
+   "last_price": 1.9,
+   "triggers": [
+    0.75,
+    5.2
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 2500,
+     "price": 0.8,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 2500,
+     "price": 5.7,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 346527029,
+   "type": "two-leg",
+   "created_at": "2026-11-26T14:33:51+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "BANKBARODA26DEC252.5PE",
+   "last_price": 1.55,
+   "triggers": [
+    0.6,
+    4.2
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 5850,
+     "price": 0.65,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 5850,
+     "price": 4.6,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 346527002,
+   "type": "two-leg",
+   "created_at": "2026-11-26T14:33:45+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "BAJFINANCE26DEC1000PE",
+   "last_price": 6.25,
+   "triggers": [
+    2.4,
+    16.65
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 1500,
+     "price": 2.5,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 1500,
+     "price": 18.15,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 346526975,
+   "type": "two-leg",
+   "created_at": "2026-11-26T14:33:40+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "BAJAJ-AUTO26DEC9800PE",
+   "last_price": 43.3,
+   "triggers": [
+    17.4,
+    119.5
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 150,
+     "price": 17.95,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 150,
+     "price": 130.35,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 346526951,
+   "type": "two-leg",
+   "created_at": "2026-11-26T14:33:37+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "AXISBANK26DEC1300PE",
+   "last_price": 6.6,
+   "triggers": [
+    2.85,
+    19.45
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 1250,
+     "price": 2.95,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 1250,
+     "price": 21.25,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 346526934,
+   "type": "two-leg",
+   "created_at": "2026-11-26T14:33:32+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "ASIANPAINT26DEC2360PE",
+   "last_price": 14,
+   "triggers": [
+    5.9,
+    40.4
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 500,
+     "price": 6.1,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 500,
+     "price": 44.1,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 346526906,
+   "type": "two-leg",
+   "created_at": "2026-11-26T14:33:27+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "ADANIGREEN26DEC1160PE",
+   "last_price": 8.85,
+   "triggers": [
+    3.35,
+    23.1
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 1200,
+     "price": 3.5,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 1200,
+     "price": 25.2,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 346526874,
+   "type": "two-leg",
+   "created_at": "2026-11-26T14:33:21+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "ADANIENT26DEC2400PE",
+   "last_price": 19.2,
+   "triggers": [
+    7.7,
+    52.95
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 309,
+     "price": 7.95,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 309,
+     "price": 57.75,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 346526849,
+   "type": "two-leg",
+   "created_at": "2026-11-26T14:33:17+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "ADANIENSOL26DEC1260PE",
+   "last_price": 13.95,
+   "triggers": [
+    5.7,
+    39.35
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 675,
+     "price": 5.9,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 675,
+     "price": 42.9,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 346526804,
+   "type": "two-leg",
+   "created_at": "2026-11-26T14:33:11+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "ABCAPITAL26DEC380PE",
+   "last_price": 2.35,
+   "triggers": [
+    0.9,
+    6.3
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 3100,
+     "price": 0.95,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 3100,
+     "price": 6.9,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 346526784,
+   "type": "two-leg",
+   "created_at": "2026-11-26T14:33:08+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "360ONE26DEC1060PE",
+   "last_price": 6.4,
+   "triggers": [
+    2.85,
+    19.5
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 1000,
+     "price": 2.95,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 1000,
+     "price": 21.3,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
   {
    "id": 346513542,
    "type": "two-leg",

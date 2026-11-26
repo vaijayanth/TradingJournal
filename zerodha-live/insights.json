@@ -1,9 +1,9 @@
 {
- "as_of": "26 Nov 13:57 (positions and GTTs live)",
- "written_at": "2026-11-26T13:57:54+05:30",
+ "as_of": "26 Nov 14:34 (positions and GTTs live)",
+ "written_at": "2026-11-26T14:34:28+05:30",
  "confidence": "low",
  "maturity": "42 positions opened since the cut-off, 5 closed trades: the swing edge cannot be judged yet.",
- "headline": "All 37 swing holds are green and nothing is due to exit; every short option is protected (98 GTT contracts, 0 scan findings).",
+ "headline": "All 37 swing holds are green and nothing is due to exit; every short option is protected (109 GTT contracts, 0 scan findings).",
  "points": [
   {
    "label": "Signals",
@@ -11,11 +11,11 @@
   },
   {
    "label": "Options process",
-   "text": "98 GTT contracts, 0 scan findings, 0 shorts without a GTT. This afternoon: 17 two-leg GTTs placed on the new spreads and calls (DIVISLAB, FEDERALBNK, INDUSINDBK, JUBLFOOD, KALYANKJIL, KEI, MAHABANK, MAXHEALTH, MOTHERSON, MOTILALOFS, NAM-INDIA, OBEROIRLTY, PATANJALI, PNB, RELIANCE, UNITDSPR, UPL), after the earlier stale delete, COLPAL fix and VMM."
+   "text": "109 GTT contracts, 0 scan findings, 0 shorts without a GTT. Latest batch: 11 two-leg GTTs on the new spreads (360ONE, ABCAPITAL, ADANIENSOL, ADANIENT, ADANIGREEN, ASIANPAINT, AXISBANK, BAJAJ-AUTO, BAJFINANCE, BANKBARODA, BIOCON), after 17 earlier today. The APLAPOLLO and KEI 4500CE 'fired' flags were checked in Kite: nothing open."
   },
   {
    "label": "Risk",
-   "text": "Financial Services is 50% of deployed capital against a 40% limit (WARN, unchanged). APLAPOLLO and MANAPPURAM are in the F&O ban today; no open legs on either."
+   "text": "All shorts have a stop, so the open risk is the gap past a stop. Financial Services remains above its 40% limit (50%). WIPRO (0.7%) and LUPIN (1.4%) are close to flipping green."
   },
   {
    "label": "Book",
@@ -26,5 +26,5 @@
    "text": "5 closed trades against 20.2% CAGR, -21.3% drawdown, 41% win rate: too early to compare. Watch the first 30 closed trades."
   }
  ],
- "action": "Any short you open from now needs a GTT (run /zerodha-gtt-order after you finish trading). RELIANCE 1270PE is the leg moving against you (8.35 vs sold 7.20)."
+ "action": "Any short you open from now needs a GTT (run /zerodha-gtt-order after you finish trading)."
 }
