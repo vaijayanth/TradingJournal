@@ -324,6 +324,18 @@
     "contracts_covered": 73,
     "shorts_without_gtt": 4
    }
+  },
+  {
+   "date": "2026-11-26 (09:55)",
+   "headline": "Coverage is 77 contracts with 0 scan findings; one newly opened short (SUNPHARMA 1800PE) still needs a GTT.",
+   "recommendations": [
+    "Place the GTT on SUNPHARMA 1800PE with /zerodha-gtt-order; cancel the CUMMINSIND trailing GTT once its buy-back at 6.35 fills."
+   ],
+   "metrics": {
+    "gtts_placed_total_today": 12,
+    "contracts_covered": 77,
+    "shorts_without_gtt": 1
+   }
   }
  ]
 }

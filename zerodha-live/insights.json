@@ -1,9 +1,9 @@
 {
- "as_of": "26 Nov 09:50 (positions and GTTs live)",
- "written_at": "2026-11-26T09:47:41+05:30",
+ "as_of": "26 Nov 09:55 (positions and GTTs live)",
+ "written_at": "2026-11-26T09:51:35+05:30",
  "confidence": "low",
  "maturity": "41 positions opened since the cut-off, 5 closed trades: the swing edge cannot be judged yet.",
- "headline": "The 3 stale GTTs are deleted and the 8 new shorts are protected; 4 more shorts opened since (SHRIRAMFIN, DABUR, APOLLOHOSP, GODREJCP) still need GTTs.",
+ "headline": "Coverage is 77 contracts with 0 scan findings; one newly opened short (SUNPHARMA 1800PE) still needs a GTT.",
  "points": [
   {
    "label": "Signals",
@@ -11,11 +11,11 @@
   },
   {
    "label": "Options process",
-   "text": "GTT coverage is 73 contracts with 0 scan findings: the 3 stale GTTs (APLAPOLLO 1920CE, NATIONALUM 280PE, NMDC 62PE) were deleted and two-leg GTTs were placed on ENRIN, FORTIS, HDFCBANK, MAZDOCK, NATIONALUM 345CE, NMDC 77CE, PREMIERENE and TORNTPHARM. Four spreads opened after the pull still have no GTT. CUMMINSIND's buy-back at 6.35 is resting and its old trailing stop (50) is still live."
+   "text": "77 GTT contracts, 0 scan findings: stale GTTs deleted and protective two-leg GTTs placed on 12 new shorts this morning (ENRIN, FORTIS, HDFCBANK, MAZDOCK, NATIONALUM, NMDC, PREMIERENE, TORNTPHARM, APOLLOHOSP, DABUR, GODREJCP, SHRIRAMFIN). SUNPHARMA 1800PE opened after the last pull has no GTT yet. CUMMINSIND's buy-back at 6.35 is resting and its old trailing stop is still live."
   },
   {
    "label": "Risk",
-   "text": "Four new short puts (SHRIRAMFIN, DABUR, APOLLOHOSP, GODREJCP) have a hedge but no stop until their GTTs are placed. Financial Services is still above its 40% limit."
+   "text": "One short put (SUNPHARMA 1800PE) has no stop until its GTT is placed. Financial Services remains above its 40% limit."
   },
   {
    "label": "Book",
@@ -26,5 +26,5 @@
    "text": "5 closed trades against 20.2% CAGR, -21.3% drawdown, 41% win rate: too early to compare. Watch the first 30 closed trades."
   }
  ],
- "action": "Place GTTs on SHRIRAMFIN 860PE, DABUR 375PE, APOLLOHOSP 8400PE and GODREJCP 870PE with /zerodha-gtt-order; cancel the CUMMINSIND trailing GTT once its buy-back at 6.35 fills."
+ "action": "Place the GTT on SUNPHARMA 1800PE with /zerodha-gtt-order; cancel the CUMMINSIND trailing GTT once its buy-back at 6.35 fills."
 }

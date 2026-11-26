@@ -1,6 +1,86 @@
 {
- "fetched_at": "2026-11-26T09:47:13+05:30",
+ "fetched_at": "2026-11-26T09:51:28+05:30",
  "active": {
+  "SHRIRAMFIN26DEC860PE": [
+   {
+    "id": 346417676,
+    "type": "two-leg",
+    "trigger_values": [
+     2.6,
+     17.75
+    ],
+    "qty": 825
+   },
+   {
+    "id": 346417676,
+    "type": "two-leg",
+    "trigger_values": [
+     2.6,
+     17.75
+    ],
+    "qty": 825
+   }
+  ],
+  "GODREJCP26DEC870PE": [
+   {
+    "id": 346417601,
+    "type": "two-leg",
+    "trigger_values": [
+     2.7,
+     18.45
+    ],
+    "qty": 1000
+   },
+   {
+    "id": 346417601,
+    "type": "two-leg",
+    "trigger_values": [
+     2.7,
+     18.45
+    ],
+    "qty": 1000
+   }
+  ],
+  "DABUR26DEC375PE": [
+   {
+    "id": 346417517,
+    "type": "two-leg",
+    "trigger_values": [
+     0.8,
+     5.65
+    ],
+    "qty": 2500
+   },
+   {
+    "id": 346417517,
+    "type": "two-leg",
+    "trigger_values": [
+     0.8,
+     5.65
+    ],
+    "qty": 2500
+   }
+  ],
+  "APOLLOHOSP26DEC8400PE": [
+   {
+    "id": 346417443,
+    "type": "two-leg",
+    "trigger_values": [
+     15.65,
+     107.75
+    ],
+    "qty": 250
+   },
+   {
+    "id": 346417443,
+    "type": "two-leg",
+    "trigger_values": [
+     15.65,
+     107.75
+    ],
+    "qty": 250
+   }
+  ],
   "TORNTPHARM26DEC4600PE": [
    {
     "id": 346414943,
@@ -1087,7 +1167,7 @@
     "type": "trailing-two-leg",
     "trigger_values": [
      3.05,
-     20.05
+     18.05
     ],
     "qty": 825
    },
@@ -1096,7 +1176,7 @@
     "type": "trailing-two-leg",
     "trigger_values": [
      3.05,
-     20.05
+     18.05
     ],
     "qty": 825
    }
@@ -1453,6 +1533,118 @@
   ]
  },
  "gtts": [
+  {
+   "id": 346417676,
+   "type": "two-leg",
+   "created_at": "2026-11-26T09:51:17+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "SHRIRAMFIN26DEC860PE",
+   "last_price": 5.9,
+   "triggers": [
+    2.6,
+    17.75
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 825,
+     "price": 2.7,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 825,
+     "price": 19.35,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 346417601,
+   "type": "two-leg",
+   "created_at": "2026-11-26T09:51:11+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "GODREJCP26DEC870PE",
+   "last_price": 6.7,
+   "triggers": [
+    2.7,
+    18.45
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 1000,
+     "price": 2.8,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 1000,
+     "price": 20.1,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 346417517,
+   "type": "two-leg",
+   "created_at": "2026-11-26T09:51:05+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "DABUR26DEC375PE",
+   "last_price": 2.05,
+   "triggers": [
+    0.8,
+    5.65
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 2500,
+     "price": 0.85,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 2500,
+     "price": 6.15,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 346417443,
+   "type": "two-leg",
+   "created_at": "2026-11-26T09:50:59+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "APOLLOHOSP26DEC8400PE",
+   "last_price": 40,
+   "triggers": [
+    15.65,
+    107.75
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 250,
+     "price": 16.15,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 250,
+     "price": 117.5,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
   {
    "id": 346414943,
    "type": "two-leg",
@@ -2974,7 +3166,7 @@
    "last_price": 8.05,
    "triggers": [
     3.05,
-    20.05
+    18.05
    ],
    "orders": [
     {
@@ -2987,7 +3179,7 @@
     {
      "side": "BUY",
      "qty": 825,
-     "price": 21.95,
+     "price": 19.95,
      "product": "NRML",
      "order_type": "LIMIT"
     }
