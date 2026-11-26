@@ -10,7 +10,7 @@ Sections (ranked by the research report, `Systematic trader insight metrics`):
   adherence   signal ledger from the git history of dhan_live_signals.json matched to the fills ledger: filled / missed / pending, slippage, delay
   leakage     fill rate, slippage and the move of missed signals since they fired
   bootstrap   live closed trades vs equal-sized samples from the post-2022 backtest pool (percentile of mean return and of win rate), with the evidence tier
-  openrisk    open book: positions below -6% (add-on exposure), loss if every open position exits on its Supertrend line, sector concentration
+  openrisk    open book: positions below -6% (deep losers: held to the Supertrend line; add-on exposure only while the add-on rule is active), loss if every open position exits on its Supertrend line, sector concentration
   trend       share of holdings green, fresh signals today, own-history percentile once 10 days exist
   options     realised options P&L for the day (stock options, no Nifty index), stress grid (market and single-stock shocks), spread stop that cannot bind,
               structure-vs-colour mismatches, breakeven win rate of the 3x stop / 60% target, cumulative closed-contract ledger by structure
@@ -374,18 +374,229 @@ def options(sig, cc):
     return out
 
 
+# --------------------------------------------------------------------------- rules in force (user, 2026-11-26: the insights follow MY rules, read from data/rules.json)
+def rules_in_force(sig, fills):
+    """The rules the book is being run under today, straight from rules.json, plus deviations from them. The model judges adherence against THIS, never against a rule it remembers."""
+    r = load(DATA / "rules.json", {}) or {}
+    asof = sig["market_data_date"]
+    off = r.get("add_on_off_from")
+    active = (not off) or asof < off
+    days_left = (datetime.strptime(off, "%Y-%m-%d") - datetime.strptime(asof, "%Y-%m-%d")).days if off and active else None
+    dev, held = [], {}
+    for f in sorted(fills, key=lambda x: x["date"]):
+        s, q = f["symbol"], f.get("qty")
+        was_open = held.get(s, 0) > 0 or f.get("kind") == "addon"
+        if f["action"] == "BUY":
+            if off and f["date"] >= off and was_open and f.get("kind") != "entry":
+                dev.append({"date": f["date"], "symbol": s, "what": "BUY added to an open swing position while averaging is off"})
+            held[s] = held.get(s, 0) + (q if q is not None else 1)
+        else:
+            held[s] = 0 if q is None else max(0, held.get(s, 0) - q)
+    return {"add_on_off_from": off, "add_on_active_today": active, "days_until_add_on_off": days_left,
+            "add_on_rule_when_active": "green and P&L at or below %s%%: %s of qty (min 1), once per %s days" % (r.get("add_trigger_pct"), r.get("add_fraction"), r.get("add_cooldown_days")),
+            "swing_add_on_deviations_n": len(dev), "swing_add_on_deviations": dev[:8],
+            "exit_rule": "Supertrend red, whole position, any P&L (this is the stop-loss, so a loser is never averaged once add-ons are off)",
+            "sizing": {"base_position_rs": r.get("base_position_rs"), "increment_rs": r.get("position_increment_rs"), "per_closed_trades": r.get("position_increment_trades"), "starting_capital_rs": r.get("starting_capital")},
+            "entry_window_trading_days": r.get("entry_window_trading_days"),
+            "note": "Judge the book against these rules only. After the add-on off date any BUY on an already-open swing stock is a deviation; do not suggest averaging a swing loser. Investment-share averaging (ND) is a separate, unchanged rule."}
+
+
+# --------------------------------------------------------------------------- the four insight sections (user, 2026-11-26): Swing, Options, Events, Risk management
+MONTH_SEASON = {1: "Q3 results season (mid-Jan to mid-Feb)", 2: "Q3 results tail and interim dividends", 3: "quiet; year-end, few results", 4: "Q4 results season starts (mid-Apr)",
+                5: "Q4 results peak and final-dividend record dates", 6: "final-dividend ex-dates tail", 7: "Q1 results season (mid-Jul to mid-Aug)", 8: "Q1 results tail, dividend ex-dates",
+                9: "quiet between seasons; interim dividends", 10: "Q2 results season starts (mid-Oct)", 11: "Q2 results tail (to mid-Nov), interim-dividend ex-dates", 12: "quiet; year-end positioning"}
+
+
+def _tstats(rows):
+    n = len(rows)
+    if not n:
+        return {"n": 0, "tier": tier(0)}
+    w = [c for c in rows if c["pl_rs"] > 0]
+    l = [c for c in rows if c["pl_rs"] < 0]
+    gw, gl = sum(c["pl_rs"] for c in w), abs(sum(c["pl_rs"] for c in l))
+    return {"n": n, "tier": tier(n), "wins": len(w), "losses": len(l), "win_rate_pct": r2(len(w) / n * 100, 1), "pnl_rs": r2(sum(c["pl_rs"] for c in rows), 0),
+            "avg_win_pct": r2(np.mean([c["pl_pct"] for c in w])) if w else None, "avg_loss_pct": r2(np.mean([c["pl_pct"] for c in l])) if l else None,
+            "expectancy_pct": r2(np.mean([c["pl_pct"] for c in rows])), "profit_factor": r2(gw / gl) if gl else None,
+            "avg_hold_days": r2(float(np.mean([c["hold_days"] for c in rows])), 1) if all(c.get("hold_days") is not None for c in rows) else None}
+
+
+def market_regime(asof):
+    """Index closes up to the signals' market data date only (Yahoo can return a partial bar for a later day)."""
+    out = {}
+    try:
+        import yfinance as yf
+        n = yf.Ticker("^NSEI").history(period="1y")["Close"].dropna()
+        n = n[n.index.strftime("%Y-%m-%d") <= asof]
+        c = float(n.iloc[-1])
+        out.update(nifty_close=r2(c, 0), nifty_vs_50dma_pct=r2((c / float(n.tail(50).mean()) - 1) * 100, 1), nifty_vs_200dma_pct=r2((c / float(n.tail(200).mean()) - 1) * 100, 1),
+                   nifty_20d_return_pct=r2((c / float(n.iloc[-21]) - 1) * 100, 1))
+        out["trend_label"] = ("uptrend (above both the 50 and 200 day averages)" if c > n.tail(50).mean() and c > n.tail(200).mean() else "mixed (above the 200 day but below the 50 day average)" if c > n.tail(200).mean() else "downtrend (below the 200 day average)")
+        v = yf.Ticker("^INDIAVIX").history(period="1y")["Close"].dropna()
+        v = v[v.index.strftime("%Y-%m-%d") <= asof]
+        out.update(vix=r2(float(v.iloc[-1])), vix_chg_pct=r2((float(v.iloc[-1]) / float(v.iloc[-2]) - 1) * 100, 1), vix_1y_percentile_pct=r2(float((v <= v.iloc[-1]).mean() * 100), 0),
+                   vix_1y_low=r2(float(v.min())), vix_1y_high=r2(float(v.max())))
+    except Exception as e:  # noqa: BLE001
+        out["error"] = f"{type(e).__name__}: {e}"
+    return out
+
+
+def swing_section(sig, fills, facts, regime):
+    asof = sig["market_data_date"]
+    ym = asof[:7]
+    cl = [c for c in sig.get("closed_trades", []) if c.get("exit_date")]
+    month = [c for c in cl if c["exit_date"][:7] == ym]
+    by_month = {}
+    for c in cl:
+        by_month.setdefault(c["exit_date"][:7], []).append(c)
+    prior = [c for c in cl if c["exit_date"][:7] < ym]
+    today_x = [c for c in cl if c["exit_date"] == asof]
+    holds = sig.get("holds", [])
+    ref = facts.get("backtest_reference") or {}
+    bt_exp = r2(ref.get("win_rate_pct", 41) / 100 * ref.get("avg_win_pct", 33.1) + (1 - ref.get("win_rate_pct", 41) / 100) * ref.get("avg_loss_pct", -9.0))
+    m, p = _tstats(month), _tstats(prior)
+    better = None
+    if m["n"] and p["n"]:
+        better = {"win_rate_change_pts": r2(m["win_rate_pct"] - p["win_rate_pct"], 1), "expectancy_change_pct_pts": r2(m["expectancy_pct"] - p["expectancy_pct"]),
+                  "avg_loss_change_pct_pts": r2((m["avg_loss_pct"] or 0) - (p["avg_loss_pct"] or 0)) if m["avg_loss_pct"] is not None and p["avg_loss_pct"] is not None else None,
+                  "hold_days_change": r2(m["avg_hold_days"] - p["avg_hold_days"], 1) if m["avg_hold_days"] is not None and p["avg_hold_days"] is not None else None,
+                  "note": "Month vs all earlier closed trades; direction only until each side has 30 trades."}
+    adh = facts.get("adherence_leakage") or {}
+    return {"month": ym, "month_trades": m, "earlier_trades": p, "by_month": {k: _tstats(v) for k, v in sorted(by_month.items())}, "improvement_vs_earlier": better,
+            "process": {"overall_fill_rate_pct": adh.get("overall_fill_rate_pct"), "decided_n": adh.get("overall_decided_n"),
+                        "entry_avg_slippage_pct": ((adh.get("by_kind") or {}).get("entry") or {}).get("avg_slippage_pct")},
+            "today": {"entries_signalled": len(sig.get("entries", [])), "entry_names": [e["symbol"] for e in sig.get("entries", [])][:12],
+                      "exits_signalled": len(sig.get("exits", [])), "exit_names": [x["symbol"] for x in sig.get("exits", [])][:12],
+                      "buy_fills_today": sum(1 for f in fills if f["date"] == asof and f["action"] == "BUY"), "sell_fills_today": sum(1 for f in fills if f["date"] == asof and f["action"] == "SELL"),
+                      "realised_today": {"n": len(today_x), "pnl_rs": r2(sum(c["pl_rs"] for c in today_x), 0), "trades": [{"symbol": c["symbol"], "pl_rs": r2(c["pl_rs"], 0), "pl_pct": c["pl_pct"]} for c in today_x][:12]},
+                      "exit_signals_open_pnl_rs": r2(sum(x.get("notional_pl_rs", 0) for x in sig.get("exits", [])), 0)},
+            "open_book": {"positions": len(holds), "in_profit": sum(1 for h in holds if h.get("pl_pct", 0) > 0), "in_profit_pct": r2(sum(1 for h in holds if h.get("pl_pct", 0) > 0) / len(holds) * 100, 1) if holds else None,
+                          "unrealised_pnl_rs": r2(sum(h.get("notional_pl_rs", 0) for h in holds), 0), "green_share_pct": (facts.get("trend") or {}).get("green_share_pct")},
+            "robustness": {"regime": regime, "live_month_expectancy_pct": m.get("expectancy_pct"), "backtest_expectancy_per_trade_pct": bt_exp,
+                           "backtest_post_2022_cagr_pct": "about 20 to 23 (walk-forward 2026-11-24)", "bootstrap_percentile_mean": (facts.get("bootstrap") or {}).get("mean_percentile"),
+                           "note": "A trend-following book earns in trends: judge the month against the regime above, not in isolation. A low win rate (backtest 41%) is normal; the avg win / avg loss ratio is what carries it."}}
+
+
+def options_today(sig, cc, facts, regime):
+    asof = sig["market_data_date"]
+    ivp = (load(DATA / "ivp.json", {}) or {}).get("rows", {})
+    rt = (facts.get("options") or {}).get("realised_today") or {}
+    ledger_p = DATA / "option_ledger.json"
+    led = load(ledger_p, {"entries": []}) or {"entries": []}
+    changed = False
+    for e in led["entries"]:
+        if e.get("date") == asof and "ivp" not in e:
+            e["ivp"] = (ivp.get(e["symbol"]) or {}).get("ivp"); e["vix"] = regime.get("vix"); changed = True
+    if changed:
+        ledger_p.write_text(json.dumps(led, indent=0))
+    ent = led["entries"]
+    by_stock = {}
+    for e in ent:
+        d = by_stock.setdefault(e["symbol"], {"n": 0, "pnl_rs": 0.0, "wins": 0}); d["n"] += 1; d["pnl_rs"] += e["pnl_rs"]; d["wins"] += 1 if e["pnl_rs"] > 0 else 0
+    ranked = sorted(by_stock.items(), key=lambda kv: kv[1]["pnl_rs"], reverse=True)
+    fav = [{"symbol": k, "closed": v["n"], "pnl_rs": r2(v["pnl_rs"], 0), "win_rate_pct": r2(v["wins"] / v["n"] * 100, 0)} for k, v in ranked[:3]]
+    worst = [{"symbol": k, "closed": v["n"], "pnl_rs": r2(v["pnl_rs"], 0), "win_rate_pct": r2(v["wins"] / v["n"] * 100, 0)} for k, v in ranked[::-1][:3] if v["pnl_rs"] < 0]
+    with_ivp = [e for e in ent if e.get("ivp") is not None]
+    hi, lo = [e for e in with_ivp if e["ivp"] >= 50], [e for e in with_ivp if e["ivp"] < 50]
+    rich = []
+    open_syms = {s for s, v in (cc.get("stocks") or {}).items() if v.get("legs")} if isinstance(cc.get("stocks"), dict) else {v["symbol"] for v in cc.get("stocks", []) if v.get("legs")}
+    stocks = cc.get("stocks", {}); stocks = stocks.values() if isinstance(stocks, dict) else stocks
+    for v in stocks:
+        s = v["symbol"]; iv = ivp.get(s)
+        if iv and iv.get("ivp") is not None and v.get("desired") and not v.get("legs"):
+            rich.append({"symbol": s, "ivp": iv["ivp"], "iv": iv.get("iv"), "colour": v.get("colour"), "wants": v.get("desired")})
+    rich.sort(key=lambda x: -x["ivp"])
+    allivp = [x["ivp"] for x in ivp.values() if x.get("ivp") is not None]
+    contracts = rt.get("contracts") or []
+    return {"today": {"contracts_closed": rt.get("contracts_closed"), "pnl_rs": rt.get("pnl_rs"), "winners": sum(1 for c in contracts if c["pnl_rs"] > 0), "losers": sum(1 for c in contracts if c["pnl_rs"] < 0),
+                      "contracts": contracts[:10], "ivp_of_closed_stocks": {s: (ivp.get(s) or {}).get("ivp") for s in (rt.get("by_stock") or {})}},
+            "vix": {k: regime.get(k) for k in ("vix", "vix_chg_pct", "vix_1y_percentile_pct", "vix_1y_low", "vix_1y_high")},
+            "iv_regime": {"universe_median_ivp": r2(float(np.median(allivp)), 0) if allivp else None, "stocks_ivp_70_plus": sum(1 for x in allivp if x >= 70), "stocks_with_ivp": len(allivp)},
+            "ledger": {"closed_contracts": len(ent), "tier": tier(len(ent)), "total_pnl_rs": r2(sum(e["pnl_rs"] for e in ent), 0), "favourites": fav, "laggards": worst,
+                       "ivp_ge_50": {"n": len(hi), "pnl_rs": r2(sum(e["pnl_rs"] for e in hi), 0)}, "ivp_lt_50": {"n": len(lo), "pnl_rs": r2(sum(e["pnl_rs"] for e in lo), 0)},
+                       "note": "Ledger starts 2026-11-26 (brokers keep no history); IVP at close is stored from that day, so the IVP and VIX split needs about 30 closed contracts per bucket. Favourites need at least 5 closed per stock."},
+            "premium_rich_no_position": rich[:6],
+            "strategy_profitable": {"breakeven_win_rate_pct": (facts.get("options") or {}).get("breakeven_win_rate_pct"), "open_short_legs": (facts.get("options") or {}).get("short_legs"),
+                                    "structure_vs_colour": (facts.get("options") or {}).get("structure_vs_colour")}}
+
+
+def events_section(sig, cc):
+    asof = datetime.strptime(sig["market_data_date"], "%Y-%m-%d").date()
+    ev = (load(DATA / "option_events.json", {}) or {}).get("stocks", {})
+    stocks = cc.get("stocks", {}); stocks = stocks.values() if isinstance(stocks, dict) else stocks
+    legs_by = {v["symbol"]: v.get("legs") or [] for v in stocks}
+    held = {h["symbol"] for h in sig.get("holds", [])}
+    rows, cal = [], {}
+    for s, v in ev.items():
+        for kind, key in (("results", "earnings"), ("ex-dividend", "ex_div")):
+            d = v.get(key)
+            if not d:
+                continue
+            dd = datetime.strptime(d, "%Y-%m-%d").date(); days = (dd - asof).days
+            if 0 <= days <= 90:
+                cal.setdefault(d[:7], {"results": 0, "ex-dividend": 0})[kind] += 1
+            if 0 <= days <= 21:
+                lg = legs_by.get(s, [])
+                rows.append({"symbol": s, "kind": kind, "date": d, "days": days, "estimated": bool(v.get(key + "_estimated")) if kind == "ex-dividend" else (v.get("earnings_source") != "yahoo calendar"),
+                             "open_option_legs": len(lg), "short_legs": sum(1 for l in lg if l["side"] == "SHORT"), "swing_holding": s in held,
+                             "legs_expiring_after_event": sorted({l["expiry"] for l in lg if l["expiry"] >= d})[:3]})
+    rows.sort(key=lambda r: (not r["open_option_legs"], r["days"]))
+    exposed = [r for r in rows if r["open_option_legs"] and r["legs_expiring_after_event"]]
+    nxt = (asof.replace(day=1) + timedelta(days=32)).replace(day=1)
+    return {"as_of": str(asof), "this_month_season": MONTH_SEASON[asof.month], "next_month_season": MONTH_SEASON[nxt.month],
+            "exposed_open_positions": exposed[:12], "exposed_open_positions_n": len(exposed), "next_21_days_n": len(rows), "next_21_days": rows[:15],
+            "calendar_next_90d": dict(sorted(cal.items())), "event_alerts_open": [a["symbol"] + " " + a["type"] for a in cc.get("alerts", []) if "event" in (a.get("type") or "").lower() or "dividend" in (a.get("concern") or "").lower() or "results" in (a.get("concern") or "").lower()][:10],
+            "note": "Dates come from Yahoo (results) and last year's ex-dividend date plus one year (estimates are flagged). A short leg that expires after the event carries the event gap; the rule is to close it before the results or ex-dividend date. Stocks outside the option universe have no event data here: check results dates before adding to a swing position."}
+
+
+def risk_daily(sig, cc, facts, events):
+    g = load(DATA / "guardrails.json", {}) or {}
+    orders = (load(DATA / "orders_snapshot.json", {}) or {}).get("orders", [])
+    pend_sell = {o["symbol"] for o in orders if o.get("side") == "SELL"}
+    exits_without_order = [x["symbol"] for x in sig.get("exits", []) if x["symbol"] not in pend_sell]
+    nostop = [a["symbol"] for a in cc.get("alerts", []) if (a.get("type") or "") in ("No stop placed", "No GTT placed", "Invalid stop order", "Invalid GTT")]
+    opp = [a["symbol"] for a in cc.get("alerts", []) if (a.get("type") or "") == "Exit"]
+    rf = facts.get("rules_in_force") or {}
+    opt, orisk = facts.get("options") or {}, facts.get("openrisk") or {}
+    checks = [("no guardrail BLOCK", (g.get("counts") or {}).get("block", 0) == 0, f"{(g.get('counts') or {}).get('block', 0)} blocks, {(g.get('counts') or {}).get('warn', 0)} warnings"),
+              ("every exit signal has an order", not exits_without_order, ", ".join(exits_without_order[:6]) or "all ordered"),
+              ("every short option has a stop", not nostop, ", ".join(sorted(set(nostop))[:6]) or "all stopped"),
+              ("no option structure against its colour", not opp, ", ".join(sorted(set(opp))[:6]) or "none"),
+              ("no add-on deviation", rf.get("swing_add_on_deviations_n", 0) == 0, f"{rf.get('swing_add_on_deviations_n', 0)} deviations"),
+              ("no open short leg crosses a results or ex-dividend date", events.get("exposed_open_positions_n", 0) == 0, f"{events.get('exposed_open_positions_n', 0)} exposed")]
+    passed = sum(1 for _, ok, _ in checks if ok)
+    return {"discipline_checks": [{"check": c, "pass": ok, "detail": d} for c, ok, d in checks], "checks_passed": passed, "checks_total": len(checks),
+            "guardrail_status": g.get("status"), "guardrail_top": [f["msg"] for f in (g.get("findings") or []) if f.get("level") in ("BLOCK", "WARN")][:4] if isinstance(g.get("findings"), list) else [],
+            "swing_risk": {"deep_losers_n": orisk.get("below_minus6_count"), "deep_losers_share_pct": orisk.get("below_minus6_share_pct"), "pnl_if_all_hit_line_rs": orisk.get("pnl_if_all_hit_line_rs"),
+                           "extra_loss_if_all_hit_line_rs": orisk.get("extra_loss_if_all_hit_line_rs"), "top_sector": (orisk.get("top_sectors") or [{}])[0]},
+            "option_risk": {"stress_pct_of_capital": (opt.get("stress") or {}).get("grid_pct_of_capital"), "worst_single_stock_gap": ((opt.get("stress") or {}).get("single_stock_gap_worst") or [None])[0],
+                            "naked_call_stocks": (opt.get("defined_risk") or {}).get("naked_call_stocks")},
+            "note": "Discipline score is counted by code from the six checks above; the narrator lists the failed ones first and does not add checks of its own."}
+
+
 def main():
     sig = load(ROOT / "zerodha_live_signals.json")
     cc = load(ROOT / "covered_call_signals.json", {}) or {}
     fills = az_fills(sig)
     facts = {"broker": "AZ", "generated_at": datetime.now(IST).isoformat(timespec="seconds"), "as_of": sig["market_data_date"], "scope": "AZ swing shares and AZ stock options; Nifty index options are outside by decision"}
     for name, fn in (("adherence_leakage", lambda: adherence_leakage(sig, git_signal_history(), fills)), ("bootstrap", lambda: bootstrap(sig, fills)), ("openrisk", lambda: open_risk(sig)),
-                     ("trend", lambda: trend(sig)), ("options", lambda: options(sig, cc))):
+                     ("trend", lambda: trend(sig)), ("options", lambda: options(sig, cc)), ("rules_in_force", lambda: rules_in_force(sig, fills))):
         try:
             facts[name] = fn()
         except Exception as e:  # noqa: BLE001
             facts[name] = {"error": f"{type(e).__name__}: {e}"}
             print(f"WARNING {name}: {facts[name]['error']}", file=sys.stderr)
+    regime = market_regime(sig["market_data_date"])
+    for name, fn in (("swing", lambda: swing_section(sig, fills, facts, regime)), ("options_today", lambda: options_today(sig, cc, facts, regime)), ("events", lambda: events_section(sig, cc))):
+        try:
+            facts[name] = fn()
+        except Exception as e:  # noqa: BLE001
+            facts[name] = {"error": f"{type(e).__name__}: {e}"}
+            print(f"WARNING {name}: {facts[name]['error']}", file=sys.stderr)
+    try:
+        facts["risk_daily"] = risk_daily(sig, cc, facts, facts.get("events") or {})
+    except Exception as e:  # noqa: BLE001
+        facts["risk_daily"] = {"error": f"{type(e).__name__}: {e}"}
+        print(f"WARNING risk_daily: {facts['risk_daily']['error']}", file=sys.stderr)
     try:
         av = pd.read_csv(REPO / "swing-backtest" / "results" / "addon_variants.csv").set_index("variant")
         facts["edge_tests"] = {"addon_nd_backtest": {"tested_on": "ND universe, 10 years (AZ and the investment-share averaging are untested)", "cagr_without_addons_pct": r2(av.loc["trig:off", "cagr%"]), "cagr_live_rule_pct": r2(av.loc["trig:-6", "cagr%"]),
@@ -393,6 +604,13 @@ def main():
                                                       "max_dd_doubling_pct": r2(av.loc["frac:1.0", "max_dd%"]), "pf_without_addons": r2(av.loc["trig:off", "pf"]), "pf_doubling": r2(av.loc["frac:1.0", "pf"])}}
     except Exception as e:  # noqa: BLE001
         facts["edge_tests"] = {"error": f"{type(e).__name__}: {e}"}
+    try:
+        rf = facts.get("rules_in_force") or {}
+        if isinstance(facts.get("edge_tests"), dict) and rf.get("add_on_off_from"):
+            facts["edge_tests"]["add_on_rule_status"] = ("Swing add-ons %s from %s by the user's rule; the 10-year ND backtest shows no CAGR edge from averaging (see the figures above), so the rule change costs nothing."
+                                                         % ("switch off" if rf.get("add_on_active_today") else "are off", rf["add_on_off_from"]))
+    except Exception:  # noqa: BLE001
+        pass
     facts["backtest_reference"] = {"cagr_pct": 20.2, "max_drawdown_pct": -21.3, "profit_factor": 1.75, "win_rate_pct": 41.0, "slippage_assumption_pct": 0.1, "source": "CLAUDE.md backtest reference (AZ flip-today, 10 years, 6% idle cash, costs + 0.1% slippage)"}
     (DATA / "insights_facts.json").write_text(json.dumps(facts, indent=1, default=str))
     a, b, o = facts["adherence_leakage"], facts["bootstrap"], facts["options"]

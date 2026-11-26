@@ -1,6 +1,6 @@
 {
  "broker": "ND",
- "generated_at": "2026-11-26T23:27:41+05:30",
+ "generated_at": "2026-11-27T00:01:56+05:30",
  "as_of": "2026-11-26",
  "scope": "ND swing shares and ND stock options; Nifty index options are outside by decision",
  "adherence_leakage": {
@@ -417,6 +417,351 @@
   "breakeven_win_rate_pct": 76.9,
   "breakeven_note": "Loss at the stop = (multiple - 1) x credit, gain at the target = decay x credit, before gaps, slippage and costs."
  },
+ "rules_in_force": {
+  "add_on_off_from": "2026-11-30",
+  "add_on_active_today": true,
+  "days_until_add_on_off": 4,
+  "add_on_rule_when_active": "green and P&L at or below -6.0%: 0.1 of qty (min 1), once per 7 days",
+  "swing_add_on_deviations_n": 0,
+  "swing_add_on_deviations": [],
+  "exit_rule": "Supertrend red, whole position, any P&L (this is the stop-loss, so a loser is never averaged once add-ons are off)",
+  "sizing": {
+   "base_position_rs": 1000,
+   "increment_rs": 1000,
+   "per_closed_trades": 100,
+   "starting_capital_rs": 2000000
+  },
+  "entry_window_trading_days": null,
+  "note": "Judge the book against these rules only. After the add-on off date any BUY on an already-open swing stock is a deviation; do not suggest averaging a swing loser. Investment-share averaging (ND) is a separate, unchanged rule."
+ },
+ "swing": {
+  "month": "2026-11",
+  "month_trades": {
+   "n": 15,
+   "tier": "weak",
+   "wins": 2,
+   "losses": 13,
+   "win_rate_pct": 13.3,
+   "pnl_rs": -2333.0,
+   "avg_win_pct": 1.5,
+   "avg_loss_pct": -11.81,
+   "expectancy_pct": -10.04,
+   "profit_factor": 0.01,
+   "avg_hold_days": 16.1
+  },
+  "earlier_trades": {
+   "n": 1,
+   "tier": "anecdote",
+   "wins": 0,
+   "losses": 1,
+   "win_rate_pct": 0.0,
+   "pnl_rs": -75.0,
+   "avg_win_pct": null,
+   "avg_loss_pct": -8.83,
+   "expectancy_pct": -8.83,
+   "profit_factor": 0.0,
+   "avg_hold_days": 1.0
+  },
+  "by_month": {
+   "2026-10": {
+    "n": 1,
+    "tier": "anecdote",
+    "wins": 0,
+    "losses": 1,
+    "win_rate_pct": 0.0,
+    "pnl_rs": -75.0,
+    "avg_win_pct": null,
+    "avg_loss_pct": -8.83,
+    "expectancy_pct": -8.83,
+    "profit_factor": 0.0,
+    "avg_hold_days": 1.0
+   },
+   "2026-11": {
+    "n": 15,
+    "tier": "weak",
+    "wins": 2,
+    "losses": 13,
+    "win_rate_pct": 13.3,
+    "pnl_rs": -2333.0,
+    "avg_win_pct": 1.5,
+    "avg_loss_pct": -11.81,
+    "expectancy_pct": -10.04,
+    "profit_factor": 0.01,
+    "avg_hold_days": 16.1
+   }
+  },
+  "improvement_vs_earlier": {
+   "win_rate_change_pts": 13.3,
+   "expectancy_change_pct_pts": -1.21,
+   "avg_loss_change_pct_pts": -2.98,
+   "hold_days_change": 15.1,
+   "note": "Month vs all earlier closed trades; direction only until each side has 30 trades."
+  },
+  "process": {
+   "overall_fill_rate_pct": 58.1,
+   "decided_n": 43,
+   "entry_avg_slippage_pct": 1.37
+  },
+  "today": {
+   "entries_signalled": 5,
+   "entry_names": [
+    "ACE",
+    "ANGELONE",
+    "BAJAJHLDNG",
+    "PRESTIGE",
+    "SCPL"
+   ],
+   "exits_signalled": 2,
+   "exit_names": [
+    "SPECTRUM",
+    "TANLA"
+   ],
+   "buy_fills_today": 10,
+   "sell_fills_today": 7,
+   "realised_today": {
+    "n": 7,
+    "pnl_rs": -896.0,
+    "trades": [
+     {
+      "symbol": "SSWL",
+      "pl_rs": 19.0,
+      "pl_pct": 1.99
+     },
+     {
+      "symbol": "SGFIN",
+      "pl_rs": -85.0,
+      "pl_pct": -11.85
+     },
+     {
+      "symbol": "SGMART",
+      "pl_rs": -25.0,
+      "pl_pct": -2.93
+     },
+     {
+      "symbol": "GUFICBIO",
+      "pl_rs": -146.0,
+      "pl_pct": -10.52
+     },
+     {
+      "symbol": "NAZARA",
+      "pl_rs": -89.0,
+      "pl_pct": -10.39
+     },
+     {
+      "symbol": "ESAFSFB",
+      "pl_rs": -128.0,
+      "pl_pct": -13.13
+     },
+     {
+      "symbol": "NILKAMAL",
+      "pl_rs": -443.0,
+      "pl_pct": -10.23
+     }
+    ]
+   },
+   "exit_signals_open_pnl_rs": -29.0
+  },
+  "open_book": {
+   "positions": 119,
+   "in_profit": 69,
+   "in_profit_pct": 58.0,
+   "unrealised_pnl_rs": 4530.0,
+   "green_share_pct": 100.0
+  },
+  "robustness": {
+   "regime": {
+    "nifty_close": 25819.0,
+    "nifty_vs_50dma_pct": 9.6,
+    "nifty_vs_200dma_pct": 7.6,
+    "nifty_20d_return_pct": 13.5,
+    "trend_label": "uptrend (above both the 50 and 200 day averages)",
+    "vix": 17.67,
+    "vix_chg_pct": -0.2,
+    "vix_1y_percentile_pct": 80.0,
+    "vix_1y_low": 9.15,
+    "vix_1y_high": 27.89
+   },
+   "live_month_expectancy_pct": -10.04,
+   "backtest_expectancy_per_trade_pct": 8.26,
+   "backtest_post_2022_cagr_pct": "about 20 to 23 (walk-forward 2026-11-24)",
+   "bootstrap_percentile_mean": 28.1,
+   "note": "A trend-following book earns in trends: judge the month against the regime above, not in isolation. A low win rate (backtest 41%) is normal; the avg win / avg loss ratio is what carries it."
+  }
+ },
+ "options_today": {
+  "today": {
+   "contracts_closed": 2,
+   "pnl_rs": 5600.0,
+   "winners": 2,
+   "losers": 0,
+   "contracts": [
+    {
+     "contract": "HCLTECH-Dec2026-1240-PE",
+     "pnl_rs": 2780.0
+    },
+    {
+     "contract": "BSE-Dec2026-3200-PE",
+     "pnl_rs": 2820.0
+    }
+   ],
+   "ivp_of_closed_stocks": {
+    "HCLTECH": 61,
+    "BSE": 15
+   }
+  },
+  "vix": {
+   "vix": 17.67,
+   "vix_chg_pct": -0.2,
+   "vix_1y_percentile_pct": 80.0,
+   "vix_1y_low": 9.15,
+   "vix_1y_high": 27.89
+  },
+  "iv_regime": {
+   "universe_median_ivp": 46.0,
+   "stocks_ivp_70_plus": 30,
+   "stocks_with_ivp": 203
+  },
+  "ledger": {
+   "closed_contracts": 2,
+   "tier": "anecdote",
+   "total_pnl_rs": 5600.0,
+   "favourites": [
+    {
+     "symbol": "BSE",
+     "closed": 1,
+     "pnl_rs": 2820.0,
+     "win_rate_pct": 100.0
+    },
+    {
+     "symbol": "HCLTECH",
+     "closed": 1,
+     "pnl_rs": 2780.0,
+     "win_rate_pct": 100.0
+    }
+   ],
+   "laggards": [],
+   "ivp_ge_50": {
+    "n": 1,
+    "pnl_rs": 2780.0
+   },
+   "ivp_lt_50": {
+    "n": 1,
+    "pnl_rs": 2820.0
+   },
+   "note": "Ledger starts 2026-11-26 (brokers keep no history); IVP at close is stored from that day, so the IVP and VIX split needs about 30 closed contracts per bucket. Favourites need at least 5 closed per stock."
+  },
+  "premium_rich_no_position": [],
+  "strategy_profitable": {
+   "breakeven_win_rate_pct": 76.9,
+   "open_short_legs": 12,
+   "structure_vs_colour": {
+    "mismatches": [
+     {
+      "symbol": "BSE",
+      "colour": "green",
+      "structure": "short call against a green stock",
+      "pnl_rs": -7840.0
+     }
+    ],
+    "count": 1,
+    "pnl_rs": -7840.0,
+    "rule": "put spread on green, short call on red"
+   }
+  }
+ },
+ "events": {
+  "as_of": "2026-11-26",
+  "this_month_season": "Q2 results tail (to mid-Nov), interim-dividend ex-dates",
+  "next_month_season": "quiet; year-end positioning",
+  "exposed_open_positions": [],
+  "exposed_open_positions_n": 0,
+  "next_21_days_n": 0,
+  "next_21_days": [],
+  "calendar_next_90d": {
+   "2027-01": {
+    "results": 7,
+    "ex-dividend": 2
+   },
+   "2027-02": {
+    "results": 1,
+    "ex-dividend": 2
+   }
+  },
+  "event_alerts_open": [],
+  "note": "Dates come from Yahoo (results) and last year's ex-dividend date plus one year (estimates are flagged). A short leg that expires after the event carries the event gap; the rule is to close it before the results or ex-dividend date. Stocks outside the option universe have no event data here: check results dates before adding to a swing position."
+ },
+ "risk_daily": {
+  "discipline_checks": [
+   {
+    "check": "no guardrail BLOCK",
+    "pass": true,
+    "detail": "0 blocks, 10 warnings"
+   },
+   {
+    "check": "every exit signal has an order",
+    "pass": true,
+    "detail": "all ordered"
+   },
+   {
+    "check": "every short option has a stop",
+    "pass": true,
+    "detail": "all stopped"
+   },
+   {
+    "check": "no option structure against its colour",
+    "pass": false,
+    "detail": "BSE"
+   },
+   {
+    "check": "no add-on deviation",
+    "pass": true,
+    "detail": "0 deviations"
+   },
+   {
+    "check": "no open short leg crosses a results or ex-dividend date",
+    "pass": true,
+    "detail": "0 exposed"
+   }
+  ],
+  "checks_passed": 5,
+  "checks_total": 6,
+  "guardrail_status": "WARN",
+  "guardrail_top": [
+   "HMAAGRO: fill price 34.37 is 25% away from the current price 46.13 (typo / split?)",
+   "SSWL: trade log says 0, Dhan holdings say 2. Holdings are used; it usually clears after the next refresh (a recent sale or buy not yet settled).",
+   "SGFIN: trade log says 0, Dhan holdings say 1. Holdings are used; it usually clears after the next refresh (a recent sale or buy not yet settled).",
+   "SGMART: trade log says 0, Dhan holdings say 1. Holdings are used; it usually clears after the next refresh (a recent sale or buy not yet settled)."
+  ],
+  "swing_risk": {
+   "deep_losers_n": 10,
+   "deep_losers_share_pct": 8.3,
+   "pnl_if_all_hit_line_rs": -19249,
+   "extra_loss_if_all_hit_line_rs": -21004,
+   "top_sector": {
+    "sector": "Healthcare",
+    "share_pct": 25.3
+   }
+  },
+  "option_risk": {
+   "stress_pct_of_capital": {
+    "market_-8pct": -1.93,
+    "market_-5pct": -0.76,
+    "market_-3pct": -0.28,
+    "market_+3pct": -0.26,
+    "market_+5pct": -0.71,
+    "market_+10pct": -2.76,
+    "market_-5pct_iv_x1.25": -1.97,
+    "market_-8pct_iv_x1.5": -3.65
+   },
+   "worst_single_stock_gap": {
+    "symbol": "BSE",
+    "move": "up 20%",
+    "pnl_rs": -106613.0
+   },
+   "naked_call_stocks": 3
+  },
+  "note": "Discipline score is counted by code from the six checks above; the narrator lists the failed ones first and does not add checks of its own."
+ },
  "edge_tests": {
   "addon_nd_backtest": {
    "tested_on": "ND universe, 10 years (AZ and the investment-share averaging are untested)",
@@ -427,7 +772,8 @@
    "max_dd_doubling_pct": -19.58,
    "pf_without_addons": 2.01,
    "pf_doubling": 1.84
-  }
+  },
+  "add_on_rule_status": "Swing add-ons switch off from 2026-11-30 by the user's rule; the 10-year ND backtest shows no CAGR edge from averaging (see the figures above), so the rule change costs nothing."
  },
  "backtest_reference": {
   "cagr_pct": 28.0,

@@ -1,56 +1,44 @@
 {
- "as_of": "26 Nov 23:28 (26 Nov close, positions, GTTs and orders live; facts file computed by code)",
- "written_at": "2026-11-26T23:28:10+05:30",
+ "as_of": "26 Nov 23:55 (26 Nov close; four sections: Swing, Options, Events, Risk management; facts file computed by code)",
+ "written_at": "2026-11-26T23:55:00+05:30",
  "confidence": "low",
- "maturity": "44 positions opened since the cut-off but only 5 closed trades (tier anecdote): outcome statistics are descriptive only, process and risk numbers are the signal.",
- "headline": "The option book is the real risk: a -5% market costs -Rs161,092 (5.37% of capital) and a -8% shock with implied volatility x1.5 costs -Rs522,452 (17.42%).",
+ "maturity": "5 closed trades is an anecdote: the process and risk numbers are the signal, outcome statistics are descriptive only until 30 trades.",
+ "headline": "Too few closed trades to judge the swing book, options had a strong day, and the real risk to watch is the size of your short option book.",
  "points": [
   {
-   "label": "Signals",
+   "label": "Swing",
    "facts": [
-    "adherence_leakage.by_kind"
+    "swing.month_trades",
+    "swing.robustness",
+    "swing.today",
+    "swing.open_book"
    ],
-   "text": "Orders are in as AMO: ASHOKLEY x131 exit, SAGILITY x429 and TORNTPHARM x3 entries. Adherence ledger (9 decided signals, tier anecdote): 55.6% have a recorded entry, add-on or exit; 4 entry signals show no entry (ENRIN, ICICIGI, MFSL, PAYTM), which can also be a position taken outside this dashboard. AZ keeps no per-fill ledger, so entry slippage cannot be measured yet."
+   "text": "Only five trades have closed this month, and four were losses, but that is too small a sample to conclude anything, and the market has been in an uptrend. Meanwhile the open book looks healthy: most positions are in profit. Today you had two new entry signals (SAGILITY and TORNTPHARM), both bought, and one exit signal on ASHOKLEY. You cannot yet say whether you are getting better, because there is no earlier month to compare with."
   },
   {
-   "label": "Options process",
+   "label": "Options",
    "facts": [
-    "options.realised_today",
-    "options.ledger",
+    "options_today",
     "options.structure_vs_colour"
    ],
-   "text": "Realised options P&L today (stock options, excluding Nifty): +Rs9,126 from 10 contracts (puts +Rs1,407, calls +Rs7,719); the NATIONALUM and NMDC spreads closed for -Rs3,844 and -Rs1,215 net. One structure breaks the rule: ASHOKLEY, a short put against a red stock, -Rs350. Ledger of closed contracts: 10 so far (tier weak), too few to compare put spreads with short calls."
+   "text": "Ten option contracts closed today and eight made money, Rs9,126 in total. The best came from VMM, ENRIN and KEI, and the two losers were NATIONALUM and NMDC. That is a good day, but it is still a small sample: with a 3x stop you need to win about 77% of the time to break even, so judge the strategy after roughly 30 trades. Volatility is on the high side (India VIX about 17.7), which means decent premiums. Stocks with rich premiums and no position right now are CROMPTON, YESBANK and IRFC. It's too early to name favourites, but NATIONALUM has cost you the most so far."
   },
   {
-   "label": "Risk",
+   "label": "Events",
    "facts": [
+    "events"
+   ],
+   "text": "Almost nothing is due in the next three weeks: only PFC goes ex-dividend today, and you have no option positions on it. None of your open options runs through a results or dividend date. The busy period is coming: January and February bring a large number of results across your stocks, and you hold over a hundred short options. Before then, work out which ones expire after their stock's results date, and plan to close them beforehand."
+  },
+  {
+   "label": "Risk management",
+   "facts": [
+    "risk_daily",
     "options.stress",
-    "options.defined_risk",
     "openrisk"
    ],
-   "text": "Stress test (every open option leg repriced, all stocks shocked together): -3% = -Rs71,072, -5% = -Rs161,092, -8% with implied volatility x1.5 = -Rs522,452 (17.42% of capital); a +10% rally costs -Rs337,581 because 36 stocks carry naked short calls. Worst single-stock gap: COALINDIA up 20% = -Rs117,989. Swing book: no position is below the -6% add-on trigger, and exiting everything on its Supertrend line would leave it at -Rs60,780; Financial Services is 48.7% of invested capital."
-  },
-  {
-   "label": "Strategy health",
-   "facts": [
-    "bootstrap"
-   ],
-   "text": "Live closed trades: n=5 (tier anecdote), win rate 20.0%, mean -10.84%; against backtest trades that also closed within 17 days that is the 16.7th percentile, normal. Open book (n=38): 84.2% in profit, average gain +5.05%, average loss -2.08%. Five closed trades say nothing about the edge: keep logging."
-  },
-  {
-   "label": "Regime and anomalies",
-   "facts": [
-    "trend"
-   ],
-   "text": "79.1% of the 215 F&O stocks have a green Supertrend (1 green and 1 red fresh flips today); all 38 swing holdings are green. Own-history percentiles start after 10 days (history day 1)."
-  },
-  {
-   "label": "Edge test",
-   "facts": [
-    "edge_tests.addon_nd_backtest"
-   ],
-   "text": "The -6% add-on has no measurable edge on the ND backtest (CAGR 27.66% without it, 27.88% with it) and bigger adds deepen the drawdown to -19.58%; AZ itself is untested, and ASHOKLEY was averaged down this morning and turned red the same evening."
+   "text": "You passed 5 of 6 discipline checks. The one miss is the ASHOKLEY put spread, which is against a red trend, so close it at tomorrow's open. Financial Services is now almost half of your capital, well above your 40% limit, so avoid adding more. Your options are the biggest risk: a 5% market fall would cost over 5% of capital, and a sharp one with higher volatility could cost more than 17%, mostly because 36 stocks carry naked short calls. If every swing position hit its Supertrend exit today, you would lose Rs60,780. From 30 November you will no longer average losers; they go to the exit line."
   }
  ],
- "action": "Close the ASHOKLEY put spread in Kite tomorrow at the open, and decide whether a Rs161,092 hit on a -5% market day is the size of option book you want to carry."
+ "action": "Close the ASHOKLEY put spread in Kite at tomorrow's open, and keep new Financial Services positions inside the 40% limit."
 }
