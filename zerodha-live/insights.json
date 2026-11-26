@@ -1,9 +1,9 @@
 {
- "as_of": "26 Nov 12:13 (positions, GTTs and prices live)",
- "written_at": "2026-11-26T12:13:39+05:30",
+ "as_of": "26 Nov 12:17 (positions and GTTs live)",
+ "written_at": "2026-11-26T12:17:45+05:30",
  "confidence": "low",
  "maturity": "42 positions opened since the cut-off, 5 closed trades: the swing edge cannot be judged yet.",
- "headline": "All 37 swing holds are green and nothing is due to exit; the open risk is in options: 1 short (VMM 86PE) has no GTT and a stale CUMMINSIND GTT still sits live.",
+ "headline": "All 37 swing holds are green and nothing is due to exit; every short option is protected again (83 GTT contracts, 0 scan findings).",
  "points": [
   {
    "label": "Signals",
@@ -11,7 +11,7 @@
   },
   {
    "label": "Options process",
-   "text": "82 GTT contracts, 2 scan findings: delete stale CUMMINSIND 5000CE GTT (the buy-back filled at 6.35), and COLPAL 1620PE GTT covers 275 of 550 qty. VMM 86PE (re-sold 4,850 at 0.61) has no stop."
+   "text": "83 GTT contracts, 0 scan findings, 0 shorts without a GTT. Just now: stale CUMMINSIND 5000CE GTT deleted, COLPAL 1620PE GTT raised to 550 qty, VMM 86PE two-leg GTT placed."
   },
   {
    "label": "Risk",
@@ -26,5 +26,5 @@
    "text": "5 closed trades against 20.2% CAGR, -21.3% drawdown, 41% win rate: too early to compare. Watch the first 30 closed trades."
   }
  ],
- "action": "Delete the CUMMINSIND trailing GTT, fix COLPAL's GTT quantity and put a GTT on VMM 86PE (/zerodha-gtt-order, needs your yes)."
+ "action": "Any short you open from now needs a GTT (run /zerodha-gtt-order after you finish trading); check the APLAPOLLO fired-GTT entry in the Kite order book."
 }

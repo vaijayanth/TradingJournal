@@ -3,12 +3,12 @@
   "VMM26DEC83PE",
   "ENRIN26DEC2500PE"
  ],
- "fetched_at": "2026-11-26T12:13:05+05:30",
+ "fetched_at": "2026-11-26T12:17:45+05:30",
  "inputs": {
-  "positions": "2026-11-26T06:42:13.541908+00:00",
-  "gtts": "2026-11-26T12:12:13+05:30",
+  "positions": "2026-11-26T06:46:55.842685+00:00",
+  "gtts": "2026-11-26T12:17:45+05:30",
   "orders": "2026-11-26T12:12:13+05:30",
-  "gtt_scan": "2026-11-26T12:12:13+05:30"
+  "gtt_scan": "2026-11-26T12:17:45+05:30"
  },
  "stale_inputs": [],
  "open_legs": 127,
@@ -319,36 +319,12 @@
    "action": "Watch the 3x stop and the Supertrend colour"
   },
   {
-   "section": "C",
-   "severity": "WARN",
-   "symbol": "VMM",
-   "tradingsymbol": "VMM26DEC86PE",
-   "concern": "No active buy-back GTT (premium 0.64, sold 0.61)",
-   "action": "Place the protective GTT (zerodha-gtt-order)"
-  },
-  {
    "section": "D",
    "severity": "WARN",
    "symbol": "APLAPOLLO",
    "tradingsymbol": "APLAPOLLO26DEC1920CE",
    "concern": "GTT 346355154 fired today (09:40) but no buy-back order from a GTT is in today's order list",
    "action": "Check the order book in Kite"
-  },
-  {
-   "section": "F",
-   "severity": "HIGH",
-   "symbol": "CUMMINSIND",
-   "tradingsymbol": "CUMMINSIND26DEC5000CE",
-   "concern": "G1 STALE: No open position on this contract (closed or expired): if it triggers it BUYS a new long position (GTT 344015712)",
-   "action": "Delete this GTT"
-  },
-  {
-   "section": "F",
-   "severity": "WARN",
-   "symbol": "COLPAL",
-   "tradingsymbol": "COLPAL26DEC1620PE",
-   "concern": "G3 QUANTITY: GTT covers 275 of 550 qty (GTT 346355171)",
-   "action": "Modify quantity to 550"
   }
  ]
 }

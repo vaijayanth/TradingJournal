@@ -1,6 +1,46 @@
 {
- "fetched_at": "2026-11-26T12:16:55+05:30",
+ "fetched_at": "2026-11-26T12:17:45+05:30",
  "active": {
+  "VMM26DEC86PE": [
+   {
+    "id": 346480535,
+    "type": "two-leg",
+    "trigger_values": [
+     0.25,
+     1.7
+    ],
+    "qty": 4850
+   },
+   {
+    "id": 346480535,
+    "type": "two-leg",
+    "trigger_values": [
+     0.25,
+     1.7
+    ],
+    "qty": 4850
+   }
+  ],
+  "COLPAL26DEC1620PE": [
+   {
+    "id": 346355171,
+    "type": "two-leg",
+    "trigger_values": [
+     3.1,
+     21.45
+    ],
+    "qty": 550
+   },
+   {
+    "id": 346355171,
+    "type": "two-leg",
+    "trigger_values": [
+     3.1,
+     21.45
+    ],
+    "qty": 550
+   }
+  ],
   "AUROPHARMA26DEC1700PE": [
    {
     "id": 346423050,
@@ -539,26 +579,6 @@
      21.2
     ],
     "qty": 325
-   }
-  ],
-  "COLPAL26DEC1620PE": [
-   {
-    "id": 346355171,
-    "type": "two-leg",
-    "trigger_values": [
-     3.1,
-     21.45
-    ],
-    "qty": 275
-   },
-   {
-    "id": 346355171,
-    "type": "two-leg",
-    "trigger_values": [
-     3.1,
-     21.45
-    ],
-    "qty": 275
    }
   ],
   "COCHINSHIP26DEC1300CE": [
@@ -1620,19 +1640,65 @@
     ],
     "qty": 425
    }
-  ],
-  "CUMMINSIND26DEC5000CE": [
-   {
-    "id": 344015712,
-    "type": "trailing-single",
-    "trigger_values": [
-     50
-    ],
-    "qty": 100
-   }
   ]
  },
  "gtts": [
+  {
+   "id": 346480535,
+   "type": "two-leg",
+   "created_at": "2026-11-26T12:17:31+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "VMM26DEC86PE",
+   "last_price": 0.64,
+   "triggers": [
+    0.25,
+    1.7
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 4850,
+     "price": 0.3,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 4850,
+     "price": 1.85,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 346355171,
+   "type": "two-leg",
+   "created_at": "2026-11-25T20:47:14+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "COLPAL26DEC1620PE",
+   "last_price": 6.9,
+   "triggers": [
+    3.1,
+    21.45
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 550,
+     "price": 3.2,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 550,
+     "price": 23.4,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
   {
    "id": 346423050,
    "type": "two-leg",
@@ -2384,34 +2450,6 @@
      "side": "BUY",
      "qty": 325,
      "price": 23.1,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
-   "id": 346355171,
-   "type": "two-leg",
-   "created_at": "2026-11-25T20:47:14+05:30",
-   "expires_at": "2026-12-30T00:00:00+05:30",
-   "tradingsymbol": "COLPAL26DEC1620PE",
-   "last_price": 6.9,
-   "triggers": [
-    3.1,
-    21.45
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 275,
-     "price": 3.2,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    },
-    {
-     "side": "BUY",
-     "qty": 275,
-     "price": 23.4,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -3896,26 +3934,6 @@
      "side": "BUY",
      "qty": 425,
      "price": 26.15,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
-   "id": 344015712,
-   "type": "trailing-single",
-   "created_at": "2026-11-09T11:55:15+05:30",
-   "expires_at": "2026-12-30T00:00:00+05:30",
-   "tradingsymbol": "CUMMINSIND26DEC5000CE",
-   "last_price": 21.8,
-   "triggers": [
-    50
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 100,
-     "price": 51,
      "product": "NRML",
      "order_type": "LIMIT"
     }

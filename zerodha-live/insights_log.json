@@ -370,6 +370,16 @@
     "open_pl_rs": 38932,
     "closed": 5
    }
+  },
+  {
+   "date": "2026-11-26 (12:17 GTT clean-up)",
+   "headline": "1 stale GTT deleted, 1 quantity fixed, 1 placed: 83 contracts covered, scan 0 findings.",
+   "recommendations": [
+    "Any short you open from now needs a GTT (run /zerodha-gtt-order after you finish trading); check the APLAPOLLO fired-GTT entry in the Kite order book."
+   ],
+   "metrics": {
+    "gtt_contracts": 83
+   }
   }
  ]
 }
