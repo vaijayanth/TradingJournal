@@ -1,13 +1,13 @@
 {
- "as_of": "26 Nov 19:13 (26 Nov close, positions, GTTs and prices live)",
- "written_at": "2026-11-26T19:13:18+05:30",
+ "as_of": "26 Nov 20:18 (26 Nov close, positions, GTTs and orders live)",
+ "written_at": "2026-11-26T20:18:48+05:30",
  "confidence": "low",
  "maturity": "44 positions opened since the cut-off (LODHA and KFINTECH moved in), 5 closed trades: the swing edge cannot be judged yet.",
  "headline": "ASHOKLEY flipped red (exit signal, -8.3%, the add-on bought this morning is in it) and two entries are live (SAGILITY, TORNTPHARM); every short option has a GTT.",
  "points": [
   {
    "label": "Signals",
-   "text": "One exit: ASHOKLEY x131 at about 156.15 (Supertrend red, -8.3%), the stock you averaged into at the open. Two entries: SAGILITY x429 (flipped green today) and TORNTPHARM x3 (flipped 25 Nov; the x4 order was cancelled and the new tier size gives x3). all other swing holds are green."
+   "text": "Orders are in as AMO: ASHOKLEY x131 exit (SELL MARKET, Supertrend red, -8.3%), SAGILITY x429 at 46.95 and TORNTPHARM x3 at 5,030 entries. All other swing holds are green. LODHA and KFINTECH moved over from the old sheet today."
   },
   {
    "label": "Options process",
@@ -26,5 +26,5 @@
    "text": "5 closed trades against 20.2% CAGR, -21.3% drawdown, 41% win rate: too early to compare; the first exit of the averaged-down ASHOKLEY will be the sixth closed trade. Watch the first 30 closed trades."
   }
  ],
- "action": "After the close run /zerodha-order for the ASHOKLEY exit and the SAGILITY and TORNTPHARM entries; close the ASHOKLEY put spread in Kite."
+ "action": "Close the ASHOKLEY put spread in Kite tomorrow at the open, then run /refresh-zerodha to record the fills."
 }

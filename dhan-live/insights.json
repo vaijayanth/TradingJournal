@@ -1,30 +1,30 @@
 {
- "as_of": "26 Nov 20:13 (26 Nov close, positions and orders live)",
- "written_at": "2026-11-26T20:13:53+05:30",
+ "as_of": "26 Nov 20:18 (26 Nov close, positions and orders live)",
+ "written_at": "2026-11-26T20:18:48+05:30",
  "confidence": "low",
  "maturity": "144 positions ever opened but only 16 closed trades: the swing edge cannot be judged yet.",
  "headline": "Tonight's 13 swing and investment orders are in; every short option now has a stop (HCLTECH 1280PE added), and the BSE 4200CE (-Rs7.8k) against a green stock is the one open item.",
  "points": [
   {
    "label": "Signals",
-   "text": "Two swing exits (SPECTRUM x1 -0.4%, TANLA x1 -2.1%) after their Supertrend turned red, five entries at 52-week highs (ACE, ANGELONE x5, BAJAJHLDNG, PRESTIGE, SCPL x2) and three add-ons (SUNTV, TEXINFRA, VRLLOG, each about -6% to -7%). The INFY and HCLTECH averaging limits lapsed at the close, so DIXON, HCLTECH and INFY averaging (-11%, -9%, -21%) are all due again."
+   "text": "All 13 order tickets for the 26 Nov close are in as AMO orders: 2 swing exits (SPECTRUM, TANLA), 3 add-ons (SUNTV, TEXINFRA, VRLLOG), 5 entries (ACE, ANGELONE x5, BAJAJHLDNG, PRESTIGE, SCPL x2) and 3 averaging buys (DIXON, HCLTECH, INFY). The DIXON limit was edited to 12,972 after the tick-size rejection on 25 Nov."
   },
   {
-   "label": "BSE",
-   "text": "The BSE 4200CE is -Rs7.8k against a green stock (BSE 3,990) and still open; closing it stops the loss growing. The HCLTECH 1280PE now has its super-order stop (21.45) and target (2.85)."
+   "label": "Options process",
+   "text": "All 12 shorts now carry super-order stops and targets (HCLTECH 1280PE added: stop 21.45, target 2.85). One structure is out of line: the BSE 4200CE is -Rs7.8k against a green stock (BSE 3,990) and still open. Realised options P&L is +Rs5.6k."
+  },
+  {
+   "label": "Risk",
+   "text": "If every open position closed on its Supertrend line, the book would be at -Rs19k (stop-out floor); the BSE 4200CE would lose about Rs21.6k more at its stop (162). DIXON, SHRIRAMFIN and BPCL are the nearest to a Supertrend flip (4% to 5%)."
   },
   {
    "label": "Book",
    "text": "Swing P&L is +Rs1.8k (realised -Rs2.4k from 16 closed trades, unrealised +Rs4.3k). All 119 holds are green; the weakest are MMFL -10.2% and SANATHAN -9.8%. Ten buys from the last three days are still unsettled."
   },
   {
-   "label": "Options",
-   "text": "Realised options P&L is +Rs5.6k (BSE 3200PE and HCLTECH 1240PE closed at their targets). All 12 shorts now carry super-order stops and targets; none is near its stop. DIXON, SHRIRAMFIN and BPCL are the nearest to a Supertrend flip (4% to 5%)."
-  },
-  {
    "label": "Versus the backtest",
    "text": "16 closed trades against 28.0% CAGR, -15.4% drawdown, 41% win rate: too early to compare; no rule change on this sample. Watch the first 30 closed trades."
   }
  ],
- "action": "Close the BSE 4200CE in the Dhan app; edit nothing else. Tomorrow after the open run /refresh-dhan to record the fills."
+ "action": "Close the BSE 4200CE in the Dhan app, then run /refresh-dhan tomorrow after the open to record the fills."
 }
