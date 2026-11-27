@@ -1,6 +1,6 @@
 {
  "broker": "ND",
- "generated_at": "2026-11-27T00:22:49+05:30",
+ "generated_at": "2026-11-27T09:55:28+05:30",
  "as_of": "2026-11-26",
  "scope": "ND swing shares and ND stock options; Nifty index options are outside by decision",
  "adherence_leakage": {
@@ -9,13 +9,13 @@
   "by_kind": {
    "entry": {
     "signals": 28,
-    "filled": 9,
-    "missed": 14,
-    "pending": 5,
-    "fill_rate_pct": 39.1,
-    "decided_n": 23,
+    "filled": 15,
+    "missed": 13,
+    "pending": 0,
+    "fill_rate_pct": 53.6,
+    "decided_n": 28,
     "tier": "weak",
-    "avg_slippage_pct": 1.37,
+    "avg_slippage_pct": 0.99,
     "median_delay_days": 1.0,
     "missed_symbols": [
      "MSTCLTD",
@@ -27,17 +27,17 @@
      "PGIL",
      "CRAFTSMAN"
     ],
-    "missed_avg_move_since_signal_pct": null
+    "missed_avg_move_since_signal_pct": 12.7
    },
    "exit": {
     "signals": 8,
-    "filled": 5,
+    "filled": 7,
     "missed": 1,
-    "pending": 2,
-    "fill_rate_pct": 83.3,
-    "decided_n": 6,
+    "pending": 0,
+    "fill_rate_pct": 87.5,
+    "decided_n": 8,
     "tier": "anecdote",
-    "avg_slippage_pct": 1.47,
+    "avg_slippage_pct": 1.05,
     "median_delay_days": 1.0,
     "missed_symbols": [
      "PASHUPATI"
@@ -46,14 +46,14 @@
    },
    "addon": {
     "signals": 17,
-    "filled": 11,
+    "filled": 14,
     "missed": 3,
-    "pending": 3,
-    "fill_rate_pct": 78.6,
-    "decided_n": 14,
+    "pending": 0,
+    "fill_rate_pct": 82.4,
+    "decided_n": 17,
     "tier": "weak",
-    "avg_slippage_pct": 0.02,
-    "median_delay_days": 3.0,
+    "avg_slippage_pct": 0.5,
+    "median_delay_days": 2.5,
     "missed_symbols": [
      "LGEINDIA",
      "ESAFSFB",
@@ -135,7 +135,12 @@
     "side": "BUY",
     "ref_price": 616.25,
     "signal_qty": 2,
-    "outcome": "pending"
+    "outcome": "filled",
+    "fill_date": "2026-11-27",
+    "fill_price": 648.1,
+    "fill_qty": 1,
+    "slip_pct": 5.17,
+    "delay_days": 2
    },
    {
     "date": "2026-11-25",
@@ -144,7 +149,12 @@
     "side": "BUY",
     "ref_price": 120.47,
     "signal_qty": 8,
-    "outcome": "pending"
+    "outcome": "filled",
+    "fill_date": "2026-11-27",
+    "fill_price": 122.0,
+    "fill_qty": 1,
+    "slip_pct": 1.27,
+    "delay_days": 2
    },
    {
     "date": "2026-11-26",
@@ -153,7 +163,12 @@
     "side": "BUY",
     "ref_price": 1295.0,
     "signal_qty": 1,
-    "outcome": "pending"
+    "outcome": "filled",
+    "fill_date": "2026-11-27",
+    "fill_price": 1295.0,
+    "fill_qty": 1,
+    "slip_pct": 0.0,
+    "delay_days": 1
    },
    {
     "date": "2026-11-26",
@@ -162,7 +177,12 @@
     "side": "BUY",
     "ref_price": 358.0,
     "signal_qty": 5,
-    "outcome": "pending"
+    "outcome": "filled",
+    "fill_date": "2026-11-27",
+    "fill_price": 361.05,
+    "fill_qty": 5,
+    "slip_pct": 0.85,
+    "delay_days": 1
    },
    {
     "date": "2026-11-26",
@@ -171,7 +191,12 @@
     "side": "BUY",
     "ref_price": 11933.0,
     "signal_qty": 1,
-    "outcome": "pending"
+    "outcome": "filled",
+    "fill_date": "2026-11-27",
+    "fill_price": 11876.0,
+    "fill_qty": 1,
+    "slip_pct": -0.48,
+    "delay_days": 1
    },
    {
     "date": "2026-11-26",
@@ -180,7 +205,12 @@
     "side": "BUY",
     "ref_price": 1832.1,
     "signal_qty": 1,
-    "outcome": "pending"
+    "outcome": "filled",
+    "fill_date": "2026-11-27",
+    "fill_price": 1836.4,
+    "fill_qty": 1,
+    "slip_pct": 0.23,
+    "delay_days": 1
    },
    {
     "date": "2026-11-26",
@@ -189,7 +219,12 @@
     "side": "BUY",
     "ref_price": 712.6,
     "signal_qty": 2,
-    "outcome": "pending"
+    "outcome": "filled",
+    "fill_date": "2026-11-27",
+    "fill_price": 716.95,
+    "fill_qty": 2,
+    "slip_pct": 0.61,
+    "delay_days": 1
    },
    {
     "date": "2026-11-26",
@@ -198,7 +233,12 @@
     "side": "SELL",
     "ref_price": 3878.6,
     "signal_qty": 1,
-    "outcome": "pending"
+    "outcome": "filled",
+    "fill_date": "2026-11-27",
+    "fill_price": 3878.6,
+    "fill_qty": 1,
+    "slip_pct": 0.0,
+    "delay_days": 1
    },
    {
     "date": "2026-11-26",
@@ -207,7 +247,12 @@
     "side": "SELL",
     "ref_price": 624.7,
     "signal_qty": 1,
-    "outcome": "pending"
+    "outcome": "filled",
+    "fill_date": "2026-11-27",
+    "fill_price": 624.7,
+    "fill_qty": 1,
+    "slip_pct": 0.0,
+    "delay_days": 1
    },
    {
     "date": "2026-11-26",
@@ -216,53 +261,58 @@
     "side": "BUY",
     "ref_price": 314.9,
     "signal_qty": 2,
-    "outcome": "pending"
+    "outcome": "filled",
+    "fill_date": "2026-11-27",
+    "fill_price": 315.95,
+    "fill_qty": 1,
+    "slip_pct": 0.33,
+    "delay_days": 1
    }
   ],
-  "overall_fill_rate_pct": 58.1,
-  "overall_decided_n": 43,
+  "overall_fill_rate_pct": 67.9,
+  "overall_decided_n": 53,
   "note": "Signals come from the git history of the signals file; a fill is a same-side fill within 6 calendar days after the signal date; slippage is positive when the fill was worse than the signal close. A 'missed' signal can also be a fill the ledger never captured (a day the refresh did not run), so check the symbol before calling it an execution miss."
  },
  "bootstrap": {
-  "n_live_closed": 16,
+  "n_live_closed": 18,
   "tier": "weak",
   "pool_n_all": 4725,
   "pool_n_matched": 1854,
   "window_days": 36,
   "pool_note": "post-2022 ND backtest trades (the walk-forward base case); matched pool = trades that closed within 36 days, like the live ones",
-  "live_mean_pct": -9.96,
-  "live_win_rate_pct": 12.5,
+  "live_mean_pct": -8.99,
+  "live_win_rate_pct": 11.1,
   "matched_pool_mean_pct": -8.61,
   "matched_pool_win_rate_pct": 9.9,
   "full_pool_mean_pct": 5.57,
   "full_pool_win_rate_pct": 40.9,
-  "mean_percentile": 28.1,
-  "win_rate_percentile": 79.2,
+  "mean_percentile": 46.0,
+  "win_rate_percentile": 74.1,
   "draws": 10000,
   "flag": "within_normal_range",
   "open_book": {
-   "n": 119,
-   "in_profit_pct": 58.0,
+   "n": 125,
+   "in_profit_pct": 55.2,
    "avg_gain_pct": 6.03,
-   "avg_loss_pct": -3.67
+   "avg_loss_pct": -3.39
   },
   "note": "Matched comparison removes the young-book bias but still ignores that live trades are early exits only; bootstrap measures sampling noise only."
  },
  "openrisk": {
-  "open_positions": 119,
-  "invested_rs": 249432.0,
-  "below_minus6_count": 10,
-  "below_minus6_invested_rs": 20754.0,
-  "below_minus6_share_pct": 8.3,
+  "open_positions": 125,
+  "invested_rs": 261459.0,
+  "below_minus6_count": 11,
+  "below_minus6_invested_rs": 19419.0,
+  "below_minus6_share_pct": 7.4,
   "below_minus6_symbols": [
    "AMANTA",
    "APOLLO",
    "ENTERO",
    "KTKBANK",
-   "MACPOWER",
    "MAHASTEEL",
    "MMFL",
-   "ROLEXRINGS"
+   "ROLEXRINGS",
+   "SANATHAN"
   ],
   "worst_positions": [
    {
@@ -271,46 +321,46 @@
    },
    {
     "symbol": "SANATHAN",
-    "pl_pct": -9.8
-   },
-   {
-    "symbol": "MACPOWER",
-    "pl_pct": -9.2
-   },
-   {
-    "symbol": "AMANTA",
-    "pl_pct": -7.8
+    "pl_pct": -8.3
    },
    {
     "symbol": "ENTERO",
     "pl_pct": -7.4
+   },
+   {
+    "symbol": "ROLEXRINGS",
+    "pl_pct": -7.3
+   },
+   {
+    "symbol": "AMANTA",
+    "pl_pct": -6.9
    }
   ],
-  "pnl_if_all_hit_line_rs": -19249,
-  "extra_loss_if_all_hit_line_rs": -21004,
+  "pnl_if_all_hit_line_rs": -18626,
+  "extra_loss_if_all_hit_line_rs": -21649,
   "top_sectors": [
    {
     "sector": "Healthcare",
-    "share_pct": 25.3
-   },
-   {
-    "sector": "Basic Materials",
-    "share_pct": 21.9
+    "share_pct": 25.5
    },
    {
     "sector": "Consumer Cyclical",
-    "share_pct": 21.6
+    "share_pct": 23.3
+   },
+   {
+    "sector": "Basic Materials",
+    "share_pct": 21.8
    }
   ],
   "note": "Stop-out figure = projection.json: loss if every open position exited on its own Supertrend line today."
  },
  "trend": {
-  "holds": 119,
-  "green": 119,
+  "holds": 125,
+  "green": 125,
   "green_share_pct": 100.0,
-  "entries_today": 5,
-  "exits_today": 2,
-  "addons_today": 3,
+  "entries_today": 0,
+  "exits_today": 0,
+  "addons_today": 1,
   "history_days": 1,
   "note": "ND universe is the 1,495-stock backtester set, so breadth here is the share of YOUR holdings that are green plus today's signal counts; percentiles appear after 10 days of own history."
  },
@@ -319,31 +369,26 @@
   "short_legs": 12,
   "long_legs": 8,
   "realised_today": {
-   "contracts_closed": 2,
-   "pnl_rs": 5600.0,
+   "contracts_closed": 1,
+   "pnl_rs": 5378.0,
    "contracts": [
     {
-     "contract": "HCLTECH-Dec2026-1240-PE",
-     "pnl_rs": 2780.0
-    },
-    {
-     "contract": "BSE-Dec2026-3200-PE",
-     "pnl_rs": 2820.0
+     "contract": "MCX-Dec2026-3300-PE",
+     "pnl_rs": 5378.0
     }
    ],
    "by_stock": {
-    "HCLTECH": 2780.0,
-    "BSE": 2820.0
+    "MCX": 5378.0
    },
    "note": "Stock options only (Nifty index options are outside the insights by decision), gross of charges."
   },
   "ledger": {
-   "closed_contracts": 2,
-   "total_pnl_rs": 5600.0,
+   "closed_contracts": 3,
+   "total_pnl_rs": 10978.0,
    "tier": "anecdote",
    "puts": {
-    "n": 2,
-    "pnl_rs": 5600.0
+    "n": 3,
+    "pnl_rs": 10978.0
    },
    "calls": {
     "n": 0,
@@ -355,47 +400,47 @@
   "stress": {
    "capital_base_rs": 2000000,
    "grid_pct_of_capital": {
-    "market_-8pct": -1.93,
-    "market_-5pct": -0.76,
-    "market_-3pct": -0.28,
-    "market_+3pct": -0.26,
-    "market_+5pct": -0.71,
-    "market_+10pct": -2.76,
-    "market_-5pct_iv_x1.25": -1.97,
-    "market_-8pct_iv_x1.5": -3.65
+    "market_-8pct": -1.65,
+    "market_-5pct": -0.57,
+    "market_-3pct": -0.16,
+    "market_+3pct": -0.36,
+    "market_+5pct": -0.87,
+    "market_+10pct": -2.97,
+    "market_-5pct_iv_x1.25": -1.79,
+    "market_-8pct_iv_x1.5": -3.39
    },
    "grid_pnl_rs": {
-    "market_-8pct": -38533.0,
-    "market_-5pct": -15256.0,
-    "market_-3pct": -5546.0,
-    "market_+3pct": -5120.0,
-    "market_+5pct": -14214.0,
-    "market_+10pct": -55273.0,
-    "market_-5pct_iv_x1.25": -39461.0,
-    "market_-8pct_iv_x1.5": -72917.0
+    "market_-8pct": -33006.0,
+    "market_-5pct": -11319.0,
+    "market_-3pct": -3121.0,
+    "market_+3pct": -7223.0,
+    "market_+5pct": -17350.0,
+    "market_+10pct": -59399.0,
+    "market_-5pct_iv_x1.25": -35771.0,
+    "market_-8pct_iv_x1.5": -67743.0
    },
    "single_stock_gap_worst": [
     {
      "symbol": "BSE",
      "move": "up 20%",
-     "pnl_rs": -106613.0
+     "pnl_rs": -103825.0
     },
     {
      "symbol": "BPCL",
      "move": "down 20%",
-     "pnl_rs": -75817.0
+     "pnl_rs": -75172.0
     },
     {
      "symbol": "CUMMINSIND",
      "move": "up 20%",
-     "pnl_rs": -69847.0
+     "pnl_rs": -70694.0
     }
    ],
    "method": "Black-Scholes repricing of every open leg, implied vol solved from the live option price (fallback stock IV or 30%), all underlyings shocked together (beta 1), expiry unchanged, risk-free 0.065.",
    "limits": "Beta 1 is an assumption; a gap through a stop fills at the gap price, not at 3x."
   },
   "defined_risk": {
-   "put_side_max_loss_if_stocks_to_zero_rs": 329388.0,
+   "put_side_max_loss_if_stocks_to_zero_rs": 355444.0,
    "naked_call_stocks": 3,
    "spreads_where_3x_stop_cannot_bind": [],
    "spreads_where_3x_stop_cannot_bind_count": 0,
@@ -407,11 +452,11 @@
      "symbol": "BSE",
      "colour": "green",
      "structure": "short call against a green stock",
-     "pnl_rs": -7840.0
+     "pnl_rs": -15030.0
     }
    ],
    "count": 1,
-   "pnl_rs": -7840.0,
+   "pnl_rs": -15030.0,
    "rule": "put spread on green, short call on red"
   },
   "breakeven_win_rate_pct": 76.9,
@@ -437,17 +482,17 @@
  "swing": {
   "month": "2026-11",
   "month_trades": {
-   "n": 15,
+   "n": 17,
    "tier": "weak",
    "wins": 2,
-   "losses": 13,
-   "win_rate_pct": 13.3,
-   "pnl_rs": -2333.0,
+   "losses": 15,
+   "win_rate_pct": 11.8,
+   "pnl_rs": -2362.0,
    "avg_win_pct": 1.5,
-   "avg_loss_pct": -11.81,
-   "expectancy_pct": -10.04,
+   "avg_loss_pct": -10.4,
+   "expectancy_pct": -9.0,
    "profit_factor": 0.01,
-   "avg_hold_days": 16.1
+   "avg_hold_days": 17.3
   },
   "earlier_trades": {
    "n": 1,
@@ -477,155 +522,137 @@
     "avg_hold_days": 1.0
    },
    "2026-11": {
-    "n": 15,
+    "n": 17,
     "tier": "weak",
     "wins": 2,
-    "losses": 13,
-    "win_rate_pct": 13.3,
-    "pnl_rs": -2333.0,
+    "losses": 15,
+    "win_rate_pct": 11.8,
+    "pnl_rs": -2362.0,
     "avg_win_pct": 1.5,
-    "avg_loss_pct": -11.81,
-    "expectancy_pct": -10.04,
+    "avg_loss_pct": -10.4,
+    "expectancy_pct": -9.0,
     "profit_factor": 0.01,
-    "avg_hold_days": 16.1
+    "avg_hold_days": 17.3
    }
   },
   "improvement_vs_earlier": {
-   "win_rate_change_pts": 13.3,
-   "expectancy_change_pct_pts": -1.21,
-   "avg_loss_change_pct_pts": -2.98,
-   "hold_days_change": 15.1,
+   "win_rate_change_pts": 11.8,
+   "expectancy_change_pct_pts": -0.17,
+   "avg_loss_change_pct_pts": -1.57,
+   "hold_days_change": 16.3,
    "note": "Month vs all earlier closed trades; direction only until each side has 30 trades."
   },
   "process": {
-   "overall_fill_rate_pct": 58.1,
-   "decided_n": 43,
-   "entry_avg_slippage_pct": 1.37
+   "overall_fill_rate_pct": 67.9,
+   "decided_n": 53,
+   "entry_avg_slippage_pct": 0.99
   },
   "today": {
-   "entries_signalled": 5,
-   "entry_names": [
+   "entries_signalled": 0,
+   "entry_names": [],
+   "exits_signalled": 0,
+   "exit_names": [],
+   "fills_date": "2026-11-27",
+   "buy_fills_today": 8,
+   "sell_fills_today": 2,
+   "buy_names": [
     "ACE",
     "ANGELONE",
     "BAJAJHLDNG",
     "PRESTIGE",
-    "SCPL"
+    "SCPL",
+    "SUNTV",
+    "TEXINFRA",
+    "VRLLOG"
    ],
-   "exits_signalled": 2,
-   "exit_names": [
+   "sell_names": [
     "SPECTRUM",
     "TANLA"
    ],
-   "buy_fills_today": 10,
-   "sell_fills_today": 7,
    "realised_today": {
-    "n": 7,
-    "pnl_rs": -896.0,
+    "n": 2,
+    "pnl_rs": -29.0,
     "trades": [
      {
-      "symbol": "SSWL",
-      "pl_rs": 19.0,
-      "pl_pct": 1.99
+      "symbol": "SPECTRUM",
+      "pl_rs": -16.0,
+      "pl_pct": -0.41
      },
      {
-      "symbol": "SGFIN",
-      "pl_rs": -85.0,
-      "pl_pct": -11.85
-     },
-     {
-      "symbol": "SGMART",
-      "pl_rs": -25.0,
-      "pl_pct": -2.93
-     },
-     {
-      "symbol": "GUFICBIO",
-      "pl_rs": -146.0,
-      "pl_pct": -10.52
-     },
-     {
-      "symbol": "NAZARA",
-      "pl_rs": -89.0,
-      "pl_pct": -10.39
-     },
-     {
-      "symbol": "ESAFSFB",
-      "pl_rs": -128.0,
-      "pl_pct": -13.13
-     },
-     {
-      "symbol": "NILKAMAL",
-      "pl_rs": -443.0,
-      "pl_pct": -10.23
+      "symbol": "TANLA",
+      "pl_rs": -13.0,
+      "pl_pct": -2.07
      }
     ]
    },
-   "exit_signals_open_pnl_rs": -29.0
+   "exit_signals_open_pnl_rs": 0.0
   },
   "open_book": {
-   "positions": 119,
+   "positions": 125,
    "in_profit": 69,
-   "in_profit_pct": 58.0,
-   "unrealised_pnl_rs": 4530.0,
+   "in_profit_pct": 55.2,
+   "unrealised_pnl_rs": 4601.0,
    "green_share_pct": 100.0
   },
   "robustness": {
    "regime": {
-    "nifty_close": 25819.0,
+    "nifty_close": 25884.0,
     "nifty_vs_50dma_pct": 9.6,
-    "nifty_vs_200dma_pct": 7.6,
-    "nifty_20d_return_pct": 13.5,
+    "nifty_vs_200dma_pct": 7.8,
+    "nifty_20d_return_pct": 13.8,
     "trend_label": "uptrend (above both the 50 and 200 day averages)",
-    "vix": 17.67,
-    "vix_chg_pct": -0.2,
-    "vix_1y_percentile_pct": 80.0,
+    "vix": 16.84,
+    "vix_chg_pct": -4.7,
+    "vix_1y_percentile_pct": 75.0,
     "vix_1y_low": 9.15,
     "vix_1y_high": 27.89
    },
-   "live_month_expectancy_pct": -10.04,
+   "live_month_expectancy_pct": -9.0,
    "backtest_expectancy_per_trade_pct": 8.26,
    "backtest_post_2022_cagr_pct": "about 20 to 23 (walk-forward 2026-11-24)",
-   "bootstrap_percentile_mean": 28.1,
+   "bootstrap_percentile_mean": 46.0,
    "note": "A trend-following book earns in trends: judge the month against the regime above, not in isolation. A low win rate (backtest 41%) is normal; the avg win / avg loss ratio is what carries it."
   }
  },
  "options_today": {
   "today": {
-   "contracts_closed": 2,
-   "pnl_rs": 5600.0,
-   "winners": 2,
+   "contracts_closed": 1,
+   "pnl_rs": 5378.0,
+   "winners": 1,
    "losers": 0,
    "contracts": [
     {
-     "contract": "HCLTECH-Dec2026-1240-PE",
-     "pnl_rs": 2780.0
-    },
-    {
-     "contract": "BSE-Dec2026-3200-PE",
-     "pnl_rs": 2820.0
+     "contract": "MCX-Dec2026-3300-PE",
+     "pnl_rs": 5378.0
     }
    ],
    "ivp_of_closed_stocks": {
-    "HCLTECH": 61,
-    "BSE": 15
+    "MCX": 45
    }
   },
   "vix": {
-   "vix": 17.67,
-   "vix_chg_pct": -0.2,
-   "vix_1y_percentile_pct": 80.0,
+   "vix": 16.84,
+   "vix_chg_pct": -4.7,
+   "vix_1y_percentile_pct": 75.0,
    "vix_1y_low": 9.15,
    "vix_1y_high": 27.89
   },
   "iv_regime": {
    "universe_median_ivp": 46.0,
-   "stocks_ivp_70_plus": 30,
+   "stocks_ivp_70_plus": 27,
    "stocks_with_ivp": 203
   },
   "ledger": {
-   "closed_contracts": 2,
+   "closed_contracts": 3,
    "tier": "anecdote",
-   "total_pnl_rs": 5600.0,
+   "total_pnl_rs": 10978.0,
    "favourites": [
+    {
+     "symbol": "MCX",
+     "closed": 1,
+     "pnl_rs": 5378.0,
+     "win_rate_pct": 100.0
+    },
     {
      "symbol": "BSE",
      "closed": 1,
@@ -645,25 +672,25 @@
     "pnl_rs": 2780.0
    },
    "ivp_lt_50": {
-    "n": 1,
-    "pnl_rs": 2820.0
+    "n": 2,
+    "pnl_rs": 8198.0
    },
    "note": "Ledger starts 2026-11-26 (brokers keep no history); IVP at close is stored from that day, so the IVP and VIX split needs about 30 closed contracts per bucket. Favourites need at least 5 closed per stock."
   },
   "exit_reasons": {
    "today": {
     "profit target": {
-     "n": 2,
-     "pnl_rs": 5600.0
+     "n": 1,
+     "pnl_rs": 5378.0
     }
    },
    "cumulative": {
     "profit target": {
-     "n": 2,
-     "pnl_rs": 5600.0
+     "n": 3,
+     "pnl_rs": 10978.0
     }
    },
-   "short_legs_closed_total": 2,
+   "short_legs_closed_total": 3,
    "stop_fired_total": 0,
    "stop_fired_today": 0,
    "note": "Reasons are inferred by code from prices and the Supertrend colour (no manual input): profit target = bought back at 44% of the sold price or less, 3x stop = at 2.7x or more, trend flip = colour turned against the structure, else early profit exit or a loss exit outside the rules. The ledger holds reasons from 2026-11-26 only."
@@ -678,11 +705,11 @@
       "symbol": "BSE",
       "colour": "green",
       "structure": "short call against a green stock",
-      "pnl_rs": -7840.0
+      "pnl_rs": -15030.0
      }
     ],
     "count": 1,
-    "pnl_rs": -7840.0,
+    "pnl_rs": -15030.0,
     "rule": "put spread on green, short call on red"
    }
   }
@@ -713,7 +740,7 @@
    {
     "check": "no guardrail BLOCK",
     "pass": true,
-    "detail": "0 blocks, 10 warnings"
+    "detail": "0 blocks, 6 warnings"
    },
    {
     "check": "every exit signal has an order",
@@ -722,8 +749,8 @@
    },
    {
     "check": "every short option has a stop",
-    "pass": true,
-    "detail": "all stopped"
+    "pass": false,
+    "detail": "MCX"
    },
    {
     "check": "no option structure against its colour",
@@ -741,40 +768,40 @@
     "detail": "0 exposed"
    }
   ],
-  "checks_passed": 5,
+  "checks_passed": 4,
   "checks_total": 6,
   "guardrail_status": "WARN",
   "guardrail_top": [
    "HMAAGRO: fill price 34.37 is 25% away from the current price 46.13 (typo / split?)",
-   "SSWL: trade log says 0, Dhan holdings say 2. Holdings are used; it usually clears after the next refresh (a recent sale or buy not yet settled).",
-   "SGFIN: trade log says 0, Dhan holdings say 1. Holdings are used; it usually clears after the next refresh (a recent sale or buy not yet settled).",
-   "SGMART: trade log says 0, Dhan holdings say 1. Holdings are used; it usually clears after the next refresh (a recent sale or buy not yet settled)."
+   "SPECTRUM: trade log says 0, Dhan holdings say 1. Holdings are used; it usually clears after the next refresh (a recent sale or buy not yet settled).",
+   "TANLA: trade log says 0, Dhan holdings say 1. Holdings are used; it usually clears after the next refresh (a recent sale or buy not yet settled).",
+   "8 stocks were bought in the last 3 days and are not in Dhan holdings yet (settlement timing); positions and P&L exclude them until holdings catch up: TEXINFRA (8->9), VRLLOG (2->3), SUNTV (2->3), ACE (0->1), ANGELONE (0->5), BAJAJHLDNG (0->1), SCPL (0->2), PRESTIGE (0->1)"
   ],
   "swing_risk": {
-   "deep_losers_n": 10,
-   "deep_losers_share_pct": 8.3,
-   "pnl_if_all_hit_line_rs": -19249,
-   "extra_loss_if_all_hit_line_rs": -21004,
+   "deep_losers_n": 11,
+   "deep_losers_share_pct": 7.4,
+   "pnl_if_all_hit_line_rs": -18626,
+   "extra_loss_if_all_hit_line_rs": -21649,
    "top_sector": {
     "sector": "Healthcare",
-    "share_pct": 25.3
+    "share_pct": 25.5
    }
   },
   "option_risk": {
    "stress_pct_of_capital": {
-    "market_-8pct": -1.93,
-    "market_-5pct": -0.76,
-    "market_-3pct": -0.28,
-    "market_+3pct": -0.26,
-    "market_+5pct": -0.71,
-    "market_+10pct": -2.76,
-    "market_-5pct_iv_x1.25": -1.97,
-    "market_-8pct_iv_x1.5": -3.65
+    "market_-8pct": -1.65,
+    "market_-5pct": -0.57,
+    "market_-3pct": -0.16,
+    "market_+3pct": -0.36,
+    "market_+5pct": -0.87,
+    "market_+10pct": -2.97,
+    "market_-5pct_iv_x1.25": -1.79,
+    "market_-8pct_iv_x1.5": -3.39
    },
    "worst_single_stock_gap": {
     "symbol": "BSE",
     "move": "up 20%",
-    "pnl_rs": -106613.0
+    "pnl_rs": -103825.0
    },
    "naked_call_stocks": 3
   },

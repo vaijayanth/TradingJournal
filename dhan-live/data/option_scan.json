@@ -1,12 +1,11 @@
 {
- "fetched_at": "2026-11-26T20:13:46+05:30",
+ "fetched_at": "2026-11-27T09:54:14+05:30",
  "stale_inputs": [],
  "open_legs": 20,
  "shorts": 12,
- "super_orders": 15,
+ "super_orders": 13,
  "fired_cleanly": [
-  "HCLTECH @ 11.65",
-  "BSE @ 23.55"
+  "MCX @ 39"
  ],
  "findings": [
   {
@@ -32,6 +31,22 @@
    "leg": "CUMMINSIND 4650CE 2026-12-29",
    "concern": "Short 4650CE (200 qty) is a naked call (by design; covered by shares you hold)",
    "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "MCX",
+   "leg": "MCX 3400PE 2026-12-29",
+   "concern": "No super order matches this short (225 @ 23.2, premium 23.2)",
+   "action": "Close and re-enter as a super order, or place a daily stop order"
+  },
+  {
+   "section": "F",
+   "severity": "WARN",
+   "symbol": "MCX",
+   "leg": "MCX 3400PE 2026-12-29",
+   "concern": "S2 NO STOP: No super order matches this short (225 @ 23.2): no stop protects it",
+   "action": "Close and re-enter as a super order, or use a daily stop order"
   }
  ]
 }
