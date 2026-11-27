@@ -254,6 +254,14 @@ def implied_vol(typ, S, K, T, r, px):
     return (lo + hi) / 2
 
 
+def broker_today(sig):
+    """The IST date the broker positions were pulled (closed contracts belong to THAT day, which is later than the signals' market date when the refresh runs during the next session)."""
+    try:
+        return datetime.fromtimestamp((DATA / "cc_raw" / "positions.txt").stat().st_mtime, IST).strftime("%Y-%m-%d")
+    except Exception:  # noqa: BLE001
+        return sig["market_data_date"]
+
+
 def parse_closed_from_positions():
     """Closed option contracts (net quantity 0) from the saved raw Dhan positions text: [{contract, pnl, buy, sell, qty}]."""
     p = DATA / "cc_raw" / "positions.txt"
@@ -294,7 +302,7 @@ def options(sig, cc):
     led = load(ledger_p, {"entries": []}) or {"entries": []}
     seen = {(e["date"], e["contract"]) for e in led["entries"]}
     for c in closed:
-        k = (sig["market_data_date"], c["contract"])
+        k = (broker_today(sig), c["contract"])
         if k not in seen:
             colour = (stocks.get(c["symbol"]) or {}).get("st_colour")
             led["entries"].append({"date": k[0], "contract": c["contract"], "symbol": c["symbol"], "type": c["type"], "pnl_rs": c["pnl_rs"], "colour_at_close": colour})
@@ -447,7 +455,16 @@ def swing_section(sig, fills, facts, regime):
     for c in cl:
         by_month.setdefault(c["exit_date"][:7], []).append(c)
     prior = [c for c in cl if c["exit_date"][:7] < ym]
-    today_x = [c for c in cl if c["exit_date"] == asof]
+    day = broker_today(sig)                                   # the IST day the broker data was pulled (can be later than the signals' market date)
+    buys_d = [f for f in fills if f["date"] == day and f["action"] == "BUY"]
+    sells_d = [f for f in fills if f["date"] == day and f["action"] == "SELL"]
+    today_x = [c for c in cl if c["exit_date"] == day]
+    hold_avg = {h["symbol"]: h["avg_cost"] for h in (load(DATA / "holdings_snapshot.json", {}) or {}).get("holdings", [])}
+    sell_rows = [{"symbol": c["symbol"], "pl_rs": r2(c["pl_rs"], 0), "pl_pct": c["pl_pct"]} for c in today_x]
+    done = {r["symbol"] for r in sell_rows}
+    for f in sells_d:                                          # a sale not yet in the closed-trade list (holdings lag a day): use the holdings average cost
+        if f["symbol"] not in done and f["symbol"] in hold_avg and f.get("price"):
+            sell_rows.append({"symbol": f["symbol"], "pl_rs": r2((f["price"] - hold_avg[f["symbol"]]) * f["qty"], 0), "pl_pct": r2((f["price"] / hold_avg[f["symbol"]] - 1) * 100)})
     holds = sig.get("holds", [])
     ref = facts.get("backtest_reference") or {}
     bt_exp = r2(ref.get("win_rate_pct", 41) / 100 * ref.get("avg_win_pct", 33.1) + (1 - ref.get("win_rate_pct", 41) / 100) * ref.get("avg_loss_pct", -9.0))
@@ -464,8 +481,8 @@ def swing_section(sig, fills, facts, regime):
                         "entry_avg_slippage_pct": ((adh.get("by_kind") or {}).get("entry") or {}).get("avg_slippage_pct")},
             "today": {"entries_signalled": len(sig.get("entries", [])), "entry_names": [e["symbol"] for e in sig.get("entries", [])][:12],
                       "exits_signalled": len(sig.get("exits", [])), "exit_names": [x["symbol"] for x in sig.get("exits", [])][:12],
-                      "buy_fills_today": sum(1 for f in fills if f["date"] == asof and f["action"] == "BUY"), "sell_fills_today": sum(1 for f in fills if f["date"] == asof and f["action"] == "SELL"),
-                      "realised_today": {"n": len(today_x), "pnl_rs": r2(sum(c["pl_rs"] for c in today_x), 0), "trades": [{"symbol": c["symbol"], "pl_rs": r2(c["pl_rs"], 0), "pl_pct": c["pl_pct"]} for c in today_x][:12]},
+                      "fills_date": day, "buy_fills_today": len(buys_d), "sell_fills_today": len(sells_d), "buy_names": sorted({f["symbol"] for f in buys_d})[:14], "sell_names": sorted({f["symbol"] for f in sells_d})[:14],
+                      "realised_today": {"n": len(sell_rows), "pnl_rs": r2(sum(x["pl_rs"] for x in sell_rows), 0), "trades": sell_rows[:12]},
                       "exit_signals_open_pnl_rs": r2(sum(x.get("notional_pl_rs", 0) for x in sig.get("exits", [])), 0)},
             "open_book": {"positions": len(holds), "in_profit": sum(1 for h in holds if h.get("pl_pct", 0) > 0), "in_profit_pct": r2(sum(1 for h in holds if h.get("pl_pct", 0) > 0) / len(holds) * 100, 1) if holds else None,
                           "unrealised_pnl_rs": r2(sum(h.get("notional_pl_rs", 0) for h in holds), 0), "green_share_pct": (facts.get("trend") or {}).get("green_share_pct")},
@@ -569,7 +586,7 @@ def _reason_summary(ent, asof):
 
 
 def options_today(sig, cc, facts, regime):
-    asof = sig["market_data_date"]
+    asof = broker_today(sig)
     ivp = (load(DATA / "ivp.json", {}) or {}).get("rows", {})
     rt = (facts.get("options") or {}).get("realised_today") or {}
     ledger_p = DATA / "option_ledger.json"
