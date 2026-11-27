@@ -1,7 +1,7 @@
 {
  "broker": "AZ",
- "generated_at": "2026-11-27T14:40:15+05:30",
- "as_of": "2026-11-26",
+ "generated_at": "2026-11-27T18:15:28+05:30",
+ "as_of": "2026-11-27",
  "scope": "AZ swing shares and AZ stock options; Nifty index options are outside by decision",
  "adherence_leakage": {
   "first_ledger_date": "2026-11-12",
@@ -207,24 +207,24 @@
   "n_live_closed": 6,
   "tier": "anecdote",
   "pool_n_all": 1997,
-  "pool_n_matched": 291,
-  "window_days": 17,
-  "pool_note": "post-2022 AZ backtest trades (the walk-forward base case); matched pool = trades that closed within 17 days, like the live ones",
+  "pool_n_matched": 335,
+  "window_days": 18,
+  "pool_note": "post-2022 AZ backtest trades (the walk-forward base case); matched pool = trades that closed within 18 days, like the live ones",
   "live_mean_pct": -10.37,
   "live_win_rate_pct": 16.7,
-  "matched_pool_mean_pct": -9.07,
+  "matched_pool_mean_pct": -8.96,
   "matched_pool_win_rate_pct": 0.3,
   "full_pool_mean_pct": 3.28,
   "full_pool_win_rate_pct": 37.0,
-  "mean_percentile": 21.1,
+  "mean_percentile": 19.6,
   "win_rate_percentile": 100.0,
   "draws": 10000,
   "flag": "within_normal_range",
   "open_book": {
    "n": 38,
-   "in_profit_pct": 84.2,
-   "avg_gain_pct": 5.05,
-   "avg_loss_pct": -1.64
+   "in_profit_pct": 76.3,
+   "avg_gain_pct": 5.63,
+   "avg_loss_pct": -1.82
   },
   "note": "Matched comparison removes the young-book bias but still ignores that live trades are early exits only; bootstrap measures sampling noise only."
  },
@@ -237,28 +237,28 @@
   "below_minus6_symbols": [],
   "worst_positions": [
    {
-    "symbol": "POWERINDIA",
-    "pl_pct": -2.2
-   },
-   {
     "symbol": "CHOLAFIN",
-    "pl_pct": -2.2
+    "pl_pct": -4.3
    },
    {
     "symbol": "CROMPTON",
-    "pl_pct": -2.1
+    "pl_pct": -4.2
    },
    {
-    "symbol": "ABB",
-    "pl_pct": -2.0
+    "symbol": "CUB",
+    "pl_pct": -2.6
    },
    {
-    "symbol": "JINDALSTEL",
-    "pl_pct": -1.3
+    "symbol": "MPHASIS",
+    "pl_pct": -2.3
+   },
+   {
+    "symbol": "BAJFINANCE",
+    "pl_pct": -0.9
    }
   ],
-  "pnl_if_all_hit_line_rs": -60460,
-  "extra_loss_if_all_hit_line_rs": -80560,
+  "pnl_if_all_hit_line_rs": -60748,
+  "extra_loss_if_all_hit_line_rs": -79270,
   "top_sectors": [
    {
     "sector": "Financial Services",
@@ -279,14 +279,14 @@
   "universe": 215,
   "green": 168,
   "green_share_pct": 78.1,
-  "fresh_green_flips_today": 1,
-  "fresh_red_flips_today": 1,
+  "fresh_green_flips_today": 0,
+  "fresh_red_flips_today": 2,
   "holds": 38,
   "holds_green_share_pct": 100.0,
   "entries_today": 2,
   "exits_today": 1,
   "addons_today": 0,
-  "history_days": 1,
+  "history_days": 2,
   "note": "Breadth = share of the F&O universe with a green Supertrend (covered_call_signals.json); percentiles against own history appear after 10 days."
  },
  "options": {
@@ -354,40 +354,40 @@
   "stress": {
    "capital_base_rs": 3000000,
    "grid_pct_of_capital": {
-    "market_-8pct": -13.06,
-    "market_-5pct": -6.01,
-    "market_-3pct": -2.69,
-    "market_+3pct": -0.14,
-    "market_+5pct": -1.8,
-    "market_+10pct": -11.3,
-    "market_-5pct_iv_x1.25": -11.26,
-    "market_-8pct_iv_x1.5": -19.93
+    "market_-8pct": -14.18,
+    "market_-5pct": -6.7,
+    "market_-3pct": -3.07,
+    "market_+3pct": 0.07,
+    "market_+5pct": -1.58,
+    "market_+10pct": -11.48,
+    "market_-5pct_iv_x1.25": -11.55,
+    "market_-8pct_iv_x1.5": -20.12
    },
    "grid_pnl_rs": {
-    "market_-8pct": -391701.0,
-    "market_-5pct": -180308.0,
-    "market_-3pct": -80637.0,
-    "market_+3pct": -4171.0,
-    "market_+5pct": -53868.0,
-    "market_+10pct": -338940.0,
-    "market_-5pct_iv_x1.25": -337736.0,
-    "market_-8pct_iv_x1.5": -597756.0
+    "market_-8pct": -425253.0,
+    "market_-5pct": -201024.0,
+    "market_-3pct": -92134.0,
+    "market_+3pct": 1986.0,
+    "market_+5pct": -47278.0,
+    "market_+10pct": -344543.0,
+    "market_-5pct_iv_x1.25": -346534.0,
+    "market_-8pct_iv_x1.5": -603484.0
    },
    "single_stock_gap_worst": [
     {
      "symbol": "COALINDIA",
      "move": "up 20%",
-     "pnl_rs": -117979.0
-    },
-    {
-     "symbol": "PAYTM",
-     "move": "up 20%",
-     "pnl_rs": -90002.0
+     "pnl_rs": -117767.0
     },
     {
      "symbol": "LUPIN",
      "move": "up 20%",
-     "pnl_rs": -79666.0
+     "pnl_rs": -83695.0
+    },
+    {
+     "symbol": "PAYTM",
+     "move": "up 20%",
+     "pnl_rs": -79560.0
     }
    ],
    "method": "Black-Scholes repricing of every open leg, implied vol solved from the live option price (fallback stock IV or 30%), all underlyings shocked together (beta 1), expiry unchanged, risk-free 0.065.",
@@ -406,17 +406,17 @@
      "symbol": "ADANIENSOL",
      "colour": "red",
      "structure": "short put against a red stock",
-     "pnl_rs": -2228.0
+     "pnl_rs": -3578.0
     },
     {
      "symbol": "HYUNDAI",
      "colour": "red",
      "structure": "short put against a red stock",
-     "pnl_rs": 41.0
+     "pnl_rs": -165.0
     }
    ],
    "count": 2,
-   "pnl_rs": -2187.0,
+   "pnl_rs": -3743.0,
    "rule": "put spread on green, short call on red"
   },
   "breakeven_win_rate_pct": 76.9,
@@ -425,7 +425,7 @@
  "rules_in_force": {
   "add_on_off_from": "2026-11-30",
   "add_on_active_today": true,
-  "days_until_add_on_off": 4,
+  "days_until_add_on_off": 3,
   "add_on_rule_when_active": "green and P&L at or below -6.0%: 0.1 of qty (min 1), once per 7 days",
   "swing_add_on_deviations_n": 0,
   "swing_add_on_deviations": [],
@@ -510,32 +510,32 @@
      }
     ]
    },
-   "exit_signals_open_pnl_rs": -170.0
+   "exit_signals_open_pnl_rs": -231.0
   },
   "open_book": {
    "positions": 38,
-   "in_profit": 32,
-   "in_profit_pct": 84.2,
-   "unrealised_pnl_rs": 35733.0,
+   "in_profit": 29,
+   "in_profit_pct": 76.3,
+   "unrealised_pnl_rs": 34218.0,
    "green_share_pct": 78.1
   },
   "robustness": {
    "regime": {
-    "nifty_close": 25884.0,
-    "nifty_vs_50dma_pct": 9.6,
-    "nifty_vs_200dma_pct": 7.8,
-    "nifty_20d_return_pct": 13.8,
+    "nifty_close": 25607.0,
+    "nifty_vs_50dma_pct": 8.2,
+    "nifty_vs_200dma_pct": 6.7,
+    "nifty_20d_return_pct": 12.8,
     "trend_label": "uptrend (above both the 50 and 200 day averages)",
-    "vix": 16.84,
-    "vix_chg_pct": -4.7,
-    "vix_1y_percentile_pct": 75.0,
+    "vix": 16.55,
+    "vix_chg_pct": -1.8,
+    "vix_1y_percentile_pct": 73.0,
     "vix_1y_low": 9.15,
     "vix_1y_high": 27.89
    },
    "live_month_expectancy_pct": -10.37,
    "backtest_expectancy_per_trade_pct": 8.26,
    "backtest_post_2022_cagr_pct": "about 20 to 23 (walk-forward 2026-11-24)",
-   "bootstrap_percentile_mean": 21.1,
+   "bootstrap_percentile_mean": 19.6,
    "note": "A trend-following book earns in trends: judge the month against the regime above, not in isolation. A low win rate (backtest 41%) is normal; the avg win / avg loss ratio is what carries it."
   }
  },
@@ -585,9 +585,9 @@
    }
   },
   "vix": {
-   "vix": 16.84,
-   "vix_chg_pct": -4.7,
-   "vix_1y_percentile_pct": 75.0,
+   "vix": 16.55,
+   "vix_chg_pct": -1.8,
+   "vix_1y_percentile_pct": 73.0,
    "vix_1y_low": 9.15,
    "vix_1y_high": 27.89
   },
@@ -749,29 +749,41 @@
       "symbol": "ADANIENSOL",
       "colour": "red",
       "structure": "short put against a red stock",
-      "pnl_rs": -2228.0
+      "pnl_rs": -3578.0
      },
      {
       "symbol": "HYUNDAI",
       "colour": "red",
       "structure": "short put against a red stock",
-      "pnl_rs": 41.0
+      "pnl_rs": -165.0
      }
     ],
     "count": 2,
-    "pnl_rs": -2187.0,
+    "pnl_rs": -3743.0,
     "rule": "put spread on green, short call on red"
    }
   }
  },
  "events": {
-  "as_of": "2026-11-26",
+  "as_of": "2026-11-27",
   "this_month_season": "Q2 results tail (to mid-Nov), interim-dividend ex-dates",
   "next_month_season": "quiet; year-end positioning",
   "exposed_open_positions": [],
   "exposed_open_positions_n": 0,
-  "next_21_days_n": 0,
-  "next_21_days": [],
+  "next_21_days_n": 1,
+  "next_21_days": [
+   {
+    "symbol": "IOC",
+    "kind": "ex-dividend",
+    "date": "2026-12-18",
+    "days": 21,
+    "estimated": true,
+    "open_option_legs": 0,
+    "short_legs": 0,
+    "swing_holding": false,
+    "legs_expiring_after_event": []
+   }
+  ],
   "calendar_next_90d": {
    "2026-12": {
     "results": 0,
@@ -783,7 +795,7 @@
    },
    "2027-02": {
     "results": 60,
-    "ex-dividend": 36
+    "ex-dividend": 37
    }
   },
   "event_alerts_open": [],
@@ -794,7 +806,7 @@
    {
     "check": "no guardrail BLOCK",
     "pass": true,
-    "detail": "0 blocks, 1 warnings"
+    "detail": "0 blocks, 2 warnings"
    },
    {
     "check": "every exit signal has an order",
@@ -808,8 +820,8 @@
    },
    {
     "check": "no option structure against its colour",
-    "pass": true,
-    "detail": "none"
+    "pass": false,
+    "detail": "ADANIENSOL, HYUNDAI"
    },
    {
     "check": "no add-on deviation",
@@ -822,17 +834,18 @@
     "detail": "0 exposed"
    }
   ],
-  "checks_passed": 5,
+  "checks_passed": 4,
   "checks_total": 6,
   "guardrail_status": "WARN",
   "guardrail_top": [
-   "sector Financial Services is 47% of deployed capital (limit 40%)"
+   "sector Financial Services is 47% of deployed capital (limit 40%)",
+   "2 open option exit / strike-breach alerts on 2 stocks (ADANIENSOL, HYUNDAI) - see the Covered Call alerts"
   ],
   "swing_risk": {
    "deep_losers_n": 0,
    "deep_losers_share_pct": 0.0,
-   "pnl_if_all_hit_line_rs": -60460,
-   "extra_loss_if_all_hit_line_rs": -80560,
+   "pnl_if_all_hit_line_rs": -60748,
+   "extra_loss_if_all_hit_line_rs": -79270,
    "top_sector": {
     "sector": "Financial Services",
     "share_pct": 47.5
@@ -840,19 +853,19 @@
   },
   "option_risk": {
    "stress_pct_of_capital": {
-    "market_-8pct": -13.06,
-    "market_-5pct": -6.01,
-    "market_-3pct": -2.69,
-    "market_+3pct": -0.14,
-    "market_+5pct": -1.8,
-    "market_+10pct": -11.3,
-    "market_-5pct_iv_x1.25": -11.26,
-    "market_-8pct_iv_x1.5": -19.93
+    "market_-8pct": -14.18,
+    "market_-5pct": -6.7,
+    "market_-3pct": -3.07,
+    "market_+3pct": 0.07,
+    "market_+5pct": -1.58,
+    "market_+10pct": -11.48,
+    "market_-5pct_iv_x1.25": -11.55,
+    "market_-8pct_iv_x1.5": -20.12
    },
    "worst_single_stock_gap": {
     "symbol": "COALINDIA",
     "move": "up 20%",
-    "pnl_rs": -117979.0
+    "pnl_rs": -117767.0
    },
    "naked_call_stocks": 38
   },

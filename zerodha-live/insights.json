@@ -1,9 +1,9 @@
 {
- "as_of": "27 Nov 14:45 (26 Nov close signals; broker data, GTTs and prices as of 27 Nov 14:45; four sections; facts computed by code)",
- "written_at": "2026-11-27T14:45:00+05:30",
+ "as_of": "27 Nov evening (27 Nov close signals; broker data, GTTs and prices as of 27 Nov 18:14; four sections; facts computed by code)",
+ "written_at": "2026-11-27T18:15:50+05:30",
  "confidence": "low",
  "maturity": "6 closed trades (tier anecdote): process and risk numbers are the signal, outcome statistics are descriptive only. Closed trades are the stopped-out losers so far; the open book is the other half.",
- "headline": "Two of your 3x stops fired this morning (HAL and SOLARINDS), and every short option is covered, including the ten new spreads you opened this afternoon.",
+ "headline": "Two put spreads, ADANIENSOL and HYUNDAI, now sit against a red trend after today's close, and that is the one thing to fix tomorrow.",
  "points": [
   {
    "label": "Swing",
@@ -13,7 +13,7 @@
     "swing.open_book",
     "swing.robustness"
    ],
-   "text": "In a trend system the closed trades are mostly the stopped-out losers, because the winners are still running, so read this next to the open book. Six trades have closed this month and five were losses, too few to judge you or the strategy, and the market is in a healthy uptrend. This morning the ASHOKLEY exit filled for a loss of Rs1,796, and the two new entries SAGILITY and TORNTPHARM were bought. Thirteen ASHOKLEY shares are still held, so the exit signal is still showing for them. The open book is 38 positions and 84.2% are in profit."
+   "text": "Six trades have closed this month and five were losses, which is too few to judge you or the strategy, and the closed list is mostly stopped-out losers while the winners are still running. The market is in a healthy uptrend, and most of your open positions are in profit. Today the ASHOKLEY exit filled for a loss of Rs1,796, and the two new entries SAGILITY and TORNTPHARM were bought. The last 13 ASHOKLEY shares still carry an exit signal with no order."
   },
   {
    "label": "Options",
@@ -21,24 +21,25 @@
     "options_today",
     "options_today.exit_reasons"
    ],
-   "text": "Seven option contracts closed today for Rs2,048 net. Three hit the profit target (BDL, CAMS and IDFCFIRSTB). Two hit the 3x stop: the HAL call lost Rs5,100 and the SOLARINDS call lost Rs5,696. The ASHOKLEY put spread closed on the trend flip. Two stops in one morning means two stocks gapped up through your first two layers, which is the one thing layer three is for. Both are red-trend stocks, and the new cool-off rule keeps another call on them off the Entry list until about 4 Dec. Your HAL5700CE is still open and HAL's Supertrend is only 0.1% from turning green, so watch it at the close. Volatility is on the high side (India VIX about 16.84). It is still a small sample, so judge the strategy after roughly 30 trades."
+   "text": "Seven option contracts closed today for Rs2,048 net. Three hit the profit target (BDL, CAMS and IDFCFIRSTB). Two hit the 3x stop: the HAL call lost Rs5,100 and the SOLARINDS call lost Rs5,696. The ASHOKLEY put spread closed on the trend flip. Two stops in a day means two stocks gapped through your first two layers, which is what layer three is for. Since the afternoon you opened ten new spreads, and every short has its protective GTT. India VIX is 16.55, about three-quarters of the way up its one-year range."
   },
   {
    "label": "Events",
    "facts": [
     "events"
    ],
-   "text": "Nothing is due in the next three weeks and none of your open options runs through a results or dividend date. The heavy stretch is ahead: January 2027 brings 120 results dates and 18 ex-dividend dates, and February 60 and 36, while you carry 107 short options. Before then, work out which ones expire after their stock's results date and plan to close them first."
+   "text": "Nothing is due in the next three weeks, and none of your open options runs through a results or dividend date. The heavy stretch is ahead: January 2027 brings 120 results dates and 18 ex-dividend dates. Before then, work out which short options expire after their stock's results date and plan to close them first."
   },
   {
    "label": "Risk management",
    "facts": [
-    "risk_daily",
-    "options.stress",
-    "openrisk"
+    "risk_daily.discipline_checks",
+    "risk_daily.swing_risk",
+    "risk_daily.option_risk",
+    "risk_daily.guardrail_top"
    ],
-   "text": "You pass 5 of 6 discipline checks. The one miss is the remaining ASHOKLEY shares, which have an exit signal but no order. All the new shorts, including the ten spreads you opened this afternoon, have protective GTTs. One thing to check: the ADANIENSOL put spread is against a red colour on the live candles while the daily signal still says green, so open its chart before the close. Financial Services is 47.5% of deployed capital against your 40% limit, so add nothing there. Options remain the biggest risk, and these are worst-case figures that assume none of your exits or stops act: a 5% market fall would cost 6.01% of capital, and a sharp one with higher volatility 19.93%, mostly because 38 stocks carry naked short calls. If every swing position hit its Supertrend exit today you would lose Rs60,460."
+   "text": "You pass 4 of 6 discipline checks. The first miss is the remaining ASHOKLEY shares, which have an exit signal but no order. The second is that ADANIENSOL and HYUNDAI now have a put spread against a red trend: the colour turned red at today's close, so the rule says close both spreads and sell the call. Financial Services is 47.5% of deployed capital against your 40% limit, so add nothing there. A 5% market fall would cost 6.70% of capital and a sharp fall with higher volatility 20.12%, mostly because 38 stocks carry naked short calls, and these figures assume none of your exits or stops act. If every swing position hit its Supertrend exit you would lose Rs60,748."
   }
  ],
- "action": "Watch HAL and ADANIENSOL at the close, decide on the 13 remaining ASHOKLEY shares, and keep Financial Services inside the 40% limit."
+ "action": "Tomorrow, close the ADANIENSOL and HYUNDAI put spreads, then sell the calls only if the trend is still red, and sell the last 13 ASHOKLEY shares."
 }
