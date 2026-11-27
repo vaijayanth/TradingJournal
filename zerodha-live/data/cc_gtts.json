@@ -1,6 +1,86 @@
 {
- "fetched_at": "2026-11-27T10:00:13+05:30",
+ "fetched_at": "2026-11-27T10:06:20+05:30",
  "active": {
+  "IDFCFIRSTB26DEC79PE": [
+   {
+    "id": 346628838,
+    "type": "two-leg",
+    "trigger_values": [
+     0.2,
+     1.3
+    ],
+    "qty": 9275
+   },
+   {
+    "id": 346628838,
+    "type": "two-leg",
+    "trigger_values": [
+     0.2,
+     1.3
+    ],
+    "qty": 9275
+   }
+  ],
+  "CAMS26DEC680PE": [
+   {
+    "id": 346628815,
+    "type": "two-leg",
+    "trigger_values": [
+     1.75,
+     13.05
+    ],
+    "qty": 825
+   },
+   {
+    "id": 346628815,
+    "type": "two-leg",
+    "trigger_values": [
+     1.75,
+     13.05
+    ],
+    "qty": 825
+   }
+  ],
+  "BDL26DEC920PE": [
+   {
+    "id": 346628793,
+    "type": "two-leg",
+    "trigger_values": [
+     2,
+     14.85
+    ],
+    "qty": 425
+   },
+   {
+    "id": 346628793,
+    "type": "two-leg",
+    "trigger_values": [
+     2,
+     14.85
+    ],
+    "qty": 425
+   }
+  ],
+  "ASHOKLEY26DEC180CE": [
+   {
+    "id": 346628765,
+    "type": "two-leg",
+    "trigger_values": [
+     0.4,
+     2.95
+    ],
+    "qty": 5000
+   },
+   {
+    "id": 346628765,
+    "type": "two-leg",
+    "trigger_values": [
+     0.4,
+     2.95
+    ],
+    "qty": 5000
+   }
+  ],
   "ASTRAL26DEC1440CE": [
    {
     "id": 344967893,
@@ -1201,26 +1281,6 @@
     "qty": 5000
    }
   ],
-  "ASHOKLEY26DEC140PE": [
-   {
-    "id": 346422987,
-    "type": "two-leg",
-    "trigger_values": [
-     0.45,
-     3.5
-    ],
-    "qty": 5000
-   },
-   {
-    "id": 346422987,
-    "type": "two-leg",
-    "trigger_values": [
-     0.45,
-     3.5
-    ],
-    "qty": 5000
-   }
-  ],
   "AUROPHARMA26DEC1700PE": [
    {
     "id": 346423050,
@@ -2083,6 +2143,118 @@
   ]
  },
  "gtts": [
+  {
+   "id": 346628838,
+   "type": "two-leg",
+   "created_at": "2026-11-27T10:06:12+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "IDFCFIRSTB26DEC79PE",
+   "last_price": 0.49,
+   "triggers": [
+    0.2,
+    1.3
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 9275,
+     "price": 0.25,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 9275,
+     "price": 1.3,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 346628815,
+   "type": "two-leg",
+   "created_at": "2026-11-27T10:06:09+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "CAMS26DEC680PE",
+   "last_price": 5.3,
+   "triggers": [
+    1.75,
+    13.05
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 825,
+     "price": 1.8,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 825,
+     "price": 13.2,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 346628793,
+   "type": "two-leg",
+   "created_at": "2026-11-27T10:06:06+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "BDL26DEC920PE",
+   "last_price": 4.5,
+   "triggers": [
+    2,
+    14.85
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 425,
+     "price": 2.05,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 425,
+     "price": 15,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 346628765,
+   "type": "two-leg",
+   "created_at": "2026-11-27T10:06:01+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "ASHOKLEY26DEC180CE",
+   "last_price": 0.9,
+   "triggers": [
+    0.4,
+    2.95
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 5000,
+     "price": 0.45,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 5000,
+     "price": 3,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
   {
    "id": 344967893,
    "type": "two-leg",
@@ -3758,34 +3930,6 @@
      "side": "BUY",
      "qty": 5000,
      "price": 10.15,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
-   "id": 346422987,
-   "type": "two-leg",
-   "created_at": "2026-11-26T10:00:20+05:30",
-   "expires_at": "2026-12-30T00:00:00+05:30",
-   "tradingsymbol": "ASHOKLEY26DEC140PE",
-   "last_price": 1.26,
-   "triggers": [
-    0.45,
-    3.5
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 5000,
-     "price": 0.5,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    },
-    {
-     "side": "BUY",
-     "qty": 5000,
-     "price": 3.55,
      "product": "NRML",
      "order_type": "LIMIT"
     }

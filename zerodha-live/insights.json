@@ -1,9 +1,9 @@
 {
- "as_of": "27 Nov 10:40 (26 Nov close signals; broker data pulled 27 Nov morning; four sections; facts computed by code)",
- "written_at": "2026-11-27T10:40:00+05:30",
+ "as_of": "27 Nov 10:55 (26 Nov close signals; broker data and GTTs as of 27 Nov 10:55; four sections; facts computed by code)",
+ "written_at": "2026-11-27T10:55:00+05:30",
  "confidence": "low",
  "maturity": "6 closed trades (tier anecdote): process and risk numbers are the signal, outcome statistics are descriptive only. Closed trades are the stopped-out losers so far; the open book is the other half.",
- "headline": "Four new short options have no protective GTT yet and a stale ASHOKLEY GTT would buy a new long if it triggered; the HAL stop firing for Rs5,100 is the first time your third layer was used.",
+ "headline": "Every short option now has a protective GTT and the stale ASHOKLEY GTT is gone; the HAL stop firing for Rs5,100 is the first time your third layer was used.",
  "points": [
   {
    "label": "Swing",
@@ -37,8 +37,8 @@
     "options.stress",
     "openrisk"
    ],
-   "text": "You pass 4 of 6 discipline checks. The misses are the four new shorts with no stop (ASHOKLEY, BDL, CAMS and IDFCFIRSTB), and the remaining ASHOKLEY shares with an exit signal but no order. Also delete the old ASHOKLEY 140PE GTT, because with no position behind it, it would buy a new long. Financial Services is 47.5% of deployed capital against your 40% limit, so add nothing there. Options remain the biggest risk, and these are worst-case figures that assume none of your exits or stops act: a 5% market fall would cost 4.98% of capital, and a sharp one with higher volatility 17.13%, mostly because 36 stocks carry naked short calls. If every swing position hit its Supertrend exit today you would lose Rs59,931."
+   "text": "You pass 5 of 6 discipline checks. The one miss is the remaining ASHOKLEY shares, which have an exit signal but no order. The four new shorts (ASHOKLEY, BDL, CAMS and IDFCFIRSTB) now have protective GTTs, and the old ASHOKLEY 140PE GTT that would have bought a new long is deleted. Financial Services is 47.5% of deployed capital against your 40% limit, so add nothing there. Options remain the biggest risk, and these are worst-case figures that assume none of your exits or stops act: a 5% market fall would cost 4.98% of capital, and a sharp one with higher volatility 17.13%, mostly because 36 stocks carry naked short calls. If every swing position hit its Supertrend exit today you would lose Rs59,931."
   }
  ],
- "action": "Place protective GTTs on the four new shorts, delete the stale ASHOKLEY 140PE GTT, and keep Financial Services inside the 40% limit."
+ "action": "Decide on the 13 remaining ASHOKLEY shares, and keep Financial Services inside the 40% limit."
 }

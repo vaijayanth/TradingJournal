@@ -1,6 +1,6 @@
 {
  "broker": "AZ",
- "generated_at": "2026-11-27T10:02:06+05:30",
+ "generated_at": "2026-11-27T10:06:24+05:30",
  "as_of": "2026-11-26",
  "scope": "AZ swing shares and AZ stock options; Nifty index options are outside by decision",
  "adherence_leakage": {
@@ -190,7 +190,7 @@
     "symbol": "ASHOKLEY",
     "side": "SELL",
     "ref_price": 156.15,
-    "signal_qty": 131,
+    "signal_qty": 13,
     "outcome": "filled",
     "fill_date": "2026-11-27",
     "fill_price": null,
@@ -758,7 +758,7 @@
    {
     "check": "no guardrail BLOCK",
     "pass": true,
-    "detail": "0 blocks, 2 warnings"
+    "detail": "0 blocks, 1 warnings"
    },
    {
     "check": "every exit signal has an order",
@@ -767,8 +767,8 @@
    },
    {
     "check": "every short option has a stop",
-    "pass": false,
-    "detail": "ASHOKLEY, BDL, CAMS, IDFCFIRSTB"
+    "pass": true,
+    "detail": "all stopped"
    },
    {
     "check": "no option structure against its colour",
@@ -786,12 +786,11 @@
     "detail": "0 exposed"
    }
   ],
-  "checks_passed": 4,
+  "checks_passed": 5,
   "checks_total": 6,
   "guardrail_status": "WARN",
   "guardrail_top": [
-   "sector Financial Services is 47% of deployed capital (limit 40%)",
-   "1 invalid GTT orders (1 high: e.g. buy GTTs on contracts you no longer hold) - see Covered Call > Alerts > Invalid GTT; the zerodha-gtt-order skill can delete them"
+   "sector Financial Services is 47% of deployed capital (limit 40%)"
   ],
   "swing_risk": {
    "deep_losers_n": 0,

@@ -5,12 +5,12 @@
   "IDFCFIRSTB26DEC75PE",
   "BDL26DEC900PE"
  ],
- "fetched_at": "2026-11-27T10:01:52+05:30",
+ "fetched_at": "2026-11-27T10:06:20+05:30",
  "inputs": {
   "positions": "2026-11-27T04:30:13.474026+00:00",
-  "gtts": "2026-11-27T10:00:13+05:30",
+  "gtts": "2026-11-27T10:06:20+05:30",
   "orders": "2026-11-27T10:00:13+05:30",
-  "gtt_scan": "2026-11-27T10:00:13+05:30"
+  "gtt_scan": "2026-11-27T10:06:20+05:30"
  },
  "stale_inputs": [],
  "open_legs": 178,
@@ -311,46 +311,6 @@
    "tradingsymbol": "WIPRO26DEC220CE",
    "concern": "Short 220CE (3000 qty) is a naked call (by design; covered only by shares you hold)",
    "action": "Watch the 3x stop and the Supertrend colour"
-  },
-  {
-   "section": "C",
-   "severity": "WARN",
-   "symbol": "ASHOKLEY",
-   "tradingsymbol": "ASHOKLEY26DEC180CE",
-   "concern": "No active buy-back GTT (premium 0.9, sold 0.98)",
-   "action": "Place the protective GTT (zerodha-gtt-order)"
-  },
-  {
-   "section": "C",
-   "severity": "WARN",
-   "symbol": "BDL",
-   "tradingsymbol": "BDL26DEC920PE",
-   "concern": "No active buy-back GTT (premium 4.5, sold 4.95)",
-   "action": "Place the protective GTT (zerodha-gtt-order)"
-  },
-  {
-   "section": "C",
-   "severity": "WARN",
-   "symbol": "CAMS",
-   "tradingsymbol": "CAMS26DEC680PE",
-   "concern": "No active buy-back GTT (premium 5.25, sold 4.35)",
-   "action": "Place the protective GTT (zerodha-gtt-order)"
-  },
-  {
-   "section": "C",
-   "severity": "WARN",
-   "symbol": "IDFCFIRSTB",
-   "tradingsymbol": "IDFCFIRSTB26DEC79PE",
-   "concern": "No active buy-back GTT (premium 0.49, sold 0.44)",
-   "action": "Place the protective GTT (zerodha-gtt-order)"
-  },
-  {
-   "section": "F",
-   "severity": "HIGH",
-   "symbol": "ASHOKLEY",
-   "tradingsymbol": "ASHOKLEY26DEC140PE",
-   "concern": "G1 STALE: No open position on this contract (closed or expired): if it triggers it BUYS a new long position (GTT 346422987)",
-   "action": "Delete this GTT"
   }
  ]
 }

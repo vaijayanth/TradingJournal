@@ -1,9 +1,9 @@
 {
- "generated_at": "2026-11-27T04:31:20.668090+00:00",
+ "generated_at": "2026-11-27T04:36:20.323659+00:00",
  "market_data_date": "2026-11-26",
  "live_prices_at": "2026-11-27T10:00:35+05:30",
- "gtt_scan_at": "2026-11-27T10:00:13+05:30",
- "gtt_checked_at": "2026-11-27T10:00:13+05:30",
+ "gtt_scan_at": "2026-11-27T10:06:20+05:30",
+ "gtt_checked_at": "2026-11-27T10:06:20+05:30",
  "rules": {
   "short_call_delta": 0.1,
   "short_put_delta": 0.1,
@@ -12371,29 +12371,6 @@
  "ivp_as_of": "2026-11-26",
  "alerts": [
   {
-   "level": "BREACH",
-   "type": "Invalid GTT",
-   "symbol": "ASHOKLEY",
-   "expiry": "2026-12-29",
-   "strike": 140.0,
-   "opt_type": "PE",
-   "concern": "Stale: No open position on this contract (closed or expired): if it triggers it BUYS a new long position",
-   "action": "Delete this GTT (GTT 346422987)",
-   "text": "ASHOKLEY ASHOKLEY26DEC140PE: No open position on this contract (closed or expired): if it triggers it BUYS a new long position"
-  },
-  {
-   "level": "WARN",
-   "type": "No GTT placed",
-   "symbol": "ASHOKLEY",
-   "expiry": "2026-12-29",
-   "strike": 180.0,
-   "opt_type": "CE",
-   "qty": 5000,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 2.94 (3x premium)",
-   "text": "ASHOKLEY 2026-12-29 short 180CE: no active buy-back GTT (3x premium stop = 2.94)"
-  },
-  {
    "level": "WARN",
    "type": "Over-hedged",
    "symbol": "BDL",
@@ -12403,42 +12380,6 @@
    "concern": "425 of 850 hedge qty has no short to cover (short 425)",
    "action": "Sell the extra long puts or confirm it is deliberate",
    "text": "BDL 2026-12-29: short 920PE 425 qty, hedge 850 qty - 425 qty over-hedged"
-  },
-  {
-   "level": "WARN",
-   "type": "No GTT placed",
-   "symbol": "BDL",
-   "expiry": "2026-12-29",
-   "strike": 920.0,
-   "opt_type": "PE",
-   "qty": 425,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 14.85 (3x premium)",
-   "text": "BDL 2026-12-29 short 920PE: no active buy-back GTT (3x premium stop = 14.85)"
-  },
-  {
-   "level": "WARN",
-   "type": "No GTT placed",
-   "symbol": "CAMS",
-   "expiry": "2026-12-29",
-   "strike": 680.0,
-   "opt_type": "PE",
-   "qty": 825,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 13.05 (3x premium)",
-   "text": "CAMS 2026-12-29 short 680PE: no active buy-back GTT (3x premium stop = 13.05)"
-  },
-  {
-   "level": "WARN",
-   "type": "No GTT placed",
-   "symbol": "IDFCFIRSTB",
-   "expiry": "2026-12-29",
-   "strike": 79.0,
-   "opt_type": "PE",
-   "qty": 9275,
-   "concern": "No buy-back GTT on this short",
-   "action": "Place GTT at 1.32 (3x premium)",
-   "text": "IDFCFIRSTB 2026-12-29 short 79PE: no active buy-back GTT (3x premium stop = 1.32)"
   },
   {
    "level": "WARN",
