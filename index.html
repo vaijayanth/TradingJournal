@@ -10538,7 +10538,7 @@ const ccActIssueTxt = r => ccIsResell(r) ? `Long ${r.strike}PE hedge left; short
 const ccActDoTxt = r => ccIsResell(r) ? 'Sell new PE above ' + r.strike : ccIsTier(r) ? (ccInBan(r.symbol) || r.lvl >= 3 ? 'Do not open' : r.desired === 'PUT_SPREAD' ? 'Open BPS' : 'Sell the call') : ccShortAlert(r)[1];
 const ccActCols = () => [
   { h: 'Type', v: r => r.ord, x: r => r.type, c: r => ccTypePill(r), txt: true },
-  { h: 'Stock', v: r => r.symbol, c: r => `<b class="stk">${dhEsc(r.symbol)}</b>`, txt: true },
+  { h: 'Stock', v: r => r.symbol, c: ccStockCell, txt: true, nw: 200 },
   { h: 'Supertrend', v: r => ccTrendOf(r.symbol), c: ccTrendCell, txt: true },
   { h: 'IVP', v: r => ccIvpOf(r.symbol), c: r => ccIvpCell(r.symbol) },
   { h: 'To flip', v: r => ccToFlipOf(r.symbol), c: r => ccToFlipCell(r.symbol) },
@@ -10546,7 +10546,7 @@ const ccActCols = () => [
   { h: 'Leg', v: r => r.strike == null ? '' : r.strike, c: r => r.strike == null ? '<span style="color:var(--text-muted)">—</span>' : ccStrike(r.strike) + ' ' + (r.opt_type || '') },
   { h: 'Expiry', v: r => r.expiry || '', c: r => r.expiry ? dhFmtDate(r.expiry) : '—' },
   { h: 'Issue', v: r => ccActIssueTxt(r), c: r => ccIsTier(r)
-      ? `${r.td === 0 ? '<b>Flipped today</b>' : `Flipped ${r.td}d ago`}${ccTierAlert(r) !== '<span style="color:var(--text-muted)">—</span>' ? '<br>' + ccTierAlert(r) : ''}`
+      ? (r.td === 0 ? '<b>Flipped today</b>' : `Flipped ${r.td}d ago`)
       : `<span title="${dhEsc(r.concern || ccAlertDetail(r) || '')}">${dhEsc(ccShortAlert(r)[0])}</span>${ccInBan(r.symbol) ? '<br>' + ccBanChip(true) : ''}`, txt: true, nw: 190 },
   { h: 'Action', v: r => ccActDoTxt(r), c: r => `<b title="${dhEsc(r.action || '')}">${dhEsc(ccActDoTxt(r))}</b>`, txt: true },
 ];
@@ -10681,6 +10681,18 @@ function ccTierRows(d) {
   });
   return out;
 }
+// Entry rows (user, 2026-11-27): everything that says "careful" sits UNDER the stock name so it is read together with the name: F&O ban, results / ex-dividend, short expiry, and a near-flip chip.
+const ccNearFlipChip = sym => {
+  const x = (window._ccSt || {})[sym]; if (!x || x.d == null || x.d > 1.5) return '';
+  return `<span class="trend-pill" style="background:var(--amber-soft, var(--surface2));color:var(--amber);white-space:nowrap" title="Supertrend ${dhEsc(x.c)}, line ${dhEsc(String(x.line))} vs price ${dhEsc(String(x.px))}: within 1.5% of flipping, the colour is on a knife-edge">⚠ Near flip ${x.d.toFixed(1)}% ${x.c === 'green' ? '↓red' : '↑green'}</span>`;
+};
+const ccStockCell = r => {
+  const base = `<b class="stk">${dhEsc(r.symbol)}</b>`;
+  if (!ccIsTier(r)) return base;
+  const parts = []; const a = ccTierAlert(r); if (a !== '<span style="color:var(--text-muted)">—</span>') parts.push(a);
+  const nf = ccNearFlipChip(r.symbol); if (nf) parts.push(nf);
+  return base + (parts.length ? `<div style="display:flex;flex-direction:column;align-items:flex-start;gap:3px;margin-top:4px">${parts.join('')}</div>` : '');
+};
 const ccTierAlert = r => {
   const banned = ccInBan(r.symbol);
   const chip = (bg, fg, t, tip) => `<span class="trend-pill" style="background:${bg};color:${fg};white-space:nowrap" title="${dhEsc(tip || '')}">${t}</span>`;
