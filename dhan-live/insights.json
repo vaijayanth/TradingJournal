@@ -1,9 +1,9 @@
 {
- "as_of": "27 Nov 10:10 (26 Nov close signals; broker data pulled 27 Nov morning; four sections; facts computed by code)",
- "written_at": "2026-11-27T10:10:00+05:30",
+ "as_of": "27 Nov 14:25 (26 Nov close signals; broker data and prices as of 27 Nov 14:25; four sections; facts computed by code)",
+ "written_at": "2026-11-27T14:25:00+05:30",
  "confidence": "low",
  "maturity": "18 closed trades (tier weak): outcome statistics are descriptive only, process and risk are the signal. Closed trades are the stopped-out losers so far; the open book is the other half.",
- "headline": "The urgent item is the BSE short call, which is now well under water against a green trend; swing results are still too early to judge, and tonight's MACPOWER add-on should be skipped because averaging is off from Monday.",
+ "headline": "The BSE short call is the one open exit: it is against a green trend, though the loss has shrunk as BSE fell. The new MCX short still needs a stop.",
  "points": [
   {
    "label": "Swing",
@@ -21,7 +21,7 @@
     "options_today",
     "options_today.exit_reasons"
    ],
-   "text": "This morning you bought back the MCX 3300PE at the profit target for Rs5,378, and then sold a fresh MCX 3400PE. All 3 contracts closed so far were profit targets and the 3x stop has not fired, which is how the layers should work. Three trades are an anecdote, so judge the strategy after about 30. Volatility is on the high side (India VIX about 16.84), so premiums are decent. The new MCX short has no stop or target yet, and the BSE 4200CE short call is the one structure out of line with its green trend."
+   "text": "This morning you bought back the MCX 3300PE at the profit target for Rs5,378, and then sold a fresh MCX 3400PE. All 3 contracts closed so far were profit targets and the 3x stop has not fired, which is how the layers should work. Three trades are an anecdote, so judge the strategy after about 30. Volatility is on the high side (India VIX about 16.84), so premiums are decent. The new MCX short has no stop or target yet. The BSE 4200CE short call is the one structure out of line with its green trend, but the stock has eased since the morning, so the loss on it has shrunk to Rs6,010. It still needs closing, because the rule is the rule."
   },
   {
    "label": "Events",
@@ -37,8 +37,8 @@
     "openrisk",
     "options.stress"
    ],
-   "text": "You pass 4 of 6 discipline checks. The two misses are the new MCX 3400PE with no stop, and the BSE short call against its green colour, which is now deeply under water and still open. Close BSE first, because that is the one layer-two exit that has not been acted on. On swing, 11 positions are down more than 6%. From 30 November you will not average them: they ride to their Supertrend exit. Tonight's MACPOWER add-on would only fill on Monday, when averaging is off, so skip it. If everything hit its exit line today the book would lose Rs18,626, which is small. On options, a 5% market fall would cost under 1% of capital even if no exit acted, but a 20% jump in BSE would cost Rs103,825, and that is exactly the short call to close."
+   "text": "You pass 4 of 6 discipline checks. The two misses are the new MCX 3400PE with no stop, and the BSE short call that goes against the green trend, which is still open. Close BSE first. On swing, 11 positions are down more than 6%. From 30 November you will not average these: they ride to their Supertrend exit or get stopped out. If everything hit its exit line today, the book would lose Rs19,885 in total, which is small. On options, a 5% market fall would cost under 1% of capital even if none of your exits acted, so the book is comfortable. The one position that could really hurt is BSE if it jumps sharply, and that is exactly the short call to close."
   }
  ],
- "action": "Close the BSE 4200CE in the Dhan app now, put a stop and target on the MCX 3400PE, and skip the MACPOWER add-on."
+ "action": "Close the BSE 4200CE in the Dhan app, put a stop and target on the MCX 3400PE, and skip the MACPOWER add-on."
 }

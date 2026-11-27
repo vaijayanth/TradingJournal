@@ -1,22 +1,22 @@
 {
  "broker": "ND",
- "generated_at": "2026-11-27T09:55:28+05:30",
+ "generated_at": "2026-11-27T14:23:54+05:30",
  "as_of": "2026-11-26",
  "scope": "ND swing shares and ND stock options; Nifty index options are outside by decision",
  "adherence_leakage": {
   "first_ledger_date": "2026-11-13",
-  "signals_total": 53,
+  "signals_total": 46,
   "by_kind": {
    "entry": {
-    "signals": 28,
-    "filled": 15,
+    "signals": 23,
+    "filled": 10,
     "missed": 13,
     "pending": 0,
-    "fill_rate_pct": 53.6,
-    "decided_n": 28,
+    "fill_rate_pct": 43.5,
+    "decided_n": 23,
     "tier": "weak",
-    "avg_slippage_pct": 0.99,
-    "median_delay_days": 1.0,
+    "avg_slippage_pct": 1.36,
+    "median_delay_days": 2.0,
     "missed_symbols": [
      "MSTCLTD",
      "PANACHE",
@@ -30,14 +30,14 @@
     "missed_avg_move_since_signal_pct": 12.7
    },
    "exit": {
-    "signals": 8,
-    "filled": 7,
+    "signals": 6,
+    "filled": 5,
     "missed": 1,
     "pending": 0,
-    "fill_rate_pct": 87.5,
-    "decided_n": 8,
+    "fill_rate_pct": 83.3,
+    "decided_n": 6,
     "tier": "anecdote",
-    "avg_slippage_pct": 1.05,
+    "avg_slippage_pct": 1.47,
     "median_delay_days": 1.0,
     "missed_symbols": [
      "PASHUPATI"
@@ -46,14 +46,14 @@
    },
    "addon": {
     "signals": 17,
-    "filled": 14,
+    "filled": 13,
     "missed": 3,
-    "pending": 0,
-    "fill_rate_pct": 82.4,
-    "decided_n": 17,
+    "pending": 1,
+    "fill_rate_pct": 81.2,
+    "decided_n": 16,
     "tier": "weak",
-    "avg_slippage_pct": 0.5,
-    "median_delay_days": 2.5,
+    "avg_slippage_pct": 0.51,
+    "median_delay_days": 3.0,
     "missed_symbols": [
      "LGEINDIA",
      "ESAFSFB",
@@ -63,6 +63,89 @@
    }
   },
   "ledger_tail": [
+   {
+    "date": "2026-11-23",
+    "kind": "entry",
+    "symbol": "SPORTKING",
+    "side": "BUY",
+    "ref_price": 239.18,
+    "signal_qty": 8,
+    "outcome": "missed"
+   },
+   {
+    "date": "2026-11-23",
+    "kind": "entry",
+    "symbol": "WINDMACHIN",
+    "side": "BUY",
+    "ref_price": 354.7,
+    "signal_qty": 5,
+    "outcome": "missed"
+   },
+   {
+    "date": "2026-11-23",
+    "kind": "exit",
+    "symbol": "GUFICBIO",
+    "side": "SELL",
+    "ref_price": 415.05,
+    "signal_qty": 3,
+    "outcome": "filled",
+    "fill_date": "2026-11-26",
+    "fill_price": 413.4,
+    "fill_qty": 3,
+    "slip_pct": 0.4,
+    "delay_days": 3
+   },
+   {
+    "date": "2026-11-23",
+    "kind": "exit",
+    "symbol": "SSWL",
+    "side": "SELL",
+    "ref_price": 490.45,
+    "signal_qty": 2,
+    "outcome": "filled",
+    "fill_date": "2026-11-26",
+    "fill_price": 495.6,
+    "fill_qty": 2,
+    "slip_pct": -1.05,
+    "delay_days": 3
+   },
+   {
+    "date": "2026-11-23",
+    "kind": "addon",
+    "symbol": "AMANTA",
+    "side": "BUY",
+    "ref_price": 204.97,
+    "signal_qty": 4,
+    "outcome": "filled",
+    "fill_date": "2026-11-26",
+    "fill_price": 221.8,
+    "fill_qty": 1,
+    "slip_pct": 8.21,
+    "delay_days": 3
+   },
+   {
+    "date": "2026-11-23",
+    "kind": "addon",
+    "symbol": "ESAFSFB",
+    "side": "BUY",
+    "ref_price": 42.48,
+    "signal_qty": 21,
+    "outcome": "missed"
+   },
+   {
+    "date": "2026-11-23",
+    "kind": "addon",
+    "symbol": "KTKBANK",
+    "side": "BUY",
+    "ref_price": 341.25,
+    "signal_qty": 5,
+    "outcome": "filled",
+    "fill_date": "2026-11-26",
+    "fill_price": 337.85,
+    "fill_qty": 1,
+    "slip_pct": -1.0,
+    "delay_days": 3
+   },
    {
     "date": "2026-11-23",
     "kind": "addon",
@@ -158,119 +241,16 @@
    },
    {
     "date": "2026-11-26",
-    "kind": "entry",
-    "symbol": "ACE",
-    "side": "BUY",
-    "ref_price": 1295.0,
-    "signal_qty": 1,
-    "outcome": "filled",
-    "fill_date": "2026-11-27",
-    "fill_price": 1295.0,
-    "fill_qty": 1,
-    "slip_pct": 0.0,
-    "delay_days": 1
-   },
-   {
-    "date": "2026-11-26",
-    "kind": "entry",
-    "symbol": "ANGELONE",
-    "side": "BUY",
-    "ref_price": 358.0,
-    "signal_qty": 5,
-    "outcome": "filled",
-    "fill_date": "2026-11-27",
-    "fill_price": 361.05,
-    "fill_qty": 5,
-    "slip_pct": 0.85,
-    "delay_days": 1
-   },
-   {
-    "date": "2026-11-26",
-    "kind": "entry",
-    "symbol": "BAJAJHLDNG",
-    "side": "BUY",
-    "ref_price": 11933.0,
-    "signal_qty": 1,
-    "outcome": "filled",
-    "fill_date": "2026-11-27",
-    "fill_price": 11876.0,
-    "fill_qty": 1,
-    "slip_pct": -0.48,
-    "delay_days": 1
-   },
-   {
-    "date": "2026-11-26",
-    "kind": "entry",
-    "symbol": "PRESTIGE",
-    "side": "BUY",
-    "ref_price": 1832.1,
-    "signal_qty": 1,
-    "outcome": "filled",
-    "fill_date": "2026-11-27",
-    "fill_price": 1836.4,
-    "fill_qty": 1,
-    "slip_pct": 0.23,
-    "delay_days": 1
-   },
-   {
-    "date": "2026-11-26",
-    "kind": "entry",
-    "symbol": "SCPL",
-    "side": "BUY",
-    "ref_price": 712.6,
-    "signal_qty": 2,
-    "outcome": "filled",
-    "fill_date": "2026-11-27",
-    "fill_price": 716.95,
-    "fill_qty": 2,
-    "slip_pct": 0.61,
-    "delay_days": 1
-   },
-   {
-    "date": "2026-11-26",
-    "kind": "exit",
-    "symbol": "SPECTRUM",
-    "side": "SELL",
-    "ref_price": 3878.6,
-    "signal_qty": 1,
-    "outcome": "filled",
-    "fill_date": "2026-11-27",
-    "fill_price": 3878.6,
-    "fill_qty": 1,
-    "slip_pct": 0.0,
-    "delay_days": 1
-   },
-   {
-    "date": "2026-11-26",
-    "kind": "exit",
-    "symbol": "TANLA",
-    "side": "SELL",
-    "ref_price": 624.7,
-    "signal_qty": 1,
-    "outcome": "filled",
-    "fill_date": "2026-11-27",
-    "fill_price": 624.7,
-    "fill_qty": 1,
-    "slip_pct": 0.0,
-    "delay_days": 1
-   },
-   {
-    "date": "2026-11-26",
     "kind": "addon",
-    "symbol": "VRLLOG",
+    "symbol": "MACPOWER",
     "side": "BUY",
-    "ref_price": 314.9,
+    "ref_price": 2023.9,
     "signal_qty": 2,
-    "outcome": "filled",
-    "fill_date": "2026-11-27",
-    "fill_price": 315.95,
-    "fill_qty": 1,
-    "slip_pct": 0.33,
-    "delay_days": 1
+    "outcome": "pending"
    }
   ],
-  "overall_fill_rate_pct": 67.9,
-  "overall_decided_n": 53,
+  "overall_fill_rate_pct": 62.2,
+  "overall_decided_n": 45,
   "note": "Signals come from the git history of the signals file; a fill is a same-side fill within 6 calendar days after the signal date; slippage is positive when the fill was worse than the signal close. A 'missed' signal can also be a fill the ledger never captured (a day the refresh did not run), so check the symbol before calling it an execution miss."
  },
  "bootstrap": {
@@ -336,8 +316,8 @@
     "pl_pct": -6.9
    }
   ],
-  "pnl_if_all_hit_line_rs": -18626,
-  "extra_loss_if_all_hit_line_rs": -21649,
+  "pnl_if_all_hit_line_rs": -19885,
+  "extra_loss_if_all_hit_line_rs": -21755,
   "top_sectors": [
    {
     "sector": "Healthcare",
@@ -400,40 +380,40 @@
   "stress": {
    "capital_base_rs": 2000000,
    "grid_pct_of_capital": {
-    "market_-8pct": -1.65,
-    "market_-5pct": -0.57,
-    "market_-3pct": -0.16,
-    "market_+3pct": -0.36,
-    "market_+5pct": -0.87,
-    "market_+10pct": -2.97,
-    "market_-5pct_iv_x1.25": -1.79,
-    "market_-8pct_iv_x1.5": -3.39
+    "market_-8pct": -2.01,
+    "market_-5pct": -0.78,
+    "market_-3pct": -0.28,
+    "market_+3pct": -0.28,
+    "market_+5pct": -0.75,
+    "market_+10pct": -2.84,
+    "market_-5pct_iv_x1.25": -2.07,
+    "market_-8pct_iv_x1.5": -3.85
    },
    "grid_pnl_rs": {
-    "market_-8pct": -33006.0,
-    "market_-5pct": -11319.0,
-    "market_-3pct": -3121.0,
-    "market_+3pct": -7223.0,
-    "market_+5pct": -17350.0,
-    "market_+10pct": -59399.0,
-    "market_-5pct_iv_x1.25": -35771.0,
-    "market_-8pct_iv_x1.5": -67743.0
+    "market_-8pct": -40281.0,
+    "market_-5pct": -15680.0,
+    "market_-3pct": -5576.0,
+    "market_+3pct": -5511.0,
+    "market_+5pct": -14963.0,
+    "market_+10pct": -56781.0,
+    "market_-5pct_iv_x1.25": -41357.0,
+    "market_-8pct_iv_x1.5": -76927.0
    },
    "single_stock_gap_worst": [
     {
      "symbol": "BSE",
      "move": "up 20%",
-     "pnl_rs": -103825.0
+     "pnl_rs": -107364.0
     },
     {
      "symbol": "BPCL",
      "move": "down 20%",
-     "pnl_rs": -75172.0
+     "pnl_rs": -76977.0
     },
     {
      "symbol": "CUMMINSIND",
      "move": "up 20%",
-     "pnl_rs": -70694.0
+     "pnl_rs": -71726.0
     }
    ],
    "method": "Black-Scholes repricing of every open leg, implied vol solved from the live option price (fallback stock IV or 30%), all underlyings shocked together (beta 1), expiry unchanged, risk-free 0.065.",
@@ -452,11 +432,11 @@
      "symbol": "BSE",
      "colour": "green",
      "structure": "short call against a green stock",
-     "pnl_rs": -15030.0
+     "pnl_rs": -6010.0
     }
    ],
    "count": 1,
-   "pnl_rs": -15030.0,
+   "pnl_rs": -6010.0,
    "rule": "put spread on green, short call on red"
   },
   "breakeven_win_rate_pct": 76.9,
@@ -543,9 +523,9 @@
    "note": "Month vs all earlier closed trades; direction only until each side has 30 trades."
   },
   "process": {
-   "overall_fill_rate_pct": 67.9,
-   "decided_n": 53,
-   "entry_avg_slippage_pct": 0.99
+   "overall_fill_rate_pct": 62.2,
+   "decided_n": 45,
+   "entry_avg_slippage_pct": 1.36
   },
   "today": {
    "entries_signalled": 0,
@@ -705,11 +685,11 @@
       "symbol": "BSE",
       "colour": "green",
       "structure": "short call against a green stock",
-      "pnl_rs": -15030.0
+      "pnl_rs": -6010.0
      }
     ],
     "count": 1,
-    "pnl_rs": -15030.0,
+    "pnl_rs": -6010.0,
     "rule": "put spread on green, short call on red"
    }
   }
@@ -780,8 +760,8 @@
   "swing_risk": {
    "deep_losers_n": 11,
    "deep_losers_share_pct": 7.4,
-   "pnl_if_all_hit_line_rs": -18626,
-   "extra_loss_if_all_hit_line_rs": -21649,
+   "pnl_if_all_hit_line_rs": -19885,
+   "extra_loss_if_all_hit_line_rs": -21755,
    "top_sector": {
     "sector": "Healthcare",
     "share_pct": 25.5
@@ -789,19 +769,19 @@
   },
   "option_risk": {
    "stress_pct_of_capital": {
-    "market_-8pct": -1.65,
-    "market_-5pct": -0.57,
-    "market_-3pct": -0.16,
-    "market_+3pct": -0.36,
-    "market_+5pct": -0.87,
-    "market_+10pct": -2.97,
-    "market_-5pct_iv_x1.25": -1.79,
-    "market_-8pct_iv_x1.5": -3.39
+    "market_-8pct": -2.01,
+    "market_-5pct": -0.78,
+    "market_-3pct": -0.28,
+    "market_+3pct": -0.28,
+    "market_+5pct": -0.75,
+    "market_+10pct": -2.84,
+    "market_-5pct_iv_x1.25": -2.07,
+    "market_-8pct_iv_x1.5": -3.85
    },
    "worst_single_stock_gap": {
     "symbol": "BSE",
     "move": "up 20%",
-    "pnl_rs": -103825.0
+    "pnl_rs": -107364.0
    },
    "naked_call_stocks": 3
   },
