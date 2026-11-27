@@ -66,7 +66,7 @@ def _st_state(highs, lows, closes, period=10, mult=3.0):
     return d, fl, fu
 
 
-def _st_distances(symbols, data_dir, ttl_minutes=30):
+def _st_distances(symbols, data_dir, ttl_minutes=30, flips=None):
     """Distance to the Supertrend flip per stock (user, 2026-11-26): green = % the price can fall to the lower line before the colour turns red, red = % it can rise to the upper line
     before it turns green. Computed from Yahoo daily candles (the last bar can lag a session for some stocks: `bar` says which date it is) and cached in data/st_distance.json
     for ttl_minutes. A failure returns what the cache has (or nothing); it never stops the engine. Information only."""
@@ -77,7 +77,7 @@ def _st_distances(symbols, data_dir, ttl_minutes=30):
         c = json.loads(cache.read_text(encoding="utf-8"))
         rows = c.get("rows", {})
         age = (now - datetime.fromisoformat(c["fetched_at"])).total_seconds() / 60
-        if age <= ttl_minutes and all(s in rows for s in symbols):
+        if age <= ttl_minutes and all(s in rows for s in symbols) and (not flips or all(("flip_move_3d" in rows[s]) or not flips.get(s) for s in symbols)):
             return rows
     except Exception:  # noqa: BLE001
         pass
@@ -95,7 +95,16 @@ def _st_distances(symbols, data_dir, ttl_minutes=30):
             if d is None or px <= 0:
                 continue
             line = fl if d == "up" else fu
-            out[s] = {"colour": "green" if d == "up" else "red", "line": round(float(line), 2), "price": round(px, 2), "dist_pct": round((px - line) / px * 100 if d == "up" else (line - px) / px * 100, 2), "bar": str(x.index[-1].date())}
+            fm = None                      # the 3-day move into the flip bar, in %: a sharp one means a 'spike flip' (user, 2026-11-27: the new structure's tail risk is about double)
+            if flips and flips.get(s):
+                try:
+                    dates = [str(t.date()) for t in x.index]
+                    k = next(i for i, dt in enumerate(dates) if dt >= flips[s])
+                    if k >= 3:
+                        cl = x["Close"].tolist(); fm = round((cl[k] / cl[k - 3] - 1) * 100, 1)
+                except Exception:  # noqa: BLE001
+                    fm = None
+            out[s] = {"flip_move_3d": fm, "colour": "green" if d == "up" else "red", "line": round(float(line), 2), "price": round(px, 2), "dist_pct": round((px - line) / px * 100 if d == "up" else (line - px) / px * 100, 2), "bar": str(x.index[-1].date())}
         except Exception:  # noqa: BLE001
             continue
     if out:
@@ -678,11 +687,24 @@ def main():
         if r_:
             s_["ivp"], s_["iv"], s_["ivr"] = r_["ivp"], r_["iv"], r_["ivr"]
             s_["iv_tier"], s_["iv_tier_rank"] = r_.get("tier"), r_.get("tier_rank")   # structural IV tier A-E (user, 2026-11-27)
-    _std = _st_distances(sorted({s_["symbol"] for s_ in stocks if s_.get("colour") and s_.get("symbol")}), DATA)
+    _std = _st_distances(sorted({s_["symbol"] for s_ in stocks if s_.get("colour") and s_.get("symbol")}), DATA, flips={s_["symbol"]: s_.get("flip_date") for s_ in stocks if s_.get("symbol")})
     for s_ in stocks:
         r_ = _std.get(s_.get("symbol"))
         if r_:
             s_["st_colour"], s_["st_line"], s_["st_price"], s_["st_dist_pct"], s_["st_bar"] = r_["colour"], r_["line"], r_["price"], r_["dist_pct"], r_["bar"]
+            s_["st_flip_move_3d"] = r_.get("flip_move_3d")
+    # 3x stop fired (user, 2026-11-27): the latest stop-out per stock from this broker's own option ledger (written by compute_insights_facts.py); the Entry tab cools that direction off
+    try:
+        _led = json.loads((DATA / "option_ledger.json").read_text(encoding="utf-8")).get("entries", [])
+        _stops = {}
+        for e_ in sorted(_led, key=lambda e: e.get("date", "")):
+            if e_.get("side") == "short" and str(e_.get("reason", "")).startswith("3x stop"):
+                _stops[e_["symbol"]] = {"date": e_["date"], "type": e_.get("type")}
+        for s_ in stocks:
+            if s_.get("symbol") in _stops:
+                s_["stop_fired"] = _stops[s_["symbol"]]
+    except Exception:  # noqa: BLE001
+        pass
     alerts.extend(_near_flip_alerts(stocks, rules.get("near_flip_pct", 1.5)))
     result = {
         "generated_at": datetime.now(timezone.utc).isoformat(), "market_data_date": market_date, "live_prices_at": live.get("fetched_at") if live_px else None, "super_scan_at": scan.get("fetched_at") if scan_ok else None, "as_of": today.isoformat(),

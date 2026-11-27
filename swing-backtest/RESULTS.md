@@ -273,3 +273,33 @@ Question: is the live add-on (1/10 of the open quantity when the open P&L is -6%
 
 Reading: **averaging has no edge.** CAGR is flat (27.7 to 27.9) across every trigger, cooldown and size; what changes is risk: the drawdown deepens steadily with add-on size (-15.0 off, -15.4 at 1/10, -16.6, -18.0, -19.6 doubling down), the profit factor falls (2.01 to 1.84) and the CAGR since 2022 falls (19.9 to 18.8). The live 1/10 is harmless but does nothing measurable (+0.2 CAGR points for 0.4 points of drawdown, inside the noise). The raw trade split is misleading: trades with add-ons show a 20% win rate and PF 0.5, and 74% of the worst-5% trades have add-ons, but that is selection (an add-on only happens on a trade that already fell 6%), not damage. Caveats: one in-sample run, survivorship bias, ND universe only (AZ and the 10 investment-share stocks, which use a weekly 1/10 averaging rule, are not tested here).
 
+
+
+## Stop re-entry and spike flips (2026-11-27, `stop_reentry_study.py`)
+216 F&O stocks, 6 years of daily candles (Jan 2021 to Oct 2026), Supertrend(10,3), 20-trading-day windows. Proxy: the stock's move, not the option stop or premium.
+
+**1. A 6% adverse 3-day move with the Supertrend still intact (one episode per stock and side per 10 days)**
+
+| | Flips against the position in 20d | Touches 8% | Touches 12% | n |
+|---|---|---|---|---|
+| Call side, spike | 66.3% | 51.2% | 32.1% | 2,589 |
+| Call side, every ordinary red day | 50.0% | 40.3% | 22.9% | 128,637 |
+| Call side, spike, entered 5 days later | 55.0% | 50.7% | 32.3% | 1,630 |
+| Put side, spike | 58.7% | 41.6% | 22.7% | 1,995 |
+| Put side, every ordinary green day | 42.4% | 31.5% | 14.2% | 160,439 |
+| Put side, spike, entered 5 days later | 46.3% | 41.8% | 23.1% | 1,310 |
+
+By the distance to the Supertrend line after the spike (call / put): 3% or less 81% / 70% flip; 3 to 6% 65% / 52%; 6 to 10% 52% / 47%; over 10% 34% / 30%. The 12% tail stays above the ordinary rate in every band.
+
+**2. A fresh flip that followed a 6% 3-day move in the flip direction, new structure's adverse move (entered on the flip day)**
+
+| | Flips back in 20d | Adverse 8% | Adverse 12% | n |
+|---|---|---|---|---|
+| Put after a green flip, spike flip | 31.2% | 39.4% | 21.6% | 1,582 |
+| Put after a green flip, ordinary flip | 33.7% | 27.2% | 11.5% | 2,296 |
+| Call after a red flip, spike flip | 34.4% | 53.5% | 36.0% | 1,502 |
+| Call after a red flip, ordinary flip | 37.0% | 36.4% | 19.6% | 2,513 |
+
+Entering one day later changes nothing (put 12% tail 21.5%). To match the ordinary 12% risk the short put needs to sit about 15% below the price after a spike flip (14.5% at 14% out, 9.5% at 16%), a short call about 18 to 20% above.
+
+**Rules taken (CLAUDE.md, 2026-11-27):** 5-day and 6%-from-the-line cool-off for the stopped direction; a spike-flip strike buffer. Limits: 2021 to 2026 was mostly a rising market (hurts call sellers), episodes cluster around market-wide shocks, and the richer premium after a spike is not tested.

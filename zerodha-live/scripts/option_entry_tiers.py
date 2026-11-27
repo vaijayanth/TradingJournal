@@ -137,7 +137,7 @@ def main():
         if dte < cfg["rules"].get("expiry_min_days", 30):   # only a near expiry is listed for this stock: say so
             alert = f"SHORT EXPIRY: only {dte}d to {e['expiry']}" + (f"; {alert}" if alert else "")
             lvl = max(lvl, 2)
-        tiers[t].append({"symbol": s["symbol"], "iv_grade": s.get("iv_tier"), "ivp": s.get("ivp"), "st_dist_pct": s.get("st_dist_pct"), "structure": structure, "colour": s["colour"], "spot": s["spot"], "flip_date": fd, "flip_trading_days": td,
+        tiers[t].append({"symbol": s["symbol"], "iv_grade": s.get("iv_tier"), "stop_fired": s.get("stop_fired"), "flip_move_3d": s.get("st_flip_move_3d"), "ivp": s.get("ivp"), "st_dist_pct": s.get("st_dist_pct"), "structure": structure, "colour": s["colour"], "spot": s["spot"], "flip_date": fd, "flip_trading_days": td,
                          "flip_calendar_days": cal, "expiry": e["expiry"], "lot": e["lot"], "alert": alert or "-", "alert_level": lvl})
     for t in tiers:
         tiers[t].sort(key=lambda r: (r["flip_trading_days"], r["symbol"]))
@@ -149,8 +149,39 @@ def main():
     except Exception:  # noqa: BLE001
         ban = set()
     GRADE = {"A": 1, "B": 2, "C": 3, "D": 4, "E": 5}
+
+    def add_biz(iso, n):
+        d, k = date.fromisoformat(iso), 0
+        while k < n:
+            d += timedelta(days=1)
+            if d.weekday() < 5:
+                k += 1
+        return d
+
+    def cooloff(r):
+        """Stop cool-off (user, 2026-11-27): after a 3x stop the SAME direction is blocked for 5 trading days AND until the Supertrend is at least 6% from flipping."""
+        st = r.get("stop_fired")
+        if not st:
+            return None
+        if not ((st.get("type") == "CE" and r["structure"] == "sell call") or (st.get("type") == "PE" and r["structure"] == "bull put spread")):
+            return None
+        until = add_biz(st["date"], 5)
+        by_days, by_flip = today < until, (r.get("st_dist_pct") is not None and r["st_dist_pct"] < 6)
+        if not (by_days or by_flip):
+            return None
+        return f"STOP COOL-OFF: stop fired {st['date']}; " + (f"wait until {until}" if by_days else "") + (" and " if by_days and by_flip else "") + ("until 6% from the flip line" if by_flip else "")
+
+    def spike(r):
+        fm, td = r.get("flip_move_3d"), r.get("flip_trading_days")
+        return fm is not None and td is not None and td <= 5 and ((r["structure"] == "bull put spread" and fm >= 6) or (r["structure"] == "sell call" and fm <= -6))
+    for r in [r for t in tiers for r in tiers[t]]:
+        c_ = cooloff(r)
+        if c_:
+            r["alert"] = c_ + ("; " + r["alert"] if r["alert"] != "-" else ""); r["alert_level"] = max(r["alert_level"], 3); r["cooloff"] = True
+        if spike(r):
+            r["alert"] = ("SPIKE FLIP %+.1f%% in 3d: strike %s; " % (r["flip_move_3d"], "3-4 pts further out (about 15% below)" if r["structure"] == "bull put spread" else "6-8 pts further out (about 18-20% above)")) + ("" if r["alert"] == "-" else r["alert"]); r["spike_flip"] = True
     allrows = [r for t in tiers for r in tiers[t]]
-    clean = [r for r in allrows if r["symbol"] not in ban and r["alert_level"] < 2 and (r.get("st_dist_pct") is None or r["st_dist_pct"] > 1.5) and (r.get("ivp") or -1) >= 50]
+    clean = [r for r in allrows if r["symbol"] not in ban and not r.get("cooloff") and r["alert_level"] < 2 and (r.get("st_dist_pct") is None or r["st_dist_pct"] > 1.5) and (r.get("ivp") or -1) >= 50]
     clean.sort(key=lambda r: (GRADE.get(r.get("iv_grade"), 6), -(r.get("ivp") or 0), r["flip_trading_days"], r["symbol"]))
     open_today = clean[:10]
 
@@ -167,9 +198,9 @@ def main():
             age = "today" if r["flip_trading_days"] == 0 else f"{r['flip_trading_days']}td/{r['flip_calendar_days']}d"
             print(f"   {r['symbol']:<12} {str(r['colour']).upper():<10} {str(r['flip_date']):<11} {age:<8} {r['spot']:>9g} {r['rule']:<16} {r['status']:<6} {r['open_legs']}  -> {r['verdict']}")
         print()
-    print(f"== Open today: the best {len(open_today)} of {len(allrows)} entry rows that pass every gate (no F&O ban, no event alert, not on a flip knife-edge, IV percentile 50 or more); IV grade A first ==")
+    print(f"== Open today: the best {len(open_today)} of {len(allrows)} entry rows that pass every gate (no F&O ban, no event alert, not on a flip knife-edge, no stop cool-off, IV percentile 50 or more); IV grade A first ==")
     for i, r in enumerate(open_today, 1):
-        print(f"   {i:>2} {r['symbol']:<12} grade {r.get('iv_grade') or '-'}  {r['structure']:<16} IVP {r.get('ivp')}  flipped {r['flip_trading_days']}d ago  expiry {r['expiry']}  lot {r['lot']}")
+        print(f"   {i:>2} {r['symbol']:<12} grade {r.get('iv_grade') or '-'}  {r['structure']:<16} IVP {r.get('ivp')}  flipped {r['flip_trading_days']}d ago  expiry {r['expiry']}  lot {r['lot']}" + ("  [SPIKE FLIP: strike further out]" if r.get("spike_flip") else ""))
     if not open_today:
         print("   (none: every entry row has an alert or a low IV percentile)")
     print()

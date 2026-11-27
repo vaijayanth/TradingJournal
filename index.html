@@ -10535,7 +10535,7 @@ function ccActRows(d, tierRows) {
 const ccIsResell = r => !!r.resell;
 const ccIsTier = r => r.kind === 'entry' && r.tier != null;
 const ccActIssueTxt = r => ccIsResell(r) ? `Long ${r.strike}PE hedge left; short put closed, stock moving up` : ccIsTier(r) ? (ccInBan(r.symbol) ? 'F&O BAN: do not open; ' : '') + (r.td === 0 ? 'Flipped today' : `Flipped ${r.td}d ago`) + (r.evs && r.evs.length ? '; ' + r.evs.map(e => e.txt).join('; ') : '') + (r.short ? '; short expiry' : '') : ccShortAlert(r)[0];
-const ccActDoTxt = r => ccIsResell(r) ? 'Sell new PE above ' + r.strike : ccIsTier(r) ? (ccInBan(r.symbol) || r.lvl >= 3 ? 'Do not open' : r.desired === 'PUT_SPREAD' ? 'Open BPS' : 'Sell the call') : ccShortAlert(r)[1];
+const ccActDoTxt = r => ccIsResell(r) ? 'Sell new PE above ' + r.strike : ccIsTier(r) ? (ccInBan(r.symbol) || r.lvl >= 3 ? 'Do not open' : ccCoolOff(r) ? 'Wait: stop cool-off' : r.desired === 'PUT_SPREAD' ? 'Open BPS' : 'Sell the call') : ccShortAlert(r)[1];
 const ccActCols = () => [
   { h: 'Type', v: r => r.ord, x: r => r.type, c: r => ccTypePill(r), txt: true },
   { h: 'Stock', v: r => r.symbol, c: ccStockCell, txt: true, nw: 200 },
@@ -10678,7 +10678,7 @@ function ccTierRows(d) {
     });
     const short = dte < minDays;
     out.push({ symbol: s.symbol, tier, desired: s.colour === 'green' ? 'PUT_SPREAD' : 'CALL', colour: s.colour, spot: s.spot, flip_date: s.flip_date, td, cal,
-      expiry: e.expiry, lot: e.lot, dte, short, evs, lvl: Math.max(lvl, short ? 2 : 0), main, events: s.events || [] });
+      expiry: e.expiry, lot: e.lot, dte, short, evs, lvl: Math.max(lvl, short ? 2 : 0), main, events: s.events || [], stop: s.stop_fired || null, fm: s.st_flip_move_3d ?? null });
   });
   return out;
 }
@@ -10690,14 +10690,33 @@ const ccTierBadge = sym => { const x = (window._ccTier || {})[sym]; if (!x) retu
 // Entry priority (user, 2026-11-27): a row is CLEAN when nothing says careful (no F&O ban, no event alert or short expiry, not on a flip knife-edge) AND the IV percentile is 50 or more.
 // Clean rows come first, ordered by structural IV tier (A first), then IV percentile, then the freshest flip. The gates sit above the tier: a flagged stock never outranks a clean one.
 const ccNearFlip = sym => { const x = (window._ccSt || {})[sym]; return !!(x && x.d != null && x.d <= 1.5); };
-const ccEntryClean = r => !ccInBan(r.symbol) && r.lvl < 2 && !ccNearFlip(r.symbol) && (((window._ccIvp || {})[r.symbol] || {}).ivp ?? -1) >= 50;
+// Stop cool-off and spike flip (user, 2026-11-27, from a 6-year test on 216 F&O stocks):
+// after a 3x stop fired, the SAME direction is blocked for 5 trading days AND until the Supertrend is at least 6% from flipping (a spike without a flip turned against the position 66% / 59% of the time in 20 days, against 50% / 42% normally);
+// a fresh flip that followed a 6% 3-day move carries about double the tail risk (22% vs 12% for a 12% adverse move), so the strike belongs 3-4 points further out for a put, 6-8 for a call.
+const CC_COOL_DAYS = 5, CC_COOL_FLIP_PCT = 6, CC_SPIKE_PCT = 6;
+const ccAddBiz = (iso, n) => { const d = new Date(iso + 'T00:00:00'); let k = 0; while (k < n) { d.setDate(d.getDate() + 1); if (d.getDay() !== 0 && d.getDay() !== 6) k++; } return d; };
+const ccCoolOff = r => {
+  const st = r.stop; if (!st) return null;
+  if (!((st.type === 'CE' && r.desired === 'CALL') || (st.type === 'PE' && r.desired === 'PUT_SPREAD'))) return null;   // only the direction that was stopped out
+  const until = ccAddBiz(st.date, CC_COOL_DAYS), t0 = new Date(), toFlip = ccToFlipOf(r.symbol);
+  t0.setHours(0, 0, 0, 0);
+  const byDays = t0 < until, byFlip = toFlip < CC_COOL_FLIP_PCT;
+  if (!byDays && !byFlip) return null;
+  const f = d => dhFmtDate(d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'));
+  return { byDays, byFlip, txt: `⏸ Stop fired ${dhFmtDate(st.date)} · ${byDays ? 'cooling off until ' + f(until) : ''}${byDays && byFlip ? ' and ' : ''}${byFlip ? 'wait until 6% from the flip line (now ' + toFlip.toFixed(1) + '%)' : ''}` };
+};
+const ccSpikeFlip = r => r.fm != null && r.td != null && r.td <= 5 && (   // only a FRESH flip (the test entered on the flip day or the day after); an older flip no longer carries the effect
+  (r.desired === 'PUT_SPREAD' && r.fm >= CC_SPIKE_PCT) || (r.desired === 'CALL' && r.fm <= -CC_SPIKE_PCT));
+const ccSpikeChip = r => !ccSpikeFlip(r) ? '' : `<span class="trend-pill" style="background:var(--amber-soft, var(--surface2));color:var(--amber);white-space:nowrap" title="The 3-day move into this flip was ${r.fm}%. In 6 years of F&O data a flip after such a move had about double the tail risk (22% vs 12% for a 12% adverse move), and waiting a day did not help. Give the strike more room.">⚠ Spike flip ${r.fm > 0 ? '+' : ''}${r.fm}% · strike ${r.desired === 'PUT_SPREAD' ? '3-4 pts further out (about 15% below)' : '6-8 pts further out (about 18-20% above)'}</span>`;
+const ccCoolChip = r => { const c = ccCoolOff(r); return c ? `<span class="trend-pill" style="background:var(--red-soft);color:var(--red);white-space:nowrap" title="After a 3x stop the same direction is blocked for ${CC_COOL_DAYS} trading days and until the Supertrend is ${CC_COOL_FLIP_PCT}% from flipping: the flip had not happened when the stop fired, and a spike without a flip turns against the position about 66% (call) / 59% (put) of the time within 20 days.">${c.txt}</span>` : ''; };
+const ccEntryClean = r => !ccInBan(r.symbol) && r.lvl < 2 && !ccNearFlip(r.symbol) && !ccCoolOff(r) && (((window._ccIvp || {})[r.symbol] || {}).ivp ?? -1) >= 50;
 const ccEntryPrioKey = r => [ccEntryClean(r) ? 0 : 1, { A: 1, B: 2, C: 3, D: 4, E: 5 }[ccTierOf(r.symbol)] || 6, -(((window._ccIvp || {})[r.symbol] || {}).ivp ?? -1), r.td ?? 999];
 const ccEntryPrioCmp = (a, b) => { const x = ccEntryPrioKey(a), y = ccEntryPrioKey(b); for (let i = 0; i < x.length; i++) if (x[i] !== y[i]) return x[i] - y[i]; return a.symbol.localeCompare(b.symbol); };
 function ccOpenToday(rows) {
   const tier = rows.filter(ccIsTier), clean = tier.filter(ccEntryClean).sort(ccEntryPrioCmp).slice(0, 10);
   if (!tier.length) return '';
-  const head = `<b>Open today</b> <span style="color:var(--text-muted)">· the best ${clean.length} of ${tier.length} entry rows that pass every gate (no F&amp;O ban, no event alert, not on a flip knife-edge, IV percentile 50 or more), best IV grade (A first) on top</span>`;
-  const items = clean.map(r => `<span style="display:inline-flex;align-items:center;gap:6px;white-space:nowrap;border:1px solid var(--border);border-radius:8px;padding:5px 9px"><b class="stk">${dhEsc(r.symbol)}</b>${ccTierBadge(r.symbol)} <span style="color:${r.desired === 'PUT_SPREAD' ? 'var(--green)' : 'var(--red)'}">${r.desired === 'PUT_SPREAD' ? 'BPS' : 'Sell call'}</span> <span style="color:var(--text-muted)">IVP ${ccIvpOf(r.symbol)} · ${r.td === 0 ? 'flipped today' : 'flipped ' + r.td + 'd ago'}</span></span>`).join('');
+  const head = `<b>Open today</b> <span style="color:var(--text-muted)">· the best ${clean.length} of ${tier.length} entry rows that pass every gate (no F&amp;O ban, no event alert, not on a flip knife-edge, no stop cool-off, IV percentile 50 or more), best IV grade (A first) on top</span>`;
+  const items = clean.map(r => `<span style="display:inline-flex;align-items:center;gap:6px;white-space:nowrap;border:1px solid var(--border);border-radius:8px;padding:5px 9px"><b class="stk">${dhEsc(r.symbol)}</b>${ccTierBadge(r.symbol)} <span style="color:${r.desired === 'PUT_SPREAD' ? 'var(--green)' : 'var(--red)'}">${r.desired === 'PUT_SPREAD' ? 'BPS' : 'Sell call'}</span> <span style="color:var(--text-muted)">IVP ${ccIvpOf(r.symbol)} · ${r.td === 0 ? 'flipped today' : 'flipped ' + r.td + 'd ago'}</span>${ccSpikeFlip(r) ? ' <span style="color:var(--amber)" title="Spike flip: give the strike more room">⚠ spike flip</span>' : ''}</span>`).join('');
   return `<div style="border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin:0 0 12px;background:var(--surface)"><div style="margin-bottom:8px">${head}</div><div style="display:flex;flex-wrap:wrap;gap:8px">${items || '<span style="color:var(--text-muted)">No clean high-IV candidate today: every entry row has an alert or a low IV percentile.</span>'}</div></div>`;
 }
 const ccNearFlipChip = sym => {
@@ -10708,7 +10727,9 @@ const ccStockCell = r => {
   if (!ccIsTier(r)) return `<b class="stk">${dhEsc(r.symbol)}</b>`;
   const base = `<b class="stk">${dhEsc(r.symbol)}</b>${ccTierBadge(r.symbol)}`;
   const parts = []; const a = ccTierAlert(r); if (a !== '<span style="color:var(--text-muted)">—</span>') parts.push(a);
+  const cc_ = ccCoolChip(r); if (cc_) parts.unshift(cc_);
   const nf = ccNearFlipChip(r.symbol); if (nf) parts.push(nf);
+  const sp_ = ccSpikeChip(r); if (sp_) parts.push(sp_);
   return base + (parts.length ? `<div style="display:flex;flex-direction:column;align-items:flex-start;gap:3px;margin-top:4px">${parts.join('')}</div>` : '');
 };
 const ccTierAlert = r => {
