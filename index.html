@@ -10568,7 +10568,7 @@ function ccActionsBox(d, pfx, tierRows, showEntry) {
   window._ccSegs = segs.map(k => ({ k, label: CC_SEG_LABEL[k], n: n(k) })); window._ccSegN = Object.fromEntries(segs.map(k => [k, n(k)]));
   const typeFilters = rows => [['all', 'All types', () => true]].concat(CC_TYPE_ORDER.filter(t => rows.some(r => r.type === t)).map(t => [t, t, r => r.type === t]));
   const entryFilters = rows => [['all', 'All entry signals', () => true]].concat([1, 2, 3, 4, 5].filter(t => rows.some(r => r.tier === t)).map(t => ['t' + t, 'Tier ' + t, r => r.tier === t]),
-    [['put', 'BPS', r => r.desired === 'PUT_SPREAD' || /BPS|bull put/i.test(r.action || '')], ['call', 'Sell call', r => r.desired === 'CALL'], ['clear', 'Clear to open (no event alert)', r => !(r.lvl >= 2)], ['alert', 'Has an event alert', r => r.lvl >= 2]]);
+    [['put', 'BPS', r => r.desired === 'PUT_SPREAD' || /BPS|bull put/i.test(r.action || '')], ['call', 'Sell call', r => r.desired === 'CALL'], ['clear', 'Clear to open (no alert)', r => !ccRowFlag(r)], ['alert', 'Has an alert (event, ban, stop cool-off)', r => ccRowFlag(r)]]);
   const R = d.rules || {};
   const tierIntro = 'Supertrend only, no RSI: green = BPS (bull put spread), red = sell call. Tier = when the current colour began: 1 today, 2 within a week, 3 within 30 days, 4 within 90 days, 5 older. Stocks with open option legs are not listed. The Issue column warns of results / ex-dividend dates and, in bold red, the NSE F&amp;O ban (no new position in a banned stock): <b>✕ Do not open</b> = inside the ' + (R.event_close_days ?? 15) + '-day close window now, <b>⚠ Close by</b> = the window opens before the expiry. Click a tier row for details. ' + (WS.id === 'zerodha' ? 'Place with /zerodha-option-order' : 'Place with /dhan-superorder (Part 3)') + ' (strikes and premiums come from live quotes there).';
   const meta = {
@@ -10705,6 +10705,7 @@ const ccCoolOff = r => {
   const f = d => dhFmtDate(d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0'));
   return { byDays, byFlip, txt: `⏸ Stop fired ${dhFmtDate(st.date)} · ${byDays ? 'cooling off until ' + f(until) : ''}${byDays && byFlip ? ' and ' : ''}${byFlip ? 'wait until 6% from the flip line (now ' + toFlip.toFixed(1) + '%)' : ''}` };
 };
+const ccRowFlag = r => (r.lvl >= 2) || ccInBan(r.symbol) || !!ccCoolOff(r);   // anything that says careful: event / short expiry, F&O ban, stop cool-off
 const ccSpikeFlip = r => r.fm != null && r.td != null && r.td <= 5 && (   // only a FRESH flip (the test entered on the flip day or the day after); an older flip no longer carries the effect
   (r.desired === 'PUT_SPREAD' && r.fm >= CC_SPIKE_PCT) || (r.desired === 'CALL' && r.fm <= -CC_SPIKE_PCT));
 const ccSpikeChip = r => !ccSpikeFlip(r) ? '' : `<span class="trend-pill" style="background:var(--amber-soft, var(--surface2));color:var(--amber);white-space:nowrap" title="The 3-day move into this flip was ${r.fm}%. In 6 years of F&O data a flip after such a move had about double the tail risk (22% vs 12% for a 12% adverse move), and waiting a day did not help. Give the strike more room.">⚠ Spike flip ${r.fm > 0 ? '+' : ''}${r.fm}% · strike ${r.desired === 'PUT_SPREAD' ? '3-4 pts further out (about 15% below)' : '6-8 pts further out (about 18-20% above)'}</span>`;
@@ -10757,7 +10758,7 @@ const ccTierDetail = r => {
   return `<div class="cc-dgrid">${cell('Supertrend', `${dhEsc(r.colour)} since ${dhFmtDate(r.flip_date)} (${r.td} trading days, ${r.cal} calendar days)`)}${cell('Structure', r.desired === 'PUT_SPREAD' ? 'Sell a put, buy the hedge 2 listed strikes lower' : 'Sell a call (no hedge)')}${cell('Expiry', dhFmtDate(r.expiry) + ' · ' + r.dte + 'd · lot ' + r.lot)}${cell('Events', dhEsc(evs))}${cell('To place', (WS.id === 'zerodha' ? '/zerodha-option-order' : '/dhan-superorder (Part 3)') + ' with --structure ' + (r.desired === 'PUT_SPREAD' ? 'put-spread' : 'call') + ' (market hours)')}</div>`;
 };
 const ccTierFilters = [['all', 'All entry signals', () => true], ['put', 'BPS', r => r.desired === 'PUT_SPREAD'], ['call', 'Sell call', r => r.desired === 'CALL'],
-  ['clear', 'Clear to open (no event alert)', r => r.lvl < 2], ['alert', 'Has an event alert', r => r.lvl >= 2]];
+  ['clear', 'Clear to open (no alert)', r => !ccRowFlag(r)], ['alert', 'Has an alert (event, ban, stop cool-off)', r => ccRowFlag(r)]];
 
 // ── Open positions as TRADES (one row per structure, not per leg): % of max profit vs the profit target, distance to the short strike, stop in place, next step ──
 const CC_TRADE_ORDER = ['3× premium', 'F&O ban', 'Near 3× stop', 'Through hedge', 'Expiry risk', 'Event close', 'Exit', 'Beyond strike', 'Profit Exit', 'No stop placed', 'No GTT placed', 'Invalid GTT', 'Near strike', 'Leftover hedge'];
