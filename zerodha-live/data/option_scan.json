@@ -5,15 +5,15 @@
   "IDFCFIRSTB26DEC75PE",
   "BDL26DEC900PE"
  ],
- "fetched_at": "2026-11-27T10:06:20+05:30",
+ "fetched_at": "2026-11-27T10:13:41+05:30",
  "inputs": {
-  "positions": "2026-11-27T04:30:13.474026+00:00",
-  "gtts": "2026-11-27T10:06:20+05:30",
+  "positions": "2026-11-27T04:43:03.601157+00:00",
+  "gtts": "2026-11-27T10:13:41+05:30",
   "orders": "2026-11-27T10:00:13+05:30",
-  "gtt_scan": "2026-11-27T10:06:20+05:30"
+  "gtt_scan": "2026-11-27T10:13:41+05:30"
  },
  "stale_inputs": [],
- "open_legs": 178,
+ "open_legs": 179,
  "triggered_gtts": 4,
  "findings": [
   {
@@ -70,6 +70,14 @@
    "symbol": "COCHINSHIP",
    "tradingsymbol": "COCHINSHIP26DEC1300CE",
    "concern": "Short 1300CE (800 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "HAL",
+   "tradingsymbol": "HAL26DEC5700CE",
+   "concern": "Short 5700CE (150 qty) is a naked call (by design; covered only by shares you hold)",
    "action": "Watch the 3x stop and the Supertrend colour"
   },
   {

@@ -1,6 +1,6 @@
 {
  "broker": "AZ",
- "generated_at": "2026-11-27T10:06:24+05:30",
+ "generated_at": "2026-11-27T10:13:41+05:30",
  "as_of": "2026-11-26",
  "scope": "AZ swing shares and AZ stock options; Nifty index options are outside by decision",
  "adherence_leakage": {
@@ -290,8 +290,8 @@
   "note": "Breadth = share of the F&O universe with a green Supertrend (covered_call_signals.json); percentiles against own history appear after 10 days."
  },
  "options": {
-  "open_legs": 178,
-  "short_legs": 107,
+  "open_legs": 179,
+  "short_legs": 108,
   "long_legs": 71,
   "realised_today": {
    "contracts_closed": 6,
@@ -349,40 +349,40 @@
   "stress": {
    "capital_base_rs": 3000000,
    "grid_pct_of_capital": {
-    "market_-8pct": -11.29,
-    "market_-5pct": -4.98,
-    "market_-3pct": -2.11,
-    "market_+3pct": -0.57,
-    "market_+5pct": -2.41,
-    "market_+10pct": -11.97,
-    "market_-5pct_iv_x1.25": -9.6,
-    "market_-8pct_iv_x1.5": -17.13
+    "market_-8pct": -11.06,
+    "market_-5pct": -4.8,
+    "market_-3pct": -1.99,
+    "market_+3pct": -0.73,
+    "market_+5pct": -2.69,
+    "market_+10pct": -12.68,
+    "market_-5pct_iv_x1.25": -9.49,
+    "market_-8pct_iv_x1.5": -17.03
    },
    "grid_pnl_rs": {
-    "market_-8pct": -338624.0,
-    "market_-5pct": -149477.0,
-    "market_-3pct": -63271.0,
-    "market_+3pct": -17001.0,
-    "market_+5pct": -72182.0,
-    "market_+10pct": -359096.0,
-    "market_-5pct_iv_x1.25": -287889.0,
-    "market_-8pct_iv_x1.5": -513837.0
+    "market_-8pct": -331655.0,
+    "market_-5pct": -143980.0,
+    "market_-3pct": -59565.0,
+    "market_+3pct": -21803.0,
+    "market_+5pct": -80846.0,
+    "market_+10pct": -380400.0,
+    "market_-5pct_iv_x1.25": -284625.0,
+    "market_-8pct_iv_x1.5": -510935.0
    },
    "single_stock_gap_worst": [
     {
      "symbol": "COALINDIA",
      "move": "up 20%",
-     "pnl_rs": -117754.0
+     "pnl_rs": -117911.0
     },
     {
      "symbol": "PAYTM",
      "move": "up 20%",
-     "pnl_rs": -93580.0
+     "pnl_rs": -94098.0
     },
     {
      "symbol": "LUPIN",
      "move": "up 20%",
-     "pnl_rs": -79524.0
+     "pnl_rs": -79466.0
     }
    ],
    "method": "Black-Scholes repricing of every open leg, implied vol solved from the live option price (fallback stock IV or 30%), all underlyings shocked together (beta 1), expiry unchanged, risk-free 0.065.",
@@ -390,7 +390,7 @@
   },
   "defined_risk": {
    "put_side_max_loss_if_stocks_to_zero_rs": 1548829.0,
-   "naked_call_stocks": 36,
+   "naked_call_stocks": 37,
    "spreads_where_3x_stop_cannot_bind": [],
    "spreads_where_3x_stop_cannot_bind_count": 0,
    "note": "Put-side max loss = sum(short strikes x qty) - sum(long strikes x qty) - net credit, the loss if every stock went to zero (an upper bound, not a forecast). A spread's 3x stop cannot bind when 3 x credit >= width."
@@ -719,7 +719,7 @@
   ],
   "strategy_profitable": {
    "breakeven_win_rate_pct": 76.9,
-   "open_short_legs": 107,
+   "open_short_legs": 108,
    "structure_vs_colour": {
     "mismatches": [],
     "count": 0,
@@ -804,21 +804,21 @@
   },
   "option_risk": {
    "stress_pct_of_capital": {
-    "market_-8pct": -11.29,
-    "market_-5pct": -4.98,
-    "market_-3pct": -2.11,
-    "market_+3pct": -0.57,
-    "market_+5pct": -2.41,
-    "market_+10pct": -11.97,
-    "market_-5pct_iv_x1.25": -9.6,
-    "market_-8pct_iv_x1.5": -17.13
+    "market_-8pct": -11.06,
+    "market_-5pct": -4.8,
+    "market_-3pct": -1.99,
+    "market_+3pct": -0.73,
+    "market_+5pct": -2.69,
+    "market_+10pct": -12.68,
+    "market_-5pct_iv_x1.25": -9.49,
+    "market_-8pct_iv_x1.5": -17.03
    },
    "worst_single_stock_gap": {
     "symbol": "COALINDIA",
     "move": "up 20%",
-    "pnl_rs": -117754.0
+    "pnl_rs": -117911.0
    },
-   "naked_call_stocks": 36
+   "naked_call_stocks": 37
   },
   "note": "Discipline score is counted by code from the six checks above; the narrator lists the failed ones first and does not add checks of its own."
  },
