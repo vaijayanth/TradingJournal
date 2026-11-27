@@ -1,6 +1,226 @@
 {
- "fetched_at": "2026-11-27T14:15:51+05:30",
+ "fetched_at": "2026-11-27T14:40:14+05:30",
  "active": {
+  "TIINDIA26DEC2000PE": [
+   {
+    "id": 346710542,
+    "type": "two-leg",
+    "trigger_values": [
+     6.6,
+     49.65
+    ],
+    "qty": 400
+   },
+   {
+    "id": 346710542,
+    "type": "two-leg",
+    "trigger_values": [
+     6.6,
+     49.65
+    ],
+    "qty": 400
+   }
+  ],
+  "MCX26DEC3500PE": [
+   {
+    "id": 346710524,
+    "type": "two-leg",
+    "trigger_values": [
+     14.45,
+     108.3
+    ],
+    "qty": 225
+   },
+   {
+    "id": 346710524,
+    "type": "two-leg",
+    "trigger_values": [
+     14.45,
+     108.3
+    ],
+    "qty": 225
+   }
+  ],
+  "LTM26DEC3900PE": [
+   {
+    "id": 346710511,
+    "type": "two-leg",
+    "trigger_values": [
+     13.25,
+     99.45
+    ],
+    "qty": 150
+   },
+   {
+    "id": 346710511,
+    "type": "two-leg",
+    "trigger_values": [
+     13.25,
+     99.45
+    ],
+    "qty": 150
+   }
+  ],
+  "LTF26DEC250PE": [
+   {
+    "id": 346710493,
+    "type": "two-leg",
+    "trigger_values": [
+     1.2,
+     8.8
+    ],
+    "qty": 2250
+   },
+   {
+    "id": 346710493,
+    "type": "two-leg",
+    "trigger_values": [
+     1.2,
+     8.8
+    ],
+    "qty": 2250
+   }
+  ],
+  "LODHA26DEC1120PE": [
+   {
+    "id": 346710483,
+    "type": "two-leg",
+    "trigger_values": [
+     4.35,
+     32.7
+    ],
+    "qty": 625
+   },
+   {
+    "id": 346710483,
+    "type": "two-leg",
+    "trigger_values": [
+     4.35,
+     32.7
+    ],
+    "qty": 625
+   }
+  ],
+  "HYUNDAI26DEC1800PE": [
+   {
+    "id": 346710463,
+    "type": "two-leg",
+    "trigger_values": [
+     7,
+     52.35
+    ],
+    "qty": 275
+   },
+   {
+    "id": 346710463,
+    "type": "two-leg",
+    "trigger_values": [
+     7,
+     52.35
+    ],
+    "qty": 275
+   }
+  ],
+  "DATAPATTNS26DEC3700PE": [
+   {
+    "id": 346710443,
+    "type": "two-leg",
+    "trigger_values": [
+     15,
+     112.5
+    ],
+    "qty": 125
+   },
+   {
+    "id": 346710443,
+    "type": "two-leg",
+    "trigger_values": [
+     15,
+     112.5
+    ],
+    "qty": 125
+   }
+  ],
+  "CUMMINSIND26DEC4800CE": [
+   {
+    "id": 346710429,
+    "type": "two-leg",
+    "trigger_values": [
+     8.4,
+     63.15
+    ],
+    "qty": 100
+   },
+   {
+    "id": 346710429,
+    "type": "two-leg",
+    "trigger_values": [
+     8.4,
+     63.15
+    ],
+    "qty": 100
+   }
+  ],
+  "COFORGE26DEC1860PE": [
+   {
+    "id": 346710418,
+    "type": "two-leg",
+    "trigger_values": [
+     7.1,
+     53.4
+    ],
+    "qty": 475
+   },
+   {
+    "id": 346710418,
+    "type": "two-leg",
+    "trigger_values": [
+     7.1,
+     53.4
+    ],
+    "qty": 475
+   }
+  ],
+  "BLUESTARCO26DEC1560PE": [
+   {
+    "id": 346710381,
+    "type": "two-leg",
+    "trigger_values": [
+     5.6,
+     42
+    ],
+    "qty": 650
+   },
+   {
+    "id": 346710381,
+    "type": "two-leg",
+    "trigger_values": [
+     5.6,
+     42
+    ],
+    "qty": 650
+   }
+  ],
+  "UJJIVANSFB26DEC70CE": [
+   {
+    "id": 346707900,
+    "type": "two-leg",
+    "trigger_values": [
+     0.13,
+     1.1
+    ],
+    "qty": 8000
+   },
+   {
+    "id": 346707900,
+    "type": "two-leg",
+    "trigger_values": [
+     0.13,
+     1.1
+    ],
+    "qty": 8000
+   }
+  ],
   "BDL26DEC920PE": [
    {
     "id": 346628793,
@@ -2143,6 +2363,314 @@
   ]
  },
  "gtts": [
+  {
+   "id": 346710542,
+   "type": "two-leg",
+   "created_at": "2026-11-27T14:40:04+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "TIINDIA26DEC2000PE",
+   "last_price": 16,
+   "triggers": [
+    6.6,
+    49.65
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 400,
+     "price": 6.7,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 400,
+     "price": 50.15,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 346710524,
+   "type": "two-leg",
+   "created_at": "2026-11-27T14:39:58+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "MCX26DEC3500PE",
+   "last_price": 36.9,
+   "triggers": [
+    14.45,
+    108.3
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 225,
+     "price": 14.6,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 225,
+     "price": 109.4,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 346710511,
+   "type": "two-leg",
+   "created_at": "2026-11-27T14:39:55+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "LTM26DEC3900PE",
+   "last_price": 33.9,
+   "triggers": [
+    13.25,
+    99.45
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 150,
+     "price": 13.4,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 150,
+     "price": 100.45,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 346710493,
+   "type": "two-leg",
+   "created_at": "2026-11-27T14:39:51+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "LTF26DEC250PE",
+   "last_price": 3.05,
+   "triggers": [
+    1.2,
+    8.8
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 2250,
+     "price": 1.25,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 2250,
+     "price": 8.9,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 346710483,
+   "type": "two-leg",
+   "created_at": "2026-11-27T14:39:47+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "LODHA26DEC1120PE",
+   "last_price": 10.9,
+   "triggers": [
+    4.35,
+    32.7
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 625,
+     "price": 4.4,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 625,
+     "price": 33.05,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 346710463,
+   "type": "two-leg",
+   "created_at": "2026-11-27T14:39:43+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "HYUNDAI26DEC1800PE",
+   "last_price": 17.15,
+   "triggers": [
+    7,
+    52.35
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 275,
+     "price": 7.1,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 275,
+     "price": 52.85,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 346710443,
+   "type": "two-leg",
+   "created_at": "2026-11-27T14:39:39+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "DATAPATTNS26DEC3700PE",
+   "last_price": 37.25,
+   "triggers": [
+    15,
+    112.5
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 125,
+     "price": 15.15,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 125,
+     "price": 113.65,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 346710429,
+   "type": "two-leg",
+   "created_at": "2026-11-27T14:39:34+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "CUMMINSIND26DEC4800CE",
+   "last_price": 20.6,
+   "triggers": [
+    8.4,
+    63.15
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 100,
+     "price": 8.5,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 100,
+     "price": 63.8,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 346710418,
+   "type": "two-leg",
+   "created_at": "2026-11-27T14:39:31+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "COFORGE26DEC1860PE",
+   "last_price": 17.8,
+   "triggers": [
+    7.1,
+    53.4
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 475,
+     "price": 7.2,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 475,
+     "price": 53.95,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 346710381,
+   "type": "two-leg",
+   "created_at": "2026-11-27T14:39:23+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "BLUESTARCO26DEC1560PE",
+   "last_price": 12.65,
+   "triggers": [
+    5.6,
+    42
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 650,
+     "price": 5.7,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 650,
+     "price": 42.4,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
+   "id": 346707900,
+   "type": "two-leg",
+   "created_at": "2026-11-27T14:27:42+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "UJJIVANSFB26DEC70CE",
+   "last_price": 0.35,
+   "triggers": [
+    0.13,
+    1.1
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 8000,
+     "price": 0.14,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 8000,
+     "price": 1.2,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
   {
    "id": 346628793,
    "type": "two-leg",

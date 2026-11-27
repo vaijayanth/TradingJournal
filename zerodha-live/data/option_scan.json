@@ -6,15 +6,15 @@
   "IDFCFIRSTB26DEC75PE",
   "BDL26DEC900PE"
  ],
- "fetched_at": "2026-11-27T14:16:52+05:30",
+ "fetched_at": "2026-11-27T14:40:14+05:30",
  "inputs": {
-  "positions": "2026-11-27T08:45:51.083215+00:00",
-  "gtts": "2026-11-27T14:15:51+05:30",
+  "positions": "2026-11-27T09:06:43.877439+00:00",
+  "gtts": "2026-11-27T14:40:14+05:30",
   "orders": "2026-11-27T14:15:51+05:30",
-  "gtt_scan": "2026-11-27T14:15:51+05:30"
+  "gtt_scan": "2026-11-27T14:40:14+05:30"
  },
  "stale_inputs": [],
- "open_legs": 178,
+ "open_legs": 198,
  "triggered_gtts": 5,
  "findings": [
   {
@@ -71,6 +71,14 @@
    "symbol": "COCHINSHIP",
    "tradingsymbol": "COCHINSHIP26DEC1300CE",
    "concern": "Short 1300CE (800 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "CUMMINSIND",
+   "tradingsymbol": "CUMMINSIND26DEC4800CE",
+   "concern": "Short 4800CE (100 qty) is a naked call (by design; covered only by shares you hold)",
    "action": "Watch the 3x stop and the Supertrend colour"
   },
   {
@@ -295,6 +303,14 @@
    "symbol": "TMPV",
    "tradingsymbol": "TMPV26DEC310CE",
    "concern": "Short 310CE (1600 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "UJJIVANSFB",
+   "tradingsymbol": "UJJIVANSFB26DEC70CE",
+   "concern": "Short 70CE (8000 qty) is a naked call (by design; covered only by shares you hold)",
    "action": "Watch the 3x stop and the Supertrend colour"
   },
   {

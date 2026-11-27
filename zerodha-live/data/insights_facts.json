@@ -1,6 +1,6 @@
 {
  "broker": "AZ",
- "generated_at": "2026-11-27T14:16:45+05:30",
+ "generated_at": "2026-11-27T14:40:15+05:30",
  "as_of": "2026-11-26",
  "scope": "AZ swing shares and AZ stock options; Nifty index options are outside by decision",
  "adherence_leakage": {
@@ -290,9 +290,9 @@
   "note": "Breadth = share of the F&O universe with a green Supertrend (covered_call_signals.json); percentiles against own history appear after 10 days."
  },
  "options": {
-  "open_legs": 178,
-  "short_legs": 107,
-  "long_legs": 71,
+  "open_legs": 198,
+  "short_legs": 118,
+  "long_legs": 80,
   "realised_today": {
    "contracts_closed": 7,
    "pnl_rs": 2048.0,
@@ -354,24 +354,24 @@
   "stress": {
    "capital_base_rs": 3000000,
    "grid_pct_of_capital": {
-    "market_-8pct": -11.76,
-    "market_-5pct": -5.34,
-    "market_-3pct": -2.34,
-    "market_+3pct": -0.31,
-    "market_+5pct": -2.0,
-    "market_+10pct": -11.34,
-    "market_-5pct_iv_x1.25": -10.11,
-    "market_-8pct_iv_x1.5": -17.97
+    "market_-8pct": -13.06,
+    "market_-5pct": -6.01,
+    "market_-3pct": -2.69,
+    "market_+3pct": -0.14,
+    "market_+5pct": -1.8,
+    "market_+10pct": -11.3,
+    "market_-5pct_iv_x1.25": -11.26,
+    "market_-8pct_iv_x1.5": -19.93
    },
    "grid_pnl_rs": {
-    "market_-8pct": -352655.0,
-    "market_-5pct": -160175.0,
-    "market_-3pct": -70318.0,
-    "market_+3pct": -9437.0,
-    "market_+5pct": -60101.0,
-    "market_+10pct": -340071.0,
-    "market_-5pct_iv_x1.25": -303376.0,
-    "market_-8pct_iv_x1.5": -539029.0
+    "market_-8pct": -391701.0,
+    "market_-5pct": -180308.0,
+    "market_-3pct": -80637.0,
+    "market_+3pct": -4171.0,
+    "market_+5pct": -53868.0,
+    "market_+10pct": -338940.0,
+    "market_-5pct_iv_x1.25": -337736.0,
+    "market_-8pct_iv_x1.5": -597756.0
    },
    "single_stock_gap_worst": [
     {
@@ -382,20 +382,20 @@
     {
      "symbol": "PAYTM",
      "move": "up 20%",
-     "pnl_rs": -89831.0
+     "pnl_rs": -90002.0
     },
     {
      "symbol": "LUPIN",
      "move": "up 20%",
-     "pnl_rs": -79707.0
+     "pnl_rs": -79666.0
     }
    ],
    "method": "Black-Scholes repricing of every open leg, implied vol solved from the live option price (fallback stock IV or 30%), all underlyings shocked together (beta 1), expiry unchanged, risk-free 0.065.",
    "limits": "Beta 1 is an assumption; a gap through a stop fills at the gap price, not at 3x."
   },
   "defined_risk": {
-   "put_side_max_loss_if_stocks_to_zero_rs": 1938129.0,
-   "naked_call_stocks": 36,
+   "put_side_max_loss_if_stocks_to_zero_rs": 2141138.0,
+   "naked_call_stocks": 38,
    "spreads_where_3x_stop_cannot_bind": [],
    "spreads_where_3x_stop_cannot_bind_count": 0,
    "note": "Put-side max loss = sum(short strikes x qty) - sum(long strikes x qty) - net credit, the loss if every stock went to zero (an upper bound, not a forecast). A spread's 3x stop cannot bind when 3 x credit >= width."
@@ -406,11 +406,17 @@
      "symbol": "ADANIENSOL",
      "colour": "red",
      "structure": "short put against a red stock",
-     "pnl_rs": -3206.0
+     "pnl_rs": -2228.0
+    },
+    {
+     "symbol": "HYUNDAI",
+     "colour": "red",
+     "structure": "short put against a red stock",
+     "pnl_rs": 41.0
     }
    ],
-   "count": 1,
-   "pnl_rs": -3206.0,
+   "count": 2,
+   "pnl_rs": -2187.0,
    "rule": "put spread on green, short call on red"
   },
   "breakeven_win_rate_pct": 76.9,
@@ -736,18 +742,24 @@
   ],
   "strategy_profitable": {
    "breakeven_win_rate_pct": 76.9,
-   "open_short_legs": 107,
+   "open_short_legs": 118,
    "structure_vs_colour": {
     "mismatches": [
      {
       "symbol": "ADANIENSOL",
       "colour": "red",
       "structure": "short put against a red stock",
-      "pnl_rs": -3206.0
+      "pnl_rs": -2228.0
+     },
+     {
+      "symbol": "HYUNDAI",
+      "colour": "red",
+      "structure": "short put against a red stock",
+      "pnl_rs": 41.0
      }
     ],
-    "count": 1,
-    "pnl_rs": -3206.0,
+    "count": 2,
+    "pnl_rs": -2187.0,
     "rule": "put spread on green, short call on red"
    }
   }
@@ -828,21 +840,21 @@
   },
   "option_risk": {
    "stress_pct_of_capital": {
-    "market_-8pct": -11.76,
-    "market_-5pct": -5.34,
-    "market_-3pct": -2.34,
-    "market_+3pct": -0.31,
-    "market_+5pct": -2.0,
-    "market_+10pct": -11.34,
-    "market_-5pct_iv_x1.25": -10.11,
-    "market_-8pct_iv_x1.5": -17.97
+    "market_-8pct": -13.06,
+    "market_-5pct": -6.01,
+    "market_-3pct": -2.69,
+    "market_+3pct": -0.14,
+    "market_+5pct": -1.8,
+    "market_+10pct": -11.3,
+    "market_-5pct_iv_x1.25": -11.26,
+    "market_-8pct_iv_x1.5": -19.93
    },
    "worst_single_stock_gap": {
     "symbol": "COALINDIA",
     "move": "up 20%",
     "pnl_rs": -117979.0
    },
-   "naked_call_stocks": 36
+   "naked_call_stocks": 38
   },
   "note": "Discipline score is counted by code from the six checks above; the narrator lists the failed ones first and does not add checks of its own."
  },

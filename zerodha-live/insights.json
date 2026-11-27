@@ -1,9 +1,9 @@
 {
- "as_of": "27 Nov 14:20 (26 Nov close signals; broker data, GTTs and prices as of 27 Nov 14:20; four sections; facts computed by code)",
- "written_at": "2026-11-27T14:20:00+05:30",
+ "as_of": "27 Nov 14:45 (26 Nov close signals; broker data, GTTs and prices as of 27 Nov 14:45; four sections; facts computed by code)",
+ "written_at": "2026-11-27T14:45:00+05:30",
  "confidence": "low",
  "maturity": "6 closed trades (tier anecdote): process and risk numbers are the signal, outcome statistics are descriptive only. Closed trades are the stopped-out losers so far; the open book is the other half.",
- "headline": "Two of your 3x stops fired this morning (HAL and SOLARINDS, both calls), the first time your third layer has been used, and every short option is still covered.",
+ "headline": "Two of your 3x stops fired this morning (HAL and SOLARINDS), and every short option is covered, including the ten new spreads you opened this afternoon.",
  "points": [
   {
    "label": "Swing",
@@ -37,7 +37,7 @@
     "options.stress",
     "openrisk"
    ],
-   "text": "You pass 5 of 6 discipline checks. The one miss is the remaining ASHOKLEY shares, which have an exit signal but no order. All the new shorts have protective GTTs. One thing to check: the ADANIENSOL put spread is against a red colour on the live candles while the daily signal still says green, so open its chart before the close. Financial Services is 47.5% of deployed capital against your 40% limit, so add nothing there. Options remain the biggest risk, and these are worst-case figures that assume none of your exits or stops act: a 5% market fall would cost 5.34% of capital, and a sharp one with higher volatility 17.97%, mostly because 36 stocks carry naked short calls. If every swing position hit its Supertrend exit today you would lose Rs60,460."
+   "text": "You pass 5 of 6 discipline checks. The one miss is the remaining ASHOKLEY shares, which have an exit signal but no order. All the new shorts, including the ten spreads you opened this afternoon, have protective GTTs. One thing to check: the ADANIENSOL put spread is against a red colour on the live candles while the daily signal still says green, so open its chart before the close. Financial Services is 47.5% of deployed capital against your 40% limit, so add nothing there. Options remain the biggest risk, and these are worst-case figures that assume none of your exits or stops act: a 5% market fall would cost 6.01% of capital, and a sharp one with higher volatility 19.93%, mostly because 38 stocks carry naked short calls. If every swing position hit its Supertrend exit today you would lose Rs60,460."
   }
  ],
  "action": "Watch HAL and ADANIENSOL at the close, decide on the 13 remaining ASHOKLEY shares, and keep Financial Services inside the 40% limit."
