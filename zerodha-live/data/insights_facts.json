@@ -1,6 +1,6 @@
 {
  "broker": "AZ",
- "generated_at": "2026-11-27T10:13:41+05:30",
+ "generated_at": "2026-11-27T10:22:24+05:30",
  "as_of": "2026-11-26",
  "scope": "AZ swing shares and AZ stock options; Nifty index options are outside by decision",
  "adherence_leakage": {
@@ -349,47 +349,47 @@
   "stress": {
    "capital_base_rs": 3000000,
    "grid_pct_of_capital": {
-    "market_-8pct": -11.06,
-    "market_-5pct": -4.8,
-    "market_-3pct": -1.99,
+    "market_-8pct": -11.19,
+    "market_-5pct": -4.84,
+    "market_-3pct": -2.0,
     "market_+3pct": -0.73,
-    "market_+5pct": -2.69,
-    "market_+10pct": -12.68,
-    "market_-5pct_iv_x1.25": -9.49,
-    "market_-8pct_iv_x1.5": -17.03
+    "market_+5pct": -2.71,
+    "market_+10pct": -12.74,
+    "market_-5pct_iv_x1.25": -9.63,
+    "market_-8pct_iv_x1.5": -17.4
    },
    "grid_pnl_rs": {
-    "market_-8pct": -331655.0,
-    "market_-5pct": -143980.0,
-    "market_-3pct": -59565.0,
-    "market_+3pct": -21803.0,
-    "market_+5pct": -80846.0,
-    "market_+10pct": -380400.0,
-    "market_-5pct_iv_x1.25": -284625.0,
-    "market_-8pct_iv_x1.5": -510935.0
+    "market_-8pct": -335653.0,
+    "market_-5pct": -145310.0,
+    "market_-3pct": -59998.0,
+    "market_+3pct": -22028.0,
+    "market_+5pct": -81414.0,
+    "market_+10pct": -382051.0,
+    "market_-5pct_iv_x1.25": -288876.0,
+    "market_-8pct_iv_x1.5": -521930.0
    },
    "single_stock_gap_worst": [
     {
      "symbol": "COALINDIA",
      "move": "up 20%",
-     "pnl_rs": -117911.0
+     "pnl_rs": -117979.0
     },
     {
      "symbol": "PAYTM",
      "move": "up 20%",
-     "pnl_rs": -94098.0
+     "pnl_rs": -95085.0
     },
     {
      "symbol": "LUPIN",
      "move": "up 20%",
-     "pnl_rs": -79466.0
+     "pnl_rs": -79436.0
     }
    ],
    "method": "Black-Scholes repricing of every open leg, implied vol solved from the live option price (fallback stock IV or 30%), all underlyings shocked together (beta 1), expiry unchanged, risk-free 0.065.",
    "limits": "Beta 1 is an assumption; a gap through a stop fills at the gap price, not at 3x."
   },
   "defined_risk": {
-   "put_side_max_loss_if_stocks_to_zero_rs": 1548829.0,
+   "put_side_max_loss_if_stocks_to_zero_rs": 1938129.0,
    "naked_call_stocks": 37,
    "spreads_where_3x_stop_cannot_bind": [],
    "spreads_where_3x_stop_cannot_bind_count": 0,
@@ -679,7 +679,7 @@
     "ivp": 100,
     "iv": 43.3,
     "colour": "red",
-    "wants": "PUT_SPREAD"
+    "wants": "CALL"
    },
    {
     "symbol": "YESBANK",
@@ -700,7 +700,7 @@
     "ivp": 78,
     "iv": 29.9,
     "colour": "green",
-    "wants": "CALL"
+    "wants": "PUT_SPREAD"
    },
    {
     "symbol": "CROMPTON",
@@ -804,19 +804,19 @@
   },
   "option_risk": {
    "stress_pct_of_capital": {
-    "market_-8pct": -11.06,
-    "market_-5pct": -4.8,
-    "market_-3pct": -1.99,
+    "market_-8pct": -11.19,
+    "market_-5pct": -4.84,
+    "market_-3pct": -2.0,
     "market_+3pct": -0.73,
-    "market_+5pct": -2.69,
-    "market_+10pct": -12.68,
-    "market_-5pct_iv_x1.25": -9.49,
-    "market_-8pct_iv_x1.5": -17.03
+    "market_+5pct": -2.71,
+    "market_+10pct": -12.74,
+    "market_-5pct_iv_x1.25": -9.63,
+    "market_-8pct_iv_x1.5": -17.4
    },
    "worst_single_stock_gap": {
     "symbol": "COALINDIA",
     "move": "up 20%",
-    "pnl_rs": -117911.0
+    "pnl_rs": -117979.0
    },
    "naked_call_stocks": 37
   },

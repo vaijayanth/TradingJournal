@@ -1,6 +1,26 @@
 {
- "fetched_at": "2026-11-27T10:13:41+05:30",
+ "fetched_at": "2026-11-27T10:22:23+05:30",
  "active": {
+  "BDL26DEC920PE": [
+   {
+    "id": 346628793,
+    "type": "two-leg",
+    "trigger_values": [
+     1.8,
+     13.4
+    ],
+    "qty": 850
+   },
+   {
+    "id": 346628793,
+    "type": "two-leg",
+    "trigger_values": [
+     1.8,
+     13.4
+    ],
+    "qty": 850
+   }
+  ],
   "HAL26DEC5700CE": [
    {
     "id": 346632242,
@@ -59,26 +79,6 @@
      13.05
     ],
     "qty": 825
-   }
-  ],
-  "BDL26DEC920PE": [
-   {
-    "id": 346628793,
-    "type": "two-leg",
-    "trigger_values": [
-     2,
-     14.85
-    ],
-    "qty": 425
-   },
-   {
-    "id": 346628793,
-    "type": "two-leg",
-    "trigger_values": [
-     2,
-     14.85
-    ],
-    "qty": 425
    }
   ],
   "ASHOKLEY26DEC180CE": [
@@ -2164,6 +2164,34 @@
  },
  "gtts": [
   {
+   "id": 346628793,
+   "type": "two-leg",
+   "created_at": "2026-11-27T10:06:06+05:30",
+   "expires_at": "2026-12-30T00:00:00+05:30",
+   "tradingsymbol": "BDL26DEC920PE",
+   "last_price": 3.9,
+   "triggers": [
+    1.8,
+    13.4
+   ],
+   "orders": [
+    {
+     "side": "BUY",
+     "qty": 850,
+     "price": 1.85,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    },
+    {
+     "side": "BUY",
+     "qty": 850,
+     "price": 13.55,
+     "product": "NRML",
+     "order_type": "LIMIT"
+    }
+   ]
+  },
+  {
    "id": 346632242,
    "type": "two-leg",
    "created_at": "2026-11-27T10:13:34+05:30",
@@ -2242,34 +2270,6 @@
      "side": "BUY",
      "qty": 825,
      "price": 13.2,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
-   "id": 346628793,
-   "type": "two-leg",
-   "created_at": "2026-11-27T10:06:06+05:30",
-   "expires_at": "2026-12-30T00:00:00+05:30",
-   "tradingsymbol": "BDL26DEC920PE",
-   "last_price": 4.5,
-   "triggers": [
-    2,
-    14.85
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 425,
-     "price": 2.05,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    },
-    {
-     "side": "BUY",
-     "qty": 425,
-     "price": 15,
      "product": "NRML",
      "order_type": "LIMIT"
     }
