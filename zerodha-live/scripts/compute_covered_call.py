@@ -128,6 +128,8 @@ OUT = HERE.parent / "covered_call_signals.json"
 
 
 def desired_structure(colour, rsi, rules):
+    if not rules.get("rsi_override", True):      # user, 2026-11-27 (AZ): the Supertrend colour alone decides, as on ND and in the entry skill
+        return ("PUT_SPREAD" if colour == "green" else "CALL"), f"Supertrend {colour}"
     if rsi is not None and rsi > rules["rsi_sell_call_above"]:
         return "CALL", f"RSI {rsi:.1f} > {rules['rsi_sell_call_above']:g}"
     if rsi is not None and rsi < rules["rsi_sell_put_below"]:

@@ -1,5 +1,5 @@
 {
- "generated_at": "2026-11-27T04:43:41.335783+00:00",
+ "generated_at": "2026-11-27T04:50:07.521879+00:00",
  "market_data_date": "2026-11-26",
  "live_prices_at": "2026-11-27T10:00:35+05:30",
  "gtt_scan_at": "2026-11-27T10:13:41+05:30",
@@ -19,6 +19,7 @@
   "show_next_month_after_day": 15,
   "expiry_week_days": 5,
   "risk_free_rate": 0.065,
+  "rsi_override": false,
   "rsi_sell_call_above": 70,
   "rsi_sell_put_below": 30,
   "expiry_min_days": 30,
@@ -840,8 +841,8 @@
    "spot": 2410.0,
    "colour": "green",
    "rsi": 72.5,
-   "basis": "RSI 72.5 > 70",
-   "desired": "CALL",
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
    "flip_date": "2026-10-23",
    "flip_trading_days": 23,
    "expiries": [
@@ -850,9 +851,9 @@
      "lot": 250
     }
    ],
-   "rsi_override": true,
+   "rsi_override": false,
    "status": "ENTER",
-   "note": "RSI 72.5 > 70: sell call",
+   "note": "Supertrend green: bull put spread",
    "legs": [],
    "events": [
     {
@@ -952,8 +953,8 @@
    "spot": 1481.5,
    "colour": "red",
    "rsi": 16.0,
-   "basis": "RSI 16.0 < 30",
-   "desired": "PUT_SPREAD",
+   "basis": "Supertrend red",
+   "desired": "CALL",
    "flip_date": "2026-11-23",
    "flip_trading_days": 2,
    "expiries": [
@@ -962,9 +963,9 @@
      "lot": 350
     }
    ],
-   "rsi_override": true,
+   "rsi_override": false,
    "status": "ENTER",
-   "note": "RSI 16.0 < 30: bull put spread",
+   "note": "Supertrend red: sell call",
    "legs": [],
    "events": [
     {
@@ -3604,8 +3605,8 @@
    "spot": 11631.0,
    "colour": "green",
    "rsi": 72.4,
-   "basis": "RSI 72.4 > 70",
-   "desired": "CALL",
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
    "flip_date": "2026-10-30",
    "flip_trading_days": 18,
    "expiries": [
@@ -3614,9 +3615,9 @@
      "lot": 100
     }
    ],
-   "rsi_override": true,
-   "status": "ENTER",
-   "note": "RSI 72.4 > 70: sell call (you hold other legs in this stock)",
+   "rsi_override": false,
+   "status": "HOLD",
+   "note": "Open structure matches the rule (Supertrend green).",
    "legs": [
     {
      "symbol": "DIVISLAB",
@@ -3729,8 +3730,8 @@
    "spot": 807.8,
    "colour": "green",
    "rsi": 76.9,
-   "basis": "RSI 76.9 > 70",
-   "desired": "CALL",
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
    "flip_date": "2026-09-23",
    "flip_trading_days": 43,
    "expiries": [
@@ -3739,9 +3740,9 @@
      "lot": 950
     }
    ],
-   "rsi_override": true,
+   "rsi_override": false,
    "status": "ENTER",
-   "note": "RSI 76.9 > 70: sell call",
+   "note": "Supertrend green: bull put spread",
    "legs": [],
    "events": [
     {
@@ -4245,8 +4246,8 @@
    "spot": 2740.2,
    "colour": "green",
    "rsi": 72.3,
-   "basis": "RSI 72.3 > 70",
-   "desired": "CALL",
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
    "flip_date": "2026-11-02",
    "flip_trading_days": 17,
    "expiries": [
@@ -4255,9 +4256,9 @@
      "lot": 375
     }
    ],
-   "rsi_override": true,
+   "rsi_override": false,
    "status": "ENTER",
-   "note": "RSI 72.3 > 70: sell call",
+   "note": "Supertrend green: bull put spread",
    "legs": [],
    "events": [
     {
@@ -4442,8 +4443,8 @@
    "spot": 2004.3,
    "colour": "green",
    "rsi": 74.8,
-   "basis": "RSI 74.8 > 70",
-   "desired": "CALL",
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
    "flip_date": "2026-11-04",
    "flip_trading_days": 15,
    "expiries": [
@@ -4452,9 +4453,9 @@
      "lot": 325
     }
    ],
-   "rsi_override": true,
+   "rsi_override": false,
    "status": "ENTER",
-   "note": "RSI 74.8 > 70: sell call",
+   "note": "Supertrend green: bull put spread",
    "legs": [],
    "events": [
     {
@@ -4790,8 +4791,8 @@
    "spot": 862.0,
    "colour": "green",
    "rsi": 72.9,
-   "basis": "RSI 72.9 > 70",
-   "desired": "CALL",
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
    "flip_date": "2026-11-03",
    "flip_trading_days": 16,
    "expiries": [
@@ -4800,9 +4801,9 @@
      "lot": 650
     }
    ],
-   "rsi_override": true,
-   "status": "ENTER",
-   "note": "RSI 72.9 > 70: sell call (you hold other legs in this stock)",
+   "rsi_override": false,
+   "status": "HOLD",
+   "note": "Open structure matches the rule (Supertrend green).",
    "legs": [
     {
      "symbol": "HDFCBANK",
@@ -6071,8 +6072,8 @@
    "spot": 307.0,
    "colour": "green",
    "rsi": 73.9,
-   "basis": "RSI 73.9 > 70",
-   "desired": "CALL",
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
    "flip_date": "2026-11-03",
    "flip_trading_days": 16,
    "expiries": [
@@ -6081,9 +6082,9 @@
      "lot": 1725
     }
    ],
-   "rsi_override": true,
+   "rsi_override": false,
    "status": "ENTER",
-   "note": "RSI 73.9 > 70: sell call",
+   "note": "Supertrend green: bull put spread",
    "legs": [],
    "events": [
     {
@@ -6625,8 +6626,8 @@
    "spot": 509.95,
    "colour": "green",
    "rsi": 71.4,
-   "basis": "RSI 71.4 > 70",
-   "desired": "CALL",
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
    "flip_date": "2026-10-06",
    "flip_trading_days": 35,
    "expiries": [
@@ -6635,9 +6636,9 @@
      "lot": 2000
     }
    ],
-   "rsi_override": true,
+   "rsi_override": false,
    "status": "ENTER",
-   "note": "RSI 71.4 > 70: sell call",
+   "note": "Supertrend green: bull put spread",
    "legs": [],
    "events": [
     {
@@ -7295,8 +7296,8 @@
    "spot": 939.1,
    "colour": "green",
    "rsi": 71.5,
-   "basis": "RSI 71.5 > 70",
-   "desired": "CALL",
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
    "flip_date": "2026-11-03",
    "flip_trading_days": 16,
    "expiries": [
@@ -7305,9 +7306,9 @@
      "lot": 1200
     }
    ],
-   "rsi_override": true,
+   "rsi_override": false,
    "status": "ENTER",
-   "note": "RSI 71.5 > 70: sell call",
+   "note": "Supertrend green: bull put spread",
    "legs": [],
    "events": [
     {
@@ -7336,8 +7337,8 @@
    "spot": 14015.0,
    "colour": "green",
    "rsi": 72.7,
-   "basis": "RSI 72.7 > 70",
-   "desired": "CALL",
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
    "flip_date": "2026-11-04",
    "flip_trading_days": 15,
    "expiries": [
@@ -7346,9 +7347,9 @@
      "lot": 50
     }
    ],
-   "rsi_override": true,
+   "rsi_override": false,
    "status": "ENTER",
-   "note": "RSI 72.7 > 70: sell call",
+   "note": "Supertrend green: bull put spread",
    "legs": [],
    "events": [
     {
@@ -7377,8 +7378,8 @@
    "spot": 1081.25,
    "colour": "green",
    "rsi": 75.8,
-   "basis": "RSI 75.8 > 70",
-   "desired": "CALL",
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
    "flip_date": "2026-11-03",
    "flip_trading_days": 16,
    "expiries": [
@@ -7387,9 +7388,9 @@
      "lot": 525
     }
    ],
-   "rsi_override": true,
-   "status": "ENTER",
-   "note": "RSI 75.8 > 70: sell call (you hold other legs in this stock)",
+   "rsi_override": false,
+   "status": "HOLD",
+   "note": "Open structure matches the rule (Supertrend green).",
    "legs": [
     {
      "symbol": "MAXHEALTH",
@@ -9097,8 +9098,8 @@
    "spot": 2291.0,
    "colour": "green",
    "rsi": 70.4,
-   "basis": "RSI 70.4 > 70",
-   "desired": "CALL",
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
    "flip_date": "2026-10-29",
    "flip_trading_days": 19,
    "expiries": [
@@ -9107,9 +9108,9 @@
      "lot": 350
     }
    ],
-   "rsi_override": true,
+   "rsi_override": false,
    "status": "ENTER",
-   "note": "RSI 70.4 > 70: sell call",
+   "note": "Supertrend green: bull put spread",
    "legs": [],
    "events": [
     {
@@ -9179,8 +9180,8 @@
    "spot": 1591.2,
    "colour": "red",
    "rsi": 25.0,
-   "basis": "RSI 25.0 < 30",
-   "desired": "PUT_SPREAD",
+   "basis": "Supertrend red",
+   "desired": "CALL",
    "flip_date": "2026-08-12",
    "flip_trading_days": 72,
    "expiries": [
@@ -9189,9 +9190,9 @@
      "lot": 175
     }
    ],
-   "rsi_override": true,
-   "status": "ENTER",
-   "note": "RSI 25.0 < 30: bull put spread (you hold other legs in this stock)",
+   "rsi_override": false,
+   "status": "HOLD",
+   "note": "Open structure matches the rule (Supertrend red).",
    "legs": [
     {
      "symbol": "PIIND",
@@ -9748,8 +9749,8 @@
    "spot": 1832.1,
    "colour": "green",
    "rsi": 74.5,
-   "basis": "RSI 74.5 > 70",
-   "desired": "CALL",
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
    "flip_date": "2026-11-03",
    "flip_trading_days": 16,
    "expiries": [
@@ -9758,9 +9759,9 @@
      "lot": 450
     }
    ],
-   "rsi_override": true,
+   "rsi_override": false,
    "status": "ENTER",
-   "note": "RSI 74.5 > 70: sell call",
+   "note": "Supertrend green: bull put spread",
    "legs": [],
    "events": [
     {
@@ -9957,8 +9958,8 @@
    "spot": 1396.2,
    "colour": "green",
    "rsi": 72.1,
-   "basis": "RSI 72.1 > 70",
-   "desired": "CALL",
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
    "flip_date": "2026-11-02",
    "flip_trading_days": 17,
    "expiries": [
@@ -9967,9 +9968,9 @@
      "lot": 500
     }
    ],
-   "rsi_override": true,
-   "status": "ENTER",
-   "note": "RSI 72.1 > 70: sell call (you hold other legs in this stock)",
+   "rsi_override": false,
+   "status": "HOLD",
+   "note": "Open structure matches the rule (Supertrend green).",
    "legs": [
     {
      "symbol": "RELIANCE",
@@ -10322,8 +10323,8 @@
    "spot": 1136.65,
    "colour": "green",
    "rsi": 70.5,
-   "basis": "RSI 70.5 > 70",
-   "desired": "CALL",
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
    "flip_date": "2026-11-05",
    "flip_trading_days": 14,
    "expiries": [
@@ -10332,9 +10333,9 @@
      "lot": 750
     }
    ],
-   "rsi_override": true,
+   "rsi_override": false,
    "status": "ENTER",
-   "note": "RSI 70.5 > 70: sell call",
+   "note": "Supertrend green: bull put spread",
    "legs": [],
    "events": [
     {
@@ -11221,8 +11222,8 @@
    "spot": 2640.3,
    "colour": "green",
    "rsi": 71.0,
-   "basis": "RSI 71.0 > 70",
-   "desired": "CALL",
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
    "flip_date": "2026-10-13",
    "flip_trading_days": 30,
    "expiries": [
@@ -11231,9 +11232,9 @@
      "lot": 225
     }
    ],
-   "rsi_override": true,
+   "rsi_override": false,
    "status": "ENTER",
-   "note": "RSI 71.0 > 70: sell call",
+   "note": "Supertrend green: bull put spread",
    "legs": [],
    "events": [
     {
@@ -11472,8 +11473,8 @@
    "spot": 5019.1,
    "colour": "green",
    "rsi": 70.5,
-   "basis": "RSI 70.5 > 70",
-   "desired": "CALL",
+   "basis": "Supertrend green",
+   "desired": "PUT_SPREAD",
    "flip_date": "2026-11-25",
    "flip_trading_days": 1,
    "expiries": [
@@ -11482,9 +11483,9 @@
      "lot": 125
     }
    ],
-   "rsi_override": true,
-   "status": "ENTER",
-   "note": "RSI 70.5 > 70: sell call (you hold other legs in this stock)",
+   "rsi_override": false,
+   "status": "HOLD",
+   "note": "Open structure matches the rule (Supertrend green).",
    "legs": [
     {
      "symbol": "TORNTPHARM",
@@ -12436,11 +12437,11 @@
   "ignored_legs": 19
  },
  "counts": {
-  "call": 60,
-  "put_spread": 155,
-  "rsi_override": 19,
-  "enter": 113,
-  "hold": 102,
+  "call": 45,
+  "put_spread": 170,
+  "rsi_override": 0,
+  "enter": 107,
+  "hold": 108,
   "flip": 0
  }
 }

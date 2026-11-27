@@ -24,7 +24,7 @@ Single-file `index.html` on GitHub Pages (https://vaijayanth.github.io/TradingJo
 | Exit | Supertrend red, whole position, any P&L | same (grandfathered positions only after a post-cutoff red flip) | none (dividend holding) |
 | Add-on | off from 2026-11-30 (green and P&L <= -6%: 1/10 until then; investment-share averaging stays) | off from 2026-11-30 (same until then) | n/a |
 | Sizing | Rs1,000 + Rs1,000 per 100 closed trades, base Rs20L | Rs20,000 + Rs5,000 per 100 trades (open + closed), base Rs30L | Rs20,000 |
-| Options | Supertrend colour only (no RSI): red = sell call, green = bull put spread | RSI > 70 sell call, RSI < 30 bull put, else colour | ND rules on the 23 stocks with options |
+| Options | Supertrend colour only (no RSI): red = sell call, green = bull put spread | Supertrend colour only (no RSI, user 2026-11-27): red = sell call, green = bull put spread | ND rules on the 23 stocks with options |
 
 ## Backtest reference (10 years, 6% idle cash, costs + 0.1% slippage; tables in `swing-backtest/RESULTS.md`)
 - **ND live:** 28.0% CAGR, -15.4% max drawdown, PF 2.01, win rate **41%** (a normal result for this system, not a warning). **AZ live (flip-today):** 20.2% / -21.3% / PF 1.75 / 41%.
