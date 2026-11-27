@@ -113,6 +113,32 @@ def stats(days):
     return last, rows
 
 
+TIER_CUTS = (("A", 25), ("B", 60), ("C", 100), ("D", 150))      # rank bands of the structural-IV ranking; everything below is E
+
+
+def tiers(days, min_days=150):
+    """Structural IV tier per stock (user, 2026-11-27): score = 0.6 x median ATM IV + 0.4 x the 20th-percentile IV (the floor) over the whole stored history,
+    so stocks that are CONSISTENTLY rich rank above one-off spikes. Needs min_days of history; others get no tier. Returns {symbol: {tier, tier_rank, iv_med, iv_floor}}."""
+    series = {}
+    for d in sorted(days):
+        for s, v in days[d].items():
+            if v:
+                series.setdefault(s, []).append(v * 100)
+    sc = []
+    for s, xs in series.items():
+        if len(xs) < min_days:
+            continue
+        ys = sorted(xs)
+        med, p20 = ys[len(ys) // 2], ys[int(len(ys) * 0.2)]
+        sc.append((0.6 * med + 0.4 * p20, s, med, p20))
+    sc.sort(reverse=True)
+    out = {}
+    for i, (_, s, med, p20) in enumerate(sc, 1):
+        t = next((n for n, cut in TIER_CUTS if i <= cut), "E")
+        out[s] = {"tier": t, "tier_rank": i, "iv_med": round(med, 1), "iv_floor": round(p20, 1)}
+    return out
+
+
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--rebuild", action="store_true")
@@ -157,6 +183,9 @@ def main():
     HIST.parent.mkdir(parents=True, exist_ok=True)
     HIST.write_text(json.dumps({"as_of": keep[-1], "method": "ATM IV from NSE F&O bhavcopy settlement prices, expiry 20-60d, BS inversion", "holidays": sorted(hol), "days": days}, separators=(",", ":")))
     asof, rows = stats(days)
+    for s_, t_ in tiers(days).items():
+        if s_ in rows:
+            rows[s_].update(t_)
     payload = json.dumps({"as_of": asof, "window_sessions": WINDOW, "source": "NSE F&O bhavcopy (end-of-day settlement prices)", "rows": rows}, indent=0, separators=(",", ":"))
     for p in OUTS:
         p.parent.mkdir(parents=True, exist_ok=True)

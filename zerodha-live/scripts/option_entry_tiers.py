@@ -137,13 +137,25 @@ def main():
         if dte < cfg["rules"].get("expiry_min_days", 30):   # only a near expiry is listed for this stock: say so
             alert = f"SHORT EXPIRY: only {dte}d to {e['expiry']}" + (f"; {alert}" if alert else "")
             lvl = max(lvl, 2)
-        tiers[t].append({"symbol": s["symbol"], "ivp": s.get("ivp"), "st_dist_pct": s.get("st_dist_pct"), "structure": structure, "colour": s["colour"], "spot": s["spot"], "flip_date": fd, "flip_trading_days": td,
+        tiers[t].append({"symbol": s["symbol"], "iv_grade": s.get("iv_tier"), "ivp": s.get("ivp"), "st_dist_pct": s.get("st_dist_pct"), "structure": structure, "colour": s["colour"], "spot": s["spot"], "flip_date": fd, "flip_trading_days": td,
                          "flip_calendar_days": cal, "expiry": e["expiry"], "lot": e["lot"], "alert": alert or "-", "alert_level": lvl})
     for t in tiers:
         tiers[t].sort(key=lambda r: (r["flip_trading_days"], r["symbol"]))
 
+    # Open today (user, 2026-11-27): the best entry rows that pass EVERY gate, best structural IV grade first. Same rule as the page's 'Open today' card:
+    # no F&O ban, no event alert or short expiry (alert_level < 2), not within 1.5% of a Supertrend flip, IV percentile 50 or more.
+    try:
+        ban = set(load(ROOT / "data" / "fno_ban.json").get("symbols", []))
+    except Exception:  # noqa: BLE001
+        ban = set()
+    GRADE = {"A": 1, "B": 2, "C": 3, "D": 4, "E": 5}
+    allrows = [r for t in tiers for r in tiers[t]]
+    clean = [r for r in allrows if r["symbol"] not in ban and r["alert_level"] < 2 and (r.get("st_dist_pct") is None or r["st_dist_pct"] > 1.5) and (r.get("ivp") or -1) >= 50]
+    clean.sort(key=lambda r: (GRADE.get(r.get("iv_grade"), 6), -(r.get("ivp") or 0), r["flip_trading_days"], r["symbol"]))
+    open_today = clean[:10]
+
     if a.json:
-        print(json.dumps({"market_data_date": c["market_data_date"], "positions_fetched_at": pos.get("fetched_at"), "tiers": tiers, "skipped": skipped, "held_stocks": sorted(held), "held_table": held_rows}, indent=1))
+        print(json.dumps({"market_data_date": c["market_data_date"], "positions_fetched_at": pos.get("fetched_at"), "open_today": open_today, "tiers": tiers, "skipped": skipped, "held_stocks": sorted(held), "held_table": held_rows}, indent=1))
         return
     print(f"AZ option entry signals - Supertrend flips only (no RSI). Market data {c['market_data_date']}; open option legs fetched {pos.get('fetched_at')}.")
     print(f"Left out: {len(held)} stocks with open option legs; {skipped['no expiry/lot']} with no listed expiry/lot" + (f"; {skipped['price below minimum']} priced below Rs{min_px:g}." if min_px else "."))
@@ -155,6 +167,12 @@ def main():
             age = "today" if r["flip_trading_days"] == 0 else f"{r['flip_trading_days']}td/{r['flip_calendar_days']}d"
             print(f"   {r['symbol']:<12} {str(r['colour']).upper():<10} {str(r['flip_date']):<11} {age:<8} {r['spot']:>9g} {r['rule']:<16} {r['status']:<6} {r['open_legs']}  -> {r['verdict']}")
         print()
+    print(f"== Open today: the best {len(open_today)} of {len(allrows)} entry rows that pass every gate (no F&O ban, no event alert, not on a flip knife-edge, IV percentile 50 or more); IV grade A first ==")
+    for i, r in enumerate(open_today, 1):
+        print(f"   {i:>2} {r['symbol']:<12} grade {r.get('iv_grade') or '-'}  {r['structure']:<16} IVP {r.get('ivp')}  flipped {r['flip_trading_days']}d ago  expiry {r['expiry']}  lot {r['lot']}")
+    if not open_today:
+        print("   (none: every entry row has an alert or a low IV percentile)")
+    print()
     for t in (1, 2, 3, 4, 5):
         rows = tiers[t]
         if t not in want:

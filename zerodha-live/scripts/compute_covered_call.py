@@ -454,6 +454,7 @@ def main():
         r_ = ivp_rows.get(s_.get("symbol"))
         if r_:
             s_["ivp"], s_["iv"], s_["ivr"] = r_["ivp"], r_["iv"], r_["ivr"]
+            s_["iv_tier"], s_["iv_tier_rank"] = r_.get("tier"), r_.get("tier_rank")   # structural IV tier A-E (user, 2026-11-27)
     _std = _st_distances(sorted({s_["symbol"] for s_ in stocks if s_.get("colour") and s_.get("symbol")}), DATA)
     for s_ in stocks:
         r_ = _std.get(s_.get("symbol"))

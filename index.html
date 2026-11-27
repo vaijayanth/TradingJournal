@@ -10517,8 +10517,8 @@ function ccActRows(d, tierRows) {
   const have = new Set(tierRows.map(r => r.symbol));
   const al = (d.alerts || []).filter(a => !(a.type === 'New trade' && have.has(a.symbol))).slice().sort(ccAlertSort)
     .map(a => Object.assign({}, a, { kind: ccKind(a.type), ord: ccTypeOrd(a) }));
-  const en = tierRows.slice().sort((a, b) => a.tier - b.tier || a.td - b.td || a.symbol.localeCompare(b.symbol))
-    .map(r => Object.assign({}, r, { kind: 'entry', type: 'Tier ' + r.tier, level: 'ENTER', ord: 100 + r.tier }));
+  const en = tierRows.slice().sort(ccEntryPrioCmp)
+    .map((r, i) => Object.assign({}, r, { kind: 'entry', type: 'Tier ' + r.tier, level: 'ENTER', ord: 100 + i }));   // default order = entry priority (clean, tier A first, IV percentile), see ccEntryClean
   // BPS re-sell prompt (user, 2026-11-23): the short put was bought back (GTT target / profit exit) but its long PE hedge is still held
   // and the Supertrend is still green = the stock is moving up, so a NEW short PE can be sold above the hedge
   const rs = [], stk = Object.fromEntries((d.stocks || []).map(x => [x.symbol, x]));
@@ -10551,6 +10551,7 @@ const ccActCols = () => [
   { h: 'Action', v: r => ccActDoTxt(r), c: r => `<b title="${dhEsc(r.action || '')}">${dhEsc(ccActDoTxt(r))}</b>`, txt: true },
 ];
 function ccActionsBox(d, pfx, tierRows, showEntry) {
+  window._ccTier = Object.fromEntries((d.stocks || []).filter(x => x.iv_tier).map(x => [x.symbol, { t: x.iv_tier, r: x.iv_tier_rank }]));   // structural IV tier A-E (user, 2026-11-27)
   window._ccIvp = Object.fromEntries((d.stocks || []).filter(x => x.ivp != null).map(x => [x.symbol, { ivp: x.ivp, iv: x.iv, ivr: x.ivr, asof: d.ivp_as_of }]));   // this broker's own IV percentile (data/ivp.json, via its engine)
   window._ccSt = Object.fromEntries((d.stocks || []).filter(x => x.st_dist_pct != null).map(x => [x.symbol, { c: x.st_colour, line: x.st_line, px: x.st_price, d: x.st_dist_pct, bar: x.st_bar }]));   // distance to the Supertrend flip (this broker's engine)
   window._ccTrend = Object.fromEntries((d.stocks || []).filter(s => s.colour).map(s => [s.symbol, s.colour]));   // this broker's Supertrend colours (Trend / Right position columns)
@@ -10578,7 +10579,7 @@ function ccActionsBox(d, pfx, tierRows, showEntry) {
   };
   const body = segs.map(k => {
     const rs = k === 'all' ? all : all.filter(r => r.kind === k), m = meta[k];
-    return `<div class="cc-asub" data-k="${k}" style="${k === cur ? '' : 'display:none'}">` + ccTbl(pfx + '_' + k, {
+    return `<div class="cc-asub" data-k="${k}" style="${k === cur ? '' : 'display:none'}">` + (k === 'entry' ? ccOpenToday(rs) : '') + ccTbl(pfx + '_' + k, {
       title: m.title, hint: m.hint, rows: rs, search: r => r.symbol + ' ' + (r.concern || r.text || ''), empty: m.empty, sort: [0, 1],
       rowKey: r => ccIsTier(r) ? r.symbol : null, detail: ccTierDetail,
       filters: k === 'entry' ? entryFilters(rs) : typeFilters(rs),
@@ -10682,13 +10683,30 @@ function ccTierRows(d) {
   return out;
 }
 // Entry rows (user, 2026-11-27): everything that says "careful" sits UNDER the stock name so it is read together with the name: F&O ban, results / ex-dividend, short expiry, and a near-flip chip.
+const CC_TIER_COL = { A: 'var(--green)', B: 'var(--accent)', C: 'var(--amber)', D: 'var(--text-muted)', E: 'var(--text-muted)' };
+const ccTierOf = sym => ((window._ccTier || {})[sym] || {}).t || null;
+const ccTierBadge = sym => { const x = (window._ccTier || {})[sym]; if (!x) return '';
+  return `<span title="IV grade ${x.t}: rank ${x.r} of the F&O stocks by how consistently rich the option premium has been (A = top 25, B 26-60, C 61-100, D 101-150, E the rest). Not the same as the Tier 1-5 flip age." style="display:inline-block;min-width:16px;text-align:center;font-size:10px;font-weight:800;padding:0 4px;border-radius:4px;border:1px solid ${CC_TIER_COL[x.t]};color:${CC_TIER_COL[x.t]};margin-left:6px">${x.t}</span>`; };
+// Entry priority (user, 2026-11-27): a row is CLEAN when nothing says careful (no F&O ban, no event alert or short expiry, not on a flip knife-edge) AND the IV percentile is 50 or more.
+// Clean rows come first, ordered by structural IV tier (A first), then IV percentile, then the freshest flip. The gates sit above the tier: a flagged stock never outranks a clean one.
+const ccNearFlip = sym => { const x = (window._ccSt || {})[sym]; return !!(x && x.d != null && x.d <= 1.5); };
+const ccEntryClean = r => !ccInBan(r.symbol) && r.lvl < 2 && !ccNearFlip(r.symbol) && (((window._ccIvp || {})[r.symbol] || {}).ivp ?? -1) >= 50;
+const ccEntryPrioKey = r => [ccEntryClean(r) ? 0 : 1, { A: 1, B: 2, C: 3, D: 4, E: 5 }[ccTierOf(r.symbol)] || 6, -(((window._ccIvp || {})[r.symbol] || {}).ivp ?? -1), r.td ?? 999];
+const ccEntryPrioCmp = (a, b) => { const x = ccEntryPrioKey(a), y = ccEntryPrioKey(b); for (let i = 0; i < x.length; i++) if (x[i] !== y[i]) return x[i] - y[i]; return a.symbol.localeCompare(b.symbol); };
+function ccOpenToday(rows) {
+  const tier = rows.filter(ccIsTier), clean = tier.filter(ccEntryClean).sort(ccEntryPrioCmp).slice(0, 10);
+  if (!tier.length) return '';
+  const head = `<b>Open today</b> <span style="color:var(--text-muted)">· the best ${clean.length} of ${tier.length} entry rows that pass every gate (no F&amp;O ban, no event alert, not on a flip knife-edge, IV percentile 50 or more), best IV grade (A first) on top</span>`;
+  const items = clean.map(r => `<span style="display:inline-flex;align-items:center;gap:6px;white-space:nowrap;border:1px solid var(--border);border-radius:8px;padding:5px 9px"><b class="stk">${dhEsc(r.symbol)}</b>${ccTierBadge(r.symbol)} <span style="color:${r.desired === 'PUT_SPREAD' ? 'var(--green)' : 'var(--red)'}">${r.desired === 'PUT_SPREAD' ? 'BPS' : 'Sell call'}</span> <span style="color:var(--text-muted)">IVP ${ccIvpOf(r.symbol)} · ${r.td === 0 ? 'flipped today' : 'flipped ' + r.td + 'd ago'}</span></span>`).join('');
+  return `<div style="border:1px solid var(--border);border-radius:10px;padding:12px 14px;margin:0 0 12px;background:var(--surface)"><div style="margin-bottom:8px">${head}</div><div style="display:flex;flex-wrap:wrap;gap:8px">${items || '<span style="color:var(--text-muted)">No clean high-IV candidate today: every entry row has an alert or a low IV percentile.</span>'}</div></div>`;
+}
 const ccNearFlipChip = sym => {
   const x = (window._ccSt || {})[sym]; if (!x || x.d == null || x.d > 1.5) return '';
   return `<span class="trend-pill" style="background:var(--amber-soft, var(--surface2));color:var(--amber);white-space:nowrap" title="Supertrend ${dhEsc(x.c)}, line ${dhEsc(String(x.line))} vs price ${dhEsc(String(x.px))}: within 1.5% of flipping, the colour is on a knife-edge">⚠ Near flip ${x.d.toFixed(1)}% ${x.c === 'green' ? '↓red' : '↑green'}</span>`;
 };
 const ccStockCell = r => {
-  const base = `<b class="stk">${dhEsc(r.symbol)}</b>`;
-  if (!ccIsTier(r)) return base;
+  if (!ccIsTier(r)) return `<b class="stk">${dhEsc(r.symbol)}</b>`;
+  const base = `<b class="stk">${dhEsc(r.symbol)}</b>${ccTierBadge(r.symbol)}`;
   const parts = []; const a = ccTierAlert(r); if (a !== '<span style="color:var(--text-muted)">—</span>') parts.push(a);
   const nf = ccNearFlipChip(r.symbol); if (nf) parts.push(nf);
   return base + (parts.length ? `<div style="display:flex;flex-direction:column;align-items:flex-start;gap:3px;margin-top:4px">${parts.join('')}</div>` : '');
