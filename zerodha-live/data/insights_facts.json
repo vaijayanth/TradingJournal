@@ -1,6 +1,6 @@
 {
  "broker": "AZ",
- "generated_at": "2026-11-27T10:22:24+05:30",
+ "generated_at": "2026-11-27T14:16:45+05:30",
  "as_of": "2026-11-26",
  "scope": "AZ swing shares and AZ stock options; Nifty index options are outside by decision",
  "adherence_leakage": {
@@ -257,8 +257,8 @@
     "pl_pct": -1.3
    }
   ],
-  "pnl_if_all_hit_line_rs": -59931,
-  "extra_loss_if_all_hit_line_rs": -80031,
+  "pnl_if_all_hit_line_rs": -60460,
+  "extra_loss_if_all_hit_line_rs": -80560,
   "top_sectors": [
    {
     "sector": "Financial Services",
@@ -277,8 +277,8 @@
  },
  "trend": {
   "universe": 215,
-  "green": 169,
-  "green_share_pct": 78.6,
+  "green": 168,
+  "green_share_pct": 78.1,
   "fresh_green_flips_today": 1,
   "fresh_red_flips_today": 1,
   "holds": 38,
@@ -290,13 +290,17 @@
   "note": "Breadth = share of the F&O universe with a green Supertrend (covered_call_signals.json); percentiles against own history appear after 10 days."
  },
  "options": {
-  "open_legs": 179,
-  "short_legs": 108,
+  "open_legs": 178,
+  "short_legs": 107,
   "long_legs": 71,
   "realised_today": {
-   "contracts_closed": 6,
-   "pnl_rs": 7744.0,
+   "contracts_closed": 7,
+   "pnl_rs": 2048.0,
    "contracts": [
+    {
+     "contract": "SOLARINDS26DEC21000CE",
+     "pnl_rs": -5696.0
+    },
     {
      "contract": "HAL26DEC5400CE",
      "pnl_rs": -5100.0
@@ -323,6 +327,7 @@
     }
    ],
    "by_stock": {
+    "SOLARINDS": -5696.0,
     "HAL": -5100.0,
     "ASHOKLEY": -550.0,
     "IDFCFIRSTB": 3710.0,
@@ -332,16 +337,16 @@
    "note": "Stock options only (Nifty index options are outside the insights by decision), gross of charges."
   },
   "ledger": {
-   "closed_contracts": 16,
-   "total_pnl_rs": 16869.0,
+   "closed_contracts": 17,
+   "total_pnl_rs": 11173.0,
    "tier": "weak",
    "puts": {
     "n": 11,
     "pnl_rs": 14250.0
    },
    "calls": {
-    "n": 5,
-    "pnl_rs": 2619.0
+    "n": 6,
+    "pnl_rs": -3078.0
    },
    "first_date": "2026-11-26",
    "note": "Ledger of closed contracts accumulates from the first run of this script; no earlier history is stored by the brokers. Put-vs-call comparison needs about 30 closed contracts per side."
@@ -349,24 +354,24 @@
   "stress": {
    "capital_base_rs": 3000000,
    "grid_pct_of_capital": {
-    "market_-8pct": -11.19,
-    "market_-5pct": -4.84,
-    "market_-3pct": -2.0,
-    "market_+3pct": -0.73,
-    "market_+5pct": -2.71,
-    "market_+10pct": -12.74,
-    "market_-5pct_iv_x1.25": -9.63,
-    "market_-8pct_iv_x1.5": -17.4
+    "market_-8pct": -11.76,
+    "market_-5pct": -5.34,
+    "market_-3pct": -2.34,
+    "market_+3pct": -0.31,
+    "market_+5pct": -2.0,
+    "market_+10pct": -11.34,
+    "market_-5pct_iv_x1.25": -10.11,
+    "market_-8pct_iv_x1.5": -17.97
    },
    "grid_pnl_rs": {
-    "market_-8pct": -335653.0,
-    "market_-5pct": -145310.0,
-    "market_-3pct": -59998.0,
-    "market_+3pct": -22028.0,
-    "market_+5pct": -81414.0,
-    "market_+10pct": -382051.0,
-    "market_-5pct_iv_x1.25": -288876.0,
-    "market_-8pct_iv_x1.5": -521930.0
+    "market_-8pct": -352655.0,
+    "market_-5pct": -160175.0,
+    "market_-3pct": -70318.0,
+    "market_+3pct": -9437.0,
+    "market_+5pct": -60101.0,
+    "market_+10pct": -340071.0,
+    "market_-5pct_iv_x1.25": -303376.0,
+    "market_-8pct_iv_x1.5": -539029.0
    },
    "single_stock_gap_worst": [
     {
@@ -377,12 +382,12 @@
     {
      "symbol": "PAYTM",
      "move": "up 20%",
-     "pnl_rs": -95085.0
+     "pnl_rs": -89831.0
     },
     {
      "symbol": "LUPIN",
      "move": "up 20%",
-     "pnl_rs": -79436.0
+     "pnl_rs": -79707.0
     }
    ],
    "method": "Black-Scholes repricing of every open leg, implied vol solved from the live option price (fallback stock IV or 30%), all underlyings shocked together (beta 1), expiry unchanged, risk-free 0.065.",
@@ -390,15 +395,22 @@
   },
   "defined_risk": {
    "put_side_max_loss_if_stocks_to_zero_rs": 1938129.0,
-   "naked_call_stocks": 37,
+   "naked_call_stocks": 36,
    "spreads_where_3x_stop_cannot_bind": [],
    "spreads_where_3x_stop_cannot_bind_count": 0,
    "note": "Put-side max loss = sum(short strikes x qty) - sum(long strikes x qty) - net credit, the loss if every stock went to zero (an upper bound, not a forecast). A spread's 3x stop cannot bind when 3 x credit >= width."
   },
   "structure_vs_colour": {
-   "mismatches": [],
-   "count": 0,
-   "pnl_rs": 0.0,
+   "mismatches": [
+    {
+     "symbol": "ADANIENSOL",
+     "colour": "red",
+     "structure": "short put against a red stock",
+     "pnl_rs": -3206.0
+    }
+   ],
+   "count": 1,
+   "pnl_rs": -3206.0,
    "rule": "put spread on green, short call on red"
   },
   "breakeven_win_rate_pct": 76.9,
@@ -499,7 +511,7 @@
    "in_profit": 32,
    "in_profit_pct": 84.2,
    "unrealised_pnl_rs": 35733.0,
-   "green_share_pct": 78.6
+   "green_share_pct": 78.1
   },
   "robustness": {
    "regime": {
@@ -523,11 +535,15 @@
  },
  "options_today": {
   "today": {
-   "contracts_closed": 6,
-   "pnl_rs": 7744.0,
+   "contracts_closed": 7,
+   "pnl_rs": 2048.0,
    "winners": 3,
-   "losers": 3,
+   "losers": 4,
    "contracts": [
+    {
+     "contract": "SOLARINDS26DEC21000CE",
+     "pnl_rs": -5696.0
+    },
     {
      "contract": "HAL26DEC5400CE",
      "pnl_rs": -5100.0
@@ -554,6 +570,7 @@
     }
    ],
    "ivp_of_closed_stocks": {
+    "SOLARINDS": 21,
     "HAL": 27,
     "ASHOKLEY": 52,
     "IDFCFIRSTB": 56,
@@ -574,9 +591,9 @@
    "stocks_with_ivp": 203
   },
   "ledger": {
-   "closed_contracts": 16,
+   "closed_contracts": 17,
    "tier": "weak",
-   "total_pnl_rs": 16869.0,
+   "total_pnl_rs": 11173.0,
    "favourites": [
     {
      "symbol": "BDL",
@@ -599,6 +616,12 @@
    ],
    "laggards": [
     {
+     "symbol": "SOLARINDS",
+     "closed": 1,
+     "pnl_rs": -5696.0,
+     "win_rate_pct": 0.0
+    },
+    {
      "symbol": "HAL",
      "closed": 1,
      "pnl_rs": -5100.0,
@@ -609,12 +632,6 @@
      "closed": 2,
      "pnl_rs": -3844.0,
      "win_rate_pct": 50.0
-    },
-    {
-     "symbol": "NMDC",
-     "closed": 2,
-     "pnl_rs": -1215.0,
-     "win_rate_pct": 50.0
     }
    ],
    "ivp_ge_50": {
@@ -622,8 +639,8 @@
     "pnl_rs": 6642.0
    },
    "ivp_lt_50": {
-    "n": 6,
-    "pnl_rs": 4499.0
+    "n": 7,
+    "pnl_rs": -1197.0
    },
    "note": "Ledger starts 2026-11-26 (brokers keep no history); IVP at close is stored from that day, so the IVP and VIX split needs about 30 closed contracts per bucket. Favourites need at least 5 closed per stock."
   },
@@ -633,6 +650,10 @@
      "n": 3,
      "pnl_rs": 13394.0
     },
+    "3x stop (gap backstop)": {
+     "n": 2,
+     "pnl_rs": -10796.0
+    },
     "hedge closed": {
      "n": 1,
      "pnl_rs": -100.0
@@ -640,10 +661,6 @@
     "trend flip": {
      "n": 1,
      "pnl_rs": -450.0
-    },
-    "3x stop (gap backstop)": {
-     "n": 1,
-     "pnl_rs": -5100.0
     }
    },
    "cumulative": {
@@ -659,18 +676,18 @@
      "n": 3,
      "pnl_rs": -7425.0
     },
+    "3x stop (gap backstop)": {
+     "n": 2,
+     "pnl_rs": -10796.0
+    },
     "early profit exit": {
      "n": 1,
      "pnl_rs": 840.0
-    },
-    "3x stop (gap backstop)": {
-     "n": 1,
-     "pnl_rs": -5100.0
     }
    },
-   "short_legs_closed_total": 13,
-   "stop_fired_total": 1,
-   "stop_fired_today": 1,
+   "short_legs_closed_total": 14,
+   "stop_fired_total": 2,
+   "stop_fired_today": 2,
    "note": "Reasons are inferred by code from prices and the Supertrend colour (no manual input): profit target = bought back at 44% of the sold price or less, 3x stop = at 2.7x or more, trend flip = colour turned against the structure, else early profit exit or a loss exit outside the rules. The ledger holds reasons from 2026-11-26 only."
   },
   "premium_rich_no_position": [
@@ -719,11 +736,18 @@
   ],
   "strategy_profitable": {
    "breakeven_win_rate_pct": 76.9,
-   "open_short_legs": 108,
+   "open_short_legs": 107,
    "structure_vs_colour": {
-    "mismatches": [],
-    "count": 0,
-    "pnl_rs": 0.0,
+    "mismatches": [
+     {
+      "symbol": "ADANIENSOL",
+      "colour": "red",
+      "structure": "short put against a red stock",
+      "pnl_rs": -3206.0
+     }
+    ],
+    "count": 1,
+    "pnl_rs": -3206.0,
     "rule": "put spread on green, short call on red"
    }
   }
@@ -795,8 +819,8 @@
   "swing_risk": {
    "deep_losers_n": 0,
    "deep_losers_share_pct": 0.0,
-   "pnl_if_all_hit_line_rs": -59931,
-   "extra_loss_if_all_hit_line_rs": -80031,
+   "pnl_if_all_hit_line_rs": -60460,
+   "extra_loss_if_all_hit_line_rs": -80560,
    "top_sector": {
     "sector": "Financial Services",
     "share_pct": 47.5
@@ -804,21 +828,21 @@
   },
   "option_risk": {
    "stress_pct_of_capital": {
-    "market_-8pct": -11.19,
-    "market_-5pct": -4.84,
-    "market_-3pct": -2.0,
-    "market_+3pct": -0.73,
-    "market_+5pct": -2.71,
-    "market_+10pct": -12.74,
-    "market_-5pct_iv_x1.25": -9.63,
-    "market_-8pct_iv_x1.5": -17.4
+    "market_-8pct": -11.76,
+    "market_-5pct": -5.34,
+    "market_-3pct": -2.34,
+    "market_+3pct": -0.31,
+    "market_+5pct": -2.0,
+    "market_+10pct": -11.34,
+    "market_-5pct_iv_x1.25": -10.11,
+    "market_-8pct_iv_x1.5": -17.97
    },
    "worst_single_stock_gap": {
     "symbol": "COALINDIA",
     "move": "up 20%",
     "pnl_rs": -117979.0
    },
-   "naked_call_stocks": 37
+   "naked_call_stocks": 36
   },
   "note": "Discipline score is counted by code from the six checks above; the narrator lists the failed ones first and does not add checks of its own."
  },
