@@ -1,5 +1,5 @@
 {
- "fetched_at": "2026-11-26T19:07:56+05:30",
+ "fetched_at": "2026-11-27T10:00:13+05:30",
  "active": {
   "ASTRAL26DEC1440CE": [
    {
@@ -39,26 +39,6 @@
      5.75
     ],
     "qty": 7200
-   }
-  ],
-  "BDL26DEC900PE": [
-   {
-    "id": 344968063,
-    "type": "two-leg",
-    "trigger_values": [
-     4.6,
-     34.65
-    ],
-    "qty": 850
-   },
-   {
-    "id": 344968063,
-    "type": "two-leg",
-    "trigger_values": [
-     4.6,
-     34.65
-    ],
-    "qty": 850
    }
   ],
   "POWERINDIA26DEC28000PE": [
@@ -1927,7 +1907,7 @@
     "type": "trailing-two-leg",
     "trigger_values": [
      1.2,
-     8.4
+     7.4
     ],
     "qty": 3175
    },
@@ -1936,7 +1916,7 @@
     "type": "trailing-two-leg",
     "trigger_values": [
      1.2,
-     8.4
+     7.4
     ],
     "qty": 3175
    }
@@ -2061,26 +2041,6 @@
     "qty": 500
    }
   ],
-  "HAL26DEC5400CE": [
-   {
-    "id": 345641137,
-    "type": "trailing-two-leg",
-    "trigger_values": [
-     7.85,
-     51.05
-    ],
-    "qty": 150
-   },
-   {
-    "id": 345641137,
-    "type": "trailing-two-leg",
-    "trigger_values": [
-     7.85,
-     51.05
-    ],
-    "qty": 150
-   }
-  ],
   "CONCOR26DEC410PE": [
    {
     "id": 345641064,
@@ -2101,26 +2061,6 @@
     "qty": 1250
    }
   ],
-  "CAMS26DEC660PE": [
-   {
-    "id": 345640948,
-    "type": "trailing-two-leg",
-    "trigger_values": [
-     3.05,
-     17.05
-    ],
-    "qty": 825
-   },
-   {
-    "id": 345640948,
-    "type": "trailing-two-leg",
-    "trigger_values": [
-     3.05,
-     17.05
-    ],
-    "qty": 825
-   }
-  ],
   "BAJAJFINSV26DEC1740PE": [
    {
     "id": 345640834,
@@ -2139,26 +2079,6 @@
      23.75
     ],
     "qty": 600
-   }
-  ],
-  "IDFCFIRSTB26DEC75PE": [
-   {
-    "id": 345419609,
-    "type": "two-leg",
-    "trigger_values": [
-     0.25,
-     1.85
-    ],
-    "qty": 9275
-   },
-   {
-    "id": 345419609,
-    "type": "two-leg",
-    "trigger_values": [
-     0.25,
-     1.85
-    ],
-    "qty": 9275
    }
   ]
  },
@@ -2214,34 +2134,6 @@
      "side": "BUY",
      "qty": 7200,
      "price": 5.8,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
-   "id": 344968063,
-   "type": "two-leg",
-   "created_at": "2026-11-16T13:56:05+05:30",
-   "expires_at": "2026-12-30T00:00:00+05:30",
-   "tradingsymbol": "BDL26DEC900PE",
-   "last_price": 12,
-   "triggers": [
-    4.6,
-    34.65
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 850,
-     "price": 4.65,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    },
-    {
-     "side": "BUY",
-     "qty": 850,
-     "price": 35,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -4860,7 +4752,7 @@
    "last_price": 2.6,
    "triggers": [
     1.2,
-    8.4
+    7.4
    ],
    "orders": [
     {
@@ -4873,7 +4765,7 @@
     {
      "side": "BUY",
      "qty": 3175,
-     "price": 9,
+     "price": 8,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -5048,34 +4940,6 @@
    ]
   },
   {
-   "id": 345641137,
-   "type": "trailing-two-leg",
-   "created_at": "2026-11-19T21:58:13+05:30",
-   "expires_at": "2026-12-30T00:00:00+05:30",
-   "tradingsymbol": "HAL26DEC5400CE",
-   "last_price": 21.5,
-   "triggers": [
-    7.85,
-    51.05
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 150,
-     "price": 8.1,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    },
-    {
-     "side": "BUY",
-     "qty": 150,
-     "price": 55.95,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
    "id": 345641064,
    "type": "trailing-two-leg",
    "created_at": "2026-11-19T21:57:04+05:30",
@@ -5098,34 +4962,6 @@
      "side": "BUY",
      "qty": 1250,
      "price": 15,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
-  },
-  {
-   "id": 345640948,
-   "type": "trailing-two-leg",
-   "created_at": "2026-11-19T21:55:09+05:30",
-   "expires_at": "2026-12-30T00:00:00+05:30",
-   "tradingsymbol": "CAMS26DEC660PE",
-   "last_price": 8.05,
-   "triggers": [
-    3.05,
-    17.05
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 825,
-     "price": 3.15,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    },
-    {
-     "side": "BUY",
-     "qty": 825,
-     "price": 18.95,
      "product": "NRML",
      "order_type": "LIMIT"
     }
@@ -5158,144 +4994,94 @@
      "order_type": "LIMIT"
     }
    ]
-  },
-  {
-   "id": 345419609,
-   "type": "two-leg",
-   "created_at": "2026-11-18T19:39:39+05:30",
-   "expires_at": "2026-12-30T00:00:00+05:30",
-   "tradingsymbol": "IDFCFIRSTB26DEC75PE",
-   "last_price": 0.67,
-   "triggers": [
-    0.25,
-    1.85
-   ],
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 9275,
-     "price": 0.3,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    },
-    {
-     "side": "BUY",
-     "qty": 9275,
-     "price": 2,
-     "product": "NRML",
-     "order_type": "LIMIT"
-    }
-   ]
   }
  ],
  "triggered": [
   {
-   "id": 346000601,
-   "type": "two-leg",
-   "tradingsymbol": "UJJIVANSFB26DEC72CE",
+   "id": 345641137,
+   "type": "trailing-two-leg",
+   "tradingsymbol": "HAL26DEC5400CE",
    "triggers": [
-    0.2,
-    1.55
+    7.85,
+    51.05
    ],
-   "triggered_at": "2026-11-26T15:25:54+05:30",
+   "triggered_at": "2026-11-27T09:40:56+05:30",
    "orders": [
     {
      "side": "BUY",
-     "qty": 8000,
-     "price": 0.25
+     "qty": 150,
+     "price": 8.1
     },
     {
      "side": "BUY",
-     "qty": 8000,
-     "price": 1.55
+     "qty": 150,
+     "price": 55.95
     }
    ]
   },
   {
-   "id": 345199325,
-   "type": "two-leg",
-   "tradingsymbol": "KEI26DEC4500CE",
+   "id": 345640948,
+   "type": "trailing-two-leg",
+   "tradingsymbol": "CAMS26DEC660PE",
    "triggers": [
-    10.8,
-    81
+    3.05,
+    17.05
    ],
-   "triggered_at": "2026-11-26T13:22:23+05:30",
+   "triggered_at": "2026-11-27T09:24:31+05:30",
    "orders": [
     {
      "side": "BUY",
-     "qty": 175,
-     "price": 11.15
+     "qty": 825,
+     "price": 3.15
     },
     {
      "side": "BUY",
-     "qty": 175,
-     "price": 83.45
+     "qty": 825,
+     "price": 18.95
     }
    ]
   },
   {
-   "id": 345641930,
+   "id": 345419609,
    "type": "two-leg",
-   "tradingsymbol": "VMM26DEC83PE",
+   "tradingsymbol": "IDFCFIRSTB26DEC75PE",
    "triggers": [
-    0.45,
-    3.1
+    0.25,
+    1.85
    ],
-   "triggered_at": "2026-11-26T10:06:04+05:30",
+   "triggered_at": "2026-11-27T09:21:07+05:30",
    "orders": [
     {
      "side": "BUY",
-     "qty": 4850,
-     "price": 0.5
+     "qty": 9275,
+     "price": 0.3
     },
     {
      "side": "BUY",
-     "qty": 4850,
-     "price": 3.4
+     "qty": 9275,
+     "price": 2
     }
    ]
   },
   {
-   "id": 346355154,
+   "id": 344968063,
    "type": "two-leg",
-   "tradingsymbol": "APLAPOLLO26DEC1920CE",
+   "tradingsymbol": "BDL26DEC900PE",
    "triggers": [
-    6.35,
-    43.75
+    4.6,
+    34.65
    ],
-   "triggered_at": "2026-11-26T09:40:06+05:30",
+   "triggered_at": "2026-11-27T09:20:54+05:30",
    "orders": [
     {
      "side": "BUY",
-     "qty": 350,
-     "price": 6.55
+     "qty": 850,
+     "price": 4.65
     },
     {
      "side": "BUY",
-     "qty": 350,
-     "price": 47.7
-    }
-   ]
-  },
-  {
-   "id": 346023014,
-   "type": "two-leg",
-   "tradingsymbol": "ENRIN26DEC2500PE",
-   "triggers": [
-    12.3,
-    84.7
-   ],
-   "triggered_at": "2026-11-26T09:15:25+05:30",
-   "orders": [
-    {
-     "side": "BUY",
-     "qty": 175,
-     "price": 12.7
-    },
-    {
-     "side": "BUY",
-     "qty": 175,
-     "price": 92.4
+     "qty": 850,
+     "price": 35
     }
    ]
   }

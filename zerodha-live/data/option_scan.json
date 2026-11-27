@@ -1,21 +1,29 @@
 {
  "fired_ok_today": [
-  "UJJIVANSFB26DEC72CE",
-  "KEI26DEC4500CE",
-  "VMM26DEC83PE",
-  "ENRIN26DEC2500PE"
+  "HAL26DEC5400CE",
+  "CAMS26DEC660PE",
+  "IDFCFIRSTB26DEC75PE",
+  "BDL26DEC900PE"
  ],
- "fetched_at": "2026-11-26T19:08:53+05:30",
+ "fetched_at": "2026-11-27T10:01:52+05:30",
  "inputs": {
-  "positions": "2026-11-26T13:37:56.708132+00:00",
-  "gtts": "2026-11-26T19:07:56+05:30",
-  "orders": "2026-11-26T19:07:56+05:30",
-  "gtt_scan": "2026-11-26T19:07:56+05:30"
+  "positions": "2026-11-27T04:30:13.474026+00:00",
+  "gtts": "2026-11-27T10:00:13+05:30",
+  "orders": "2026-11-27T10:00:13+05:30",
+  "gtt_scan": "2026-11-27T10:00:13+05:30"
  },
  "stale_inputs": [],
- "open_legs": 180,
- "triggered_gtts": 5,
+ "open_legs": 178,
+ "triggered_gtts": 4,
  "findings": [
+  {
+   "section": "B",
+   "severity": "INFO",
+   "symbol": "ASHOKLEY",
+   "tradingsymbol": "ASHOKLEY26DEC180CE",
+   "concern": "Short 180CE (5000 qty) is a naked call (by design; covered only by shares you hold)",
+   "action": "Watch the 3x stop and the Supertrend colour"
+  },
   {
    "section": "B",
    "severity": "INFO",
@@ -62,14 +70,6 @@
    "symbol": "COCHINSHIP",
    "tradingsymbol": "COCHINSHIP26DEC1300CE",
    "concern": "Short 1300CE (800 qty) is a naked call (by design; covered only by shares you hold)",
-   "action": "Watch the 3x stop and the Supertrend colour"
-  },
-  {
-   "section": "B",
-   "severity": "INFO",
-   "symbol": "HAL",
-   "tradingsymbol": "HAL26DEC5400CE",
-   "concern": "Short 5400CE (150 qty) is a naked call (by design; covered only by shares you hold)",
    "action": "Watch the 3x stop and the Supertrend colour"
   },
   {
@@ -313,12 +313,44 @@
    "action": "Watch the 3x stop and the Supertrend colour"
   },
   {
-   "section": "D",
+   "section": "C",
    "severity": "WARN",
-   "symbol": "APLAPOLLO",
-   "tradingsymbol": "APLAPOLLO26DEC1920CE",
-   "concern": "GTT 346355154 fired today (09:40) but no buy-back order from a GTT is in today's order list",
-   "action": "Check the order book in Kite"
+   "symbol": "ASHOKLEY",
+   "tradingsymbol": "ASHOKLEY26DEC180CE",
+   "concern": "No active buy-back GTT (premium 0.9, sold 0.98)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "BDL",
+   "tradingsymbol": "BDL26DEC920PE",
+   "concern": "No active buy-back GTT (premium 4.5, sold 4.95)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "CAMS",
+   "tradingsymbol": "CAMS26DEC680PE",
+   "concern": "No active buy-back GTT (premium 5.25, sold 4.35)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "C",
+   "severity": "WARN",
+   "symbol": "IDFCFIRSTB",
+   "tradingsymbol": "IDFCFIRSTB26DEC79PE",
+   "concern": "No active buy-back GTT (premium 0.49, sold 0.44)",
+   "action": "Place the protective GTT (zerodha-gtt-order)"
+  },
+  {
+   "section": "F",
+   "severity": "HIGH",
+   "symbol": "ASHOKLEY",
+   "tradingsymbol": "ASHOKLEY26DEC140PE",
+   "concern": "G1 STALE: No open position on this contract (closed or expired): if it triggers it BUYS a new long position (GTT 346422987)",
+   "action": "Delete this GTT"
   }
  ]
 }

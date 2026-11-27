@@ -1,8 +1,8 @@
 {
- "generated_at": "2026-11-26T19:13:51+05:30",
+ "generated_at": "2026-11-27T10:01:20+05:30",
  "broker": "zerodha",
  "market_data_date": "2026-11-26",
- "signals_generated_at": "2026-11-26T13:43:03.007901+00:00",
+ "signals_generated_at": "2026-11-27T04:30:37.980829+00:00",
  "status": "WARN",
  "global_block": false,
  "counts": {
@@ -16,13 +16,13 @@
    "id": "C2",
    "level": "WARN",
    "symbol": null,
-   "msg": "sector Financial Services is 48% of deployed capital (limit 40%)"
+   "msg": "sector Financial Services is 47% of deployed capital (limit 40%)"
   },
   {
-   "id": "P3",
+   "id": "P5",
    "level": "WARN",
    "symbol": null,
-   "msg": "1 open option exit / strike-breach alerts on 1 stocks (ASHOKLEY) - see the Covered Call alerts"
+   "msg": "1 invalid GTT orders (1 high: e.g. buy GTTs on contracts you no longer hold) - see Covered Call > Alerts > Invalid GTT; the zerodha-gtt-order skill can delete them"
   }
  ]
 }

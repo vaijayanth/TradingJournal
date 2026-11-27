@@ -1,6 +1,6 @@
 {
  "broker": "AZ",
- "generated_at": "2026-11-27T00:22:51+05:30",
+ "generated_at": "2026-11-27T10:02:06+05:30",
  "as_of": "2026-11-26",
  "scope": "AZ swing shares and AZ stock options; Nifty index options are outside by decision",
  "adherence_leakage": {
@@ -9,11 +9,11 @@
   "by_kind": {
    "entry": {
     "signals": 9,
-    "filled": 3,
+    "filled": 5,
     "missed": 4,
-    "pending": 2,
-    "fill_rate_pct": 42.9,
-    "decided_n": 7,
+    "pending": 0,
+    "fill_rate_pct": 55.6,
+    "decided_n": 9,
     "tier": "anecdote",
     "avg_slippage_pct": null,
     "median_delay_days": 3.0,
@@ -27,28 +27,30 @@
    },
    "exit": {
     "signals": 2,
-    "filled": 1,
+    "filled": 2,
     "missed": 0,
-    "pending": 1,
+    "pending": 0,
     "fill_rate_pct": 100.0,
-    "decided_n": 1,
+    "decided_n": 2,
     "tier": "anecdote",
     "avg_slippage_pct": null,
-    "median_delay_days": 4.0,
+    "median_delay_days": 2.5,
     "missed_symbols": [],
     "missed_avg_move_since_signal_pct": null
    },
    "addon": {
     "signals": 1,
-    "filled": 1,
-    "missed": 0,
+    "filled": 0,
+    "missed": 1,
     "pending": 0,
-    "fill_rate_pct": 100.0,
+    "fill_rate_pct": 0.0,
     "decided_n": 1,
     "tier": "anecdote",
     "avg_slippage_pct": null,
-    "median_delay_days": 3.0,
-    "missed_symbols": [],
+    "median_delay_days": null,
+    "missed_symbols": [
+     "ASHOKLEY"
+    ],
     "missed_avg_move_since_signal_pct": null
    }
   },
@@ -152,12 +154,7 @@
     "side": "BUY",
     "ref_price": 158.7,
     "signal_qty": 131,
-    "outcome": "filled",
-    "fill_date": "2026-11-26",
-    "fill_price": null,
-    "fill_qty": null,
-    "slip_pct": null,
-    "delay_days": 3
+    "outcome": "missed"
    },
    {
     "date": "2026-11-25",
@@ -166,7 +163,12 @@
     "side": "BUY",
     "ref_price": 4895.5,
     "signal_qty": 4,
-    "outcome": "pending"
+    "outcome": "filled",
+    "fill_date": "2026-11-27",
+    "fill_price": null,
+    "fill_qty": null,
+    "slip_pct": null,
+    "delay_days": 2
    },
    {
     "date": "2026-11-26",
@@ -175,7 +177,12 @@
     "side": "BUY",
     "ref_price": 46.6,
     "signal_qty": 429,
-    "outcome": "pending"
+    "outcome": "filled",
+    "fill_date": "2026-11-27",
+    "fill_price": null,
+    "fill_qty": null,
+    "slip_pct": null,
+    "delay_days": 1
    },
    {
     "date": "2026-11-26",
@@ -184,27 +191,32 @@
     "side": "SELL",
     "ref_price": 156.15,
     "signal_qty": 131,
-    "outcome": "pending"
+    "outcome": "filled",
+    "fill_date": "2026-11-27",
+    "fill_price": null,
+    "fill_qty": 131,
+    "slip_pct": null,
+    "delay_days": 1
    }
   ],
-  "overall_fill_rate_pct": 55.6,
-  "overall_decided_n": 9,
+  "overall_fill_rate_pct": 58.3,
+  "overall_decided_n": 12,
   "note": "Signals come from the git history of the signals file; a fill is a same-side fill within 6 calendar days after the signal date; slippage is positive when the fill was worse than the signal close. AZ has no per-fill ledger, so entry and add-on slippage is not available (exit slippage uses the recorded exit price). A 'missed' signal can also be a fill the ledger never captured (a day the refresh did not run), so check the symbol before calling it an execution miss."
  },
  "bootstrap": {
-  "n_live_closed": 5,
+  "n_live_closed": 6,
   "tier": "anecdote",
   "pool_n_all": 1997,
   "pool_n_matched": 291,
   "window_days": 17,
   "pool_note": "post-2022 AZ backtest trades (the walk-forward base case); matched pool = trades that closed within 17 days, like the live ones",
-  "live_mean_pct": -10.84,
-  "live_win_rate_pct": 20.0,
+  "live_mean_pct": -10.37,
+  "live_win_rate_pct": 16.7,
   "matched_pool_mean_pct": -9.07,
   "matched_pool_win_rate_pct": 0.3,
   "full_pool_mean_pct": 3.28,
   "full_pool_win_rate_pct": 37.0,
-  "mean_percentile": 16.7,
+  "mean_percentile": 21.1,
   "win_rate_percentile": 100.0,
   "draws": 10000,
   "flag": "within_normal_range",
@@ -212,13 +224,13 @@
    "n": 38,
    "in_profit_pct": 84.2,
    "avg_gain_pct": 5.05,
-   "avg_loss_pct": -2.08
+   "avg_loss_pct": -1.64
   },
   "note": "Matched comparison removes the young-book bias but still ignores that live trades are early exits only; bootstrap measures sampling noise only."
  },
  "openrisk": {
   "open_positions": 38,
-  "invested_rs": 1093586.0,
+  "invested_rs": 1125945.0,
   "below_minus6_count": 0,
   "below_minus6_invested_rs": 0.0,
   "below_minus6_share_pct": 0.0,
@@ -226,7 +238,7 @@
   "worst_positions": [
    {
     "symbol": "POWERINDIA",
-    "pl_pct": -4.9
+    "pl_pct": -2.2
    },
    {
     "symbol": "CHOLAFIN",
@@ -245,28 +257,28 @@
     "pl_pct": -1.3
    }
   ],
-  "pnl_if_all_hit_line_rs": -60780,
-  "extra_loss_if_all_hit_line_rs": -80687,
+  "pnl_if_all_hit_line_rs": -59931,
+  "extra_loss_if_all_hit_line_rs": -80031,
   "top_sectors": [
    {
     "sector": "Financial Services",
-    "share_pct": 48.7
+    "share_pct": 47.5
    },
    {
     "sector": "Consumer Cyclical",
-    "share_pct": 18.3
+    "share_pct": 17.8
    },
    {
-    "sector": "Technology",
-    "share_pct": 8.3
+    "sector": "Industrials",
+    "share_pct": 10.5
    }
   ],
   "note": "Stop-out figure = projection.json: loss if every open position exited on its own Supertrend line today."
  },
  "trend": {
   "universe": 215,
-  "green": 170,
-  "green_share_pct": 79.1,
+  "green": 169,
+  "green_share_pct": 78.6,
   "fresh_green_flips_today": 1,
   "fresh_red_flips_today": 1,
   "holds": 38,
@@ -278,77 +290,58 @@
   "note": "Breadth = share of the F&O universe with a green Supertrend (covered_call_signals.json); percentiles against own history appear after 10 days."
  },
  "options": {
-  "open_legs": 180,
-  "short_legs": 108,
-  "long_legs": 72,
+  "open_legs": 178,
+  "short_legs": 107,
+  "long_legs": 71,
   "realised_today": {
-   "contracts_closed": 10,
-   "pnl_rs": 9126.0,
+   "contracts_closed": 6,
+   "pnl_rs": 7744.0,
    "contracts": [
     {
-     "contract": "NATIONALUM26DEC280PE",
-     "pnl_rs": -5625.0
+     "contract": "HAL26DEC5400CE",
+     "pnl_rs": -5100.0
     },
     {
-     "contract": "NMDC26DEC62PE",
-     "pnl_rs": -1350.0
+     "contract": "ASHOKLEY26DEC140PE",
+     "pnl_rs": -450.0
     },
     {
-     "contract": "NMDC26DEC60PE",
-     "pnl_rs": 135.0
+     "contract": "ASHOKLEY26DEC135PE",
+     "pnl_rs": -100.0
     },
     {
-     "contract": "APLAPOLLO26DEC1920CE",
-     "pnl_rs": 840.0
+     "contract": "IDFCFIRSTB26DEC75PE",
+     "pnl_rs": 3710.0
     },
     {
-     "contract": "CUMMINSIND26DEC5000CE",
-     "pnl_rs": 1545.0
+     "contract": "CAMS26DEC660PE",
+     "pnl_rs": 3712.0
     },
     {
-     "contract": "NATIONALUM26DEC260PE",
-     "pnl_rs": 1781.0
-    },
-    {
-     "contract": "UJJIVANSFB26DEC72CE",
-     "pnl_rs": 2560.0
-    },
-    {
-     "contract": "KEI26DEC4500CE",
-     "pnl_rs": 2774.0
-    },
-    {
-     "contract": "ENRIN26DEC2500PE",
-     "pnl_rs": 3168.0
-    },
-    {
-     "contract": "VMM26DEC83PE",
-     "pnl_rs": 3298.0
+     "contract": "BDL26DEC900PE",
+     "pnl_rs": 5971.0
     }
    ],
    "by_stock": {
-    "NATIONALUM": -3844.0,
-    "NMDC": -1215.0,
-    "APLAPOLLO": 840.0,
-    "CUMMINSIND": 1545.0,
-    "UJJIVANSFB": 2560.0,
-    "KEI": 2774.0,
-    "ENRIN": 3168.0,
-    "VMM": 3298.0
+    "HAL": -5100.0,
+    "ASHOKLEY": -550.0,
+    "IDFCFIRSTB": 3710.0,
+    "CAMS": 3712.0,
+    "BDL": 5971.0
    },
    "note": "Stock options only (Nifty index options are outside the insights by decision), gross of charges."
   },
   "ledger": {
-   "closed_contracts": 10,
-   "total_pnl_rs": 9126.0,
+   "closed_contracts": 16,
+   "total_pnl_rs": 16869.0,
    "tier": "weak",
    "puts": {
-    "n": 6,
-    "pnl_rs": 1407.0
+    "n": 11,
+    "pnl_rs": 14250.0
    },
    "calls": {
-    "n": 4,
-    "pnl_rs": 7719.0
+    "n": 5,
+    "pnl_rs": 2619.0
    },
    "first_date": "2026-11-26",
    "note": "Ledger of closed contracts accumulates from the first run of this script; no earlier history is stored by the brokers. Put-vs-call comparison needs about 30 closed contracts per side."
@@ -356,63 +349,56 @@
   "stress": {
    "capital_base_rs": 3000000,
    "grid_pct_of_capital": {
-    "market_-8pct": -11.76,
-    "market_-5pct": -5.37,
-    "market_-3pct": -2.37,
-    "market_+3pct": -0.28,
-    "market_+5pct": -1.95,
-    "market_+10pct": -11.25,
-    "market_-5pct_iv_x1.25": -9.84,
-    "market_-8pct_iv_x1.5": -17.42
+    "market_-8pct": -11.29,
+    "market_-5pct": -4.98,
+    "market_-3pct": -2.11,
+    "market_+3pct": -0.57,
+    "market_+5pct": -2.41,
+    "market_+10pct": -11.97,
+    "market_-5pct_iv_x1.25": -9.6,
+    "market_-8pct_iv_x1.5": -17.13
    },
    "grid_pnl_rs": {
-    "market_-8pct": -352778.0,
-    "market_-5pct": -161092.0,
-    "market_-3pct": -71072.0,
-    "market_+3pct": -8503.0,
-    "market_+5pct": -58585.0,
-    "market_+10pct": -337581.0,
-    "market_-5pct_iv_x1.25": -295060.0,
-    "market_-8pct_iv_x1.5": -522452.0
+    "market_-8pct": -338624.0,
+    "market_-5pct": -149477.0,
+    "market_-3pct": -63271.0,
+    "market_+3pct": -17001.0,
+    "market_+5pct": -72182.0,
+    "market_+10pct": -359096.0,
+    "market_-5pct_iv_x1.25": -287889.0,
+    "market_-8pct_iv_x1.5": -513837.0
    },
    "single_stock_gap_worst": [
     {
      "symbol": "COALINDIA",
      "move": "up 20%",
-     "pnl_rs": -117989.0
+     "pnl_rs": -117754.0
     },
     {
      "symbol": "PAYTM",
      "move": "up 20%",
-     "pnl_rs": -92152.0
+     "pnl_rs": -93580.0
     },
     {
      "symbol": "LUPIN",
      "move": "up 20%",
-     "pnl_rs": -79466.0
+     "pnl_rs": -79524.0
     }
    ],
    "method": "Black-Scholes repricing of every open leg, implied vol solved from the live option price (fallback stock IV or 30%), all underlyings shocked together (beta 1), expiry unchanged, risk-free 0.065.",
    "limits": "Beta 1 is an assumption; a gap through a stop fills at the gap price, not at 3x."
   },
   "defined_risk": {
-   "put_side_max_loss_if_stocks_to_zero_rs": 1879510.0,
+   "put_side_max_loss_if_stocks_to_zero_rs": 1548829.0,
    "naked_call_stocks": 36,
    "spreads_where_3x_stop_cannot_bind": [],
    "spreads_where_3x_stop_cannot_bind_count": 0,
    "note": "Put-side max loss = sum(short strikes x qty) - sum(long strikes x qty) - net credit, the loss if every stock went to zero (an upper bound, not a forecast). A spread's 3x stop cannot bind when 3 x credit >= width."
   },
   "structure_vs_colour": {
-   "mismatches": [
-    {
-     "symbol": "ASHOKLEY",
-     "colour": "red",
-     "structure": "short put against a red stock",
-     "pnl_rs": -350.0
-    }
-   ],
-   "count": 1,
-   "pnl_rs": -350.0,
+   "mismatches": [],
+   "count": 0,
+   "pnl_rs": 0.0,
    "rule": "put spread on green, short call on red"
   },
   "breakeven_win_rate_pct": 76.9,
@@ -438,17 +424,17 @@
  "swing": {
   "month": "2026-11",
   "month_trades": {
-   "n": 5,
+   "n": 6,
    "tier": "anecdote",
    "wins": 1,
-   "losses": 4,
-   "win_rate_pct": 20.0,
-   "pnl_rs": -13668.0,
+   "losses": 5,
+   "win_rate_pct": 16.7,
+   "pnl_rs": -15464.0,
    "avg_win_pct": 5.72,
-   "avg_loss_pct": -14.98,
-   "expectancy_pct": -10.84,
-   "profit_factor": 0.08,
-   "avg_hold_days": 45.4
+   "avg_loss_pct": -13.59,
+   "expectancy_pct": -10.37,
+   "profit_factor": 0.07,
+   "avg_hold_days": 57.2
   },
   "earlier_trades": {
    "n": 0,
@@ -456,23 +442,23 @@
   },
   "by_month": {
    "2026-11": {
-    "n": 5,
+    "n": 6,
     "tier": "anecdote",
     "wins": 1,
-    "losses": 4,
-    "win_rate_pct": 20.0,
-    "pnl_rs": -13668.0,
+    "losses": 5,
+    "win_rate_pct": 16.7,
+    "pnl_rs": -15464.0,
     "avg_win_pct": 5.72,
-    "avg_loss_pct": -14.98,
-    "expectancy_pct": -10.84,
-    "profit_factor": 0.08,
-    "avg_hold_days": 45.4
+    "avg_loss_pct": -13.59,
+    "expectancy_pct": -10.37,
+    "profit_factor": 0.07,
+    "avg_hold_days": 57.2
    }
   },
   "improvement_vs_earlier": null,
   "process": {
-   "overall_fill_rate_pct": 55.6,
-   "decided_n": 9,
+   "overall_fill_rate_pct": 58.3,
+   "decided_n": 12,
    "entry_avg_slippage_pct": null
   },
   "today": {
@@ -485,138 +471,139 @@
    "exit_names": [
     "ASHOKLEY"
    ],
+   "fills_date": "2026-11-27",
    "buy_fills_today": 2,
-   "sell_fills_today": 0,
+   "sell_fills_today": 1,
+   "buy_names": [
+    "SAGILITY",
+    "TORNTPHARM"
+   ],
+   "sell_names": [
+    "ASHOKLEY"
+   ],
    "realised_today": {
-    "n": 0,
-    "pnl_rs": 0.0,
-    "trades": []
+    "n": 1,
+    "pnl_rs": -1796.0,
+    "trades": [
+     {
+      "symbol": "ASHOKLEY",
+      "pl_rs": -1796.0,
+      "pl_pct": -8.05
+     }
+    ]
    },
-   "exit_signals_open_pnl_rs": -1842.0
+   "exit_signals_open_pnl_rs": -170.0
   },
   "open_book": {
    "positions": 38,
    "in_profit": 32,
    "in_profit_pct": 84.2,
-   "unrealised_pnl_rs": 35417.0,
-   "green_share_pct": 79.1
+   "unrealised_pnl_rs": 35733.0,
+   "green_share_pct": 78.6
   },
   "robustness": {
    "regime": {
-    "nifty_close": 25819.0,
+    "nifty_close": 25884.0,
     "nifty_vs_50dma_pct": 9.6,
-    "nifty_vs_200dma_pct": 7.6,
-    "nifty_20d_return_pct": 13.5,
+    "nifty_vs_200dma_pct": 7.8,
+    "nifty_20d_return_pct": 13.8,
     "trend_label": "uptrend (above both the 50 and 200 day averages)",
-    "vix": 17.67,
-    "vix_chg_pct": -0.2,
-    "vix_1y_percentile_pct": 80.0,
+    "vix": 16.84,
+    "vix_chg_pct": -4.7,
+    "vix_1y_percentile_pct": 75.0,
     "vix_1y_low": 9.15,
     "vix_1y_high": 27.89
    },
-   "live_month_expectancy_pct": -10.84,
+   "live_month_expectancy_pct": -10.37,
    "backtest_expectancy_per_trade_pct": 8.26,
    "backtest_post_2022_cagr_pct": "about 20 to 23 (walk-forward 2026-11-24)",
-   "bootstrap_percentile_mean": 16.7,
+   "bootstrap_percentile_mean": 21.1,
    "note": "A trend-following book earns in trends: judge the month against the regime above, not in isolation. A low win rate (backtest 41%) is normal; the avg win / avg loss ratio is what carries it."
   }
  },
  "options_today": {
   "today": {
-   "contracts_closed": 10,
-   "pnl_rs": 9126.0,
-   "winners": 8,
-   "losers": 2,
+   "contracts_closed": 6,
+   "pnl_rs": 7744.0,
+   "winners": 3,
+   "losers": 3,
    "contracts": [
     {
-     "contract": "NATIONALUM26DEC280PE",
-     "pnl_rs": -5625.0
+     "contract": "HAL26DEC5400CE",
+     "pnl_rs": -5100.0
     },
     {
-     "contract": "NMDC26DEC62PE",
-     "pnl_rs": -1350.0
+     "contract": "ASHOKLEY26DEC140PE",
+     "pnl_rs": -450.0
     },
     {
-     "contract": "NMDC26DEC60PE",
-     "pnl_rs": 135.0
+     "contract": "ASHOKLEY26DEC135PE",
+     "pnl_rs": -100.0
     },
     {
-     "contract": "APLAPOLLO26DEC1920CE",
-     "pnl_rs": 840.0
+     "contract": "IDFCFIRSTB26DEC75PE",
+     "pnl_rs": 3710.0
     },
     {
-     "contract": "CUMMINSIND26DEC5000CE",
-     "pnl_rs": 1545.0
+     "contract": "CAMS26DEC660PE",
+     "pnl_rs": 3712.0
     },
     {
-     "contract": "NATIONALUM26DEC260PE",
-     "pnl_rs": 1781.0
-    },
-    {
-     "contract": "UJJIVANSFB26DEC72CE",
-     "pnl_rs": 2560.0
-    },
-    {
-     "contract": "KEI26DEC4500CE",
-     "pnl_rs": 2774.0
-    },
-    {
-     "contract": "ENRIN26DEC2500PE",
-     "pnl_rs": 3168.0
-    },
-    {
-     "contract": "VMM26DEC83PE",
-     "pnl_rs": 3298.0
+     "contract": "BDL26DEC900PE",
+     "pnl_rs": 5971.0
     }
    ],
    "ivp_of_closed_stocks": {
-    "NATIONALUM": 57,
-    "NMDC": 39,
-    "APLAPOLLO": 100,
-    "CUMMINSIND": 33,
-    "UJJIVANSFB": null,
-    "KEI": 60,
-    "ENRIN": null,
-    "VMM": 48
+    "HAL": 27,
+    "ASHOKLEY": 52,
+    "IDFCFIRSTB": 56,
+    "CAMS": 60,
+    "BDL": 31
    }
   },
   "vix": {
-   "vix": 17.67,
-   "vix_chg_pct": -0.2,
-   "vix_1y_percentile_pct": 80.0,
+   "vix": 16.84,
+   "vix_chg_pct": -4.7,
+   "vix_1y_percentile_pct": 75.0,
    "vix_1y_low": 9.15,
    "vix_1y_high": 27.89
   },
   "iv_regime": {
    "universe_median_ivp": 46.0,
-   "stocks_ivp_70_plus": 30,
+   "stocks_ivp_70_plus": 27,
    "stocks_with_ivp": 203
   },
   "ledger": {
-   "closed_contracts": 10,
+   "closed_contracts": 16,
    "tier": "weak",
-   "total_pnl_rs": 9126.0,
+   "total_pnl_rs": 16869.0,
    "favourites": [
     {
-     "symbol": "VMM",
+     "symbol": "BDL",
      "closed": 1,
-     "pnl_rs": 3298.0,
+     "pnl_rs": 5971.0,
      "win_rate_pct": 100.0
     },
     {
-     "symbol": "ENRIN",
+     "symbol": "CAMS",
      "closed": 1,
-     "pnl_rs": 3168.0,
+     "pnl_rs": 3712.0,
      "win_rate_pct": 100.0
     },
     {
-     "symbol": "KEI",
+     "symbol": "IDFCFIRSTB",
      "closed": 1,
-     "pnl_rs": 2774.0,
+     "pnl_rs": 3710.0,
      "win_rate_pct": 100.0
     }
    ],
    "laggards": [
+    {
+     "symbol": "HAL",
+     "closed": 1,
+     "pnl_rs": -5100.0,
+     "win_rate_pct": 0.0
+    },
     {
      "symbol": "NATIONALUM",
      "closed": 2,
@@ -631,115 +618,112 @@
     }
    ],
    "ivp_ge_50": {
-    "n": 4,
-    "pnl_rs": -230.0
+    "n": 8,
+    "pnl_rs": 6642.0
    },
    "ivp_lt_50": {
-    "n": 4,
-    "pnl_rs": 3628.0
+    "n": 6,
+    "pnl_rs": 4499.0
    },
    "note": "Ledger starts 2026-11-26 (brokers keep no history); IVP at close is stored from that day, so the IVP and VIX split needs about 30 closed contracts per bucket. Favourites need at least 5 closed per stock."
   },
   "exit_reasons": {
    "today": {
     "profit target": {
-     "n": 5,
-     "pnl_rs": 13344.0
+     "n": 3,
+     "pnl_rs": 13394.0
     },
     "hedge closed": {
-     "n": 2,
-     "pnl_rs": 1916.0
+     "n": 1,
+     "pnl_rs": -100.0
     },
     "trend flip": {
-     "n": 2,
-     "pnl_rs": -6975.0
-    },
-    "early profit exit": {
      "n": 1,
-     "pnl_rs": 840.0
+     "pnl_rs": -450.0
+    },
+    "3x stop (gap backstop)": {
+     "n": 1,
+     "pnl_rs": -5100.0
     }
    },
    "cumulative": {
     "profit target": {
-     "n": 5,
-     "pnl_rs": 13344.0
+     "n": 8,
+     "pnl_rs": 26738.0
     },
     "hedge closed": {
-     "n": 2,
-     "pnl_rs": 1916.0
+     "n": 3,
+     "pnl_rs": 1816.0
     },
     "trend flip": {
-     "n": 2,
-     "pnl_rs": -6975.0
+     "n": 3,
+     "pnl_rs": -7425.0
     },
     "early profit exit": {
      "n": 1,
      "pnl_rs": 840.0
+    },
+    "3x stop (gap backstop)": {
+     "n": 1,
+     "pnl_rs": -5100.0
     }
    },
-   "short_legs_closed_total": 8,
-   "stop_fired_total": 0,
-   "stop_fired_today": 0,
+   "short_legs_closed_total": 13,
+   "stop_fired_total": 1,
+   "stop_fired_today": 1,
    "note": "Reasons are inferred by code from prices and the Supertrend colour (no manual input): profit target = bought back at 44% of the sold price or less, 3x stop = at 2.7x or more, trend flip = colour turned against the structure, else early profit exit or a loss exit outside the rules. The ledger holds reasons from 2026-11-26 only."
   },
   "premium_rich_no_position": [
    {
     "symbol": "APLAPOLLO",
     "ivp": 100,
-    "iv": 52.1,
+    "iv": 43.3,
     "colour": "red",
     "wants": "PUT_SPREAD"
    },
    {
-    "symbol": "CROMPTON",
-    "ivp": 85,
-    "iv": 36.0,
-    "colour": "green",
-    "wants": "PUT_SPREAD"
-   },
-   {
     "symbol": "YESBANK",
-    "ivp": 84,
-    "iv": 37.2,
+    "ivp": 81,
+    "iv": 36.7,
     "colour": "green",
     "wants": "PUT_SPREAD"
    },
    {
-    "symbol": "IRFC",
-    "ivp": 71,
-    "iv": 36.1,
+    "symbol": "ZYDUSLIFE",
+    "ivp": 79,
+    "iv": 27.8,
     "colour": "green",
     "wants": "PUT_SPREAD"
    },
    {
-    "symbol": "MARUTI",
-    "ivp": 70,
-    "iv": 25.1,
+    "symbol": "TCS",
+    "ivp": 78,
+    "iv": 29.9,
     "colour": "green",
     "wants": "CALL"
    },
    {
-    "symbol": "PIDILITIND",
-    "ivp": 70,
-    "iv": 23.7,
+    "symbol": "CROMPTON",
+    "ivp": 77,
+    "iv": 35.3,
+    "colour": "green",
+    "wants": "PUT_SPREAD"
+   },
+   {
+    "symbol": "HCLTECH",
+    "ivp": 72,
+    "iv": 29.9,
     "colour": "green",
     "wants": "PUT_SPREAD"
    }
   ],
   "strategy_profitable": {
    "breakeven_win_rate_pct": 76.9,
-   "open_short_legs": 108,
+   "open_short_legs": 107,
    "structure_vs_colour": {
-    "mismatches": [
-     {
-      "symbol": "ASHOKLEY",
-      "colour": "red",
-      "structure": "short put against a red stock",
-      "pnl_rs": -350.0
-     }
-    ],
-    "count": 1,
-    "pnl_rs": -350.0,
+    "mismatches": [],
+    "count": 0,
+    "pnl_rs": 0.0,
     "rule": "put spread on green, short call on red"
    }
   }
@@ -750,25 +734,9 @@
   "next_month_season": "quiet; year-end positioning",
   "exposed_open_positions": [],
   "exposed_open_positions_n": 0,
-  "next_21_days_n": 1,
-  "next_21_days": [
-   {
-    "symbol": "PFC",
-    "kind": "ex-dividend",
-    "date": "2026-11-26",
-    "days": 0,
-    "estimated": true,
-    "open_option_legs": 0,
-    "short_legs": 0,
-    "swing_holding": false,
-    "legs_expiring_after_event": []
-   }
-  ],
+  "next_21_days_n": 0,
+  "next_21_days": [],
   "calendar_next_90d": {
-   "2026-11": {
-    "results": 0,
-    "ex-dividend": 1
-   },
    "2026-12": {
     "results": 0,
     "ex-dividend": 1
@@ -779,7 +747,7 @@
    },
    "2027-02": {
     "results": 60,
-    "ex-dividend": 35
+    "ex-dividend": 36
    }
   },
   "event_alerts_open": [],
@@ -794,18 +762,18 @@
    },
    {
     "check": "every exit signal has an order",
-    "pass": true,
-    "detail": "all ordered"
+    "pass": false,
+    "detail": "ASHOKLEY"
    },
    {
     "check": "every short option has a stop",
-    "pass": true,
-    "detail": "all stopped"
+    "pass": false,
+    "detail": "ASHOKLEY, BDL, CAMS, IDFCFIRSTB"
    },
    {
     "check": "no option structure against its colour",
-    "pass": false,
-    "detail": "ASHOKLEY"
+    "pass": true,
+    "detail": "none"
    },
    {
     "check": "no add-on deviation",
@@ -818,38 +786,38 @@
     "detail": "0 exposed"
    }
   ],
-  "checks_passed": 5,
+  "checks_passed": 4,
   "checks_total": 6,
   "guardrail_status": "WARN",
   "guardrail_top": [
-   "sector Financial Services is 48% of deployed capital (limit 40%)",
-   "1 open option exit / strike-breach alerts on 1 stocks (ASHOKLEY) - see the Covered Call alerts"
+   "sector Financial Services is 47% of deployed capital (limit 40%)",
+   "1 invalid GTT orders (1 high: e.g. buy GTTs on contracts you no longer hold) - see Covered Call > Alerts > Invalid GTT; the zerodha-gtt-order skill can delete them"
   ],
   "swing_risk": {
    "deep_losers_n": 0,
    "deep_losers_share_pct": 0.0,
-   "pnl_if_all_hit_line_rs": -60780,
-   "extra_loss_if_all_hit_line_rs": -80687,
+   "pnl_if_all_hit_line_rs": -59931,
+   "extra_loss_if_all_hit_line_rs": -80031,
    "top_sector": {
     "sector": "Financial Services",
-    "share_pct": 48.7
+    "share_pct": 47.5
    }
   },
   "option_risk": {
    "stress_pct_of_capital": {
-    "market_-8pct": -11.76,
-    "market_-5pct": -5.37,
-    "market_-3pct": -2.37,
-    "market_+3pct": -0.28,
-    "market_+5pct": -1.95,
-    "market_+10pct": -11.25,
-    "market_-5pct_iv_x1.25": -9.84,
-    "market_-8pct_iv_x1.5": -17.42
+    "market_-8pct": -11.29,
+    "market_-5pct": -4.98,
+    "market_-3pct": -2.11,
+    "market_+3pct": -0.57,
+    "market_+5pct": -2.41,
+    "market_+10pct": -11.97,
+    "market_-5pct_iv_x1.25": -9.6,
+    "market_-8pct_iv_x1.5": -17.13
    },
    "worst_single_stock_gap": {
     "symbol": "COALINDIA",
     "move": "up 20%",
-    "pnl_rs": -117989.0
+    "pnl_rs": -117754.0
    },
    "naked_call_stocks": 36
   },
