@@ -884,6 +884,10 @@ tr.cc-det td { background:var(--surface2); white-space:normal !important; paddin
 .d2-hstat b { display:block; font-family:var(--font-mono); font-size:17px; margin-top:3px; } .d2-hstat b .d2-note { display:inline; font-family:var(--font-ui); font-weight:400; }
 .d2-pill { border:1px solid var(--green); color:var(--green); border-radius:20px; padding:4px 9px; font-size:9.5px; font-weight:700; white-space:nowrap; }
 .d2-pill.muted { border-color:var(--border); color:var(--text-muted); }
+.d2-pill.down { border-color:var(--red); color:var(--red); }
+.d2-nf { display:grid; grid-template-columns:repeat(5,1fr); gap:10px; padding:2px 16px 12px; } .d2-nf .d2-kpi { min-width:0; }
+.d2-nf-line { padding:0 16px 14px; font-size:12px; color:var(--text-secondary); line-height:1.5; }
+@media (max-width:820px) { .d2-nf { grid-template-columns:repeat(2,1fr); } }
 .d2-edge, .d2-attn, .d2-recent { margin-top:13px; }
 .d2-edge-body, .d2-recent-body { display:grid; grid-template-columns:repeat(4,1fr); }
 .d2-edge-m { padding:15px; border-right:1px solid var(--border); } .d2-edge-m:last-child { border-right:0; }
@@ -1313,6 +1317,12 @@ b.stk, #cc-root td b.stk, #page-dashboard-di b.stk { font-weight:700; }
     <div class="d2-kpi"><div class="d2-label">Unrealised MTM</div><div class="d2-value" id="d2-k-mtm">—</div><div class="d2-note">Open book</div></div>
     <div class="d2-kpi"><div class="d2-label">Invested</div><div class="d2-value" id="d2-a-inv">—</div><div class="d2-note"><span id="d2-a-pos">—</span> open positions</div></div>
     <div class="d2-kpi"><div class="d2-label">Position tier</div><div class="d2-value" id="d2-a-tier">—</div><div class="d2-note" id="d2-a-tier-n">—</div></div>
+  </section>
+
+  <section class="d2-panel" id="d2-nifty" style="display:none;margin-bottom:13px">
+    <div class="d2-panel-head"><div><div class="d2-title">Nifty direction</div><div class="d2-hint" id="d2-nf-sub">Supertrend(10,3) on the Nifty 50 daily close</div></div><span class="d2-pill muted" id="d2-nf-pill">—</span></div>
+    <div class="d2-nf" id="d2-nf-body"></div>
+    <div class="d2-nf-line" id="d2-nf-line"></div>
   </section>
 
   <section class="d2-panel" id="d2-insights" style="display:none;margin-bottom:13px">
@@ -8832,7 +8842,7 @@ const WS_KEY = 'tj_workspace';
 const WORKSPACES = {
   dhan:    { id: 'dhan',    label: 'ND',      strategy: 'dh252', source: 'MCP snapshot',  status: 'live',
              snapshotUrl: 'dhan-live/dhan_live_signals.json', insightsUrl: 'dhan-live/insights.json', banUrl: 'dhan-live/data/fno_ban.json',
-             ordersUrl: 'dhan-live/data/orders_snapshot.json', projectionUrl: 'dhan-live/data/projection.json', crosscheckUrl: 'dhan-live/data/signal_crosscheck.json', guardUrl: 'dhan-live/data/guardrails.json',
+             ordersUrl: 'dhan-live/data/orders_snapshot.json', projectionUrl: 'dhan-live/data/projection.json', niftyUrl: 'dhan-live/data/nifty_trend.json', crosscheckUrl: 'dhan-live/data/signal_crosscheck.json', guardUrl: 'dhan-live/data/guardrails.json',
              copy: { refreshCmd: '/refresh-dhan', hasCC: true, strat: 'dh252', liveTitle: 'ND Live · dh252',
                      liveSub: "Live ND positions vs. backtester's daily Supertrend / 52-week-high signals", logoA: 'dh', logoB: '252', logoSub: '52-week-high swing',
                      entryShort: '52-week high, trend green', addShort: 'Down 6%+, trend green',
@@ -8848,7 +8858,7 @@ const WORKSPACES = {
              pages: { live: true, covcall: true, dashboard: 'v2', performance: 'v2', analysis: 'v2' } },   // 'v2' = contract-driven page-dashboard2
   zerodha: { id: 'zerodha', label: 'AZ',      strategy: 'F&O Supertrend', source: 'MCP snapshot', status: 'live',
              snapshotUrl: 'zerodha-live/zerodha_live_signals.json', insightsUrl: 'zerodha-live/insights.json', banUrl: 'zerodha-live/data/fno_ban.json',
-             ordersUrl: 'zerodha-live/data/orders_snapshot.json', projectionUrl: 'zerodha-live/data/projection.json', crosscheckUrl: 'zerodha-live/data/signal_crosscheck.json', guardUrl: 'zerodha-live/data/guardrails.json',
+             ordersUrl: 'zerodha-live/data/orders_snapshot.json', projectionUrl: 'zerodha-live/data/projection.json', niftyUrl: 'zerodha-live/data/nifty_trend.json', crosscheckUrl: 'zerodha-live/data/signal_crosscheck.json', guardUrl: 'zerodha-live/data/guardrails.json',
              ccUrl: 'zerodha-live/covered_call_signals.json',
              cfg: { staleDays: 3, addTriggerPct: -6, addCooldownDays: 7, addFraction: 0.1,
                     bt: { label: '10-yr backtest · Rs30L start · Rs20k + Rs5k ladder · flip-today entry · 6% on idle cash', cagr: 20.21, maxDd: -21.32, winRate: 41.2, pf: 1.75, avgWin: 21.0, avgLoss: -6.8, holdWin: 106, holdLoss: 36, maxPos: 136, trades: 3656 } },
@@ -10001,6 +10011,7 @@ function d2Render(d) {
     + `Marked to market at the last close.`);
 
   try { d2RenderScore(d); } catch (e) { console.error('Scorecard error:', e); }
+  d2RenderNifty();
   d2RenderInsights();
 
   // Attention queues
@@ -10035,6 +10046,33 @@ function d2Render(d) {
 
 
 // ── Strategy insights (user, 2026-11-18): one box per workspace, written by Claude at each refresh into <broker>-live/insights.json ──
+// ── Nifty direction strip (user, 2026-11-28): this workspace's own data/nifty_trend.json (scripts/nifty_trend.py, run by the refresh). Information only.
+WS.nifty = WS.nifty || {};
+function d2RenderNifty() {
+  const id = WS.id, panel = document.getElementById('d2-nifty'); if (!panel) return;
+  const url = (WORKSPACES[id] || {}).niftyUrl;
+  if (!url) { panel.style.display = 'none'; return; }
+  const draw = j => { if (id === WS.id) d2NiftyDraw(j); };
+  if (WS.nifty[id]) { draw(WS.nifty[id]); return; }
+  fetch(url + '?t=' + Date.now()).then(r => r.ok ? r.json() : Promise.reject()).then(j => { WS.nifty[id] = j; draw(j); }).catch(() => { if (id === WS.id) panel.style.display = 'none'; });
+}
+function d2NiftyDraw(j) {
+  const panel = document.getElementById('d2-nifty'); panel.style.display = '';
+  const up = j.st === 'GREEN', fmtD = x => new Date(x + 'T00:00:00').toLocaleDateString('en-GB', { day: 'numeric', month: 'short' });
+  const pill = document.getElementById('d2-nf-pill'); pill.textContent = up ? 'UPTREND' : 'DOWNTREND'; pill.className = 'd2-pill' + (up ? '' : ' down');
+  document.getElementById('d2-nf-sub').textContent = 'Supertrend(10,3) on the Nifty 50 daily close · as of ' + fmtD(j.as_of);
+  const cell = (lab, val, note, cls) => `<div class="d2-kpi"><div class="d2-label">${lab}</div><div class="d2-value ${cls || ''}">${val}</div><div class="d2-note">${note}</div></div>`;
+  const sg = x => (x >= 0 ? '+' : '') + x.toFixed(2) + '%';
+  document.getElementById('d2-nf-body').innerHTML =
+    cell('Nifty 50', j.close.toLocaleString('en-IN', { maximumFractionDigits: 0 }), sg(j.chg_pct) + ' on the day', j.chg_pct >= 0 ? 'pos' : 'neg') +
+    cell('Supertrend', up ? 'Green' : 'Red', 'since ' + fmtD(j.since) + ' · ' + j.age_td + ' sessions', up ? 'pos' : 'neg') +
+    cell('Flip line', j.line.toLocaleString('en-IN', { maximumFractionDigits: 0 }), j.to_flip_pct.toFixed(1) + '% ' + (up ? 'below' : 'above') + ' the close') +
+    cell('Vs 200-day average', sg(j.vs_sma200_pct), j.vs_sma200_pct >= 0 ? 'above it' : 'below it', j.vs_sma200_pct >= 0 ? 'pos' : 'neg') +
+    cell('Last 20 sessions', sg(j.ret_20d_pct), 'Nifty 50 return', j.ret_20d_pct >= 0 ? 'pos' : 'neg');
+  const last = (j.flips || []).slice(-1)[0];
+  document.getElementById('d2-nf-line').textContent = (up ? 'Trend is up: a close below ' : 'Trend is down: a close above ') + j.line.toLocaleString('en-IN', { maximumFractionDigits: 0 }) +
+    ' would flip it' + (last ? '. Last flip: to ' + last.to.toLowerCase() + ' on ' + fmtD(last.date) + '.' : '.') + ' Information only: no rule or order reads this.';
+}
 async function d2RenderInsights() {
   const ws = WORKSPACES[WS.id], box = document.getElementById('d2-insights'); if (!box) return;
   if (!ws.insightsUrl) { box.style.display = 'none'; return; }
