@@ -1,9 +1,9 @@
 {
- "as_of": "27 Nov evening (27 Nov close signals; broker data, GTTs and prices as of 27 Nov 18:14; four sections; facts computed by code)",
- "written_at": "2026-11-27T18:15:50+05:30",
+ "as_of": "28 Nov, Saturday (27 Nov close signals; broker data, GTTs and prices as of 28 Nov 18:29; four sections; facts computed by code)",
+ "written_at": "2026-11-28T18:30:27+05:30",
  "confidence": "low",
  "maturity": "6 closed trades (tier anecdote): process and risk numbers are the signal, outcome statistics are descriptive only. Closed trades are the stopped-out losers so far; the open book is the other half.",
- "headline": "Two put spreads, ADANIENSOL and HYUNDAI, now sit against a red trend after today's close, and that is the one thing to fix tomorrow.",
+ "headline": "Markets are closed, and two put spreads, ADANIENSOL and HYUNDAI, are still against a red trend: that is Monday's first job.",
  "points": [
   {
    "label": "Swing",
@@ -13,7 +13,7 @@
     "swing.open_book",
     "swing.robustness"
    ],
-   "text": "Six trades have closed this month and five were losses, which is too few to judge you or the strategy, and the closed list is mostly stopped-out losers while the winners are still running. The market is in a healthy uptrend, and most of your open positions are in profit. Today the ASHOKLEY exit filled for a loss of Rs1,796, and the two new entries SAGILITY and TORNTPHARM were bought. The last 13 ASHOKLEY shares still carry an exit signal with no order."
+   "text": "No session today, so nothing new traded. Six trades have closed this month and five were losses, which is too few to judge you or the strategy, and the closed list is mostly stopped-out losers while the winners are still running. Nifty is in a healthy uptrend and most open positions are in profit. Friday's SAGILITY and TORNTPHARM entries have now settled into holdings. The last 13 ASHOKLEY shares still carry an exit signal with no order."
   },
   {
    "label": "Options",
@@ -21,7 +21,7 @@
     "options_today",
     "options_today.exit_reasons"
    ],
-   "text": "Seven option contracts closed today for Rs2,048 net. Three hit the profit target (BDL, CAMS and IDFCFIRSTB). Two hit the 3x stop: the HAL call lost Rs5,100 and the SOLARINDS call lost Rs5,696. The ASHOKLEY put spread closed on the trend flip. Two stops in a day means two stocks gapped through your first two layers, which is what layer three is for. Since the afternoon you opened ten new spreads, and every short has its protective GTT. India VIX is 16.55, about three-quarters of the way up its one-year range."
+   "text": "No option trades today. Friday was the busy day: three contracts hit the profit target (BDL, CAMS and IDFCFIRSTB), and two hit the 3x stop (the HAL call lost Rs5,100 and the SOLARINDS call Rs5,696). Two stops in a day means two stocks gapped through your first two layers, which is what layer three is for. Every short, including the ten new spreads, has its protective GTT. India VIX is 16.55, about three-quarters up its one-year range."
   },
   {
    "label": "Events",
@@ -38,8 +38,8 @@
     "risk_daily.option_risk",
     "risk_daily.guardrail_top"
    ],
-   "text": "You pass 4 of 6 discipline checks. The first miss is the remaining ASHOKLEY shares, which have an exit signal but no order. The second is that ADANIENSOL and HYUNDAI now have a put spread against a red trend: the colour turned red at today's close, so the rule says close both spreads and sell the call. Financial Services is 47.5% of deployed capital against your 40% limit, so add nothing there. A 5% market fall would cost 6.70% of capital and a sharp fall with higher volatility 20.12%, mostly because 38 stocks carry naked short calls, and these figures assume none of your exits or stops act. If every swing position hit its Supertrend exit you would lose Rs60,748."
+   "text": "You pass 4 of 6 discipline checks. The first miss is the remaining ASHOKLEY shares, which have an exit signal but no order. The second is that ADANIENSOL and HYUNDAI have a put spread against a red trend: the colour turned red at Friday's close, so the rule says close both spreads and sell the call. Financial Services is 46.1% of deployed capital against your 40% limit, so add nothing there. A 5% market fall would cost 6.72% of capital and a sharp fall with higher volatility 20.13%, mostly because 38 stocks carry naked short calls, and these figures assume none of your exits or stops act. If every swing position hit its Supertrend exit you would lose Rs63,265."
   }
  ],
- "action": "Tomorrow, close the ADANIENSOL and HYUNDAI put spreads, then sell the calls only if the trend is still red, and sell the last 13 ASHOKLEY shares."
+ "action": "At Monday's open close the ADANIENSOL and HYUNDAI put spreads, sell the call only if red still holds, and sell the last 13 ASHOKLEY shares."
 }

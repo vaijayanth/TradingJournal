@@ -1,21 +1,17 @@
 {
- "fired_ok_today": [
-  "SOLARINDS26DEC21000CE",
-  "HAL26DEC5400CE",
-  "CAMS26DEC660PE",
-  "IDFCFIRSTB26DEC75PE",
-  "BDL26DEC900PE"
- ],
- "fetched_at": "2026-11-27T18:15:02+05:30",
+ "fired_ok_today": [],
+ "fetched_at": "2026-11-28T18:30:01+05:30",
  "inputs": {
-  "positions": "2026-11-27T12:43:54.763693+00:00",
-  "gtts": "2026-11-27T18:13:54+05:30",
+  "positions": "2026-11-28T12:59:13.914965+00:00",
+  "gtts": "2026-11-28T18:29:13+05:30",
   "orders": "2026-11-27T18:14:15+05:30",
-  "gtt_scan": "2026-11-27T18:13:54+05:30"
+  "gtt_scan": "2026-11-28T18:29:13+05:30"
  },
- "stale_inputs": [],
+ "stale_inputs": [
+  "order list (cc_orders.py): from 2026-11-27, not today (2026-11-28)"
+ ],
  "open_legs": 198,
- "triggered_gtts": 5,
+ "triggered_gtts": 0,
  "findings": [
   {
    "section": "B",

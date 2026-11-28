@@ -1,6 +1,6 @@
 {
  "broker": "AZ",
- "generated_at": "2026-11-27T18:15:28+05:30",
+ "generated_at": "2026-11-28T18:30:06+05:30",
  "as_of": "2026-11-27",
  "scope": "AZ swing shares and AZ stock options; Nifty index options are outside by decision",
  "adherence_leakage": {
@@ -221,16 +221,16 @@
   "draws": 10000,
   "flag": "within_normal_range",
   "open_book": {
-   "n": 38,
-   "in_profit_pct": 76.3,
-   "avg_gain_pct": 5.63,
-   "avg_loss_pct": -1.82
+   "n": 40,
+   "in_profit_pct": 75.0,
+   "avg_gain_pct": 5.45,
+   "avg_loss_pct": -1.69
   },
   "note": "Matched comparison removes the young-book bias but still ignores that live trades are early exits only; bootstrap measures sampling noise only."
  },
  "openrisk": {
-  "open_positions": 38,
-  "invested_rs": 1125945.0,
+  "open_positions": 40,
+  "invested_rs": 1161101.0,
   "below_minus6_count": 0,
   "below_minus6_invested_rs": 0.0,
   "below_minus6_share_pct": 0.0,
@@ -257,33 +257,33 @@
     "pl_pct": -0.9
    }
   ],
-  "pnl_if_all_hit_line_rs": -60748,
-  "extra_loss_if_all_hit_line_rs": -79270,
+  "pnl_if_all_hit_line_rs": -63265,
+  "extra_loss_if_all_hit_line_rs": -81863,
   "top_sectors": [
    {
     "sector": "Financial Services",
-    "share_pct": 47.5
+    "share_pct": 46.1
    },
    {
     "sector": "Consumer Cyclical",
-    "share_pct": 17.8
+    "share_pct": 17.3
    },
    {
     "sector": "Industrials",
-    "share_pct": 10.5
+    "share_pct": 10.2
    }
   ],
   "note": "Stop-out figure = projection.json: loss if every open position exited on its own Supertrend line today."
  },
  "trend": {
   "universe": 215,
-  "green": 168,
-  "green_share_pct": 78.1,
+  "green": 167,
+  "green_share_pct": 77.7,
   "fresh_green_flips_today": 0,
   "fresh_red_flips_today": 2,
-  "holds": 38,
+  "holds": 40,
   "holds_green_share_pct": 100.0,
-  "entries_today": 2,
+  "entries_today": 0,
   "exits_today": 1,
   "addons_today": 0,
   "history_days": 2,
@@ -294,46 +294,10 @@
   "short_legs": 118,
   "long_legs": 80,
   "realised_today": {
-   "contracts_closed": 7,
-   "pnl_rs": 2048.0,
-   "contracts": [
-    {
-     "contract": "SOLARINDS26DEC21000CE",
-     "pnl_rs": -5696.0
-    },
-    {
-     "contract": "HAL26DEC5400CE",
-     "pnl_rs": -5100.0
-    },
-    {
-     "contract": "ASHOKLEY26DEC140PE",
-     "pnl_rs": -450.0
-    },
-    {
-     "contract": "ASHOKLEY26DEC135PE",
-     "pnl_rs": -100.0
-    },
-    {
-     "contract": "IDFCFIRSTB26DEC75PE",
-     "pnl_rs": 3710.0
-    },
-    {
-     "contract": "CAMS26DEC660PE",
-     "pnl_rs": 3712.0
-    },
-    {
-     "contract": "BDL26DEC900PE",
-     "pnl_rs": 5971.0
-    }
-   ],
-   "by_stock": {
-    "SOLARINDS": -5696.0,
-    "HAL": -5100.0,
-    "ASHOKLEY": -550.0,
-    "IDFCFIRSTB": 3710.0,
-    "CAMS": 3712.0,
-    "BDL": 5971.0
-   },
+   "contracts_closed": 0,
+   "pnl_rs": 0.0,
+   "contracts": [],
+   "by_stock": {},
    "note": "Stock options only (Nifty index options are outside the insights by decision), gross of charges."
   },
   "ledger": {
@@ -354,40 +318,40 @@
   "stress": {
    "capital_base_rs": 3000000,
    "grid_pct_of_capital": {
-    "market_-8pct": -14.18,
-    "market_-5pct": -6.7,
-    "market_-3pct": -3.07,
+    "market_-8pct": -14.21,
+    "market_-5pct": -6.72,
+    "market_-3pct": -3.08,
     "market_+3pct": 0.07,
-    "market_+5pct": -1.58,
-    "market_+10pct": -11.48,
-    "market_-5pct_iv_x1.25": -11.55,
-    "market_-8pct_iv_x1.5": -20.12
+    "market_+5pct": -1.56,
+    "market_+10pct": -11.46,
+    "market_-5pct_iv_x1.25": -11.56,
+    "market_-8pct_iv_x1.5": -20.13
    },
    "grid_pnl_rs": {
-    "market_-8pct": -425253.0,
-    "market_-5pct": -201024.0,
-    "market_-3pct": -92134.0,
-    "market_+3pct": 1986.0,
-    "market_+5pct": -47278.0,
-    "market_+10pct": -344543.0,
-    "market_-5pct_iv_x1.25": -346534.0,
-    "market_-8pct_iv_x1.5": -603484.0
+    "market_-8pct": -426200.0,
+    "market_-5pct": -201537.0,
+    "market_-3pct": -92405.0,
+    "market_+3pct": 2188.0,
+    "market_+5pct": -46942.0,
+    "market_+10pct": -343741.0,
+    "market_-5pct_iv_x1.25": -346887.0,
+    "market_-8pct_iv_x1.5": -603984.0
    },
    "single_stock_gap_worst": [
     {
      "symbol": "COALINDIA",
      "move": "up 20%",
-     "pnl_rs": -117767.0
+     "pnl_rs": -117590.0
     },
     {
      "symbol": "LUPIN",
      "move": "up 20%",
-     "pnl_rs": -83695.0
+     "pnl_rs": -83571.0
     },
     {
      "symbol": "PAYTM",
      "move": "up 20%",
-     "pnl_rs": -79560.0
+     "pnl_rs": -79470.0
     }
    ],
    "method": "Black-Scholes repricing of every open leg, implied vol solved from the live option price (fallback stock IV or 30%), all underlyings shocked together (beta 1), expiry unchanged, risk-free 0.065.",
@@ -480,44 +444,30 @@
    "entry_avg_slippage_pct": null
   },
   "today": {
-   "entries_signalled": 2,
-   "entry_names": [
-    "SAGILITY",
-    "TORNTPHARM"
-   ],
+   "entries_signalled": 0,
+   "entry_names": [],
    "exits_signalled": 1,
    "exit_names": [
     "ASHOKLEY"
    ],
-   "fills_date": "2026-11-27",
-   "buy_fills_today": 2,
-   "sell_fills_today": 1,
-   "buy_names": [
-    "SAGILITY",
-    "TORNTPHARM"
-   ],
-   "sell_names": [
-    "ASHOKLEY"
-   ],
+   "fills_date": "2026-11-28",
+   "buy_fills_today": 0,
+   "sell_fills_today": 0,
+   "buy_names": [],
+   "sell_names": [],
    "realised_today": {
-    "n": 1,
-    "pnl_rs": -1796.0,
-    "trades": [
-     {
-      "symbol": "ASHOKLEY",
-      "pl_rs": -1796.0,
-      "pl_pct": -8.05
-     }
-    ]
+    "n": 0,
+    "pnl_rs": 0.0,
+    "trades": []
    },
-   "exit_signals_open_pnl_rs": -231.0
+   "exit_signals_open_pnl_rs": -97.0
   },
   "open_book": {
-   "positions": 38,
-   "in_profit": 29,
-   "in_profit_pct": 76.3,
-   "unrealised_pnl_rs": 34218.0,
-   "green_share_pct": 78.1
+   "positions": 40,
+   "in_profit": 30,
+   "in_profit_pct": 75.0,
+   "unrealised_pnl_rs": 34159.0,
+   "green_share_pct": 77.7
   },
   "robustness": {
    "regime": {
@@ -527,7 +477,7 @@
     "nifty_20d_return_pct": 12.8,
     "trend_label": "uptrend (above both the 50 and 200 day averages)",
     "vix": 16.55,
-    "vix_chg_pct": -1.8,
+    "vix_chg_pct": -1.7,
     "vix_1y_percentile_pct": 73.0,
     "vix_1y_low": 9.15,
     "vix_1y_high": 27.89
@@ -541,59 +491,23 @@
  },
  "options_today": {
   "today": {
-   "contracts_closed": 7,
-   "pnl_rs": 2048.0,
-   "winners": 3,
-   "losers": 4,
-   "contracts": [
-    {
-     "contract": "SOLARINDS26DEC21000CE",
-     "pnl_rs": -5696.0
-    },
-    {
-     "contract": "HAL26DEC5400CE",
-     "pnl_rs": -5100.0
-    },
-    {
-     "contract": "ASHOKLEY26DEC140PE",
-     "pnl_rs": -450.0
-    },
-    {
-     "contract": "ASHOKLEY26DEC135PE",
-     "pnl_rs": -100.0
-    },
-    {
-     "contract": "IDFCFIRSTB26DEC75PE",
-     "pnl_rs": 3710.0
-    },
-    {
-     "contract": "CAMS26DEC660PE",
-     "pnl_rs": 3712.0
-    },
-    {
-     "contract": "BDL26DEC900PE",
-     "pnl_rs": 5971.0
-    }
-   ],
-   "ivp_of_closed_stocks": {
-    "SOLARINDS": 21,
-    "HAL": 27,
-    "ASHOKLEY": 52,
-    "IDFCFIRSTB": 56,
-    "CAMS": 60,
-    "BDL": 31
-   }
+   "contracts_closed": 0,
+   "pnl_rs": 0.0,
+   "winners": 0,
+   "losers": 0,
+   "contracts": [],
+   "ivp_of_closed_stocks": {}
   },
   "vix": {
    "vix": 16.55,
-   "vix_chg_pct": -1.8,
+   "vix_chg_pct": -1.7,
    "vix_1y_percentile_pct": 73.0,
    "vix_1y_low": 9.15,
    "vix_1y_high": 27.89
   },
   "iv_regime": {
-   "universe_median_ivp": 46.0,
-   "stocks_ivp_70_plus": 27,
+   "universe_median_ivp": 42.0,
+   "stocks_ivp_70_plus": 23,
    "stocks_with_ivp": 203
   },
   "ledger": {
@@ -651,24 +565,7 @@
    "note": "Ledger starts 2026-11-26 (brokers keep no history); IVP at close is stored from that day, so the IVP and VIX split needs about 30 closed contracts per bucket. Favourites need at least 5 closed per stock."
   },
   "exit_reasons": {
-   "today": {
-    "profit target": {
-     "n": 3,
-     "pnl_rs": 13394.0
-    },
-    "3x stop (gap backstop)": {
-     "n": 2,
-     "pnl_rs": -10796.0
-    },
-    "hedge closed": {
-     "n": 1,
-     "pnl_rs": -100.0
-    },
-    "trend flip": {
-     "n": 1,
-     "pnl_rs": -450.0
-    }
-   },
+   "today": {},
    "cumulative": {
     "profit target": {
      "n": 8,
@@ -693,49 +590,49 @@
    },
    "short_legs_closed_total": 14,
    "stop_fired_total": 2,
-   "stop_fired_today": 2,
+   "stop_fired_today": 0,
    "note": "Reasons are inferred by code from prices and the Supertrend colour (no manual input): profit target = bought back at 44% of the sold price or less, 3x stop = at 2.7x or more, trend flip = colour turned against the structure, else early profit exit or a loss exit outside the rules. The ledger holds reasons from 2026-11-26 only."
   },
   "premium_rich_no_position": [
    {
     "symbol": "APLAPOLLO",
     "ivp": 100,
-    "iv": 43.3,
+    "iv": 47.6,
     "colour": "red",
     "wants": "CALL"
    },
    {
     "symbol": "YESBANK",
-    "ivp": 81,
-    "iv": 36.7,
+    "ivp": 79,
+    "iv": 36.2,
     "colour": "green",
     "wants": "PUT_SPREAD"
    },
    {
     "symbol": "ZYDUSLIFE",
-    "ivp": 79,
-    "iv": 27.8,
+    "ivp": 76,
+    "iv": 27.6,
+    "colour": "green",
+    "wants": "PUT_SPREAD"
+   },
+   {
+    "symbol": "SBICARD",
+    "ivp": 73,
+    "iv": 30.7,
     "colour": "green",
     "wants": "PUT_SPREAD"
    },
    {
     "symbol": "TCS",
-    "ivp": 78,
-    "iv": 29.9,
+    "ivp": 73,
+    "iv": 29.3,
     "colour": "green",
     "wants": "PUT_SPREAD"
    },
    {
     "symbol": "CROMPTON",
-    "ivp": 77,
-    "iv": 35.3,
-    "colour": "green",
-    "wants": "PUT_SPREAD"
-   },
-   {
-    "symbol": "HCLTECH",
-    "ivp": 72,
-    "iv": 29.9,
+    "ivp": 67,
+    "iv": 33.7,
     "colour": "green",
     "wants": "PUT_SPREAD"
    }
@@ -838,34 +735,34 @@
   "checks_total": 6,
   "guardrail_status": "WARN",
   "guardrail_top": [
-   "sector Financial Services is 47% of deployed capital (limit 40%)",
+   "sector Financial Services is 46% of deployed capital (limit 40%)",
    "2 open option exit / strike-breach alerts on 2 stocks (ADANIENSOL, HYUNDAI) - see the Covered Call alerts"
   ],
   "swing_risk": {
    "deep_losers_n": 0,
    "deep_losers_share_pct": 0.0,
-   "pnl_if_all_hit_line_rs": -60748,
-   "extra_loss_if_all_hit_line_rs": -79270,
+   "pnl_if_all_hit_line_rs": -63265,
+   "extra_loss_if_all_hit_line_rs": -81863,
    "top_sector": {
     "sector": "Financial Services",
-    "share_pct": 47.5
+    "share_pct": 46.1
    }
   },
   "option_risk": {
    "stress_pct_of_capital": {
-    "market_-8pct": -14.18,
-    "market_-5pct": -6.7,
-    "market_-3pct": -3.07,
+    "market_-8pct": -14.21,
+    "market_-5pct": -6.72,
+    "market_-3pct": -3.08,
     "market_+3pct": 0.07,
-    "market_+5pct": -1.58,
-    "market_+10pct": -11.48,
-    "market_-5pct_iv_x1.25": -11.55,
-    "market_-8pct_iv_x1.5": -20.12
+    "market_+5pct": -1.56,
+    "market_+10pct": -11.46,
+    "market_-5pct_iv_x1.25": -11.56,
+    "market_-8pct_iv_x1.5": -20.13
    },
    "worst_single_stock_gap": {
     "symbol": "COALINDIA",
     "move": "up 20%",
-    "pnl_rs": -117767.0
+    "pnl_rs": -117590.0
    },
    "naked_call_stocks": 38
   },
